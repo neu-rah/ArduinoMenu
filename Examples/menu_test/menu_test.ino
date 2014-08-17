@@ -9,20 +9,30 @@
 #include "keyStream.h"//keyboard driver and fake stream (for the encoder button)
 #include "chainStream.h"// concatenate multiple input streams (this allows adding a button to the encoder)
 
-#define vpinsSPI_CS srv_pb.pin(1)//vpins SPI CS 
-#define STCP srv_pb.pin(1)//stcp or latch pin
-
-//setup i2c network and port/pin/device maps
-I2CServerBranch srv_vpa(Wire,0x11,VPA,VPA,1);//virtual (spi) port on i2c vport server (2 bytes)
-I2CServerBranch srv_pb(Wire,0x11,VPB,PB,1);//physical port on i2c vport server is now local virtual port (tied)
-I2CServerBranch srv_pc(Wire,0x11,VPC,PC,1);//physical port on i2c vport server is now local virtual port (tied)
-I2CServerBranch srv_pd(Wire,0x11,VPD,PD,1);//physical port on i2c vport server is now local virtual port (tied)
-//here wiring the LCD screen and other stuff over the I2C network...
-LiquidCrystal lcd1(srv_vpa.pin(6), srv_vpa.pin(4), srv_vpa.pin(0), srv_vpa.pin(1), srv_vpa.pin(2), srv_vpa.pin(3));
-
-#define LCD_SZ_Y 2
 #define LCD_SZ_X 16
+#define LCD_SZ_Y 2
+
+//how the LCS was wired
+#define LCD_WIRE NONE
+//#define LCD_WIRE VPINS_I2C
+//#define LCD_WIRE VPINS_SPI//not implemented
+//#define LCD_WIRE I2C//not implemented
+//#define LCD_WIRE DIRECT//not implemented
+
+#if LCD_WIRE==VPINS_I2C// LCD is wired over i2c to another AVR that uses virtual pins and shift registers to control it and virtual port server to share it
+  //remote pins over I2C to VPort server
+  #define vpinsSPI_CS srv_pb.pin(1)//vpins SPI CS 
+  #define STCP srv_pb.pin(1)//stcp or latch pin
   
+  //setup i2c network and port/pin/device maps
+  I2CServerBranch srv_vpa(Wire,0x11,VPA,VPA,1);//virtual (spi) port on i2c vport server (2 bytes)
+  I2CServerBranch srv_pb(Wire,0x11,VPB,PB,1);//physical port on i2c vport server is now local virtual port (tied)
+  I2CServerBranch srv_pc(Wire,0x11,VPC,PC,1);//physical port on i2c vport server is now local virtual port (tied)
+  I2CServerBranch srv_pd(Wire,0x11,VPD,PD,1);//physical port on i2c vport server is now local virtual port (tied)
+  //here wiring the LCD screen and other stuff over the I2C network...
+  LiquidCrystal lcd1(srv_vpa.pin(6), srv_vpa.pin(4), srv_vpa.pin(0), srv_vpa.pin(1), srv_vpa.pin(2), srv_vpa.pin(3));
+#endif
+
 ////////////////////////////////////////////
 // ENCODER (aka rotary switch) PINS
 // rotary
@@ -78,7 +88,9 @@ chainStream<3> allIn(in3);
 
 //describing a menu output, alternatives so far are Serial or LiquidCrystal LCD
 menuPrint serial(Serial);
-menuLCD lcd(lcd1,16,2);
+#if LCD_WIRE!=NONE// are we using and LCD?
+  menuLCD lcd(lcd1,16,2);
+#endif
 
 //menuOut* out[]={&lcd,&serial};
 //chainOut<2> allOut(out);
@@ -89,13 +101,16 @@ void setup() {
   Serial.println("menu system test");
   Wire.begin();
 
-  Serial.println("waiting for servers...");
+#if LCD_WIRE==VPINS_I2C// LCD is wired over i2c to another AVR that uses virtual pins and shift registers to control it and virtual port server to share it  Serial.println("waiting for servers...");
   srv_vpa.begin();// wait for server ready (all on same server, so)
   //srv_vpb.begin();// wait for server ready
   Serial.println("all servers ready!");
-  
+#endif
+
+#if LCD_WIRE!=NONE
   lcd1.begin(16,2);
   lcd1.print("Menu test");
+#endif
 
   pinMode(encBtn, INPUT);
   digitalWrite(encBtn,1);
@@ -106,11 +121,12 @@ void setup() {
 ///////////////////////////////////////////////////////////////////////////////
 // testing the menu system
 void loop() {
-  //mainMenu.activate(Serial,Serial);//show menu to Serial and read keys from Serial
-  mainMenu.activate(lcd,allIn);//show menu on LCD and multiple inputs to navigate
+  mainMenu.activate(Serial,Serial);//show menu to Serial and read keys from Serial
+#if LCD_WIRE!=NONE  
+  //mainMenu.activate(lcd,allIn);//show menu on LCD and multiple inputs to navigate
   //mainMenu.activate(lcd,Serial);//very bad combination!
+#endif LCD_WIRE!=NONE
   //mainMenu.activate(Serial,enc);//bad combination! shopw menu on serial and navigate using quadEncoder
-  //mainMenu.activate<2>(allOut,allIn);//multiple outputs test, sory no multiple output support!
 }
 
 void nothing() {}
@@ -122,6 +138,7 @@ void percentBar(int percent) {
 }
 
 void setValue(int &value,String text,char* units,int sensivity,int low,int hi,int steps,void (*func)()) {
+  Serial.print
   lcd1.clear();
   if (!steps) steps=(hi-low)/(float)LCD_SZ_X;
   float fact=((float)sensivity)/((float)steps);//sensivity factor

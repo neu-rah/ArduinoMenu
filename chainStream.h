@@ -1,4 +1,8 @@
-//scan a chain of several input streams to provide input
+/***********
+scan a chain of several input streams to provide input
+Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
+*/
+
 template <int N>
 class chainStream:public Stream {
   public:

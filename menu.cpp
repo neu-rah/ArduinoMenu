@@ -1,3 +1,7 @@
+/********************
+Arduino generic menu system
+Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
+*/
 #include "menu.h"
 
 int menu::menuKeys(menuOut &p,Stream& c) {

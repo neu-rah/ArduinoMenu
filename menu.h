@@ -1,14 +1,24 @@
+/********************
+Arduino generic menu system
+Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
+
+    prompt: class representing a text and an associated function pointer
+      menu: prompt derived holding a list of prompts (options and submenus)
+   menuOut: print derived with special virtual functions needed for menu output, derive this to have the menu in other devices
+ menuPrint: menuOut implementation for generic print (as Serial)
+   menuLCD: menuOut implementation for standard LiquidCrystal LCD
+
+the menu system will read provided stream for input, it works for Serial
+for encoders, joysticks, keyboards or touch a stream must be made out of them
+*/
 #ifndef RSITE_ARDUINOP_MENU_SYSTEM
   #define RSITE_ARDUINOP_MENU_SYSTEM
   
-  //#include <HardwareSerial.h>
   #include <LiquidCrystal.h>
   
   class prompt;
   class menu;
   class menuOut;
-  
-  //#include "menu_objects.h"
   
   #define CONCATENATE(arg1, arg2)   CONCATENATE1(arg1, arg2)
   #define CONCATENATE1(arg1, arg2)  CONCATENATE2(arg1, arg2)
@@ -69,13 +79,16 @@
     //device size
     int maxX;
     int maxY;
+    //device resolution
+    int resX;
+    int resY;
     enum styles {
       enumerated, //print numbers or references for options, keyboard or file
       cursor,//print a cursor at selected option, tracking device
       point,//pointing device
     } style;
     //menuOut(menuOut::styles style=menuOut::enumerated):maxX(0),maxY(0),style(style),top(0) {}
-    menuOut(menuOut::styles style=menuOut::enumerated,int x=0x7F,int y=0x7F):maxX(x),maxY(y),style(style),top(0) {}
+    menuOut(menuOut::styles style=menuOut::enumerated,int x=0x7F,int y=0x7F):maxX(x),maxY(y),style(style),top(0),resX(1),resY(1) {}
     virtual void clear()=0;
     virtual void setCursor(int x,int y)=0;
     virtual void print(const char *text)=0;
@@ -101,7 +114,7 @@
     LiquidCrystal& lcd;
     menuLCD(LiquidCrystal& lcd,int x=0x7F,int y=0x7F):lcd(lcd),menuOut(menuOut::cursor,x,y) {}
     virtual void clear() {lcd.clear();}
-    virtual void setCursor(int x,int y) {lcd.setCursor(x,y);}
+    virtual void setCursor(int x,int y) {lcd.setCursor(x*resX,y*resY);}
     virtual void print(const char *text) {lcd.print(text);}
     virtual void println(const char *text) {lcd.print(text);};
     virtual void print(int i) {lcd.print(i);};

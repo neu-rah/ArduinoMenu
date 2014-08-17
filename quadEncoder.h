@@ -1,3 +1,9 @@
+/***************
+quadrature encoder driver
+quadrature encoder stream (fake, not using buffers)
+Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
+*/
+
 #include "pcint.h"
 
 //PCInt library is missing (Arduino has none), handlers are conflicting due to private handler implementations
