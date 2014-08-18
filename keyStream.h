@@ -12,6 +12,7 @@ struct keyMap {
 };
 
 //emulate a stream keyboard, this is not using interrupts as a good driver should do
+// AND is not using a buffer either!
 template <int N>
 class keyLook:public Stream {
 public:

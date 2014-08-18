@@ -54,7 +54,7 @@ void menu::printMenu(menuOut& p) {
     }
   }
   if (i-p.top<p.maxY) {
-    p.setCursor(0,i);
+    p.setCursor(0,i-p.top);
     if (p.style==menuOut::enumerated) 
       p.print(" 0");
     p.print(sel==sz?">":" ");

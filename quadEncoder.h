@@ -1,12 +1,13 @@
 /***************
-quadrature encoder driver
+quadrature encoder driver (PCINT)
 quadrature encoder stream (fake, not using buffers)
 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
 */
 
 #include "pcint.h"
-
 //PCInt library is missing (Arduino has none), handlers are conflicting due to private handler implementations
+//therefor you can not use this and SoftwareSerial or any other that defines PCINT handlers, unless made common
+
 class quadEncoder {
 public:
   volatile int pos;
@@ -32,18 +33,14 @@ public:
 };
 
 //emulate a stream based on quadEncoder movement returning +/- for every 'sensivity' steps
-#define quadEncoder_BUFFER_SIZE 8
+//buffer not needer because we have an accumulator
 class quadEncoderStream:public Stream {
 public:
   quadEncoder &enc;//associated hardware quadEncoder
   int sensivity;
   int oldPos;
-  struct {
-    unsigned char buffer[quadEncoder_BUFFER_SIZE];
-    volatile unsigned int head;
-    volatile unsigned int tail;
-  } rx_buffer = { { 0 }, 0, 0};
   quadEncoderStream(quadEncoder &enc,int sensivity):enc(enc), sensivity(sensivity) {}
+  inline void setSensivity(int s) {sensivity=s;}
   int available(void) {return abs(enc.pos-oldPos)/sensivity;}
   int peek(void) {
     int d=enc.pos-oldPos;

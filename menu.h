@@ -112,7 +112,7 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
   class menuLCD:public menuOut {
     public:
     LiquidCrystal& lcd;
-    menuLCD(LiquidCrystal& lcd,int x=0x7F,int y=0x7F):lcd(lcd),menuOut(menuOut::cursor,x,y) {}
+    menuLCD(LiquidCrystal& lcd,int x=16,int y=1):lcd(lcd),menuOut(menuOut::cursor,x,y) {}
     virtual void clear() {lcd.clear();}
     virtual void setCursor(int x,int y) {lcd.setCursor(x*resX,y*resY);}
     virtual void print(const char *text) {lcd.print(text);}
@@ -153,13 +153,16 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
     
     int menuKeys(menuOut &p,Stream& c);
     void printMenu(menuOut& p);
+    
     void activate(menuOut& p,Stream& c);
+    
     inline void activate(Print& p,Stream&c) {
       menuPrint tmp(p);
       activate(tmp,c);
     }
+    
     inline void activate(LiquidCrystal& p,Stream&c) {
-      menuLCD tmp(p);
+      menuLCD tmp(p);//defaults to LCD 16x1
       activate(tmp,c);
     }
   };
