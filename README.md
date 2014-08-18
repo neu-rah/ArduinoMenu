@@ -10,4 +10,4 @@ input is read from generic streams, included simple streams for encoders and key
 
 output to menuOut devices, included derivations to support serial and lcd
 
-multiple stream packing for input allowing mixing encoder strream with encoder keyboard (usually 1 or 2 keys)
+multiple stream packing for input allowing mixing encoder stream with encoder keyboard (usually 1 or 2 keys)
