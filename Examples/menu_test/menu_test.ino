@@ -45,16 +45,16 @@
 //functions to wire as menu actions
 
 //aux function
-void setValue(int &value,String text,char* units="",int sensivity=5,int low=0,int hi=100,int steps=0,void (*func)()=nothing);
+void setValue(prompt &p,menuOut &o,int &value,String text,char* units="",int sensivity=5,int low=0,int hi=100,int steps=0,void (*func)()=nothing);
 
 void ledOn() {digitalWrite(13,1);}
 void ledOff() {digitalWrite(13,0);}
 
 int frequency=100;
-void setFreq() {setValue(frequency,"Freq:","0 Hz",20,1,1000);}
+void setFreq(prompt &p,menuOut &o) {setValue(p,o,frequency,"Freq:","0 Hz",20,1,1000);}
 
 int dutty=50;
-void setDutty() {setValue(dutty,"Dutty:","%",1,0,100);}
+void setDutty(prompt &p,menuOut &o) {setValue(p,o,dutty,"Dutty:","%",1,0,100);}
 
 void completeHandlerTest(prompt &p,menuOut &o,Stream &i) {
   o.clear();
@@ -139,7 +139,7 @@ void percentBar(int percent) {
      lcd1.print((char)(n<i?255:' '));
 }
 
-void setValue(int &value,String text,char* units,int sensivity,int low,int hi,int steps,void (*func)()) {
+void setValue(prompt &p,menuOut &o,int &value,String text,char* units,int sensivity,int low,int hi,int steps,void (*func)()) {
   lcd1.clear();
   if (!steps) steps=(hi-low)/(float)LCD_SZ_X;
   float fact=((float)sensivity)/((float)steps);//sensivity factor

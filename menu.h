@@ -148,19 +148,20 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
   ////////////////////////////////////////////////////////////////////
   // menu structure
   
-	template<typename ...Ts>
-	class handler {
+	class promptAction {
 	public:
-		typedef void (*menuHandler)(Ts...);
-		menuHandler hFn;
-		inline handler() {}
-		inline handler(void (*f)()):hFn((menuHandler)f) {}
-		inline handler(void (*f)(...)):hFn((menuHandler)f) {}
-		inline handler(menuHandler f):hFn(f) {}
-		inline void operator()(Ts... ts) {hFn(ts...);}
+		typedef void (*callback)(prompt &p, menuOut &o, Stream &i);//callback fynction type
+		callback hFn;//the hooked callback function
+		//cast no arguments or partial arguments to be accepted as promptActions
+		inline promptAction() {}
+		inline promptAction(void (*f)()):hFn((callback)f) {}
+		inline promptAction(void (*f)(prompt&)):hFn((callback)f) {}
+		inline promptAction(void (*f)(prompt&,menuOut&)):hFn((callback)f) {}
+		inline promptAction(callback f):hFn(f) {}
+		//use this objects as a function (replacing functions)
+		inline void operator()(prompt &p, menuOut &o, Stream &i) {hFn(p,o,i	);}
 	};
 
-	typedef handler<prompt&,menuOut&,Stream&> promptAction;
   class prompt {
     public:
     const char *text;
