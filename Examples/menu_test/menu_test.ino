@@ -56,10 +56,16 @@ void setFreq() {setValue(frequency,"Freq:","0 Hz",20,1,1000);}
 int dutty=50;
 void setDutty() {setValue(dutty,"Dutty:","%",1,0,100);}
 
+void completeHandlerTest(prompt &p,menuOut &o,Stream &i) {
+  o.clear();
+  o.print("Handler test ok!");
+  while(i.read()!=13);
+}
+
 /////////////////////////////////////////////////////////////////////////
 // MENU DEFINITION
 // here we define the menu structure and wire actions functions to it
-MENU(subMenu,"LED on pin 13, this is a long option",
+MENU(subMenu,"LED on pin 13",
   OP("LED On",ledOn),
   OP("LED Off",ledOff)
 );
@@ -67,6 +73,7 @@ MENU(subMenu,"LED on pin 13, this is a long option",
 MENU(mainMenu,"Sistema",
   OP("Frequency",setFreq),
   OP("Dutty",setDutty),
+  OP("Handler test",completeHandlerTest),
   SUBMENU(subMenu)
 );
 
@@ -94,6 +101,7 @@ menuLCD lcd(lcd1,16,2);
 //chainOut<2> allOut(out);
 
 ///////////////////////////////////////////////////////////////////////////////
+
 void setup() {
   Serial.begin(9600);
   Serial.println("menu system test");
@@ -116,9 +124,9 @@ void setup() {
 ///////////////////////////////////////////////////////////////////////////////
 // testing the menu system
 void loop() {
-  mainMenu.activate(Serial,Serial);//show menu to Serial and read keys from Serial
+  //mainMenu.activate(Serial,Serial);//show menu to Serial and read keys from Serial
+  mainMenu.activate(lcd,allIn);//show menu on LCD and multiple inputs to navigate
   //mainMenu.activate(lcd1,allIn);//show menu on LCD and multiple inputs to navigate, defaults to LCD 16x1
-  //mainMenu.activate(lcd,allIn);//show menu on LCD and multiple inputs to navigate
   //mainMenu.activate(lcd,Serial);//very bad combination!
   //mainMenu.activate(Serial,enc);//bad combination! shopw menu on serial and navigate using quadEncoder
 }

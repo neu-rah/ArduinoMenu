@@ -148,16 +148,29 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
   ////////////////////////////////////////////////////////////////////
   // menu structure
   
-  typedef void (*promptAction)();//(class prompt&,class menuOut&,class Stream&);
+  //typedef void (*promptAction)(class prompt&,class menuOut&,class Stream&);
   //void noAction() {}
+
+	class promptAction {
+	public:
+		typedef void (*menuHandler)(prompt&,menuOut&,Stream&);
+		menuHandler hFn;
+		inline promptAction() {}
+		inline promptAction(void (*f)()):hFn((menuHandler)f) {}
+		inline promptAction(void (*f)(prompt&)):hFn((menuHandler)f) {}
+		inline promptAction(void (*f)(prompt &p,menuOut &o)):hFn((menuHandler)f) {}
+		inline promptAction(menuHandler f):hFn(f) {}
+		inline void operator()(prompt &p,menuOut &o,Stream &i) {hFn(p,o,i);}
+	};
 
   class prompt {
     public:
     const char *text;
     promptAction action;
-    prompt(const char * text,promptAction action=0):text(text),action(action) {}
+    prompt(const char * text):text(text) {}
+    prompt(const char * text,promptAction action):text(text),action(action) {}
     virtual size_t printTo(Print& p) {p.print(text);return strlen(text);}
-    virtual void activate(menuOut& p,Stream&c) {action();}
+    virtual void activate(menuOut& p,Stream&c) {action(*this,p,c);}
     void activate(Print& p,Stream&c) {
       menuPrint tmp(p);
       activate(tmp,c);
