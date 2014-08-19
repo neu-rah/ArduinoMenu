@@ -148,10 +148,7 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
   ////////////////////////////////////////////////////////////////////
   // menu structure
   
-  //typedef void (*promptAction)(class prompt&,class menuOut&,class Stream&);
-  //void noAction() {}
-
-	class promptAction {
+	/*class promptAction {
 	public:
 		typedef void (*menuHandler)(prompt&,menuOut&,Stream&);
 		menuHandler hFn;
@@ -161,7 +158,23 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
 		inline promptAction(void (*f)(prompt &p,menuOut &o)):hFn((menuHandler)f) {}
 		inline promptAction(menuHandler f):hFn(f) {}
 		inline void operator()(prompt &p,menuOut &o,Stream &i) {hFn(p,o,i);}
+	};*/
+	
+	template<typename ...Ts>
+	class handler {
+	public:
+		typedef void (*menuHandler)(Ts...);
+		menuHandler hFn;
+		inline handler() {}
+		inline handler(void (*f)()):hFn((menuHandler)f) {}
+		inline handler(void (*f)(prompt&)):hFn((menuHandler)f) {}
+		inline handler(void (*f)(prompt &p,menuOut &o)):hFn((menuHandler)f) {}
+		inline handler(menuHandler f):hFn(f) {}
+		inline void operator()(Ts... ts) {hFn(ts...);}
 	};
+
+	typedef handler<prompt&,menuOut&,Stream&> promptAction;
+
 
   class prompt {
     public:
