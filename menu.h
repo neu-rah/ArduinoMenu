@@ -107,9 +107,9 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
     int resX;
     int resY;
     enum styles {
-      enumerated, //print numbers or references for options, keyboard or file
-      cursor,//print a cursor at selected option, tracking device
-      point,//pointing device
+      enumerated, //print numbers or references for options, adequated keyboard or file input
+      cursor,//print a cursor at selected option, tracking device (encoder)
+      point,//pointing device (not implemented)
     } style;
     //menuOut(menuOut::styles style=menuOut::enumerated):maxX(0),maxY(0),style(style),top(0) {}
     menuOut(menuOut::styles style=menuOut::enumerated,int x=0x7F,int y=0x7F):maxX(x),maxY(y),style(style),top(0),resX(1),resY(1) {}
@@ -148,18 +148,6 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
   ////////////////////////////////////////////////////////////////////
   // menu structure
   
-	/*class promptAction {
-	public:
-		typedef void (*menuHandler)(prompt&,menuOut&,Stream&);
-		menuHandler hFn;
-		inline promptAction() {}
-		inline promptAction(void (*f)()):hFn((menuHandler)f) {}
-		inline promptAction(void (*f)(prompt&)):hFn((menuHandler)f) {}
-		inline promptAction(void (*f)(prompt &p,menuOut &o)):hFn((menuHandler)f) {}
-		inline promptAction(menuHandler f):hFn(f) {}
-		inline void operator()(prompt &p,menuOut &o,Stream &i) {hFn(p,o,i);}
-	};*/
-	
 	template<typename ...Ts>
 	class handler {
 	public:
@@ -167,15 +155,12 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
 		menuHandler hFn;
 		inline handler() {}
 		inline handler(void (*f)()):hFn((menuHandler)f) {}
-		inline handler(void (*f)(prompt&)):hFn((menuHandler)f) {}
-		inline handler(void (*f)(prompt &p,menuOut &o)):hFn((menuHandler)f) {}
+		inline handler(void (*f)(...)):hFn((menuHandler)f) {}
 		inline handler(menuHandler f):hFn(f) {}
 		inline void operator()(Ts... ts) {hFn(ts...);}
 	};
 
 	typedef handler<prompt&,menuOut&,Stream&> promptAction;
-
-
   class prompt {
     public:
     const char *text;
