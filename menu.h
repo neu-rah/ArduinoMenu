@@ -14,8 +14,8 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
 #ifndef RSITE_ARDUINOP_MENU_SYSTEM
   #define RSITE_ARDUINOP_MENU_SYSTEM
   
-  #include <LiquidCrystal.h>
-  
+	#include <HardwareSerial.h>
+	
   class prompt;
   class menu;
   class menuOut;
@@ -96,7 +96,7 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
   #define DEF_SUBMENU(id) &id
   
   /////////////////////////////////////////////////////////
-  // menu output device
+  // menu pure virtual output device, use derived
   class menuOut {
     public:
     int top;//top for this device
@@ -115,34 +115,11 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
     menuOut(menuOut::styles style=menuOut::enumerated,int x=0x7F,int y=0x7F):maxX(x),maxY(y),style(style),top(0),resX(1),resY(1) {}
     virtual void clear()=0;
     virtual void setCursor(int x,int y)=0;
+    virtual void print(char ch)=0;
     virtual void print(const char *text)=0;
     virtual void println(const char *text)=0;
     virtual void print(int)=0;
     virtual void println(int)=0;
-  };
-  
-  class menuPrint:public menuOut {
-    public:
-    Print& device;
-    menuPrint(Print& device):device(device) {}
-    virtual void clear() {device.println("");device.println("");}
-    virtual void setCursor(int x,int y) {device.println("");}
-    virtual void print(const char *text) {device.print(text);}
-    virtual void println(const char *text) {device.println(text);}
-    virtual void print(int i) {device.print(i);};
-    virtual void println(int i) {device.println(i);};
-  };
-  
-  class menuLCD:public menuOut {
-    public:
-    LiquidCrystal& lcd;
-    menuLCD(LiquidCrystal& lcd,int x=16,int y=1):lcd(lcd),menuOut(menuOut::cursor,x,y) {}
-    virtual void clear() {lcd.clear();}
-    virtual void setCursor(int x,int y) {lcd.setCursor(x*resX,y*resY);}
-    virtual void print(const char *text) {lcd.print(text);}
-    virtual void println(const char *text) {lcd.print(text);};
-    virtual void print(int i) {lcd.print(i);};
-    virtual void println(int i) {lcd.println(i);};
   };
   
   ////////////////////////////////////////////////////////////////////
@@ -170,14 +147,14 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
     prompt(const char * text,promptAction action):text(text),action(action) {}
     virtual size_t printTo(Print& p) {p.print(text);return strlen(text);}
     virtual void activate(menuOut& p,Stream&c) {action(*this,p,c);}
-    void activate(Print& p,Stream&c) {
+    /*void activate(Print& p,Stream&c) {
       menuPrint tmp(p);
       activate(tmp,c);
-    }
-    inline void activate(LiquidCrystal& p,Stream&c) {
+    }*/
+    /*inline void activate(LiquidCrystal& p,Stream&c) {
       menuLCD tmp(p);
       activate(tmp,c);
-    }
+    }*/
   };
   
   class menu:public prompt {
@@ -192,15 +169,15 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
     
     void activate(menuOut& p,Stream& c);
     
-    inline void activate(Print& p,Stream&c) {
+    /*inline void activate(Print& p,Stream&c) {
       menuPrint tmp(p);
       activate(tmp,c);
-    }
+    }*/
     
-    inline void activate(LiquidCrystal& p,Stream&c) {
+    /*inline void activate(LiquidCrystal& p,Stream&c) {
       menuLCD tmp(p);//defaults to LCD 16x1
       activate(tmp,c);
-    }
+    }*/
   };
 
 #endif

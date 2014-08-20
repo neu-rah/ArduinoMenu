@@ -8,9 +8,11 @@
 #include "quadEncoder.h"//quadrature encoder driver and fake stream
 #include "keyStream.h"//keyboard driver and fake stream (for the encoder button)
 #include "chainStream.h"// concatenate multiple input streams (this allows adding a button to the encoder)
+#include "menuLCD.h"
+#include "menuPrint.h"
 
-#define LCD_SZ_X 16
-#define LCD_SZ_Y 2
+//#define LCD_SZ_X 16
+//#define LCD_SZ_Y 2
 
 //how the LCS was wired
 //#define LCD_WIRE NONE
@@ -25,6 +27,7 @@
   #define STCP srv_pb.pin(1)//stcp or latch pin
   
   //setup i2c network and port/pin/device maps
+  // my LCD is remote wired... other LCD's should initialize as usual
   I2CServerBranch srv_vpa(Wire,0x11,VPA,VPA,1);//virtual (spi) port on i2c vport server (2 bytes)
   I2CServerBranch srv_pb(Wire,0x11,VPB,PB,1);//physical port B on i2c vport server is now local virtual port VPB (tied)
   I2CServerBranch srv_pc(Wire,0x11,VPC,PC,1);//physical port C on i2c vport server is now local virtual port VPC (tied)
@@ -45,16 +48,16 @@
 //functions to wire as menu actions
 
 //aux function
-void setValue(prompt &p,menuOut &o,int &value,String text,char* units="",int sensivity=5,int low=0,int hi=100,int steps=0,void (*func)()=nothing);
+void setValue(prompt &p,menuOut &o, Stream &i,int &value,const char* text,const char* units="",int sensivity=5,int low=0,int hi=100,int steps=0,void (*func)()=nothing);
 
 void ledOn() {digitalWrite(13,1);}
 void ledOff() {digitalWrite(13,0);}
 
 int frequency=100;
-void setFreq(prompt &p,menuOut &o) {setValue(p,o,frequency,"Freq:","0 Hz",20,1,1000);}
+void setFreq(prompt &p,menuOut &o,Stream &i) {setValue(p,o,i,frequency,"Freq:","0 Hz",20,1,1000);}
 
 int dutty=50;
-void setDutty(prompt &p,menuOut &o) {setValue(p,o,dutty,"Dutty:","%",1,0,100);}
+void setDutty(prompt &p,menuOut &o,Stream &i) {setValue(p,o,i,dutty,"Dutty:","%",1,0,100);}
 
 void completeHandlerTest(prompt &p,menuOut &o,Stream &i) {
   o.clear();
@@ -125,7 +128,7 @@ void setup() {
 // testing the menu system
 void loop() {
   //mainMenu.activate(Serial,Serial);//show menu to Serial and read keys from Serial
-  mainMenu.activate(lcd,allIn);//show menu on LCD and multiple inputs to navigate
+  mainMenu.activate(lcd,allIn);//show menu on LCD and use multiple inputs to navigate (defined encoder, encoder button, serial)
   //mainMenu.activate(lcd1,allIn);//show menu on LCD and multiple inputs to navigate, defaults to LCD 16x1
   //mainMenu.activate(lcd,Serial);//very bad combination!
   //mainMenu.activate(Serial,enc);//bad combination! shopw menu on serial and navigate using quadEncoder
@@ -133,43 +136,53 @@ void loop() {
 
 void nothing() {}
 
-void percentBar(int percent) {
-  int i=map(percent, 0, 100, 0, LCD_SZ_X);
-  for(int n=0;n<LCD_SZ_X;n++)
-     lcd1.print((char)(n<i?255:' '));
+void percentBar(menuOut &o,int percent) {
+  int i=map(percent, 0, 100, 0, o.maxX);
+  for(int n=0;n<o.maxX;n++)
+     o.print((char)(n<i?255:' '));
 }
 
-void setValue(prompt &p,menuOut &o,int &value,String text,char* units,int sensivity,int low,int hi,int steps,void (*func)()) {
-  lcd1.clear();
-  if (!steps) steps=(hi-low)/(float)LCD_SZ_X;
-  float fact=((float)sensivity)/((float)steps);//sensivity factor
-  int at=text.length();
-  lcd1.setCursor(0,0);
-  lcd1.print(text);
-  float pos=quadEncoder.pos*fact;
-  float last=pos;
-  while(encButton.read()!=13) {
-    //clamp value
+//read a value from the input stream device (encoder or serial)
+void setValue(prompt &p,menuOut &o, Stream &i,int &value,const char* text,const char* units,int sensivity,int low,int hi,int steps,void (*func)()) {
+  o.clear();
+  int at=strlen(text);//.length();
+  o.setCursor(0,0);
+  o.print(text);
+  if (o.style==menuOut::enumerated) {//probably a Serial terminal -------------------------------------
+    //long timeout because some terminals send data righ away when typed, and parseInt would parse a partial number
+    i.setTimeout(10000);//lib gives no access to previous timeout value :( ... cant restore it then, i would wait forever if possible
+    value=i.parseInt();//assuming data was all delivered to the buffer (we had a large timeout)
+    //clamp the entry
     if (value>hi) value=hi;
     else if (value<low) value=low;
-    lcd1.setCursor(at,0);
-    lcd1.print(value);
-    lcd1.print(units);
-    lcd1.print("  ");
-    lcd1.setCursor(0,1);
-    percentBar(map(value,low,hi,0,100));
-    pos=quadEncoder.pos*fact;
-    int delta=pos-last;
-    if (delta) {
-      value+=delta;
-      last=pos;
+    i.setTimeout(1000);//assuming it was default
+    Serial.println(value);//feed back
+    while(i.available()) i.read();//clean up extra characters to avoid reentry
+  } else {// then we assume its some kind of encoder ---------------------------------------------------
+    if (!steps) steps=(hi-low)/(float)o.maxX;
+    float fact=((float)sensivity)/((float)steps);//sensivity factor
+    float pos=quadEncoder.pos*fact;
+    float last=pos;
+    while(encButton.read()!=13) {
+      //clamp value
+      if (value>hi) value=hi;
+      else if (value<low) value=low;
+      o.setCursor(at,0);
+      o.print(value);
+      o.print(units);
+      o.print("  ");
+      o.setCursor(0,1);
+      percentBar(o,map(value,low,hi,0,100));
+      pos=quadEncoder.pos*fact;
+      int delta=pos-last;
+      if (delta) {
+        value+=delta;
+        last=pos;
+      }
+      //func();
     }
-    //func();
+    delay(100);
+    while(encButton.read()==13);
   }
-  delay(100);
-  while(encButton.read()==13);
-  enc.oldPos=quadEncoder.pos;//reset the fake stream position
 }
-
-
 

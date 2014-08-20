@@ -7,7 +7,7 @@ Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
 int menu::menuKeys(menuOut &p,Stream& c) {
   int op=-2;
   do {
-    while(!c.available()); delay(20);
+    while(!c.available());// delay(20);
     if (c.peek()!=13) {
       if(c.available()) {
         int ch=c.read();
@@ -69,8 +69,11 @@ void menu::activate(menuOut& p,Stream& c) {
   do {
     printMenu(p);
     op=menuKeys(p,c);
-    if (op>=0&&op<sz)
-       data[op]->activate(p,c);
+    if (op>=0&&op<sz) {
+    	sel=op;
+      data[op]->activate(p,c);
+      c.flush();//reset the encoder
+    }
   } while(op!=-1);
 }
 
