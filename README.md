@@ -7,6 +7,7 @@ Easy to define menu system with sub-menus and associated function to call
 Works either over serial or with LCD + encoder
 
 example of menu definition (c++ macros)
+
 		MENU(subMenu,"LED on pin 13",
 			OP("LED On",ledOn),
 			OP("LED Off",ledOff)
