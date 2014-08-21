@@ -26,7 +26,7 @@ int menu::menuKeys(menuOut &p,Stream& c) {
           }
         }
         else op=ch-49;
-        if (c.peek()==13) c.read();//discard serial enter at eol
+        if (c.peek()==13||c.peek()==10) c.read();//discard ENTER and CR
       }
     } else {
       c.read();
@@ -72,8 +72,9 @@ void menu::activate(menuOut& p,Stream& c) {
     if (op>=0&&op<sz) {
     	sel=op;
       data[op]->activate(p,c);
-      c.flush();//reset the encoder
     }
+		c.flush();//reset the encoder
+		while(c.available()) c.read();//clean the stream
   } while(op!=-1);
 }
 
