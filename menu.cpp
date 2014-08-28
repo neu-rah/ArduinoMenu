@@ -4,6 +4,8 @@ Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
 */
 #include "menu.h"
 
+const char* menu::exit="Exit";
+
 int menu::menuKeys(menuOut &p,Stream& c) {
   int op=-2;
   do {
@@ -58,7 +60,7 @@ void menu::printMenu(menuOut& p) {
     if (p.style==menuOut::enumerated) 
       p.print(" 0");
     p.print(sel==sz?">":" ");
-    p.print("Exit");
+    p.println(menu::exit);
   }
 }
   

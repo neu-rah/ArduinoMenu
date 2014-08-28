@@ -14,7 +14,7 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
 #ifndef RSITE_ARDUINOP_MENU_SYSTEM
   #define RSITE_ARDUINOP_MENU_SYSTEM
   
-	#include <HardwareSerial.h>
+	#include <Stream.h>
 	
   class prompt;
   class menu;
@@ -97,6 +97,7 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
   
   /////////////////////////////////////////////////////////
   // menu pure virtual output device, use derived
+  // this base class represents the output device either derived to serial, LCD or other
   class menuOut {
     public:
     int top;//top for this device
@@ -125,6 +126,13 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
   ////////////////////////////////////////////////////////////////////
   // menu structure
   
+  //an associated function to be called on menu selection
+  //associated functions can accept no parameters 
+  // or accept some of the standard parameters preserving the order
+  // standard parameters (for this menu lib) are:
+  // prompt -> the associated prompt object that trigged the call
+  // menuOut -> the device we were using to display the menu.. you migh want to draw on it
+  // Stream -> the input stream we are using to play the menu, can be a serial or an encoder or keyboard stream
 	class promptAction {
 	public:
 		typedef void (*callback)(prompt &p, menuOut &o, Stream &i);//callback fynction type
@@ -139,6 +147,8 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
 		inline void operator()(prompt &p, menuOut &o, Stream &i) {hFn(p,o,i	);}
 	};
 
+	//holds a menu option
+	//a menu is also a prompt so we can have sub-menus
   class prompt {
     public:
     const char *text;
@@ -147,18 +157,12 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
     prompt(const char * text,promptAction action):text(text),action(action) {}
     virtual size_t printTo(Print& p) {p.print(text);return strlen(text);}
     virtual void activate(menuOut& p,Stream&c) {action(*this,p,c);}
-    /*void activate(Print& p,Stream&c) {
-      menuPrint tmp(p);
-      activate(tmp,c);
-    }*/
-    /*inline void activate(LiquidCrystal& p,Stream&c) {
-      menuLCD tmp(p);
-      activate(tmp,c);
-    }*/
   };
   
+  //a menu or sub-menu
   class menu:public prompt {
     public:
+    static const char *exit;//text used for exit option
     const int sz;
     int sel;//selection
     prompt* const* data;
@@ -168,16 +172,6 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
     void printMenu(menuOut& p);
     
     void activate(menuOut& p,Stream& c);
-    
-    /*inline void activate(Print& p,Stream&c) {
-      menuPrint tmp(p);
-      activate(tmp,c);
-    }*/
-    
-    /*inline void activate(LiquidCrystal& p,Stream&c) {
-      menuLCD tmp(p);//defaults to LCD 16x1
-      activate(tmp,c);
-    }*/
   };
 
 #endif

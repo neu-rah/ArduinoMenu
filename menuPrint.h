@@ -1,6 +1,6 @@
 #ifndef RSITE_ARDUINOP_MENU_PRINT
 	#define RSITE_ARDUINOP_MENU_PRINT
-  #include <HardwareSerial.h>
+  //#include <HardwareSerial.h>
 	#include "menu.h"
 
   class menuPrint:public menuOut {

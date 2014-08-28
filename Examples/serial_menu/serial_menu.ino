@@ -1,4 +1,3 @@
-//#include <LiquidCrystal.h>
 #include "menu.h"//menu macros and objects
 #include "menuPrint.h"
 
@@ -22,6 +21,7 @@ void setup() {
   Serial.begin(9600);
   Serial.println("menu system test");
   pinMode(13,OUTPUT);
+  menu::exit="Saida";
 }
 
 void loop() {
