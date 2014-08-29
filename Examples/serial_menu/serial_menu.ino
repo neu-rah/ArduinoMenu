@@ -4,6 +4,7 @@
 ///////////////////////////////////////////////////////////////////////////
 //functions to wire as menu actions
 
+void none() {}
 void ledOn() {digitalWrite(13,1);}
 void ledOff() {digitalWrite(13,0);}
 
@@ -12,7 +13,8 @@ void ledOff() {digitalWrite(13,0);}
 // here we define the menu structure and wire actions functions to it
 MENU(mainMenu,"Main menu",
   OP("LED On",ledOn),
-  OP("LED Off",ledOff)
+  OP("LED Off",ledOff),
+  OP("Disabled option",none)
 );
 
 menuPrint menu_out(Serial);//describe output device
@@ -22,6 +24,7 @@ void setup() {
   Serial.println("menu system test");
   pinMode(13,OUTPUT);
   menu::exit="Saida";
+  mainMenu.data[2]->enabled=false;
 }
 
 void loop() {

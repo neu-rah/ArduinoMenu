@@ -153,8 +153,10 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
     public:
     const char *text;
     promptAction action;
-    prompt(const char * text):text(text) {}
-    prompt(const char * text,promptAction action):text(text),action(action) {}
+    bool enabled;
+    prompt(const char * text):text(text),enabled(true) {}
+    prompt(const char * text,promptAction action)
+    	:text(text),action(action),enabled(true) {}
     virtual size_t printTo(Print& p) {p.print(text);return strlen(text);}
     virtual void activate(menuOut& p,Stream&c) {action(*this,p,c);}
   };
@@ -163,6 +165,8 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
   class menu:public prompt {
     public:
     static const char *exit;//text used for exit option
+    static char enabledCursor;
+    static char disabledCursor;
     const int sz;
     int sel;//selection
     prompt* const* data;

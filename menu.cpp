@@ -5,6 +5,8 @@ Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
 #include "menu.h"
 
 const char* menu::exit="Exit";
+char menu::enabledCursor='>';
+char menu::disabledCursor='-';
 
 int menu::menuKeys(menuOut &p,Stream& c) {
   int op=-2;
@@ -51,7 +53,7 @@ void menu::printMenu(menuOut& p) {
         p.print(i<10?" ":"");
         p.print(i+1);
       }
-      p.print((i==sel)?">":" ");
+      p.print((i==sel)?data[i]->enabled?menu::enabledCursor:menu::disabledCursor:' ');
       p.print(data[i]->text);
     }
   }
@@ -59,7 +61,7 @@ void menu::printMenu(menuOut& p) {
     p.setCursor(0,i-p.top);
     if (p.style==menuOut::enumerated) 
       p.print(" 0");
-    p.print(sel==sz?">":" ");
+    p.print(sel==sz?menu::enabledCursor:' ');
     p.println(menu::exit);
   }
 }
@@ -71,7 +73,7 @@ void menu::activate(menuOut& p,Stream& c) {
   do {
     printMenu(p);
     op=menuKeys(p,c);
-    if (op>=0&&op<sz) {
+    if (op>=0&&op<sz&&data[op]->enabled) {
     	sel=op;
       data[op]->activate(p,c);
     }
