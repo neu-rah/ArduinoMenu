@@ -73,9 +73,9 @@ void menu::activate(menuOut& p,Stream& c) {
   do {
     printMenu(p);
     op=menuKeys(p,c);
-    if (op>=0&&op<sz&&data[op]->enabled) {
+    if (op>=0&&op<sz) {
     	sel=op;
-      data[op]->activate(p,c);
+      if (data[op]->enabled) data[op]->activate(p,c);
     }
 		c.flush();//reset the encoder
 		while(c.available()) c.read();//clean the stream
