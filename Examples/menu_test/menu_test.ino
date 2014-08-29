@@ -43,6 +43,7 @@
 #define encB 4
 //this encoder has a button here
 #define encBtn A0
+#define escBtn 5
 
 ///////////////////////////////////////////////////////////////////////////
 //functions to wire as menu actions
@@ -85,8 +86,8 @@ quadEncoder quadEncoder(encA,encB);//simple quad encoder driver
 quadEncoderStream enc(quadEncoder,5);// simple quad encoder fake Stream
 
 //a keyboard with only one key :D, this is the encoder button
-keyMap encBtn_map[]={{-encBtn,13}};//negative pin numbers means we have a pull-up, this is on when low
-keyLook<1> encButton(encBtn_map);
+keyMap encBtn_map[]={{-encBtn,13},{-escBtn,27}};//negative pin numbers means we have a pull-up, this is on when low
+keyLook<2> encButton(encBtn_map);
 
 //multiple inputs allow conjugation of the quadEncoder with a single key keyboard that is the quadEncoder button
 Stream* in[]={&enc,&encButton};
@@ -120,6 +121,9 @@ void setup() {
 
   pinMode(encBtn, INPUT);
   digitalWrite(encBtn,1);
+
+  pinMode(escBtn, INPUT);
+  digitalWrite(escBtn,1);
 
   pinMode(13,OUTPUT);
 }

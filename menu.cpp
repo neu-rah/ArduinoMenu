@@ -21,15 +21,15 @@ int menu::menuKeys(menuOut &p,Stream& c) {
             if (sel+1>=p.maxY) p.top=sel-p.maxY;
             printMenu(p);
           }
-        }
-        else if (ch=='+') {
+        } else if (ch=='+') {
           if (sel<sz) {
             sel++;
             if ((sz-sel+1)>=p.maxY) p.top=sel;
             printMenu(p);
           }
-        }
-        else op=ch-49;
+        } else if (ch==27) {
+        	op=-1;
+        } else op=ch-49;
         if (c.peek()==13||c.peek()==10) c.read();//discard ENTER and CR
       }
     } else {
