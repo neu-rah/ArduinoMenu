@@ -84,6 +84,10 @@ void setValue(prompt &p,menuOut &o, Stream &i,int &value,const char* text,const 
 
 void ledOn() {digitalWrite(LEDPIN,1);}
 void ledOff() {digitalWrite(LEDPIN,0);}
+void disabledTest(prompt &p,menuOut &o,Stream &i) {
+  o.print("THIS IS AN ERROR, this option should never be called as it is disabled");
+  while(i.read()!=13);
+}
 
 int frequency=100;
 void setFreq(prompt &p,menuOut &o,Stream &i) {setValue(p,o,i,frequency,"Freq:","0 Hz",20,1,1000);}
@@ -108,6 +112,7 @@ MENU(subMenu,"LED ON/OFF",
 MENU(mainMenu,"Sistema",
   OP("Frequency",setFreq),
   OP("Dutty",setDutty),
+  OP("Disabled",disabledTest),
   OP("Handler test",completeHandlerTest),
   SUBMENU(subMenu)
 );
@@ -175,6 +180,8 @@ void setup() {
   digitalWrite(encBtn,1);
 
   pinMode(LEDPIN,OUTPUT);
+
+  mainMenu.data[2]->enabled=false;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

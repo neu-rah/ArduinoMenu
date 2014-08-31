@@ -36,7 +36,7 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
     FOR_EACH_3(what,  __VA_ARGS__)
   #define FOR_EACH_5(what, x, ...)\
     what(x)\
-   FOR_EACH_4(what,  __VA_ARGS__);
+   FOR_EACH_4(what,  __VA_ARGS__)
   #define FOR_EACH_6(what, x, ...)\
     what(x)\
     FOR_EACH_5(what,  __VA_ARGS__)
