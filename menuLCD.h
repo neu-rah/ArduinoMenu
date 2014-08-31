@@ -20,7 +20,7 @@
 			print(selected?(o.enabled?menu::enabledCursor:menu::disabledCursor):' ');
 			print(o.text);
 		}
-		virtual void printMenu(menu& m) {
+		virtual void printMenu(menu& m,bool drawExit) {
 			clear();
 			if (m.sel-top>=maxY) top=m.sel-maxY+1;//selected option outside device (bottom)
 			else if (m.sel<top) top=m.sel;//selected option outside device (top)
@@ -30,7 +30,7 @@
 				  print(*m.data[i],i==m.sel,i+1,i-top,m.width);
 				}
 			}
-			if (i-top<maxY)
+			if (drawExit&&i-top<maxY)
 				print(menu::exitOption,m.sel==m.sz,0,i-top,m.width);
 		}
   };

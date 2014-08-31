@@ -9,7 +9,7 @@ char menu::enabledCursor='>';
 char menu::disabledCursor='-';
 prompt menu::exitOption(menu::exit);
 
-int menu::menuKeys(menuOut &p,Stream& c) {
+int menu::menuKeys(menuOut &p,Stream& c,bool canExit) {
   int op=-2;
   do {
     while(!c.available());// delay(20);
@@ -20,13 +20,13 @@ int menu::menuKeys(menuOut &p,Stream& c) {
           if (sel>0) {
             sel--;
             if (sel+1>=p.maxY) p.top=sel-p.maxY;
-            printMenu(p);
+            printMenu(p,canExit);
           }
         } else if (ch=='+') {
-          if (sel<sz) {
+          if (sel<(sz-(canExit?0:1))) {
             sel++;
             if ((sz-sel+1)>=p.maxY) p.top=sel;
-            printMenu(p);
+            printMenu(p,canExit);
           }
         } else if (ch==27) {
         	op=-1;
@@ -37,23 +37,23 @@ int menu::menuKeys(menuOut &p,Stream& c) {
       c.read();
       op=sel==sz?-1:sel;
     }
-  } while(op<-1||op>=sz);
+  } while(canExit&&(op<-1||op>=sz));
   return op;
 }
     
-void menu::activate(menuOut& p,Stream& c) {
+void menu::activate(menuOut& p,Stream& c,bool canExit) {
   sel=0;
   p.top=0;
   int op=-1;
   do {
-    printMenu(p);
+    printMenu(p,canExit);
 		c.flush();//reset the encoder
 		while(c.available()) c.read();//clean the stream
-    op=menuKeys(p,c);
+    op=menuKeys(p,c,canExit);
     if (op>=0&&op<sz) {
     	sel=op;
       if (data[op]->enabled)
-      	data[op]->activate(p,c);
+      	data[op]->activate(p,c,true);
       	p.drawn=0;//redraw menu
     }
   } while(op!=-1);

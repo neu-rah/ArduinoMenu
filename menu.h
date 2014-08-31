@@ -118,7 +118,7 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
     virtual void print(int)=0;
     virtual void println(int)=0;
     virtual void print(prompt &o,bool selected,int idx,int posY,int width)=0;
-		virtual void printMenu(menu&)=0;
+		virtual void printMenu(menu&,bool drawExit)=0;
   };
   
   ////////////////////////////////////////////////////////////////////
@@ -156,7 +156,7 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
     prompt(const char * text,promptAction action)
     	:text(text),action(action),enabled(true) {}
     virtual size_t printTo(Print& p) {p.print(text);return strlen(text);}
-    virtual void activate(menuOut& p,Stream&c) {action(*this,p,c);}
+    virtual void activate(menuOut& p,Stream&c,bool) {action(*this,p,c);}
   };
   
   //a menu or sub-menu
@@ -172,10 +172,10 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
     prompt* const* data;
     menu(const char * text,int sz,prompt* const data[]):prompt(text),sz(sz),data(data),sel(0),width(16) {}
     
-    int menuKeys(menuOut &p,Stream& c);
-    void printMenu(menuOut& p) {p.printMenu(*this);}
+    int menuKeys(menuOut &p,Stream& c,bool drawExit);
+    inline void printMenu(menuOut& p,bool drawExit) {p.printMenu(*this,drawExit);}
     
-    void activate(menuOut& p,Stream& c);
+    void activate(menuOut& p,Stream& c,bool canExit=false);
   };
 
 #endif
