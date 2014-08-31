@@ -107,13 +107,15 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
     //device resolution
     int resX;
     int resY;
-    enum styles {
+    /*enum styles {
       enumerated, //print numbers or references for options, adequated keyboard or file input
       cursor,//print a cursor at selected option, tracking device (encoder)
       point,//pointing device (not implemented)
-    } style;
+    } style;*/
     //menuOut(menuOut::styles style=menuOut::enumerated):maxX(0),maxY(0),style(style),top(0) {}
-    menuOut(menuOut::styles style=menuOut::enumerated,int x=0x7F,int y=0x7F,int resX=1,int resY=1):maxX(x),maxY(y),style(style),top(0),resX(resX),resY(resY) {}
+    //menuOut(menuOut::styles style=menuOut::enumerated,int width=0x7F,int x=0x7F,int y=0x7F,int resX=1,int resY=1):maxX(x),maxY(y),style(style),top(0),resX(resX),resY(resY) {}
+    menuOut(int x=0x7F,int y=0x7F,int resX=1,int resY=1)
+    	:maxX(x),maxY(y),top(0),resX(resX),resY(resY) {}
     virtual void clear()=0;
     virtual void setCursor(int x,int y)=0;
     virtual void print(char ch)=0;
@@ -121,7 +123,7 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
     virtual void println(const char *text)=0;
     virtual void print(int)=0;
     virtual void println(int)=0;
-    virtual void print(prompt &o,bool selected);
+    virtual void print(prompt &o,bool selected,int idx,int posY,int width)=0;
   };
   
   ////////////////////////////////////////////////////////////////////
@@ -165,6 +167,7 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
   //a menu or sub-menu
   class menu:public prompt {
     public:
+    int width;//menu width
     static const char *exit;//text used for exit option
     static char enabledCursor;//character to be used as navigation cursor
     static char disabledCursor;//to be used when navigating over disabled options
@@ -172,7 +175,7 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
     const int sz;
     int sel;//selection
     prompt* const* data;
-    menu(const char * text,int sz,prompt* const data[]):prompt(text),sz(sz),data(data),sel(0) {}
+    menu(const char * text,int sz,prompt* const data[]):prompt(text),sz(sz),data(data),sel(0),width(16) {}
     
     int menuKeys(menuOut &p,Stream& c);
     void printMenu(menuOut& p);

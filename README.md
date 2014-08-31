@@ -22,6 +22,6 @@ example of menu definition (c++ macros)
 
 input is read from generic streams, included simple streams for encoders and keyboards
 
-output to menuOut devices, included derivations to support serial and lcd
+output to menuOut devices, included derivations to support serial, GFX and lcd
 
 multiple stream packing for input allowing mixing encoder stream with encoder keyboard (usually 1 or 2 keys)

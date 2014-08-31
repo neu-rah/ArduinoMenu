@@ -14,6 +14,13 @@
     virtual void println(const char *text) {device.println(text);}
     virtual void print(int i) {device.print(i);};
     virtual void println(int i) {device.println(i);};
+		virtual void print(prompt &o,bool selected,int idx,int posY,int width) {
+			//setCursor(0,posY);
+      print(idx<10?" ":"");
+      print(idx);
+			print(selected?(o.enabled?menu::enabledCursor:menu::disabledCursor):' ');
+			println(o.text);
+		}
   };
   
 #endif RSITE_ARDUINOP_MENU_PRINT

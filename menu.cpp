@@ -9,11 +9,6 @@ char menu::enabledCursor='>';
 char menu::disabledCursor='-';
 prompt menu::exitOption(menu::exit);
 
-void menuOut::print(prompt &o,bool selected) {
-	print(selected?(o.enabled?menu::enabledCursor:menu::disabledCursor):' ');
-	print(o.text);
-}
-
 int menu::menuKeys(menuOut &p,Stream& c) {
   int op=-2;
   do {
@@ -48,27 +43,27 @@ int menu::menuKeys(menuOut &p,Stream& c) {
     
 void menu::printMenu(menuOut& p) {
   p.clear();
-  if (p.style==menuOut::enumerated) {p.print(text); p.print("==========================");}
+  //if (p.style==menuOut::enumerated) {p.print(text); p.print("==========================");}
   if (sel-p.top>=p.maxY) p.top=sel-p.maxY+1;//selected option outside device (bottom)
   else if (sel<p.top) p.top=sel;//selected option outside device (top)
   int i=0;for(;i<sz;i++) {
     if ((i>=p.top)&&((i-p.top)<p.maxY)) {
-      p.setCursor(0,i-p.top);
+      //p.setCursor(0,i-p.top);
       if(i-p.top>=p.maxY) break;
-      if (p.style==menuOut::enumerated) {
+      /*if (p.style==menuOut::enumerated) {
         p.print(i<10?" ":"");
         p.print(i+1);
-      }
-      p.print(*data[i],i==sel);
+      }*/
+      p.print(*data[i],i==sel,i+1,i-p.top,width);
       /*p.print((i==sel)?data[i]->enabled?menu::enabledCursor:menu::disabledCursor:' ');
       p.print(data[i]->text);*/
     }
   }
   if (i-p.top<p.maxY) {
-    p.setCursor(0,i-p.top);
-    if (p.style==menuOut::enumerated) 
-      p.print(" 0");
-    p.print(exitOption,sel==sz);
+    //p.setCursor(0,i-p.top);
+    /*if (p.style==menuOut::enumerated) 
+      p.print(" 0");*/
+    p.print(exitOption,sel==sz,0,i-p.top,width);
     /*p.print(sel==sz?menu::enabledCursor:' ');
     p.println(menu::exit);*/
   }

@@ -85,6 +85,8 @@ void setValue(prompt &p,menuOut &o, Stream &i,int &value,const char* text,const 
 void ledOn() {digitalWrite(LEDPIN,1);}
 void ledOff() {digitalWrite(LEDPIN,0);}
 void disabledTest(prompt &p,menuOut &o,Stream &i) {
+  o.clear();
+  o.setCursor(0,0);
   o.print("THIS IS AN ERROR, this option should never be called as it is disabled");
   while(i.read()!=13);
 }
@@ -97,6 +99,7 @@ void setDutty(prompt &p,menuOut &o,Stream &i) {setValue(p,o,i,dutty,"Dutty:","%"
 
 void completeHandlerTest(prompt &p,menuOut &o,Stream &i) {
   o.clear();
+  o.setCursor(0,0);
   o.print("Handler test ok!");
   while(i.read()!=13);
 }
@@ -113,6 +116,17 @@ MENU(mainMenu,"Sistema",
   OP("Frequency",setFreq),
   OP("Dutty",setDutty),
   OP("Disabled",disabledTest),
+  OP("Handler test",completeHandlerTest),
+  OP("Handler test",completeHandlerTest),
+  OP("Handler test",completeHandlerTest),
+  OP("Handler test",completeHandlerTest),
+  OP("Handler test",completeHandlerTest),
+  OP("Handler test",completeHandlerTest),
+  OP("Handler test",completeHandlerTest),
+  OP("Handler test",completeHandlerTest),
+  OP("Handler test",completeHandlerTest),
+  OP("Handler test",completeHandlerTest),
+  OP("Handler test",completeHandlerTest),
   OP("Handler test",completeHandlerTest),
   SUBMENU(subMenu)
 );
@@ -144,6 +158,8 @@ menuGFX gfx(tft);
 ///////////////////////////////////////////////////////////////////////////////
 
 void setup() {
+  mainMenu.data[2]->enabled=false;//disabling option
+
   Serial.begin(9600);
   Serial.println("menu system test");
   
@@ -166,7 +182,7 @@ void setup() {
   lcd1.print("Menu test");
 
   digitalWrite(vpinsSPI_CS,HIGH);
-  digitalWrite(tftCS,LOW);
+  digitalWrite(tftCS,HIGH);
   tft.initR(INITR_BLACKTAB);
   tft.setRotation(3);
   tft.setTextWrap(false);
@@ -175,13 +191,22 @@ void setup() {
   tft.fillScreen(ST7735_BLACK);
   tft.print("Menu test on GFX");
   tft.setCursor(0,10);
+  
+  digitalWrite(vpinsSPI_CS,LOW);
+  digitalWrite(tftCS,LOW);
+  lcd1.setCursor(0,1);
+  lcd1.print(mainMenu.width);
+  digitalWrite(vpinsSPI_CS,HIGH);
+  digitalWrite(tftCS,HIGH);
+  
+  //update limits after screen rotation
+  gfx.maxX=tft.width()/gfx.resX;
+  gfx.maxY=tft.height()/gfx.resY;
 
   pinMode(encBtn, INPUT);
   digitalWrite(encBtn,1);
 
   pinMode(LEDPIN,OUTPUT);
-
-  mainMenu.data[2]->enabled=false;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -211,7 +236,7 @@ void setValue(prompt &p,menuOut &o, Stream &i,int &value,const char* text,const 
   int at=strlen(text);//.length();
   o.setCursor(0,0);
   o.print(text);
-  if (o.style==menuOut::enumerated) {//probably a Serial terminal -------------------------------------
+  /*if (o.style==menuOut::enumerated) {//probably a Serial terminal -------------------------------------
     //long timeout because some terminals send data righ away when typed, and parseInt would parse a partial number
     i.setTimeout(10000);//lib gives no access to previous timeout value :( ... cant restore it then, i would wait forever if possible
     value=i.parseInt();//assuming data was all delivered to the buffer (we had a large timeout)
@@ -221,7 +246,7 @@ void setValue(prompt &p,menuOut &o, Stream &i,int &value,const char* text,const 
     i.setTimeout(1000);//assuming it was default
     Serial.println(value);//feed back
     while(i.available()) i.read();//clean up extra characters to avoid reentry
-  } else {// then we assume its some kind of encoder ---------------------------------------------------
+  } else {*/// then we assume its some kind of encoder ---------------------------------------------------
     if (!steps) steps=(hi-low)/(float)o.maxX;
     float fact=((float)sensivity)/((float)steps);//sensivity factor
     float pos=quadEncoder.pos*fact;
@@ -243,7 +268,7 @@ void setValue(prompt &p,menuOut &o, Stream &i,int &value,const char* text,const 
         last=pos;
       }
       //func();
-    }
+    //}
     delay(100);
     while(encButton.read()==13);
   }
