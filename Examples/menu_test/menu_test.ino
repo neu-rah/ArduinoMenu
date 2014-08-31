@@ -157,11 +157,28 @@ menuPrint serial(Serial);
 #endif
 #if (USE_TFT == YES)
   menuGFX gfx(tft);
+  //menuGFX gfx(tft,BLUE,BLACK,WHITE,SILVER,5,8);
 #endif
 menuPrint menuSerialOut(Serial);//describe output device
 
-//menuOut* out[]={&lcd,&serial};
-//chainOut<2> allOut(out);//not implemented multiple outputs... useless i think
+/*template<int N>
+class chainOut:public Print {
+public:
+  menuOut* out[N];
+  chainOut(Print* out[N]):out(out) {}
+  virtual void clear() {for(int n=0;n<N;n++) out[n]->clear();}
+  virtual void setCursor(int x,int y) {for(int n=0;n<N;n++) out[n]->setCursor(x,y);}
+  virtual void print(char ch) {for(int n=0;n<N;n++) out[n]->print(ch);}
+  virtual void print(const char *text) {for(int n=0;n<N;n++) out[n]->print(text);}
+  virtual void println(const char *text) {for(int n=0;n<N;n++) out[n]->print(text);}
+  virtual void print(int i) {for(int n=0;n<N;n++) out[n]->print(i);}
+  virtual void println(int i) {for(int n=0;n<N;n++) out[n]->print(i);}
+  virtual void print(prompt &o,bool selected,int idx,int posY,int width) {for(int n=0;n<N;n++) out[n]->print(o,selected,idx,posY,width);}
+  virtual void printMenu(menu&m,bool drawExit) {for(int n=0;n<N;n++) out[n]->print(m,drawExit);}
+};
+
+menuOut* out[]={&lcd,&gfx};
+chainOut<2> allOut(out);*/
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -219,14 +236,13 @@ void loop() {
   //mainMenu.activate(menuSerialOut,Serial);//show menu to Serial and read keys from Serial
   //Serial.println("");
   //Serial.println("Restarting...");
+  //mainMenu.activate(Serial,enc);//bad combination! shopw menu on serial and navigate using quadEncoder
   
   #if (LCD_WIRE != LCDWIRE_NONE)
-    //digitalWrite(vpinsSPI_CS,LOW);
-    //digitalWrite(tftCS,LOW);
+    digitalWrite(vpinsSPI_CS,LOW);
+    digitalWrite(tftCS,LOW);
     //mainMenu.activate(lcd,allIn);//show menu on LCD and use multiple inputs to navigate (defined encoder, encoder button, serial)
-    //mainMenu.activate(lcd1,allIn);//show menu on LCD and multiple inputs to navigate, defaults to LCD 16x1
     //mainMenu.activate(lcd,Serial);//very bad combination!
-    //mainMenu.activate(Serial,enc);//bad combination! shopw menu on serial and navigate using quadEncoder
   #endif
   
   #if (USE_TFT == YES)

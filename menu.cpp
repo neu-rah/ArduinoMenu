@@ -25,7 +25,7 @@ int menu::menuKeys(menuOut &p,Stream& c,bool canExit) {
         } else if (ch=='+') {
           if (sel<(sz-(canExit?0:1))) {
             sel++;
-            if ((sz-sel+1)>=p.maxY) p.top=sel;
+            if ((sz-sel+(canExit?1:0))>=p.maxY) p.top=sel-(canExit?1:0);
             printMenu(p,canExit);
           }
         } else if (ch==27) {
