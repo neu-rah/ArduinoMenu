@@ -113,7 +113,7 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
       point,//pointing device (not implemented)
     } style;
     //menuOut(menuOut::styles style=menuOut::enumerated):maxX(0),maxY(0),style(style),top(0) {}
-    menuOut(menuOut::styles style=menuOut::enumerated,int x=0x7F,int y=0x7F):maxX(x),maxY(y),style(style),top(0),resX(1),resY(1) {}
+    menuOut(menuOut::styles style=menuOut::enumerated,int x=0x7F,int y=0x7F,int resX=1,int resY=1):maxX(x),maxY(y),style(style),top(0),resX(resX),resY(resY) {}
     virtual void clear()=0;
     virtual void setCursor(int x,int y)=0;
     virtual void print(char ch)=0;
@@ -121,6 +121,7 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
     virtual void println(const char *text)=0;
     virtual void print(int)=0;
     virtual void println(int)=0;
+    virtual void print(prompt &o,bool selected);
   };
   
   ////////////////////////////////////////////////////////////////////
@@ -165,8 +166,9 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
   class menu:public prompt {
     public:
     static const char *exit;//text used for exit option
-    static char enabledCursor;
-    static char disabledCursor;
+    static char enabledCursor;//character to be used as navigation cursor
+    static char disabledCursor;//to be used when navigating over disabled options
+    static prompt exitOption;//option tro append to every menu allowing exit when no escape button/key is available
     const int sz;
     int sel;//selection
     prompt* const* data;

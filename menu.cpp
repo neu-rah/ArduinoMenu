@@ -7,6 +7,12 @@ Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
 const char* menu::exit="Exit";
 char menu::enabledCursor='>';
 char menu::disabledCursor='-';
+prompt menu::exitOption(menu::exit);
+
+void menuOut::print(prompt &o,bool selected) {
+	print(selected?(o.enabled?menu::enabledCursor:menu::disabledCursor):' ');
+	print(o.text);
+}
 
 int menu::menuKeys(menuOut &p,Stream& c) {
   int op=-2;
@@ -53,16 +59,18 @@ void menu::printMenu(menuOut& p) {
         p.print(i<10?" ":"");
         p.print(i+1);
       }
-      p.print((i==sel)?data[i]->enabled?menu::enabledCursor:menu::disabledCursor:' ');
-      p.print(data[i]->text);
+      p.print(*data[i],i==sel);
+      /*p.print((i==sel)?data[i]->enabled?menu::enabledCursor:menu::disabledCursor:' ');
+      p.print(data[i]->text);*/
     }
   }
   if (i-p.top<p.maxY) {
     p.setCursor(0,i-p.top);
     if (p.style==menuOut::enumerated) 
       p.print(" 0");
-    p.print(sel==sz?menu::enabledCursor:' ');
-    p.println(menu::exit);
+    p.print(exitOption,sel==sz);
+    /*p.print(sel==sz?menu::enabledCursor:' ');
+    p.println(menu::exit);*/
   }
 }
   

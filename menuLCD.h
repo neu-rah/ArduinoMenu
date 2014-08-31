@@ -14,7 +14,6 @@
     virtual void println(const char *text) {lcd.print(text);};
     virtual void print(int i) {lcd.print(i);};
     virtual void println(int i) {lcd.println(i);};
-    //static operator menuOut(LiquidCrystal &lcd) {return menuLCD(lcd);}
   };
 #endif RSITE_ARDUINOP_MENU_LCD
 
