@@ -7,23 +7,7 @@
 #include "quadEncoder.h"//quadrature encoder driver and fake stream
 #include "keyStream.h"//keyboard driver and fake stream (for the encoder button)
 #include "chainStream.h"// concatenate multiple input streams (this allows adding a button to the encoder)
-#include "menuLCD.h"
-#include "menuPrint.h"
-#include <Adafruit_GFX.h>    // Co1re graphics library
-#include <Adafruit_ST7735.h> // Hardware-specific library
-#include <menuGFX.h>
-
-///////////////////////////////////////////////////////////////////////////
-//TFT + SD
-//#define sdCS  4
-#define tftCS 5
-#define dc    6
-#define rst   7  // you can also connect this to the Arduino reset
-
-Adafruit_ST7735 tft(tftCS, dc, rst);
-
-//#define LCD_SZ_X 16
-//#define LCD_SZ_Y 2
+#include "menuPrint.h"//Print (Serial) menu
 
 #define LCDWIRE_NONE 0
 #define LCDWIRE_VPINS_I2C 1
@@ -31,17 +15,35 @@ Adafruit_ST7735 tft(tftCS, dc, rst);
 #define LCDWIRE_I2C 3
 #define LCDWIRE_DIRECT 4
 
-//how the LCS was wired
+//how the LCD is wired
 //#define LCD_WIRE LCDWIRE_NONE
 //#define LCD_WIRE LCDWIRE_VPINS_I2C
-#define LCD_WIRE LCDWIRE_VPINS_SPI//not implemented
-//#define LCD_WIRE LCDWIRE_I2C//not implemented
-//#define LCD_WIRE LCDWIRE_DIRECT//not implemented
+#define LCD_WIRE LCDWIRE_VPINS_SPI//on shift registers thru vpins (same library)
+//#define LCD_WIRE LCDWIRE_I2C//not tested
+//#define LCD_WIRE LCDWIRE_DIRECT//not tested
 
+#define USE_TFT YES//YES|NO
+
+#if (USE_TFT == YES)
+  #include <Adafruit_GFX.h>    // Co1re graphics library
+  #include <Adafruit_ST7735.h> // Hardware-specific library
+  #include <menuGFX.h>
+
+  ///////////////////////////////////////////////////////////////////////////
+  //TFT + SD
+  //#define sdCS  4
+  #define tftCS 5
+  #define dc    6
+  #define rst   7  // you can also connect this to the Arduino reset
+  
+  Adafruit_ST7735 tft(tftCS, dc, rst);
+#endif
+
+#define vpinsSPI_CS 9//vpins SPI CS 
 #if (LCD_WIRE == LCDWIRE_VPINS_SPI)//LCD wired on shift registers using vpins
   #include <SPI.h>
   #include <VPinsSPI.h>
-  #define vpinsSPI_CS 9//vpins SPI CS 
+  #include "menuLCD.h"
   #define STCP 9//stcp or latch pin
   
   #define RS 26
@@ -53,6 +55,7 @@ Adafruit_ST7735 tft(tftCS, dc, rst);
 
 #if (LCD_WIRE == LCDWIRE_VPINS_I2C)// LCD is wired over i2c to another AVR that uses virtual pins and shift registers to control it and virtual port server to share it
   #include <Wire.h>
+  #include "menuLCD.h"
   //remote pins over I2C to VPort server
   #define vpinsSPI_CS srv_pb.pin(1)//vpins SPI CS 
   #define STCP srv_pb.pin(1)//stcp or latch pin
@@ -117,6 +120,7 @@ MENU(mainMenu,"Sistema",
   OP("Dutty",setDutty),
   OP("Disabled",disabledTest),
   OP("Handler test",completeHandlerTest),
+  /*OP("Handler test",completeHandlerTest),
   OP("Handler test",completeHandlerTest),
   OP("Handler test",completeHandlerTest),
   OP("Handler test",completeHandlerTest),
@@ -126,8 +130,7 @@ MENU(mainMenu,"Sistema",
   OP("Handler test",completeHandlerTest),
   OP("Handler test",completeHandlerTest),
   OP("Handler test",completeHandlerTest),
-  OP("Handler test",completeHandlerTest),
-  OP("Handler test",completeHandlerTest),
+  OP("Handler test",completeHandlerTest),*/
   SUBMENU(subMenu)
 );
 
@@ -137,7 +140,7 @@ quadEncoderStream enc(quadEncoder,5);// simple quad encoder fake Stream
 
 //a keyboard with only one key :D, this is the encoder button
 keyMap encBtn_map[]={{-encBtn,13}};//negative pin numbers means we have a pull-up, this is on when low
-keyLook<2> encButton(encBtn_map);
+keyLook<1> encButton(encBtn_map);
 
 //multiple inputs allow conjugation of the quadEncoder with a single key keyboard that is the quadEncoder button
 Stream* in[]={&enc,&encButton};
@@ -149,11 +152,16 @@ chainStream<3> allIn(in3);
 
 //describing a menu output, alternatives so far are Serial or LiquidCrystal LCD
 menuPrint serial(Serial);
-menuLCD lcd(lcd1,16,2);
-menuGFX gfx(tft);
+#if (LCD_WIRE!=LCDWIRE_NONE)
+  menuLCD lcd(lcd1,16,2);
+#endif
+#if (USE_TFT == YES)
+  menuGFX gfx(tft);
+#endif
+menuPrint menuSerialOut(Serial);//describe output device
 
 //menuOut* out[]={&lcd,&serial};
-//chainOut<2> allOut(out);
+//chainOut<2> allOut(out);//not implemented multiple outputs... useless i think
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -163,11 +171,15 @@ void setup() {
   Serial.begin(9600);
   Serial.println("menu system test");
   
+#if ((LCD_WIRE != LCDWIRE_NONE) || (USE_TFT == YES))
   pinMode(vpinsSPI_CS,OUTPUT);
   digitalWrite(vpinsSPI_CS,LOW);
+#endif
 
 #if (LCD_WIRE == LCDWIRE_VPINS_SPI)
   SPI.begin();
+  lcd1.begin(16,2);
+  lcd1.print("Menu test");
 #endif
 
 #if (LCD_WIRE == LCDWIRE_VPINS_I2C)
@@ -176,11 +188,10 @@ void setup() {
   srv_vpa.begin();// wait for server ready (all on same server, so)
   //srv_vpb.begin();// wait for server ready
   Serial.println("all servers ready!");
+
 #endif
 
-  lcd1.begin(16,2);
-  lcd1.print("Menu test");
-
+#if (USE_TFT == YES)
   digitalWrite(vpinsSPI_CS,HIGH);
   digitalWrite(tftCS,HIGH);
   tft.initR(INITR_BLACKTAB);
@@ -191,17 +202,10 @@ void setup() {
   tft.fillScreen(ST7735_BLACK);
   tft.print("Menu test on GFX");
   tft.setCursor(0,10);
-  
-  digitalWrite(vpinsSPI_CS,LOW);
-  digitalWrite(tftCS,LOW);
-  lcd1.setCursor(0,1);
-  lcd1.print(mainMenu.width);
-  digitalWrite(vpinsSPI_CS,HIGH);
-  digitalWrite(tftCS,HIGH);
-  
   //update limits after screen rotation
   gfx.maxX=tft.width()/gfx.resX;
   gfx.maxY=tft.height()/gfx.resY;
+#endif
 
   pinMode(encBtn, INPUT);
   digitalWrite(encBtn,1);
@@ -212,14 +216,25 @@ void setup() {
 ///////////////////////////////////////////////////////////////////////////////
 // testing the menu system
 void loop() {
-  gfx.clear();
-  tft.print("DEBUG");
-  //mainMenu.activate(Serial,Serial);//show menu to Serial and read keys from Serial
-  //mainMenu.activate(lcd,allIn);//show menu on LCD and use multiple inputs to navigate (defined encoder, encoder button, serial)
-  mainMenu.activate(gfx,allIn);//show menu on LCD and use multiple inputs to navigate (defined encoder, encoder button, serial)
-  //mainMenu.activate(lcd1,allIn);//show menu on LCD and multiple inputs to navigate, defaults to LCD 16x1
-  //mainMenu.activate(lcd,Serial);//very bad combination!
-  //mainMenu.activate(Serial,enc);//bad combination! shopw menu on serial and navigate using quadEncoder
+  //mainMenu.activate(menuSerialOut,Serial);//show menu to Serial and read keys from Serial
+  //Serial.println("");
+  //Serial.println("Restarting...");
+  
+  #if (LCD_WIRE != LCDWIRE_NONE)
+    //digitalWrite(vpinsSPI_CS,LOW);
+    //digitalWrite(tftCS,LOW);
+    //mainMenu.activate(lcd,allIn);//show menu on LCD and use multiple inputs to navigate (defined encoder, encoder button, serial)
+    //mainMenu.activate(lcd1,allIn);//show menu on LCD and multiple inputs to navigate, defaults to LCD 16x1
+    //mainMenu.activate(lcd,Serial);//very bad combination!
+    //mainMenu.activate(Serial,enc);//bad combination! shopw menu on serial and navigate using quadEncoder
+  #endif
+  
+  #if (USE_TFT == YES)
+    digitalWrite(vpinsSPI_CS,HIGH);
+    digitalWrite(tftCS,HIGH);
+    mainMenu.activate(gfx,allIn);//show menu on LCD and use multiple inputs to navigate (defined encoder, encoder button, serial)
+  #endif
+  
 }
 
 void nothing() {}
@@ -268,9 +283,9 @@ void setValue(prompt &p,menuOut &o, Stream &i,int &value,const char* text,const 
         last=pos;
       }
       //func();
-    //}
+    }
     delay(100);
     while(encButton.read()==13);
-  }
+  //}
 }
 

@@ -31,7 +31,4 @@ void loop() {
   mainMenu.activate(menu_out,Serial);
   Serial.println("");
   Serial.println("Restarting...");
-  Serial.println("");
-  Serial.flush();//send all data
-  while(Serial.available()) Serial.read();//clean the stream
 }

@@ -21,6 +21,12 @@
 			print(selected?(o.enabled?menu::enabledCursor:menu::disabledCursor):' ');
 			println(o.text);
 		}
+		virtual void printMenu(menu& m) {
+			clear();
+			int i=0;for(;i<m.sz;i++)
+				  print(*m.data[i],i==m.sel,i+1,i-top,m.width);
+			print(menu::exitOption,m.sel==m.sz,0,i-top,m.width);
+		}
   };
   
 #endif RSITE_ARDUINOP_MENU_PRINT

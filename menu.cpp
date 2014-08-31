@@ -41,47 +41,21 @@ int menu::menuKeys(menuOut &p,Stream& c) {
   return op;
 }
     
-void menu::printMenu(menuOut& p) {
-  p.clear();
-  //if (p.style==menuOut::enumerated) {p.print(text); p.print("==========================");}
-  if (sel-p.top>=p.maxY) p.top=sel-p.maxY+1;//selected option outside device (bottom)
-  else if (sel<p.top) p.top=sel;//selected option outside device (top)
-  int i=0;for(;i<sz;i++) {
-    if ((i>=p.top)&&((i-p.top)<p.maxY)) {
-      //p.setCursor(0,i-p.top);
-      if(i-p.top>=p.maxY) break;
-      /*if (p.style==menuOut::enumerated) {
-        p.print(i<10?" ":"");
-        p.print(i+1);
-      }*/
-      p.print(*data[i],i==sel,i+1,i-p.top,width);
-      /*p.print((i==sel)?data[i]->enabled?menu::enabledCursor:menu::disabledCursor:' ');
-      p.print(data[i]->text);*/
-    }
-  }
-  if (i-p.top<p.maxY) {
-    //p.setCursor(0,i-p.top);
-    /*if (p.style==menuOut::enumerated) 
-      p.print(" 0");*/
-    p.print(exitOption,sel==sz,0,i-p.top,width);
-    /*p.print(sel==sz?menu::enabledCursor:' ');
-    p.println(menu::exit);*/
-  }
-}
-  
 void menu::activate(menuOut& p,Stream& c) {
   sel=0;
   p.top=0;
   int op=-1;
   do {
     printMenu(p);
+		c.flush();//reset the encoder
+		while(c.available()) c.read();//clean the stream
     op=menuKeys(p,c);
     if (op>=0&&op<sz) {
     	sel=op;
-      if (data[op]->enabled) data[op]->activate(p,c);
+      if (data[op]->enabled)
+      	data[op]->activate(p,c);
+      	p.drawn=0;//redraw menu
     }
-		c.flush();//reset the encoder
-		while(c.available()) c.read();//clean the stream
   } while(op!=-1);
 }
 

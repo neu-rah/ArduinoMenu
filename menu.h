@@ -100,6 +100,7 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
   // this base class represents the output device either derived to serial, LCD or other
   class menuOut {
     public:
+    menu* drawn;//last drawn menu, avoiding clear/redraw on each nav. change
     int top;//top for this device
     //device size
     int maxX;
@@ -107,15 +108,8 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
     //device resolution
     int resX;
     int resY;
-    /*enum styles {
-      enumerated, //print numbers or references for options, adequated keyboard or file input
-      cursor,//print a cursor at selected option, tracking device (encoder)
-      point,//pointing device (not implemented)
-    } style;*/
-    //menuOut(menuOut::styles style=menuOut::enumerated):maxX(0),maxY(0),style(style),top(0) {}
-    //menuOut(menuOut::styles style=menuOut::enumerated,int width=0x7F,int x=0x7F,int y=0x7F,int resX=1,int resY=1):maxX(x),maxY(y),style(style),top(0),resX(resX),resY(resY) {}
     menuOut(int x=0x7F,int y=0x7F,int resX=1,int resY=1)
-    	:maxX(x),maxY(y),top(0),resX(resX),resY(resY) {}
+    	:maxX(x),maxY(y),top(0),resX(resX),resY(resY),drawn(0) {}
     virtual void clear()=0;
     virtual void setCursor(int x,int y)=0;
     virtual void print(char ch)=0;
@@ -124,6 +118,7 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
     virtual void print(int)=0;
     virtual void println(int)=0;
     virtual void print(prompt &o,bool selected,int idx,int posY,int width)=0;
+		virtual void printMenu(menu&)=0;
   };
   
   ////////////////////////////////////////////////////////////////////
@@ -178,7 +173,7 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
     menu(const char * text,int sz,prompt* const data[]):prompt(text),sz(sz),data(data),sel(0),width(16) {}
     
     int menuKeys(menuOut &p,Stream& c);
-    void printMenu(menuOut& p);
+    void printMenu(menuOut& p) {p.printMenu(*this);}
     
     void activate(menuOut& p,Stream& c);
   };
