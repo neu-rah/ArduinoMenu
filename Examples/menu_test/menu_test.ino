@@ -16,15 +16,15 @@
 #define LCDWIRE_DIRECT 4
 
 //how the LCD is wired
-//#define LCD_WIRE LCDWIRE_NONE
+#define LCD_WIRE LCDWIRE_NONE
 //#define LCD_WIRE LCDWIRE_VPINS_I2C
-#define LCD_WIRE LCDWIRE_VPINS_SPI//on shift registers thru vpins (same library)
+//#define LCD_WIRE LCDWIRE_VPINS_SPI//on shift registers thru vpins (same library)
 //#define LCD_WIRE LCDWIRE_I2C//not tested
 //#define LCD_WIRE LCDWIRE_DIRECT//not tested
 
-#define USE_TFT YES//YES|NO
+#define USE_TFT 0//0|1
 
-#if (USE_TFT == YES)
+#if (USE_TFT == 1)
   #include <Adafruit_GFX.h>    // Co1re graphics library
   #include <Adafruit_ST7735.h> // Hardware-specific library
   #include <menuGFX.h>
@@ -77,12 +77,14 @@
 #define encB 4
 //this encoder has a button here
 #define encBtn A0
-#define LEDPIN A3//on uno use pin 13
+#define LEDPIN 13//on uno use pin 13
 
 ///////////////////////////////////////////////////////////////////////////
 //functions to wire as menu actions
 
 //aux function
+void nothing() {}
+
 void setValue(prompt &p,menuOut &o, Stream &i,int &value,const char* text,const char* units="",int sensivity=5,int low=0,int hi=100,int steps=0,void (*func)()=nothing);
 
 void ledOn() {digitalWrite(LEDPIN,1);}
@@ -155,30 +157,11 @@ menuPrint serial(Serial);
 #if (LCD_WIRE!=LCDWIRE_NONE)
   menuLCD lcd(lcd1,16,2);
 #endif
-#if (USE_TFT == YES)
+#if (USE_TFT == 1)
   menuGFX gfx(tft);
   //menuGFX gfx(tft,BLUE,BLACK,WHITE,SILVER,5,8);
 #endif
 menuPrint menuSerialOut(Serial);//describe output device
-
-/*template<int N>
-class chainOut:public Print {
-public:
-  menuOut* out[N];
-  chainOut(Print* out[N]):out(out) {}
-  virtual void clear() {for(int n=0;n<N;n++) out[n]->clear();}
-  virtual void setCursor(int x,int y) {for(int n=0;n<N;n++) out[n]->setCursor(x,y);}
-  virtual void print(char ch) {for(int n=0;n<N;n++) out[n]->print(ch);}
-  virtual void print(const char *text) {for(int n=0;n<N;n++) out[n]->print(text);}
-  virtual void println(const char *text) {for(int n=0;n<N;n++) out[n]->print(text);}
-  virtual void print(int i) {for(int n=0;n<N;n++) out[n]->print(i);}
-  virtual void println(int i) {for(int n=0;n<N;n++) out[n]->print(i);}
-  virtual void print(prompt &o,bool selected,int idx,int posY,int width) {for(int n=0;n<N;n++) out[n]->print(o,selected,idx,posY,width);}
-  virtual void printMenu(menu&m,bool drawExit) {for(int n=0;n<N;n++) out[n]->print(m,drawExit);}
-};
-
-menuOut* out[]={&lcd,&gfx};
-chainOut<2> allOut(out);*/
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -188,7 +171,7 @@ void setup() {
   Serial.begin(9600);
   Serial.println("menu system test");
   
-#if ((LCD_WIRE != LCDWIRE_NONE) || (USE_TFT == YES))
+#if ((LCD_WIRE != LCDWIRE_NONE) || (USE_TFT == 1))
   pinMode(vpinsSPI_CS,OUTPUT);
   digitalWrite(vpinsSPI_CS,LOW);
 #endif
@@ -208,7 +191,7 @@ void setup() {
 
 #endif
 
-#if (USE_TFT == YES)
+#if (USE_TFT == 1)
   digitalWrite(vpinsSPI_CS,HIGH);
   digitalWrite(tftCS,HIGH);
   tft.initR(INITR_BLACKTAB);
@@ -233,27 +216,24 @@ void setup() {
 ///////////////////////////////////////////////////////////////////////////////
 // testing the menu system
 void loop() {
-  //mainMenu.activate(menuSerialOut,Serial);//show menu to Serial and read keys from Serial
-  //Serial.println("");
-  //Serial.println("Restarting...");
-  //mainMenu.activate(Serial,enc);//bad combination! shopw menu on serial and navigate using quadEncoder
+  mainMenu.activate(menuSerialOut,Serial);//show menu to Serial and read keys from Serial
+  Serial.println("");
+  Serial.println("Restarting...");
   
   #if (LCD_WIRE != LCDWIRE_NONE)
-    digitalWrite(vpinsSPI_CS,LOW);
-    digitalWrite(tftCS,LOW);
+    //digitalWrite(vpinsSPI_CS,LOW);
+    //digitalWrite(tftCS,LOW);
     //mainMenu.activate(lcd,allIn);//show menu on LCD and use multiple inputs to navigate (defined encoder, encoder button, serial)
     //mainMenu.activate(lcd,Serial);//very bad combination!
   #endif
   
-  #if (USE_TFT == YES)
-    digitalWrite(vpinsSPI_CS,HIGH);
-    digitalWrite(tftCS,HIGH);
-    mainMenu.activate(gfx,allIn);//show menu on LCD and use multiple inputs to navigate (defined encoder, encoder button, serial)
+  #if (USE_TFT == 1)
+    //digitalWrite(vpinsSPI_CS,HIGH);
+    //digitalWrite(tftCS,HIGH);
+    //mainMenu.activate(gfx,allIn);//show menu on LCD and use multiple inputs to navigate (defined encoder, encoder button, serial)
   #endif
   
 }
-
-void nothing() {}
 
 void percentBar(menuOut &o,int percent) {
   int i=map(percent, 0, 100, 0, o.maxX);

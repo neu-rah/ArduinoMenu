@@ -2,6 +2,7 @@
 Arduino generic menu system
 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
 */
+#include <Arduino.h>
 #include "menu.h"
 
 const char* menu::exit="Exit";
@@ -12,7 +13,7 @@ prompt menu::exitOption(menu::exit);
 int menu::menuKeys(menuOut &p,Stream& c,bool canExit) {
   int op=-2;
   do {
-    while(!c.available());// delay(20);
+    while(!c.available());
     if (c.peek()!=13) {
       if(c.available()) {
         int ch=c.read();
@@ -31,13 +32,14 @@ int menu::menuKeys(menuOut &p,Stream& c,bool canExit) {
         } else if (ch==27) {
         	op=-1;
         } else op=ch-49;
-        if (c.peek()==13||c.peek()==10) c.read();//discard ENTER and CR
       }
-    } else {
-      c.read();
+    } else
       op=sel==sz?-1:sel;
-    }
-  } while(canExit&&(op<-1||op>=sz));
+    if (!((op>=0&&op<sz)||(canExit&&op==-1))) op=-2;//validate the option
+    //add some delays to be sure we do not have more characters NL or CR on the way
+    //delay might be adjusted to vope with stream speed
+    delay(50);while (c.peek()==13||c.peek()==10) {c.read();delay(50);}//discard ENTER and CR
+  } while(op==-2);//repeat until we have a valid option (can be Exit/Esc)
   return op;
 }
     
@@ -47,14 +49,13 @@ void menu::activate(menuOut& p,Stream& c,bool canExit) {
   int op=-1;
   do {
     printMenu(p,canExit);
-		c.flush();//reset the encoder
-		while(c.available()) c.read();//clean the stream
     op=menuKeys(p,c,canExit);
     if (op>=0&&op<sz) {
     	sel=op;
-      if (data[op]->enabled)
+      if (data[op]->enabled) {
       	data[op]->activate(p,c,true);
       	p.drawn=0;//redraw menu
+      }
     }
   } while(op!=-1);
 }
