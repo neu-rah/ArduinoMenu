@@ -67,7 +67,10 @@ void menu::activate(menuOut& p,Stream& c,bool canExit) {
   } while(op!=-1);
 }
 
-void menu::clampY(menuOut& o) {//keep menu inside screen Y
+//todo: preparing functions for touch screen support
+// this functions will probably move to the touch device class
+// however they are now here for test purposes
+/*void menu::clampY(menuOut& o) {//keep menu inside screen Y
 	if (o.top+o.maxY>sz) o.top=sz-o.maxY;
 	else if (o.top<0) o.top=0;
 }
@@ -92,4 +95,4 @@ void menu::click(menuOut &p, Stream &c,int x,int y) {
 }
 
 
-
+*/	

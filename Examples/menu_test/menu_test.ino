@@ -142,9 +142,9 @@ MENU(subMenu,"LED ON/OFF",
 MENU(mainMenu,"Sistema",
   OP("Frequency",setFreq),
   OP("Dutty",setDutty),
-  OP("Scroll up", scrollUp_test),
-  OP("scroll down", scrollDown_test),
   OP("Disabled",disabledTest),
+  /*OP("Scroll up", scrollUp_test),
+  OP("scroll down", scrollDown_test),
   OP("Handler test",completeHandlerTest),
   OP("Handler test",completeHandlerTest),
   OP("Handler test",completeHandlerTest),
@@ -154,52 +154,9 @@ MENU(mainMenu,"Sistema",
   OP("Handler test",completeHandlerTest),
   OP("Handler test",completeHandlerTest),
   OP("Handler test",completeHandlerTest),
-  OP("Handler test",completeHandlerTest),
+  OP("Handler test",completeHandlerTest),*/
   SUBMENU(subMenu)
 );
-
-//more menu functions that need the menu defs
-/*int scrollY(menuOut& o,int pixels) {
-  tft.print(pixels);tft.println(" px");
-  int lines=pixels/o.resY;//convert pixels to lines
-  tft.print(lines);tft.println(" lines");
-  tft.print(o.top);tft.println(" top");
-  o.top+=lines;
-  mainMenu.clampY(o);
-  tft.print(o.top);tft.println(" clamped top");
-  if (mainMenu.sel<o.top) mainMenu.sel=o.top;
-  else if (mainMenu.sel>=(o.top+o.maxY)) mainMenu.sel=o.top+o.maxY-1;
-  //menu needs to be redrawn after this
-  return pixels-lines*o.resY;
-}*/
-
-void scrollUp_test(prompt &p,menuOut &o,Stream &i) {
-  setValue(stv,p,o,i,"dist:"," Pixels",1,0,16);
-  /*selectTFT();
-  tft.fillScreen(BLACK);tft.setCursor(0,0);
-  int ot=o.top;
-  int os=mainMenu.sel;*/
-  int remain=mainMenu.scrollY(o,-stv);//assuming its main menu
-  /*tft.print("top: ");tft.print(ot);tft.print(" sel: ");tft.println(os);
-  tft.print("scroll ");tft.print(stv);tft.print(" remain:");tft.println(remain);
-  tft.print("top: ");tft.print(o.top);tft.print(" sel: ");tft.println(mainMenu.sel);
-  selectLCD();*/
-  mainMenu.printMenu(o, false);
-}
-
-void scrollDown_test(prompt &p,menuOut &o,Stream &i) {
-  setValue(stv,p,o,i,"dist:"," Pixels",1,0,16);
-  //selectTFT();
-  //tft.fillScreen(BLACK);tft.setCursor(0,0);
-  //int ot=o.top;
-  //int os=mainMenu.sel;
-  int remain=mainMenu.scrollY(o,stv);//assuming its main menu
-  /*tft.print("top: ");tft.print(ot);tft.print(" sel: ");tft.println(os);
-  tft.print("scroll ");tft.print(stv);tft.print(" remain:");tft.println(remain);
-  tft.print("top: ");tft.print(o.top);tft.print(" sel: ");tft.println(mainMenu.sel);
-  selectLCD();*/
-  mainMenu.printMenu(o, false);
-}
 
 //the quadEncoder
 quadEncoder quadEncoder(encA,encB);//simple quad encoder driver
@@ -230,7 +187,7 @@ menuPrint menuSerialOut(Serial);//describe output device
 
 /////////////////////////////////////////////////////////////////////////
 void setup() {
-  mainMenu.data[4]->enabled=false;//disabling option
+  mainMenu.data[2]->enabled=false;//disabling option
 
   Serial.begin(9600);
   Serial.println("menu system test");

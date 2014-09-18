@@ -185,9 +185,11 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
     void activate(menuOut& p,Stream& c,bool canExit=false);
     
     //some funcs to support touch... TODO: test them
-		void clampY(menuOut& o);//keep menu inside secreen
+    // this functions will probably move to touch class...
+    // will be here now for test while i wait for my touch screen to arrive.....
+		/*void clampY(menuOut& o);//keep menu inside secreen
 		int scrollY(menuOut& o,int pixels);//aux function for touch screen
-		void click(menuOut &p, Stream &c,int x,int y);
+		void click(menuOut &p, Stream &c,int x,int y);*/
   };
 
 #endif
