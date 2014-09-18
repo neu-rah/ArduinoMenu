@@ -1,6 +1,13 @@
 /********************
+Sept. 2014 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
+creative commons license 3.0: Attribution-ShareAlike CC BY-SA
+This software is furnished "as is", without technical support, and with no 
+warranty, express or implied, as to its usefulness for any purpose.
+
+Thread Safe: No
+Extendable: Yes
+
 Arduino generic menu system
-Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
 */
 #include <Arduino.h>
 #include "menu.h"
@@ -59,4 +66,30 @@ void menu::activate(menuOut& p,Stream& c,bool canExit) {
     }
   } while(op!=-1);
 }
+
+void menu::clampY(menuOut& o) {//keep menu inside screen Y
+	if (o.top+o.maxY>sz) o.top=sz-o.maxY;
+	else if (o.top<0) o.top=0;
+}
+
+//we scroll by lines, return remaining pixels
+int menu::scrollY(menuOut& o,int pixels) {
+	if (o.top==0&&sz<=o.maxY) return pixels;//menu is inside screen, no need to scroll
+	int lines=pixels/o.resY;//convert pixels to lines
+	o.top+=lines;
+	clampY(o);
+	if (sel<o.top) sel=o.top;
+	else if (sel>=(o.top+o.maxY)) sel=o.top+o.maxY-1;
+	//menu needs to be redrawn after this
+	return pixels-lines*o.resY;
+}
+
+void menu::click(menuOut &p, Stream &c,int x,int y) {
+	int row=y/p.resY;
+	int col=x/p.resX;
+	if (row<p.maxY&&row>=0&&col>=0&&col<p.maxX&&(p.top+row)<sz)
+		data[p.top+row]->activate(p,c,true);
+}
+
+
 

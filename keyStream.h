@@ -1,11 +1,19 @@
 /**************
+Sept. 2014 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
+creative commons license 3.0: Attribution-ShareAlike CC BY-SA
+This software is furnished "as is", without technical support, and with no 
+warranty, express or implied, as to its usefulness for any purpose.
+
+Thread Safe: No
+Extendable: Yes
+
 quick and dirty keyboard driver
 metaprog keyboard driver where N is the number of keys
 all keys are expected to be a pin (buttons)
 we can have reverse logic (pull-ups) by entering negative pin numbers
 ex: -A0 means: pin A0 normally high, low when button pushed (reverse logic)
-Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
-*/
+***/
+
 struct keyMap {
   int8_t pin;
   int8_t code;

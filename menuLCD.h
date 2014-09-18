@@ -1,3 +1,15 @@
+/********************
+Sept. 2014 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
+creative commons license 3.0: Attribution-ShareAlike CC BY-SA
+This software is furnished "as is", without technical support, and with no 
+warranty, express or implied, as to its usefulness for any purpose.
+
+Thread Safe: No
+Extendable: Yes
+
+Use standard arduino LCD (LiquidCrystal library) as menu output
+***/
+
 #ifndef RSITE_ARDUINOP_MENU_LCD
 	#define RSITE_ARDUINOP_MENU_LCD
   #include <LiquidCrystal.h>

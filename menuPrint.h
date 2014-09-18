@@ -1,3 +1,15 @@
+/********************
+Sept. 2014 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
+creative commons license 3.0: Attribution-ShareAlike CC BY-SA
+This software is furnished "as is", without technical support, and with no 
+warranty, express or implied, as to its usefulness for any purpose.
+
+Thread Safe: No
+Extendable: Yes
+
+menu output to Print device (ex: Serial)
+***/
+
 #ifndef RSITE_ARDUINOP_MENU_PRINT
 	#define RSITE_ARDUINOP_MENU_PRINT
   //#include <HardwareSerial.h>

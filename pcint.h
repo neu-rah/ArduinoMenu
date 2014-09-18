@@ -1,3 +1,8 @@
+/********************
+Sept. 2014 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
+
+small changes tro existing PCINT library, supporting an optional cargo parameter
+**/	
 #ifndef ARDUINO_PCINT_MANAGER
 #define ARDUINO_PCINT_MANAGER
 	#if ARDUINO < 100

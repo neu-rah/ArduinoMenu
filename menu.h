@@ -1,6 +1,13 @@
 /********************
+Sept. 2014 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
+creative commons license 3.0: Attribution-ShareAlike CC BY-SA
+This software is furnished "as is", without technical support, and with no 
+warranty, express or implied, as to its usefulness for any purpose.
+
+Thread Safe: No
+Extendable: Yes
+
 Arduino generic menu system
-Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
 
     prompt: class representing a text and an associated function pointer
       menu: prompt derived holding a list of prompts (options and submenus)
@@ -169,13 +176,18 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
     static prompt exitOption;//option tro append to every menu allowing exit when no escape button/key is available
     const int sz;
     int sel;//selection
-    prompt* const* data;
+    prompt* const* data PROGMEM;
     menu(const char * text,int sz,prompt* const data[]):prompt(text),sz(sz),data(data),sel(0),width(16) {}
     
     int menuKeys(menuOut &p,Stream& c,bool drawExit);
     inline void printMenu(menuOut& p,bool drawExit) {p.printMenu(*this,drawExit);}
     
     void activate(menuOut& p,Stream& c,bool canExit=false);
+    
+    //some funcs to support touch... TODO: test them
+		void clampY(menuOut& o);//keep menu inside secreen
+		int scrollY(menuOut& o,int pixels);//aux function for touch screen
+		void click(menuOut &p, Stream &c,int x,int y);
   };
 
 #endif

@@ -1,9 +1,15 @@
+/******************
+This is my development file... not a good example
+Rui Azevedo 2014
+ruihfazevedo@rrob@gmail.com
+********/
+
 #include <VPinsI2C.h>
 #include <virtual_pins.h>
 #include <HardwareSerial.h>
 #include <LiquidCrystal.h>
-#include "pcint.h"//this is incompatible with software serial (arduino needs an handler!)
 #include "menu.h"//menu macros and objects
+#include "pcint.h"//this is incompatible with software serial (arduino needs an handler!)
 #include "quadEncoder.h"//quadrature encoder driver and fake stream
 #include "keyStream.h"//keyboard driver and fake stream (for the encoder button)
 #include "chainStream.h"// concatenate multiple input streams (this allows adding a button to the encoder)
@@ -16,13 +22,14 @@
 #define LCDWIRE_DIRECT 4
 
 //how the LCD is wired
-#define LCD_WIRE LCDWIRE_NONE
+//#define LCD_WIRE LCDWIRE_NONE
 //#define LCD_WIRE LCDWIRE_VPINS_I2C
-//#define LCD_WIRE LCDWIRE_VPINS_SPI//on shift registers thru vpins (same library)
+#define LCD_WIRE LCDWIRE_VPINS_SPI//on shift registers thru vpins (same library)
 //#define LCD_WIRE LCDWIRE_I2C//not tested
 //#define LCD_WIRE LCDWIRE_DIRECT//not tested
 
-#define USE_TFT 0//0|1
+#define USE_TFT 1//0|1
+  #define tftCS 5
 
 #if (USE_TFT == 1)
   #include <Adafruit_GFX.h>    // Co1re graphics library
@@ -32,7 +39,6 @@
   ///////////////////////////////////////////////////////////////////////////
   //TFT + SD
   //#define sdCS  4
-  #define tftCS 5
   #define dc    6
   #define rst   7  // you can also connect this to the Arduino reset
   
@@ -70,6 +76,18 @@
   LiquidCrystal lcd1(srv_vpa.pin(6), srv_vpa.pin(4), srv_vpa.pin(0), srv_vpa.pin(1), srv_vpa.pin(2), srv_vpa.pin(3));
 #endif
 
+///////////////////////////////////////////////////////////////////////////////
+//set CS pins for LCD or TFT
+void selectLCD() {
+  digitalWrite(vpinsSPI_CS,LOW);
+  digitalWrite(tftCS,LOW);
+}
+
+void selectTFT() {
+  digitalWrite(vpinsSPI_CS,HIGH);
+  digitalWrite(tftCS,HIGH);
+}
+
 ////////////////////////////////////////////
 // ENCODER (aka rotary switch) PINS
 // rotary
@@ -77,7 +95,7 @@
 #define encB 4
 //this encoder has a button here
 #define encBtn A0
-#define LEDPIN 13//on uno use pin 13
+#define LEDPIN A3//on uno use pin 13
 
 ///////////////////////////////////////////////////////////////////////////
 //functions to wire as menu actions
@@ -85,7 +103,7 @@
 //aux function
 void nothing() {}
 
-void setValue(prompt &p,menuOut &o, Stream &i,int &value,const char* text,const char* units="",int sensivity=5,int low=0,int hi=100,int steps=0,void (*func)()=nothing);
+void setValue(int &value,prompt &p,menuOut &o, Stream &i,const char* text,const char* units="",int sensivity=5,int low=0,int hi=100,int steps=0,void (*func)()=nothing);
 
 void ledOn() {digitalWrite(LEDPIN,1);}
 void ledOff() {digitalWrite(LEDPIN,0);}
@@ -97,10 +115,10 @@ void disabledTest(prompt &p,menuOut &o,Stream &i) {
 }
 
 int frequency=100;
-void setFreq(prompt &p,menuOut &o,Stream &i) {setValue(p,o,i,frequency,"Freq:","0 Hz",20,1,1000);}
+void setFreq(prompt &p,menuOut &o,Stream &i) {setValue(frequency,p,o,i,"Freq:","0 Hz",20,1,1000);}
 
 int dutty=50;
-void setDutty(prompt &p,menuOut &o,Stream &i) {setValue(p,o,i,dutty,"Dutty:","%",1,0,100);}
+void setDutty(prompt &p,menuOut &o,Stream &i) {setValue(dutty,p,o,i,"Dutty:","%",1,0,100);}
 
 void completeHandlerTest(prompt &p,menuOut &o,Stream &i) {
   o.clear();
@@ -108,6 +126,10 @@ void completeHandlerTest(prompt &p,menuOut &o,Stream &i) {
   o.print("Handler test ok!");
   while(i.read()!=13);
 }
+
+int stv=8;
+void scrollUp_test(prompt &p,menuOut &o,Stream &i);
+void scrollDown_test(prompt &p,menuOut &o,Stream &i);
 
 /////////////////////////////////////////////////////////////////////////
 // MENU DEFINITION
@@ -120,9 +142,10 @@ MENU(subMenu,"LED ON/OFF",
 MENU(mainMenu,"Sistema",
   OP("Frequency",setFreq),
   OP("Dutty",setDutty),
+  OP("Scroll up", scrollUp_test),
+  OP("scroll down", scrollDown_test),
   OP("Disabled",disabledTest),
   OP("Handler test",completeHandlerTest),
-  /*OP("Handler test",completeHandlerTest),
   OP("Handler test",completeHandlerTest),
   OP("Handler test",completeHandlerTest),
   OP("Handler test",completeHandlerTest),
@@ -132,9 +155,51 @@ MENU(mainMenu,"Sistema",
   OP("Handler test",completeHandlerTest),
   OP("Handler test",completeHandlerTest),
   OP("Handler test",completeHandlerTest),
-  OP("Handler test",completeHandlerTest),*/
   SUBMENU(subMenu)
 );
+
+//more menu functions that need the menu defs
+/*int scrollY(menuOut& o,int pixels) {
+  tft.print(pixels);tft.println(" px");
+  int lines=pixels/o.resY;//convert pixels to lines
+  tft.print(lines);tft.println(" lines");
+  tft.print(o.top);tft.println(" top");
+  o.top+=lines;
+  mainMenu.clampY(o);
+  tft.print(o.top);tft.println(" clamped top");
+  if (mainMenu.sel<o.top) mainMenu.sel=o.top;
+  else if (mainMenu.sel>=(o.top+o.maxY)) mainMenu.sel=o.top+o.maxY-1;
+  //menu needs to be redrawn after this
+  return pixels-lines*o.resY;
+}*/
+
+void scrollUp_test(prompt &p,menuOut &o,Stream &i) {
+  setValue(stv,p,o,i,"dist:"," Pixels",1,0,16);
+  /*selectTFT();
+  tft.fillScreen(BLACK);tft.setCursor(0,0);
+  int ot=o.top;
+  int os=mainMenu.sel;*/
+  int remain=mainMenu.scrollY(o,-stv);//assuming its main menu
+  /*tft.print("top: ");tft.print(ot);tft.print(" sel: ");tft.println(os);
+  tft.print("scroll ");tft.print(stv);tft.print(" remain:");tft.println(remain);
+  tft.print("top: ");tft.print(o.top);tft.print(" sel: ");tft.println(mainMenu.sel);
+  selectLCD();*/
+  mainMenu.printMenu(o, false);
+}
+
+void scrollDown_test(prompt &p,menuOut &o,Stream &i) {
+  setValue(stv,p,o,i,"dist:"," Pixels",1,0,16);
+  //selectTFT();
+  //tft.fillScreen(BLACK);tft.setCursor(0,0);
+  //int ot=o.top;
+  //int os=mainMenu.sel;
+  int remain=mainMenu.scrollY(o,stv);//assuming its main menu
+  /*tft.print("top: ");tft.print(ot);tft.print(" sel: ");tft.println(os);
+  tft.print("scroll ");tft.print(stv);tft.print(" remain:");tft.println(remain);
+  tft.print("top: ");tft.print(o.top);tft.print(" sel: ");tft.println(mainMenu.sel);
+  selectLCD();*/
+  mainMenu.printMenu(o, false);
+}
 
 //the quadEncoder
 quadEncoder quadEncoder(encA,encB);//simple quad encoder driver
@@ -163,10 +228,9 @@ menuPrint serial(Serial);
 #endif
 menuPrint menuSerialOut(Serial);//describe output device
 
-///////////////////////////////////////////////////////////////////////////////
-
+/////////////////////////////////////////////////////////////////////////
 void setup() {
-  mainMenu.data[2]->enabled=false;//disabling option
+  mainMenu.data[4]->enabled=false;//disabling option
 
   Serial.begin(9600);
   Serial.println("menu system test");
@@ -198,7 +262,9 @@ void setup() {
   tft.setRotation(3);
   tft.setTextWrap(false);
   tft.setTextColor(ST7735_RED);
-  tft.setTextSize(1);
+  tft.setTextSize(2);
+  gfx.resX*=2;//update resolution after font size change
+  gfx.resY*=2;//update resolution after font size change
   tft.fillScreen(ST7735_BLACK);
   tft.print("Menu test on GFX");
   tft.setCursor(0,10);
@@ -211,14 +277,16 @@ void setup() {
   digitalWrite(encBtn,1);
 
   pinMode(LEDPIN,OUTPUT);
+  
+  delay(300);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // testing the menu system
 void loop() {
-  mainMenu.activate(menuSerialOut,Serial);//show menu to Serial and read keys from Serial
-  Serial.println("");
-  Serial.println("Restarting...");
+  //mainMenu.activate(menuSerialOut,Serial);//show menu to Serial and read keys from Serial
+  //Serial.println("");
+  //Serial.println("Restarting...");
   
   #if (LCD_WIRE != LCDWIRE_NONE)
     //digitalWrite(vpinsSPI_CS,LOW);
@@ -228,9 +296,9 @@ void loop() {
   #endif
   
   #if (USE_TFT == 1)
-    //digitalWrite(vpinsSPI_CS,HIGH);
-    //digitalWrite(tftCS,HIGH);
-    //mainMenu.activate(gfx,allIn);//show menu on LCD and use multiple inputs to navigate (defined encoder, encoder button, serial)
+    digitalWrite(vpinsSPI_CS,HIGH);
+    digitalWrite(tftCS,HIGH);
+    mainMenu.activate(gfx,allIn);//show menu on LCD and use multiple inputs to navigate (defined encoder, encoder button, serial)
   #endif
   
 }
@@ -242,7 +310,7 @@ void percentBar(menuOut &o,int percent) {
 }
 
 //read a value from the input stream device (encoder or serial)
-void setValue(prompt &p,menuOut &o, Stream &i,int &value,const char* text,const char* units,int sensivity,int low,int hi,int steps,void (*func)()) {
+void setValue(int &value,prompt &p,menuOut &o, Stream &i,const char* text,const char* units,int sensivity,int low,int hi,int steps,void (*func)()) {
   o.clear();
   int at=strlen(text);//.length();
   o.setCursor(0,0);
