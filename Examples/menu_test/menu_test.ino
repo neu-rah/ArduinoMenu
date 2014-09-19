@@ -8,12 +8,12 @@ ruihfazevedo@rrob@gmail.com
 #include <virtual_pins.h>
 #include <HardwareSerial.h>
 #include <LiquidCrystal.h>
-#include "menu.h"//menu macros and objects
-#include "pcint.h"//this is incompatible with software serial (arduino needs an handler!)
-#include "quadEncoder.h"//quadrature encoder driver and fake stream
-#include "keyStream.h"//keyboard driver and fake stream (for the encoder button)
-#include "chainStream.h"// concatenate multiple input streams (this allows adding a button to the encoder)
-#include "menuPrint.h"//Print (Serial) menu
+#include <menu.h>//menu macros and objects
+#include <pcint.h>//this is incompatible with software serial (arduino needs an handler!)
+#include <quadEncoder.h>//quadrature encoder driver and fake stream
+#include <keyStream.h>//keyboard driver and fake stream (for the encoder button)
+#include <chainStream.h>// concatenate multiple input streams (this allows adding a button to the encoder)
+#include <menuPrint.h>//Print (Serial) menu
 
 #define LCDWIRE_NONE 0
 #define LCDWIRE_VPINS_I2C 1

@@ -17,6 +17,8 @@ char menu::enabledCursor='>';
 char menu::disabledCursor='-';
 prompt menu::exitOption(menu::exit);
 
+//menu navigation engine
+//iteract with input until a selection is done, return the selection
 int menu::menuKeys(menuOut &p,Stream& c,bool canExit) {
   int op=-2;
   do {
@@ -50,6 +52,11 @@ int menu::menuKeys(menuOut &p,Stream& c,bool canExit) {
   return op;
 }
     
+//execute the menu
+//cycle:
+//	...->draw -> input scan -> iterations -> [activate submenu or user function] -> ...
+// draw: call target device object
+//input scan: call the navigation function (self)
 void menu::activate(menuOut& p,Stream& c,bool canExit) {
   sel=0;
   p.top=0;
@@ -61,6 +68,7 @@ void menu::activate(menuOut& p,Stream& c,bool canExit) {
     	sel=op;
       if (data[op]->enabled) {
       	data[op]->activate(p,c,true);
+      	c.flush();//reset the encoder
       	p.drawn=0;//redraw menu
       }
     }
