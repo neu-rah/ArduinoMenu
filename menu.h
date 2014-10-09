@@ -124,6 +124,8 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
     virtual void println(const char *text)=0;
     virtual void print(int)=0;
     virtual void println(int)=0;
+    virtual void print(double)=0;
+    virtual void println(double)=0;
     virtual void print(prompt &o,bool selected,int idx,int posY,int width)=0;
 		virtual void printMenu(menu&,bool drawExit)=0;
   };

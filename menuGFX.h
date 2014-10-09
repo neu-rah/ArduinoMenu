@@ -59,6 +59,8 @@ Use graphics screens (adafruit library based) as menu output
     virtual void println(const char *text) {gfx.println(text);};
     virtual void print(int i) {gfx.print(i);};
     virtual void println(int i) {gfx.println(i);};
+    virtual void print(double i) {gfx.print(i);};
+    virtual void println(double i) {gfx.println(i);};
     virtual void print(prompt &o,bool selected,int idx,int posY,int width) {
     	gfx.fillRect(0,posY*resY,width*resX,resY,selected?hiliteColor:bgColor);
     	gfx.setTextColor(o.enabled?enabledColor:disabledColor);

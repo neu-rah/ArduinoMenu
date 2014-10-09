@@ -26,6 +26,8 @@ menu output to Print device (ex: Serial)
     virtual void println(const char *text) {device.println(text);}
     virtual void print(int i) {device.print(i);};
     virtual void println(int i) {device.println(i);};
+    virtual void print(double i) {device.print(i);};
+    virtual void println(double i) {device.println(i);};
 		virtual void print(prompt &o,bool selected,int idx,int posY,int width) {
 			//setCursor(0,posY);
       print(idx<10?" ":"");
