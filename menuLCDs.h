@@ -36,7 +36,12 @@ as VirtualPins is not yet a standard I implemented this to support existing libr
 			print(selected?(o.enabled?menu::enabledCursor:menu::disabledCursor):' ');
 			print(o.text);
 		}
+		virtual void print(menuField<int> &o,bool selected,int idx,int posY,int width) {
+			println("Ok, this is it");
+		}
 		virtual void printMenu(menu& m,bool drawExit) {
+			if (drawn==&m) return;
+			Serial.println("menuLCD clear");
 			clear();
 			if (m.sel-top>=maxY) top=m.sel-maxY+1;//selected option outside device (bottom)
 			else if (m.sel<top) top=m.sel;//selected option outside device (top)
@@ -48,6 +53,7 @@ as VirtualPins is not yet a standard I implemented this to support existing libr
 			}
 			if (drawExit&&i-top<maxY)
 				print(menu::exitOption,m.sel==m.sz,0,i-top,m.width);
+			drawn=&m;
 		}
   };
 #endif RSITE_ARDUINOP_MENU_LCD

@@ -26,6 +26,7 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
   class prompt;
   class menu;
   class menuOut;
+  template <typename T> class menuField;
   
   #define CONCATENATE(arg1, arg2)   CONCATENATE1(arg1, arg2)
   #define CONCATENATE1(arg1, arg2)  CONCATENATE2(arg1, arg2)
@@ -97,15 +98,16 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
     menu id (text,sizeof(id##_data)/sizeof(prompt*),id##_data);
   
   #define OP(...) OP_(__COUNTER__,__VA_ARGS__)
-  #define FIELD(...) FIELD_(__COUNTER__,__VA_ARGS__)
+  #define FIELD_INT(...) FIELD_INT_(__COUNTER__,__VA_ARGS__)
   
   #define DECL_OP_(cnt,...) prompt op##cnt(__VA_ARGS__);
-  #define DECL_FIELD_(cnt,...) menuField _menuField##cnt(__VA_ARGS__);
+  #define DECL_FIELD_INT_(cnt,...) menuField<int> _menuField_int##cnt(__VA_ARGS__);
   #define DECL_SUBMENU(id)
   
   #define DEF_OP_(cnt,...) &op##cnt
-  #define DEF_FIELD_(cnt,...) &_menuField##cnt
+  #define DEF_FIELD_INT_(cnt,...) &_menuField_int##cnt
   #define DEF_SUBMENU(id) &id
+  
   
   /////////////////////////////////////////////////////////
   // menu pure virtual output device, use derived
@@ -132,6 +134,7 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
     virtual void print(double)=0;
     virtual void println(double)=0;
     virtual void print(prompt &o,bool selected,int idx,int posY,int width)=0;
+    virtual void print(menuField<int> &o,bool selected,int idx,int posY,int width)=0;
 		virtual void printMenu(menu&,bool drawExit)=0;
   };
   
@@ -166,7 +169,7 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
     const char *text;
     promptAction action;
     bool enabled;
-    prompt(const char * text):text(text),enabled(true) {}
+    prompt(const char * text,bool enabled=true):text(text),enabled(enabled) {}
     prompt(const char * text,promptAction action)
     	:text(text),action(action),enabled(true) {}
     virtual size_t printTo(Print& p) {p.print(text);return strlen(text);}

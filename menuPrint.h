@@ -35,6 +35,9 @@ menu output to Print device (ex: Serial)
 			print(selected?(o.enabled?menu::enabledCursor:menu::disabledCursor):' ');
 			println(o.text);
 		}
+		virtual void print(menuField<int> &o,bool selected,int idx,int posY,int width) {
+			println("Ok, this is it");
+		}
 		virtual void printMenu(menu& m,bool drawExit) {
 			clear();
 			int i=0;for(;i<m.sz;i++)

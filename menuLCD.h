@@ -34,6 +34,9 @@ Use standard arduino LCD (LiquidCrystal library) as menu output
 			print(selected?(o.enabled?menu::enabledCursor:menu::disabledCursor):' ');
 			print(o.text);
 		}
+		virtual void print(menuField<int> &o,bool selected,int idx,int posY,int width) {
+			println("Ok, this is it");
+		}
 		virtual void printMenu(menu& m,bool drawExit) {
 			clear();
 			if (m.sel-top>=maxY) top=m.sel-maxY+1;//selected option outside device (bottom)

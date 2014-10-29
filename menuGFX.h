@@ -68,6 +68,9 @@ Use graphics screens (adafruit library based) as menu output
     	//gfx.setTextColor(o.enabled?enabledColor:disabledColor,selected?hiliteColor:bgColor);
     	gfx.print(o.text);
     }
+		virtual void print(menuField<int> &o,bool selected,int idx,int posY,int width) {
+			println("Ok, this is it");
+		}
 		virtual void printMenu(menu& m,bool drawExit) {
 			if (drawn!=&m) clear();
 			if (m.sel-top>=maxY) top=m.sel-maxY+1;//selected option outside device (bottom)

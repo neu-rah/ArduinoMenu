@@ -32,13 +32,15 @@ int menu::menuKeys(menuOut &p,Stream& c,bool canExit) {
           if (sel>0) {
             sel--;
             if (sel+1>=p.maxY) p.top=sel-p.maxY;
-            printMenu(p,canExit);
+            p.drawn=0;
+            //printMenu(p,canExit);
           }
         } else if (ch=='+') {
           if (sel<(sz-(canExit?0:1))) {
             sel++;
             if ((sz-sel+(canExit?1:0))>=p.maxY) p.top=sel-(canExit?1:0);
-            printMenu(p,canExit);
+            p.drawn=0;
+            //printMenu(p,canExit);
           }
         } else if (ch==27) {
         	op=-1;
@@ -65,6 +67,8 @@ void menu::activate(menuOut& p,Stream& c,bool canExit) {
 		activeMenu=this;
 		sel=0;
 		p.top=0;
+   	//c.flush();//reset the encoder
+   	//p.drawn=0;//redraw menu
 	}
   int op=-1;
   //do {
@@ -74,11 +78,14 @@ void menu::activate(menuOut& p,Stream& c,bool canExit) {
     	sel=op;
       if (data[op]->enabled) {
       	data[op]->activate(p,c,true);
-      	c.flush();//reset the encoder
-      	p.drawn=0;//redraw menu
+      	//c.flush();//reset the encoder
+      	//p.drawn=0;//redraw menu
       }
-    } else if (op==-1) //then exit
+    } else if (op==-1) {//then exit
     	activeMenu=previousMenu;
+		 	//c.flush();//reset the encoder
+		 	//p.drawn=0;//redraw menu
+    }
   //} while(op!=-1);
 }
 
