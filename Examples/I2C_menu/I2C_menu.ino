@@ -25,5 +25,5 @@ void setup()
 void loop()
 {
   //serial can use numbers or +/- and Enter to navigate
-  mainMenu.activate(menu_lcd,Serial);
+  mainMenu.run(menu_lcd,Serial);
 }

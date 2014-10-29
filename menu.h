@@ -97,9 +97,14 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
     menu id (text,sizeof(id##_data)/sizeof(prompt*),id##_data);
   
   #define OP(...) OP_(__COUNTER__,__VA_ARGS__)
+  #define FIELD(...) FIELD_(__COUNTER__,__VA_ARGS__)
+  
   #define DECL_OP_(cnt,...) prompt op##cnt(__VA_ARGS__);
+  #define DECL_FIELD_(cnt,...) menuField _menuField##cnt(__VA_ARGS__);
   #define DECL_SUBMENU(id)
+  
   #define DEF_OP_(cnt,...) &op##cnt
+  #define DEF_FIELD_(cnt,...) &_menuField##cnt
   #define DEF_SUBMENU(id) &id
   
   /////////////////////////////////////////////////////////
@@ -175,16 +180,20 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
     static const char *exit;//text used for exit option
     static char enabledCursor;//character to be used as navigation cursor
     static char disabledCursor;//to be used when navigating over disabled options
-    static prompt exitOption;//option tro append to every menu allowing exit when no escape button/key is available
+    static prompt exitOption;//option to append to menu allowing exit when no escape button/key is available
+    static menu* activeMenu;
+    menu* previousMenu;
     const int sz;
     int sel;//selection
     prompt* const* data PROGMEM;
-    menu(const char * text,int sz,prompt* const data[]):prompt(text),sz(sz),data(data),sel(0),width(16) {}
+    menu(const char * text,int sz,prompt* const data[]):prompt(text),sz(sz),data(data),sel(0),width(16),previousMenu(NULL) {}
     
     int menuKeys(menuOut &p,Stream& c,bool drawExit);
     inline void printMenu(menuOut& p,bool drawExit) {p.printMenu(*this,drawExit);}
     
     void activate(menuOut& p,Stream& c,bool canExit=false);
+    
+    void poll(menuOut& p,Stream& c,bool canExit=false);
     
     //some funcs to support touch... TODO: test them
     // this functions will probably move to touch class...

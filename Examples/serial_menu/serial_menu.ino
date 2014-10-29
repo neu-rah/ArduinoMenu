@@ -1,12 +1,14 @@
 #include "menu.h"//menu macros and objects
 #include "menuPrint.h"
 
+#define LEDPIN 13
+
 ///////////////////////////////////////////////////////////////////////////
 //functions to wire as menu actions
 
 void none() {}
-void ledOn() {digitalWrite(13,1);}
-void ledOff() {digitalWrite(13,0);}
+void ledOn() {digitalWrite(LEDPIN,1);}
+void ledOff() {digitalWrite(LEDPIN,0);}
 
 /////////////////////////////////////////////////////////////////////////
 // MENU DEFINITION
@@ -22,13 +24,13 @@ menuPrint menu_out(Serial);//describe output device
 void setup() {
   Serial.begin(9600);
   Serial.println("menu system test");
-  pinMode(13,OUTPUT);
+  pinMode(LEDPIN,OUTPUT);
   menu::exit="Saida";
   mainMenu.data[2]->enabled=false;
 }
 
 void loop() {
-  mainMenu.activate(menu_out,Serial);
+  mainMenu.run(menu_out,Serial);
   Serial.println("");
   Serial.println("Restarting...");
 }

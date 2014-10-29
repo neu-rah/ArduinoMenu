@@ -16,13 +16,15 @@ const char* menu::exit="Exit";
 char menu::enabledCursor='>';
 char menu::disabledCursor='-';
 prompt menu::exitOption(menu::exit);
+menu* menu::activeMenu=NULL;
 
 //menu navigation engine
 //iteract with input until a selection is done, return the selection
 int menu::menuKeys(menuOut &p,Stream& c,bool canExit) {
   int op=-2;
-  do {
-    while(!c.available());
+  //do {
+    //while(!c.available());
+    if (!c.available()) return op;
     if (c.peek()!=13) {
       if(c.available()) {
         int ch=c.read();
@@ -48,7 +50,7 @@ int menu::menuKeys(menuOut &p,Stream& c,bool canExit) {
     //add some delays to be sure we do not have more characters NL or CR on the way
     //delay might be adjusted to vope with stream speed
     delay(50);while (c.peek()==13||c.peek()==10) {c.read();delay(50);}//discard ENTER and CR
-  } while(op==-2);//repeat until we have a valid option (can be Exit/Esc)
+  //} while(op==-2);//repeat until we have a valid option (can be Exit/Esc)
   return op;
 }
     
@@ -58,10 +60,14 @@ int menu::menuKeys(menuOut &p,Stream& c,bool canExit) {
 // draw: call target device object
 //input scan: call the navigation function (self)
 void menu::activate(menuOut& p,Stream& c,bool canExit) {
-  sel=0;
-  p.top=0;
+	if (activeMenu!=this) {
+		previousMenu=activeMenu;
+		activeMenu=this;
+		sel=0;
+		p.top=0;
+	}
   int op=-1;
-  do {
+  //do {
     printMenu(p,canExit);
     op=menuKeys(p,c,canExit);
     if (op>=0&&op<sz) {
@@ -71,8 +77,14 @@ void menu::activate(menuOut& p,Stream& c,bool canExit) {
       	c.flush();//reset the encoder
       	p.drawn=0;//redraw menu
       }
-    }
-  } while(op!=-1);
+    } else if (op==-1) //then exit
+    	activeMenu=previousMenu;
+  //} while(op!=-1);
+}
+
+void menu::poll(menuOut& p,Stream& c,bool canExit) {
+	if (!activeMenu) activeMenu=this;
+	activeMenu->activate(p,c,activeMenu==this?canExit:true);
 }
 
 //todo: preparing functions for touch screen support
