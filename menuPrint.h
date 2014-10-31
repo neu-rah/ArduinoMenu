@@ -23,26 +23,33 @@ menu output to Print device (ex: Serial)
     virtual void setCursor(int x,int y) {device.println("");}
     virtual void print(char ch) {device.print(ch);}
     virtual void print(const char *text) {device.print(text);}
-    virtual void println(const char *text) {device.println(text);}
+    virtual void println(const char *text="") {device.println(text);}
     virtual void print(int i) {device.print(i);};
     virtual void println(int i) {device.println(i);};
     virtual void print(double i) {device.print(i);};
     virtual void println(double i) {device.println(i);};
 		virtual void print(prompt &o,bool selected,int idx,int posY,int width) {
 			//setCursor(0,posY);
+			//Serial<<"menuPrint prompt "<<o.text<<endl;
       print(idx<10?" ":"");
       print(idx);
 			print(selected?(o.enabled?menu::enabledCursor:menu::disabledCursor):' ');
-			println(o.text);
+			//println(o.text);
+			o.printTo(device);
+			println();
 		}
-		virtual void print(menuField<int> &o,bool selected,int idx,int posY,int width) {
+		/*virtual void print(menuField<int> &o,bool selected,int idx,int posY,int width) {
 			println("Ok, this is it");
-		}
+		}*/
 		virtual void printMenu(menu& m,bool drawExit) {
+			if (drawn==&m) return;
+			//Serial<<"menuPrint printMenu "<<m.sz<<" options of "<<m.text<<endl;
 			clear();
-			int i=0;for(;i<m.sz;i++)
-				  print(*m.data[i],i==m.sel,i+1,i-top,m.width);
+			int i=0;
+			for(;i<m.sz;i++)
+			  print(*m.data[i],i==m.sel,i+1,i-top,m.width);
 			if (drawExit) print(menu::exitOption,m.sel==m.sz,0,i-top,m.width);
+			drawn=&m;
 		}
   };
   

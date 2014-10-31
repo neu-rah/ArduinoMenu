@@ -56,7 +56,7 @@ Use graphics screens (adafruit library based) as menu output
     virtual void setCursor(int x,int y) {gfx.setCursor(x*resX,y*resY);}
     virtual void print(char ch) {gfx.print(ch);}
     virtual void print(const char *text) {gfx.print(text);}
-    virtual void println(const char *text) {gfx.println(text);};
+    virtual void println(const char *text="") {gfx.println(text);};
     virtual void print(int i) {gfx.print(i);};
     virtual void println(int i) {gfx.println(i);};
     virtual void print(double i) {gfx.print(i);};
@@ -66,11 +66,13 @@ Use graphics screens (adafruit library based) as menu output
     	gfx.setTextColor(o.enabled?enabledColor:disabledColor);
     	gfx.setCursor(0,posY*resY);
     	//gfx.setTextColor(o.enabled?enabledColor:disabledColor,selected?hiliteColor:bgColor);
-    	gfx.print(o.text);
+    	//gfx.print(o.text);
+    	o.printTo(gfx);
+    	println();
     }
-		virtual void print(menuField<int> &o,bool selected,int idx,int posY,int width) {
+		/*virtual void print(menuField<int> &o,bool selected,int idx,int posY,int width) {
 			println("Ok, this is it");
-		}
+		}*/
 		virtual void printMenu(menu& m,bool drawExit) {
 			if (drawn!=&m) clear();
 			if (m.sel-top>=maxY) top=m.sel-maxY+1;//selected option outside device (bottom)

@@ -68,22 +68,26 @@ void menu::activate(menuOut& p,Stream& c,bool canExit) {
 		sel=0;
 		p.top=0;
    	//c.flush();//reset the encoder
-   	//p.drawn=0;//redraw menu
+   	p.drawn=0;//redraw menu
 	}
   int op=-1;
   //do {
+  	//Serial<<"activation printing menu "<<text<<endl;
     printMenu(p,canExit);
     op=menuKeys(p,c,canExit);
     if (op>=0&&op<sz) {
     	sel=op;
       if (data[op]->enabled) {
+      	/*Serial<<"activating option "<<op<<endl;
+      	Serial.flush();
+      	delay(10);*/
       	data[op]->activate(p,c,true);
       	//c.flush();//reset the encoder
       	//p.drawn=0;//redraw menu
       }
     } else if (op==-1) {//then exit
     	activeMenu=previousMenu;
-		 	//c.flush();//reset the encoder
+		 	c.flush();//reset the encoder
 		 	//p.drawn=0;//redraw menu
     }
   //} while(op!=-1);

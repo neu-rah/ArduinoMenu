@@ -22,6 +22,8 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
   #define RSITE_ARDUINOP_MENU_SYSTEM
   
 	#include <Stream.h>
+	#include <HardwareSerial.h>
+	#include "../utils/streamFlow.h"
 	
   class prompt;
   class menu;
@@ -98,14 +100,14 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
     menu id (text,sizeof(id##_data)/sizeof(prompt*),id##_data);
   
   #define OP(...) OP_(__COUNTER__,__VA_ARGS__)
-  #define FIELD_INT(...) FIELD_INT_(__COUNTER__,__VA_ARGS__)
+  #define FIELD(...) FIELD_(__COUNTER__,__VA_ARGS__)
   
   #define DECL_OP_(cnt,...) prompt op##cnt(__VA_ARGS__);
-  #define DECL_FIELD_INT_(cnt,...) menuField<int> _menuField_int##cnt(__VA_ARGS__);
+  #define DECL_FIELD_(cnt,type,...) menuField<type> _menuField##cnt(__VA_ARGS__);
   #define DECL_SUBMENU(id)
   
   #define DEF_OP_(cnt,...) &op##cnt
-  #define DEF_FIELD_INT_(cnt,...) &_menuField_int##cnt
+  #define DEF_FIELD_(cnt,type,...) &_menuField##cnt
   #define DEF_SUBMENU(id) &id
   
   
@@ -128,13 +130,15 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
     virtual void setCursor(int x,int y)=0;
     virtual void print(char ch)=0;
     virtual void print(const char *text)=0;
-    virtual void println(const char *text)=0;
+    virtual void println(const char *text="")=0;
     virtual void print(int)=0;
     virtual void println(int)=0;
     virtual void print(double)=0;
     virtual void println(double)=0;
     virtual void print(prompt &o,bool selected,int idx,int posY,int width)=0;
-    virtual void print(menuField<int> &o,bool selected,int idx,int posY,int width)=0;
+    virtual void print(menuField<int> &o,bool selected,int idx,int posY,int width) {
+			println("Ok, this is it");
+		}
 		virtual void printMenu(menu&,bool drawExit)=0;
   };
   
@@ -169,11 +173,17 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
     const char *text;
     promptAction action;
     bool enabled;
-    prompt(const char * text,bool enabled=true):text(text),enabled(enabled) {}
+    prompt(const char * text):text(text),enabled(true) {}
     prompt(const char * text,promptAction action)
     	:text(text),action(action),enabled(true) {}
-    virtual size_t printTo(Print& p) {p.print(text);return strlen(text);}
-    virtual void activate(menuOut& p,Stream&c,bool) {action(*this,p,c);}
+    virtual size_t printTo(Print& p) {
+    	//Serial<<"printing prompt"<<endl;
+    	p.print(text);return strlen(text);
+    }
+    virtual void activate(menuOut& p,Stream&c,bool) {
+    	//Serial<<"activating prompt "<<text<<endl;
+    	action(*this,p,c);
+    }
   };
   
   //a menu or sub-menu
@@ -185,14 +195,19 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
     static char disabledCursor;//to be used when navigating over disabled options
     static prompt exitOption;//option to append to menu allowing exit when no escape button/key is available
     static menu* activeMenu;
-    menu* previousMenu;
     const int sz;
+    menu* previousMenu;
     int sel;//selection
     prompt* const* data PROGMEM;
     menu(const char * text,int sz,prompt* const data[]):prompt(text),sz(sz),data(data),sel(0),width(16),previousMenu(NULL) {}
     
+    virtual size_t printTo(Print& p) {
+    	Serial<<"printing menu..."<<endl;
+    }
     int menuKeys(menuOut &p,Stream& c,bool drawExit);
-    inline void printMenu(menuOut& p,bool drawExit) {p.printMenu(*this,drawExit);}
+    inline void printMenu(menuOut& p,bool drawExit) {
+    	p.printMenu(*this,drawExit);
+    }
     
     void activate(menuOut& p,Stream& c,bool canExit=false);
     

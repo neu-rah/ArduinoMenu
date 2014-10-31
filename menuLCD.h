@@ -24,7 +24,7 @@ Use standard arduino LCD (LiquidCrystal library) as menu output
     virtual void setCursor(int x,int y) {lcd.setCursor(x*resX,y*resY);}
     virtual void print(char ch) {lcd.print(ch);}
     virtual void print(const char *text) {lcd.print(text);}
-    virtual void println(const char *text) {lcd.print(text);};
+    virtual void println(const char *text="") {lcd.print(text);};
     virtual void print(int i) {lcd.print(i);};
     virtual void println(int i) {lcd.println(i);};
     virtual void print(double i) {lcd.print(i);};
@@ -32,12 +32,15 @@ Use standard arduino LCD (LiquidCrystal library) as menu output
 		virtual void print(prompt &o,bool selected,int idx,int posY,int width) {
 			lcd.setCursor(0,posY);
 			print(selected?(o.enabled?menu::enabledCursor:menu::disabledCursor):' ');
-			print(o.text);
+			//print(o.text);
+			o.printTo(lcd);
+			println();
 		}
-		virtual void print(menuField<int> &o,bool selected,int idx,int posY,int width) {
+		/*virtual void print(menuField<int> &o,bool selected,int idx,int posY,int width) {
 			println("Ok, this is it");
-		}
+		}*/
 		virtual void printMenu(menu& m,bool drawExit) {
+			if (drawn==&m) return;
 			clear();
 			if (m.sel-top>=maxY) top=m.sel-maxY+1;//selected option outside device (bottom)
 			else if (m.sel<top) top=m.sel;//selected option outside device (top)
@@ -49,6 +52,7 @@ Use standard arduino LCD (LiquidCrystal library) as menu output
 			}
 			if (drawExit&&i-top<maxY)
 				print(menu::exitOption,m.sel==m.sz,0,i-top,m.width);
+			drawn=&m;
 		}
   };
 #endif RSITE_ARDUINOP_MENU_LCD
