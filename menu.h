@@ -136,9 +136,6 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
     virtual void print(double)=0;
     virtual void println(double)=0;
     virtual void print(prompt &o,bool selected,int idx,int posY,int width)=0;
-    virtual void print(menuField<int> &o,bool selected,int idx,int posY,int width) {
-			println("Ok, this is it");
-		}
 		virtual void printMenu(menu&,bool drawExit)=0;
   };
   
@@ -165,7 +162,7 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
 		//use this objects as a function (replacing functions)
 		inline void operator()(prompt &p, menuOut &o, Stream &i) {hFn(p,o,i	);}
 	};
-
+	
 	//holds a menu option
 	//a menu is also a prompt so we can have sub-menus
   class prompt {
@@ -173,8 +170,8 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
     const char *text;
     promptAction action;
     bool enabled;
-    prompt(const char * text):text(text),enabled(true) {}
-    prompt(const char * text,promptAction action)
+    inline prompt(const char * text):text(text),enabled(true) {}
+    inline prompt(const char * text,promptAction action)
     	:text(text),action(action),enabled(true) {}
     virtual size_t printTo(Print& p) {
     	//Serial<<"printing prompt"<<endl;
@@ -186,24 +183,29 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
     }
   };
   
+  class menuNode:public prompt {//some basic information for menus and fields
+  	public:
+    int width=16;//field or menu width
+    //navigation and focus control
+    static menuNode* activeNode;
+    menu* previousMenu=NULL;
+    inline menuNode(const char * text):prompt(text) {}
+    inline menuNode(const char * text,promptAction action):prompt(text,action) {}
+  };
+  
   //a menu or sub-menu
-  class menu:public prompt {
+  class menu:public menuNode {
     public:
-    int width;//menu width
     static const char *exit;//text used for exit option
     static char enabledCursor;//character to be used as navigation cursor
     static char disabledCursor;//to be used when navigating over disabled options
     static prompt exitOption;//option to append to menu allowing exit when no escape button/key is available
-    static menu* activeMenu;
-    const int sz;
-    menu* previousMenu;
+    const int sz=0;
     int sel;//selection
     prompt* const* data PROGMEM;
-    menu(const char * text,int sz,prompt* const data[]):prompt(text),sz(sz),data(data),sel(0),width(16),previousMenu(NULL) {}
+    bool canExit=false;//store last canExit value for inner reference
+    menu(const char * text,int sz,prompt* const data[]):menuNode(text),sz(sz),data(data) {}
     
-    virtual size_t printTo(Print& p) {
-    	Serial<<"printing menu..."<<endl;
-    }
     int menuKeys(menuOut &p,Stream& c,bool drawExit);
     inline void printMenu(menuOut& p,bool drawExit) {
     	p.printMenu(*this,drawExit);

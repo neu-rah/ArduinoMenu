@@ -22,7 +22,6 @@ as VirtualPins is not yet a standard I implemented this to support existing libr
   class menuLCD:public menuOut {
     public:
     LCD& lcd;
-    //menuLCD(LiquidCrystal& lcd,int x=16,int y=1):lcd(lcd),menuOut(menuOut::cursor,x,y) {}
     menuLCD(LCD& lcd,int x=16,int y=1):lcd(lcd),menuOut(x,y) {}
     virtual void clear() {lcd.clear();}
     virtual void setCursor(int x,int y) {lcd.setCursor(x*resX,y*resY);}
@@ -36,24 +35,17 @@ as VirtualPins is not yet a standard I implemented this to support existing libr
 		virtual void print(prompt &o,bool selected,int idx,int posY,int width) {
 			lcd.setCursor(0,posY);
 			print(selected?(o.enabled?menu::enabledCursor:menu::disabledCursor):' ');
-			//print(o.text);
 			o.printTo(lcd);
 			println();
 		}
-		/*virtual void print(menuField<int> &o,bool selected,int idx,int posY,int width) {
-			println("Ok, this is it");
-		}*/
 		virtual void printMenu(menu& m,bool drawExit) {
 			if (drawn==&m) return;
-			//Serial.println("menuLCDs print");
 			clear();
 			if (m.sel-top>=maxY) top=m.sel-maxY+1;//selected option outside device (bottom)
 			else if (m.sel<top) top=m.sel;//selected option outside device (top)
 			int i=0;for(;i<m.sz;i++) {
 				if ((i>=top)&&((i-top)<maxY)) {
 				  if(i-top>=maxY) break;
-				  //Serial.print("OP: 0x");
-				  //Serial.println(((long**)m.data[i])[0][0],HEX);
 				  print(*m.data[i],i==m.sel,i+1,i-top,m.width);
 				}
 			}

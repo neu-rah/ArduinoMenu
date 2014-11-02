@@ -12,7 +12,6 @@ menu output to Print device (ex: Serial)
 
 #ifndef RSITE_ARDUINOP_MENU_PRINT
 	#define RSITE_ARDUINOP_MENU_PRINT
-  //#include <HardwareSerial.h>
 	#include "menu.h"
 
   class menuPrint:public menuOut {
@@ -29,21 +28,14 @@ menu output to Print device (ex: Serial)
     virtual void print(double i) {device.print(i);};
     virtual void println(double i) {device.println(i);};
 		virtual void print(prompt &o,bool selected,int idx,int posY,int width) {
-			//setCursor(0,posY);
-			//Serial<<"menuPrint prompt "<<o.text<<endl;
       print(idx<10?" ":"");
       print(idx);
 			print(selected?(o.enabled?menu::enabledCursor:menu::disabledCursor):' ');
-			//println(o.text);
 			o.printTo(device);
 			println();
 		}
-		/*virtual void print(menuField<int> &o,bool selected,int idx,int posY,int width) {
-			println("Ok, this is it");
-		}*/
 		virtual void printMenu(menu& m,bool drawExit) {
 			if (drawn==&m) return;
-			//Serial<<"menuPrint printMenu "<<m.sz<<" options of "<<m.text<<endl;
 			clear();
 			int i=0;
 			for(;i<m.sz;i++)
