@@ -99,13 +99,6 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
     };\
     menu id (text,sizeof(id##_data)/sizeof(prompt*),id##_data);
   
-  /*#define CHOOSE(type,id,text,...)\
-    FOR_EACH(menuValue<type> DECL_VALUE,__VA_ARGS__)\
-    menuValue<type>* const id##_data[]={\
-      FOR_EACH(DEF,__VA_ARGS__)\
-    };\
-    menuChoice<type> id (text,sizeof(id##_data)/sizeof(prompt*),id##_data);*/
-
   #define CHOOSE(target,id,text,...)\
     FOR_EACH(menuValue<typeof(target)> DECL_VALUE,__VA_ARGS__)\
     menuValue<typeof(target)>* const id##_data[]={\
@@ -125,13 +118,13 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
   #define VALUE(...) VALUE_(__COUNTER__,__VA_ARGS__)
   
   #define DECL_OP_(cnt,...) prompt op##cnt(__VA_ARGS__);
-  #define DECL_FIELD_(cnt,type,...) menuField<type> _menuField##cnt(__VA_ARGS__);
+  #define DECL_FIELD_(cnt,target,...) menuField<typeof(target)> _menuField##cnt(target,__VA_ARGS__);
   #define DECL_SUBMENU(id)
 	#define DECL_VALUE(...) _##__VA_ARGS__
 	#define _VALUE_(cnt,...) choice##cnt(__VA_ARGS__);
   
   #define DEF_OP_(cnt,...) &op##cnt
-  #define DEF_FIELD_(cnt,type,...) &_menuField##cnt
+  #define DEF_FIELD_(cnt,...) &_menuField##cnt
   #define DEF_SUBMENU(id) &id
   #define DEF_VALUE(id) &id
   #define DEF_VALUE_(cnt,...) &choice##cnt
