@@ -66,6 +66,7 @@ Use graphics screens (adafruit library based) as menu output
     	o.printTo(gfx);
     	println();
     }
+    inline int needRedraw(menu& m,int i) {return (drawn!=&m)||(top!=lastTop)||(m.sel!=lastSel&&((i==m.sel)||(i==lastSel)));}
 		virtual void printMenu(menu& m,bool drawExit) {
 			if (drawn!=&m) clear();//clear all screen when changing menu
 			if (m.sel-top>=maxY) top=m.sel-maxY+1;//selected option outside device (bottom)
@@ -73,7 +74,7 @@ Use graphics screens (adafruit library based) as menu output
 			int i=0;for(;i<m.sz;i++) {
 				if ((i>=top)&&((i-top)<maxY)) {
 				  if(i-top>=maxY) break;
-				  if ((drawn!=&m)||(top!=lastTop)||(m.sel!=lastSel&&((i==m.sel)||(i==lastSel)))) {
+				  if (needRedraw(m,i)) {
 				  	Serial<<hex((long)drawn)<<" <-> "<<hex((long)&m)
 				  		<<(drawn!=&m)<<(top!=lastTop)<<(m.sel!=lastSel&&((i==m.sel)||(i==lastSel)))
 					  	<<" drawing option:"<<m.data[i]->text<<endl;
@@ -81,7 +82,7 @@ Use graphics screens (adafruit library based) as menu output
 				  }
 				}
 			}
-			if (drawExit&&i-top<maxY&&((top!=lastTop)||(i==m.sel)||(i==lastSel)||(drawn!=&m)))
+			if (drawExit&&i-top<maxY&&needRedraw(m,i))
 				print(menu::exitOption,m.sel==m.sz,0,i-top,m.width);
 			lastTop=top;
 			lastSel=m.sel;
