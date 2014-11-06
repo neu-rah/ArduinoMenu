@@ -5,7 +5,7 @@ This software is furnished "as is", without technical support, and with no
 warranty, express or implied, as to its usefulness for any purpose.
 
 Thread Safe: No
-Extendable: Yes
+Extensible: Yes
 
 Use graphics screens (adafruit library based) as menu output
 ***/
@@ -30,8 +30,6 @@ Use graphics screens (adafruit library based) as menu output
 
   class menuGFX:public menuOut {
     public:
-    int lastTop;
-    int lastSel;
     uint16_t bgColor;
     uint16_t enabledColor;
     uint16_t disabledColor;
@@ -69,14 +67,18 @@ Use graphics screens (adafruit library based) as menu output
     	println();
     }
 		virtual void printMenu(menu& m,bool drawExit) {
-			if (drawn!=&m) clear();
+			if (drawn!=&m) clear();//clear all screen when changing menu
 			if (m.sel-top>=maxY) top=m.sel-maxY+1;//selected option outside device (bottom)
 			else if (m.sel<top) top=m.sel;//selected option outside device (top)
 			int i=0;for(;i<m.sz;i++) {
 				if ((i>=top)&&((i-top)<maxY)) {
 				  if(i-top>=maxY) break;
-				  if ((top!=lastTop)||(i==m.sel)||(i==lastSel)||(drawn!=&m))
+				  if ((drawn!=&m)||(top!=lastTop)||(m.sel!=lastSel&&((i==m.sel)||(i==lastSel)))) {
+				  	Serial<<hex((long)drawn)<<" <-> "<<hex((long)&m)
+				  		<<(drawn!=&m)<<(top!=lastTop)<<(m.sel!=lastSel&&((i==m.sel)||(i==lastSel)))
+					  	<<" drawing option:"<<m.data[i]->text<<endl;
 				  	print(*m.data[i],i==m.sel,i+1,i-top,m.width);
+				  }
 				}
 			}
 			if (drawExit&&i-top<maxY&&((top!=lastTop)||(i==m.sel)||(i==lastSel)||(drawn!=&m)))

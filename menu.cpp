@@ -5,7 +5,7 @@ This software is furnished "as is", without technical support, and with no
 warranty, express or implied, as to its usefulness for any purpose.
 
 Thread Safe: No
-Extendable: Yes
+Extensible: Yes
 
 Arduino generic menu system
 */
@@ -30,14 +30,14 @@ int menu::menuKeys(menuOut &p,Stream& c,bool canExit) {
         if (sel>0) {
           sel--;
           if (sel+1>=p.maxY) p.top=sel-p.maxY;
-          p.drawn=0;
+          //p.drawn=0;
           //printMenu(p,canExit);
         }
       } else if (ch=='+') {
         if (sel<(sz-(canExit?0:1))) {
           sel++;
           if ((sz-sel+(canExit?1:0))>=p.maxY) p.top=sel-(canExit?1:0);
-          p.drawn=0;
+          //p.drawn=0;
           //printMenu(p,canExit);
         }
       } else if (ch==27) {
@@ -64,7 +64,7 @@ void menu::activate(menuOut& p,Stream& c,bool canExit) {
 		activeNode=this;
 		sel=0;
 		p.top=0;
-   	p.drawn=0;//redraw menu
+   	//p.drawn=0;//redraw menu
    	this->canExit=canExit;
 	}
   int op=-1;

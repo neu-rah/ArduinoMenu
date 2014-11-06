@@ -5,7 +5,7 @@ This software is furnished "as is", without technical support, and with no
 warranty, express or implied, as to its usefulness for any purpose.
 
 Thread Safe: No
-Extendable: Yes
+Extensible: Yes
 
 Arduino generic menu system
 
@@ -15,8 +15,8 @@ Arduino generic menu system
  menuPrint: menuOut implementation for generic print (as Serial)
    menuLCD: menuOut implementation for standard LiquidCrystal LCD
 
-the menu system will read provided stream for input, it works for Serial
-for encoders, joysticks, keyboards or touch a stream must be made out of them
+the menu system will read provided stream for input, it works for Serial,
+encoders, joysticks, keyboards (or touch?) a stream must be made out of them
 */
 #ifndef RSITE_ARDUINOP_MENU_SYSTEM
   #define RSITE_ARDUINOP_MENU_SYSTEM
@@ -142,6 +142,9 @@ for encoders, joysticks, keyboards or touch a stream must be made out of them
     //device resolution
     int resX;
     int resY;
+    //preventing uneeded redraws
+    int lastTop;
+    int lastSel;
     menuOut(int x=0x7F,int y=0x7F,int resX=1,int resY=1)
     	:maxX(x),maxY(y),top(0),resX(resX),resY(resY),drawn(0) {}
     virtual void clear()=0;
