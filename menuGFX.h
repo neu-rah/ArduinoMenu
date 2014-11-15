@@ -8,6 +8,7 @@ Thread Safe: No
 Extensible: Yes
 
 Use graphics screens (adafruit library based) as menu output
+www.r-site.net
 ***/
 #ifndef RSITE_ARDUINOP_MENU_GFX
 	#define RSITE_ARDUINOP_MENU_GFX
@@ -30,10 +31,10 @@ Use graphics screens (adafruit library based) as menu output
 
   class menuGFX:public menuOut {
     public:
-    uint16_t bgColor;
-    uint16_t enabledColor;
-    uint16_t disabledColor;
-    uint16_t hiliteColor;
+  	uint16_t hiliteColor=BLUE;
+  	uint16_t bgColor=SILVER;
+  	uint16_t enabledColor=WHITE;
+  	uint16_t disabledColor=RED;
     Adafruit_GFX& gfx;
     menuGFX(
     	Adafruit_GFX& gfx,
@@ -50,7 +51,14 @@ Use graphics screens (adafruit library based) as menu output
 	  	disabledColor(disabledColor),
 	  	hiliteColor(hiliteColor),
 	  	menuOut(gfx.width()/resX,gfx.height()/resY,resX,resY) {}
-    virtual void clear() {gfx.fillScreen(bgColor);gfx.setCursor(0,0);}
+	  	
+    virtual void clear() {
+    	//gfx.fillScreen(bgColor);
+    	Serial<<"max:"<<maxX<<","<<maxY<<endl
+    		<<"res:"<<resX<<","<<resY<<endl;
+    	gfx.fillRect(0,0,resX*maxX,resY*maxY,bgColor);
+    	gfx.setCursor(0,0);
+    }
     virtual void setCursor(int x,int y) {gfx.setCursor(x*resX,y*resY);}
     virtual void print(char ch) {gfx.print(ch);}
     virtual void print(const char *text) {gfx.print(text);}
@@ -60,27 +68,37 @@ Use graphics screens (adafruit library based) as menu output
     virtual void print(double i) {gfx.print(i);};
     virtual void println(double i) {gfx.println(i);};
     virtual void print(prompt &o,bool selected,int idx,int posY,int width) {
+    	Serial<<"menuGFX printing prompt "<<o.text<<endl;
     	gfx.fillRect(0,posY*resY,width*resX,resY,selected?hiliteColor:bgColor);
     	gfx.setTextColor(o.enabled?enabledColor:disabledColor);
     	gfx.setCursor(0,posY*resY);
     	o.printTo(gfx);
-    	println();
+    	//println();
     }
-    inline int needRedraw(menu& m,int i) {return (drawn!=&m)||(top!=lastTop)||(m.sel!=lastSel&&((i==m.sel)||(i==lastSel)));}
+    /*virtual void print(menuField &o,bool selected,int idx,int posY,int width) {
+			p.print(text);
+			p.print(activeNode==this?(tunning?'>':':'):' ');
+			p.print(value);
+			p.print(" ");
+			p.print(units);
+			p.print("  ");
+    }*/
+    /*drawStyle getStyle(prompt& p,bool selected,bool editing=false) {
+    	if (p.enabled)
+    		return selected?SELECTED:NORMAL;
+    	else return DISABLED;
+    }*/
 		virtual void printMenu(menu& m,bool drawExit) {
 			if (drawn!=&m) clear();//clear all screen when changing menu
 			if (m.sel-top>=maxY) top=m.sel-maxY+1;//selected option outside device (bottom)
 			else if (m.sel<top) top=m.sel;//selected option outside device (top)
-			int i=0;for(;i<m.sz;i++) {
-				if ((i>=top)&&((i-top)<maxY)) {
+			int i=top;for(;i<m.sz;i++) {
+				//if ((i>=top)&&((i-top)<maxY)) {
 				  if(i-top>=maxY) break;
 				  if (needRedraw(m,i)) {
-				  	Serial<<hex((long)drawn)<<" <-> "<<hex((long)&m)
-				  		<<(drawn!=&m)<<(top!=lastTop)<<(m.sel!=lastSel&&((i==m.sel)||(i==lastSel)))
-					  	<<" drawing option:"<<m.data[i]->text<<endl;
 				  	print(*m.data[i],i==m.sel,i+1,i-top,m.width);
 				  }
-				}
+				//}
 			}
 			if (drawExit&&i-top<maxY&&needRedraw(m,i))
 				print(menu::exitOption,m.sel==m.sz,0,i-top,m.width);

@@ -8,6 +8,7 @@ Thread Safe: No
 Extensible: Yes
 
 Arduino generic menu system
+www.r-site.net
 */
 #include <Arduino.h>
 #include "menu.h"
@@ -17,6 +18,8 @@ char menu::enabledCursor='>';
 char menu::disabledCursor='-';
 prompt menu::exitOption(menu::exit);
 menuNode* menuNode::activeNode=NULL;
+
+bool menuOut::needRedraw(menu& m,int i) {return (drawn!=&m)||(top!=lastTop)||(m.sel!=lastSel&&((i==m.sel)||(i==lastSel)));}
 
 //menu navigation engine
 //iteract with input until a selection is done, return the selection

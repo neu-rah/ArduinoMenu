@@ -17,6 +17,7 @@ Arduino generic menu system
 
 the menu system will read provided stream for input, it works for Serial,
 encoders, joysticks, keyboards (or touch?) a stream must be made out of them
+www.r-site.net
 */
 #ifndef RSITE_ARDUINOP_MENU_SYSTEM
   #define RSITE_ARDUINOP_MENU_SYSTEM
@@ -113,6 +114,9 @@ encoders, joysticks, keyboards (or touch?) a stream must be made out of them
     };\
     menuToggle<typeof(target)> id (text,sizeof(id##_data)/sizeof(prompt*),id##_data,target);
   
+	/*#define GET_MACRO(_1,_2,NAME,...) NAME
+	#define VALUE(...) GET_MACRO(__VA_ARGS__, EXPLICIT_VALUE, IMPLICIT_VALUE)(__VA_ARGS__)*/
+
   #define OP(...) OP_(__COUNTER__,__VA_ARGS__)
   #define FIELD(...) FIELD_(__COUNTER__,__VA_ARGS__)
   #define VALUE(...) VALUE_(__COUNTER__,__VA_ARGS__)
@@ -136,17 +140,31 @@ encoders, joysticks, keyboards (or touch?) a stream must be made out of them
     public:
     menu* drawn;//last drawn menu, avoiding clear/redraw on each nav. change
     int top;//top for this device
-    //device size
+    //device size (in characters)
     int maxX;
     int maxY;
-    //device resolution
+    //device resolution (pixels per character)
     int resX;
     int resY;
     //preventing uneeded redraws
-    int lastTop;
-    int lastSel;
-    menuOut(int x=0x7F,int y=0x7F,int resX=1,int resY=1)
+    int lastTop=-1;
+    int lastSel=-1;
+    
+    inline menuOut(int x=0x7F,int y=0x7F,int resX=1,int resY=1)
     	:maxX(x),maxY(y),top(0),resX(resX),resY(resY),drawn(0) {}
+
+    enum drawStyle {NORMAL=0,SELECTED,EDITING,TUNNING,DISABLED};
+		//just access the vars, its all public!
+  	/*
+    inline menuOut() {}
+  	inline menuOut& xmax(int x) {maxX=x;return *this;}
+  	inline menuOut& ymay(int y) {maxY=y;return *this;}
+ 	
+  	inline menuOut& xres(int x) {maxX=x;return *this;}
+  	inline menuOut& yres(int y) {maxY=y;return *this;}*/
+  	
+  //member functions
+    bool needRedraw(menu& m,int i);
     virtual void clear()=0;
     virtual void setCursor(int x,int y)=0;
     virtual void print(char ch)=0;
@@ -156,7 +174,7 @@ encoders, joysticks, keyboards (or touch?) a stream must be made out of them
     virtual void println(int)=0;
     virtual void print(double)=0;
     virtual void println(double)=0;
-    virtual void print(prompt &o,bool selected,int idx,int posY,int width)=0;
+    virtual void print(prompt &o,bool selected,int idx,int posY,int width);
 		virtual void printMenu(menu&,bool drawExit)=0;
   };
   
@@ -205,7 +223,7 @@ encoders, joysticks, keyboards (or touch?) a stream must be made out of them
   
   class menuNode:public prompt {//some basic information for menus and fields
   	public:
-    int width=16;//field or menu width
+    int width=32;//field or menu width
     //navigation and focus control
     static menuNode* activeNode;
     menu* previousMenu=NULL;

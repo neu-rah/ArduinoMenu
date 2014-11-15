@@ -19,14 +19,15 @@ class quadEncoder {
 public:
   volatile int pos;
   int pinA,pinB;
-  quadEncoder(int a,int b):pinA(a),pinB(b) {
-    pinMode(a, INPUT);
-    digitalWrite(a,1);
-    pinMode(b, INPUT);
-    digitalWrite(b,1);
+  quadEncoder(int a,int b):pinA(a),pinB(b) {}
+  void begin() {
+    pinMode(pinA, INPUT);
+    digitalWrite(pinA,1);
+    pinMode(pinB, INPUT);
+    digitalWrite(pinB,1);
     //attach pin change handlers
-    PCattachInterrupt(a, mixHandler((void(*)(void*))quadEncoderUpdateA,this), CHANGE);
-    PCattachInterrupt(b, mixHandler((void(*)(void*))quadEncoderUpdateB,this), CHANGE);
+    PCattachInterrupt(pinA, mixHandler((void(*)(void*))quadEncoderUpdateA,this), CHANGE);
+    PCattachInterrupt(pinB, mixHandler((void(*)(void*))quadEncoderUpdateB,this), CHANGE);
   }
   //PCint handlers
   static void quadEncoderUpdateA(class quadEncoder *e) {

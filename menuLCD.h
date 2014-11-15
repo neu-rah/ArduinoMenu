@@ -8,6 +8,8 @@ Thread Safe: No
 Extensible: Yes
 
 Use standard arduino LCD (LiquidCrystal library) as menu output
+
+www.r-site.net
 ***/
 
 #ifndef RSITE_ARDUINOP_MENU_LCD
@@ -35,18 +37,22 @@ Use standard arduino LCD (LiquidCrystal library) as menu output
 			println();
 		}
 		virtual void printMenu(menu& m,bool drawExit) {
-			if (drawn==&m) return;
-			clear();
+		  Serial<<"Printing menu "<<m.text<<endl;
+			if (drawn!=&m) clear();//clear screen when changing menu
 			if (m.sel-top>=maxY) top=m.sel-maxY+1;//selected option outside device (bottom)
 			else if (m.sel<top) top=m.sel;//selected option outside device (top)
 			int i=0;for(;i<m.sz;i++) {
 				if ((i>=top)&&((i-top)<maxY)) {
-				  if(i-top>=maxY) break;
-				  print(*m.data[i],i==m.sel,i+1,i-top,m.width);
+				  //if(i-top>=maxY) break;
+				  if (needRedraw(m,i)) {
+				  	print(*m.data[i],i==m.sel,i+1,i-top,m.width);
+				  }
 				}
 			}
-			if (drawExit&&i-top<maxY)
+			if (drawExit&&i-top<maxY&&needRedraw(m,i))
 				print(menu::exitOption,m.sel==m.sz,0,i-top,m.width);
+			lastTop=top;
+			lastSel=m.sel;
 			drawn=&m;
 		}
   };
