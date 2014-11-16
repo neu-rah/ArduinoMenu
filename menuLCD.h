@@ -37,7 +37,6 @@ www.r-site.net
 			println();
 		}
 		virtual void printMenu(menu& m,bool drawExit) {
-		  Serial<<"Printing menu "<<m.text<<endl;
 			if (drawn!=&m) clear();//clear screen when changing menu
 			if (m.sel-top>=maxY) top=m.sel-maxY+1;//selected option outside device (bottom)
 			else if (m.sel<top) top=m.sel;//selected option outside device (top)

@@ -36,12 +36,14 @@ www.r-site.net
 			println();
 		}
 		virtual void printMenu(menu& m,bool drawExit) {
-			if (drawn==&m) return;
+			if (drawn==&m&&m.sel==lastSel) return;
 			clear();
 			int i=0;
 			for(;i<m.sz;i++)
 			  print(*m.data[i],i==m.sel,i+1,i-top,m.width);
 			if (drawExit) print(menu::exitOption,m.sel==m.sz,0,i-top,m.width);
+			lastTop=top;
+			lastSel=m.sel;
 			drawn=&m;
 		}
   };
