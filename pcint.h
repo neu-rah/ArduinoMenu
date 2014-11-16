@@ -4,10 +4,12 @@ adapted from: http://playground.arduino.cc/Main/PcInt
 with many changes to make it compatible with arduino boards (original worked on Uno)
 not tested on many boards but has the code uses arduino macros for pin mappings 
 it should be more compatible and also more easy to extend
+some boards migh need pcintPinMap definition
+
 Sept. 2014
   small changes to existing PCINT library, supporting an optional cargo parameter
 
-Nov.2014
+Nov.2014 large changes
   - Use arduino standard macros for PCINT mapping instead of specific map math, broaden compatibility
   - array[a][b] is 17% faster than array[(a<<3)+b], same memory
   - reverse pin mappings for pin change check (not on arduino env. AFAIK)
@@ -22,12 +24,6 @@ Nov.2014
 	#endif
 	#include "pins_arduino.h"
 
-	/*volatile uint8_t *port_to_pcmask[] = {//no need for volatile as it is only accesed inside interrupt
-		&PCMSK0,
-		&PCMSK1,
-		&PCMSK2
-	};*/
-	
 	// PCINT reverse map
 	// because some avr's (like 2560) have a messed map we got to have this detailed pin reverse map
 	// still this makes the PCINT automatization very slow, risking interrupt collision
@@ -102,7 +98,7 @@ Nov.2014
 	// there isn't really a good way to back-map ports and masks to pins.
 	// here we consider only the first change found ignoring subsequent, assuming no interrupt cascade
 	static void PCint(uint8_t port) {
-		const uint8_t* map=pcintPinMapBank(port);//get 8 bit pin change map
+		const uint8_t* map=pcintPinMapBank(port);//get 8 bits pin change map
 		for(int i=0;i<8;i++) {
 			uint8_t p=digitalPinFromPCINTBank(map,i);
 			if (p==-1) continue;//its not assigned
@@ -111,14 +107,14 @@ Nov.2014
 			if (PCintFunc[port][i]!=NULL) {//only check active pins
 				uint8_t stat=(*portInputRegister(digitalPinToPort(p)))&digitalPinToBitMask(p);
 				if (PCintLast[port][i]^stat) {//pin changed!
+ 				  PCintLast[port][i]=stat;
 					if (
             PCintMode[port][i]==CHANGE
             || (stat&&(PCintMode[port][i]==RISING))
             || ((!stat)&&(PCintMode[port][i]==FALLING))
 		      ) {
-	 				  PCintLast[port][i]=stat;
 	 				  PCintFunc[port][i]();
-						break;
+						break;//if using concurrent interrupts remove this
 		      }
 				}
 			}
