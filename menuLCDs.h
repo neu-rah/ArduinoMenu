@@ -24,6 +24,11 @@ www.r-site.net
     public:
     LCD& lcd;
     menuLCD(LCD& lcd,int x=16,int y=1):lcd(lcd),menuOut(x,y) {}
+    virtual void clearLine(int ln) {
+			lcd.setCursor(0,ln);
+    	for(int n=0;n<maxX;n++) print(' ');
+			lcd.setCursor(0,ln);
+    }//clear current line
     virtual void clear() {lcd.clear();}
     virtual void setCursor(int x,int y) {lcd.setCursor(x*resX,y*resY);}
     virtual void print(char ch) {lcd.print(ch);}
@@ -34,16 +39,13 @@ www.r-site.net
     virtual void print(double i) {lcd.print(i);};
     virtual void println(double i) {lcd.println(i);};
 		virtual void print(prompt &o,bool selected,int idx,int posY,int width) {
-			lcd.setCursor(0,posY);
-			print(selected?(o.enabled?menu::enabledCursor:menu::disabledCursor):' ');
-			o.printTo(lcd);
+			o.printTo(*this,posY,selected);
 			println();
 		}
 		virtual void printMenu(menu& m,bool drawExit) {
 			if (m.sel-top>=maxY) top=m.sel-maxY+1;//selected option outside device (bottom)
 			else if (m.sel<top) top=m.sel;//selected option outside device (top)
 			if (drawn!=&m||top!=lastTop) clear();
-		  Serial<<"Printing menu "<<m.text<<endl;
 			int i=top;for(;i<m.sz;i++) {
 				//if ((i>=top)&&((i-top)<maxY)) {
 				  if(i-top>=maxY) break;

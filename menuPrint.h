@@ -19,6 +19,7 @@ www.r-site.net
     public:
     Print& device;
     menuPrint(Print& device):device(device) {}
+    virtual void clearLine(int ln) {}
     virtual void clear() {device.println("");device.println("");}
     virtual void setCursor(int x,int y) {device.println("");}
     virtual void print(char ch) {device.print(ch);}
@@ -31,8 +32,8 @@ www.r-site.net
 		virtual void print(prompt &o,bool selected,int idx,int posY,int width) {
       print(idx<10?" ":"");
       print(idx);
-			print(selected?(o.enabled?menu::enabledCursor:menu::disabledCursor):' ');
-			o.printTo(device);
+			//print(selected?(o.enabled?menu::enabledCursor:menu::disabledCursor):' ');
+			o.printTo(*this,posY,selected);
 			println();
 		}
 		virtual void printMenu(menu& m,bool drawExit) {

@@ -21,6 +21,12 @@ menuNode* menuNode::activeNode=NULL;
 
 bool menuOut::needRedraw(menu& m,int i) {return (drawn!=&m)||(top!=lastTop)||(m.sel!=lastSel&&((i==m.sel)||(i==lastSel)));}
 
+void prompt::printTo(menuOut& p,int posY,bool selected) {
+	p.clearLine(posY);
+	p.print(selected?(enabled?menu::enabledCursor:menu::disabledCursor):' ');
+	p.print(text);
+}
+
 //menu navigation engine
 //iteract with input until a selection is done, return the selection
 int menu::menuKeys(menuOut &p,Stream& c,bool canExit) {
@@ -67,7 +73,6 @@ void menu::activate(menuOut& p,Stream& c,bool canExit) {
 		activeNode=this;
 		sel=0;
 		p.top=0;
-   	//p.drawn=0;//redraw menu
    	this->canExit=canExit;
 	}
   int op=-1;

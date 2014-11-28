@@ -165,6 +165,7 @@ www.r-site.net
   	
   //member functions
     bool needRedraw(menu& m,int i);
+    virtual void clearLine(int ln)=0;
     virtual void clear()=0;
     virtual void setCursor(int x,int y)=0;
     virtual void print(char ch)=0;
@@ -213,9 +214,7 @@ www.r-site.net
     inline prompt(const char * text):text(text),enabled(true) {}
     inline prompt(const char * text,promptAction action)
     	:text(text),action(action),enabled(true) {}
-    virtual size_t printTo(Print& p) {
-    	p.print(text);return strlen(text);
-    }
+    virtual void printTo(menuOut& p,int posY,bool selected);
     virtual void activate(menuOut& p,Stream&c,bool) {
     	action(*this,p,c);
     }

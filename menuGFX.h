@@ -52,10 +52,11 @@ www.r-site.net
 	  	hiliteColor(hiliteColor),
 	  	menuOut(gfx.width()/resX,gfx.height()/resY,resX,resY) {}
 	  	
+    virtual void clearLine(int ln) {
+    	gfx.fillRect(0,ln*resY,resX,maxY,bgColor);
+    	gfx.setCursor(0,ln*resY);
+    }
     virtual void clear() {
-    	//gfx.fillScreen(bgColor);
-    	Serial<<"max:"<<maxX<<","<<maxY<<endl
-    		<<"res:"<<resX<<","<<resY<<endl;
     	gfx.fillRect(0,0,resX*maxX,resY*maxY,bgColor);
     	gfx.setCursor(0,0);
     }
@@ -68,26 +69,9 @@ www.r-site.net
     virtual void print(double i) {gfx.print(i);};
     virtual void println(double i) {gfx.println(i);};
     virtual void print(prompt &o,bool selected,int idx,int posY,int width) {
-    	Serial<<"menuGFX printing prompt "<<o.text<<endl;
-    	gfx.fillRect(0,posY*resY,width*resX,resY,selected?hiliteColor:bgColor);
     	gfx.setTextColor(o.enabled?enabledColor:disabledColor);
-    	gfx.setCursor(0,posY*resY);
-    	o.printTo(gfx);
-    	//println();
+    	o.printTo(*this,posY,selected);
     }
-    /*virtual void print(menuField &o,bool selected,int idx,int posY,int width) {
-			p.print(text);
-			p.print(activeNode==this?(tunning?'>':':'):' ');
-			p.print(value);
-			p.print(" ");
-			p.print(units);
-			p.print("  ");
-    }*/
-    /*drawStyle getStyle(prompt& p,bool selected,bool editing=false) {
-    	if (p.enabled)
-    		return selected?SELECTED:NORMAL;
-    	else return DISABLED;
-    }*/
 		virtual void printMenu(menu& m,bool drawExit) {
 			if (drawn!=&m) clear();//clear all screen when changing menu
 			if (m.sel-top>=maxY) top=m.sel-maxY+1;//selected option outside device (bottom)
