@@ -32,8 +32,8 @@ www.r-site.net
 		virtual void print(prompt &o,bool selected,int idx,int posY,int width) {
       print(idx<10?" ":"");
       print(idx);
-			//print(selected?(o.enabled?menu::enabledCursor:menu::disabledCursor):' ');
-			o.printTo(*this,posY,selected);
+			print(selected?(o.enabled?menu::enabledCursor:menu::disabledCursor):' ');
+			o.printTo(*this);
 			println();
 		}
 		virtual void printMenu(menu& m,bool drawExit) {

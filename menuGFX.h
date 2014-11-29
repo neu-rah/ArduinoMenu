@@ -69,8 +69,11 @@ www.r-site.net
     virtual void print(double i) {gfx.print(i);};
     virtual void println(double i) {gfx.println(i);};
     virtual void print(prompt &o,bool selected,int idx,int posY,int width) {
+    	gfx.fillRect(0,posY*resY,width*resX,resY,selected?hiliteColor:bgColor);
     	gfx.setTextColor(o.enabled?enabledColor:disabledColor);
-    	o.printTo(*this,posY,selected);
+    	gfx.setCursor(0,posY*resY);
+    	o.printTo(*this);
+    	println();
     }
 		virtual void printMenu(menu& m,bool drawExit) {
 			if (drawn!=&m) clear();//clear all screen when changing menu

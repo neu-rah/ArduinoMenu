@@ -39,8 +39,9 @@ www.r-site.net
     virtual void print(double i) {lcd.print(i);};
     virtual void println(double i) {lcd.println(i);};
 		virtual void print(prompt &o,bool selected,int idx,int posY,int width) {
-			o.printTo(*this,posY,selected);
-			println();
+			lcd.setCursor(0,posY);
+			print(selected?(o.enabled?menu::enabledCursor:menu::disabledCursor):' ');
+			o.printTo(*this);
 		}
 		virtual void printMenu(menu& m,bool drawExit) {
 			if (m.sel-top>=maxY) top=m.sel-maxY+1;//selected option outside device (bottom)

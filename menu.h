@@ -154,14 +154,6 @@ www.r-site.net
     	:maxX(x),maxY(y),top(0),resX(resX),resY(resY),drawn(0) {}
 
     enum drawStyle {NORMAL=0,SELECTED,EDITING,TUNNING,DISABLED};
-		//just access the vars, its all public!
-  	/*
-    inline menuOut() {}
-  	inline menuOut& xmax(int x) {maxX=x;return *this;}
-  	inline menuOut& ymay(int y) {maxY=y;return *this;}
- 	
-  	inline menuOut& xres(int x) {maxX=x;return *this;}
-  	inline menuOut& yres(int y) {maxY=y;return *this;}*/
   	
   //member functions
     bool needRedraw(menu& m,int i);
@@ -214,7 +206,9 @@ www.r-site.net
     inline prompt(const char * text):text(text),enabled(true) {}
     inline prompt(const char * text,promptAction action)
     	:text(text),action(action),enabled(true) {}
-    virtual void printTo(menuOut& p,int posY,bool selected);
+    virtual void printTo(menuOut& p) {
+			p.print(text);
+		}
     virtual void activate(menuOut& p,Stream&c,bool) {
     	action(*this,p,c);
     }
