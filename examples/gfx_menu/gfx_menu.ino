@@ -14,22 +14,35 @@ ruihfazevedo@rrob@gmail.com
 #include <Adafruit_ST7735.h> // Hardware-specific library
 #include <menuGFX.h>
 
-///////////////////////////////////////////////////////////////////////////
-//TFT + SD
-#define sdCS  9
-#define tftCS 8
-#define dc    6
-#define rst   7
+#if defined(__AVR_ATmega2560__)
+  ///////////////////////////////////////////////////////////////////////////
+  //TFT + SD
+  //#define sdCS  9//not using SD card
+  #define tftCS 8
+  #define dc    6
+  #define rst   7
+  ////////////////////////////////////////////
+  // ENCODER (aka rotary switch) PINS
+  #define encA 12
+  #define encB 10
+  #define encBtn 13
+#elif defined(__AVR_ATmega328__) || defined(__AVR_ATmega328P__)
+  ///////////////////////////////////////////////////////////////////////////
+  //TFT + SD
+  //#define sdCS  9//not using SD card
+  #define tftCS 10
+  #define dc    7
+  #define rst   8
+  ////////////////////////////////////////////
+  // ENCODER (aka rotary switch) PINS
+  #define encA A2
+  #define encB A1
+  #define encBtn A3
+#else
+  #error "Uknown pinout"
+#endif
 
 Adafruit_ST7735 tft(tftCS, dc, rst);
-
-////////////////////////////////////////////
-// ENCODER (aka rotary switch) PINS
-// mega 2560
-#define encA 10
-#define encB 12
-#define encBtn 13
-
 ///////////////////////////////////////////////////////////////////////////
 //functions to wire as menu actions
 

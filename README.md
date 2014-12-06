@@ -9,7 +9,7 @@ Works either over serial or with LCD + encoder
 V2.0 
 
 main changes:
-	- non-blocking menu mode
+	- non-blocking menu main cycle
 	- Menufields as menu prompts with associated value
 		values can be:
 			numeric withing range
@@ -23,45 +23,45 @@ notes:
 -------------------------------------------------------------------------------
 example of menu definition (c++ macros)
 
-		//a submenu
-		MENU(ledMenu,"LED on pin 13",
-			OP("LED On",ledOn),
-			OP("LED Off",ledOff)
-		);
-		
-		//field value toggle on click
-		TOGGLE(targetVar,trigModes,"Mode: ",
-			VALUE("None",trigPoint::None),
-			VALUE("On rise",trigPoint::onRise),
-			VALUE("On fall",trigPoint::onFall),
-			VALUE("Both",trigPoint::isIn)
-		);
-		
-		//field value, click to browse, click to choose
-		CHOOSE(adc_prescale,sample_clock,"Sample clock",
-			VALUE("/128",avrADC::clk_128,setADCClk),
-			VALUE("/64",avrADC::clk_64,setADCClk),
-			VALUE("/32",avrADC::clk_32,setADCClk),
-			VALUE("/16",avrADC::clk_16,setADCClk),
-			VALUE("/8",avrADC::clk_8,setADCClk),
-			VALUE("/4",avrADC::clk_4,setADCClk),
-			VALUE("/2",avrADC::clk_2,setADCClk)
-		);
+	//a submenu
+	MENU(ledMenu,"LED on pin 13",
+		OP("LED On",ledOn),
+		OP("LED Off",ledOff)
+	);
 
-		//the main menu...
-		//Fields are numeric and show selected value. click to start change, click to fine tune, click to end
-		MENU(mainMenu,"Main menu",
-		  FIELD(frequency,"Freq","Hz",0,16000000,100,1,updateFreq),
-		  FIELD(dutty,"Duty","%",0,100,1,0,updateDutty),
-			OP("Handler test",completeHandlerTest),
-			SUBMENU(trigModes),
-			SUBMENU(ledMenu)
-		);
+	//field value toggle on click
+	TOGGLE(targetVar,trigModes,"Mode: ",
+		VALUE("None",trigPoint::None),
+		VALUE("On rise",trigPoint::onRise),
+		VALUE("On fall",trigPoint::onFall),
+		VALUE("Both",trigPoint::isIn)
+	);
+
+	//field value, click to browse, click to choose
+	CHOOSE(adc_prescale,sample_clock,"Sample clock",
+		VALUE("/128",avrADC::clk_128,setADCClk),
+		VALUE("/64",avrADC::clk_64,setADCClk),
+		VALUE("/32",avrADC::clk_32,setADCClk),
+		VALUE("/16",avrADC::clk_16,setADCClk),
+		VALUE("/8",avrADC::clk_8,setADCClk),
+		VALUE("/4",avrADC::clk_4,setADCClk),
+		VALUE("/2",avrADC::clk_2,setADCClk)
+	);
+
+	//the main menu...
+	//Fields are numeric and show selected value. click to start change, click to fine tune, click to end
+	MENU(mainMenu,"Main menu",
+		FIELD(frequency,"Freq","Hz",0,16000000,100,1,updateFreq),
+		FIELD(dutty,"Duty","%",0,100,1,0,updateDutty),
+		OP("Handler test",completeHandlerTest),
+		SUBMENU(trigModes),
+		SUBMENU(ledMenu)
+	);
 
 -------------------------------------------------------------------------------
 syntax:
 
-	OP(name,function)
+  OP(name,function)
 		name string to be shown as menu option prompt
 		function to be called on click
 	
