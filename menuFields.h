@@ -54,7 +54,7 @@ www.r-site.net
 		virtual void printTo(menuOut& p) {
 			p.print(text);
 			p.print(activeNode==this?(tunning?'>':':'):' ');
-			p.print(value);
+			p.print((unsigned long)value);
 			p.print(" ");
 			p.print(units);
 			p.print("  ");

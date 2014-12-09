@@ -25,13 +25,13 @@ www.r-site.net
     virtual void print(char ch) {device.print(ch);}
     virtual void print(const char *text) {device.print(text);}
     virtual void println(const char *text="") {device.println(text);}
-    virtual void print(int i) {device.print(i);};
-    virtual void println(int i) {device.println(i);};
+    virtual void print(unsigned long i) {device.print(i);};
+    virtual void println(unsigned long i) {device.println(i);};
     virtual void print(double i) {device.print(i);};
     virtual void println(double i) {device.println(i);};
 		virtual void print(prompt &o,bool selected,int idx,int posY,int width) {
       print(idx<10?" ":"");
-      print(idx);
+      print((unsigned long)idx);
 			print(selected?(o.enabled?menu::enabledCursor:menu::disabledCursor):' ');
 			o.printTo(*this);
 			println();

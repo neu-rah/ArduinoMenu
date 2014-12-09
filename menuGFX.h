@@ -54,24 +54,24 @@ www.r-site.net
 	  	
     virtual void clearLine(int ln) {
     	gfx.fillRect(0,ln*resY,resX*maxX,resY,bgColor);
-    	gfx.setCursor(0,ln*resY);
+    	setCursor(0,ln);
     }
     virtual void clear() {
     	gfx.fillRect(0,0,resX*maxX,resY*maxY,bgColor);
-    	gfx.setCursor(0,0);
+    	setCursor(0,0);
     }
     virtual void setCursor(int x,int y) {gfx.setCursor(x*resX,y*resY);}
     virtual void print(char ch) {gfx.print(ch);}
     virtual void print(const char *text) {gfx.print(text);}
     virtual void println(const char *text="") {gfx.println(text);};
-    virtual void print(int i) {gfx.print(i);};
-    virtual void println(int i) {gfx.println(i);};
+    virtual void print(unsigned long i) {gfx.print(i);};
+    virtual void println(unsigned long i) {gfx.println(i);};
     virtual void print(double i) {gfx.print(i);};
     virtual void println(double i) {gfx.println(i);};
     virtual void print(prompt &o,bool selected,int idx,int posY,int width) {
     	gfx.fillRect(0,posY*resY,maxX*resX,resY,selected?hiliteColor:bgColor);
     	gfx.setTextColor(o.enabled?enabledColor:disabledColor);
-    	gfx.setCursor(0,posY);//*resY);
+    	setCursor(0,posY);
     	o.printTo(*this);
     	println();
     }

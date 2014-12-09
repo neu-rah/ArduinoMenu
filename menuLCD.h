@@ -22,17 +22,17 @@ www.r-site.net
     LiquidCrystal& lcd;
     menuLCD(LiquidCrystal& lcd,int x=16,int y=1):lcd(lcd),menuOut(x,y) {}
     virtual void clearLine(int ln) {
-    	lcd.setCursor(0,ln);
+    	setCursor(0,ln);
     	for(int n=0;n<maxX;n++) print(' ');
-    	lcd.setCursor(0,ln);
+    	setCursor(0,ln);
     }
     virtual void clear() {lcd.clear();}
     virtual void setCursor(int x,int y) {lcd.setCursor(x*resX,y*resY);}
     virtual void print(char ch) {lcd.print(ch);}
     virtual void print(const char *text) {lcd.print(text);}
     virtual void println(const char *text="") {lcd.print(text);};
-    virtual void print(int i) {lcd.print(i);};
-    virtual void println(int i) {lcd.println(i);};
+    virtual void print(unsigned long i) {lcd.print(i);};
+    virtual void println(unsigned long i) {lcd.println(i);};
     virtual void print(double i) {lcd.print(i);};
     virtual void println(double i) {lcd.println(i);};
 		virtual void print(prompt &o,bool selected,int idx,int posY,int width) {

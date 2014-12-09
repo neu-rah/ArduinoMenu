@@ -41,8 +41,8 @@ ruihfazevedo@rrob@gmail.com
   #define rst   7
   ////////////////////////////////////////////
   // ENCODER (aka rotary switch) PINS
-  #define encA 12
-  #define encB 10
+  #define encA 10
+  #define encB 12
   #define encBtn 13
 #elif defined(__AVR_ATmega328__) || defined(__AVR_ATmega328P__)
   ///////////////////////////////////////////////////////////////////////////
