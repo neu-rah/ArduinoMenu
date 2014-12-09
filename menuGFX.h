@@ -71,7 +71,7 @@ www.r-site.net
     virtual void print(prompt &o,bool selected,int idx,int posY,int width) {
     	gfx.fillRect(0,posY*resY,maxX*resX,resY,selected?hiliteColor:bgColor);
     	gfx.setTextColor(o.enabled?enabledColor:disabledColor);
-    	gfx.setCursor(0,posY*resY);
+    	gfx.setCursor(0,posY);//*resY);
     	o.printTo(*this);
     	println();
     }

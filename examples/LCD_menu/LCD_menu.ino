@@ -1,8 +1,17 @@
-/******************
+/********************
+Arduino generic menu system
 LCD menu - unsing arduino classic LCD library
-Rui Azevedo 2014
-ruihfazevedo@rrob@gmail.com
-********/
+http://www.r-site.net/?at=//op%5B%40id=%273090%27%5D
+
+Sept.2014 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
+creative commons license 3.0: Attribution-ShareAlike CC BY-SA
+This software is furnished "as is", without technical support, and with no 
+warranty, express or implied, as to its usefulness for any purpose.
+
+Thread Safe: No
+Extensible: Yes
+
+*/
 #include <HardwareSerial.h>
 #include <LiquidCrystal.h>
 #include <menu.h>//menu macros and objects

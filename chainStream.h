@@ -31,6 +31,7 @@ class chainStream:public Stream {
     for(int n=0;n<N;n++)
       if (streams[n]->available()) {
         int key=streams[n]->read();
+        if (key==-1) return -1;
         while(streams[n]->peek()==key) streams[n]->read();//wait for key release
         return key;
       }

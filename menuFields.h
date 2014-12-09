@@ -44,7 +44,7 @@ www.r-site.net
 	template <typename T>
 	class menuField:public menuNode {
 	public:
-		T &value;
+		T& value;
 		const char* units;
 		T low,high,step,tune;
 		bool tunning=false;
@@ -79,11 +79,11 @@ www.r-site.net
     		tunning=false;
     		activeNode=previousMenu;
     		c.flush();
-    		ch=13;
+    		ch=menu::enterCode;
       } else {
 			  ch=c.read();
 		    tmp=value;
-		    if (ch==13) {
+		    if (ch==menu::enterCode) {
 		    	if (tunning||!tune) {//then exit edition
 		    		tunning=false;
 		    		activeNode=previousMenu;
@@ -93,7 +93,7 @@ www.r-site.net
 		    else if (ch=='-') value-=tunning?tune:step;
 		  }
       clamp();
-      if (value!=tmp||ch==13) {
+      if (value!=tmp||ch==menu::enterCode) {
       	func();//call update functions
       	p.lastSel=-1;
       	previousMenu->printMenu(p,previousMenu->canExit);

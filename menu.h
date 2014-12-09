@@ -19,11 +19,13 @@ the menu system will read provided stream for input, it works for Serial,
 encoders, joysticks, keyboards (or touch?) a stream must be made out of them
 www.r-site.net
 */
-#ifndef RSITE_ARDUINOP_MENU_SYSTEM
-  #define RSITE_ARDUINOP_MENU_SYSTEM
+#ifndef RSITE_ARDUINO_MENU_SYSTEM
+  #define RSITE_ARDUINO_MENU_SYSTEM
   
 	#include <Stream.h>
 	#include <HardwareSerial.h>
+	//#include <Flash.h>
+
 	//#include <streamFlow.h>
 	
   class prompt;
@@ -138,6 +140,7 @@ www.r-site.net
   // this base class represents the output device either derived to serial, LCD or other
   class menuOut {
     public:
+    
     menu* drawn;//last drawn menu, avoiding clear/redraw on each nav. change
     int top;//top for this device
     //device size (in characters)
@@ -199,7 +202,7 @@ www.r-site.net
 	//a menu is also a prompt so we can have sub-menus
   class prompt {
     public:
-    const char *text;
+    const char* text;
     static void nothing() {}
     promptAction action=nothing;
     bool enabled;
@@ -227,13 +230,17 @@ www.r-site.net
   //a menu or sub-menu
   class menu:public menuNode {
     public:
+    static char escCode;
+    static char enterCode;
+    static char upCode;
+    static char downCode;
     static const char *exit;//text used for exit option
     static char enabledCursor;//character to be used as navigation cursor
     static char disabledCursor;//to be used when navigating over disabled options
     static prompt exitOption;//option to append to menu allowing exit when no escape button/key is available
     const int sz=0;
     int sel;//selection
-    prompt* const* data PROGMEM;
+    prompt* const* data;// PROGMEM;
     bool canExit=false;//store last canExit value for inner reference
     menu(const char * text,int sz,prompt* const data[]):menuNode(text),sz(sz),data(data) {}
     
@@ -245,13 +252,7 @@ www.r-site.net
     void activate(menuOut& p,Stream& c,bool canExit=false);
     
     void poll(menuOut& p,Stream& c,bool canExit=false);
-    
-    //some funcs to support touch... TODO: test them
-    // this functions will probably move to touch class...
-    // will be here now for test while i wait for my touch screen to arrive.....
-		/*void clampY(menuOut& o);//keep menu inside secreen
-		int scrollY(menuOut& o,int pixels);//aux function for touch screen
-		void click(menuOut &p, Stream &c,int x,int y);*/
+   
   };
 
 #endif

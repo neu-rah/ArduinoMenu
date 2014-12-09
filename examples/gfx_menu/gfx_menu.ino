@@ -1,5 +1,23 @@
-/******************
+/********************
+Arduino generic menu system
 GFX menu - unsing adafruit gfx screens
+http://www.r-site.net/?at=//op%5B%40id=%273090%27%5D
+
+Sept. 2014 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
+
+creative commons license 3.0: Attribution-ShareAlike CC BY-SA
+This software is furnished "as is", without technical support, and with no 
+warranty, express or implied, as to its usefulness for any purpose.
+
+Thread Safe: No
+Extensible: Yes
+
+Adafruit GFX library from:
+  https://learn.adafruit.com/adafruit-gfx-graphics-library/overview
+Display ST7735 driver
+  http://www.adafruit.com/product/358
+***/
+/******************
 Rui Azevedo 2014
 ruihfazevedo@rrob@gmail.com
 ********/

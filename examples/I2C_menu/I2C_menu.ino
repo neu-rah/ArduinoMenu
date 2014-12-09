@@ -1,3 +1,20 @@
+/********************
+Arduino generic menu system
+Arduino menu on I2C LCD example
+http://www.r-site.net/?at=//op%5B%40id=%273090%27%5D
+
+Sep.2014 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
+creative commons license 3.0: Attribution-ShareAlike CC BY-SA
+This software is furnished "as is", without technical support, and with no 
+warranty, express or implied, as to its usefulness for any purpose.
+
+Thread Safe: No
+Extensible: Yes
+
+LCD library:
+https://bitbucket.org/fmalpartida/new-liquidcrystal/wiki/Home
+http://playground.arduino.cc/Code/LCD3wires
+*/
 #include <Wire.h> 
 #include <LiquidCrystal_I2C.h>
 #include <menu.h>//menu macros and objects

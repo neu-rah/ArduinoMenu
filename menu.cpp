@@ -14,6 +14,10 @@ www.r-site.net
 #include "menu.h"
 
 const char* menu::exit="Exit";
+char menu::escCode='/';
+char menu::enterCode='*';
+char menu::upCode='+';
+char menu::downCode='-';
 char menu::enabledCursor='>';
 char menu::disabledCursor='-';
 prompt menu::exitOption(menu::exit);
@@ -25,34 +29,32 @@ bool menuOut::needRedraw(menu& m,int i) {return (drawn!=&m)||(top!=lastTop)||(m.
 //iteract with input until a selection is done, return the selection
 int menu::menuKeys(menuOut &p,Stream& c,bool canExit) {
   int op=-2;
-  if (!c.available()) return op;
-  if (c.peek()!=13) {
-    //if(c.available()) {
-      int ch=c.read();
-      if (ch=='-') {
-        if (sel>0) {
-          sel--;
-          if (sel+1>=p.maxY) p.top=sel-p.maxY;
-          //p.drawn=0;
-          //printMenu(p,canExit);
-        }
-      } else if (ch=='+') {
-        if (sel<(sz-(canExit?0:1))) {
-          sel++;
-          if ((sz-sel+(canExit?1:0))>=p.maxY) p.top=sel-(canExit?1:0);
-          //p.drawn=0;
-          //printMenu(p,canExit);
-        }
-      } else if (ch==27) {
-      	op=-1;
-      } else op=ch-49;
-    //}
+  if (!c.available()) return op;//only work when stream data is available
+  if (c.peek()!=menu::enterCode) {
+    int ch=c.read();
+    if (ch==menu::downCode) {
+      if (sel>0) {
+        sel--;
+        if (sel+1>=p.maxY) p.top=sel-p.maxY;
+        //p.drawn=0;
+        //printMenu(p,canExit);
+      }
+    } else if (ch==menu::upCode) {
+      if (sel<(sz-(canExit?0:1))) {
+        sel++;
+        if ((sz-sel+(canExit?1:0))>=p.maxY) p.top=sel-(canExit?1:0);
+        //p.drawn=0;
+        //printMenu(p,canExit);
+      }
+    } else if (ch==menu::escCode) {
+    	op=-1;
+    } else op=ch-'1';
   } else
     op=sel==sz?-1:sel;
   if (!((op>=0&&op<sz)||(canExit&&op==-1))) op=-2;//validate the option
   //add some delays to be sure we do not have more characters NL or CR on the way
   //delay might be adjusted to cope with stream speed
-  delay(50);while (c.peek()==13||c.peek()==10) {c.read();delay(50);}//discard ENTER and CR
+  delay(50);while (c.peek()==menu::enterCode/*||c.peek()==10*/) {c.read();delay(50);}//discard ENTER and CR
   return op;
 }
     
@@ -87,4 +89,5 @@ void menu::poll(menuOut& p,Stream& c,bool canExit) {
 	if (!activeNode) activeNode=this;
 	activeNode->activate(p,c,activeNode==this?canExit:true);
 }
+
 
