@@ -215,6 +215,7 @@ www.r-site.net
     virtual void activate(menuOut& p,Stream&c,bool) {
     	action(*this,p,c);
     }
+    virtual bool isMenu() const {return false;}
   };
   
   class menuNode:public prompt {//some basic information for menus and fields
@@ -253,6 +254,7 @@ www.r-site.net
     
     void poll(menuOut& p,Stream& c,bool canExit=false);
    
+    virtual bool isMenu() const {return true;}
   };
 
 #endif

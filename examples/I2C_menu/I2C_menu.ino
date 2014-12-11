@@ -41,6 +41,6 @@ void setup()
 
 void loop()
 {
-  //serial can use numbers or +/- and Enter to navigate
+  //serial can use numbers or +/- and Enter=* Esc=/ to navigate (nav keys can be redefined)
   mainMenu.poll(menu_lcd,Serial);
 }

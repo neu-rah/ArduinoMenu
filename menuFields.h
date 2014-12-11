@@ -40,6 +40,7 @@ www.r-site.net
   };
   
 	//Prompt linked to a variable
+	//TODO: implement Escape on a field cancels the editting (undo) restoring the value
 	static const char* numericChars="0123456789.";
 	template <typename T>
 	class menuField:public menuNode {

@@ -89,7 +89,7 @@ quadEncoder encoder(encA,encB);//simple quad encoder driver
 quadEncoderStream enc(encoder,5);// simple quad encoder fake Stream
 
 //a keyboard with only one key :D, this is the encoder button
-keyMap encBtn_map[]={{-encBtn,13}};//negative pin numbers means we have a pull-up, this is on when low
+keyMap encBtn_map[]={{-encBtn,menu::enterCode}};//negative pin numbers means we have a pull-up, this is on when low
 keyLook<1> encButton(encBtn_map);
 
 //multiple inputs allow conjugation of the quadEncoder with a single key keyboard that is the quadEncoder button
