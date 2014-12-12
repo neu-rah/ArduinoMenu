@@ -61,34 +61,25 @@ www.r-site.net
     	setCursor(0,0);
     }
     virtual void setCursor(int x,int y) {gfx.setCursor(x*resX,y*resY);}
-    virtual void print(char ch) {gfx.print(ch);}
-    virtual void print(const char *text) {gfx.print(text);}
-    virtual void println(const char *text="") {gfx.println(text);};
-    virtual void print(unsigned long i) {gfx.print(i);};
-    virtual void println(unsigned long i) {gfx.println(i);};
-    virtual void print(double i) {gfx.print(i);};
-    virtual void println(double i) {gfx.println(i);};
-    virtual void print(prompt &o,bool selected,int idx,int posY,int width) {
+    virtual size_t write(uint8_t ch) {return gfx.write(ch);}
+    virtual void printPrompt(prompt &o,bool selected,int idx,int posY,int width) {
     	gfx.fillRect(0,posY*resY,maxX*resX,resY,selected?hiliteColor:bgColor);
     	gfx.setTextColor(o.enabled?enabledColor:disabledColor);
     	setCursor(0,posY);
     	o.printTo(*this);
-    	//println();
     }
 		virtual void printMenu(menu& m,bool drawExit) {
 			if (drawn!=&m) clear();//clear all screen when changing menu
 			if (m.sel-top>=maxY) top=m.sel-maxY+1;//selected option outside device (bottom)
 			else if (m.sel<top) top=m.sel;//selected option outside device (top)
 			int i=top;for(;i<m.sz;i++) {
-				//if ((i>=top)&&((i-top)<maxY)) {
 				  if(i-top>=maxY) break;
 				  if (needRedraw(m,i)) {
-				  	print(*m.data[i],i==m.sel,i+1,i-top,m.width);
+				  	printPrompt(*m.data[i],i==m.sel,i+1,i-top,m.width);
 				  }
-				//}
 			}
 			if (drawExit&&i-top<maxY&&needRedraw(m,i))
-				print(menu::exitOption,m.sel==m.sz,0,i-top,m.width);
+				printPrompt(menu::exitOption,m.sel==m.sz,0,i-top,m.width);
 			lastTop=top;
 			lastSel=m.sel;
 			drawn=&m;

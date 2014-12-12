@@ -22,14 +22,8 @@ www.r-site.net
     virtual void clearLine(int ln) {}
     virtual void clear() {device.println("");device.println("");}
     virtual void setCursor(int x,int y) {device.println("");}
-    virtual void print(char ch) {device.print(ch);}
-    virtual void print(const char *text) {device.print(text);}
-    virtual void println(const char *text="") {device.println(text);}
-    virtual void print(unsigned long i) {device.print(i);};
-    virtual void println(unsigned long i) {device.println(i);};
-    virtual void print(double i) {device.print(i);};
-    virtual void println(double i) {device.println(i);};
-		virtual void print(prompt &o,bool selected,int idx,int posY,int width) {
+    virtual size_t write(uint8_t ch) {return device.write(ch);}
+		virtual void printPrompt(prompt &o,bool selected,int idx,int posY,int width) {
       print(idx<10?" ":"");
       print((unsigned long)idx);
 			print(selected?(o.enabled?menu::enabledCursor:menu::disabledCursor):' ');
@@ -41,8 +35,8 @@ www.r-site.net
 			clear();
 			int i=0;
 			for(;i<m.sz;i++)
-			  print(*m.data[i],i==m.sel,i+1,i-top,m.width);
-			if (drawExit) print(menu::exitOption,m.sel==m.sz,0,i-top,m.width);
+			  printPrompt(*m.data[i],i==m.sel,i+1,i-top,m.width);
+			if (drawExit) printPrompt(menu::exitOption,m.sel==m.sz,0,i-top,m.width);
 			lastTop=top;
 			lastSel=m.sel;
 			drawn=&m;

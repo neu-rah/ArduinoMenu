@@ -74,6 +74,7 @@ void menu::activate(menuOut& p,Stream& c,bool canExit) {
   if (op>=0&&op<sz) {
   	sel=op;
     if (data[op]->enabled) {
+      printMenu(p,canExit);//clearing old selection
     	data[op]->activate(p,c,true);
     }
   } else if (op==-1) {//then exit

@@ -28,14 +28,8 @@ www.r-site.net
     }
     virtual void clear() {lcd.clear();}
     virtual void setCursor(int x,int y) {lcd.setCursor(x*resX,y*resY);}
-    virtual void print(char ch) {lcd.print(ch);}
-    virtual void print(const char *text) {lcd.print(text);}
-    virtual void println(const char *text="") {lcd.print(text);};
-    virtual void print(unsigned long i) {lcd.print(i);};
-    virtual void println(unsigned long i) {lcd.println(i);};
-    virtual void print(double i) {lcd.print(i);};
-    virtual void println(double i) {lcd.println(i);};
-		virtual void print(prompt &o,bool selected,int idx,int posY,int width) {
+    virtual size_t write(uint8_t ch) {return lcd.write(ch);}
+		virtual void printPrompt(prompt &o,bool selected,int idx,int posY,int width) {
 			clearLine(posY);
 			print(selected?(o.enabled?menu::enabledCursor:menu::disabledCursor):' ');
 			o.printTo(*this);
@@ -46,14 +40,13 @@ www.r-site.net
 			else if (m.sel<top) top=m.sel;//selected option outside device (top)
 			int i=0;for(;i<m.sz;i++) {
 				if ((i>=top)&&((i-top)<maxY)) {
-				  //if(i-top>=maxY) break;
 				  if (needRedraw(m,i)) {
-				  	print(*m.data[i],i==m.sel,i+1,i-top,m.width);
+				  	printPrompt(*m.data[i],i==m.sel,i+1,i-top,m.width);
 				  }
 				}
 			}
 			if (drawExit&&i-top<maxY&&needRedraw(m,i))
-				print(menu::exitOption,m.sel==m.sz,0,i-top,m.width);
+				printPrompt(menu::exitOption,m.sel==m.sz,0,i-top,m.width);
 			lastTop=top;
 			lastSel=m.sel;
 			drawn=&m;

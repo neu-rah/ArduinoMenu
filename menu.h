@@ -164,13 +164,6 @@ www.r-site.net
     virtual void clearLine(int ln)=0;
     virtual void clear()=0;
     virtual void setCursor(int x,int y)=0;
-    /*virtual void print(char ch)=0;
-    virtual void print(const char *text)=0;
-    virtual void println(const char *text="")=0;
-    virtual void print(unsigned long)=0;
-    virtual void println(unsigned long)=0;
-    virtual void print(double)=0;
-    virtual void println(double)=0;*/
     virtual void printPrompt(prompt &o,bool selected,int idx,int posY,int width);
 		virtual void printMenu(menu&,bool drawExit)=0;
   };
