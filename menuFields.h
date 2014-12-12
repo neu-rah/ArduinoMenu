@@ -1,12 +1,6 @@
 /********************
+www.r-site.net
 Nov. 2014 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
-creative commons license 3.0: Attribution-ShareAlike CC BY-SA
-This software is furnished "as is", without technical support, and with no 
-warranty, express or implied, as to its usefulness for any purpose.
-
-Thread Safe: No
-Extensible: Yes
-
 implementing menu fields as options that show a value
 value (variable reference) can be changed by either using:
 	menuField - for numeric varibles between range and optinally with a tune speed
@@ -16,7 +10,14 @@ value (variable reference) can be changed by either using:
 class menuValue is used as a menu prompt with an associated value for menuChoose and menuToggle
 
 this classes are implemented as templates to accomodate virtually any value type
-www.r-site.net
+
+creative commons license 3.0: Attribution-ShareAlike CC BY-SA
+This software is furnished "as is", without technical support, and with no 
+warranty, express or implied, as to its usefulness for any purpose.
+
+Thread Safe: No
+Extensible: Yes
+
 ***/
 
 #ifndef RSITE_ARDUINOP_MENU_FIELDS
@@ -55,10 +56,8 @@ www.r-site.net
 		virtual void printTo(menuOut& p) {
 			p.print(text);
 			p.print(activeNode==this?(tunning?'>':':'):' ');
-			p.print((unsigned long)value);
-			p.print(" ");
+			p.print(value);
 			p.print(units);
-			p.print("  ");
 		}
 		void clamp() {
       if (value<low) value=low;

@@ -36,15 +36,11 @@ int menu::menuKeys(menuOut &p,Stream& c,bool canExit) {
       if (sel>0) {
         sel--;
         if (sel+1>=p.maxY) p.top=sel-p.maxY;
-        //p.drawn=0;
-        //printMenu(p,canExit);
       }
     } else if (ch==menu::upCode) {
       if (sel<(sz-(canExit?0:1))) {
         sel++;
         if ((sz-sel+(canExit?1:0))>=p.maxY) p.top=sel-(canExit?1:0);
-        //p.drawn=0;
-        //printMenu(p,canExit);
       }
     } else if (ch==menu::escCode) {
     	op=-1;
@@ -54,6 +50,7 @@ int menu::menuKeys(menuOut &p,Stream& c,bool canExit) {
   if (!((op>=0&&op<sz)||(canExit&&op==-1))) op=-2;//validate the option
   //add some delays to be sure we do not have more characters NL or CR on the way
   //delay might be adjusted to cope with stream speed
+  //TODO: guess we dont need this.. check it out
   delay(50);while (c.peek()==menu::enterCode/*||c.peek()==10*/) {c.read();delay(50);}//discard ENTER and CR
   return op;
 }

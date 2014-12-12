@@ -138,7 +138,7 @@ www.r-site.net
   /////////////////////////////////////////////////////////
   // menu pure virtual output device, use derived
   // this base class represents the output device either derived to serial, LCD or other
-  class menuOut {
+  class menuOut:public Print {
     public:
     
     menu* drawn;//last drawn menu, avoiding clear/redraw on each nav. change
@@ -159,18 +159,19 @@ www.r-site.net
     enum drawStyle {NORMAL=0,SELECTED,EDITING,TUNNING,DISABLED};
   	
   //member functions
+    virtual size_t write(uint8_t) = 0;
     bool needRedraw(menu& m,int i);
     virtual void clearLine(int ln)=0;
     virtual void clear()=0;
     virtual void setCursor(int x,int y)=0;
-    virtual void print(char ch)=0;
+    /*virtual void print(char ch)=0;
     virtual void print(const char *text)=0;
     virtual void println(const char *text="")=0;
     virtual void print(unsigned long)=0;
     virtual void println(unsigned long)=0;
     virtual void print(double)=0;
-    virtual void println(double)=0;
-    virtual void print(prompt &o,bool selected,int idx,int posY,int width);
+    virtual void println(double)=0;*/
+    virtual void printPrompt(prompt &o,bool selected,int idx,int posY,int width);
 		virtual void printMenu(menu&,bool drawExit)=0;
   };
   

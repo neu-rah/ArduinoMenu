@@ -73,7 +73,7 @@ www.r-site.net
     	gfx.setTextColor(o.enabled?enabledColor:disabledColor);
     	setCursor(0,posY);
     	o.printTo(*this);
-    	println();
+    	//println();
     }
 		virtual void printMenu(menu& m,bool drawExit) {
 			if (drawn!=&m) clear();//clear all screen when changing menu
