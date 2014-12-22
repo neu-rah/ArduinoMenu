@@ -78,6 +78,7 @@ void menu::activate(menuOut& p,Stream& c,bool canExit) {
     	data[op]->activate(p,c,true);
     }
   } else if (op==-1) {//then exit
+    p.clear();
   	activeNode=previousMenu;
 	 	c.flush();//reset the encoder
   }

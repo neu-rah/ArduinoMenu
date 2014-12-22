@@ -215,11 +215,12 @@ www.r-site.net
   class menuNode:public prompt {//some basic information for menus and fields
   	public:
     int width=32;//field or menu width
+    int ox,oy;//coordinate origin displacement
     //navigation and focus control
     static menuNode* activeNode;
     menu* previousMenu=NULL;
-    inline menuNode(const char * text):prompt(text) {}
-    inline menuNode(const char * text,promptAction action):prompt(text,action) {}
+    inline menuNode(const char * text):prompt(text),ox(0),oy(0) {}
+    inline menuNode(const char * text,promptAction action):prompt(text,action),ox(0),oy(0) {}
   };
   
   //a menu or sub-menu
@@ -239,6 +240,7 @@ www.r-site.net
     bool canExit=false;//store last canExit value for inner reference
     menu(const char * text,int sz,prompt* const data[]):menuNode(text),sz(sz),data(data) {}
     
+    inline void setPosition(int x,int y) {ox=x;oy=y;}
     int menuKeys(menuOut &p,Stream& c,bool drawExit);
     inline void printMenu(menuOut& p,bool drawExit) {
     	p.printMenu(*this,drawExit);

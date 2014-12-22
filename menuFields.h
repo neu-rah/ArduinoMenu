@@ -66,6 +66,8 @@ Extensible: Yes
 		//lazy drawing, we have no drawing position here... so we will ask the menu to redraw
 		virtual void activate(menuOut& p,Stream&c,bool canExit=false) {
 			if (activeNode!=this) {
+			  ox=activeNode->ox;
+			  oy=activeNode->oy;
 				previousMenu=(menu*)activeNode;
 				activeNode=this;
       	p.lastSel=-1;

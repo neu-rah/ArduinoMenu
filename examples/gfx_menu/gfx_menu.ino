@@ -1,4 +1,4 @@
-/********************
+/***************************************
 Arduino generic menu system
 GFX menu - unsing adafruit gfx screens
 tested on ATmega2560
