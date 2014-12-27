@@ -51,8 +51,10 @@ Extensible: Yes
 		T low,high,step,tune;
 		bool tunning;
 		void (*func)();
+		char ch;
+		T tmp;
 		menuField(T &value,const char * text,const char *units,T low,T high,T step,T tune=0,void (*func)()=nothing)
-			:menuNode(text),value(value),units(units),low(low),high(high),step(step),tune(tune),func(func),tunning(false) {}
+			:menuNode(text),value(value),units(units),low(low),high(high),step(step),tune(tune),func(func),tunning(false),ch(0),tmp(0) {}
 		virtual void printTo(menuOut& p) {
 			p.print(text);
 			p.print(activeNode==this?(tunning?'>':':'):' ');
@@ -74,8 +76,6 @@ Extensible: Yes
       	previousMenu->printMenu(p,previousMenu->canExit);
 			}
 			if (!c.available()) return;
-			char ch=0;
-			T tmp;
 			if (strchr(numericChars,c.peek())) {//a numeric value was entered
       	value=c.parseFloat();
     		tunning=false;
