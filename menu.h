@@ -150,11 +150,11 @@ www.r-site.net
     int resX;
     int resY;
     //preventing uneeded redraws
-    int lastTop=-1;
-    int lastSel=-1;
+    int lastTop;
+    int lastSel;
     
     inline menuOut(int x=0x7F,int y=0x7F,int resX=1,int resY=1)
-    	:maxX(x),maxY(y),top(0),resX(resX),resY(resY),drawn(0) {}
+    	:maxX(x),maxY(y),top(0),resX(resX),resY(resY),drawn(0),lastTop(-1),lastSel(-1) {}
 
     enum drawStyle {NORMAL=0,SELECTED,EDITING,TUNNING,DISABLED};
   	
@@ -198,9 +198,9 @@ www.r-site.net
     public:
     const char* text;
     static void nothing() {}
-    promptAction action=nothing;
+    promptAction action;
     bool enabled;
-    inline prompt(const char * text):text(text),enabled(true) {}
+    inline prompt(const char * text):text(text),enabled(true),action(nothing) {}
     inline prompt(const char * text,promptAction action)
     	:text(text),action(action),enabled(true) {}
     virtual void printTo(menuOut& p) {
@@ -214,13 +214,13 @@ www.r-site.net
   
   class menuNode:public prompt {//some basic information for menus and fields
   	public:
-    int width=32;//field or menu width
+    int width;//field or menu width
     int ox,oy;//coordinate origin displacement
     //navigation and focus control
     static menuNode* activeNode;
     menu* previousMenu=NULL;
-    inline menuNode(const char * text):prompt(text),ox(0),oy(0) {}
-    inline menuNode(const char * text,promptAction action):prompt(text,action),ox(0),oy(0) {}
+    inline menuNode(const char * text):prompt(text),ox(0),oy(0),width(32) {}
+    inline menuNode(const char * text,promptAction action):prompt(text,action),ox(0),oy(0),width(32) {}
   };
   
   //a menu or sub-menu
@@ -234,7 +234,7 @@ www.r-site.net
     static char enabledCursor;//character to be used as navigation cursor
     static char disabledCursor;//to be used when navigating over disabled options
     static prompt exitOption;//option to append to menu allowing exit when no escape button/key is available
-    const int sz=0;
+    const int sz;
     int sel;//selection
     prompt* const* data;// PROGMEM;
     bool canExit=false;//store last canExit value for inner reference

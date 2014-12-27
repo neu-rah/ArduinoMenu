@@ -49,10 +49,10 @@ Extensible: Yes
 		T& value;
 		const char* units;
 		T low,high,step,tune;
-		bool tunning=false;
+		bool tunning;
 		void (*func)();
 		menuField(T &value,const char * text,const char *units,T low,T high,T step,T tune=0,void (*func)()=nothing)
-			:menuNode(text),value(value),units(units),low(low),high(high),step(step),tune(tune),func(func) {}
+			:menuNode(text),value(value),units(units),low(low),high(high),step(step),tune(tune),func(func),tunning(false) {}
 		virtual void printTo(menuOut& p) {
 			p.print(text);
 			p.print(activeNode==this?(tunning?'>':':'):' ');
@@ -130,6 +130,7 @@ Extensible: Yes
 	    
 		void activate(menuOut& p,Stream& c,bool canExit) {
 			if (menu::activeNode!=this) {
+			  this->setPosition(menuNode::activeNode->ox,menuNode::activeNode->oy);
 				menu::previousMenu=(menu*)menu::activeNode;
 				menu::activeNode=this;
 			 	this->canExit=canExit;
@@ -157,6 +158,8 @@ Extensible: Yes
 	    menuSelect<T>(target,text,sz,data) {menuSelect<T>::sync();}
 	    
 		void activate(menuOut& p,Stream& c,bool canExit) {
+		  /*ox=activeNode->ox;
+		  oy=activeNode->oy;*/
 			menu::sel++;
 			if (menu::sel>=menu::sz) menu::sel=0;
 		 	p.lastSel=-1;//redraw only affected option

@@ -31,10 +31,10 @@ www.r-site.net
 
   class menuGFX:public menuOut {
     public:
-  	uint16_t hiliteColor=BLUE;
-  	uint16_t bgColor=SILVER;
-  	uint16_t enabledColor=WHITE;
-  	uint16_t disabledColor=RED;
+  	uint16_t hiliteColor;
+  	uint16_t bgColor;
+  	uint16_t enabledColor;
+  	uint16_t disabledColor;
     Adafruit_GFX& gfx;
     menuGFX(
     	Adafruit_GFX& gfx,
