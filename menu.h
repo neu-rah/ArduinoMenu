@@ -218,8 +218,8 @@ www.r-site.net
     int ox,oy;//coordinate origin displacement
     //navigation and focus control
     static menuNode* activeNode;
-    menu* previousMenu=NULL;
-    inline menuNode(const char * text):prompt(text),ox(0),oy(0),width(32) {}
+    menu* previousMenu;
+    inline menuNode(const char * text):prompt(text),ox(0),oy(0),width(32),previousMenu(NULL) {}
     inline menuNode(const char * text,promptAction action):prompt(text,action),ox(0),oy(0),width(32) {}
   };
   
@@ -237,8 +237,8 @@ www.r-site.net
     const int sz;
     int sel;//selection
     prompt* const* data;// PROGMEM;
-    bool canExit=false;//store last canExit value for inner reference
-    menu(const char * text,int sz,prompt* const data[]):menuNode(text),sz(sz),data(data) {}
+    bool canExit;//store last canExit value for inner reference
+    menu(const char * text,int sz,prompt* const data[]):menuNode(text),sz(sz),data(data),canExit(false) {}
     
     inline void setPosition(int x,int y) {ox=x;oy=y;}
     int menuKeys(menuOut &p,Stream& c,bool drawExit);
