@@ -218,7 +218,7 @@ www.r-site.net
     int ox,oy;//coordinate origin displacement
     //navigation and focus control
     static menuNode* activeNode;
-    menu* previousMenu;
+    class menu* previousMenu;
     inline menuNode(const char * text):prompt(text),ox(0),oy(0),width(32),previousMenu(NULL) {}
     inline menuNode(const char * text,promptAction action):prompt(text,action),ox(0),oy(0),width(32) {}
   };

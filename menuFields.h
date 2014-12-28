@@ -131,20 +131,20 @@ Extensible: Yes
 		void activate(menuOut& p,Stream& c,bool canExit) {
 			if (menu::activeNode!=this) {
 			  this->setPosition(menuNode::activeNode->ox,menuNode::activeNode->oy);
-				menu::previousMenu=(menu*)menu::activeNode;
+				this->menu::previousMenu=(menu*)menu::activeNode;
 				menu::activeNode=this;
 			 	this->canExit=canExit;
 			}
 			int op=-1;
 			menu::printMenu(p,false);
 			op=menu::menuKeys(p,c,canExit);
-			if (op>=0&&op<menu::sz) {
-				menu::sel=op;
-				if (menu::data[op]->enabled) {
-					menuSelect<T>::target=((menuValue<T>*)menu::data[op])->value;
-					menu::data[op]->activate(p,c,true);
+			if (op>=0&&op<this->menu::sz) {
+				this->menu::sel=op;
+				if (this->menu::data[op]->enabled) {
+					this->menuSelect<T>::target=((menuValue<T>*)this->menu::data[op])->value;
+					this->menu::data[op]->activate(p,c,true);
 					//and exit
-					menu::activeNode=menu::previousMenu;
+					this->menu::activeNode=this->menu::previousMenu;
 				 	c.flush();//reset the encoder
 				}
 			}
@@ -160,11 +160,11 @@ Extensible: Yes
 		void activate(menuOut& p,Stream& c,bool canExit) {
 		  /*ox=activeNode->ox;
 		  oy=activeNode->oy;*/
-			menu::sel++;
-			if (menu::sel>=menu::sz) menu::sel=0;
+			this->menu::sel++;
+			if (this->menu::sel>=this->menu::sz) this->menu::sel=0;
 		 	p.lastSel=-1;//redraw only affected option
-			menuSelect<T>::target=((menuValue<T>*)menu::data[menu::sel])->value;
-			menu::data[menu::sel]->activate(p,c,true);
+			this->menuSelect<T>::target=((menuValue<T>*)this->menu::data[menu::sel])->value;
+			this->menu::data[this->menu::sel]->activate(p,c,true);
 		}
 	};
 #endif
