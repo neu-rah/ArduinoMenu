@@ -5,7 +5,7 @@ http://www.r-site.net/?at=//op%5B%40id=%273090%27%5D
 
 Dec.2014 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
 creative commons license 3.0: Attribution-ShareAlike CC BY-SA
-This software is furnished "as is", without technical support, and with no 
+This software is furnished "as is", without technical support, and with no
 warranty, express or implied, as to its usefulness for any purpose.
 
 Thread Safe: No
@@ -20,7 +20,7 @@ UTouch library from:
 #include <UTFT.h>
 #include <UTouch.h>
 #ifdef DEBUG
-  #include <streamFlow.h>
+//#include <streamFlow.h>
 #endif
 #include <menu.h>
 #include <menuUTFT.h>
@@ -97,7 +97,7 @@ void setup() {
   myGLCD.setFont(BigFont);
   myGLCD.setColor(0, 255, 0);
   myGLCD.setBackColor(0, 0, 0);
-  
+
   gfx.init();//setup geometry after myGLCD initialized
   //restrict menu area, for scroll and boundary tests
   gfx.maxX=48;

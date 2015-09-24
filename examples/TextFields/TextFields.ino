@@ -24,14 +24,14 @@ UTouch library from:
 #include <UTFT.h>
 #include <UTouch.h>
 #ifdef DEBUG
-  #include <streamFlow.h>
+//#include <streamFlow.h>
 #endif
 #include <menu.h>
 #include <menuUTFT.h>
 #include <chainStream.h>// concatenate multiple input streams (this allows adding a button to the encoder)
 #include <menuUTouch.h>
 #include <menuFields.h>
-#include <menuTextFields.h>
+//#include <menuTextFields.h>
 #include <menuPrint.h>
 
 UTFT myGLCD(CTE28,25,26,27,28);

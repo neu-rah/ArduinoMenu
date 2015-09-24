@@ -96,7 +96,7 @@ UTFT library from:
       return 1;
     }
 		virtual void drawEditCursor(int at,int posY) {
-			Serial<<"cursor at "<<at<<","<<posY<<endl;
+			//Serial<<"cursor at "<<at<<","<<posY<<endl;
 			gfx.setColor(editCursorColor);
 			gfx.drawRect(
 				menuNode::activeNode->ox+at*resX,
