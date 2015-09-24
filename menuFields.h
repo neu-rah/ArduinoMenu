@@ -6,13 +6,13 @@ value (variable reference) can be changed by either using:
 	menuField - for numeric varibles between range and optinally with a tune speed
 	menuChoose - Use menu like navigation to select variable value
 	menuToggle - cycle list of possible values
-	
+
 class menuValue is used as a menu prompt with an associated value for menuChoose and menuToggle
 
 this classes are implemented as templates to accomodate virtually any value type
 
 creative commons license 3.0: Attribution-ShareAlike CC BY-SA
-This software is furnished "as is", without technical support, and with no 
+This software is furnished "as is", without technical support, and with no
 warranty, express or implied, as to its usefulness for any purpose.
 
 Thread Safe: No
@@ -39,7 +39,7 @@ Extensible: Yes
     inline menuValue(const char * text,T value,promptAction action)
     	:prompt(text,action),value(value) {}
   };
-  
+
 	//Prompt linked to a variable
 	//TODO: implement Escape on a field cancels the editting (undo) restoring the value
 	static const char* numericChars="0123456789.";
@@ -102,7 +102,7 @@ Extensible: Yes
       }
 		}
 	};
-	
+
 	template<typename T>
 	class menuSelect:public menu {
 		public:
@@ -114,7 +114,7 @@ Extensible: Yes
 	  	for(int n=0;n<sz;n++)
 	  		if (((menuValue<T>*)data[n])->value==target)
 	  			sel=n;
-    }	
+    }
 		virtual void printTo(menuOut& p) {
 			menuSelect<T>::sync();
 			p.print(prompt::text);
@@ -123,11 +123,11 @@ Extensible: Yes
   };
 
 	template<typename T>
-	class menuChoice: public menuSelect<T> { 
+	class menuChoice: public menuSelect<T> {
 		public:
 		menuChoice(const char *text,unsigned int sz,menuValue<T>* const data[],T& target):
 	    menuSelect<T>(target,text,sz,data) {menuSelect<T>::sync();}
-	    
+
 		void activate(menuOut& p,Stream& c,bool canExit) {
 			if (menu::activeNode!=this) {
 			  this->setPosition(menuNode::activeNode->ox,menuNode::activeNode->oy);
@@ -153,10 +153,10 @@ Extensible: Yes
 	template<typename T>
 	class menuToggle: public menuSelect<T> {
 		public:
-		
+
 		menuToggle(const char *text,unsigned int sz,menuValue<T>* const data[],T& target):
 	    menuSelect<T>(target,text,sz,data) {menuSelect<T>::sync();}
-	    
+
 		void activate(menuOut& p,Stream& c,bool canExit) {
 		  /*ox=activeNode->ox;
 		  oy=activeNode->oy;*/
@@ -168,4 +168,3 @@ Extensible: Yes
 		}
 	};
 #endif
-

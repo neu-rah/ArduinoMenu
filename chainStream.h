@@ -10,10 +10,13 @@ Extendable: Yes
 scan a chain of several input streams to provide input
 ***/
 
+#ifndef RSITE_CHAINSTREAM_DEF_H
+#define RSITE_CHAINSTREAM_DEF_H
 
 template <int N>
 class chainStream:public Stream {
   public:
+  static int on;
   Stream** streams;
   chainStream<N>(Stream** chain):streams(chain) {}
   int available(void) {
@@ -28,13 +31,17 @@ class chainStream:public Stream {
     return -1;
   }
   int read() {
-    for(int n=0;n<N;n++)
-      if (streams[n]->available()) {
-        int key=streams[n]->read();
-        if (key==-1) return -1;
-        while(streams[n]->peek()==key) streams[n]->read();//wait for key release
+    for(int n=0;n<N;n++) {
+      int key=streams[n]->available()?streams[n]->read():-1;
+      if (key!=on) {
+        on=key;
         return key;
       }
+        //streams[n]->read();
+        //if (key==-1) return -1;
+        //while(streams[n]->peek()==key) streams[n]->read();//wait for key release
+        //return key;
+    }
     return -1;
   }
   void flush() {
@@ -44,4 +51,6 @@ class chainStream:public Stream {
   size_t write(uint8_t v) {return 0;}//this is readonly, ignoring
 };
 
-
+template<int N>
+int chainStream<N>::on=-1;
+#endif

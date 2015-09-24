@@ -1,7 +1,7 @@
 /********************
 Sept. 2014 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
 creative commons license 3.0: Attribution-ShareAlike CC BY-SA
-This software is furnished "as is", without technical support, and with no 
+This software is furnished "as is", without technical support, and with no
 warranty, express or implied, as to its usefulness for any purpose.
 
 Thread Safe: No
@@ -30,8 +30,8 @@ bool menuOut::needRedraw(menu& m,int i) {return (drawn!=&m)||(top!=lastTop)||(m.
 int menu::menuKeys(menuOut &p,Stream& c,bool canExit) {
   int op=-2;
   if (!c.available()) return op;//only work when stream data is available
-  if (c.peek()!=menu::enterCode) {
-    int ch=c.read();
+  int ch=c.read();
+  if (ch!=menu::enterCode) {
     if (ch==menu::downCode) {
       if (sel>0) {
         sel--;
@@ -44,17 +44,16 @@ int menu::menuKeys(menuOut &p,Stream& c,bool canExit) {
       }
     } else if (ch==menu::escCode) {
     	op=-1;
-    } else op=ch-'1';
-  } else
+    } else
+      op=ch-'1';
+  } else {
     op=sel==sz?-1:sel;
+  }
   if (!((op>=0&&op<sz)||(canExit&&op==-1))) op=-2;//validate the option
-  //add some delays to be sure we do not have more characters NL or CR on the way
-  //delay might be adjusted to cope with stream speed
-  //TODO: guess we dont need this.. check it out
-  delay(50);while (c.peek()==menu::enterCode/*||c.peek()==10*/) {c.read();delay(50);}//discard ENTER and CR
+  //c.read();
   return op;
 }
-    
+
 //execute the menu
 //cycle:
 //	...->draw -> input scan -> iterations -> [activate submenu or user function] -> ...
@@ -85,8 +84,5 @@ void menu::activate(menuOut& p,Stream& c,bool canExit) {
 }
 
 void menu::poll(menuOut& p,Stream& c,bool canExit) {
-	if (!activeNode) activeNode=this;
-	activeNode->activate(p,c,activeNode==this?canExit:true);
+  (activeNode?activeNode:this)->activate(p,c,activeNode==this?canExit:true);
 }
-
-

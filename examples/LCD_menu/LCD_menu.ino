@@ -5,7 +5,7 @@ http://www.r-site.net/?at=//op%5B%40id=%273090%27%5D
 
 Sept.2014 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
 creative commons license 3.0: Attribution-ShareAlike CC BY-SA
-This software is furnished "as is", without technical support, and with no 
+This software is furnished "as is", without technical support, and with no
 warranty, express or implied, as to its usefulness for any purpose.
 
 Thread Safe: No
@@ -27,6 +27,11 @@ Extensible: Yes
   #define RW 46
   #define EN 48
   LiquidCrystal lcd1(RS, RW, EN, 43, 45, 47, 49);
+#elif defined (__AVR_ATmega328P__)
+  #define RS 8
+  #define RW 9
+  #define EN 7
+  LiquidCrystal lcd1(RS, RW, EN, 6, 4, 3, 2);
 #else
   #error "DEFINE YOUR LCD WIRING HERE (search for this message on code)"
 #endif
@@ -79,8 +84,8 @@ keyMap encBtn_map[]={{-encBtn,menu::enterCode}};//negative pin numbers means we 
 keyLook<1> encButton(encBtn_map);
 
 //multiple inputs allow conjugation of the quadEncoder with a single key keyboard that is the quadEncoder button
-Stream* in[]={&enc,&encButton};
-chainStream<2> quadEncoder_button(in);
+//Stream* in[]={&enc,&encButton};
+//chainStream<2> quadEncoder_button(in);
 
 //alternative to previous but now we can input from Serial too...
 Stream* in3[]={&enc,&encButton,&Serial};
@@ -93,15 +98,15 @@ menuLCD lcd(lcd1,20,4);
 void setup() {
   Serial.begin(9600);
   Serial.println("menu system test");
-  
+
   quadEncoder.begin();
-  
+
   lcd1.begin(20,4);
   lcd1.print("Menu test");
 
   pinMode(encBtn, INPUT);
   digitalWrite(encBtn,1);
-  
+
   pinMode(LEDPIN,OUTPUT);
 
   delay(300);
@@ -112,4 +117,3 @@ void setup() {
 void loop() {
     mainMenu.poll(lcd,allIn);
 }
-

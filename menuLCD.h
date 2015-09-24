@@ -1,7 +1,7 @@
 /********************
 Sept. 2014 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
 creative commons license 3.0: Attribution-ShareAlike CC BY-SA
-This software is furnished "as is", without technical support, and with no 
+This software is furnished "as is", without technical support, and with no
 warranty, express or implied, as to its usefulness for any purpose.
 
 Thread Safe: No
@@ -27,6 +27,8 @@ www.r-site.net
     	setCursor(0,ln);
     }
     virtual void clear() {lcd.clear();}
+		virtual void showCursor() {lcd.cursor();}
+		virtual void hideCursor() {lcd.noCursor();}
     virtual void setCursor(int x,int y) {lcd.setCursor(x*resX,y*resY);}
     virtual size_t write(uint8_t ch) {return lcd.write(ch);}
 		virtual void printPrompt(prompt &o,bool selected,int idx,int posY,int width) {
@@ -53,4 +55,3 @@ www.r-site.net
 		}
   };
 #endif RSITE_ARDUINOP_MENU_LCD
-
