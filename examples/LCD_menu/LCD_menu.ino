@@ -29,9 +29,9 @@ Extensible: Yes
   LiquidCrystal lcd1(RS, RW, EN, 43, 45, 47, 49);
 #elif defined (__AVR_ATmega328P__)
   #define RS 8
-  #define RW 9
-  #define EN 7
-  LiquidCrystal lcd1(RS, RW, EN, 6, 4, 3, 2);
+  #define RW 3
+  #define EN 9
+  LiquidCrystal lcd1(RS, RW, EN, 4, 5, 6, 7);
 #else
   #error "DEFINE YOUR LCD WIRING HERE (search for this message on code)"
 #endif
@@ -41,7 +41,7 @@ Extensible: Yes
 // rotary
 #if defined(__AVR_ATmega328__)||defined(__AVR_ATmega328P__)// uno and breaduinos
   #define encA 2
-  #define encB 4
+  #define encB 3
   //this encoder has a button here
   #define encBtn A0
   #define LEDPIN 13

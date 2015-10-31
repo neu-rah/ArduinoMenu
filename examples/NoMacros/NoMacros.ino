@@ -5,7 +5,7 @@ http://www.r-site.net/?at=//op%5B%40id=%273090%27%5D
 
 Sept.2014 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
 creative commons license 3.0: Attribution-ShareAlike CC BY-SA
-This software is furnished "as is", without technical support, and with no 
+This software is furnished "as is", without technical support, and with no
 warranty, express or implied, as to its usefulness for any purpose.
 
 Thread Safe: No
@@ -30,20 +30,21 @@ on this example we build a menu without using the macros, its a bit harder but h
   #define RW 46
   #define EN 48
   LiquidCrystal lcd1(RS, RW, EN, 43, 45, 47, 49);
-#else
+#elif defined(__AVR_ATmega328__)||defined (__AVR_ATmega328P__)
   #define RS 8
-  #define RW 9
-  #define EN 7
-  LiquidCrystal lcd1(RS, RW, EN, 6, 4, 3, 2);
-  //#error "DEFINE YOUR LCD WIRING HERE (search for this message on code)"
+  #define RW 3
+  #define EN 9
+  LiquidCrystal lcd1(RS, RW, EN, 4, 5, 6, 7);
+#else
+  #error "DEFINE YOUR LCD WIRING HERE (search for this message on code)"
 #endif
 
 ////////////////////////////////////////////
 // ENCODER (aka rotary switch) PINS
 // rotary
 #if defined(__AVR_ATmega328__)||defined(__AVR_ATmega328P__)// uno and breaduinos
-  #define encA 10
-  #define encB 5
+  #define encA 2
+  #define encB 3
   //this encoder has a button here
   #define encBtn A0
   #define LEDPIN 13
@@ -84,8 +85,8 @@ void justTest() {
 // here we define the menu structure and wire actions functions to it
 // empty options are just for scroll testing
 
-prompt sub1("Option 1",ledOn);
-prompt sub2("Option 2",ledOff);
+prompt sub1("LED ON",ledOn);
+prompt sub2("LED OFF",ledOff);
 prompt* subMenuData[]={&sub1,&sub2};
 menu subMenu("Sub-menu",2,subMenuData);
 
@@ -119,9 +120,9 @@ menuLCD lcd(lcd1,16,2);
 void setup() {
   Serial.begin(9600);
   Serial.println("menu system test");
-  
+
   quadEncoder.begin();
-  
+
   lcd1.begin(16,2);
   lcd1.print("Menu test");
   //lcd1.blink();
@@ -129,7 +130,7 @@ void setup() {
 
   pinMode(encBtn, INPUT);
   digitalWrite(encBtn,1);
-  
+
   pinMode(LEDPIN,OUTPUT);
 
   delay(300);
@@ -137,10 +138,6 @@ void setup() {
 
 ///////////////////////////////////////////////////////////////////////////////
 // testing the menu system
-int key=0;
 void loop() {
     mainMenu.poll(lcd,allIn);
-    //digitalWrite(LEDPIN,millis()>>8&1);
 }
-
-
