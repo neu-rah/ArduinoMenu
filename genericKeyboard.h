@@ -24,7 +24,7 @@ public:
   int(keyReader*)();
   int lastkey;
   unsigned long pressMills=0;
-  keyLook(int(reader*)()):keyReader(reader),lastkey(-1) {}
+  genericKeyboard(int(reader*)()):keyReader(reader),lastkey(-1) {}
   int available(void) {
     int ch=peek();
     if (lastkey==-1) {
