@@ -21,10 +21,10 @@ ex: int myReader() ...
 // AND is not using a buffer either!
 class genericKeyboard:public Stream {
 public:
-  int(keyReader*)();
+  int (*keyReader)();
   int lastkey;
   unsigned long pressMills=0;
-  genericKeyboard(int(reader*)()):keyReader(reader),lastkey(-1) {}
+  genericKeyboard(int(*reader)()):keyReader(reader),lastkey(-1) {}
   int available(void) {
     int ch=peek();
     if (lastkey==-1) {
@@ -34,7 +34,7 @@ public:
     if (ch==lastkey) return 0;
     return 1;
   }
-  int peek(void) {return keyReader;}
+  int peek(void) {return keyReader();}
   int read() {
     int ch=peek();
     if (ch==lastkey) return -1;
