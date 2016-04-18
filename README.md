@@ -5,6 +5,8 @@ AVR generic menu/interactivity system
 Easy to define menu system with sub-menus and associated function to call
 Works either over serial or with LCD + encoder
 
+more details on wiki and issues discussions
+
 -------------------------------------------------------------------------------
 V2.0 
 
