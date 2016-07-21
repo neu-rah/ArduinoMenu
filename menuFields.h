@@ -68,6 +68,7 @@ Extensible: Yes
 		//lazy drawing, we have no drawing position here... so we will ask the menu to redraw
 		virtual void activate(menuOut& p,Stream&c,bool canExit=false) {
 			if (activeNode!=this) {
+				action(*this,p,c);
 			  ox=activeNode->ox;
 			  oy=activeNode->oy;
 				previousMenu=(menu*)activeNode;
@@ -131,6 +132,7 @@ Extensible: Yes
 		//ignore canExit (this exists by select), however we could use a cancel option instead of Exit
 		void activate(menuOut& p,Stream& c,bool) {
 			if (menu::activeNode!=this) {
+				menuSelect<T>::action(*this,p,c);
 			  this->setPosition(menuNode::activeNode->ox,menuNode::activeNode->oy);
 				this->menu::previousMenu=(menu*)menu::activeNode;
 				menu::activeNode=this;
@@ -159,6 +161,7 @@ Extensible: Yes
 	    menuSelect<T>(target,text,sz,data) {menuSelect<T>::sync();}
 
 		void activate(menuOut& p,Stream& c,bool canExit) {
+			menuSelect<T>::action(*this,p,c);
 		  /*ox=activeNode->ox;
 		  oy=activeNode->oy;*/
 			this->menu::sel++;
