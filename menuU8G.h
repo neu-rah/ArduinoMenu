@@ -10,7 +10,7 @@ Extensible: Yes
 Use graphics screens as menu output, based on U8GLIB graphic display
 www.r-site.net
  
- printPrompt(), Added posX to take into account ox via menu.ox and setPosition(ox,oy)
+ printPrompt(), Added posX to take into account ox via menu.ox and setPosition(ox,oy), need to update other files to support that.
  
 ***/
 #ifndef RSITE_ARDUINOP_MENU_U8G
@@ -43,16 +43,14 @@ www.r-site.net
 	  	hiliteColor(hiliteColor),
 	  	menuOut(gfx.getWidth()/resX,gfx.getHeight()/resY,resX,resY)
         {
-            // Typeface used to draw the menu
+            // Small typefaces used to draw the menu, do not forget to report resX and resY
             //gfx.setFont(u8g_font_6x10r);
             //gfx.setFont(u8g_font_baby);
             //gfx.setFont(u8g_font_profont10r);
             //gfx.setFont(u8g_font_trixel_square);
             //gfx.setFont(u8g_font_lucasfont_alternate);
-            gfx.setFont(u8g_font_04b_03); // the best result
-            gfx.setFontPosBottom(); // compensate U8Glib font positioning
-            //resX = 8;
-            //resY = 6;
+            gfx.setFont(u8g_font_04b_03); // Good result
+            gfx.setFontPosBottom(); // U8Glib font positioning
         }
 	  	
     virtual void clearLine(int ln) {
@@ -64,7 +62,7 @@ www.r-site.net
     }
     virtual void setCursor(int x,int y) {
         unsigned char xPxTextOffset = 4; // offset in pixels on text on x againt hightlight bar
-        gfx.setPrintPos(x*resX+xPxTextOffset,y*resY); // +4 Left font offset
+        gfx.setPrintPos(x*resX+xPxTextOffset,y*resY); // +4px Left font offset - optionnal
     }
     virtual size_t write(uint8_t ch) {
         gfx.write(ch); // print the ASCII correspoding char instead of print which display the decimal value of the char.
@@ -78,7 +76,7 @@ www.r-site.net
         o.printTo(*this);
     }
 		virtual void printMenu(menu& m,bool drawExit) {
-            //if (drawn!=&m) clear();//clear all screen when changing menu
+            //if (drawn!=&m) clear();//clear all screen when changing menu - not ok for U8Glib
             
             // vertical separator
             gfx.setColorIndex(3);
@@ -102,7 +100,7 @@ www.r-site.net
 				printPrompt(menu::exitOption,m.sel==m.sz,0,m.ox,(i-top)+m.oy,m.width);
 			lastTop = top;
 			lastSel = m.sel;
-			//drawn=&m;  // if commented, equals to have gfx.redraw() in loop
+			//drawn=&m;  // if commented, equals to have gfx.redraw() in loop - not ok for U8Glib
 		}
   };
 #endif RSITE_ARDUINOP_MENU_LCD
