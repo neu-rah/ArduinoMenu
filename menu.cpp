@@ -36,12 +36,15 @@ int menu::menuKeys(menuOut &p,Stream& c,bool canExit) {
       if (sel>0) {
         sel--;
         if (sel+1>=p.maxY) p.top=sel-p.maxY;
-      }
+      } else
+      	sel = sz-(canExit?0:1); // infinite loop menu
     } else if (ch==menu::upCode) {
       if (sel<(sz-(canExit?0:1))) {
         sel++;
         if ((sz-sel+(canExit?1:0))>=p.maxY) p.top=sel-(canExit?1:0);
-      }
+      } else
+      	sel = 0; // infinite loop menu
+      
     } else if (ch==menu::escCode) {
     	op=-1;
     } else
