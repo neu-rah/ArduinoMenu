@@ -18,6 +18,9 @@ Arduino generic menu system
 the menu system will read provided stream for input, it works for Serial,
 encoders, joysticks, keyboards (or touch?) a stream must be made out of them
 www.r-site.net
+
+v2.1 - Add full support of SetPosition(x,y) to move the menu inside the screen (char positioning) - can be extended for pixel positioning
+
 */
 #ifndef RSITE_ARDUINO_MENU_SYSTEM
   #define RSITE_ARDUINO_MENU_SYSTEM
@@ -164,7 +167,7 @@ www.r-site.net
     virtual void clearLine(int ln)=0;
     virtual void clear()=0;
     virtual void setCursor(int x,int y)=0;
-    virtual void printPrompt(prompt &o,bool selected,int idx,int posY,int width);
+    virtual void printPrompt(prompt &o,bool selected,int idx,int posX,int posY,int width);
 		virtual void printMenu(menu&,bool drawExit)=0;
   };
   
