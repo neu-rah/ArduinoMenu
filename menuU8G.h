@@ -78,10 +78,6 @@ www.r-site.net
 		virtual void printMenu(menu& m,bool drawExit) {
             //if (drawn!=&m) clear();//clear all screen when changing menu - not ok for U8Glib
             
-            // vertical separator
-            gfx.setColorIndex(3);
-            gfx.drawVLine(m.ox*resX-1,0,m.sz*resY);
-            
             if (m.sel-top >= maxY)
                 top = m.sel - maxY + resY + 1; //selected option outside device (bottom)
 			else if (m.sel < top)
