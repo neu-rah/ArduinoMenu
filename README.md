@@ -8,7 +8,7 @@ Works either over serial or with LCD + encoder
 more details on wiki and issues discussions
 
 -------------------------------------------------------------------------------
-V2.0 
+V2.0
 
 main changes:
 	- non-blocking menu main cycle
@@ -66,7 +66,7 @@ syntax:
   OP(name,function)
 		name string to be shown as menu option prompt
 		function to be called on click
-	
+
 	FIELD(variable,name,units,min,max,step,tune,function)
 		Holding and changing numeric values
 		where:
@@ -77,13 +77,13 @@ syntax:
 			step: increment/decrement when adjusting value
 			tune: value to increment/decrement when fine tunning the value
 			function: called on every value change
-	
+
 	VALUE(text,value)
 		holding possible FIELD values
 		where:
 			text: to be used as prompt
 			value: to be passed when selected
-		
+
 	TOGGLE(variable,id,name,
 		VALUE(...),
 		...,
@@ -95,7 +95,7 @@ syntax:
 			variable: holding the value
 			id: of this element to be used with SUBMENU
 			name: to be used as prompt
-			
+
 	CHOOSE(variable,id,name,
 		VALUE(...),
 		...,
@@ -123,7 +123,7 @@ syntax:
 	define menu structure
 	where:
 		id: this menu id
-		
+
 -------------------------------------------------------------------------------
 Notes:
 
@@ -136,5 +136,3 @@ Notes:
 
 -------------------------------------------------------------------------------
 more info at http://r-site.net?lang=en&at=//op%5B@id=%273090%27%5D
-
-
