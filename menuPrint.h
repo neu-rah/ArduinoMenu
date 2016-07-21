@@ -23,7 +23,7 @@ www.r-site.net
     virtual void clear() {device.println("");device.println("");}
     virtual void setCursor(int x,int y) {device.println("");}
     virtual size_t write(uint8_t ch) {return device.write(ch);}
-		virtual void printPrompt(prompt &o,bool selected,int idx,int posY,int width) {
+		virtual void printPrompt(prompt &o,bool selected,int idx,int posX,int posY,int width) {
       print(idx<10?" ":"");
       print((unsigned long)idx);
 			print(selected?(o.enabled?menu::enabledCursor:menu::disabledCursor):' ');
