@@ -9,6 +9,9 @@ Extensible: Yes
 
 Arduino generic menu system
 www.r-site.net
+
+v2.0 mods - calling action on every element
+
 */
 #include <Arduino.h>
 #include "menu.h"
@@ -65,6 +68,7 @@ int menu::menuKeys(menuOut &p,Stream& c,bool canExit) {
 //input scan: call the navigation function (self)
 void menu::activate(menuOut& p,Stream& c,bool canExit) {
 	if (activeNode!=this) {
+		action(*this,p,c);
 		previousMenu=(menu*)activeNode;
 		activeNode=this;
 		sel=0;
