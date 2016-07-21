@@ -101,7 +101,7 @@ void setup() {
 
   quadEncoder.begin();
 
-  lcd1.begin(20,4);
+  lcd1.begin(16,2);
   lcd1.print("Menu test");
 
   pinMode(encBtn, INPUT);

@@ -128,16 +128,17 @@ Extensible: Yes
 		menuChoice(const char *text,unsigned int sz,menuValue<T>* const data[],T& target):
 	    menuSelect<T>(target,text,sz,data) {menuSelect<T>::sync();}
 
-		void activate(menuOut& p,Stream& c,bool canExit) {
+		//ignore canExit (this exists by select), however we could use a cancel option instead of Exit
+		void activate(menuOut& p,Stream& c,bool) {
 			if (menu::activeNode!=this) {
 			  this->setPosition(menuNode::activeNode->ox,menuNode::activeNode->oy);
 				this->menu::previousMenu=(menu*)menu::activeNode;
 				menu::activeNode=this;
-			 	this->canExit=canExit;
+			 	this->canExit=false;
 			}
 			int op=-1;
 			menu::printMenu(p,false);
-			op=menu::menuKeys(p,c,canExit);
+			op=menu::menuKeys(p,c,false);
 			if (op>=0&&op<this->menu::sz) {
 				this->menu::sel=op;
 				if (this->menu::data[op]->enabled) {
