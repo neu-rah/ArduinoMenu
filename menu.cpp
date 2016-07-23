@@ -28,6 +28,10 @@ menuNode* menuNode::activeNode=NULL;
 
 bool menuOut::needRedraw(menu& m,int i) {return (drawn!=&m)||(top!=lastTop)||(m.sel!=lastSel&&((i==m.sel)||(i==lastSel)));}
 
+#ifndef LOOP_MENU
+#define LOOP_MENU false
+#endif
+
 //menu navigation engine
 //iteract with input until a selection is done, return the selection
 int menu::menuKeys(menuOut &p,Stream& c,bool canExit) {
@@ -36,18 +40,27 @@ int menu::menuKeys(menuOut &p,Stream& c,bool canExit) {
   int ch=c.read();
   if (ch!=menu::enterCode) {
     if (ch==menu::downCode) {
-      if (sel>0) {
-        sel--;
-        if (sel+1>=p.maxY) p.top=sel-p.maxY;
-      } else
-      	sel = sz-(canExit?0:1); // infinite loop menu
+      sel--;
+      if (sel<0) {
+        #if LOOP_MENU
+          sel=sz-(canExit?0:1);
+          if (sel+1>=p.maxY) p.top=sel-p.maxY+1;
+        #else
+          sel=0;
+        #endif
+      }
+      if (p.top>sel) p.top=sel;
     } else if (ch==menu::upCode) {
-      if (sel<(sz-(canExit?0:1))) {
-        sel++;
-        if ((sz-sel+(canExit?1:0))>=p.maxY) p.top=sel-(canExit?1:0);
-      } else
-      	sel = 0; // infinite loop menu
-
+      sel++;
+      if (sel>(sz-(canExit?0:1))) {
+        #if LOOP_MENU
+          sel=0;
+          p.top=0;
+        #else
+          sel=sz-(canExit?0:1);
+        #endif
+      }
+      if (sel+1>p.maxY) p.top=sel-p.maxY+1;
     } else if (ch==menu::escCode) {
     	op=-1;
     } else

@@ -52,8 +52,8 @@ www.r-site.net
 	  	enabledColor(enabledColor),
 			disabledColor(disabledColor),
 	  	hiliteColor(hiliteColor),
-			enabledColorHi(enabledColor),
-			disabledColorHi(disabledColor),
+			enabledColorHi(bgColor),
+			disabledColorHi(bgColor),
 	  	menuOut(gfx.width()/resX,gfx.height()/resY,resX,resY) {}
 
     virtual void clearLine(int ln) {
