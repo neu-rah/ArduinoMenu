@@ -1,7 +1,7 @@
 /********************
 Sept. 2014 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
 creative commons license 3.0: Attribution-ShareAlike CC BY-SA
-This software is furnished "as is", without technical support, and with no 
+This software is furnished "as is", without technical support, and with no
 warranty, express or implied, as to its usefulness for any purpose.
 
 Thread Safe: No
@@ -26,7 +26,7 @@ www.r-site.net
 	#define SILVER RGB565(200,200,200)
 	#define CYAN 0x07FF
 	#define MAGENTA 0xF81F
-	#define YELLOW 0xFFE0 
+	#define YELLOW 0xFFE0
 	#define WHITE 0xFFFF
 
   class menuGFX:public menuOut {
@@ -35,12 +35,14 @@ www.r-site.net
   	uint16_t bgColor;
   	uint16_t enabledColor;
   	uint16_t disabledColor;
+		uint16_t enabledColorHi;
+		uint16_t disabledColorHi;
     Adafruit_GFX& gfx;
     menuGFX(
     	Adafruit_GFX& gfx,
     	uint16_t hiliteColor=BLUE,
     	uint16_t bgColor=BLACK,
-    	uint16_t enabledColor=WHITE,
+			uint16_t enabledColor=WHITE,
     	uint16_t disabledColor=SILVER,
     	int resX=6,
     	int resY=9
@@ -48,10 +50,12 @@ www.r-site.net
 	  	:gfx(gfx),
 	  	bgColor(bgColor),
 	  	enabledColor(enabledColor),
-	  	disabledColor(disabledColor),
+			disabledColor(disabledColor),
 	  	hiliteColor(hiliteColor),
+			enabledColorHi(enabledColor),
+			disabledColorHi(disabledColor),
 	  	menuOut(gfx.width()/resX,gfx.height()/resY,resX,resY) {}
-	  	
+
     virtual void clearLine(int ln) {
     	gfx.fillRect(0,ln*resY,resX*maxX,resY,bgColor);
     	setCursor(0,ln);
@@ -64,7 +68,7 @@ www.r-site.net
     virtual size_t write(uint8_t ch) {return gfx.write(ch);}
     virtual void printPrompt(prompt &o,bool selected,int idx,int posX,int posY,int width) {
     	gfx.fillRect(0,posY*resY,maxX*resX,resY,selected?hiliteColor:bgColor);
-    	gfx.setTextColor(o.enabled?enabledColor:disabledColor);
+    	gfx.setTextColor(selected?(o.enabled?enabledColorHi:disabledColorHi):(o.enabled?enabledColor:disabledColor));
     	setCursor(0,posY);
     	o.printTo(*this);
     }
@@ -86,4 +90,3 @@ www.r-site.net
 		}
   };
 #endif RSITE_ARDUINOP_MENU_LCD
-

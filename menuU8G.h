@@ -1,22 +1,22 @@
 /********************
 Sept. 2014 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
 creative commons license 3.0: Attribution-ShareAlike CC BY-SA
-This software is furnished "as is", without technical support, and with no 
+This software is furnished "as is", without technical support, and with no
 warranty, express or implied, as to its usefulness for any purpose.
- 
+
 Thread Safe: No
 Extensible: Yes
 
 Use graphics screens as menu output, based on U8GLIB graphic display
 www.r-site.net
- 
+
  printPrompt(), Added posX to take into account ox via menu.ox and setPosition(ox,oy), need to update other files to support that.
- 
+
 ***/
 #ifndef RSITE_ARDUINOP_MENU_U8G
 	#define RSITE_ARDUINOP_MENU_U8G
-//#include <U8glib.h>
-#include <U8g_teensy.h>
+#include <U8glib.h>
+//#include <U8g_teensy.h>
 	#include "menu.h"
 
   class menuU8G:public menuOut {
@@ -25,7 +25,9 @@ www.r-site.net
   	unsigned char bgColor;
   	unsigned char enabledColor;
   	unsigned char disabledColor;
-      
+		unsigned char enabledColorHi;
+		unsigned char disabledColorHi;
+
     U8GLIB& gfx;
     menuU8G(
     	U8GLIB& gfx,
@@ -41,6 +43,8 @@ www.r-site.net
 	  	enabledColor(enabledColor),
 	  	disabledColor(disabledColor),
 	  	hiliteColor(hiliteColor),
+			enabledColorHi(bgColor),
+	  	disabledColorHi(bgColor),
 	  	menuOut(gfx.getWidth()/resX,gfx.getHeight()/resY,resX,resY)
         {
             // Small typefaces used to draw the menu, do not forget to report resX and resY
@@ -52,13 +56,13 @@ www.r-site.net
             gfx.setFont(u8g_font_04b_03); // Good result
             gfx.setFontPosBottom(); // U8Glib font positioning
         }
-	  	
+
     virtual void clearLine(int ln) {
         // No need to clear, the U8Glib display loop clear screen on each refresh
         //setCursor(0,ln);
     }
     virtual void clear() {
-        // No need to clear, the U8Glib display loop clear screen on each refresh        
+        // No need to clear, the U8Glib display loop clear screen on each refresh
     }
     virtual void setCursor(int x,int y) {
         unsigned char xPxTextOffset = 4; // offset in pixels on text on x againt hightlight bar
@@ -69,22 +73,22 @@ www.r-site.net
         return 1;
     }
     virtual void printPrompt(prompt &o,bool selected,int idx,int posX,int posY,int width) {
-        gfx.setColorIndex(selected?disabledColor:bgColor);
+        gfx.setColorIndex(selected?hiliteColor:bgColor);
         gfx.drawBox(posX*resX,posY*resY,maxX*resX,resY);
-        gfx.setColorIndex(selected?hiliteColor:disabledColor);
+        gfx.setColorIndex(selected?(o.enabled?enabledColorHi:disabledColorHi):(o.enabled?enabledColor:disabledColor));
         setCursor(posX,posY+1); //+1 compensate the height of the font and the way how U8Glib works
         o.printTo(*this);
     }
 		virtual void printMenu(menu& m,bool drawExit) {
             //if (drawn!=&m) clear();//clear all screen when changing menu - not ok for U8Glib
-            
+
             if (m.sel-top >= maxY)
                 top = m.sel - maxY + resY + 1; //selected option outside device (bottom)
 			else if (m.sel < top)
                 top = m.sel + resY; //selected option outside device (top)
-			
+
             int i = top;
-            
+
             for (; i < m.sz; i++)
             {
 				  if (i-top >= maxY)
@@ -100,4 +104,3 @@ www.r-site.net
 		}
   };
 #endif RSITE_ARDUINOP_MENU_LCD
-
