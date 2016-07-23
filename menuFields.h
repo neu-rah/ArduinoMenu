@@ -18,6 +18,8 @@ warranty, express or implied, as to its usefulness for any purpose.
 Thread Safe: No
 Extensible: Yes
 
+v2.0 - 	Calling action on every elements
+
 ***/
 
 #ifndef RSITE_ARDUINOP_MENU_FIELDS

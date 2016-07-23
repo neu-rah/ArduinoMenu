@@ -62,7 +62,7 @@ www.r-site.net
     }
     virtual void setCursor(int x,int y) {gfx.setCursor(x*resX,y*resY);}
     virtual size_t write(uint8_t ch) {return gfx.write(ch);}
-    virtual void printPrompt(prompt &o,bool selected,int idx,int posY,int width) {
+    virtual void printPrompt(prompt &o,bool selected,int idx,int posX,int posY,int width) {
     	gfx.fillRect(0,posY*resY,maxX*resX,resY,selected?hiliteColor:bgColor);
     	gfx.setTextColor(o.enabled?enabledColor:disabledColor);
     	setCursor(0,posY);

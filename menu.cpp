@@ -9,6 +9,9 @@ Extensible: Yes
 
 Arduino generic menu system
 www.r-site.net
+
+v2.0 mods - calling action on every element
+
 */
 #include <Arduino.h>
 #include "menu.h"
@@ -36,12 +39,15 @@ int menu::menuKeys(menuOut &p,Stream& c,bool canExit) {
       if (sel>0) {
         sel--;
         if (sel+1>=p.maxY) p.top=sel-p.maxY;
-      }
+      } else
+      	sel = sz-(canExit?0:1); // infinite loop menu
     } else if (ch==menu::upCode) {
       if (sel<(sz-(canExit?0:1))) {
         sel++;
         if ((sz-sel+(canExit?1:0))>=p.maxY) p.top=sel-(canExit?1:0);
-      }
+      } else
+      	sel = 0; // infinite loop menu
+
     } else if (ch==menu::escCode) {
     	op=-1;
     } else
@@ -61,7 +67,7 @@ int menu::menuKeys(menuOut &p,Stream& c,bool canExit) {
 //input scan: call the navigation function (self)
 void menu::activate(menuOut& p,Stream& c,bool canExit) {
 	if (activeNode!=this) {
-    action(*this,p,c);
+		action(*this,p,c);
 		previousMenu=(menu*)activeNode;
 		activeNode=this;
 		sel=0;

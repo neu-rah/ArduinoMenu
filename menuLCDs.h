@@ -32,7 +32,7 @@ www.r-site.net
     virtual void clear() {lcd.clear();}
     virtual void setCursor(int x,int y) {lcd.setCursor(x*resX,y*resY);}
     virtual size_t write(uint8_t ch) {return lcd.write(ch);}
-		virtual void printPrompt(prompt &o,bool selected,int idx,int posY,int width) {
+		virtual void printPrompt(prompt &o,bool selected,int idx,int posX,int posY,int width) {
 			clearLine(posY);
 			print(selected?(o.enabled?menu::enabledCursor:menu::disabledCursor):' ');
 			o.printTo(*this);
