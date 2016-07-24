@@ -72,9 +72,9 @@ int menu::menuKeys(menuOut &p,Stream& c,bool canExit) {
 //	...->draw -> input scan -> iterations -> [activate submenu or user function] -> ...
 // draw: call target device object
 //input scan: call the navigation function (self)
-void menu::activate(menuOut& p,Stream& c,bool canExit) {
+promptFeedback menu::activate(menuOut& p,Stream& c,bool canExit) {
 	if (activeNode!=this) {
-    action(*this,p,c);
+    if (action(*this,p,c)) return true;
 		previousMenu=(menu*)activeNode;
 		activeNode=this;
 		sel=0;
@@ -88,13 +88,18 @@ void menu::activate(menuOut& p,Stream& c,bool canExit) {
   	sel=op;
     if (data[op]->enabled) {
       printMenu(p,canExit);//clearing old selection
-    	data[op]->activate(p,c,true);
+      if (data[op]->activate(p,c,true)) {
+        p.clear();
+      	activeNode=previousMenu;
+        return true;
+      }
     }
   } else if (op==-1) {//then exit
     p.clear();
   	activeNode=previousMenu;
 	 	c.flush();//reset the encoder
   }
+  return 0;
 }
 
 void menu::poll(menuOut& p,Stream& c,bool canExit) {

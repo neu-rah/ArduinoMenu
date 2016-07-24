@@ -92,7 +92,7 @@ v2.1 - Add full support of SetPosition(x,y) to move the menu inside the screen (
   template<>
   int (*)(prompt &p, menuOut &o, Stream &i) operator(void (*f)(prompt &p, menuOut &o, Stream &i)) {return devoid<f>;}*/
 
-  #define promptFeedback void
+  #define promptFeedback bool
 
 	class promptAction {
 	public:
@@ -114,7 +114,7 @@ v2.1 - Add full support of SetPosition(x,y) to move the menu inside the screen (
   class prompt {
     public:
     const char* text;
-    static promptFeedback nothing() {}
+    static promptFeedback nothing() {return false;}
     promptAction action;
     bool enabled;
     inline prompt(const char * text):text(text),enabled(true),action(nothing) {}
@@ -123,9 +123,8 @@ v2.1 - Add full support of SetPosition(x,y) to move the menu inside the screen (
     virtual void printTo(menuOut& p) {
 			p.print(text);
 		}
-    virtual void activate(menuOut& p,Stream&c,bool) {
-      //Serial.println("prompt::activate");
-    	action(*this,p,c);
+    virtual promptFeedback activate(menuOut& p,Stream&c,bool) {
+      return action(*this,p,c);
     }
     virtual bool isMenu() const {return false;}
   };
@@ -177,7 +176,7 @@ v2.1 - Add full support of SetPosition(x,y) to move the menu inside the screen (
       sel=(idx>=sz||idx<0)?sz-1:idx;//focus idx option if out of range then the last will be selected
     }
 
-    void activate(menuOut& p,Stream& c,bool canExit=false);
+    promptFeedback activate(menuOut& p,Stream& c,bool canExit=false);
 
     void poll(menuOut& p,Stream& c,bool canExit=false);
 

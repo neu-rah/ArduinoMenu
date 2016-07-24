@@ -68,9 +68,9 @@ v2.0 - 	Calling action on every elements
       else if (value>high) value=high;
 		}
 		//lazy drawing, we have no drawing position here... so we will ask the menu to redraw
-		virtual void activate(menuOut& p,Stream&c,bool canExit=false) {
+		virtual promptFeedback activate(menuOut& p,Stream&c,bool canExit=false) {
 			if (activeNode!=this) {
-				action(*this,p,c);
+				if (action(*this,p,c)) return true;;
 			  ox=activeNode->ox;
 			  oy=activeNode->oy;
 				previousMenu=(menu*)activeNode;
@@ -78,8 +78,9 @@ v2.0 - 	Calling action on every elements
       	p.lastSel=-1;
       	previousMenu->printMenu(p,previousMenu->canExit);
 			}
+			//printing here to solve U8GLX blank screen on field edit
 			previousMenu->printMenu(p,previousMenu->canExit);
-			if (!c.available()) return;
+			if (!c.available()) return 0;
 			if (strchr(numericChars,c.peek())) {//a numeric value was entered
       	value=c.parseFloat();
     		tunning=false;
@@ -104,6 +105,7 @@ v2.0 - 	Calling action on every elements
       	p.lastSel=-1;
       	previousMenu->printMenu(p,previousMenu->canExit);
       }
+			return 0;
 		}
 	};
 
@@ -133,9 +135,9 @@ v2.0 - 	Calling action on every elements
 	    menuSelect<T>(target,text,sz,data) {menuSelect<T>::sync();}
 
 		//ignore canExit (this exists by select), however we could use a cancel option instead of Exit
-		void activate(menuOut& p,Stream& c,bool) {
+		promptFeedback activate(menuOut& p,Stream& c,bool) {
 			if (menu::activeNode!=this) {
-				menuSelect<T>::action(*this,p,c);
+				if (menuSelect<T>::action(*this,p,c)) return true;
 			  this->setPosition(menuNode::activeNode->ox,menuNode::activeNode->oy);
 				this->menu::previousMenu=(menu*)menu::activeNode;
 				menu::activeNode=this;
@@ -156,6 +158,7 @@ v2.0 - 	Calling action on every elements
 				 	c.flush();//reset the encoder
 				}
 			}
+			return 0;
 		}
 	};
 	template<typename T>
@@ -165,9 +168,9 @@ v2.0 - 	Calling action on every elements
 		menuToggle(const char *text,unsigned int sz,menuValue<T>* const data[],T& target):
 	    menuSelect<T>(target,text,sz,data) {menuSelect<T>::sync();}
 
-		void activate(menuOut& p,Stream& c,bool canExit) {
+		promptFeedback activate(menuOut& p,Stream& c,bool canExit) {
 			//Serial.println("entering toggle");
-			menuSelect<T>::action(*this,p,c);
+			if (menuSelect<T>::action(*this,p,c)) return true;
 		  /*ox=activeNode->ox;
 		  oy=activeNode->oy;*/
 			this->menu::sel++;
@@ -175,6 +178,7 @@ v2.0 - 	Calling action on every elements
 		 	p.lastSel=-1;//redraw only affected option
 			this->menuSelect<T>::target=((menuValue<T>*)this->menu::data[menu::sel])->value;
 			this->menu::data[this->menu::sel]->activate(p,c,true);
+			return 0;
 		}
 	};
 #endif
