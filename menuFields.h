@@ -52,10 +52,10 @@ v2.0 - 	Calling action on every elements
 		const char* units;
 		T low,high,step,tune;
 		bool tunning;
-		void (*func)();
+		promptFeedback (*func)();
 		char ch;
 		T tmp;
-		menuField(T &value,const char * text,const char *units,T low,T high,T step,T tune=0,void (*func)()=nothing)
+		menuField(T &value,const char * text,const char *units,T low,T high,T step,T tune=0,promptFeedback (*func)()=nothing)
 			:menuNode(text),value(value),units(units),low(low),high(high),step(step),tune(tune),func(func),tunning(false),ch(0),tmp(0) {}
 		virtual void printTo(menuOut& p) {
 			p.print(text);
@@ -78,6 +78,7 @@ v2.0 - 	Calling action on every elements
       	p.lastSel=-1;
       	previousMenu->printMenu(p,previousMenu->canExit);
 			}
+			previousMenu->printMenu(p,previousMenu->canExit);
 			if (!c.available()) return;
 			if (strchr(numericChars,c.peek())) {//a numeric value was entered
       	value=c.parseFloat();
@@ -139,6 +140,8 @@ v2.0 - 	Calling action on every elements
 				this->menu::previousMenu=(menu*)menu::activeNode;
 				menu::activeNode=this;
 			 	this->canExit=false;
+				if (p.top>menu::sel) p.top=menu::sel;
+				else if (menu::sel+1>p.maxY) p.top=menu::sel-p.maxY+1;
 			}
 			int op=-1;
 			menu::printMenu(p,false);
@@ -163,6 +166,7 @@ v2.0 - 	Calling action on every elements
 	    menuSelect<T>(target,text,sz,data) {menuSelect<T>::sync();}
 
 		void activate(menuOut& p,Stream& c,bool canExit) {
+			//Serial.println("entering toggle");
 			menuSelect<T>::action(*this,p,c);
 		  /*ox=activeNode->ox;
 		  oy=activeNode->oy;*/

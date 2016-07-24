@@ -24,13 +24,10 @@ char menu::downCode='-';
 char menu::enabledCursor='>';
 char menu::disabledCursor='-';
 prompt menu::exitOption(menu::exit);
+bool menu::wrapMenus=false;
 menuNode* menuNode::activeNode=NULL;
 
 bool menuOut::needRedraw(menu& m,int i) {return (drawn!=&m)||(top!=lastTop)||(m.sel!=lastSel&&((i==m.sel)||(i==lastSel)));}
-
-#ifndef LOOP_MENU
-#define LOOP_MENU false
-#endif
 
 //menu navigation engine
 //iteract with input until a selection is done, return the selection
@@ -42,29 +39,26 @@ int menu::menuKeys(menuOut &p,Stream& c,bool canExit) {
     if (ch==menu::downCode) {
       sel--;
       if (sel<0) {
-        #if LOOP_MENU
+        if (wrapMenus) {
           sel=sz-(canExit?0:1);
           if (sel+1>=p.maxY) p.top=sel-p.maxY+1;
-        #else
-          sel=0;
-        #endif
+        } else sel=0;
       }
       if (p.top>sel) p.top=sel;
     } else if (ch==menu::upCode) {
       sel++;
       if (sel>(sz-(canExit?0:1))) {
-        #if LOOP_MENU
+        if (wrapMenus) {
           sel=0;
           p.top=0;
-        #else
-          sel=sz-(canExit?0:1);
-        #endif
+        } else sel=sz-(canExit?0:1);
       }
       if (sel+1>p.maxY) p.top=sel-p.maxY+1;
     } else if (ch==menu::escCode) {
     	op=-1;
-    } else
+    } else {
       op=ch-'1';
+    }
   } else {
     op=sel==sz?-1:sel;
   }
@@ -80,7 +74,7 @@ int menu::menuKeys(menuOut &p,Stream& c,bool canExit) {
 //input scan: call the navigation function (self)
 void menu::activate(menuOut& p,Stream& c,bool canExit) {
 	if (activeNode!=this) {
-		action(*this,p,c);
+    action(*this,p,c);
 		previousMenu=(menu*)activeNode;
 		activeNode=this;
 		sel=0;
