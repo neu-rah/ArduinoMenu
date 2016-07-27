@@ -27,6 +27,7 @@ v2.1 - Add full support of SetPosition(x,y) to move the menu inside the screen (
 
 	#include <Stream.h>
 	#include <HardwareSerial.h>
+  #include <avr/pgmspace.h>
 	//#include <Flash.h>
 
 	#include <streamFlow.h>
@@ -106,22 +107,25 @@ v2.1 - Add full support of SetPosition(x,y) to move the menu inside the screen (
 		inline promptAction(promptFeedback (*f)(prompt&,menuOut&)):hFn((callback)f) {}
 		inline promptAction(callback f):hFn(f) {}
 		//use this objects as a function (replacing functions)
-		inline promptFeedback operator()(prompt &p, menuOut &o, Stream &i) {return hFn(p,o,i);}
+		inline promptFeedback operator()(prompt &p, menuOut &o, Stream &i) const {return hFn(p,o,i);}
 	};
+
+  void print_P(menuOut& s,const char* at);
 
 	//holds a menu option
 	//a menu is also a prompt so we can have sub-menus
   class prompt {
     public:
-    const char* text;
-    static promptFeedback nothing() {return false;}
+    const char* text MEMMODE;
     promptAction action;
+    static promptFeedback nothing() {return false;}
     bool enabled;
     inline prompt(const char * text):text(text),enabled(true),action(nothing) {}
     inline prompt(const char * text,promptAction action)
     	:text(text),action(action),enabled(true) {}
     virtual void printTo(menuOut& p) {
-			p.print(text);
+			//p.print(text);
+      print_P(p,text);
 		}
     virtual promptFeedback activate(menuOut& p,Stream&c,bool) {
       return action(*this,p,c);
@@ -147,7 +151,7 @@ v2.1 - Add full support of SetPosition(x,y) to move the menu inside the screen (
     static char enterCode;
     static char upCode;
     static char downCode;
-    static const char *exit;//text used for exit option
+    static const char exit[] MEMMODE;//text used for exit option
     static char enabledCursor;//character to be used as navigation cursor
     static char disabledCursor;//to be used when navigating over disabled options
     static prompt exitOption;//option to append to menu allowing exit when no escape button/key is available
@@ -158,7 +162,7 @@ v2.1 - Add full support of SetPosition(x,y) to move the menu inside the screen (
     };
     const int sz;
     int sel;//selection
-    prompt* const* data;// PROGMEM;
+    prompt* const* data;
     bool canExit;//store last canExit value for inner reference
     menu(const char * text,int sz,prompt* const data[]):menuNode(text),sz(sz),data(data),canExit(false) {}
 

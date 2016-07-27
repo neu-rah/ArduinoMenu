@@ -1,7 +1,7 @@
 /********************
 Sept. 2014 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
 creative commons license 3.0: Attribution-ShareAlike CC BY-SA
-This software is furnished "as is", without technical support, and with no 
+This software is furnished "as is", without technical support, and with no
 warranty, express or implied, as to its usefulness for any purpose.
 
 Thread Safe: No
@@ -35,13 +35,12 @@ www.r-site.net
 			clear();
 			int i=0;
 			for(;i<m.sz;i++)
-			  printPrompt(*m.data[i],i==m.sel,i+1,i-top,m.width);
-			if (drawExit) printPrompt(menu::exitOption,m.sel==m.sz,0,i-top,m.width);
+			  printPrompt(*m.data[i],i==m.sel,i+1,i-top,0,m.width);
+			if (drawExit) printPrompt(menu::exitOption,m.sel==m.sz,i,0,i-top,m.width);
 			lastTop=top;
 			lastSel=m.sel;
 			drawn=&m;
 		}
   };
-  
-#endif RSITE_ARDUINOP_MENU_PRINT
 
+#endif RSITE_ARDUINOP_MENU_PRINT

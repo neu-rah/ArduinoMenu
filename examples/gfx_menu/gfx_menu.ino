@@ -66,9 +66,9 @@ Adafruit_ST7735 tft(tftCS, dc, rst);
 //functions to wire as menu actions
 
 //aux function
-void nothing() {}
+bool nothing() {return false;}
 
-void setValue(int &value,prompt &p,menuOut &o, Stream &i,const char* text,const char* units="",int sensivity=5,int low=0,int hi=100,int steps=0,void (*func)()=nothing);
+bool setValue(int &value,prompt &p,menuOut &o, Stream &i,const char* text,const char* units="",int sensivity=5,int low=0,int hi=100,int steps=0,bool (*func)()=nothing);
 
 /////////////////////////////////////////////////////////////////////////
 // MENU DEFINITION

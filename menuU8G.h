@@ -80,21 +80,17 @@ www.r-site.net
         o.printTo(*this);
     }
 		virtual void printMenu(menu& m,bool drawExit) {
-            //if (drawn!=&m) clear();//clear all screen when changing menu - not ok for U8Glib
-
-            if (m.sel-top >= maxY)
-                top = m.sel - maxY + resY + 1; //selected option outside device (bottom)
+      //if (drawn!=&m) clear();//clear all screen when changing menu - not ok for U8Glib
+  		if (m.sel-top >= maxY)
+        top = m.sel - maxY + resY + 1; //selected option outside device (bottom)
 			else if (m.sel < top)
-                top = m.sel + resY; //selected option outside device (top)
-
-            int i = top;
-
-            for (; i < m.sz; i++)
-            {
-				  if (i-top >= maxY)
-                      break;
-				  if (needRedraw(m,i))
-                      printPrompt(*m.data[i],i == m.sel,i+1,m.ox,(i-top)+m.oy,m.width);
+        top = m.sel + resY; //selected option outside device (top)
+      int i = top;
+      for (; i < m.sz; i++) {
+			  if (i-top >= maxY) break;
+			  if (needRedraw(m,i))
+					printPrompt(*(prompt*)pgm_read_ptr_near(&m.data[i]),i == m.sel,i+1,m.ox,(i-top)+m.oy,m.width);
+      	//printPrompt(*m.data[i],i == m.sel,i+1,m.ox,(i-top)+m.oy,m.width);
 			}
 			if (drawExit && i-top<maxY && needRedraw(m,i))
 				printPrompt(menu::exitOption,m.sel==m.sz,0,m.ox,(i-top)+m.oy,m.width);

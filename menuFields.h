@@ -79,7 +79,8 @@ v2.0 - 	Calling action on every elements
       	previousMenu->printMenu(p,previousMenu->canExit);
 			}
 			//printing here to solve U8GLX blank screen on field edit
-			previousMenu->printMenu(p,previousMenu->canExit);
+			// TODO: check Serial out...
+			previousMenu->printMenu(p,false);//previousMenu->canExit);
 			if (!c.available()) return 0;
 			if (strchr(numericChars,c.peek())) {//a numeric value was entered
       	value=c.parseFloat();
@@ -118,13 +119,14 @@ v2.0 - 	Calling action on every elements
 		void sync() {//if possible make selection match the target value
 			sel=0;
 	  	for(int n=0;n<sz;n++)
-	  		if (((menuValue<T>*)data[n])->value==target)
+	  		if (((menuValue<T>*)pgm_read_ptr_near(&data[n]))->value==target)
 	  			sel=n;
     }
 		virtual void printTo(menuOut& p) {
 			menuSelect<T>::sync();
-			p.print(prompt::text);
-			p.print(((menuValue<T>*)menu::data[menu::sel])->text);
+			print_P(p,text);
+			((prompt*)pgm_read_ptr_near(&data[sel]))->printTo(p);
+			//print_P(p,((menuValue<T>*)pgm_read_ptr_near(&data[sel]))->text);
 		}
   };
 
@@ -150,9 +152,10 @@ v2.0 - 	Calling action on every elements
 			op=menu::menuKeys(p,c,false);
 			if (op>=0&&op<this->menu::sz) {
 				this->menu::sel=op;
-				if (this->menu::data[op]->enabled) {
-					this->menuSelect<T>::target=((menuValue<T>*)this->menu::data[op])->value;
-					this->menu::data[op]->activate(p,c,true);
+				menuValue<T>* cp=(menuValue<T>*)pgm_read_ptr_near(&this->menu::data[op]);
+				if (cp->enabled) {
+					this->menuSelect<T>::target=cp->value;
+					cp->activate(p,c,true);
 					//and exit
 					this->menu::activeNode=this->menu::previousMenu;
 				 	c.flush();//reset the encoder
@@ -176,8 +179,9 @@ v2.0 - 	Calling action on every elements
 			this->menu::sel++;
 			if (this->menu::sel>=this->menu::sz) this->menu::sel=0;
 		 	p.lastSel=-1;//redraw only affected option
-			this->menuSelect<T>::target=((menuValue<T>*)this->menu::data[menu::sel])->value;
-			this->menu::data[this->menu::sel]->activate(p,c,true);
+			menuValue<T>* cp=(menuValue<T>*)pgm_read_ptr_near(&this->menu::data[menu::sel]);
+			this->menuSelect<T>::target=cp->value;
+			cp->activate(p,c,true);
 			return 0;
 		}
 	};

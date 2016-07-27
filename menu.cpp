@@ -16,7 +16,7 @@ v2.0 mods - calling action on every element
 #include <Arduino.h>
 #include "menu.h"
 
-const char* menu::exit="Exit";
+const char menu::exit[] MEMMODE="Exit";
 char menu::escCode='/';
 char menu::enterCode='*';
 char menu::upCode='+';
@@ -26,6 +26,12 @@ char menu::disabledCursor='-';
 prompt menu::exitOption(menu::exit);
 bool menu::wrapMenus=false;
 menuNode* menuNode::activeNode=NULL;
+
+void print_P(menuOut& s,const char* at) {
+  int len=strlen_P(at);
+  for(;len;len--,at++)
+    s.write(pgm_read_byte_near(at));
+}
 
 bool menuOut::needRedraw(menu& m,int i) {return (drawn!=&m)||(top!=lastTop)||(m.sel!=lastSel&&((i==m.sel)||(i==lastSel)));}
 
@@ -86,9 +92,10 @@ promptFeedback menu::activate(menuOut& p,Stream& c,bool canExit) {
   op=menuKeys(p,c,canExit);
   if (op>=0&&op<sz) {
   	sel=op;
-    if (data[op]->enabled) {
+    prompt* cp=(prompt*)pgm_read_ptr_near(&data[op]);
+    if (cp->enabled) {
       printMenu(p,canExit);//clearing old selection
-      if (data[op]->activate(p,c,true)) {
+      if (cp->activate(p,c,true)) {
         p.clear();
       	activeNode=previousMenu;
         return true;
