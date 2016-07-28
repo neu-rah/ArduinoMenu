@@ -80,6 +80,7 @@ int menu::menuKeys(menuOut &p,Stream& c,bool canExit) {
 //input scan: call the navigation function (self)
 promptFeedback menu::activate(menuOut& p,Stream& c,bool canExit) {
 	if (activeNode!=this) {
+    //Serial<<"first time activation, canExit param:"<<canExit<<endl;
     if (action(*this,p,c)) return true;
 		previousMenu=(menu*)activeNode;
 		activeNode=this;
@@ -110,5 +111,6 @@ promptFeedback menu::activate(menuOut& p,Stream& c,bool canExit) {
 }
 
 void menu::poll(menuOut& p,Stream& c,bool canExit) {
-  (activeNode?activeNode:this)->activate(p,c,activeNode==this?canExit:true);
+  menuNode* n=activeNode?activeNode:this;
+  n->activate(p,c,(activeNode==this||!activeNode)?canExit:true);
 }

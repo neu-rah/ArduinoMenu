@@ -43,12 +43,12 @@ www.r-site.net
 			int i=0;for(;i<m.sz;i++) {
 				if ((i>=top)&&((i-top)<maxY)) {
 				  if (needRedraw(m,i)) {
-				  	printPrompt(*m.data[i],i==m.sel,i+1,i-top,m.width);
+				  	printPrompt(*m.data[i],i==m.sel,i+1,0,i-top,m.width);
 				  }
 				}
 			}
 			if (drawExit&&i-top<maxY&&needRedraw(m,i))
-				printPrompt(menu::exitOption,m.sel==m.sz,0,i-top,m.width);
+				printPrompt(menu::exitOption,m.sel==m.sz,0,0,i-top,m.width);
 			lastTop=top;
 			lastSel=m.sel;
 			drawn=&m;

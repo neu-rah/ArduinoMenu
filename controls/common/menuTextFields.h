@@ -40,7 +40,7 @@ public:
 		promptAction func,
 		const char* allowed=numericChars
   ):menuNode(prompt,func),cursor(0),target(target),allowed(allowed) {len=strlen(target);}
-	virtual void activate(menuOut& p,Stream&c,bool canExit=false) {
+	virtual promptFeedback activate(menuOut& p,Stream&c,bool canExit=false) {
 		if (activeNode!=this) {
 		  ox=activeNode->ox;
 		  oy=activeNode->oy;
@@ -80,6 +80,7 @@ public:
     	previousMenu->printMenu(p,previousMenu->canExit);
     //}
 		p.setCursor(strlen(text)+cursor+2);
+		return false;
 	}
 	virtual void printTo(menuOut& p) {
 		p.print(prompt::text);

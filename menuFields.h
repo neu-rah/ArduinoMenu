@@ -70,6 +70,9 @@ v2.0 - 	Calling action on every elements
 		//lazy drawing, we have no drawing position here... so we will ask the menu to redraw
 		virtual promptFeedback activate(menuOut& p,Stream&c,bool canExit=false) {
 			if (activeNode!=this) {
+				Serial.println("menuField activate 1st time");
+				print_P(p,activeNode->text);
+				Serial<<" canExit:"<<((menu*)activeNode)->canExit<<endl;
 				if (action(*this,p,c)) return true;;
 			  ox=activeNode->ox;
 			  oy=activeNode->oy;

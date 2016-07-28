@@ -54,12 +54,8 @@ Extensible: Yes
 
 ///////////////////////////////////////////////////////////////////////////
 //functions to wire as menu actions
-
-//aux function
-void nothing() {}
-
-void ledOn() {digitalWrite(LEDPIN,1);}
-void ledOff() {digitalWrite(LEDPIN,0);}
+bool ledOn() {digitalWrite(LEDPIN,1);return false;}
+bool ledOff() {digitalWrite(LEDPIN,0);return false;}
 
 /////////////////////////////////////////////////////////////////////////
 // MENU DEFINITION
@@ -68,11 +64,11 @@ void ledOff() {digitalWrite(LEDPIN,0);}
 MENU(mainMenu,"LED ON/OFF",
   OP("LED On",ledOn),
   OP("LED Off",ledOff),
-  OP("Empty 1"),
-  OP("Empty 2"),
-  OP("Empty 3"),
-  OP("Empty 4"),
-  OP("Empty 5...")
+  OP("Empty 1",menu::nothing),
+  OP("Empty 2",menu::nothing),
+  OP("Empty 3",menu::nothing),
+  OP("Empty 4",menu::nothing),
+  OP("Empty 5...",menu::nothing)
 );
 
 //the quadEncoder
@@ -96,7 +92,7 @@ menuLCD lcd(lcd1,20,4);
 
 /////////////////////////////////////////////////////////////////////////
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println("menu system test");
 
   quadEncoder.begin();

@@ -21,8 +21,8 @@ on this example we build a menu without using the macros, its a bit harder but h
 #include <keyStream.h>//keyboard driver and fake stream (for the encoder button)
 #include <chainStream.h>// concatenate multiple input streams (this allows adding a button to the encoder)
 #include "menuLCD.h"
-#include "streamFlow.h"
-#include <controls/common/menuTextFields.h>
+//#include "streamFlow.h"
+//#include <controls/common/menuTextFields.h>
 
 #if defined(__AVR_ATmega2560__)
   //LCD wired on my AtMega2560
@@ -57,27 +57,24 @@ on this example we build a menu without using the macros, its a bit harder but h
 
 ///////////////////////////////////////////////////////////////////////////
 //functions to wire as menu actions
+bool ledOn() {digitalWrite(LEDPIN,1);return true;}
+bool ledOff() {digitalWrite(LEDPIN,0);return true;}
 
-//aux function
-void nothing() {}
+//char name[4+1]="0000";
 
-void ledOn() {digitalWrite(LEDPIN,1);}
-void ledOff() {digitalWrite(LEDPIN,0);}
-
-char name[4+1]="0000";
-
-
-void updateName(prompt& p,menuOut& o,Stream &c) {
+bool updateName(prompt& p,menuOut& o,Stream &c) {
   digitalWrite(LEDPIN,!digitalRead(LEDPIN));
+  return false;
 }
 
 bool runMenu=true;//to disable the menu and free the display for something else, this is controlled outside the lib
 
-void justTest() {
+bool justTest() {
   runMenu=false;
   lcd1.clear();
   lcd1.setCursor(0,0);
   lcd1.print("Using the LCD");
+  return false;
 }
 
 /////////////////////////////////////////////////////////////////////////
@@ -85,15 +82,20 @@ void justTest() {
 // here we define the menu structure and wire actions functions to it
 // empty options are just for scroll testing
 
-prompt sub1("LED ON",ledOn);
-prompt sub2("LED OFF",ledOff);
-prompt* subMenuData[]={&sub1,&sub2};
-menu subMenu("Sub-menu",2,subMenuData);
+const char sub1_[] PROGMEM="LED ON";
+prompt sub1(sub1_,ledOn);
+const char sub2_[] PROGMEM="LED OFF";
+prompt sub2(sub2_,ledOff);
+prompt* const subMenuData[] PROGMEM={&sub1,&sub2};
+const char subMenu_[] PROGMEM="Sub-menu";
+menu subMenu(subMenu_,2,subMenuData);
 
-prompt empty("Empty");
+const char empty_[] PROGMEM="Empty";
+prompt empty(empty_);
 
-prompt* mainMenuData[]={&subMenu,&empty};
-menu mainMenu("Main menu",2,mainMenuData);
+prompt* const mainMenuData[] PROGMEM={&subMenu,&empty};
+const char mainMenu_[] PROGMEM="Main menu";
+menu mainMenu(mainMenu_,2,mainMenuData);
 
 ///////////////////////////////////////////////////////////////////////////
 // IO

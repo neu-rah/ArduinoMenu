@@ -174,11 +174,11 @@ v2.1 - Add full support of SetPosition(x,y) to move the menu inside the screen (
     //force menu redraw on selected device
     inline void redraw(menuOut& p,Stream& c,bool canExit=false) {p.drawn=NULL;poll(p,c,canExit);}
     //set the focus to menu->Option idx, the focused menu will exit to the current
-    inline void focus(int idx,menu *prev=NULL) {
+    /*inline void focus(int idx,menu *prev=NULL) {
       previousMenu=prev;
       activeNode=this;//redirect drawing
       sel=(idx>=sz||idx<0)?sz-1:idx;//focus idx option if out of range then the last will be selected
-    }
+    }*/
 
     promptFeedback activate(menuOut& p,Stream& c,bool canExit=false);
 

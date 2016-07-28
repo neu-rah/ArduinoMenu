@@ -31,7 +31,7 @@ UTouch library from:
 #include <chainStream.h>// concatenate multiple input streams (this allows adding a button to the encoder)
 #include <menuUTouch.h>
 #include <menuFields.h>
-//#include <menuTextFields.h>
+#include <controls/common/menuTextFields.h>
 #include <menuPrint.h>
 
 UTFT myGLCD(CTE28,25,26,27,28);
@@ -52,9 +52,7 @@ chainStream<2> in(in2);
 // this functions will be wired to menu options
 // meaning they will be called on option click/select
 // or on field value change/update
-void nothing() {}
-
-void sayIt(prompt& p,menuOut& o,Stream &c) {
+bool sayIt(prompt& p,menuOut& o,Stream &c) {
   myGLCD.setBackColor(0, 0, 0);
   myGLCD.clrScr();
   myGLCD.setColor(0, 255, 0);
@@ -63,6 +61,7 @@ void sayIt(prompt& p,menuOut& o,Stream &c) {
   o.drawn=0;
   delay(1000);
   myGLCD.clrScr();
+  return false;
 }
 
 int aValue=50;
@@ -76,8 +75,9 @@ float fValue=101.1;
 
 char name[20+1]="                    ";
 
-void updateName(prompt& p,menuOut& o,Stream &c) {
+bool updateName(prompt& p,menuOut& o,Stream &c) {
   o.println(name);
+  return false;
 }
 
 MENU(subMenu,"Sub-menu",

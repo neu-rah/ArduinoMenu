@@ -46,9 +46,7 @@ chainStream<2> in(in2);
 // this functions will be wired to menu options
 // meaning they will be called on option click/select
 // or on field value change/update
-void nothing() {}
-
-void sayIt(prompt& p,menuOut& o,Stream &c) {
+bool sayIt(prompt& p,menuOut& o,Stream &c) {
   myGLCD.setBackColor(0, 0, 0);
   myGLCD.clrScr();
   myGLCD.setColor(0, 255, 0);
@@ -57,6 +55,7 @@ void sayIt(prompt& p,menuOut& o,Stream &c) {
   o.drawn=0;
   delay(1000);
   myGLCD.clrScr();
+  return true;
 }
 
 int aValue=50;
@@ -65,9 +64,9 @@ float fValue=101.1;
 // MENU DEFINITION
 // here we define the menu structure and wire actions functions to it
 MENU(subMenu,"Sub-Menu",
-  OP("Op1",nothing),
-  OP("Op2",nothing),
-  OP("Op3",nothing)
+  OP("Op1",menu::nothing),
+  OP("Op2",menu::nothing),
+  OP("Op3",menu::nothing)
 );
 
 /*MENU(menuSetup,"Menu config",
