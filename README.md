@@ -8,6 +8,16 @@ Works either over serial or with LCD + encoder
 more details on wiki and issues discussions
 
 -------------------------------------------------------------------------------
+V2.3
+
+	- actions functions need to return bool now (only affects menus)
+		false = continue menu
+		true = exit menu
+	- Support for U8GLib screens
+	- alternative use of ClickEncoder
+	- using flash memory to store menu strings and lists (PROGMEM)
+
+-------------------------------------------------------------------------------
 V2.0
 
 main changes:
