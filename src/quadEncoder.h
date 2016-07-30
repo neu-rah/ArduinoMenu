@@ -1,7 +1,7 @@
 /********************
 Sept. 2014 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
 creative commons license 3.0: Attribution-ShareAlike CC BY-SA
-This software is furnished "as is", without technical support, and with no 
+This software is furnished "as is", without technical support, and with no
 warranty, express or implied, as to its usefulness for any purpose.
 
 Thread Safe: No
@@ -11,9 +11,7 @@ quadrature encoder driver (PCINT)
 quadrature encoder stream (fake, not using buffers)
 */
 
-#include "pcint.h"
-//PCInt library is missing (Arduino has none), handlers are conflicting due to private handler implementations
-//therefor you can not use this and SoftwareSerial or any other that defines PCINT handlers, unless made common
+#include <pcint.h> //https://github.com/neu-rah/PCINT
 
 class quadEncoder {
 public:
@@ -71,5 +69,3 @@ public:
   void flush() {oldPos=enc.pos;}
   size_t write(uint8_t v) {oldPos=v;return 1;}
 };
-
-
