@@ -2,7 +2,7 @@
 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
 adapted from: http://playground.arduino.cc/Main/PcInt
 with many changes to make it compatible with arduino boards (original worked on Uno)
-not tested on many boards but has the code uses arduino macros for pin mappings 
+not tested on many boards but has the code uses arduino macros for pin mappings
 it should be more compatible and also more easy to extend
 some boards migh need pcintPinMap definition
 
@@ -14,7 +14,7 @@ Nov.2014 large changes
   - array[a][b] is 17% faster than array[(a<<3)+b], same memory
   - reverse pin mappings for pin change check (not on arduino env. AFAIK)
 
-**/	
+**/
 #ifndef ARDUINO_PCINT_MANAGER
 #define ARDUINO_PCINT_MANAGER
 	#if ARDUINO < 100
@@ -31,10 +31,29 @@ Nov.2014 large changes
 		const uint8_t PROGMEM pcintPinMap[3][8]={{8,9,10,11,12,13,-1,-1},{A0,A1,A2,A3,A4,A5,-1,-1},{0,1,2,3,4,5,6,7}};
 	#elif ( defined(__AVR_ATmega2560__) )
 		const uint8_t PROGMEM pcintPinMap[3][8]={{53,52,51,50,10,11,12,13},{0,15,14,-1,-1,-1,-1,-1},{A8,A9,A10,A11,A12,A13,A14,A15}};
+	#elif ( defined(__AVR_ATmega1284P__) || defined(__AVR_ATmega1284__) || defined(__AVR_ATmega644__))
+		#warning "Using ATMega1284/1284P/644"
+		#define digitalPinFromPCINTSlot(slot,bit) pgm_read_byte(digital_pin_to_pcint+(((slot)<<3)+(bit)))
+		#define pcintPinMapBank(slot) ((uint8_t*)((uint8_t*)digital_pin_to_pcint+((slot)<<3)))
+		#if MIGHTY_1284P_VARIANT == BOBUINO
+			#warning "Using BOBUINO variant"
+			const uint8_t PROGMEM pcintPinMap[3][8]={{21,20,19,18,17,16,30,31},{4,5,6,7,10,11,12,13},{29,28,24,25,26,27,15,14}};
+			//BOBUINO
+			//https://camo.githubusercontent.com/6be59711fba13a714d1ee2be990e3b9b79b9748f/687474703a2f2f692e696d6775722e636f6d2f664843354c514b2e706e67
+			//const uint8_t PROGMEM pcintPinMap[3][8]={{21,20,19,18,17,16,15,14},{4,5,6,7,10,11,12,13},{22,23,24,25,26,27,28,29}};
+			//const uint8_t PROGMEM pcintPinMap[3][8]={{24,25,10,11,8,9,26,27},{29,30,12,13,14,15,7,6},{5,4,3,2,1,0,16,17}};
+			//#error "uC PCINT REVERSE MAP IS NOT DEFINED, ATmega1284P BOBUINO, choose variant pinmap on file pcint.h"
+		#else
+			//http://orig06.deviantart.net/00ad/f/2013/038/6/7/atmega1284p_by_pighixxx-d5u4aed.png
+			//const uint8_t PROGMEM pcintPinMap[3][8]={{24,25,26,27,28,29,20,31},{0,1,2,3,4,5,6,7},{16,17,18,19,20,21,22,23}};
+			//const uint8_t PROGMEM pcintPinMap[3][8]={{21,20,19,18,17,16,15,14},{4,5,6,7,10,11,12,13},{22,23,24,25,26,27,28,29}};
+			//Uno_Pro
+			const uint8_t PROGMEM pcintPinMap[3][8]={{21,20,19,18,17,16,15,14},{4,5,2,3,10,11,12,13},{22,23,24,25,26,27,28,29}};
+			//#error "uC PCINT REVERSE MAP IS NOT DEFINED, ATmega1284P variant unknown"
+		#endif
 	#else
 		#error "uC PCINT REVERSE MAP IS NOT DEFINED"
 	#endif
-	
 	#define digitalPinFromPCINTSlot(slot,bit) pgm_read_byte(pcintPinMap+(((slot)<<3)+(bit)))
 	#define pcintPinMapBank(slot) ((uint8_t*)((uint8_t*)pcintPinMap+((slot)<<3)))
 	#define digitalPinFromPCINTBank(bank,bit) pgm_read_byte((uint8_t*)bank+bit)
@@ -120,7 +139,7 @@ Nov.2014 large changes
 		}
 	}
 
-	//AVR handle pin change... later figure it out the pin
+	//AVR handle pin change... later figure out the pin
 	SIGNAL(PCINT0_vect) {
 		PCint(0);
 	}
@@ -132,4 +151,3 @@ Nov.2014 large changes
 	}
 
 #endif
-
