@@ -1,14 +1,14 @@
 /********************
 Sept. 2014 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
 creative commons license 3.0: Attribution-ShareAlike CC BY-SA
-This software is furnished "as is", without technical support, and with no 
+This software is furnished "as is", without technical support, and with no
 warranty, express or implied, as to its usefulness for any purpose.
 
 Thread Safe: No
 Extensible: Yes
 
-implement menu output for Francisco Malpartida arduino LCD's 
- 
+implement menu output for Francisco Malpartida arduino LCD's
+
 as VirtualPins is not yet a standard I implemented this to support existing libraries
 www.r-site.net
 ***/
@@ -19,7 +19,7 @@ www.r-site.net
 	#include "menu.h"
 
 	typedef void (*functionPtr)();
-	
+
   class menuLCD:public menuOut {
     public:
     LCD& lcd;
@@ -44,7 +44,7 @@ www.r-site.net
 			int i=top;for(;i<m.sz;i++) {
 			  if(i-top>=maxY) break;
 			  if (needRedraw(m,i))
-			  	printPrompt(*m.data[i],i==m.sel,i+1,i-top,m.width);
+			  	printPrompt(*(prompt*)pgm_read_ptr_near(&m.data[i]),i==m.sel,i+1,i-top,m.width);
 			}
 			if (drawExit&&i-top<maxY&&needRedraw(m,i))
 				printPrompt(menu::exitOption,m.sel==m.sz,0,i-top,m.width);
@@ -54,4 +54,3 @@ www.r-site.net
 		}
   };
 #endif RSITE_ARDUINOP_MENU_LCD
-
