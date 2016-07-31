@@ -29,7 +29,7 @@ TOGGLE(test,onoff_tog,"led: ",
 
 
 MENU(mainMenu,"Main menu",
-  OP("Disabled option",none),
+  OP("Disabled option",menu::nothing),
   SUBMENU(onoff_tog),
   FIELD(param,"Name","%",0,100,10,1)
 );
@@ -38,6 +38,7 @@ menuPrint menu_out(Serial);//describe output device
 
 void setup() {
   Serial.begin(115200);
+  while(!Serial);
   Serial.println("menu system test");
   pinMode(13,OUTPUT);
   mainMenu.data[0]->enabled=false;

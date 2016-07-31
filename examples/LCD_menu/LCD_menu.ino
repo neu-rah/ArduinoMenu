@@ -40,10 +40,10 @@ Extensible: Yes
 // ENCODER (aka rotary switch) PINS
 // rotary
 #if defined(__AVR_ATmega328__)||defined(__AVR_ATmega328P__)// uno and breaduinos
-  #define encA 2
-  #define encB 3
+  #define encA A2
+  #define encB 2
   //this encoder has a button here
-  #define encBtn A0
+  #define encBtn A3
   #define LEDPIN 13
 #elif defined(__AVR_ATmega2560__)
   #define encA 10
@@ -61,7 +61,7 @@ bool ledOff() {digitalWrite(LEDPIN,0);return false;}
 // MENU DEFINITION
 // here we define the menu structure and wire actions functions to it
 // empty options are just for scroll testing
-MENU(mainMenu,"LED ON/OFF",
+MENU(mainMenu,"Main menu",
   OP("LED On",ledOn),
   OP("LED Off",ledOff),
   OP("Empty 1",menu::nothing),
@@ -88,11 +88,12 @@ Stream* in3[]={&enc,&encButton,&Serial};
 chainStream<3> allIn(in3);
 
 //describing a menu output, alternatives so far are Serial or LiquidCrystal LCD
-menuLCD lcd(lcd1,20,4);
+menuLCD lcd(lcd1,16,2);
 
 /////////////////////////////////////////////////////////////////////////
 void setup() {
   Serial.begin(115200);
+  while(!Serial);
   Serial.println("menu system test");
 
   quadEncoder.begin();
@@ -105,11 +106,14 @@ void setup() {
 
   pinMode(LEDPIN,OUTPUT);
 
+  //lcd.setCursor(0,1);
+  //mainMenu.printTo(lcd);
+  //((prompt*)pgm_read_ptr_near(&mainMenu.data[0]))->printTo(lcd);
   delay(300);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // testing the menu system
 void loop() {
-    mainMenu.poll(lcd,allIn);
+  mainMenu.poll(lcd,allIn);
 }
