@@ -125,8 +125,16 @@ template <typename T> class menuField;
   };\
   menu id (id##_text,sizeof(id##_data)/sizeof(prompt*),id##_data);
 
+#define SELECT(target,id,text,...)\
+  const char id##_text[] MEMMODE=text;\
+  XFOR_EACH(DECL_VALUE,target,__VA_ARGS__)\
+  menuValue<typeof(target)>* const id##_data[] MEMMODE={\
+    FOR_EACH(DEF,__VA_ARGS__)\
+  };\
+  menuSelect<typeof(target)> id (id##_text,sizeof(id##_data)/sizeof(prompt*),id##_data,target);
+
 #define CHOOSE(target,id,text,...)\
-const char id##_text[] MEMMODE=text;\
+  const char id##_text[] MEMMODE=text;\
   XFOR_EACH(DECL_VALUE,target,__VA_ARGS__)\
   menuValue<typeof(target)>* const id##_data[] MEMMODE={\
     FOR_EACH(DEF,__VA_ARGS__)\

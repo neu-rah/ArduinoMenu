@@ -56,7 +56,8 @@ v2.0 - 	Calling action on every elements
 		char ch;
 		T tmp;
 		menuField(T &value,const char * text,const char *units,T low,T high,T step,T tune=0,promptFeedback (*func)()=nothing)
-			:menuNode(text),value(value),units(units),low(low),high(high),step(step),tune(tune),func(func),tunning(false),ch(0),tmp(0) {}
+			:menuNode(text),value(value),units(units),low(low),high(high),step(step),tune(tune),func(func),tunning(false),ch(0),tmp(value) {}
+		virtual bool needRedraw() {return tmp!=value;}
 		virtual void printTo(menuOut& p) {
 			p.print(text);
 			p.print(activeNode==this?(tunning?'>':':'):' ');
@@ -111,11 +112,12 @@ v2.0 - 	Calling action on every elements
 	};
 
 	template<typename T>
-	class menuSelect:public menu {
+	class menuVariant:public menu {
 		public:
 		T& target;
-		menuSelect(T& target,const char *text,unsigned int sz,menuValue<T>* const data[]):
+		menuVariant(T& target,const char *text,unsigned int sz,menuValue<T>* const data[]):
 	    menu(text,sz,(prompt**)data),target(target) {sync();}
+		virtual bool needRedraw() {return ((menuValue<T>*)pgm_read_ptr_near(&data[sel]))->value!=target;}
 		void sync() {//if possible make selection match the target value
 			sel=0;
 	  	for(int n=0;n<sz;n++)
@@ -123,7 +125,7 @@ v2.0 - 	Calling action on every elements
 	  			sel=n;
     }
 		virtual void printTo(menuOut& p) {
-			menuSelect<T>::sync();
+			menuVariant<T>::sync();
 			print_P(p,text);
 			((prompt*)pgm_read_ptr_near(&data[sel]))->printTo(p);
 			//print_P(p,((menuValue<T>*)pgm_read_ptr_near(&data[sel]))->text);
@@ -131,15 +133,20 @@ v2.0 - 	Calling action on every elements
   };
 
 	template<typename T>
-	class menuChoice: public menuSelect<T> {
+	class menuSelect: public menuVariant<T> {
+		public:
+	};
+
+	template<typename T>
+	class menuChoice: public menuVariant<T> {
 		public:
 		menuChoice(const char *text,unsigned int sz,menuValue<T>* const data[],T& target):
-	    menuSelect<T>(target,text,sz,data) {menuSelect<T>::sync();}
+	    menuVariant<T>(target,text,sz,data) {menuVariant<T>::sync();}
 
 		//ignore canExit (this exists by select), however we could use a cancel option instead of Exit
 		promptFeedback activate(menuOut& p,Stream& c,bool) {
 			if (menu::activeNode!=this) {
-				if (menuSelect<T>::action(*this,p,c)) return true;
+				if (menuVariant<T>::action(*this,p,c)) return true;
 			  this->setPosition(menuNode::activeNode->ox,menuNode::activeNode->oy);
 				this->menu::previousMenu=(menu*)menu::activeNode;
 				menu::activeNode=this;
@@ -154,7 +161,7 @@ v2.0 - 	Calling action on every elements
 				this->menu::sel=op;
 				menuValue<T>* cp=(menuValue<T>*)pgm_read_ptr_near(&this->menu::data[op]);
 				if (cp->enabled) {
-					this->menuSelect<T>::target=cp->value;
+					this->menuVariant<T>::target=cp->value;
 					cp->activate(p,c,true);
 					//and exit
 					this->menu::activeNode=this->menu::previousMenu;
@@ -165,22 +172,19 @@ v2.0 - 	Calling action on every elements
 		}
 	};
 	template<typename T>
-	class menuToggle: public menuSelect<T> {
+	class menuToggle: public menuVariant<T> {
 		public:
 
 		menuToggle(const char *text,unsigned int sz,menuValue<T>* const data[],T& target):
-	    menuSelect<T>(target,text,sz,data) {menuSelect<T>::sync();}
+	    menuVariant<T>(target,text,sz,data) {menuVariant<T>::sync();}
 
 		promptFeedback activate(menuOut& p,Stream& c,bool canExit) {
-			//Serial.println("entering toggle");
-			if (menuSelect<T>::action(*this,p,c)) return true;
-		  /*ox=activeNode->ox;
-		  oy=activeNode->oy;*/
+			if (menuVariant<T>::action(*this,p,c)) return true;
 			this->menu::sel++;
 			if (this->menu::sel>=this->menu::sz) this->menu::sel=0;
 		 	p.lastSel=-1;//redraw only affected option
 			menuValue<T>* cp=(menuValue<T>*)pgm_read_ptr_near(&this->menu::data[menu::sel]);
-			this->menuSelect<T>::target=cp->value;
+			this->menuVariant<T>::target=cp->value;
 			cp->activate(p,c,true);
 			return 0;
 		}

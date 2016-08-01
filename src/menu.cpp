@@ -33,7 +33,13 @@ void print_P(menuOut& s,const char* at) {
     s.write(pgm_read_byte_near(at));
 }
 
-bool menuOut::needRedraw(menu& m,int i) {return (drawn!=&m)||(top!=lastTop)||(m.sel!=lastSel&&((i==m.sel)||(i==lastSel)));}
+bool menuOut::needRedraw(menu& m,int i) {
+  return (drawn!=&m)
+    ||(top!=lastTop)
+    ||(m.sel!=lastSel&&((i==m.sel)
+    ||(i==lastSel)))
+    ||((prompt*)pgm_read_ptr_near(&m.data[i]))->needRedraw();
+  }
 
 //menu navigation engine
 //iteract with input until a selection is done, return the selection
