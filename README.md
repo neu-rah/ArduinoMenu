@@ -20,7 +20,7 @@ Works either over serial or with LCD + encoder
 - Customizable (colors and cursors).
 - Able to work over Serial stream for regular or debug mode.
 
-[![IMAGE ALT TEXT](https://img.youtube.com/vi/wHv5sU-HXVI/2.jpg)](https://youtu.be/wHv5sU-HXVI "Arduino menu 2.0 video") [![IMAGE ALT TEXT](https://img.youtube.com/vi/W-TRCziF67g/2.jpg)](https://youtu.be/W-TRCziF67g "Arduino menu basic features video")
+[![IMAGE ALT TEXT](https://img.youtube.com/vi/wHv5sU-HXVI/2.jpg)](https://youtu.be/wHv5sU-HXVI "Arduino menu 2.0 fields video") [![IMAGE ALT TEXT](https://img.youtube.com/vi/W-TRCziF67g/2.jpg)](https://youtu.be/W-TRCziF67g "Arduino menu basic features video")
 
 ## IO devices
 ### Output devices
@@ -104,97 +104,146 @@ MENU(mainMenu,"Main menu",
 
 ## syntax
 
-	OP(name,function)
-		name string to be shown as menu option prompt
-		function to be called on click
+#### Option
+```c++
+OP(name,function)
+```
+Menu option, call user function on click
 
-	FIELD(variable,name,units,min,max,step,tune,function)
-		Holding and changing numeric values
-		where:
-			variable: holding the value (must be numeric or support comparison oprators)
-			name: to use as prompt
-			units: to be shown after value
-			min,max: defining numeric value range
-			step: increment/decrement when adjusting value
-			tune: value to increment/decrement when fine tunning the value
-			function: called on every value change
+**name**: string to be shown as menu option prompt
 
-	VALUE(text,value)
-		holding possible FIELD values
-		where:
-			text: to be used as prompt
-			value: to be passed when selected
+**function**: to be called on click
 
+#### Numeric field
+```c++
+FIELD(variable,name,units,min,max,step,tune,function)
+```
+
+Holding and changing numeric values
+
+**variable**: holding the value (must be numeric or support comparison oprators)
+
+**name**: to use as prompt
+
+**units**: to be shown after value
+
+**min,max**: defining numeric value range
+
+**step**: increment/decrement when adjusting value
+
+**tune**: value to increment/decrement when fine tunning
+the value
+
+**function**: called on every value change
+
+#### Field value
+```c++
+VALUE(text,value)
+```
+
+holding possible FIELD values
+
+**text**: to be used as prompt
+
+**value**: to be passed when selected
+
+#### Toggle field value
+```c++
 	TOGGLE(variable,id,name,
 		VALUE(...),
 		...,
 		VALUE(...)
 	)
-		Holding a value and a list of possible values to toggle on click
-		this is ideal for On/Off Yes/No and other small list of values
-		where:
-			variable: holding the value
-			id: of this element to be used with SUBMENU
-			name: to be used as prompt
+```
 
-	SELECT(variable,id,name,
+Holding a value and a list of possible values to toggle on click. This is ideal for On/Off Yes/No and other small list of values
+
+**variable**: holding the value
+
+**id**: of this element to be used with SUBMENU
+
+**name**: to be used as prompt
+
+#### Select field value
+```c++
+SELECT(variable,id,name,
 		VALUE(...),
 		...,
 		VALUE(...)
 	)
-		define a value from a list of possibilities
-		click to enter edit mode
-		rotate to choose value
-		click to exit edit mode
-		where:
-			variable: holding the value
-			id: of this element to be used with SUBMENU
-			name: to be used as prompt
+```
 
-	CHOOSE(variable,id,name,
-		VALUE(...),
-		...,
-		VALUE(...)
-	)
-		Holding a value and a list of possible values to select as a submenu
-		this is ideal for longer lists of values
-		where:
-			variable: holding the value
-			id: of this element to be used with SUBMENU
-			name: to be used as prompt
+define a value from a list of possibilities
+click to enter edit mode
+rotate to choose value
+click to exit edit mode
 
-	SUBMENU(id)
-		link in a submenu as option of the current one
-		where:
-			id: the submenu id
+**variable**: holding the value
 
-	MENU(id,name,
-		...
-		OP(...),
-		FIELD(...),
-		SUBMENU(...),
-		...
-	)
-	define menu structure
-	where:
-		id: this menu id
-		name: menu name to use as submenu title
+**id**: of this element to be used with SUBMENU
 
+**name**: to be used as prompt
+
+#### Choose field value
+```c++
+CHOOSE(variable,id,name,
+VALUE(...),
+...,
+VALUE(...)
+)
+```
+
+Holding a value and a list of possible values to select as a submenu. This is ideal for longer lists of values.
+
+**variable**: holding the value
+
+**id**: of this element to be used with SUBMENU
+
+**name**: to be used as prompt
+
+#### Submenu
+```c++
+SUBMENU(id)
+```
+
+link in a submenu as option of the current one
+
+**id**: the submenu id
+
+#### Menu
+```c++
+MENU(id,name,
+	...
+	OP(...),
+	FIELD(...),
+	SUBMENU(...),
+	...
+)
+```
+
+define menu structure
+
+**id**: this menu id
+
+**name**: menu name to use as submenu title
 
 ## History
 
 ### 2.3
 
 - actions functions need to return bool now (only affects menus)
-   false = continue menu
-   true = exit menu
+
+		false = continue menu
+		true = exit menu
+
 - Support for U8GLib screens
 - alternative use of ClickEncoder
 - using flash memory to store menu strings and lists (PROGMEM)
+- new field type SELECT
+- reflexivity, field reflect external changes to values
 
 ### 2.0
 
-main changes:
 - non-blocking menu main cycle
 - Menufields as menu prompts with associated value
   values can be:
@@ -202,6 +251,9 @@ main changes:
     list of values toggled on click (for small lists)
     list of values selected as submenu (for longer lists)
 - PCINT now supports Mega/2560 and possibly others
+
+### 1.x
+- basic menu functionality
 
 ## notes
 
