@@ -160,7 +160,10 @@ template <typename T> class menuField;
 #define DECL_OP_(cnt,text,...) \
   const char title_##cnt[] MEMMODE=text;\
   prompt op##cnt(title_##cnt,__VA_ARGS__);
-#define DECL_FIELD_(cnt,target,...) menuField<typeof(target)> _menuField##cnt(target,__VA_ARGS__);
+#define DECL_FIELD_(cnt,target,text,units,...)\
+  const char fieldLabel##cnt[] MEMMODE=text;\
+  const char fieldUnit##cnt[] MEMMODE=units;\
+  menuField<typeof(target)> _menuField##cnt(target,fieldLabel##cnt,fieldUnit##cnt,__VA_ARGS__);
 #define DECL_TEXTFIELD_(cnt,target,...) menuTextField _menuTextField##cnt(target,__VA_ARGS__);
 #define DECL_SUBMENU(id)
 #define DECL_VALUE(target,...) MK_VALUE(target, _##__VA_ARGS__)

@@ -59,11 +59,10 @@ v2.0 - 	Calling action on every elements
 			:menuNode(text),value(value),units(units),low(low),high(high),step(step),tune(tune),func(func),tunning(false),ch(0),tmp(value) {}
 		virtual bool needRedraw(menuOut&) {return tmp!=value;}
 		virtual void printTo(menuOut& p) {
-			//print_P(p,text);
-			p.print(text);
+			print_P(p,text);
 			p.print(activeNode==this?(tunning?'>':':'):' ');
 			p.print(value);
-			p.print(units);
+			print_P(p,units);
 		}
 		void clamp() {
       if (value<low) value=low;
