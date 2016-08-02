@@ -229,6 +229,11 @@ define menu structure
 
 ## History
 
+### 2.4
+- new field type SELECT
+- reflexivity, field reflect external changes to values
+- field string to progmem
+
 ### 2.3
 
 - actions functions need to return bool now (only affects menus)
@@ -239,8 +244,6 @@ define menu structure
 - Support for U8GLib screens
 - alternative use of ClickEncoder
 - using flash memory to store menu strings and lists (PROGMEM)
-- new field type SELECT
-- reflexivity, field reflect external changes to values
 
 ### 2.0
 
