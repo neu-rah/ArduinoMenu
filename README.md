@@ -210,5 +210,7 @@ input is read from generic streams, included simple streams for encoders and key
 
 multiple stream packing for input to mix encoder stream with encoder keyboard (usually 1 or 2 keys)
 
--------------------------------------------------------------------------------
-more info at http://r-site.net?lang=en&at=//op%5B@id=%273090%27%5D
+## info
+more info at
+
+[wiki](https://github.com/neu-rah/ArduinoMenu/wiki) pages, [issues](https://github.com/neu-rah/ArduinoMenu/issues?utf8=%E2%9C%93&q=) or [r-site.net](http://www.r-site.net/?lang=en&at=//op%5B@id=%273090%27%5D)
