@@ -176,6 +176,7 @@ MENU(mainMenu,"Main menu",
 	define menu structure
 	where:
 		id: this menu id
+		name: menu name to use as submenu title
 
 
 ## History
