@@ -96,9 +96,10 @@ MENU(mainMenu,"Main menu",
 	FIELD(frequency,"Freq","Hz",0,16000000,100,1,updateFreq),
 	FIELD(dutty,"Duty","%",0,100,1,0,updateDutty),
 	OP("Handler test",completeHandlerTest),
+	SUBMENU(ledMenu),
 	SUBMENU(trigModes),
 	SUBMENU(selMenu),
-	SUBMENU(ledMenu)
+	SUBMENU(sample_clock)
 );
 ```
 
