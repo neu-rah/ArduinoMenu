@@ -49,6 +49,7 @@ v2.0 - 	Calling action on every elements
 	class menuField:public menuNode {
 	public:
 		T& value;
+		T lastDrawn;
 		const char* units;
 		T low,high,step,tune;
 		bool tunning;
@@ -57,7 +58,16 @@ v2.0 - 	Calling action on every elements
 		T tmp;
 		menuField(T &value,const char * text,const char *units,T low,T high,T step,T tune=0,promptFeedback (*func)()=nothing)
 			:menuNode(text),value(value),units(units),low(low),high(high),step(step),tune(tune),func(func),tunning(false),ch(0),tmp(value) {}
-		virtual bool needRedraw(menuOut&) {return tmp!=value;}
+		virtual bool needRedraw(menuOut&,bool selected) {
+			//if (selected&&menu::activeNode==this) {
+				bool r=value!=lastDrawn;
+				lastDrawn=value;
+				return r;
+			/*} else if (tmp!=value) {
+				tmp=value;
+				return true;
+			}*/
+		}
 		virtual void printTo(menuOut& p) {
 			print_P(p,text);
 			p.print(activeNode==this?(tunning?'>':':'):' ');
@@ -124,7 +134,7 @@ v2.0 - 	Calling action on every elements
 		T& target;
 		menuVariant(T& target,const char *text,unsigned int sz,menuValue<T>* const data[]):
 	    menu(text,sz,(prompt**)data),target(target) {sync();}
-		virtual bool needRedraw(menuOut&p) {
+		virtual bool needRedraw(menuOut&p,bool selected) {
 			bool nr=((menuValue<T>*)pgm_read_ptr_near(&data[sel]))->value!=target;//||p.lastSel!=sel;
 			//T v=((menuValue<T>*)pgm_read_ptr_near(&data[sel]))->value;
 			//if (nr) Serial<<"Variant need redraw:"<<*this<<endl<<"value:"<<v<<" target:"<<target<<" sel:"<<sel<<" lastSel:"<<p.lastSel<<endl;;
@@ -152,20 +162,23 @@ v2.0 - 	Calling action on every elements
 		//this kind of information... till there we can not use paralle output devices! RA2016
 		menuSelect(const char *text,unsigned int sz,menuValue<T>* const data[],T& target):
 			menuVariant<T>(target,text,sz,data) {menuVariant<T>::sync();}
-		virtual bool needRedraw(menuOut&p) {
-			bool nr=lastDrawnOp!=menu::sel;//||((menuValue<T>*)pgm_read_ptr_near(&menu::data[menu::sel]))->value==menuVariant<T>::target;
-			T v=((menuValue<T>*)pgm_read_ptr_near(&menu::data[menu::sel]))->value;
-			//if (nr) Serial<<"Variant need redraw:"<<*this<<endl
-			/*Serial
-				<<"       value:"<<v<<endl
-				<<"      target:"<<menuVariant<T>::target
-				<<"         sel:"<<menu::sel
-				<<"     lastSel:"<<p.lastSel
-				<<" lastDrawnOp:"<<lastDrawnOp
-				<<endl;;*/
-			//p.lastSel=menu::sel;
-			lastDrawnOp=menu::sel;
-			return nr;
+		virtual bool needRedraw(menuOut&p,bool selected) {
+			if (selected) {
+				bool nr=lastDrawnOp!=menu::sel;//||((menuValue<T>*)pgm_read_ptr_near(&menu::data[menu::sel]))->value==menuVariant<T>::target;
+				//T v=((menuValue<T>*)pgm_read_ptr_near(&menu::data[menu::sel]))->value;
+				//if (nr) Serial<<"Variant need redraw:"<<*this<<endl
+				/*Serial
+					<<"       value:"<<v<<endl
+					<<"      target:"<<menuVariant<T>::target
+					<<"         sel:"<<menu::sel
+					<<"     lastSel:"<<p.lastSel
+					<<" lastDrawnOp:"<<lastDrawnOp
+					<<endl;;*/
+				//p.lastSel=menu::sel;
+				lastDrawnOp=menu::sel;
+				return nr;
+			}
+			return ((menuValue<T>*)pgm_read_ptr_near(&menu::data[menu::sel]))->value!=menuVariant<T>::target;
 		}
 		virtual void printTo(menuOut& p) {
 			//Serial<<"drawing menuSelect"<<endl;

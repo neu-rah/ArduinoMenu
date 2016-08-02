@@ -128,7 +128,7 @@ v2.1 - Add full support of SetPosition(x,y) to move the menu inside the screen (
 			//p.print(text);
       print_P(p,text);
 		}
-    virtual bool needRedraw(menuOut&) {return false;}
+    virtual bool needRedraw(menuOut&,bool) {return false;}
     virtual promptFeedback activate(menuOut& p,Stream&c,bool) {
       return action(*this,p,c);
     }

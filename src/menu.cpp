@@ -38,7 +38,7 @@ bool menuOut::needRedraw(menu& m,int i) {
     (drawn!=&m)//menu changed
     ||(top!=lastTop)//screen scrolled
     ||(m.sel!=lastSel&&((i==m.sel)||(i==lastSel)))//selection changed
-    ||((prompt*)pgm_read_ptr_near(&m.data[i]))->needRedraw(*this);//reflexivity, value changed
+    ||((prompt*)pgm_read_ptr_near(&m.data[i]))->needRedraw(*this,i==m.sel);//reflexivity, value changed
   }
 
 //menu navigation engine
