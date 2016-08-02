@@ -5,73 +5,102 @@ AVR generic menu/interactivity system
 Easy to define menu system with sub-menus and associated function to call
 Works either over serial or with LCD + encoder
 
+## Features
+
+- Wide variety of input/output devices supported.
+- Low memory usage, strings and options list stored to PROGMEM
+- Easy to define menus.
+- Minimalistic user code base.
+- Field to edit values hooked to existing program variables.
+- Fields can edit variables of any type.
+- Reflexive fields, showing variable changes (experimental).
+- Numerical field edit and range validation.
+- User functions called on regular options or field edit.
+- Attachable functions to menu enter (experimental).
+- Customizable (colors and cursors).
+- Able to work over Serial stream for regular or debug mode.
+
+## IO devices
+### Output devices
+
+Serial https://www.arduino.cc/en/Reference/Serial
+
+Standard arduino LCD library  https://www.arduino.cc/en/Reference/LiquidCrystal
+
+F Malpartida's LCDs (ex: i2c LCD)
+https://bitbucket.org/fmalpartida/new-liquidcrystal/wiki/Home
+
+Adafruit's GFX devices
+https://github.com/adafruit/Adafruit-GFX-Library
+
+UTFT devices
+http://www.rinkydinkelectronics.com/library.php?id=51
+
+U8glib devices
+https://github.com/olikraus/U8glib_Arduino
+
+### Input devices
+
+Serial https://www.arduino.cc/en/Reference/Serial
+
+Generic encoder using PCINT - quadEncoder
+
+Generic keyboard (no PCINT) - configurable for digital or analog keyboards
+
+ClickEncoder
+https://github.com/0xPIT/encoder
+
 more details on wiki and issues discussions
 
--------------------------------------------------------------------------------
-V2.3
-
-	- actions functions need to return bool now (only affects menus)
-		false = continue menu
-		true = exit menu
-	- Support for U8GLib screens
-	- alternative use of ClickEncoder
-	- using flash memory to store menu strings and lists (PROGMEM)
-
--------------------------------------------------------------------------------
-V2.0
-
-main changes:
-	- non-blocking menu main cycle
-	- Menufields as menu prompts with associated value
-		values can be:
-			numeric withing range
-			list of values toggled on click (for small lists)
-			list of values selected as submenu (for longer lists)
-	- PCINT now supports Mega/2560 and possibly others
-
-notes:
-	- encoder now needs begin() to be called on setup
-
--------------------------------------------------------------------------------
+## Menu definition example
 example of menu definition (c++ macros)
 
-	//a submenu
-	MENU(ledMenu,"LED on pin 13",
-		OP("LED On",ledOn),
-		OP("LED Off",ledOff)
-	);
+```c++
+//a submenu
+MENU(ledMenu,"LED on pin 13",
+	OP("LED On",ledOn),
+	OP("LED Off",ledOff)
+);
 
-	//field value toggle on click
-	TOGGLE(targetVar,trigModes,"Mode: ",
-		VALUE("None",trigPoint::None),
-		VALUE("On rise",trigPoint::onRise),
-		VALUE("On fall",trigPoint::onFall),
-		VALUE("Both",trigPoint::isIn)
-	);
+//field value toggle on click
+TOGGLE(targetVar,trigModes,"Mode: ",
+	VALUE("None",trigPoint::None),
+	VALUE("On rise",trigPoint::onRise),
+	VALUE("On fall",trigPoint::onFall),
+	VALUE("Both",trigPoint::isIn)
+);
 
-	//field value, click to browse, click to choose
-	CHOOSE(adc_prescale,sample_clock,"Sample clock",
-		VALUE("/128",avrADC::clk_128,setADCClk),
-		VALUE("/64",avrADC::clk_64,setADCClk),
-		VALUE("/32",avrADC::clk_32,setADCClk),
-		VALUE("/16",avrADC::clk_16,setADCClk),
-		VALUE("/8",avrADC::clk_8,setADCClk),
-		VALUE("/4",avrADC::clk_4,setADCClk),
-		VALUE("/2",avrADC::clk_2,setADCClk)
-	);
+//field value enter edit on click, rotate to change, click to end edit
+SELECT(selTest,selMenu,"Select",
+  VALUE("Zero",0),
+  VALUE("One",1),
+  VALUE("Two",2)
+);
 
-	//the main menu...
-	//Fields are numeric and show selected value. click to start change, click to fine tune, click to end
-	MENU(mainMenu,"Main menu",
-		FIELD(frequency,"Freq","Hz",0,16000000,100,1,updateFreq),
-		FIELD(dutty,"Duty","%",0,100,1,0,updateDutty),
-		OP("Handler test",completeHandlerTest),
-		SUBMENU(trigModes),
-		SUBMENU(ledMenu)
-	);
+//field value, click to browse, click to choose
+CHOOSE(adc_prescale,sample_clock,"Sample clock",
+	VALUE("/128",avrADC::clk_128,setADCClk),
+	VALUE("/64",avrADC::clk_64,setADCClk),
+	VALUE("/32",avrADC::clk_32,setADCClk),
+	VALUE("/16",avrADC::clk_16,setADCClk),
+	VALUE("/8",avrADC::clk_8,setADCClk),
+	VALUE("/4",avrADC::clk_4,setADCClk),
+	VALUE("/2",avrADC::clk_2,setADCClk)
+);
 
--------------------------------------------------------------------------------
-syntax:
+//the main menu...
+//Fields are numeric and show selected value. click to start change, click to fine tune, click to end
+MENU(mainMenu,"Main menu",
+	FIELD(frequency,"Freq","Hz",0,16000000,100,1,updateFreq),
+	FIELD(dutty,"Duty","%",0,100,1,0,updateDutty),
+	OP("Handler test",completeHandlerTest),
+	SUBMENU(trigModes),
+	SUBMENU(selMenu),
+	SUBMENU(ledMenu)
+);
+```
+
+## syntax
 
   OP(name,function)
 		name string to be shown as menu option prompt
@@ -106,6 +135,20 @@ syntax:
 			id: of this element to be used with SUBMENU
 			name: to be used as prompt
 
+	SELECT(variable,id,name,
+		VALUE(...),
+		...,
+		VALUE(...)
+	)
+		define a value from a list of possibilities
+		click to enter edit mode
+		rotate to choose value
+		click to exit edit mode
+		where:
+			variable: holding the value
+			id: of this element to be used with SUBMENU
+			name: to be used as prompt
+
 	CHOOSE(variable,id,name,
 		VALUE(...),
 		...,
@@ -134,15 +177,37 @@ syntax:
 	where:
 		id: this menu id
 
--------------------------------------------------------------------------------
-Notes:
 
-	input is read from generic streams, included simple streams for encoders and keyboards
+## History
+
+### 2.3
+
+- actions functions need to return bool now (only affects menus)
+   false = continue menu
+   true = exit menu
+- Support for U8GLib screens
+- alternative use of ClickEncoder
+- using flash memory to store menu strings and lists (PROGMEM)
+
+### 2.0
+
+main changes:
+- non-blocking menu main cycle
+- Menufields as menu prompts with associated value
+  values can be:
+    numeric withing range
+    list of values toggled on click (for small lists)
+    list of values selected as submenu (for longer lists)
+- PCINT now supports Mega/2560 and possibly others
+
+## notes
+
+encoder now needs begin() to be called on setup
+
+input is read from generic streams, included simple streams for encoders and keyboards
 	- provided encoder driver uses internal pull-ups and reverse logic
 
-	output to menuOut devices, included derivations to support serial, GFX and lcd
-
-	multiple stream packing for input to mix encoder stream with encoder keyboard (usually 1 or 2 keys)
+multiple stream packing for input to mix encoder stream with encoder keyboard (usually 1 or 2 keys)
 
 -------------------------------------------------------------------------------
 more info at http://r-site.net?lang=en&at=//op%5B@id=%273090%27%5D
