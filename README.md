@@ -102,7 +102,7 @@ MENU(mainMenu,"Main menu",
 
 ## syntax
 
-  OP(name,function)
+	OP(name,function)
 		name string to be shown as menu option prompt
 		function to be called on click
 
