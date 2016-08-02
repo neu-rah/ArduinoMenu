@@ -2,9 +2,6 @@ ArduinoMenu
 ===========
 AVR generic menu/interactivity system
 
-Easy to define menu system with sub-menus and associated function to call
-Works either over serial or with LCD + encoder
-
 ## Features
 
 - Wide variety of input/output devices supported.
