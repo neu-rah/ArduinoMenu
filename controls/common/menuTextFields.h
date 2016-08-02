@@ -1,4 +1,7 @@
 /********************
+
+THIS IS EXPERIMENTAL!
+
 www.r-site.net
 Nov. 2014 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
 implementing menu fields as options that show a value

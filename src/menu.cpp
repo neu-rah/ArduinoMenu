@@ -34,11 +34,11 @@ void print_P(menuOut& s,const char* at) {
 }
 
 bool menuOut::needRedraw(menu& m,int i) {
-  return (drawn!=&m)
-    ||(top!=lastTop)
-    ||(m.sel!=lastSel&&((i==m.sel)
-    ||(i==lastSel)))
-    ||((prompt*)pgm_read_ptr_near(&m.data[i]))->needRedraw();
+  return
+    (drawn!=&m)//menu changed
+    ||(top!=lastTop)//screen scrolled
+    ||(m.sel!=lastSel&&((i==m.sel)||(i==lastSel)))//selection changed
+    ||((prompt*)pgm_read_ptr_near(&m.data[i]))->needRedraw(*this);//reflexivity, value changed
   }
 
 //menu navigation engine
