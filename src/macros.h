@@ -1,15 +1,16 @@
-
 #ifdef USEPGM
   //storing some values into avr flash memory (saving ram space)
   #include <avr/pgmspace.h>
   #define MEMMODE PROGMEM
   #define pgmPtrNear(addr) pgm_read_ptr_near(addr)
-  #define pgmByteNear(addr) pgm_read_byte_near(addr)
+  #define pgmByteNear(addr) (pgm_read_byte_near(addr))
+  //#error USEPGM (just checking)
 #else
   //use ram for non-avr devices
   #define MEMMODE
   #define pgmPtrNear(addr) (addr)
-  #define pgmByteNear(addr) (*((byte*)addr))
+  #define pgmByteNear(addr) (*(uint8_t*)addr)
+  #error NO USEPGM (this mem mode is under development)
 #endif
 
 class prompt;

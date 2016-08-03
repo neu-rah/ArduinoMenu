@@ -51,17 +51,6 @@ Generic keyboard (no PCINT) - configurable for digital or analog keyboards
 
 ClickEncoder https://github.com/0xPIT/encoder
 
-## Saving memory
-Some menu data can be stored on avr programming memory (flash) to save ram for your project.
-
-to activate memory saving put
-```c++
-#define USEPGM
-```
-on top of your code before any menu includes.
-
-this is conditional because some non-avr devices might not supoprt it.
-
 ## Menu definition example
 example of menu definition (c++ macros)
 

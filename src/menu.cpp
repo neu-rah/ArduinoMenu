@@ -27,6 +27,7 @@ prompt menu::exitOption(menu::exit);
 bool menu::wrapMenus=false;
 menuNode* menuNode::activeNode=NULL;
 
+//PROGMEM AUX PRINT
 void print_P(menuOut& s,const char* at) {
   int len=strlen_P(at);
   for(;len;len--,at++)

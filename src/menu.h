@@ -25,6 +25,9 @@ v2.1 - Add full support of SetPosition(x,y) to move the menu inside the screen (
 #ifndef RSITE_ARDUINO_MENU_SYSTEM
   #define RSITE_ARDUINO_MENU_SYSTEM
 
+  //PGM activated by default, non pgm mode is not working ok
+  #define USEPGM
+
 	#include <Stream.h>
 	#include <HardwareSerial.h>
 
@@ -188,4 +191,6 @@ v2.1 - Add full support of SetPosition(x,y) to move the menu inside the screen (
     virtual bool isMenu() const {return true;}
   };
 
+  //PROGMEM AUX PRINT
+  void print_P(menuOut& s,const char* at);
 #endif
