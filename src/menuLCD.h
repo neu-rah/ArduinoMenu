@@ -44,7 +44,7 @@ www.r-site.net
 			int i=0;for(;i<m.sz;i++) {
 				if ((i>=top)&&((i-top)<maxY)) {
 				  if (needRedraw(m,i)) {
-				  	printPrompt(*(prompt*)pgm_read_ptr_near(&m.data[i]),i==m.sel,i+1,0,i-top,m.width);
+				  	printPrompt(*(prompt*)pgmPtrNear(&m.data[i]),i==m.sel,i+1,0,i-top,m.width);
 				  }
 				}
 			}

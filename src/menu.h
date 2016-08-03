@@ -27,7 +27,6 @@ v2.1 - Add full support of SetPosition(x,y) to move the menu inside the screen (
 
 	#include <Stream.h>
 	#include <HardwareSerial.h>
-  #include <avr/pgmspace.h>
 
   #ifdef DEBUG
 	#include <streamFlow.h>

@@ -89,7 +89,7 @@ www.r-site.net
       for (; i < m.sz; i++) {
 			  if (i-top >= maxY) break;
 			  if (needRedraw(m,i))
-					printPrompt(*(prompt*)pgm_read_ptr_near(&m.data[i]),i == m.sel,i+1,m.ox,(i-top)+m.oy,m.width);
+					printPrompt(*(prompt*)pgmPtrNear(&m.data[i]),i == m.sel,i+1,m.ox,(i-top)+m.oy,m.width);
       	//printPrompt(*m.data[i],i == m.sel,i+1,m.ox,(i-top)+m.oy,m.width);
 			}
 			if (drawExit && i-top<maxY && needRedraw(m,i))

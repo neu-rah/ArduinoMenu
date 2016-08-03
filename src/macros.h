@@ -1,4 +1,12 @@
-#define MEMMODE PROGMEM
+
+#ifdef USEPGM
+  #include <avr/pgmspace.h>
+  #define MEMMODE PROGMEM
+  #define pgmPtrNear(addr) pgm_read_ptr_near(addr)
+#else
+  #define MEMMODE
+  #define pgmPtrNear(addr) (addr)
+#endif
 
 class prompt;
 class menu;

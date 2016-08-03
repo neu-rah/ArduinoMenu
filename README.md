@@ -231,6 +231,7 @@ define menu structure
 - new field type SELECT
 - reflexivity, field reflect external changes to values
 - field string to progmem
+- PROGMEM usage is condicional, #define USEPGM
 
 ### 2.3
 

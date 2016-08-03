@@ -7,7 +7,7 @@
  Based on keyStream.h developed by Rui Azevado.
  and ClickEncoder library by Peter Dannegger.
  https://github.com/christophepersoz/encoder
- 
+
  Sept. 2014 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
  creative commons license 3.0: Attribution-ShareAlike CC BY-SA
  This software is furnished "as is", without technical support, and with no
@@ -32,7 +32,6 @@
 #include <stdint.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
-#include <avr/pgmspace.h>
 #endif
 
 #include <Arduino.h>

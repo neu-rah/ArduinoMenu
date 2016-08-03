@@ -135,22 +135,22 @@ v2.0 - 	Calling action on every elements
 		menuVariant(T& target,const char *text,unsigned int sz,menuValue<T>* const data[]):
 	    menu(text,sz,(prompt**)data),target(target) {sync();}
 		virtual bool needRedraw(menuOut&p,bool selected) {
-			bool nr=((menuValue<T>*)pgm_read_ptr_near(&data[sel]))->value!=target;//||p.lastSel!=sel;
-			//T v=((menuValue<T>*)pgm_read_ptr_near(&data[sel]))->value;
+			bool nr=((menuValue<T>*)pgmPtrNear(&data[sel]))->value!=target;//||p.lastSel!=sel;
+			//T v=((menuValue<T>*)pgmPtrNear(&data[sel]))->value;
 			//if (nr) Serial<<"Variant need redraw:"<<*this<<endl<<"value:"<<v<<" target:"<<target<<" sel:"<<sel<<" lastSel:"<<p.lastSel<<endl;;
 			return nr;
 		}
 		void sync() {//if possible make selection match the target value
 			sel=0;
 	  	for(int n=0;n<sz;n++)
-	  		if (((menuValue<T>*)pgm_read_ptr_near(&data[n]))->value==target)
+	  		if (((menuValue<T>*)pgmPtrNear(&data[n]))->value==target)
 	  			sel=n;
     }
 		virtual void printTo(menuOut& p) {
 			menuVariant<T>::sync();
 			print_P(p,text);
-			((prompt*)pgm_read_ptr_near(&data[sel]))->printTo(p);
-			//print_P(p,((menuValue<T>*)pgm_read_ptr_near(&data[sel]))->text);
+			((prompt*)pgmPtrNear(&data[sel]))->printTo(p);
+			//print_P(p,((menuValue<T>*)pgmPtrNear(&data[sel]))->text);
 		}
   };
 
@@ -164,8 +164,8 @@ v2.0 - 	Calling action on every elements
 			menuVariant<T>(target,text,sz,data) {menuVariant<T>::sync();}
 		virtual bool needRedraw(menuOut&p,bool selected) {
 			if (selected) {
-				bool nr=lastDrawnOp!=menu::sel;//||((menuValue<T>*)pgm_read_ptr_near(&menu::data[menu::sel]))->value==menuVariant<T>::target;
-				//T v=((menuValue<T>*)pgm_read_ptr_near(&menu::data[menu::sel]))->value;
+				bool nr=lastDrawnOp!=menu::sel;//||((menuValue<T>*)pgmPtrNear(&menu::data[menu::sel]))->value==menuVariant<T>::target;
+				//T v=((menuValue<T>*)pgmPtrNear(&menu::data[menu::sel]))->value;
 				//if (nr) Serial<<"Variant need redraw:"<<*this<<endl
 				/*Serial
 					<<"       value:"<<v<<endl
@@ -178,13 +178,13 @@ v2.0 - 	Calling action on every elements
 				lastDrawnOp=menu::sel;
 				return nr;
 			}
-			return ((menuValue<T>*)pgm_read_ptr_near(&menu::data[menu::sel]))->value!=menuVariant<T>::target;
+			return ((menuValue<T>*)pgmPtrNear(&menu::data[menu::sel]))->value!=menuVariant<T>::target;
 		}
 		virtual void printTo(menuOut& p) {
 			//Serial<<"drawing menuSelect"<<endl;
 			print_P(p,menu::text);
 			p.print(menu::activeNode==this?':':' ');
-			((prompt*)pgm_read_ptr_near(&menu::data[menu::sel]))->printTo(p);
+			((prompt*)pgmPtrNear(&menu::data[menu::sel]))->printTo(p);
 		}
 		promptFeedback activate(menuOut& p,Stream& c,bool) {
 			if (menu::activeNode!=this) {
@@ -203,7 +203,7 @@ v2.0 - 	Calling action on every elements
 			if (op>=0&&op<this->menu::sz) {
 				//Serial<<"Selecting op:"<<op<<endl;
 				this->menu::sel=op;
-				menuValue<T>* cp=(menuValue<T>*)pgm_read_ptr_near(&this->menu::data[op]);
+				menuValue<T>* cp=(menuValue<T>*)pgmPtrNear(&this->menu::data[op]);
 				if (cp->enabled) {
 					this->menuVariant<T>::target=cp->value;
 					cp->activate(p,c,true);
@@ -240,7 +240,7 @@ v2.0 - 	Calling action on every elements
 			op=menu::menuKeys(p,c,false);
 			if (op>=0&&op<this->menu::sz) {
 				this->menu::sel=op;
-				menuValue<T>* cp=(menuValue<T>*)pgm_read_ptr_near(&this->menu::data[op]);
+				menuValue<T>* cp=(menuValue<T>*)pgmPtrNear(&this->menu::data[op]);
 				if (cp->enabled) {
 					this->menuVariant<T>::target=cp->value;
 					cp->activate(p,c,true);
@@ -264,7 +264,7 @@ v2.0 - 	Calling action on every elements
 			this->menu::sel++;
 			if (this->menu::sel>=this->menu::sz) this->menu::sel=0;
 		 	p.lastSel=-1;//redraw only affected option
-			menuValue<T>* cp=(menuValue<T>*)pgm_read_ptr_near(&this->menu::data[menu::sel]);
+			menuValue<T>* cp=(menuValue<T>*)pgmPtrNear(&this->menu::data[menu::sel]);
 			this->menuVariant<T>::target=cp->value;
 			cp->activate(p,c,true);
 			return 0;
