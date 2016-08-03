@@ -16,6 +16,8 @@ Extensible: Yes
 
 //#define DEBUG
 
+#define USEPGM
+
 #include <HardwareSerial.h>
 #include <LiquidCrystal.h>
 #include <menu.h>//menu macros and objects
