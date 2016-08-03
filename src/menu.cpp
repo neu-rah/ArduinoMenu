@@ -30,7 +30,7 @@ menuNode* menuNode::activeNode=NULL;
 void print_P(menuOut& s,const char* at) {
   int len=strlen_P(at);
   for(;len;len--,at++)
-    s.write(pgm_read_byte_near(at));
+    s.write(pgmByteNear(at));
 }
 
 bool menuOut::needRedraw(menu& m,int i) {

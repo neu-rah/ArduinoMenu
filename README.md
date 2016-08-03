@@ -16,6 +16,7 @@ AVR generic menu/interactivity system
 - Attachable functions to menu enter (experimental).
 - Customizable (colors and cursors).
 - Able to work over Serial stream for regular or debug mode.
+- modularity, support for different devices in separate include files.
 
 [![IMAGE ALT TEXT](https://img.youtube.com/vi/wHv5sU-HXVI/2.jpg)](https://youtu.be/wHv5sU-HXVI "Arduino menu 2.0 fields video") [![IMAGE ALT TEXT](https://img.youtube.com/vi/W-TRCziF67g/2.jpg)](https://youtu.be/W-TRCziF67g "Arduino menu basic features video")
 
@@ -42,14 +43,24 @@ https://github.com/olikraus/U8glib_Arduino
 
 Serial https://www.arduino.cc/en/Reference/Serial
 
-Generic encoder using PCINT - quadEncoder
+quadEncoder - Generic encoder using PCINT
+
+Buttons - simple digital keyboard
 
 Generic keyboard (no PCINT) - configurable for digital or analog keyboards
 
-ClickEncoder
-https://github.com/0xPIT/encoder
+ClickEncoder https://github.com/0xPIT/encoder
 
-more details on wiki and issues discussions
+## Saving memory
+Some menu data can be stored on avr programming memory (flash) to save ram for your project.
+
+to activate memory saving put
+```c++
+#define USEPGM
+```
+on top of your code before any menu includes.
+
+this is conditional because some non-avr devices might not supoprt it.
 
 ## Menu definition example
 example of menu definition (c++ macros)
@@ -136,7 +147,7 @@ the value
 
 #### Field value
 ```c++
-VALUE(text,value)
+VALUE(text,value [,action] )
 ```
 
 holding possible FIELD values
@@ -145,13 +156,15 @@ holding possible FIELD values
 
 **value**: to be passed when selected
 
+**action**: optional function to be called on activation
+
 #### Toggle field value
 ```c++
-	TOGGLE(variable,id,name,
-		VALUE(...),
-		...,
-		VALUE(...)
-	)
+TOGGLE(variable,id,name,
+	VALUE(...),
+	...,
+	VALUE(...)
+)
 ```
 
 Holding a value and a list of possible values to toggle on click. This is ideal for On/Off Yes/No and other small list of values
@@ -165,10 +178,10 @@ Holding a value and a list of possible values to toggle on click. This is ideal 
 #### Select field value
 ```c++
 SELECT(variable,id,name,
-		VALUE(...),
-		...,
-		VALUE(...)
-	)
+	VALUE(...),
+	...,
+	VALUE(...)
+)
 ```
 
 define a value from a list of possibilities
@@ -185,9 +198,9 @@ click to exit edit mode
 #### Choose field value
 ```c++
 CHOOSE(variable,id,name,
-VALUE(...),
-...,
-VALUE(...)
+	VALUE(...),
+	...,
+	VALUE(...)
 )
 ```
 
@@ -225,23 +238,56 @@ define menu structure
 
 **name**: menu name to use as submenu title
 
+## Include files
+
+**chainStream.h** - join multiple input stream to be used as one
+
+**ClickEncoderStream.h** - using encoder https://github.com/0xPIT/encoder
+
+**genericKeyboard.h** - use a custom keyboard by providing a reader function.
+
+**keyStream.h** - simple digital keyboard driver doing digitalRead of pins. this driver can miss clicks on heavy load.
+
+**macros.h** - macro definitions to help building complex menu structure (included by menu.h)
+
+**menuFields.h** - allows the menu system to alter/monitor your variables, this file defines the behavior of FIELD, TOGGLE, SELECT and CHOOSE.
+
+**menuGFX.h** - use an Adafruit-GFX-Library compatible screen https://learn.adafruit.com/adafruit-gfx-graphics-library
+
+**menu.h** - basic menu functionality
+
+**menuLCD.h** - use the standard arduino LiquidCrystal screen https://www.arduino.cc/en/Tutorial/HelloWorld
+
+**menuLCDs.h** - use alternative LCD`s https://bitbucket.org/fmalpartida/new-liquidcrystal/wiki/schematics#!hardware-configurations-and-initialization
+
+**menuPrint.h** - output to Serial stream numbering options for quick access
+
+**menuU8G.h** - use a U8Glib compatible screen https://github.com/olikraus/u8glib/wiki/device
+
+**menuUTFT.h** - use UTFT compatible screen http://www.rinkydinkelectronics.com/library.php?id=51
+
+**menuUTouch.h** - touch screen input http://henningkarlsen.com/electronics/library.php?id=56
+
+quadEncoder.h - basic quad-encoder driver using pin change interrupt. Button should be added as a keyboard.
+
 ## History
 
 ### 2.4
 - new field type SELECT
 - reflexivity, field reflect external changes to values
-- field string to progmem
-- PROGMEM usage is condicional, #define USEPGM
+- store field strings to progmem
+- PROGMEM usage is optional, #define USEPGM
 
 ### 2.3
 
-- actions functions need to return bool now (only affects menus)
+- action functions now need to return bool (only affects menus)
 
-		false = continue menu
-		true = exit menu
+>**false** = continue menu
+>
+>**true** = exit menu
 
 - Support for U8GLib screens
-- alternative use of ClickEncoder
+- alternative use ClickEncoder
 - using flash memory to store menu strings and lists (PROGMEM)
 
 ### 2.0
