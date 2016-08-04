@@ -63,13 +63,13 @@ int menu::menuKeys(menuOut &p,Stream& c,bool canExit) {
           sel=sz-(canExit?0:1);
           if (sel+1>=p.maxY) {
             p.top=sel-p.maxY+1;
-            Serial<<"menuKeys top1:"<<p.top<<endl;
+            //Serial<<"menuKeys top1:"<<p.top<<endl;
           }
         } else sel=0;
       }
       if (p.top>sel) {
         p.top=sel;
-        Serial<<"menuKeys top2:"<<p.top<<endl;
+        //Serial<<"menuKeys top2:"<<p.top<<endl;
       }
     } else if (ch==menu::upCode) {
       sel++;
@@ -81,7 +81,7 @@ int menu::menuKeys(menuOut &p,Stream& c,bool canExit) {
       }
       if (sel+1-p.top>p.maxY) {
         p.top=sel-p.maxY+1;
-        Serial<<"menuKeys top3:"<<p.top<<endl;
+        //Serial<<"menuKeys top3:"<<p.top<<endl;
       }
     } else if (ch==menu::escCode) {
     	op=-1;
