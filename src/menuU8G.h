@@ -80,11 +80,13 @@ www.r-site.net
         o.printTo(*this);
     }
 		virtual void printMenu(menu& m,bool drawExit) {
-      //if (drawn!=&m) clear();//clear all screen when changing menu - not ok for U8Glib
-  		if (m.sel-top >= maxY)
-        top = m.sel - maxY + resY + 1; //selected option outside device (bottom)
-			else if (m.sel < top)
-        top = m.sel + resY; //selected option outside device (top)
+			//Serial<<"printing menu "<<m<<" top:"<<top<<endl;
+			//Serial<<*menu::activeNode<<" <-> "<<*drawn<<endl;
+			if (m.sel < top) {
+				top = m.sel;//+ resY; //selected option outside device (top)
+			} else if (m.sel-top >= maxY) {
+        top = m.sel - maxY + 1;//resY-1; //selected option outside device (bottom)
+			}
       int i = top;
       for (; i < m.sz; i++) {
 			  if (i-top >= maxY) break;
@@ -96,6 +98,7 @@ www.r-site.net
 				printPrompt(menu::exitOption,m.sel==m.sz,0,m.ox,(i-top)+m.oy,m.width);
 			lastTop = top;
 			lastSel = m.sel;
+			//Serial<<"menuU8G::printMenu top:"<<top<<endl;
 			//drawn=&m;  // if commented, equals to have gfx.redraw() in loop - not ok for U8Glib
 		}
   };

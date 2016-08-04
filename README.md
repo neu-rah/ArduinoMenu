@@ -208,7 +208,7 @@ SUBMENU(id)
 
 link in a submenu as option of the current one
 
-**id**: the submenu id
+**id**: of element to be used as a submenu, can be a menu, toggle, select or choose
 
 #### Menu
 ```c++
@@ -227,17 +227,21 @@ define menu structure
 
 **name**: menu name to use as submenu title
 
+## Saving RAM
+
+By default PROGMEM is used on platforms where it is available.
+
 ## Include files
 
-**chainStream.h** - join multiple input stream to be used as one
+**chainStream.h** - join multiple input stream to be used as one, this is used to join quadEncoder stream with a keyboard (encoder button).
 
-**ClickEncoderStream.h** - using encoder https://github.com/0xPIT/encoder
+**ClickEncoderStream.h** - using alternative encoder https://github.com/0xPIT/encoder
 
-**genericKeyboard.h** - use a custom keyboard by providing a reader function.
+**genericKeyboard.h** - make a custom keyboard by providing a reader function.
 
 **keyStream.h** - simple digital keyboard driver doing digitalRead of pins. this driver can miss clicks on heavy load.
 
-**macros.h** - macro definitions to help building complex menu structure (included by menu.h)
+_**macros.h** - macro definitions to help building complex menu structure (included by menu.h)_
 
 **menuFields.h** - allows the menu system to alter/monitor your variables, this file defines the behavior of FIELD, TOGGLE, SELECT and CHOOSE.
 

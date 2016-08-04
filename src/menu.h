@@ -25,9 +25,6 @@ v2.1 - Add full support of SetPosition(x,y) to move the menu inside the screen (
 #ifndef RSITE_ARDUINO_MENU_SYSTEM
   #define RSITE_ARDUINO_MENU_SYSTEM
 
-  //PGM activated by default, non pgm mode is not working ok
-  #define USEPGM
-
 	#include <Stream.h>
 	#include <HardwareSerial.h>
 
@@ -119,13 +116,15 @@ v2.1 - Add full support of SetPosition(x,y) to move the menu inside the screen (
 	//a menu is also a prompt so we can have sub-menus
   class prompt {
     public:
-    const char* text MEMMODE;
+    const char* text;// MEMMODE; memmode is defined by the source, here its only a pointer
     promptAction action;
     static promptFeedback nothing() {return false;}
     bool enabled;
     inline prompt(const char * text):text(text),enabled(true),action(nothing) {}
     inline prompt(const char * text,promptAction action)
     	:text(text),action(action),enabled(true) {}
+    inline void enable() {enabled=true;}
+    inline void disable() {enabled=false;}
     virtual void printTo(menuOut& p) {
 			//p.print(text);
       print_P(p,text);
@@ -170,11 +169,13 @@ v2.1 - Add full support of SetPosition(x,y) to move the menu inside the screen (
     bool canExit;//store last canExit value for inner reference
     menu(const char * text,int sz,prompt* const data[]):menuNode(text),sz(sz),data(data),canExit(false) {}
 
+    inline prompt& operator[](int i) {return *(prompt*)pgmPtrNear(&data[i]);}
     inline void setPosition(int x,int y) {ox=x;oy=y;}
     int menuKeys(menuOut &p,Stream& c,bool drawExit);
-    inline void printMenu(menuOut& p,bool drawExit) {
+    inline void printMenu(menuOut& p,bool drawExit=false) {
     	p.printMenu(*this,drawExit);
     }
+    //virtual bool needRedraw(menuOut& o,bool) {return o.drawn!=true;}
     //force menu redraw on selected device
     inline void redraw(menuOut& p,Stream& c,bool canExit=false) {p.drawn=NULL;poll(p,c,canExit);}
     //set the focus to menu->Option idx, the focused menu will exit to the current

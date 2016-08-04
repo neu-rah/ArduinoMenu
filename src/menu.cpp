@@ -16,6 +16,13 @@ v2.0 mods - calling action on every element
 #include <Arduino.h>
 #include "menu.h"
 
+//#define DEBUG
+#ifdef DEBUG
+#include <streamFlow.h>
+#include <menuPrint.h>
+menuPrint debugOut(Serial);
+#endif
+
 const char menu::exit[] MEMMODE="Exit";
 char menu::escCode='/';
 char menu::enterCode='*';
@@ -54,10 +61,16 @@ int menu::menuKeys(menuOut &p,Stream& c,bool canExit) {
       if (sel<0) {
         if (wrapMenus) {
           sel=sz-(canExit?0:1);
-          if (sel+1>=p.maxY) p.top=sel-p.maxY+1;
+          if (sel+1>=p.maxY) {
+            p.top=sel-p.maxY+1;
+            Serial<<"menuKeys top1:"<<p.top<<endl;
+          }
         } else sel=0;
       }
-      if (p.top>sel) p.top=sel;
+      if (p.top>sel) {
+        p.top=sel;
+        Serial<<"menuKeys top2:"<<p.top<<endl;
+      }
     } else if (ch==menu::upCode) {
       sel++;
       if (sel>(sz-(canExit?0:1))) {
@@ -66,7 +79,10 @@ int menu::menuKeys(menuOut &p,Stream& c,bool canExit) {
           p.top=0;
         } else sel=sz-(canExit?0:1);
       }
-      if (sel+1>p.maxY) p.top=sel-p.maxY+1;
+      if (sel+1-p.top>p.maxY) {
+        p.top=sel-p.maxY+1;
+        Serial<<"menuKeys top3:"<<p.top<<endl;
+      }
     } else if (ch==menu::escCode) {
     	op=-1;
     } else {
@@ -106,6 +122,10 @@ promptFeedback menu::activate(menuOut& p,Stream& c,bool canExit) {
       if (cp->activate(p,c,true)) {
         p.clear();
       	activeNode=previousMenu;
+        //print_P(debugOut,this->text);
+        //Serial<<"->";
+        //print_P(debugOut,this->operator[](sel).text);
+        //Serial<<" quiting... "<<p.lastSel<<endl;
         return true;
       }
     }

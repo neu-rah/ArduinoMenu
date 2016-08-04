@@ -16,11 +16,11 @@ UTFT library from:
 UTouch library from:
   http://henningkarlsen.com/electronics/library.php?id=56
 */
-#define DEBUG
+//#define DEBUG
 #include <UTFT.h>
 #include <UTouch.h>
 #ifdef DEBUG
-//#include <streamFlow.h>
+#include <streamFlow.h>
 #endif
 #include <menu.h>
 #include <menuUTFT.h>

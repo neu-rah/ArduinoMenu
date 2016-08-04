@@ -1,4 +1,3 @@
-
 /********************
 Arduino generic menu system
 LCD menu - unsing arduino classic LCD library
@@ -15,8 +14,6 @@ Extensible: Yes
 */
 
 //#define DEBUG
-
-#define USEPGM
 
 #include <HardwareSerial.h>
 #include <LiquidCrystal.h>
@@ -68,16 +65,6 @@ double fps=0;
 unsigned long lastFpsChk=0;
 int counter=0;
 
-void scrSaver() {
-  if (scrSaverEnter) {
-    lcd1.clear();
-    lcd1.print("|www.r-site.net|");
-    lcd1.setCursor(0,1);
-    lcd1.print("|click to enter|");
-    scrSaverEnter=false;
-  }
-}
-
 ///////////////////////////////////////////////////////////////////////////
 //functions to wire as menu actions
 bool pauseMenu() {
@@ -94,6 +81,11 @@ bool ledOff() {
   Serial.println("set led off!");
   digitalWrite(LEDPIN,ledCtrl=0);
   return false;
+}
+
+bool quit() {
+  Serial.println("Quiting after action call");
+  return true;
 }
 
 /////////////////////////////////////////////////////////////////////////
@@ -125,17 +117,39 @@ CHOOSE(chooseTest,chooseMenu,"Choose ",
   VALUE("Last",-1)
 );
 
+MENU(subMenu,"SubMenu"
+  ,OP("A",quit)
+  ,OP("B",quit)
+  ,OP("C",quit)
+  ,OP("D",quit)
+  ,OP("E",quit)
+  ,OP("F",quit)
+  ,OP("G",quit)
+  ,OP("H",quit)
+);
+
 MENU(mainMenu,"Main menu",
   SUBMENU(setLed),
   OP("LED On",ledOn),
   OP("LED Off",ledOff),
   SUBMENU(selMenu),
   SUBMENU(chooseMenu),
+  SUBMENU(subMenu),
   FIELD(percent,"Percent","%",0,100,10,1),
   FIELD(fps,"fps [","]",0,0,0,0),
   FIELD(counter,"counter [","]",0,0,0,0),
   OP("Exit",pauseMenu)
 );
+
+void scrSaver() {
+  if (scrSaverEnter) {
+    lcd1.clear();
+    lcd1.print("|www.r-site.net|");
+    lcd1.setCursor(0,1);
+    lcd1.print("|click to enter|");
+    scrSaverEnter=false;
+  }
+}
 
 //the quadEncoder
 quadEncoder quadEncoder(encA,encB);//simple quad encoder driver
@@ -172,8 +186,8 @@ void setup() {
 
   pinMode(LEDPIN,OUTPUT);
 
-  ((prompt*)pgm_read_ptr_near(&mainMenu.data[6]))->enabled=false;
-  ((prompt*)pgm_read_ptr_near(&mainMenu.data[7]))->enabled=false;
+  mainMenu[7].disable();
+  mainMenu[8].disable();
 
   delay(300);
 }
