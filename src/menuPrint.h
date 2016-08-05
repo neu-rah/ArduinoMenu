@@ -35,7 +35,7 @@ www.r-site.net
 			clear();
 			int i=0;
 			for(;i<m.sz;i++)
-			  printPrompt(*(prompt*)pgmPtrNear(&m.data[i]),i==m.sel,i+1,i-top,0,m.width);
+				printPrompt(*(prompt*)pgmPtrNear(m.data[i]),i==m.sel,i+1,i-top,0,m.width);
 			if (drawExit) printPrompt(menu::exitOption,m.sel==m.sz,i,0,i-top,m.width);
 			lastTop=top;
 			lastSel=m.sel;

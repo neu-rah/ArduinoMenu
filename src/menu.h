@@ -169,7 +169,7 @@ v2.1 - Add full support of SetPosition(x,y) to move the menu inside the screen (
     bool canExit;//store last canExit value for inner reference
     menu(const char * text,int sz,prompt* const data[]):menuNode(text),sz(sz),data(data),canExit(false) {}
 
-    inline prompt& operator[](int i) {return *(prompt*)pgmPtrNear(&data[i]);}
+    inline prompt& operator[](int i) {return *(prompt*)pgmPtrNear(data[i]);}
     inline void setPosition(int x,int y) {ox=x;oy=y;}
     int menuKeys(menuOut &p,Stream& c,bool drawExit);
     inline void printMenu(menuOut& p,bool drawExit=false) {

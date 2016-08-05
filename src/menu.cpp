@@ -36,9 +36,7 @@ menuNode* menuNode::activeNode=NULL;
 
 //PROGMEM AUX PRINT
 void print_P(menuOut& s,const char* at) {
-  int len=strlen_P(at);
-  for(;len;len--,at++)
-    s.write(pgmByteNear(at));
+  while(uint8_t ch=pgmByteNear(at++)) s.write(ch);
 }
 
 bool menuOut::needRedraw(menu& m,int i) {
@@ -46,7 +44,7 @@ bool menuOut::needRedraw(menu& m,int i) {
     (drawn!=&m)//menu changed
     ||(top!=lastTop)//screen scrolled
     ||(m.sel!=lastSel&&((i==m.sel)||(i==lastSel)))//selection changed
-    ||((prompt*)pgmPtrNear(&m.data[i]))->needRedraw(*this,i==m.sel);//reflexivity, value changed
+    ||((prompt*)pgmPtrNear(m.data[i]))->needRedraw(*this,i==m.sel);//reflexivity, value changed
   }
 
 //menu navigation engine
@@ -116,7 +114,7 @@ promptFeedback menu::activate(menuOut& p,Stream& c,bool canExit) {
   op=menuKeys(p,c,canExit);
   if (op>=0&&op<sz) {
   	sel=op;
-    prompt* cp=(prompt*)pgmPtrNear(&data[op]);
+    prompt* cp=(prompt*)pgmPtrNear(data[op]);
     if (cp->enabled) {
       printMenu(p,canExit);//clearing old selection
       if (cp->activate(p,c,true)) {

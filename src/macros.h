@@ -3,13 +3,13 @@
 #ifdef pgm_read_ptr_near
   //storing some values into avr flash memory (saving ram space)
   #define MEMMODE PROGMEM
-  #define pgmPtrNear(addr) pgm_read_ptr_near(addr)
+  #define pgmPtrNear(addr) pgm_read_ptr_near(&(addr))
   #define pgmByteNear(addr) (pgm_read_byte_near(addr))
 #else
   //use ram for non-avr devices
   #define MEMMODE
   #define pgmPtrNear(addr) (addr)
-  #define pgmByteNear(addr) (*addr)
+  #define pgmByteNear(addr) (*(addr))
 #endif
 
 class prompt;
