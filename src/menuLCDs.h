@@ -7,10 +7,8 @@ warranty, express or implied, as to its usefulness for any purpose.
 Thread Safe: No
 Extensible: Yes
 
-implement menu output for Francisco Malpartida arduino LCD's
-
-as VirtualPins is not yet a standard I implemented this to support existing libraries
-www.r-site.net
+implement menu output for F.Malpartida arduino LCD's
+https://bitbucket.org/fmalpartida/new-liquidcrystal/wiki/Home
 ***/
 
 #ifndef RSITE_ARDUINOP_MENU_LCD
@@ -44,10 +42,10 @@ www.r-site.net
 			int i=top;for(;i<m.sz;i++) {
 			  if(i-top>=maxY) break;
 			  if (needRedraw(m,i))
-			  	printPrompt(*(prompt*)pgmPtrNear(m.data[i]),i==m.sel,i+1,i-top,m.width);
+			  	printPrompt(*(prompt*)pgmPtrNear(m.data[i]),i==m.sel,i+1,0,i-top,m.width);
 			}
 			if (drawExit&&i-top<maxY&&needRedraw(m,i))
-				printPrompt(menu::exitOption,m.sel==m.sz,0,i-top,m.width);
+				printPrompt(menu::exitOption,m.sel==m.sz,0,0,i-top,m.width);
 			lastTop=top;
 			lastSel=m.sel;
 			drawn=&m;
