@@ -44,7 +44,7 @@ bool menuOut::needRedraw(menu& m,int i) {
     (drawn!=&m)//menu changed
     ||(top!=lastTop)//screen scrolled
     ||(m.sel!=lastSel&&((i==m.sel)||(i==lastSel)))//selection changed
-    ||((prompt*)pgmPtrNear(m.data[i]))->needRedraw(*this,i==m.sel);//reflexivity, value changed
+    ||(i<m.sz&&((prompt*)pgmPtrNear(m.data[i]))->needRedraw(*this,i==m.sel));//reflexivity, value changed
   }
 
 //menu navigation engine
