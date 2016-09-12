@@ -149,6 +149,7 @@ v2.0 - 	Calling action on every elements
 		virtual void printTo(menuOut& p) {
 			menuVariant<T>::sync();
 			print_P(p,text);
+			p.print(' ');
 			((prompt*)pgmPtrNear(data[sel]))->printTo(p);
 			//print_P(p,((menuValue<T>*)pgmPtrNear(data[sel]))->text);
 		}
