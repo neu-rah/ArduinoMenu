@@ -164,7 +164,7 @@ v2.1 - Add full support of SetPosition(x,y) to move the menu inside the screen (
       quit
     };
     const int sz;
-    int sel;//selection
+    signed int sel;//selection
     prompt* const* data;
     bool canExit;//store last canExit value for inner reference
     menu(const char * text,int sz,prompt* const data[]):menuNode(text),sz(sz),data(data),canExit(false) {}
