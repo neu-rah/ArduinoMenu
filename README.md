@@ -2,21 +2,43 @@ ArduinoMenu
 ===========
 AVR generic menu/interactivity system
 
+##purpose
+Full automated navigation system calling user funtions.
+With this system you can define menus, submenus, input fields and other iteration objects that deal with all input/output and can call user defined handler as a result of user iteration.
+The user function can be operated as a single action called on click/enter or as a event driven function responding to focus In/Out or Enter/Esc events.
+The system is designed as a non blocking polling system, allowing parallel task to run.
+
 ## Features
 
+- Small footprint on RAM and time.
 - Wide variety of input/output devices supported.
-- Low memory usage, strings and options list stored to PROGMEM
-- Easy to define menus.
+- Low memory usage, using PROGMEM on systems where its is available.
+- Easy to define menus (macros).
 - Minimalistic user code base.
-- Field to edit values hooked to existing program variables.
-- Fields can edit variables of any type.
+- Fields edit values hooked to existing program variables (references).
+- Fields can edit variables of any type (templates).
 - Reflexive fields, showing variable changes (experimental).
 - Numerical field edit and range validation.
 - User functions called on regular options or field edit.
-- Attachable functions to menu enter (experimental).
 - Customizable (colors and cursors).
-- Able to work over Serial stream for regular or debug mode.
+- Able to work over Serial stream IO as a base level.
 - modularity, support for different devices in separate include files.
+- static allocation of RAM, avoiding heap fragmentation, all RAM needed to operate the system is allocated at program statup.
+- events available for menus and prompts
+- simply returns when no input available and no draw needed
+- lazy drawing, only draws when changed, avoiding time consumption and flicking.
+
+## Limitations
+
+- when using macros the menu is limited to 16 options (current macro limnit).
+- menus **must** have at least 2 options.
+- maximum 256 options
+
+## Base
+
+- Character based information display.
+- Line based menu organization.
+- Stream IO + specializations.
 
 [![IMAGE ALT TEXT](https://img.youtube.com/vi/wHv5sU-HXVI/2.jpg)](https://youtu.be/wHv5sU-HXVI "Arduino menu 2.0 fields video") [![IMAGE ALT TEXT](https://img.youtube.com/vi/W-TRCziF67g/2.jpg)](https://youtu.be/W-TRCziF67g "Arduino menu basic features video")
 
@@ -253,7 +275,7 @@ _**macros.h** - macro definitions to help building complex menu structure (inclu
 
 **menuLCDs.h** - use alternative LCD`s https://bitbucket.org/fmalpartida/new-liquidcrystal/wiki/schematics#!hardware-configurations-and-initialization
 
-**menuPrint.h** - output to Serial stream numbering options for quick access
+**menuPrint.h** - output to Serial stream numbering, options for quick access
 
 **menuU8G.h** - use a U8Glib compatible screen https://github.com/olikraus/u8glib/wiki/device
 
@@ -261,15 +283,57 @@ _**macros.h** - macro definitions to help building complex menu structure (inclu
 
 **menuUTouch.h** - touch screen input http://henningkarlsen.com/electronics/library.php?id=56
 
-quadEncoder.h - basic quad-encoder driver using pin change interrupt. Button should be added as a keyboard.
+quadEncoder.h - basic quad-encoder driver using pin change interrupt. Button should be added as a keyboard.1
+
+## API
+
+This API is needed only to extend the menu. For regular usage only the poll function needs to be called.
+
+### menu object functions
+
+```c++
+virtual void printTo(idx_t i,navNode &nav,menuOut& out);
+```
+
+raw print to output device, each object can do its specialized print (one line)
+
+```c++
+virtual bool canNav() const;
+```
+can receive navigation focus and process keys
+
+```c++
+virtual bool isMenu() const;
+```
+
+has menu data list and can be a navNode target
+
+```c++
+virtual bool changed(const navNode &nav,const menuOut& out);
+```
+object has changed and need redraw
+
+```c++
+virtual result activate(FUNC_PARAMS) {return proceed;}
+```
+this is the system version of enter handler, its used by elements like toggle.
+
 
 ## History
 
+### 3.0
+	- complete revision of menu control system
+	- menu structure separated in ram objects and flash objects
+	- using separate navigation control objects **navNode**
+	- central navigation control object **navRoot**
+	- using event for all menu objects
+
 ### 2.4
+- support for teensy (tested on 3.2)
 - new field type SELECT
-- reflexivity, field reflect external changes to values
+- reflexivity, fields reflect external changes to values
 - store field strings to progmem
-- PROGMEM usage is optional, #define USEPGM
+- automatic use of RAM on system without PROGMEM
 
 ### 2.3
 
@@ -309,3 +373,8 @@ multiple stream packing for input to mix encoder stream with encoder keyboard (u
 more info at
 
 [wiki](https://github.com/neu-rah/ArduinoMenu/wiki) pages, [issues](https://github.com/neu-rah/ArduinoMenu/issues?utf8=%E2%9C%93&q=) or [r-site.net](http://www.r-site.net/?lang=en&at=//op%5B@id=%273090%27%5D)
+
+## Repots
+please report errors, problems or enhancement ideas, I apreciate the feedback. Thanks.
+
+On issues report please specify the input and output drivers or devices.

@@ -1,193 +1,149 @@
-//#include <avr/pgmspace.h>
+#include <baseMacros.h>
 
-#ifdef pgm_read_ptr_near
+//#define MENU_USERAM
+#if defined(pgm_read_ptr_near) && !defined(MENU_USERAM)
   //storing some values into avr flash memory (saving ram space)
+  #define USING_PGM
   #define MEMMODE PROGMEM
-  #define pgmPtrNear(addr) pgm_read_ptr(&(addr))
-  #define pgmByteNear(addr) (pgm_read_byte(addr))
+  #define memPtr(src) pgm_read_ptr(&(src))
+  #define memByte(addr) (pgm_read_byte(addr))
+  #define memWord(addr) (pgm_read_word(addr))
+  #define memIdx(src) (pgm_read_byte(&src))
+  #define memStrLen strlen_P
 #else
-  //use ram for non-avr devices
+  //use ram on non-avr devices
+  #define USING_RAM
   #define MEMMODE
-  #define pgmPtrNear(addr) (addr)
-  #define pgmByteNear(addr) (*(addr))
+  #define memPtr(src) (src)
+  #define memByte(addr) (*(addr))
+  #define memWord(addr) (*(addr))
+  #define memIdx(src) (src)
+  #define memStrLen strlen
 #endif
-
-class prompt;
-class menu;
-class menuOut;
-template <typename T> class menuField;
-
-#define CONCATENATE(arg1, arg2)   CONCATENATE1(arg1, arg2)
-#define CONCATENATE1(arg1, arg2)  CONCATENATE2(arg1, arg2)
-#define CONCATENATE2(arg1, arg2)  arg1##arg2
-
-#define FOR_EACH_1(what, x, ...) what(x)
-#define FOR_EACH_2(what, x, ...)\
-  what(x)\
-  FOR_EACH_1(what,  __VA_ARGS__)
-#define FOR_EACH_3(what, x, ...)\
-  what(x)\
-  FOR_EACH_2(what, __VA_ARGS__)
-#define FOR_EACH_4(what, x, ...)\
-  what(x)\
-  FOR_EACH_3(what,  __VA_ARGS__)
-#define FOR_EACH_5(what, x, ...)\
-  what(x)\
- FOR_EACH_4(what,  __VA_ARGS__)
-#define FOR_EACH_6(what, x, ...)\
-  what(x)\
-  FOR_EACH_5(what,  __VA_ARGS__)
-#define FOR_EACH_7(what, x, ...)\
-  what(x)\
-  FOR_EACH_6(what,  __VA_ARGS__)
-#define FOR_EACH_8(what, x, ...)\
-  what(x)\
-  FOR_EACH_7(what,  __VA_ARGS__)
-#define FOR_EACH_9(what, x, ...)\
-  what(x)\
-  FOR_EACH_8(what,  __VA_ARGS__)
-#define FOR_EACH_10(what, x, ...)\
-  what(x)\
-  FOR_EACH_9(what,  __VA_ARGS__)
-#define FOR_EACH_11(what, x, ...)\
-  what(x)\
-  FOR_EACH_10(what,  __VA_ARGS__)
-#define FOR_EACH_12(what, x, ...)\
-  what(x)\
-  FOR_EACH_11(what,  __VA_ARGS__)
-#define FOR_EACH_13(what, x, ...)\
-  what(x)\
-  FOR_EACH_12(what,  __VA_ARGS__)
-#define FOR_EACH_14(what, x, ...)\
-  what(x)\
-  FOR_EACH_13(what,  __VA_ARGS__)
-#define FOR_EACH_15(what, x, ...)\
-  what(x)\
-  FOR_EACH_14(what,  __VA_ARGS__)
-#define FOR_EACH_16(what, x, ...)\
-  what(x)\
-  FOR_EACH_15(what,  __VA_ARGS__)
-
-#define XFOR_EACH_1(what, params, x, ...) what(params,x)
-#define XFOR_EACH_2(what, params, x, ...)\
-  what(params,x)\
-  XFOR_EACH_1(what, params,  __VA_ARGS__)
-#define XFOR_EACH_3(what, params, x, ...)\
-  what(params,x)\
-  XFOR_EACH_2(what, params, __VA_ARGS__)
-#define XFOR_EACH_4(what, params, x, ...)\
-  what(params,x)\
-  XFOR_EACH_3(what, params,  __VA_ARGS__)
-#define XFOR_EACH_5(what, params, x, ...)\
-  what(params,x)\
- XFOR_EACH_4(what, params,  __VA_ARGS__)
-#define XFOR_EACH_6(what, params, x, ...)\
-  what(params,x)\
-  XFOR_EACH_5(what, params,  __VA_ARGS__)
-#define XFOR_EACH_7(what, params, x, ...)\
-  what(params,x)\
-  XFOR_EACH_6(what, params,  __VA_ARGS__)
-#define XFOR_EACH_8(what, params, x, ...)\
-  what(params,x)\
-  XFOR_EACH_7(what, params,  __VA_ARGS__)
-#define XFOR_EACH_9(what, params, x, ...)\
-  what(params,x)\
-  XFOR_EACH_8(what, params,  __VA_ARGS__)
-#define XFOR_EACH_10(what, params, x, ...)\
-  what(params,x)\
-  XFOR_EACH_9(what, params,  __VA_ARGS__)
-#define XFOR_EACH_11(what, params, x, ...)\
-  what(params,x)\
-  XFOR_EACH_10(what, params,  __VA_ARGS__)
-#define XFOR_EACH_12(what, params, x, ...)\
-  what(params,x)\
-  XFOR_EACH_11(what, params,  __VA_ARGS__)
-#define XFOR_EACH_13(what, params, x, ...)\
-  what(params,x)\
-  XFOR_EACH_12(what, params,  __VA_ARGS__)
-#define XFOR_EACH_14(what, params, x, ...)\
-  what(params,x)\
-  XFOR_EACH_13(what, params,  __VA_ARGS__)
-#define XFOR_EACH_15(what, params, x, ...)\
-  what(params,x)\
-  XFOR_EACH_14(what, params,  __VA_ARGS__)
-#define XFOR_EACH_16(what, params, x, ...)\
-  what(params,x)\
-  XFOR_EACH_15(what, params, __VA_ARGS__)
-
-#define FOR_EACH_NARG(...) FOR_EACH_NARG_(__VA_ARGS__, FOR_EACH_RSEQ_N())
-#define FOR_EACH_NARG_(...) FOR_EACH_ARG_N(__VA_ARGS__)
-#define FOR_EACH_ARG_N(_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, N, ...) N
-#define FOR_EACH_RSEQ_N() 16,15,14,13,12,11,10,9,8, 7, 6, 5, 4, 3, 2, 1, 0
-
-#define FOR_EACH_(N, what, x, ...) CONCATENATE(FOR_EACH_, N)(what, x, __VA_ARGS__)
-#define FOR_EACH(what, x, ...) FOR_EACH_(FOR_EACH_NARG(x, __VA_ARGS__), what, x, __VA_ARGS__)
-
-#define XFOR_EACH_(N, what, params, x, ...) CONCATENATE(XFOR_EACH_, N)(what, params, x, __VA_ARGS__)
-#define XFOR_EACH(what, params , x, ...) XFOR_EACH_(FOR_EACH_NARG(x, __VA_ARGS__), what, params, x, __VA_ARGS__)
 
 #define DECL(x) DECL_##x
 #define DEF(x) DEF_##x,
 
-#define MENU(id,text,...)\
+//TODO: move id##_menuShadow to DEF_MENU
+#define MENU(id,text,aFn,mask,style,...) altMENU(menu,id,text,aFn,mask,style,__VA_ARGS__)
+#define altMENU(objType,id,text,aFn,mask,style,...)\
   FOR_EACH(DECL,__VA_ARGS__)\
   const char id##_text[] MEMMODE=text;\
   prompt* const id##_data[] MEMMODE={\
     FOR_EACH(DEF,__VA_ARGS__)\
   };\
-  menu id (id##_text,sizeof(id##_data)/sizeof(prompt*),id##_data);
+  const MEMMODE menuNodeShadowRaw id##ShadowRaw={\
+    (callback)aFn,\
+    (systemStyles)(_menuData|_canNav),\
+    id##_text,\
+    mask,\
+    sizeof(id##_data)/sizeof(prompt*),\
+    id##_data,\
+    style\
+  };\
+  const menuNodeShadow& id##Shadow=*(menuNodeShadow*)&id##ShadowRaw;\
+  objType id(id##Shadow);
 
-#define SELECT(target,id,text,...)\
+#define SELECT(...) altVARIANT(select,((systemStyles)(_menuData|_canNav|_parentDraw)),__VA_ARGS__)
+#define CHOOSE(...) altVARIANT(choose,((systemStyles)(_menuData|_canNav|_isVariant)),__VA_ARGS__)
+#define TOGGLE(...) altVARIANT(toggle,_menuData,__VA_ARGS__)
+#define altVARIANT(objType,ss,target,id,text,action,mask,style,...)\
   const char id##_text[] MEMMODE=text;\
   XFOR_EACH(DECL_VALUE,target,__VA_ARGS__)\
-  menuValue<typeof(target)>* const id##_data[] MEMMODE={\
+  prompt* const id##_data[] MEMMODE={\
     FOR_EACH(DEF,__VA_ARGS__)\
   };\
-  menuSelect<typeof(target)> id (id##_text,sizeof(id##_data)/sizeof(prompt*),id##_data,target);
-
-#define CHOOSE(target,id,text,...)\
-  const char id##_text[] MEMMODE=text;\
-  XFOR_EACH(DECL_VALUE,target,__VA_ARGS__)\
-  menuValue<typeof(target)>* const id##_data[] MEMMODE={\
-    FOR_EACH(DEF,__VA_ARGS__)\
+  const MEMMODE menuVariantShadowRaw<typeof(target)> id##ShadowRaw={\
+    (callback)action,\
+    ss,\
+    id##_text,\
+    mask,\
+    sizeof(id##_data)/sizeof(prompt*),\
+    id##_data,\
+    style,\
+    &target\
   };\
-  menuChoice<typeof(target)> id (id##_text,sizeof(id##_data)/sizeof(prompt*),id##_data,target);
+  const MEMMODE menuVariantShadow<typeof(target)>& id##_Shadow=*(menuVariantShadow<typeof(target)>*)&id##ShadowRaw;\
+  objType<typeof(target)> id (id##_Shadow);
 
-#define TOGGLE(target,id,text,...)\
-  const char id##_text[] MEMMODE=text;\
-  XFOR_EACH(DECL_VALUE,target,__VA_ARGS__)\
-  menuValue<typeof(target)>* const id##_data[] MEMMODE={\
-    FOR_EACH(DEF,__VA_ARGS__)\
-  };\
-  menuToggle<typeof(target)> id (id##_text,sizeof(id##_data)/sizeof(prompt*),id##_data,target);
-
-/*#define GET_MACRO(_1,_2,NAME,...) NAME
-#define VALUE(...) GET_MACRO(__VA_ARGS__, EXPLICIT_VALUE, IMPLICIT_VALUE)(__VA_ARGS__)*/
-
-#define OP(...) OP_(__COUNTER__,__VA_ARGS__)
-#define FIELD(...) FIELD_(__COUNTER__,__VA_ARGS__)
+// bridging macros prepending id's to arguments list
+// for all elements that need separate allocation and a name to it
+#define OP(...) altOP(prompt,__VA_ARGS__)
+#define altOP(...) OP_(__COUNTER__,__VA_ARGS__)
+#define EXIT(...) EXIT_(__COUNTER__,__VA_ARGS__)
+#define FIELD(...) altFIELD(menuField,__VA_ARGS__)
+#define altFIELD(...) FIELD_(__COUNTER__,__VA_ARGS__)
 #define VALUE(...) VALUE_(__COUNTER__,__VA_ARGS__)
-#define TEXTFIELD(...) TEXTFIELD_(__COUNTER__,__VA_ARGS__)
+//#define TEXTFIELD(...) TEXTFIELD_(__COUNTER__,__VA_ARGS__)
 
-#define DECL_OP_(cnt,text,...) \
+//allocating space for elements and shadows -------------------------------------
+#define DECL_EXIT_(cnt,exitText)\
+  const char title_##cnt[] MEMMODE=exitText;\
+  const MEMMODE promptShadowRaw opShadowRaw##cnt = {\
+    (callback)doExit,\
+    _noStyle,\
+    title_##cnt,\
+    enterEvent\
+  };\
+  const promptShadow& opShadow##cnt=*(promptShadow*)&opShadowRaw##cnt;\
+  prompt op##cnt(opShadow##cnt);
+#define DECL_OP_(cnt,objType,text,aFn,mask) \
   const char title_##cnt[] MEMMODE=text;\
-  prompt op##cnt(title_##cnt,__VA_ARGS__);
-#define DECL_FIELD_(cnt,target,text,units,...)\
+  const MEMMODE promptShadowRaw opShadowRaw##cnt={\
+    (callback)aFn,\
+    _noStyle,\
+    title_##cnt,\
+    mask\
+  };\
+  const promptShadow& opShadow##cnt=*(promptShadow*)&opShadowRaw##cnt;\
+  objType op##cnt(opShadow##cnt);
+#define DECL_FIELD_(cnt,objType,target,text,units,low,high,step,tune,action,mask)\
   const char fieldLabel##cnt[] MEMMODE=text;\
   const char fieldUnit##cnt[] MEMMODE=units;\
-  menuField<typeof(target)> _menuField##cnt(target,fieldLabel##cnt,fieldUnit##cnt,__VA_ARGS__);
-#define DECL_TEXTFIELD_(cnt,target,...) menuTextField _menuTextField##cnt(target,__VA_ARGS__);
+  const MEMMODE menuFieldShadowRaw<typeof(target)> fieldShadowRaw##cnt={\
+    (callback)action,\
+    _canNav,\
+    fieldLabel##cnt,\
+    mask,\
+    &target,\
+    fieldUnit##cnt,\
+    low,\
+    high,\
+    step,\
+    tune\
+  };\
+  const menuFieldShadow<typeof(target)>& _fieldShadow##cnt=*(menuFieldShadow<typeof(target)>*)&fieldShadowRaw##cnt;\
+  objType<typeof(target)> _menuField##cnt(_fieldShadow##cnt);
+  //(target,fieldLabel##cnt,fieldUnit##cnt,__VA_ARGS__) MEMMODE;
+#define DECL_TEXTFIELD_(cnt,target,...)\
+  menuTextField _menuTextField##cnt(target,__VA_ARGS__);
 #define DECL_SUBMENU(id)
 #define DECL_VALUE(target,...) MK_VALUE(target, _##__VA_ARGS__)
 #define _VALUE_(...)  __VA_ARGS__
 #define MK_VALUE(...) _MK_VALUE(__VA_ARGS__)
-#define _MK_VALUE(target,cnt,text,...)\
+#define _MK_VALUE(target,cnt,text,value,action,mask)\
   const char valueLabel##cnt[] MEMMODE=text;\
-  menuValue<typeof(target)> choice##cnt(valueLabel##cnt,__VA_ARGS__);
+  const MEMMODE menuValueShadowRaw<typeof(target)> choice##cnt##ShadowRaw={\
+    (callback)action,\
+    _noStyle,\
+    valueLabel##cnt,\
+    mask,\
+    value\
+  };\
+  const menuValueShadow<typeof(target)>& choice##cnt##Shadow=\
+    *(menuValueShadow<typeof(target)>*)&choice##cnt##ShadowRaw;\
+  menuValue<typeof(target)> menuValue##cnt(choice##cnt##Shadow);
 
+// when building a list of elements --------------------------------------------
+#define DEF_EXIT_(cnt,...) &op##cnt
 #define DEF_OP_(cnt,...) &op##cnt
 #define DEF_FIELD_(cnt,...) &_menuField##cnt
-#define DEF_TEXTFIELD_(cnt,...) &_menuTextField##cnt
+//#define DEF_TEXTFIELD_(cnt,...) &_menuTextField##cnt
 #define DEF_SUBMENU(id) &id
 #define DEF_VALUE(id) &id
-#define DEF_VALUE_(cnt,...) &choice##cnt
+#define DEF_VALUE_(cnt,...) &menuValue##cnt
+
+//The navigation root ------------------------------------------------------------------
+#define NAVROOT(id,menu,maxDepth,in,out)\
+  navNode id##_path[maxDepth];\
+  navRoot id(menu,id##_path,maxDepth,in,out);

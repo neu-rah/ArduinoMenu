@@ -1,0 +1,19 @@
+Arduino Menu Library
+
++ add macros to build navRoot
++ suspension in only one function with suspension events
++ implement other fields
+- dialogs and modal dialogs (static alloc)
+- alerts (dynamic)
+- errors (dynamic modal)
+- modal just blocks the cycle.
++ use menu acceletators + auto numbering
+- custom field format (date/time)
+- textField?
+
+maybe we need a super parser for text FIELD
+- current parsers are at meu object level interpreting keys
+- however enter and navigation keys should be handled at lower levels
+- the problem is to bring down numeric parse and accelerators
+
+=> menus should have ID's and accelerators
