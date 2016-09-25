@@ -1,7 +1,7 @@
 /***********
 Sept. 2014 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
 creative commons license 3.0: Attribution-ShareAlike CC BY-SA
-This software is furnished "as is", without technical support, and with no 
+This software is furnished "as is", without technical support, and with no
 warranty, express or implied, as to its usefulness for any purpose.
 
 Thread Safe: No
@@ -34,7 +34,7 @@ class chainStream:public Stream {
     for(int n=0;n<N;n++) {
       int key=streams[n]->available()?streams[n]->read():-1;
       if (key!=on) {
-        on=key;
+        on=-1;
         return key;
       }
         //streams[n]->read();
