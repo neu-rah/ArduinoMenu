@@ -299,9 +299,14 @@
         //device resolution (pixels per character)
         idx_t resX=1;
         idx_t resY=1;
+        menuNode* drawn;
+        menuOut() {}
+        menuOut(idx_t x,idx_t y):maxX(x),maxY(y) {}
         virtual menuOut& operator<<(prompt const &p);
+        virtual void clearLine(int ln)=0;
+        virtual void clear()=0;
         virtual void setCursor(int x,int y);
-        virtual void printMenu(navNode &nav);
+        virtual void printMenu(navNode &nav)=0;
     };
 
     // Navigation

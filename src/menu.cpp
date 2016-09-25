@@ -20,12 +20,14 @@ menuOut& menuOut::operator<<(const prompt& p) {
 navRoot* navNode::root=NULL;
 
 bool menuNode::changed(const navNode &nav,const menuOut& out) {
+  Serial<<"menuNode "<<*(prompt*)this<<" changed?"<<endl;
   if (nav.target!=this) return dirty;
   if (dirty) return true;
   for(int i=0;i<out.maxY;i++) {
     if (i+nav.top>=nav.sz()) break;
     if (operator[](i).changed(nav,out)) return true;
   }
+  Serial<<"NOT CHANGED!"<<endl;
   return false;
 }
 
@@ -68,11 +70,13 @@ void navNode::doNavigation(char ch,Stream& in,menuOut& out) {
     case downCmd:
       sel--;
       if (sel<0) {if(wrap()) sel=sz()-1; else sel=0;}
-      if (sel<top) top=sel;
+      //if (sel<top) top=sel;
+      Serial<<"downCmd "<<sel<<" sz:"<<sz()<<endl;
       break;
     case upCmd:
       sel++;
       if (sel>=sz()) {if(wrap()) sel=0; else sel=sz()-1;}
+      Serial<<"upCmd "<<sel<<" sz:"<<sz()<<endl;
       break;
     case escCmd:
       assert(root);
@@ -89,9 +93,11 @@ void navNode::doNavigation(char ch,Stream& in,menuOut& out) {
     }
   }
   if(osel!=sel) {
+    Serial<<"sel changed to "<<sel<<endl;
     if (target->sysStyles()&(_parentDraw|_isVariant))
       target->dirty=true;
     else {
+      Serial<<"siblings dirty"<<endl;
       operator[](osel).dirty=true;
       operator[](sel).dirty=true;
     }

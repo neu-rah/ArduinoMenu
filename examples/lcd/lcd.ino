@@ -32,10 +32,12 @@ chainStream<3> in(inputsList);//3 is the number of inputs
 // menu structure definition //////////////////////////////////////////////
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,OP("Op1",doNothing,noEvent)
+  ,OP("Op2",doNothing,noEvent)
+  ,OP("Op3",doNothing,noEvent)
   ,EXIT("<Back")
 );
 
-lcdOut out(lcd);
+lcdOut out(lcd,16,2);
 NAVROOT(nav,mainMenu,2,in,out);
 
 void setup() {

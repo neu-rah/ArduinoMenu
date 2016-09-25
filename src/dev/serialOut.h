@@ -7,7 +7,26 @@
       public:
         Print& device;
         inline serialOut(Print& o):device(o) {}
-        virtual size_t write(uint8_t ch) {return device.write(ch);}
+        void clearLine(int ln) override {}
+        void clear() override {device.println("");device.println("");}
+        size_t write(uint8_t ch) override {return device.write(ch);}
+        void printMenu(navNode &nav) override {
+          if (nav.target->changed(nav,*this)) {
+            *this<<"["<<*(prompt*)nav.target<<"]"<<endl;
+            for(idx_t i=0;i<maxY;i++) {
+              if (i+nav.top>=nav.sz()) break;
+              *this<<"["<<i+1<<"]";
+              prompt& p=nav[i+nav.top];
+              write(i+nav.top==nav.sel?options.selectedCursor:' ');
+              p.printTo(i,nav,*this);
+              *this<<endl;
+              p.dirty=false;
+            }
+            nav.target->prompt::dirty=false;
+            for(int n=memStrLen((char*)memPtr(nav.target->shadow->text))+2;n;n--) *this<<"-";
+            *this<<endl;
+          }
+        }
     };
   }//namespace Menu
 
