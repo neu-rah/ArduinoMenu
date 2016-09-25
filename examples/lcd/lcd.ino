@@ -50,6 +50,6 @@ void setup() {
 
 void loop() {
   nav.poll();
-  digitalWrite(LED_BUILTIN,!digitalRead(LED_BUILTIN));
+  //digitalWrite(LED_BUILTIN,!digitalRead(LED_BUILTIN));
   delay(100);//simulate a delay as if other tasks are running
 }
