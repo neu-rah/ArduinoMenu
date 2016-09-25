@@ -74,7 +74,6 @@
 #define FIELD(...) altFIELD(menuField,__VA_ARGS__)
 #define altFIELD(...) FIELD_(__COUNTER__,__VA_ARGS__)
 #define VALUE(...) VALUE_(__COUNTER__,__VA_ARGS__)
-//#define TEXTFIELD(...) TEXTFIELD_(__COUNTER__,__VA_ARGS__)
 
 //allocating space for elements and shadows -------------------------------------
 #define DECL_EXIT_(cnt,exitText)\
@@ -114,7 +113,6 @@
   };\
   const menuFieldShadow<typeof(target)>& _fieldShadow##cnt=*(menuFieldShadow<typeof(target)>*)&fieldShadowRaw##cnt;\
   objType<typeof(target)> _menuField##cnt(_fieldShadow##cnt);
-  //(target,fieldLabel##cnt,fieldUnit##cnt,__VA_ARGS__) MEMMODE;
 #define DECL_TEXTFIELD_(cnt,target,...)\
   menuTextField _menuTextField##cnt(target,__VA_ARGS__);
 #define DECL_SUBMENU(id)
@@ -138,7 +136,6 @@
 #define DEF_EXIT_(cnt,...) &op##cnt
 #define DEF_OP_(cnt,...) &op##cnt
 #define DEF_FIELD_(cnt,...) &_menuField##cnt
-//#define DEF_TEXTFIELD_(cnt,...) &_menuTextField##cnt
 #define DEF_SUBMENU(id) &id
 #define DEF_VALUE(id) &id
 #define DEF_VALUE_(cnt,...) &menuValue##cnt

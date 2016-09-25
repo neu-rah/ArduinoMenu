@@ -300,6 +300,7 @@
         idx_t resX=1;
         idx_t resY=1;
         virtual menuOut& operator<<(prompt const &p);
+        virtual void setCursor(int x,int y);
         virtual void printMenu(navNode &nav);
     };
 

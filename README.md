@@ -1,15 +1,14 @@
-ArduinoMenu
-===========
-AVR generic menu/interactivity system
+# ArduinoMenu
 
-##purpose
+**AVR generic menu/interactivity system**
+
+## Purpose
 Full automated navigation system calling user funtions.
 With this system you can define menus, submenus, input fields and other iteration objects that deal with all input/output and can call user defined handler as a result of user iteration.
 The user function can be operated as a single action called on click/enter or as a event driven function responding to focus In/Out or Enter/Esc events.
 The system is designed as a non blocking polling system, allowing parallel task to run.
 
 ## Features
-
 - Small footprint on RAM and time.
 - Wide variety of input/output devices supported.
 - Low memory usage, using PROGMEM on systems where its is available.
@@ -17,22 +16,30 @@ The system is designed as a non blocking polling system, allowing parallel task 
 - Minimalistic user code base.
 - Fields edit values hooked to existing program variables (references).
 - Fields can edit variables of any type (templates).
-- Reflexive fields, showing variable changes (experimental).
+- Reflexive fields, showing variable changes.
 - Numerical field edit and range validation.
-- User functions called on regular options or field edit.
 - Customizable (colors and cursors).
 - Able to work over Serial stream IO as a base level.
 - modularity, support for different devices in separate include files.
-- static allocation of RAM, avoiding heap fragmentation, all RAM needed to operate the system is allocated at program statup.
+- static allocation of RAM, avoiding heap fragmentation, all RAM needed to define menu structure is allocated at program statup.
 - events available for menus and prompts
 - simply returns when no input available and no draw needed
 - lazy drawing, only draws when changed, avoiding time consumption and flicking.
 
-## Limitations
+## Dependencies
+This library depends on the following libraries:
+
+- Streaming https://github.com/scottdky/Streaming
+- Assert4a https://github.com/nettigo/Assert4a
+
+So, be sure to install them too.
+
+## Limits
 
 - when using macros the menu is limited to 16 options (current macro limnit).
 - menus **must** have at least 2 options.
 - maximum 256 options
+- fast access only supports 9 options (1 to 9)
 
 ## Base
 
