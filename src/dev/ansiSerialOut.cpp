@@ -8,10 +8,10 @@ void ansiSerialOut::printMenu(navNode &nav) {
 
     *this<<"["<<*(prompt*)nav.target<<"]"<<endl;
     for(idx_t i=0;i<maxY;i++) {
-      if (i+nav.top>=nav.sz()) break;
-      prompt *p=(prompt*)memPtr(nav.data()[i+nav.top]);
+      if (i>=nav.sz()) break;
+      prompt *p=(prompt*)memPtr(nav.data()[i]);
       *this<<"["<<i+1<<"]";
-      write(i+nav.top==nav.sel?options.selectedCursor:' ');
+      write(i==nav.sel?options.selectedCursor:' ');
       p->printTo(i,nav,*this);
       *this<<endl;
       p->dirty=false;

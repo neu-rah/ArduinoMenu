@@ -17,3 +17,14 @@ maybe we need a super parser for text FIELD
 - the problem is to bring down numeric parse and accelerators
 
 => menus should have ID's and accelerators
+
+the problem with dirty and changed
+
+using a dirty flag on menu item (to be clean on draw) is not consistent with multiple device draw.
+using the change function to compare current value with stored one is also inconsistent with multiple devices draw
+
+it seems that stored values (reflex) and dirty flags MUST be available for each device!
+however they are on different and independent structures!
+
+having a cross reference.. does it really worth the effort?
+if not then the menu IS single output driven.

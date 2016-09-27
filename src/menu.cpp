@@ -19,34 +19,33 @@ menuOut& menuOut::operator<<(const prompt& p) {
 
 navRoot* navNode::root=NULL;
 
+/*#define debugPin A5
+class Debug:public Stream {
+  int available() override {return Serial.available();}
+  int peek() override {return Serial.peek();}
+  int read() override {return Serial.read();}
+  void flush() override {return Serial.flush();}
+  size_t write(uint8_t c) override {return Serial.write(c);}
+};
+Debug D;
+
+template<class T>
+Debug& operator<<(Debug& s,T o) {
+  if (!digitalRead(debugPin)) Serial<<o;
+  return s;
+}*/
+
 bool menuNode::changed(const navNode &nav,const menuOut& out) {
-  Serial<<"menuNode "<<*(prompt*)this<<" changed?"<<endl;
+  //D<<"menuNode "<<*(prompt*)this<<" changed??"<<endl;
   if (nav.target!=this) return dirty;
   if (dirty) return true;
   for(int i=0;i<out.maxY;i++) {
-    if (i+nav.top>=nav.sz()) break;
+    //if (i+out.top>=nav.sz()) break;
+    //D<<"checking "<<operator[](i)<<" "<<operator[](i).changed(nav,out)<<endl;
     if (operator[](i).changed(nav,out)) return true;
   }
-  Serial<<"NOT CHANGED!"<<endl;
+  //D<<"NOT CHANGED!"<<endl;
   return false;
-}
-
-void menuOut::printMenu(navNode &nav) {
-  if (nav.target->changed(nav,*this)) {
-    *this<<"["<<*(prompt*)nav.target<<"]"<<endl;
-    for(idx_t i=0;i<maxY;i++) {
-      if (i+nav.top>=nav.sz()) break;
-      *this<<"["<<i+1<<"]";
-      prompt& p=nav[i+nav.top];
-      write(i+nav.top==nav.sel?options.selectedCursor:' ');
-      p.printTo(i,nav,*this);
-      *this<<endl;
-      p.dirty=false;
-    }
-    nav.target->prompt::dirty=false;
-    for(int n=memStrLen((char*)memPtr(nav.target->shadow->text))+2;n;n--) *this<<"-";
-    *this<<endl;
-  }
 }
 
 //aux function, turn input character into navigation command
@@ -64,7 +63,7 @@ void navTarget::navigate(navNode& nav,char ch,Stream& in,menuOut& out) {
 //generic navigation (aux function)
 void navNode::doNavigation(char ch,Stream& in,menuOut& out) {
   idx_t osel=sel;
-  idx_t otop=top;
+  //idx_t otop=out.top;
   navCmds cmd=navKeys(ch);
   switch(cmd) {
     case downCmd:
@@ -93,11 +92,9 @@ void navNode::doNavigation(char ch,Stream& in,menuOut& out) {
     }
   }
   if(osel!=sel) {
-    Serial<<"sel changed to "<<sel<<endl;
     if (target->sysStyles()&(_parentDraw|_isVariant))
       target->dirty=true;
     else {
-      Serial<<"siblings dirty"<<endl;
       operator[](osel).dirty=true;
       operator[](sel).dirty=true;
     }
@@ -109,9 +106,9 @@ void navNode::doNavigation(char ch,Stream& in,menuOut& out) {
     assert(root);
     root->enter();
   }
-  if(otop!=top) {
+  /*if(otop!=top) {
     target->prompt::dirty=true;
-  }
+  }*/
 }
 
 result navNode::event(eventMask e,idx_t i) {
@@ -157,7 +154,7 @@ void navRoot::enter() {
         menuNode* dest=(menuNode*)&selected();
         level++;
         node().target=dest;
-        node().top=0;
+        //out.top=0;
         node().sel=0;
         active().dirty=true;
         sel.sysHandler(enterEvent,node(),selected(),in,out);

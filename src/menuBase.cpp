@@ -2,6 +2,12 @@
 
 using namespace Menu;
 
+template<void (*A)(eventMask event, navNode& nav, prompt &item, Stream &in)> result Menu::callCaster(eventMask event, navNode& nav, prompt &item, Stream &in) {A(event,nav,item,in);return proceed;}
+template<void (*A)(eventMask event, navNode& nav, prompt &item)> result Menu::callCaster(eventMask event, navNode& nav, prompt &item) {A(event,nav,item);return proceed;}
+template<void (*A)(eventMask event, navNode& nav)> result Menu::callCaster(eventMask event, navNode& nav) {A(event,nav);return proceed;}
+template<void (*A)(eventMask event)> result Menu::callCaster(eventMask event) {A(event);return proceed;}
+template<void (*A)()> result Menu::callCaster() {A();return proceed;}
+
 //MEMMODE AUX PRINT
 int Menu::print_P(Print& s,const char* at) {
   const char* p=at;
@@ -21,7 +27,7 @@ Print& Menu::operator<<(Print& o,result r) {
   return o;
 }
 
-char* showEvent(eventMask e) {
+const char* showEvent(eventMask e) {
   switch(e) {
     case noEvent:return "noEvent";
     case activateEvent:return "activateEvent";

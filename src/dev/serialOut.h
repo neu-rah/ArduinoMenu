@@ -14,10 +14,10 @@
           if (nav.target->changed(nav,*this)) {
             *this<<"["<<*(prompt*)nav.target<<"]"<<endl;
             for(idx_t i=0;i<maxY;i++) {
-              if (i+nav.top>=nav.sz()) break;
+              //if (i+top>=nav.sz()) break;
               *this<<"["<<i+1<<"]";
-              prompt& p=nav[i+nav.top];
-              write(i+nav.top==nav.sel?options.selectedCursor:' ');
+              prompt& p=nav[i];
+              write(i==nav.sel?options.selectedCursor:' ');
               p.printTo(i,nav,*this);
               *this<<endl;
               p.dirty=false;

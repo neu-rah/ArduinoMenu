@@ -8,6 +8,9 @@
     class lcdOut:public menuOut {
       public:
         LiquidCrystal& device;
+        idx_t top=0;
+        idx_t lastTop=-1;
+        idx_t lastSel=-1;
         inline lcdOut(LiquidCrystal& o,int x,int y):menuOut(x,y),device(o) {}
         size_t write(uint8_t ch) override {return device.write(ch);}
         void clearLine(int ln) override {
@@ -18,27 +21,33 @@
         void clear() override {device.clear();}
         void setCursor(int x,int y) override {device.setCursor(x*resX,y*resY);}
         void printMenu(navNode &nav) override {
-          Serial<<"lcd printMenu "<<nav.target->changed(nav,*this)<<endl;
-          idx_t ot=nav.top;
-          while(nav.sel>=nav.top+maxY) nav.top++;
-          while(nav.sel<nav.top) nav.top--;
+          //Serial<<"lcd printMenu "<<nav.target->changed(nav,*this)<<endl;
+          idx_t ot=top;
+          while(nav.sel>=top+maxY) top++;
+          while(nav.sel<top) top--;
           if (drawn!=nav.target) {
             device.clear();
             drawn=nav.target;
           }
-          if (nav.top!=ot||drawn!=nav.target||nav.target->changed(nav,*this)) {
-            Serial<<"top:"<<nav.top<<" sel:"<<nav.sel<<endl;
+          //if (!nav.target->changed(nav,*this)) digitalWrite(LED_BUILTIN,!digitalRead(LED_BUILTIN));
+          if (top!=lastTop||lastSel!=nav.sel||top!=ot||drawn!=nav.target||nav.target->changed(nav,*this)) {
+            //Serial<<"top:"<<top<<" sel:"<<nav.sel<<endl;
             for(idx_t i=0;i<maxY;i++) {
-              if (i+nav.top>=nav.sz()) break;
-              Serial<<"printing "<<i+nav.top<<" "<<nav[i+nav.top]<<" at:"<<i<<endl;
+              if (i+top>=nav.sz()) break;
+              //Serial<<"printing "<<i+top<<" "<<nav[i+top]<<" at:"<<i<<endl;
               clearLine(i);
+              //delay(50);//TODO: remove this!
               setCursor(0,i);
-              prompt& p=nav[i+nav.top];
-              write(i+nav.top==nav.sel?options.selectedCursor:' ');
+              prompt& p=nav[i+top];
+              write(i+top==nav.sel?options.selectedCursor:' ');
               p.printTo(i,nav,*this);
               p.dirty=false;
             }
             nav.target->dirty=false;
+            lastTop=top;
+            lastSel=nav.sel;
+          } else {
+            //check displayed items for change
           }
         }
     };

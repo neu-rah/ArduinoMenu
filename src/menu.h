@@ -37,12 +37,6 @@
         inline result operator()(FUNC_PARAMS) const {return (*shadow)(FUNC_VALUES);}
     };
 
-    //initialization order fiasco invalidates this:
-    //extern const promptShadow exitShadow;
-    //extern menu& systemOptions;
-    //extern prompt exitPrompt;
-    //extern prompt calcelPrompt;
-
     //--------------------------------------------------------------------------
     // can receive navigation focus and prrocess keys
     class navTarget:public prompt {
@@ -299,6 +293,8 @@
         //device resolution (pixels per character)
         idx_t resX=1;
         idx_t resY=1;
+        //first line shown on device
+
         menuNode* drawn;
         menuOut() {}
         menuOut(idx_t x,idx_t y):maxX(x),maxY(y) {}
@@ -314,7 +310,7 @@
     class navNode {
       public:
         idx_t sel=0;
-        idx_t top=0;
+        //idx_t top=0;//TODO: send this to menuOut
         menuNode* target;
         static navRoot* root;
         inline menuNodeShadow& shadow() const {return *(menuNodeShadow*)target->shadow;}
