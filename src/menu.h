@@ -293,7 +293,6 @@
         //device resolution (pixels per character)
         idx_t resX=1;
         idx_t resY=1;
-        //first line shown on device
 
         menuNode* drawn;
         menuOut() {}
