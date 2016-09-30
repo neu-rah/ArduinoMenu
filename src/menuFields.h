@@ -68,11 +68,17 @@ v2.0 - 	Calling action on every elements
 				return true;
 			}*/
 		}
-		virtual void printTo(menuOut& p) {
+		virtual void printName(menuOut& p) {
 			print_P(p,text);
 			p.print(activeNode==this?(tunning?'>':':'):' ');
-			p.print(value);
-			print_P(p,units);
+		}
+    virtual void printValue(menuOut& p) {p.print(value);}
+    virtual void printUnit(menuOut& p) {print_P(p,units);}
+		virtual void printTo(menuOut& p) {
+			printName(p);
+			p.print(activeNode==this?(tunning?'>':':'):' ');
+			printValue(p);
+			printUnit(p);
 		}
 		void clamp() {
       if (value<low) value=low;
