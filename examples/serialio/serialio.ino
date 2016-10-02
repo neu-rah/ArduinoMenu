@@ -2,18 +2,18 @@
 //#include <AnsiStream.h>
 //#include <Stream.h>
 //#include <HardwareSerial.h>
-#include "menu.h"
+#include <menu.h>
 //#include "Dump.h"
-#include "dev/serialOut.h"
+#include <dev/serialOut.h>
 
 using namespace Menu;
 
 #define LEDPIN A4
 
-//result zZz() {Serial<<"zZz"<<endl;return proceed;}
+result zZz() {Serial<<"zZz"<<endl;return proceed;}
 
 result showEvent(eventMask e,navNode& nav,prompt& item) {
-  nav.root->out<<e<<" on "<<item<<endl;
+  Serial<<e<<" on "<<item<<endl;
   return proceed;
 }
 
@@ -91,7 +91,9 @@ MENU(mainMenu,"Main menu",zZz,noEvent,wrapStyle
   ,EXIT("<Back")
 );
 
-serialOut out(Serial);//the output device (just the serial port)
+serialOut outSerial(Serial);//the output device (just the serial port)
+menuOut* outputs[]={&outSerial};
+outputsList out(outputs,1);
 NAVROOT(nav,mainMenu,2,Serial,out);
 
 //when menu is suspended

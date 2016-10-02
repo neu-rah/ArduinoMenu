@@ -2,3 +2,4 @@
 .clang_complete
 .gcc-flags.json
 .piolibdeps
+src/main.cpp

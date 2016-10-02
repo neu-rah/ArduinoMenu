@@ -10,6 +10,7 @@
         void clearLine(int ln) override {}
         void clear() override {device.println("");device.println("");}
         size_t write(uint8_t ch) override {return device.write(ch);}
+        virtual void setCursor(int x,int y) {};
         void printMenu(navNode &nav) override {
           if (nav.target->changed(nav,*this)) {
             *this<<"["<<*(prompt*)nav.target<<"]"<<endl;

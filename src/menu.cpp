@@ -56,12 +56,12 @@ navCmds navNode::navKeys(char ch) {
   return noCmd;
 }
 
-void navTarget::navigate(navNode& nav,char ch,Stream& in,menuOut& out) {
-  nav.doNavigation(ch,in,out);
+void navTarget::navigate(navNode& nav,char ch,Stream& in) {
+  nav.doNavigation(ch,in);
 }
 
 //generic navigation (aux function)
-void navNode::doNavigation(char ch,Stream& in,menuOut& out) {
+void navNode::doNavigation(char ch,Stream& in) {
   idx_t osel=sel;
   //idx_t otop=out.top;
   navCmds cmd=navKeys(ch);
@@ -116,14 +116,14 @@ result navNode::event(eventMask e,idx_t i) {
   eventMask m=(eventMask)memByte(&p.shadow->promptShadow::events);
   eventMask me=(eventMask)(e&m);
   if (me) {
-    return p(e,*this,p,root->in,root->out);
+    return p(e,*this,p);
   }
   return proceed;
 }
 
 result navNode::sysEvent(eventMask e,idx_t i) {
   prompt& p=operator[](i);
-  return p(e,*this,p,root->in,root->out);
+  return p(e,*this,p);
 }
 
 void navRoot::poll() {
@@ -134,7 +134,7 @@ void navRoot::poll() {
       suspended=false;
     } else options.idleTask(idling);
   } else if (in.available()) {
-    navFocus->navigate(node(),in.read(),in,out);
+    navFocus->navigate(node(),in.read(),in);
   }
   if (!suspended) printMenu();//previous actions can suspend the  menu
 }
@@ -142,7 +142,7 @@ void navRoot::poll() {
 void navRoot::enter() {
   if (
     selected().enabled
-    &&selected().sysHandler(activateEvent,node(),selected(),in,out)==proceed
+    &&selected().sysHandler(activateEvent,node(),selected())==proceed
   ) {
     prompt& sel=selected();
     bool canNav=sel.canNav();
@@ -157,7 +157,7 @@ void navRoot::enter() {
         //out.top=0;
         node().sel=0;
         active().dirty=true;
-        sel.sysHandler(enterEvent,node(),selected(),in,out);
+        sel.sysHandler(enterEvent,node(),selected());
       }
     } else if (go==quit&&!selected().isMenu()) exit();
     if (canNav) {
@@ -169,7 +169,7 @@ void navRoot::enter() {
 
 void navRoot::exit() {
   if (selected().shadow->events&&exitEvent)
-    (*selected().shadow)(exitEvent,node(),selected(),in,out);
+    (*selected().shadow)(exitEvent,node(),selected());
   if (navFocus->isMenu()) {
     if (level) level--;
     else {

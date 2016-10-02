@@ -43,7 +43,7 @@
       public:
         navTarget(const promptShadow& shadow):prompt(shadow) {}
         //bool canNav() const override {return true;}
-        virtual void navigate(navNode& nav,char ch,Stream& in,menuOut& out);
+        virtual void navigate(navNode& nav,char ch,Stream& in);
     };
 
     //--------------------------------------------------------------------------
@@ -111,7 +111,7 @@
         bool tunning=false;
         T reflex;
         menuField(const menuFieldShadow<T> & shadow):navTarget(shadow) {}
-        void navigate(navNode& nav,char ch,Stream& in,menuOut& out) override;
+        void navigate(navNode& nav,char ch,Stream& in) override;
         void printTo(idx_t i,navNode &nav,menuOut& out) override;
         inline T& target() const {return *(T*)memPtr(((menuFieldShadow<T>*)shadow)->value);}
         inline T getTypeValue(const T* from) const {
@@ -231,7 +231,7 @@
           //Serial<<"menuVariant::shadow "<<target()<<"/"<<reflex<<endl;
           return dirty||reflex!=target();
         }
-        void navigate(navNode& nav,char ch,Stream& in,menuOut& out) override;
+        void navigate(navNode& nav,char ch,Stream& in) override;
         void printTo(idx_t i,navNode &nav,menuOut& out) override;
     };
 
@@ -300,7 +300,7 @@
         virtual menuOut& operator<<(prompt const &p);
         virtual void clearLine(int ln)=0;
         virtual void clear()=0;
-        virtual void setCursor(int x,int y);
+        virtual void setCursor(int x,int y)=0;
         virtual void printMenu(navNode &nav)=0;
     };
 
@@ -325,22 +325,34 @@
         inline result sysEvent(eventMask e,idx_t i);//send event to item index i
         inline result sysEvent(eventMask e) {return sysEvent(e,sel);}//send event to current item
         navCmds navKeys(char ch);
-        void doNavigation(char ch,Stream& in,menuOut& out);
+        void doNavigation(char ch,Stream& in);
         inline bool changed(const menuOut& out) const {return target->changed(*this,out);}
         inline prompt& operator[](idx_t i) const {return target->operator[](i);}
     };
 
+    //list of output devices
+    class outputsList {
+      public:
+        int cnt=1;
+        menuOut** outs;
+        outputsList(menuOut* o[],int n):cnt(n),outs(o) {}
+        void printMenu(navNode& nav) const {
+          for(int n=0;n<cnt;n++)
+            outs[n]->printMenu(nav);
+        }
+    };
+
     class navRoot {
       public:
-        menuOut& out;
+        outputsList &out;
         Stream& in;
         navNode* path;
         idx_t maxDepth=0;
         idx_t level=0;
         bool suspended=false;
         navTarget* navFocus=NULL;
-        navRoot(menuNode& root,navNode* path,idx_t d,Stream& in,menuOut& out)
-          :out(out),in(in),path(path),maxDepth(d) {
+        navRoot(menuNode& root,navNode* path,idx_t d,Stream& in,outputsList &o)
+          :out(o),in(in),path(path),maxDepth(d) {
             navFocus=&root;
             path[0].target=&root;
             navNode::root=this;
@@ -354,7 +366,7 @@
             out.printMenu(path[level-1]);
           else out.printMenu(node());
         }
-        inline bool changed() const {return node().changed(out);}
+        //inline bool changed() const {return node().changed(out);}
         void poll();
         void enter();
         void exit();
@@ -375,7 +387,7 @@
     static const char* numericChars="0123456789.";
 
     template<typename T>
-    void menuField<T>::navigate(navNode& nav,char ch,Stream& in,menuOut& out) {
+    void menuField<T>::navigate(navNode& nav,char ch,Stream& in) {
       //Serial<<"menuField<T>::navigate"<<endl;
       menuFieldShadow<T>& s=*(menuFieldShadow<T>*)shadow;
 			if (strchr(numericChars,in.peek())) {//a numeric value was entered
@@ -434,10 +446,10 @@
     }
 
     template<typename T>
-    void menuVariant<T>::navigate(navNode& nav,char ch,Stream& in,menuOut& out) {
+    void menuVariant<T>::navigate(navNode& nav,char ch,Stream& in) {
       //Serial<<"menuVariant::navigate"<<endl;Serial.flush();
       nav.sel=sync();
-      nav.doNavigation(ch,in,out);
+      nav.doNavigation(ch,in);
       //Serial<<"sel:"<<nav.sel<<endl;
       sync(nav.sel);
       if (ch==options.navCodes[enterCmd].ch) nav.root->exit();

@@ -51,14 +51,12 @@
     /*template<vCall vFunc>
     result rFunc(FUNC_PARAMS) {vFunc(FUNC_VALUES);return proceed;}*/
 
-    #define FUNC_PARAMS eventMask event, navNode& nav, prompt &item, Stream &in, menuOut &out
-    #define FUNC_VALUES event,nav,item,in,out
+    #define FUNC_PARAMS eventMask event, navNode& nav, prompt &item
+    #define FUNC_VALUES event,nav,item
 
     //callback function type
     typedef result (*callback)(FUNC_PARAMS);
-    typedef void (*vCall)(FUNC_PARAMS);
-
-    //template<callback C> result togFn(FUNC_PARAMS) {Serial<<"togFn!!!"<<endl;return C(FUNC_VALUES);}
+    typedef void (*vCall)(FUNC_PARAMS);//now also accept void return
 
     //functions to hook as common prompt actions
     result doNothing();//just proceed with menu
@@ -68,7 +66,7 @@
     typedef result (*idleFunc)(idleEvent);
     result inaction(idleEvent e);
 
-    template<void (*A)(eventMask event, navNode& nav, prompt &item, Stream &in)> result callCaster(eventMask event, navNode& nav, prompt &item, Stream &in);
+    //template<void (*A)(eventMask event, navNode& nav, prompt &item, Stream &in)> result callCaster(eventMask event, navNode& nav, prompt &item, Stream &in);
     template<void (*A)(eventMask event, navNode& nav, prompt &item)> result callCaster(eventMask event, navNode& nav, prompt &item);
     template<void (*A)(eventMask event, navNode& nav)> result callCaster(eventMask event, navNode& nav);
     template<void (*A)(eventMask event)> result callCaster(eventMask event);
@@ -84,8 +82,8 @@
         inline action(result (*f)()):hFn((callback)f) {}
     		inline action(result (*f)(eventMask)):hFn((callback)f) {}
         inline action(result (*f)(eventMask,navNode&)):hFn((callback)f) {}
-        inline action(result (*f)(eventMask,navNode&,prompt&)):hFn((callback)f) {}
-        inline action(result (*f)(eventMask,navNode&,prompt&,Stream&)):hFn((callback)f) {}
+        //inline action(result (*f)(eventMask,navNode&,prompt&)):hFn((callback)f) {}
+        //inline action(result (*f)(eventMask,navNode&,prompt&,Stream&)):hFn((callback)f) {}
     		inline action(callback f):hFn(f) {}
     		inline result operator()(FUNC_PARAMS) const {return ((callback)memPtr(hFn))(FUNC_VALUES);}
     };
