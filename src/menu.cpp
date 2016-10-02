@@ -51,12 +51,10 @@ void navNode::doNavigation(char ch,Stream& in) {
       sel--;
       if (sel<0) {if(wrap()) sel=sz()-1; else sel=0;}
       //if (sel<top) top=sel;
-      Serial<<"downCmd "<<sel<<" sz:"<<sz()<<endl;
       break;
     case upCmd:
       sel++;
       if (sel>=sz()) {if(wrap()) sel=0; else sel=sz()-1;}
-      Serial<<"upCmd "<<sel<<" sz:"<<sz()<<endl;
       break;
     case escCmd:
       assert(root);

@@ -40,11 +40,11 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,EXIT("<Back")
 );
 
-lcdOut outLCD(lcd,16,2);
-serialOut outSerial(Serial);//the output device (just the serial port)
-menuOut* outputs[]={&outLCD,&outSerial};
-outputsList out(outputs,2);
-NAVROOT(nav,mainMenu,2,in,out);
+lcdOut outLCD(lcd,16,2);//output device for LCD
+serialOut outSerial(Serial);//output device for serial port
+menuOut* outputs[]={&outLCD,&outSerial};//list of output devices
+outputsList out(outputs,2);//outputs list with 2 outputs
+NAVROOT(nav,mainMenu,2,in,out);//the navigation root object
 
 //#define debugPin A5
 
