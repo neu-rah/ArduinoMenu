@@ -40,9 +40,9 @@
               prompt& p=nav[i+top];
               write(i+top==nav.sel?options.selectedCursor:' ');
               p.printTo(i,nav,*this);
-              p.dirty=false;
+              //p.dirty=false;
             }
-            nav.target->dirty=false;
+            //nav.target->dirty=false;
             lastTop=top;
             lastSel=nav.sel;
           } else {
@@ -50,6 +50,7 @@
           }
         }
         void clearChanged(navNode &nav) override {
+          nav.target->dirty=false;
           for(idx_t i=0;i<maxY;i++) {
             if (i+top>=nav.sz()) break;
             nav[i+top].dirty=false;

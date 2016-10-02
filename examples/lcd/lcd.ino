@@ -3,6 +3,7 @@
 #include <dev/keyIn.h>//for encoder button
 #include <dev/chainStream.h>//for mixing input stream (encoder+button)
 #include <dev/lcdOut.h>//for lcd output
+#include <dev/serialOut.h>
 
 using namespace Menu;
 
@@ -39,7 +40,10 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,EXIT("<Back")
 );
 
-lcdOut out(lcd,16,2);
+lcdOut outLCD(lcd,16,2);
+serialOut outSerial(Serial);//the output device (just the serial port)
+menuOut* outputs[]={&outLCD,&outSerial};
+outputsList out(outputs,2);
 NAVROOT(nav,mainMenu,2,in,out);
 
 //#define debugPin A5
@@ -57,6 +61,7 @@ void setup() {
 
 void loop() {
   nav.poll();
+  //digitalWrite(LEDPIN, ledCtrl);
   //digitalWrite(LED_BUILTIN,!digitalRead(LED_BUILTIN));
   delay(100);//simulate a delay as if other tasks are running
 }
