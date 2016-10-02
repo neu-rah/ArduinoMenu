@@ -294,6 +294,7 @@
         idx_t resX=1;
         idx_t resY=1;
 
+        idx_t top=0;//first line to draw
         menuNode* drawn;
         menuOut() {}
         menuOut(idx_t x,idx_t y):maxX(x),maxY(y) {}
@@ -302,6 +303,26 @@
         virtual void clear()=0;
         virtual void setCursor(int x,int y)=0;
         virtual void printMenu(navNode &nav)=0;
+        virtual void clearChanged(navNode &nav)=0;
+    };
+
+    //list of output devices
+    //this allows parallel navigation on multiple devices
+    class outputsList {
+      public:
+        int cnt=1;
+        menuOut** outs;
+        outputsList(menuOut* o[],int n):cnt(n),outs(o) {}
+        menuOut& operator[](idx_t i) {
+          assert(i<cnt);
+          return *outs[i];
+        }
+        void printMenu(navNode& nav) const {
+          for(int n=0;n<cnt;n++)
+            outs[n]->printMenu(nav);
+          for(int n=0;n<cnt;n++)
+            outs[n]->clearChanged(nav);
+        }
     };
 
     // Navigation
@@ -328,18 +349,6 @@
         void doNavigation(char ch,Stream& in);
         inline bool changed(const menuOut& out) const {return target->changed(*this,out);}
         inline prompt& operator[](idx_t i) const {return target->operator[](i);}
-    };
-
-    //list of output devices
-    class outputsList {
-      public:
-        int cnt=1;
-        menuOut** outs;
-        outputsList(menuOut* o[],int n):cnt(n),outs(o) {}
-        void printMenu(navNode& nav) const {
-          for(int n=0;n<cnt;n++)
-            outs[n]->printMenu(nav);
-        }
     };
 
     class navRoot {

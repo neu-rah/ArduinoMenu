@@ -19,32 +19,13 @@ menuOut& menuOut::operator<<(const prompt& p) {
 
 navRoot* navNode::root=NULL;
 
-/*#define debugPin A5
-class Debug:public Stream {
-  int available() override {return Serial.available();}
-  int peek() override {return Serial.peek();}
-  int read() override {return Serial.read();}
-  void flush() override {return Serial.flush();}
-  size_t write(uint8_t c) override {return Serial.write(c);}
-};
-Debug D;
-
-template<class T>
-Debug& operator<<(Debug& s,T o) {
-  if (!digitalRead(debugPin)) Serial<<o;
-  return s;
-}*/
-
 bool menuNode::changed(const navNode &nav,const menuOut& out) {
-  //D<<"menuNode "<<*(prompt*)this<<" changed??"<<endl;
   if (nav.target!=this) return dirty;
   if (dirty) return true;
   for(int i=0;i<out.maxY;i++) {
-    //if (i+out.top>=nav.sz()) break;
-    //D<<"checking "<<operator[](i)<<" "<<operator[](i).changed(nav,out)<<endl;
+    if (i+out.top>=nav.sz()) break;
     if (operator[](i).changed(nav,out)) return true;
   }
-  //D<<"NOT CHANGED!"<<endl;
   return false;
 }
 

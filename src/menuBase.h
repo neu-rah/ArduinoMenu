@@ -48,6 +48,24 @@
     //events for the idle function
     enum idleEvent {idleStart,idling,idleEnd};
 
+    //TODO: implement colors at base level
+    // enabled|disabled
+    // selected|normal
+    // => enabled, disabled, selEnabled, selDisabled
+    // bg|fg (pair)
+    /*enum colors {
+      optionColor,
+      menuColor,
+      fieldColor,
+      valueColor,
+      unitColor,
+      cursorColor,//just selected
+    };
+    or something like that.. then use functions to setColor(...)
+    and getColor(enumerated)
+    this will be part of the config/options
+    */
+
     /*template<vCall vFunc>
     result rFunc(FUNC_PARAMS) {vFunc(FUNC_VALUES);return proceed;}*/
 

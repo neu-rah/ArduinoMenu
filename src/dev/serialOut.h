@@ -1,6 +1,7 @@
 #ifndef RSITE_ARDUINO_MENU_SERIALOUT
   #define RSITE_ARDUINO_MENU_SERIALOUT
   #include "../menu.h"
+  #include "../Dump.h"
 
   namespace Menu {
     class serialOut:public menuOut {
@@ -15,20 +16,28 @@
           if (nav.target->changed(nav,*this)) {
             *this<<"["<<*(prompt*)nav.target<<"]"<<endl;
             for(idx_t i=0;i<maxY;i++) {
-              //if (i+top>=nav.sz()) break;
+              if (i+top>=nav.sz()) break;
               *this<<"["<<i+1<<"]";
-              prompt& p=nav[i];
+              prompt& p=nav[i+top];
               write(i==nav.sel?options.selectedCursor:' ');
               p.printTo(i,nav,*this);
               *this<<endl;
-              p.dirty=false;
+              //p.dirty=false;
             }
-            nav.target->prompt::dirty=false;
+            //nav.target->prompt::dirty=false;
             for(int n=memStrLen((char*)memPtr(nav.target->shadow->text))+2;n;n--) *this<<"-";
             *this<<endl;
           }
         }
+        void clearChanged(navNode &nav) override {
+          nav.target->prompt::dirty=false;
+          for(idx_t i=0;i<maxY;i++) {
+            if (i+top>=nav.sz()) break;
+            nav[i+top].dirty=false;
+          }
+        }
     };
+
   }//namespace Menu
 
 

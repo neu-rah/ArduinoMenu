@@ -8,7 +8,6 @@
     class lcdOut:public menuOut {
       public:
         LiquidCrystal& device;
-        idx_t top=0;
         idx_t lastTop=-1;
         idx_t lastSel=-1;
         inline lcdOut(LiquidCrystal& o,int x,int y):menuOut(x,y),device(o) {}
@@ -48,6 +47,12 @@
             lastSel=nav.sel;
           } else {
             //check displayed items for change
+          }
+        }
+        void clearChanged(navNode &nav) override {
+          for(idx_t i=0;i<maxY;i++) {
+            if (i+top>=nav.sz()) break;
+            nav[i+top].dirty=false;
           }
         }
     };
