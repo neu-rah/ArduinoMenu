@@ -7,14 +7,15 @@ warranty, express or implied, as to its usefulness for any purpose.
 Thread Safe: No
 Extensible: Yes
 
-use double output with parallel navigation
-output: LCD and Serial
-input: encoder and Serial
+menu with adafruit GFX
+output: Nokia 5110 display (PDC8544 HW SPI)
+input: Serial
 www.r-site.net
 ***/
 
 #include <menu.h>
 #include <SPI.h>//this display uses hardware SPI
+#include <Adafruit_GFX.h>
 //#include <Adafruit_ST7735.h> // Hardware-specific library
 #include <Adafruit_PCD8544.h>
 #include <dev/adafruitGfxOut.h>
@@ -25,13 +26,13 @@ using namespace Menu;
 
 #define LEDPIN A4
 
-#define GFX_DC 6
+#define GFX_DC 9
 #define GFX_CS 8
 #define GFX_RST 7
 
 //Adafruit_ST7735 gfx(GFX_CS, GFX_DC, GFX_RST);
 //Adafruit_PCD8544 gfx(GFX_DC,GFX_CS,GFX_RST);
-Adafruit_PCD8544 nokia = Adafruit_PCD8544(GFX_DC,GFX_CS,GFX_RST);
+Adafruit_PCD8544 nokia(GFX_DC,GFX_CS,GFX_RST);
 
 result zZz() {Serial<<"zZz"<<endl;return proceed;}
 
@@ -114,8 +115,22 @@ MENU(mainMenu,"Main menu",zZz,noEvent,wrapStyle
   ,EXIT("<Back")
 );
 
+const uint16_t colors[][2][2] MEMMODE={
+  {{0,1},{0,1}},//option color
+  {{0,1},{0,1}},//selected option color
+  {{0,1},{0,1}},//menu color
+  {{0,1},{0,1}},//selected menu color
+  {{0,1},{0,1}},//fieldColor
+  {{0,1},{0,1}},//fieldColorHi
+  {{0,1},{0,1}},//valueColor
+  {{0,1},{0,1}},//valueColorHi
+  {{0,1},{0,1}},//unitColor
+  {{0,1},{0,1}},//unitColorHi
+  {{0,1},{0,1}}//cursorColor
+};
+
 serialOut outSerial(Serial);//the output device (just the serial port)
-menuGFX outGFX((Adafruit_GFX&)nokia);//output device for LCD
+menuGFX outGFX(nokia,colors);//output device for LCD
 menuOut* outputs[]={&outGFX,&outSerial};
 outputsList out(outputs,2);
 NAVROOT(nav,mainMenu,2,Serial,out);
@@ -141,12 +156,18 @@ void setup() {
 
   SPI.begin();
   nokia.begin();
+  nokia.clearDisplay();
   nokia.print("Menu test on GFX");
-
+  nokia.setContrast(50);
+  nokia.display(); // show splashscreen
+  delay(500);
+  nokia.clearDisplay();
+  nokia.display(); // show splashscreen
 }
 
 void loop() {
-  //nav.poll();
+  nav.poll();
+  nokia.display(); // show splashscreen
   //digitalWrite(LEDPIN, ledCtrl);
   delay(100);//simulate a delay when other tasks are done
 }

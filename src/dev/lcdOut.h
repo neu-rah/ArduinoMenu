@@ -8,8 +8,6 @@
     class lcdOut:public menuOut {
       public:
         LiquidCrystal& device;
-        idx_t lastTop=-1;
-        idx_t lastSel=-1;
         inline lcdOut(LiquidCrystal& o,int x,int y):menuOut(x,y),device(o) {}
         size_t write(uint8_t ch) override {return device.write(ch);}
         void clearLine(int ln) override {

@@ -290,7 +290,8 @@
         //device size (in characters)
         idx_t maxX=80;
         idx_t maxY=24;
-        //device resolution (pixels per character)
+        idx_t lastTop=-1;
+        idx_t lastSel=-1;
         idx_t top=0;//first line to draw
         menuNode* drawn;
         menuOut() {}
@@ -301,6 +302,7 @@
         virtual void setCursor(int x,int y)=0;
         virtual void printMenu(navNode &nav)=0;
         virtual void clearChanged(navNode &nav)=0;
+        virtual void setColor(colorDefs,status) {}
     };
 
     class gfxOut:public menuOut {

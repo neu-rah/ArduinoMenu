@@ -34,15 +34,23 @@ namespace Menu {
 	  class menuGFX:public gfxOut {
 	    public:
 				Adafruit_GFX& gfx;
-		    menuGFX(Adafruit_GFX& gfx,int resX=6,int resY=9)
-			  	:gfxOut(gfx.width()/resX,gfx.height()/resY,resX,resY),gfx(gfx) {}
+				const uint16_t (&colors)[11][2][2];
+		    menuGFX(Adafruit_GFX& gfx,const uint16_t (&c)[11][2][2],int resX=6,int resY=9)
+			  	:gfxOut(gfx.width()/resX,gfx.height()/resY,resX,resY),colors(c),gfx(gfx) {}
+
+				//virtual colorFmt getColor(colorDefs,status,colorPair)=0;
+				//TODO: Ok, virtual cant return template parameter type... now what?
+				void setColor(colorDefs c,status s) override {
+					const uint16_t* bf=colors[c][s];
+					gfx.setTextColor(bf[background],bf[foreground]);
+				}
 
 		    void clearLine(int ln) override {
-		    	//gfx.fillRect(0,ln*resY,resX*maxX,resY,bgColor);
+		    	gfx.fillRect(0,ln*resY,resX*maxX,resY,colors[optionColor][enabled][background]);
 		    	setCursor(0,ln);
 		    }
 		    void clear() override {
-		    	//gfx.fillRect(0,0,resX*maxX,resY*maxY,bgColor);
+		    	gfx.fillRect(0,0,resX*maxX,resY*maxY,colors[optionColor][enabled][background]);
 		    	setCursor(0,0);
 		    }
 		    void setCursor(int x,int y) override {gfx.setCursor(x*resX,y*resY);}
@@ -54,20 +62,26 @@ namespace Menu {
 		    	o.printTo(*(menuOut*)this);*/
 		    //}
 				void printMenu(navNode &nav) override {
-					/*if (drawn!=&m) clear();//clear all screen when changing menu
-					if (m.sel-top>=maxY) top=m.sel-maxY+1;//selected option outside device (bottom)
-					else if (m.sel<top) top=m.sel;//selected option outside device (top)
-					int i=top;for(;i<m.sz;i++) {
-						  if(i-top>=maxY) break;
-						  if (needRedraw(m,i)) {
-						  	printPrompt(*(prompt*)pgmPtrNear(m.data[i]),i==m.sel,i+1,0,i-top,m.width);
-						  }
+					idx_t ot=top;
+          while(nav.sel>=top+maxY) top++;
+          while(nav.sel<top) top--;
+          if (drawn!=nav.target) {
+						clear();
+						drawn=nav.target;
 					}
-					if (drawExit&&i-top<maxY&&needRedraw(m,i))
-						printPrompt(menu::exitOption,m.sel==m.sz,0,0,i-top,m.width);
-					lastTop=top;
-					lastSel=m.sel;
-					drawn=&m;*/
+					if (top!=lastTop||lastSel!=nav.sel||top!=ot||drawn!=nav.target||nav.target->changed(nav,*this)) {
+						for(idx_t i=0;i<maxY;i++) {
+              if (i+top>=nav.sz()) break;
+              clearLine(i);
+              setCursor(0,i);
+              prompt& p=nav[i+top];
+              write(i+top==nav.sel?options.selectedCursor:' ');
+              p.printTo(i,nav,*this);
+            }
+            lastTop=top;
+            lastSel=nav.sel;
+						//gfx.display();//this is device specific!
+          }
 				}
 				void clearChanged(navNode &nav) override {}
 	  };

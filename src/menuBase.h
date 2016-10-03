@@ -63,7 +63,7 @@ www.r-site.net
     //events for the idle function
     enum idleEvent {idleStart,idling,idleEnd};
 
-    enum colors {
+    enum colorDefs {
       optionColor,
       optionColorHi,
       menuColor,
@@ -81,7 +81,7 @@ www.r-site.net
 
     template<typename T> struct colorPairs {T bg;T fb;};
     template<typename T> struct colorDef {colorPairs<T> pair[2];};
-    template<typename T> struct colorTable {colorDef<T> colors[11];};
+    template<typename T> struct colorTable {colorDef<T> colorDefs[11];};
 
     //example of color table
     // each color is in the format {{disabled bg,disabled fg},{enabled bg,enabled fg}}
