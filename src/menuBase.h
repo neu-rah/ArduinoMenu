@@ -1,3 +1,18 @@
+/********************
+Sept. 2016 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
+creative commons license 3.0: Attribution-ShareAlike CC BY-SA
+This software is furnished "as is", without technical support, and with no
+warranty, express or implied, as to its usefulness for any purpose.
+
+Thread Safe: No
+Extensible: Yes
+
+base for menu library
+definitions and enumerations
+
+www.r-site.net
+***/
+
 #ifndef RSITE_ARDUINO_MENU_SYSTEM_BASE
   #define RSITE_ARDUINO_MENU_SYSTEM_BASE
 
@@ -48,26 +63,41 @@
     //events for the idle function
     enum idleEvent {idleStart,idling,idleEnd};
 
-    //TODO: implement colors at base level
-    // enabled|disabled
-    // selected|normal
-    // => enabled, disabled, selEnabled, selDisabled
-    // bg|fg (pair)
-    /*enum colors {
+    enum colors {
       optionColor,
+      optionColorHi,
       menuColor,
+      menuColorHi,
       fieldColor,
+      fieldColorHi,
       valueColor,
+      valueColorHi,
       unitColor,
-      cursorColor,//just selected
+      unitColorHi,
+      cursorColor
     };
-    or something like that.. then use functions to setColor(...)
-    and getColor(enumerated)
-    this will be part of the config/options
-    */
+    enum status {disabled,enabled};
+    enum colorPair {background,foreground};
 
-    /*template<vCall vFunc>
-    result rFunc(FUNC_PARAMS) {vFunc(FUNC_VALUES);return proceed;}*/
+    template<typename T> struct colorPairs {T bg;T fb;};
+    template<typename T> struct colorDef {colorPairs<T> pair[2];};
+    template<typename T> struct colorTable {colorDef<T> colors[11];};
+
+    //example of color table
+    // each color is in the format {{disabled bg,disabled fg},{enabled bg,enabled fg}}
+    /*const int colors[][2][2] MEMMODE={
+      {{0,1},{0,1}},//option color
+      {{0,1},{0,1}},//selected option color
+      {{0,1},{0,1}},//menu color
+      {{0,1},{0,1}},//selected menu color
+      {{0,1},{0,1}},//fieldColor
+      {{0,1},{0,1}},//fieldColorHi
+      {{0,1},{0,1}},//valueColor
+      {{0,1},{0,1}},//valueColorHi
+      {{0,1},{0,1}},//unitColor
+      {{0,1},{0,1}},//unitColorHi
+      {{0,1},{0,1}}//cursorColor
+    };*/
 
     #define FUNC_PARAMS eventMask event, navNode& nav, prompt &item
     #define FUNC_VALUES event,nav,item
@@ -106,16 +136,7 @@
     		inline result operator()(FUNC_PARAMS) const {return ((callback)memPtr(hFn))(FUNC_VALUES);}
     };
 
-    //void xyz(eventMask event, navNode& nav, prompt &item, Stream &in) {}
-    //vCall xyz1=(vCall)xyz;
-    //action a1(callCaster<xyz>);
-
     extern action noAction;
-
-    //generic callback
-    //typedef void (*simpleFunctionCallback)();
-    //generic inctivity function, as default menu suspension handler...
-    //void inaction();
 
     //config
     ///////////////////////////////////////////////////////////////////////////
@@ -141,12 +162,6 @@
     // TODO: make this a parametrized thing instead of a global reference
     extern config options;
 
-    //printing
-    /*template<class T> inline menuOut &operator<<(menuOut &o, const T arg) {
-      ((Print&)o)<<arg;
-      return o;
-    }*/
-    //template<class T> inline menuOut &operator <<(menuOut &o, T arg);
     Print& operator<<(Print& o,bool b);
     Print& operator<<(Print& o,navCmds cmd);
     Print& operator<<(Print& o,result cmd);

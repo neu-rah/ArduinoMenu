@@ -1,9 +1,37 @@
+/********************
+Sept. 2014 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
+creative commons license 3.0: Attribution-ShareAlike CC BY-SA
+This software is furnished "as is", without technical support, and with no
+warranty, express or implied, as to its usefulness for any purpose.
+
+Thread Safe: No
+Extensible: Yes
+
+use double output with parallel navigation
+output: LCD and Serial
+input: encoder and Serial
+www.r-site.net
+***/
+
 #include <menu.h>
+#include <SPI.h>//this display uses hardware SPI
+//#include <Adafruit_ST7735.h> // Hardware-specific library
+#include <Adafruit_PCD8544.h>
+#include <dev/adafruitGfxOut.h>
 #include <dev/serialOut.h>
+//#include <FreeMono9pt7b.h>
 
 using namespace Menu;
 
 #define LEDPIN A4
+
+#define GFX_DC 6
+#define GFX_CS 8
+#define GFX_RST 7
+
+//Adafruit_ST7735 gfx(GFX_CS, GFX_DC, GFX_RST);
+//Adafruit_PCD8544 gfx(GFX_DC,GFX_CS,GFX_RST);
+Adafruit_PCD8544 nokia = Adafruit_PCD8544(GFX_DC,GFX_CS,GFX_RST);
 
 result zZz() {Serial<<"zZz"<<endl;return proceed;}
 
@@ -87,8 +115,9 @@ MENU(mainMenu,"Main menu",zZz,noEvent,wrapStyle
 );
 
 serialOut outSerial(Serial);//the output device (just the serial port)
-menuOut* outputs[]={&outSerial};
-outputsList out(outputs,1);
+menuGFX outGFX((Adafruit_GFX&)nokia);//output device for LCD
+menuOut* outputs[]={&outGFX,&outSerial};
+outputsList out(outputs,2);
 NAVROOT(nav,mainMenu,2,Serial,out);
 
 //when menu is suspended
@@ -109,10 +138,15 @@ void setup() {
   while(!Serial);
   Serial<<"menu 3.0 test"<<endl;Serial.flush();
   options.idleTask=idle;//point a function to be used when menu is suspended
+
+  SPI.begin();
+  nokia.begin();
+  nokia.print("Menu test on GFX");
+
 }
 
 void loop() {
-  nav.poll();
-  digitalWrite(LEDPIN, ledCtrl);
+  //nav.poll();
+  //digitalWrite(LEDPIN, ledCtrl);
   delay(100);//simulate a delay when other tasks are done
 }

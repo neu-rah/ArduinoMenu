@@ -291,9 +291,6 @@
         idx_t maxX=80;
         idx_t maxY=24;
         //device resolution (pixels per character)
-        idx_t resX=1;
-        idx_t resY=1;
-
         idx_t top=0;//first line to draw
         menuNode* drawn;
         menuOut() {}
@@ -304,6 +301,16 @@
         virtual void setCursor(int x,int y)=0;
         virtual void printMenu(navNode &nav)=0;
         virtual void clearChanged(navNode &nav)=0;
+    };
+
+    class gfxOut:public menuOut {
+      public:
+        idx_t resX=1;
+        idx_t resY=1;
+        idx_t posX=0;
+        idx_t posY=0;
+        gfxOut(idx_t x,idx_t y,idx_t rx,idx_t ry,idx_t px=0,idx_t py=0)
+          :menuOut(x,y),resX(rx),resY(ry),posX(px),posY(py) {}
     };
 
     //list of output devices

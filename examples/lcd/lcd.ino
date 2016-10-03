@@ -1,9 +1,23 @@
+/********************
+Sept. 2014 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
+creative commons license 3.0: Attribution-ShareAlike CC BY-SA
+This software is furnished "as is", without technical support, and with no
+warranty, express or implied, as to its usefulness for any purpose.
+
+Thread Safe: No
+Extensible: Yes
+
+menu output to standard arduino LCD
+output: LCD
+input: encoder and Serial
+www.r-site.net
+***/
+
 #include <menu.h>
 #include <dev/encoderIn.h>//for PCINT encoder
 #include <dev/keyIn.h>//for encoder button
 #include <dev/chainStream.h>//for mixing input stream (encoder+button)
 #include <dev/lcdOut.h>//for lcd output
-#include <dev/serialOut.h>
 
 using namespace Menu;
 
@@ -41,9 +55,8 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
 );
 
 lcdOut outLCD(lcd,16,2);//output device for LCD
-serialOut outSerial(Serial);//output device for serial port
-menuOut* outputs[]={&outLCD,&outSerial};//list of output devices
-outputsList out(outputs,2);//outputs list with 2 outputs
+menuOut* outputs[]={&outLCD};//list of output devices
+outputsList out(outputs,1);//outputs list with 2 outputs
 NAVROOT(nav,mainMenu,2,in,out);//the navigation root object
 
 //#define debugPin A5
@@ -52,11 +65,11 @@ void setup() {
   Serial.begin(115200);
   while(!Serial);
   Serial<<"Arduino Menu Library"<<endl;Serial.flush();
-  pinMode(LED_BUILTIN,OUTPUT);
-  //pinMode(debugPin,INPUT_PULLUP);
   encoder.begin();
   pinMode(encBtn,INPUT_PULLUP);
   lcd.begin(16,2);
+  int c=colors[optionColorHi][enabled][foreground];
+  Serial<<"color:"<<c<<endl;
 }
 
 void loop() {
