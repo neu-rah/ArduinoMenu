@@ -22,18 +22,9 @@
               write(i==nav.sel?options.selectedCursor:' ');
               p.printTo(i,nav,*this);
               *this<<endl;
-              //p.dirty=false;
             }
-            //nav.target->prompt::dirty=false;
             for(int n=memStrLen((char*)memPtr(nav.target->shadow->text))+2;n;n--) *this<<"-";
             *this<<endl;
-          }
-        }
-        void clearChanged(navNode &nav) override {
-          nav.target->prompt::dirty=false;
-          for(idx_t i=0;i<maxY;i++) {
-            if (i+top>=nav.sz()) break;
-            nav[i+top].dirty=false;
           }
         }
     };

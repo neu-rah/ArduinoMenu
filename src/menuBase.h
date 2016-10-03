@@ -76,7 +76,7 @@ www.r-site.net
       unitColorHi,
       cursorColor
     };
-    enum status {disabled,enabled};
+    enum status {disabledStatus,enabledStatus};
     enum colorPair {background,foreground};
 
     template<typename T> struct colorPairs {T bg;T fb;};

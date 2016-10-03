@@ -1,5 +1,5 @@
 /********************
-Sept. 2014 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
+Sept. 2014 ~ Oct 2016 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
 creative commons license 3.0: Attribution-ShareAlike CC BY-SA
 This software is furnished "as is", without technical support, and with no
 warranty, express or implied, as to its usefulness for any purpose.
@@ -115,18 +115,19 @@ MENU(mainMenu,"Main menu",zZz,noEvent,wrapStyle
   ,EXIT("<Back")
 );
 
+// each color is in the format {{disabled bg,disabled fg},{enabled bg,enabled fg}}
 const uint16_t colors[][2][2] MEMMODE={
-  {{0,1},{0,1}},//option color
-  {{0,1},{0,1}},//selected option color
-  {{0,1},{0,1}},//menu color
-  {{0,1},{0,1}},//selected menu color
-  {{0,1},{0,1}},//fieldColor
-  {{0,1},{0,1}},//fieldColorHi
-  {{0,1},{0,1}},//valueColor
-  {{0,1},{0,1}},//valueColorHi
-  {{0,1},{0,1}},//unitColor
-  {{0,1},{0,1}},//unitColorHi
-  {{0,1},{0,1}}//cursorColor
+  {{WHITE,BLACK},{WHITE,BLACK}},//option color
+  {{WHITE,BLACK},{WHITE,BLACK}},//selected option color
+  {{WHITE,BLACK},{WHITE,BLACK}},//menu color
+  {{WHITE,BLACK},{WHITE,BLACK}},//selected menu color
+  {{WHITE,BLACK},{WHITE,BLACK}},//fieldColor
+  {{WHITE,BLACK},{WHITE,BLACK}},//fieldColorHi
+  {{WHITE,BLACK},{WHITE,BLACK}},//valueColor
+  {{WHITE,BLACK},{WHITE,BLACK}},//valueColorHi
+  {{WHITE,BLACK},{WHITE,BLACK}},//unitColor
+  {{WHITE,BLACK},{WHITE,BLACK}},//unitColorHi
+  {{WHITE,BLACK},{WHITE,BLACK}},//cursorColor
 };
 
 serialOut outSerial(Serial);//the output device (just the serial port)
@@ -147,8 +148,6 @@ result idle(idleEvent e) {
 
 void setup() {
   pinMode(LEDPIN,OUTPUT);
-  digitalWrite(LEDPIN,HIGH);
-  delay(500);
   Serial.begin(115200);
   while(!Serial);
   Serial<<"menu 3.0 test"<<endl;Serial.flush();
@@ -157,10 +156,10 @@ void setup() {
   SPI.begin();
   nokia.begin();
   nokia.clearDisplay();
-  nokia.print("Menu test on GFX");
+  nokia.print("Menu 3.0 test on GFX");
   nokia.setContrast(50);
   nokia.display(); // show splashscreen
-  delay(500);
+  delay(2000);
   nokia.clearDisplay();
   nokia.display(); // show splashscreen
 }
@@ -168,6 +167,6 @@ void setup() {
 void loop() {
   nav.poll();
   nokia.display(); // show splashscreen
-  //digitalWrite(LEDPIN, ledCtrl);
+  digitalWrite(LEDPIN, ledCtrl);
   delay(100);//simulate a delay when other tasks are done
 }

@@ -42,25 +42,19 @@ namespace Menu {
 				//TODO: Ok, virtual cant return template parameter type... now what?
 				void setColor(colorDefs c,status s) override {
 					const uint16_t* bf=colors[c][s];
-					gfx.setTextColor(bf[background],bf[foreground]);
+					gfx.setTextColor(memWord(bf[background]),memWord(bf[foreground]));
 				}
 
 		    void clearLine(int ln) override {
-		    	gfx.fillRect(0,ln*resY,resX*maxX,resY,colors[optionColor][enabled][background]);
+		    	gfx.fillRect(0,ln*resY,resX*maxX,resY,colors[optionColor][enabledStatus][background]);
 		    	setCursor(0,ln);
 		    }
 		    void clear() override {
-		    	gfx.fillRect(0,0,resX*maxX,resY*maxY,colors[optionColor][enabled][background]);
+		    	gfx.fillRect(0,0,resX*maxX,resY*maxY,colors[optionColor][enabledStatus][background]);
 		    	setCursor(0,0);
 		    }
 		    void setCursor(int x,int y) override {gfx.setCursor(x*resX,y*resY);}
 		    size_t write(uint8_t ch) override {return gfx.write(ch);}
-		    //void printPrompt(prompt &o,bool selected,int idx,int posX,int posY,int width) override {
-		    	/*gfx.fillRect(0,posY*resY,maxX*resX,resY,selected?hiliteColor:bgColor);
-		    	gfx.setTextColor(selected?(o.enabled?enabledColorHi:disabledColorHi):(o.enabled?enabledColor:disabledColor));
-		    	setCursor(0,posY);
-		    	o.printTo(*(menuOut*)this);*/
-		    //}
 				void printMenu(navNode &nav) override {
 					idx_t ot=top;
           while(nav.sel>=top+maxY) top++;
@@ -75,7 +69,9 @@ namespace Menu {
               clearLine(i);
               setCursor(0,i);
               prompt& p=nav[i+top];
+							setColor(cursorColor,p.enabled);
               write(i+top==nav.sel?options.selectedCursor:' ');
+							setColor(nav.sel==i+top?optionColorHi:optionColor,p.enabled);
               p.printTo(i,nav,*this);
             }
             lastTop=top;
@@ -83,7 +79,6 @@ namespace Menu {
 						//gfx.display();//this is device specific!
           }
 				}
-				void clearChanged(navNode &nav) override {}
 	  };
 
 }; //namespace menuGFX

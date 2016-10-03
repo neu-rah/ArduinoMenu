@@ -17,6 +17,14 @@ menuOut& menuOut::operator<<(const prompt& p) {
   return *this;
 }
 
+void menuOut::clearChanged(navNode &nav) {
+  nav.target->dirty=false;
+  for(idx_t i=0;i<maxY;i++) {
+    if (i+top>=nav.sz()) break;
+    nav[i+top].dirty=false;
+  }
+}
+
 navRoot* navNode::root=NULL;
 
 bool menuNode::changed(const navNode &nav,const menuOut& out) {

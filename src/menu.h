@@ -22,7 +22,7 @@
     };
     class prompt {
       public:
-        bool enabled=true;//ignore enter if false
+        status enabled=enabledStatus;//ignore enter if false
         bool dirty=true;//needs to be  redrawn
         const promptShadow* shadow;//constant read-only data (PROGMEM)
         inline prompt(const promptShadow& shadow):shadow(&shadow) {}
@@ -301,8 +301,9 @@
         virtual void clear()=0;
         virtual void setCursor(int x,int y)=0;
         virtual void printMenu(navNode &nav)=0;
-        virtual void clearChanged(navNode &nav)=0;
+        virtual void clearChanged(navNode &nav);
         virtual void setColor(colorDefs,status) {}
+        //inline void setColor(colorDefs c,bool s) {setColor(c,(status)s);}
     };
 
     class gfxOut:public menuOut {
@@ -395,10 +396,11 @@
     void menuField<T>::printTo(idx_t i,navNode &nav,menuOut& out) {
       menuFieldShadow<T>& s=*(menuFieldShadow<T>*)shadow;
       reflex=target();
-      dirty=false;
       prompt::printTo(i,nav,out);
       out<<(this==nav.root->navFocus?(tunning?">":":"):" ");
+      out.setColor(fieldColor,enabled);
       out<<reflex;
+      out.setColor(unitColor,enabled);
       print_P(out,(const char*)memPtr(s.units));
     }
 
@@ -423,18 +425,18 @@
   		    		tunning=false;
               dirty=true;
   		    		nav.root->exit();
-  		    	} else {
-              dirty=true;
-              tunning=true;
-            }
+  		    	} else tunning=true;
+            dirty=true;
             break;
           case upCmd:
             //Serial<<"upCmd"<<endl;
             target()+=(tunning?tune():step())*(options.invertFieldKeys?-1:1);
+            dirty=true;
             break;
           case downCmd:
             //Serial<<"downCmd"<<endl;
             target()-=(tunning?tune():step())*(options.invertFieldKeys?-1:1);;
+            dirty=true;
             break;
           default:break;
         }
@@ -451,7 +453,6 @@
       out<<*(prompt*)this;
       idx_t at=menuVariant<T>::sync(menuVariant<T>::sync());
       out<<menuNode::operator[](at);
-      prompt::dirty=false;
     }
 
     template<typename T>
@@ -460,7 +461,6 @@
       idx_t at=menuVariant<T>::sync(menuVariant<T>::sync());
       out<<(this==&nav.root->active()?":":" ");
       out<<menuNode::operator[](at);
-      prompt::dirty=false;
     }
 
     template<typename T>

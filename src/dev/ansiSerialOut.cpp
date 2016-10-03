@@ -14,9 +14,7 @@ void ansiSerialOut::printMenu(navNode &nav) {
       write(i==nav.sel?options.selectedCursor:' ');
       p->printTo(i,nav,*this);
       *this<<endl;
-      p->dirty=false;
     }
-    nav.target->dirty=false;
     for(int n=memStrLen(nav.target->shadow->text)+2;n;n--) *this<<"-";
     *this<<endl;
   }
