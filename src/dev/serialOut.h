@@ -8,8 +8,12 @@
       public:
         Print& device;
         inline serialOut(Print& o):device(o) {}
-        void clearLine(int ln) override {}
-        void clear() override {device.println("");device.println("");}
+        void clear() override {
+          device.println("");device.println("");
+        }
+        void clearLine(int ln,colorDefs color,bool selected=false,status stat=enabledStatus) override {
+          device.println("");
+        }
         size_t write(uint8_t ch) override {return device.write(ch);}
         virtual void setCursor(int x,int y) {};
         void printMenu(navNode &nav) override {

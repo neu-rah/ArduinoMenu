@@ -63,41 +63,16 @@ www.r-site.net
     //events for the idle function
     enum idleEvent {idleStart,idling,idleEnd};
 
+    //color defs, then indexing by selected and enabled status
     enum colorDefs {
-      optionColor,
-      optionColorHi,
-      menuColor,
-      menuColorHi,
-      fieldColor,
-      fieldColorHi,
-      valueColor,
-      valueColorHi,
+      bgColor,
+      fgColor,
+      valColor,
       unitColor,
-      unitColorHi,
-      cursorColor
+      nColors//total number of colors
     };
+
     enum status {disabledStatus,enabledStatus};
-    enum colorPair {background,foreground};
-
-    template<typename T> struct colorPairs {T bg;T fb;};
-    template<typename T> struct colorDef {colorPairs<T> pair[2];};
-    template<typename T> struct colorTable {colorDef<T> colorDefs[11];};
-
-    //example of color table
-    // each color is in the format {{disabled bg,disabled fg},{enabled bg,enabled fg}}
-    /*const int colors[][2][2] MEMMODE={
-      {{0,1},{0,1}},//option color
-      {{0,1},{0,1}},//selected option color
-      {{0,1},{0,1}},//menu color
-      {{0,1},{0,1}},//selected menu color
-      {{0,1},{0,1}},//fieldColor
-      {{0,1},{0,1}},//fieldColorHi
-      {{0,1},{0,1}},//valueColor
-      {{0,1},{0,1}},//valueColorHi
-      {{0,1},{0,1}},//unitColor
-      {{0,1},{0,1}},//unitColorHi
-      {{0,1},{0,1}}//cursorColor
-    };*/
 
     #define FUNC_PARAMS eventMask event, navNode& nav, prompt &item
     #define FUNC_VALUES event,nav,item

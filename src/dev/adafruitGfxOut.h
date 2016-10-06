@@ -42,7 +42,12 @@ namespace Menu {
 				//TODO: Ok, virtual cant return template parameter type... now what?
 				void setColor(colorDefs c,status s) override {
 					const uint16_t* bf=colors[c][s];
-					gfx.setTextColor(memWord(bf[background]),memWord(bf[foreground]));
+					gfx.setTextColor(memWord(bf[foreground]));//,memWord(bf[background]));
+				}
+
+				void invColor(colorDefs c,status s) override {
+					const uint16_t* bf=colors[c][s];
+					gfx.setTextColor(memWord(bf[background]));
 				}
 
 		    void clearLine(int ln) override {

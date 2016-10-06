@@ -1,36 +1,31 @@
 /********************
-Sept. 2014 ~ Oct 2016 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
+Arduino generic menu system
+U8GLib menu example
+U8Glib: https://github.com/olikraus/U8glib_Arduino
+
+Jul.2016 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
+Original from: https://github.com/christophepersoz
 creative commons license 3.0: Attribution-ShareAlike CC BY-SA
 This software is furnished "as is", without technical support, and with no
 warranty, express or implied, as to its usefulness for any purpose.
 
 Thread Safe: No
 Extensible: Yes
-
-menu with adafruit GFX
-output: Nokia 5110 display (PDC8544 HW SPI)
-input: Serial
-www.r-site.net
-***/
+*/
 
 #include <menu.h>
-#include <SPI.h>//this display uses hardware SPI
-#include <Adafruit_GFX.h>
-//#include <Adafruit_ST7735.h> // Hardware-specific library
-#include <Adafruit_PCD8544.h>
-#include <dev/adafruitGfxOut.h>
 #include <dev/serialOut.h>
-//#include <FreeMono9pt7b.h>
+#include <dev/U8GLibOut.h>
 
 using namespace Menu;
 
 #define LEDPIN A4
 
-#define GFX_DC 9
-#define GFX_CS 8
-#define GFX_RST 7
+#define U8_DC 9
+#define U8_CS 8
+#define U8_RST 7
 
-Adafruit_PCD8544 nokia(GFX_DC,GFX_CS,GFX_RST);
+U8GLIB_PCD8544 u8g(U8_CS, U8_DC, U8_RST) ;
 
 result zZz() {Serial<<"zZz"<<endl;return proceed;}
 
@@ -113,24 +108,17 @@ MENU(mainMenu,"Main menu",zZz,noEvent,wrapStyle
   ,EXIT("<Back")
 );
 
-// each color is in the format {{disabled bg,disabled fg},{enabled bg,enabled fg}}
+// each color is in the format {{normal disabled,normal enabled},{selected disabled,selected enabled}}
 const uint16_t colors[][2][2] MEMMODE={
-  {{WHITE,BLACK},{WHITE,BLACK}},//option color
-  {{WHITE,BLACK},{WHITE,BLACK}},//selected option color
-  {{WHITE,BLACK},{WHITE,BLACK}},//menu color
-  {{WHITE,BLACK},{WHITE,BLACK}},//selected menu color
-  {{WHITE,BLACK},{WHITE,BLACK}},//fieldColor
-  {{WHITE,BLACK},{WHITE,BLACK}},//fieldColorHi
-  {{WHITE,BLACK},{WHITE,BLACK}},//valueColor
-  {{WHITE,BLACK},{WHITE,BLACK}},//valueColorHi
-  {{WHITE,BLACK},{WHITE,BLACK}},//unitColor
-  {{WHITE,BLACK},{WHITE,BLACK}},//unitColorHi
-  {{WHITE,BLACK},{WHITE,BLACK}},//cursorColor
+  {{0,0},{1,1}},//bgColor
+  {{1,1},{0,0}},//fgColor
+  {{1,1},{0,0}},//valColor
+  {{1,1},{0,0}},//unitColor
 };
 
 serialOut outSerial(Serial);//the output device (just the serial port)
-menuGFX outGFX(nokia,colors);//output device for LCD
-menuOut* outputs[]={&outGFX,&outSerial};
+menuU8G gfx(u8g,colors,5,10);
+menuOut* outputs[]={&gfx,&outSerial};
 outputsList out(outputs,2);
 NAVROOT(nav,mainMenu,2,Serial,out);
 
@@ -151,21 +139,18 @@ void setup() {
   Serial<<"menu 3.0 test"<<endl;Serial.flush();
   options.idleTask=idle;//point a function to be used when menu is suspended
   mainMenu[1].enabled=disabledStatus;
-
-  SPI.begin();
-  nokia.begin();
-  nokia.clearDisplay();
-  nokia.print("Menu 3.0 test on GFX");
-  nokia.setContrast(50);
-  nokia.display(); // show splashscreen
-  delay(2000);
-  nokia.clearDisplay();
-  nokia.display(); // show splashscreen
+  u8g.setFont(u8g_font_helvR08);
+  dumpRam(Serial, &colors, sizeof(colors));
+  dumpPgm(Serial, &colors, sizeof(colors));
 }
 
 void loop() {
-  nav.poll();
-  nokia.display(); // show splashscreen
-  digitalWrite(LEDPIN, ledCtrl);
-  delay(100);//simulate a delay when other tasks are done
+  u8g.firstPage();
+  do {
+    //gfx.clearLine(0,bgColor,true,enabledStatus);
+    //gfx.clearLine(1,bgColor,false,enabledStatus);
+    nav.poll();
+    digitalWrite(LEDPIN, ledCtrl);
+  } while( u8g.nextPage() );
+  delay(300);//simulate a delay when other tasks are done
 }

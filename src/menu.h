@@ -128,7 +128,7 @@
         inline T step() const {return getTypeValue(&((menuFieldShadow<T>*)shadow)->step);}
         inline T tune() const {return  getTypeValue(&((menuFieldShadow<T>*)shadow)->tune);}
         bool changed(const navNode &nav,const menuOut& out) override {
-          return dirty||(dirty=reflex!=target());
+          return dirty||(reflex!=target());
         }
         void clamp() {
           if (target()<low()) target()=low();
@@ -213,7 +213,6 @@
           #endif
           return -1;
         }
-        //TODO: implement reflexivity!
         idx_t sync(idx_t i) {
           menuVariantShadow<T>& s=*(menuVariantShadow<T>*)shadow;
           #ifdef DEBUG
@@ -228,7 +227,7 @@
         }
         inline T& target() const {return *(T*)memPtr(((menuVariantShadow<T>*)shadow)->value);}
         bool changed(const navNode &nav,const menuOut& out) override {
-          //Serial<<"menuVariant::shadow "<<target()<<"/"<<reflex<<endl;
+          //if (dirty) Serial<<"menuVariant::shadow "<<target()<<"/"<<reflex<<endl;
           return dirty||reflex!=target();
         }
         void navigate(navNode& nav,char ch,Stream& in) override;
@@ -297,13 +296,12 @@
         menuOut() {}
         menuOut(idx_t x,idx_t y):maxX(x),maxY(y) {}
         virtual menuOut& operator<<(prompt const &p);
-        virtual void clearLine(int ln)=0;
+        virtual void clearLine(int ln,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus)=0;
         virtual void clear()=0;
         virtual void setCursor(int x,int y)=0;
         virtual void printMenu(navNode &nav)=0;
         virtual void clearChanged(navNode &nav);
-        virtual void setColor(colorDefs,status) {}
-        //inline void setColor(colorDefs c,bool s) {setColor(c,(status)s);}
+        virtual void setColor(colorDefs c,bool selected=false,status s=enabledStatus) {}
     };
 
     class gfxOut:public menuOut {
@@ -398,7 +396,7 @@
       reflex=target();
       prompt::printTo(i,nav,out);
       out<<(this==nav.root->navFocus?(tunning?">":":"):" ");
-      out.setColor(fieldColor,enabled);
+      out.setColor(valColor,this==nav.root->navFocus,enabled);
       out<<reflex;
       out.setColor(unitColor,enabled);
       print_P(out,(const char*)memPtr(s.units));
@@ -468,8 +466,9 @@
       //Serial<<"menuVariant::navigate"<<endl;Serial.flush();
       nav.sel=sync();
       nav.doNavigation(ch,in);
-      //Serial<<"sel:"<<nav.sel<<endl;
+      //Serial<<"sel:"<<nav.sel<<" "<<*(prompt*)this<<" dirty:"<<dirty<<endl;
       sync(nav.sel);
+      //Serial<<"after sync "<<*(prompt*)this<<" dirty:"<<dirty<<endl;
       if (ch==options.navCodes[enterCmd].ch) nav.root->exit();
     }
 
