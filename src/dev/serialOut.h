@@ -11,11 +11,11 @@
         void clear() override {
           device.println("");device.println("");
         }
-        void clearLine(int ln,colorDefs color,bool selected=false,status stat=enabledStatus) override {
+        void clearLine(idx_t ln,colorDefs color,bool selected=false,status stat=enabledStatus) override {
           device.println("");
         }
         size_t write(uint8_t ch) override {return device.write(ch);}
-        virtual void setCursor(int x,int y) {};
+        void setCursor(idx_t x,idx_t y) override {};
         void printMenu(navNode &nav) override {
           if (nav.target->changed(nav,*this)) {
             *this<<"["<<*(prompt*)nav.target<<"]"<<endl;
@@ -23,7 +23,8 @@
               if (i+top>=nav.sz()) break;
               *this<<"["<<i+1<<"]";
               prompt& p=nav[i+top];
-              write(i==nav.sel?options.selectedCursor:' ');
+              drawCursor(i,i==nav.sel,p.enabled);
+              //write(i==nav.sel?options.selectedCursor:' ');
               p.printTo(i,nav,*this);
               *this<<endl;
             }

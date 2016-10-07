@@ -113,23 +113,18 @@ MENU(mainMenu,"Main menu",zZz,noEvent,wrapStyle
   ,EXIT("<Back")
 );
 
-// each color is in the format {{disabled bg,disabled fg},{enabled bg,enabled fg}}
+// each color is in the format {{normal disabled,normal enabled},{selected disabled,selected enabled}}
+// monochromatic color table
 const uint16_t colors[][2][2] MEMMODE={
-  {{WHITE,BLACK},{WHITE,BLACK}},//option color
-  {{WHITE,BLACK},{WHITE,BLACK}},//selected option color
-  {{WHITE,BLACK},{WHITE,BLACK}},//menu color
-  {{WHITE,BLACK},{WHITE,BLACK}},//selected menu color
-  {{WHITE,BLACK},{WHITE,BLACK}},//fieldColor
-  {{WHITE,BLACK},{WHITE,BLACK}},//fieldColorHi
-  {{WHITE,BLACK},{WHITE,BLACK}},//valueColor
-  {{WHITE,BLACK},{WHITE,BLACK}},//valueColorHi
-  {{WHITE,BLACK},{WHITE,BLACK}},//unitColor
-  {{WHITE,BLACK},{WHITE,BLACK}},//unitColorHi
-  {{WHITE,BLACK},{WHITE,BLACK}},//cursorColor
+  {{BLACK,BLACK},{BLACK,WHITE}},//bgColor
+  {{WHITE,WHITE},{WHITE,BLACK}},//fgColor
+  {{WHITE,WHITE},{BLACK,BLACK}},//valColor
+  {{WHITE,WHITE},{BLACK,BLACK}},//unitColor
+  {{BLACK,BLACK},{WHITE,WHITE}},//cursorColor
 };
 
 serialOut outSerial(Serial);//the output device (just the serial port)
-menuGFX outGFX(nokia,colors);//output device for LCD
+menuGFX outGFX(nokia,colors,6,10);//output device for LCD
 menuOut* outputs[]={&outGFX,&outSerial};
 outputsList out(outputs,2);
 NAVROOT(nav,mainMenu,2,Serial,out);
@@ -155,7 +150,7 @@ void setup() {
   SPI.begin();
   nokia.begin();
   nokia.clearDisplay();
-  nokia.print("Menu 3.0 test on GFX");
+  nokia.print("Menu 3.x test on GFX");
   nokia.setContrast(50);
   nokia.display(); // show splashscreen
   delay(2000);

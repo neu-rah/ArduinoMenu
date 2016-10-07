@@ -25,6 +25,26 @@ void menuOut::clearChanged(navNode &nav) {
   }
 }
 
+void gfxOut::printMenu(navNode &nav) {
+  idx_t ot=top;
+  while(nav.sel>=top+maxY) top++;
+  while(nav.sel<top) top--;
+  if (top!=lastTop||lastSel!=nav.sel||top!=ot||drawn!=nav.target||nav.target->changed(nav,*this)) {
+    for(idx_t i=0;i<maxY;i++) {
+      if (i+top>=nav.sz()) break;
+      prompt& p=nav[i+top];
+      bool selected=nav.sel==i+top;
+      clearLine(i,bgColor,selected,p.enabled);
+      drawCursor(i,selected,p.enabled);
+      setColor(fgColor,selected,p.enabled);
+      setCursor(posX,posY+i);
+      p.printTo(i,nav,*this);
+    }
+    lastTop=top;
+    lastSel=nav.sel;
+  }
+}
+
 navRoot* navNode::root=NULL;
 
 bool menuNode::changed(const navNode &nav,const menuOut& out) {

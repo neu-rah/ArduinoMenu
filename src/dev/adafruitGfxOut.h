@@ -34,56 +34,30 @@ namespace Menu {
 	  class menuGFX:public gfxOut {
 	    public:
 				Adafruit_GFX& gfx;
-				const uint16_t (&colors)[11][2][2];
-		    menuGFX(Adafruit_GFX& gfx,const uint16_t (&c)[11][2][2],int resX=6,int resY=9)
+				const uint16_t (&colors)[nColors][2][2];
+		    menuGFX(Adafruit_GFX& gfx,const uint16_t (&c)[nColors][2][2],int resX=6,int resY=9)
 			  	:gfxOut(gfx.width()/resX,gfx.height()/resY,resX,resY),colors(c),gfx(gfx) {}
 
-				//virtual colorFmt getColor(colorDefs,status,colorPair)=0;
-				//TODO: Ok, virtual cant return template parameter type... now what?
-				void setColor(colorDefs c,status s) override {
-					const uint16_t* bf=colors[c][s];
-					gfx.setTextColor(memWord(bf[foreground]));//,memWord(bf[background]));
+				size_t write(uint8_t ch) override {return gfx.write(ch);}
+
+				void setColor(colorDefs c,bool selected=false,status s=enabledStatus) override {
+					gfx.setTextColor(memWord(&colors[c][selected][s]));
 				}
 
-				void invColor(colorDefs c,status s) override {
-					const uint16_t* bf=colors[c][s];
-					gfx.setTextColor(memWord(bf[background]));
-				}
-
-		    void clearLine(int ln) override {
-		    	gfx.fillRect(0,ln*resY,resX*maxX,resY,colors[optionColor][enabledStatus][background]);
-		    	setCursor(0,ln);
+				void clearLine(idx_t ln,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus) override {
+					gfx.fillRect(posX,posY+ln*resY,maxX*resX,resY,memWord(&colors[color][selected][stat]));
+		    	//setCursor(0,ln);
 		    }
 		    void clear() override {
-		    	gfx.fillRect(0,0,resX*maxX,resY*maxY,colors[optionColor][enabledStatus][background]);
-		    	setCursor(0,0);
+					gfx.fillScreen(memWord(&colors[bgColor][false][enabledStatus]));
+		    	//setCursor(0,0);
 		    }
-		    void setCursor(int x,int y) override {gfx.setCursor(x*resX,y*resY);}
-		    size_t write(uint8_t ch) override {return gfx.write(ch);}
-				void printMenu(navNode &nav) override {
-					idx_t ot=top;
-          while(nav.sel>=top+maxY) top++;
-          while(nav.sel<top) top--;
-          if (drawn!=nav.target) {
-						clear();
-						drawn=nav.target;
-					}
-					if (top!=lastTop||lastSel!=nav.sel||top!=ot||drawn!=nav.target||nav.target->changed(nav,*this)) {
-						for(idx_t i=0;i<maxY;i++) {
-              if (i+top>=nav.sz()) break;
-              clearLine(i);
-              setCursor(0,i);
-              prompt& p=nav[i+top];
-							setColor(cursorColor,p.enabled);
-              write(i+top==nav.sel?options.selectedCursor:' ');
-							setColor(nav.sel==i+top?optionColorHi:optionColor,p.enabled);
-              p.printTo(i,nav,*this);
-            }
-            lastTop=top;
-            lastSel=nav.sel;
-						//gfx.display();//this is device specific!
-          }
+		    void setCursor(idx_t x,idx_t y) override {gfx.setCursor(x*resX,y*resY);}
+
+				void drawCursor(idx_t ln,bool selected,status stat) override {
+					gfx.drawRect(posX,posY+ln*resY,maxX*resX,resY,memWord(&colors[cursorColor][selected][stat]));
 				}
+
 	  };
 
 }; //namespace menuGFX

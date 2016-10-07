@@ -109,15 +109,17 @@ MENU(mainMenu,"Main menu",zZz,noEvent,wrapStyle
 );
 
 // each color is in the format {{normal disabled,normal enabled},{selected disabled,selected enabled}}
-const uint16_t colors[][2][2] MEMMODE={
-  {{0,0},{1,1}},//bgColor
-  {{1,1},{0,0}},//fgColor
+// monochromatic color table
+const uint8_t colors[][2][2] MEMMODE={
+  {{0,0},{0,1}},//bgColor
+  {{1,1},{1,0}},//fgColor
   {{1,1},{0,0}},//valColor
   {{1,1},{0,0}},//unitColor
+  {{0,0},{1,1}},//cursorColor
 };
 
 serialOut outSerial(Serial);//the output device (just the serial port)
-menuU8G gfx(u8g,colors,5,10);
+menuU8G gfx(u8g,colors,5,12);
 menuOut* outputs[]={&gfx,&outSerial};
 outputsList out(outputs,2);
 NAVROOT(nav,mainMenu,2,Serial,out);
@@ -140,15 +142,19 @@ void setup() {
   options.idleTask=idle;//point a function to be used when menu is suspended
   mainMenu[1].enabled=disabledStatus;
   u8g.setFont(u8g_font_helvR08);
-  dumpRam(Serial, &colors, sizeof(colors));
-  dumpPgm(Serial, &colors, sizeof(colors));
+  u8g.firstPage();
+  do {
+    gfx.setCursor(0,0);
+    gfx.print("Menu 3.x test");
+    gfx.setCursor(0,1);
+    gfx.print("on U8Glib");
+  } while(u8g.nextPage());
+  delay(2000);
 }
 
 void loop() {
   u8g.firstPage();
   do {
-    //gfx.clearLine(0,bgColor,true,enabledStatus);
-    //gfx.clearLine(1,bgColor,false,enabledStatus);
     nav.poll();
     digitalWrite(LEDPIN, ledCtrl);
   } while( u8g.nextPage() );

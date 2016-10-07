@@ -296,12 +296,15 @@
         menuOut() {}
         menuOut(idx_t x,idx_t y):maxX(x),maxY(y) {}
         virtual menuOut& operator<<(prompt const &p);
-        virtual void clearLine(int ln,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus)=0;
+        virtual void clearLine(idx_t ln,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus)=0;
         virtual void clear()=0;
-        virtual void setCursor(int x,int y)=0;
+        virtual void setCursor(idx_t x,idx_t y)=0;
         virtual void printMenu(navNode &nav)=0;
         virtual void clearChanged(navNode &nav);
         virtual void setColor(colorDefs c,bool selected=false,status s=enabledStatus) {}
+        virtual void drawCursor(idx_t ln,bool selected,status stat) {
+          write(selected?(stat==disabledStatus?options.disabledCursor:options.selectedCursor):' ');
+        }
     };
 
     class gfxOut:public menuOut {
@@ -312,6 +315,7 @@
         idx_t posY=0;
         gfxOut(idx_t x,idx_t y,idx_t rx,idx_t ry,idx_t px=0,idx_t py=0)
           :menuOut(x,y),resX(rx),resY(ry),posX(px),posY(py) {}
+        void printMenu(navNode &nav) override;
     };
 
     //list of output devices

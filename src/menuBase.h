@@ -69,6 +69,7 @@ www.r-site.net
       fgColor,
       valColor,
       unitColor,
+      cursorColor,
       nColors//total number of colors
     };
 
