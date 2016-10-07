@@ -1,7 +1,7 @@
 Arduino Menu Library
 
-- color enumeration at base level
-- add list of output devices
++ color enumeration at base level
++ add list of output devices
 + add macros to build navRoot
 + suspension in only one function with suspension events
 + implement other fields

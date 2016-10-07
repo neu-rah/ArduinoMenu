@@ -7,7 +7,7 @@
     class serialOut:public menuOut {
       public:
         Print& device;
-        inline serialOut(Print& o):device(o) {}
+        inline serialOut(Print& o,idx_t mx,idx_t my):menuOut(mx,my),device(o) {}
         void clear() override {
           device.println("");device.println("");
         }
