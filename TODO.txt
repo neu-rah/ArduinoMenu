@@ -1,32 +1,29 @@
 Arduino Menu Library
 
+- BUG: TODO: reflect enable/disable
 + color enumeration at base level
 + add list of output devices
 + add macros to build navRoot
 + suspension in only one function with suspension events
 + implement other fields
++ use menu acceletators + auto numbering
++ output numbering + acceletation should be optional for any menu class and not just specialized
+- split options into:
+  * config (static MEMMODE)
+  * options (dynamic => RAM)
+- use/draw title option for any menu
 - dialogs and modal dialogs (static alloc)
 - alerts (dynamic)
 - errors (dynamic modal)
 - modal just blocks the cycle.
-+ use menu acceletators + auto numbering
 - custom field format (date/time)
 - textField?
+    if so make it a submenu where text is a title and we navigate a pad/menu to choose letters and commands.
 
-maybe we need a super parser for text FIELD
-- current parsers are at meu object level interpreting keys
-- however enter and navigation keys should be handled at lower levels
-- the problem is to bring down numeric parse and accelerators
+generic input:
 
-=> menus should have ID's and accelerators
-
-the problem with dirty and changed
-
-using a dirty flag on menu item (to be clean on draw) is not consistent with multiple device draw.
-using the change function to compare current value with stored one is also inconsistent with multiple devices draw
-
-it seems that stored values (reflex) and dirty flags MUST be available for each device!
-however they are on different and independent structures!
-
-having a cross reference.. does it really worth the effort?
-if not then the menu IS single output driven.
+- input parsing should be delivered to focused menu object to allow customization
+- then some chain or system wide functions can be called as aux. functions.
+- input classes should provide a parser to be called as aux function of any of the above and deliver cmds.
+  => that we gcan not accept Serial as input but use a specialized derivation instead
+-

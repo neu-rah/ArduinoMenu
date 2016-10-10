@@ -303,7 +303,12 @@
         virtual void clearChanged(navNode &nav);
         virtual void setColor(colorDefs c,bool selected=false,status s=enabledStatus) {}
         virtual void drawCursor(idx_t ln,bool selected,status stat) {
+          setColor(cursorColor, selected, stat);
           write(selected?(stat==disabledStatus?options.disabledCursor:options.selectedCursor):' ');
+        }
+        void alert(char *msg) {
+          clear();
+          *this<<msg<<endl;
         }
     };
 
@@ -334,6 +339,23 @@
             outs[n]->printMenu(nav);
           for(int n=0;n<cnt;n++)
             outs[n]->clearChanged(nav);
+        }
+        void alert(char *msg) const {for(int n=0;n<cnt;n++) outs[n]->alert(msg);}
+        void clearLine(idx_t ln,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus) const {
+          for(int n=0;n<cnt;n++) outs[n]->clearLine(ln,color,selected,stat);
+        }
+        void clearChanged(navNode &nav) const {
+          for(int n=0;n<cnt;n++) outs[n]->clearChanged(nav);
+        }
+        void clear() {for(int n=0;n<cnt;n++) outs[n]->clear();}
+        void setCursor(idx_t x,idx_t y) {
+          for(int n=0;n<cnt;n++) outs[n]->setCursor(x,y);
+        }
+        void setColor(colorDefs c,bool selected=false,status s=enabledStatus) {
+          for(int n=0;n<cnt;n++) outs[n]->setColor(c,selected,s);
+        }
+        void drawCursor(idx_t ln,bool selected,status stat) {
+          for(int n=0;n<cnt;n++) outs[n]->drawCursor(ln,selected,stat);
         }
     };
 
@@ -371,6 +393,7 @@
         idx_t maxDepth=0;
         idx_t level=0;
         bool suspended=false;
+        bool showTitle=true;
         navTarget* navFocus=NULL;
         navRoot(menuNode& root,navNode* path,idx_t d,Stream& in,outputsList &o)
           :out(o),in(in),path(path),maxDepth(d) {
@@ -391,6 +414,7 @@
         void poll();
         void enter();
         void exit();
+        inline void alert(char *msg,bool modal=true) {out.alert(msg);}
     };
 
     ////////////////////////////////////////////////////////////////////////
@@ -454,6 +478,7 @@
     void toggle<T>::printTo(idx_t i,navNode &nav,menuOut& out) {
       out<<*(prompt*)this;
       idx_t at=menuVariant<T>::sync(menuVariant<T>::sync());
+      out.setColor(valColor,this==nav.root->navFocus,prompt::enabled);
       out<<menuNode::operator[](at);
     }
 
@@ -462,6 +487,7 @@
       out<<*(prompt*)this;
       idx_t at=menuVariant<T>::sync(menuVariant<T>::sync());
       out<<(this==&nav.root->active()?":":" ");
+      out.setColor(valColor,this==nav.root->navFocus,prompt::enabled);
       out<<menuNode::operator[](at);
     }
 

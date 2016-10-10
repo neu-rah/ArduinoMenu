@@ -1,2 +1,0 @@
-/home/azevedo/Sketchbook/LIBDEV/ArduinoMenu/src/dev/U8GLibOut.h:19:22: fatal error: U8glib.h: Ficheiro ou directoria inexistente
-compilation terminated.

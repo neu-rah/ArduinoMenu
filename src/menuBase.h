@@ -70,6 +70,7 @@ www.r-site.net
       valColor,
       unitColor,
       cursorColor,
+      titleColor,
       nColors//total number of colors
     };
 
@@ -122,7 +123,6 @@ www.r-site.net
       //const char* exitText=exitTextMem;
       const bool invertFieldKeys=false;//invert for encoder
       const bool nav2D=false;//use left|right keys?
-      idleFunc idleTask=inaction;
       struct navCode {navCmds cmd;char ch;} navCodes[7]={
         {noCmd,-1},
         {escCmd,'/'},
@@ -133,6 +133,7 @@ www.r-site.net
         {rightCmd,'+'}
       };
       inline char getCmdChar(navCmds cmd) const {return navCodes[cmd].ch;}
+      idleFunc idleTask=inaction;
     };
 
     // TODO: make this a parametrized thing instead of a global reference

@@ -1,4 +1,7 @@
 #include "menu.h"
+#ifdef DEBUG
+  #include <AnsiStream.h>
+#endif
 using namespace Menu;
 
 config Menu::options;
@@ -74,6 +77,8 @@ void navNode::doNavigation(char ch,Stream& in) {
   idx_t osel=sel;
   //idx_t otop=out.top;
   navCmds cmd=navKeys(ch);
+  //Serial<<ANSI::setBackgroundColor(BLACK)<<ANSI::setForegroundColor(WHITE);
+  //Serial<<ANSI::xy(0,20)<<"doNavigation "<<cmd<<" sel:"<<sel;
   switch(cmd) {
     case downCmd:
       sel--;
@@ -91,6 +96,7 @@ void navNode::doNavigation(char ch,Stream& in) {
     case noCmd:
     default: break;
   }
+  //Serial<<ANSI::xy(0,21)<<"processed keys, sel:"<<sel;
   if (strchr(numericChars,ch)) {
     char at=ch-'1';
     if (at>=0&&at<sz()) {
@@ -102,6 +108,7 @@ void navNode::doNavigation(char ch,Stream& in) {
     if (target->sysStyles()&(_parentDraw|_isVariant))
       target->dirty=true;
     else {
+      //Serial<<" setting dirty on "<<osel<<" and "<<sel;
       operator[](osel).dirty=true;
       operator[](sel).dirty=true;
     }
@@ -177,6 +184,7 @@ void navRoot::enter() {
 void navRoot::exit() {
   if (selected().shadow->events&&exitEvent)
     (*selected().shadow)(exitEvent,node(),selected());
+  navFocus->dirty=true;
   if (navFocus->isMenu()) {
     if (level) level--;
     else {

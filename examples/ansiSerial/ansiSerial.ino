@@ -21,22 +21,24 @@ using namespace Menu;
 
 #define LEDPIN A4
 
-result zZz() {Serial<<"zZz"<<endl;return proceed;}
-
 result showEvent(eventMask e,navNode& nav,prompt& item) {
-  Serial<<e<<" on "<<item<<endl;
+  Serial<<ANSI::xy(0,13)<<ANSI::eraseLine()<<ANSI::setForegroundColor(WHITE)<<e<<" on "<<item;
   return proceed;
 }
 
 int test=55;
 
-result action1(eventMask e) {
-  Serial<<e<<" action1 executed, proceed menu"<<endl;Serial.flush();
+result action1(eventMask e,navNode& nav, prompt &item) {
+  Serial<<ANSI::xy(22,1+nav.root->showTitle)
+    <<e<<" event on "<<item<<", proceed menu";
+  Serial.flush();
   return proceed;
 }
 
 result action2(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out) {
-  Serial<<item<<" "<<e<<" action2 executed, quiting menu"<<endl;
+  Serial<<ANSI::xy(22,nav.sel+nav.root->showTitle)
+    <<item<<" "<<e<<" event on "<<item<<", quiting menu.";
+  Serial.flush();
   return quit;
 }
 
@@ -64,7 +66,7 @@ SELECT(selTest,selMenu,"Select",doNothing,noEvent,noStyle
 );
 
 int chooseTest=-1;
-CHOOSE(chooseTest,chooseMenu,"Choose ",doNothing,noEvent,noStyle
+CHOOSE(chooseTest,chooseMenu,"Choose",doNothing,noEvent,noStyle
   ,VALUE("First",1,doNothing,noEvent)
   ,VALUE("Second",2,doNothing,noEvent)
   ,VALUE("Third",3,doNothing,noEvent)
@@ -89,9 +91,16 @@ MENU(subMenu,"Sub-Menu",showEvent,anyEvent,noStyle
   ,EXIT("<Back")
 );
 
-MENU(mainMenu,"Main menu",zZz,noEvent,wrapStyle
+extern menu mainMenu;
+TOGGLE((mainMenu[1].enabled),togOp,"Op 2:",doNothing,noEvent,noStyle
+  ,VALUE("Enabled",enabledStatus,doNothing,noEvent)
+  ,VALUE("disabled",disabledStatus,doNothing,noEvent)
+);
+
+MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,OP("Op1",action1,anyEvent)
   ,OP("Op2",action2,enterEvent)
+  //,SUBMENU(togOp)
   ,FIELD(test,"Test","%",0,100,10,1,doNothing,noEvent)
   ,SUBMENU(subMenu)
   ,SUBMENU(setLed)
@@ -105,14 +114,15 @@ MENU(mainMenu,"Main menu",zZz,noEvent,wrapStyle
 // each color is in the format {{normal disabled,normal enabled},{selected disabled,selected enabled}}
 // monochromatic color table
 const uint8_t colors[][2][2] MEMMODE={
-  {{BLACK,BLACK},{BLACK,WHITE}},//bgColor
-  {{WHITE,WHITE},{WHITE,BLACK}},//fgColor
-  {{WHITE,WHITE},{BLACK,BLACK}},//valColor
+  {{BLUE,BLUE},{WHITE,WHITE}},//bgColor
+  {{BLACK,WHITE},{BLACK,BLUE}},//fgColor
+  {{WHITE,YELLOW},{BLACK,RED}},//valColor
   {{WHITE,WHITE},{BLACK,BLACK}},//unitColor
   {{BLACK,BLACK},{WHITE,WHITE}},//cursorColor
+  {{BLUE,BLUE},{RED,RED}},//titleColor
 };
 
-ansiSerialOut ansi(Serial,colors,20,10);//the output device, ansi-terminal Cols x Rows
+ansiSerialOut ansi(Serial,colors,20,8);//the output device, ansi-terminal Cols x Rows
 menuOut* outputs[]={&ansi};
 outputsList out(outputs,1);
 NAVROOT(nav,mainMenu,2,Serial,out);
