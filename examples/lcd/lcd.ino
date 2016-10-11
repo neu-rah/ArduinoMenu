@@ -44,13 +44,93 @@ keyIn<1> encButton(encBtn_map);//1 is the number of keys
 Stream* inputsList[]={&encStream,&encButton,&Serial};
 chainStream<3> in(inputsList);//3 is the number of inputs
 
-void action1() {Serial<<"action1!"<<endl;}
+#define LEDPIN 13
 
-// menu structure definition //////////////////////////////////////////////
+result showEvent(eventMask e,navNode& nav,prompt& item) {
+  Serial<<e<<" on "<<item<<endl;
+  return proceed;
+}
+
+int test=55;
+
+result action1(eventMask e,navNode& nav, prompt &item) {
+  Serial<<e<<" event on "<<item<<", proceed menu"<<endl;
+  Serial.flush();
+  return proceed;
+}
+
+result action2(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out) {
+  Serial<<item<<" "<<e<<" event on "<<item<<", quiting menu."<<endl;
+  Serial.flush();
+  return quit;
+}
+
+int ledCtrl=LOW;
+
+result ledOn() {
+  ledCtrl=HIGH;
+  return proceed;
+}
+result ledOff() {
+  ledCtrl=LOW;
+  return proceed;
+}
+
+TOGGLE(ledCtrl,setLed,"Led: ",doNothing,noEvent,noStyle//,doExit,enterEvent,noStyle
+  ,VALUE("On",HIGH,doNothing,noEvent)
+  ,VALUE("Off",LOW,doNothing,noEvent)
+);
+
+int selTest=0;
+SELECT(selTest,selMenu,"Select",doNothing,noEvent,noStyle
+  ,VALUE("Zero",0,doNothing,noEvent)
+  ,VALUE("One",1,doNothing,noEvent)
+  ,VALUE("Two",2,doNothing,noEvent)
+);
+
+int chooseTest=-1;
+CHOOSE(chooseTest,chooseMenu,"Choose",doNothing,noEvent,noStyle
+  ,VALUE("First",1,doNothing,noEvent)
+  ,VALUE("Second",2,doNothing,noEvent)
+  ,VALUE("Third",3,doNothing,noEvent)
+  ,VALUE("Last",-1,doNothing,noEvent)
+);
+
+//customizing a prompt look!
+//by extending the prompt class
+class altPrompt:public prompt {
+public:
+  altPrompt(const promptShadow& p):prompt(p) {}
+  void printTo(idx_t i,navNode &nav,menuOut& out) override {
+    out<<"special prompt!";
+  }
+};
+
+MENU(subMenu,"Sub-Menu",showEvent,anyEvent,noStyle
+  ,OP("Sub1",showEvent,anyEvent)
+  ,OP("Sub2",showEvent,anyEvent)
+  ,OP("Sub3",showEvent,anyEvent)
+  ,altOP(altPrompt,"",showEvent,anyEvent)
+  ,EXIT("<Back")
+);
+
+extern menu mainMenu;
+TOGGLE((mainMenu[1].enabled),togOp,"Op 2:",doNothing,noEvent,noStyle
+  ,VALUE("Enabled",enabledStatus,doNothing,noEvent)
+  ,VALUE("disabled",disabledStatus,doNothing,noEvent)
+);
+
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
-  ,OP("Op1",action1,enterEvent)
-  ,OP("Op2",doNothing,noEvent)
-  ,OP("Op3",doNothing,noEvent)
+  ,OP("Op1",action1,anyEvent)
+  ,OP("Op2",action2,enterEvent)
+  //,SUBMENU(togOp)
+  ,FIELD(test,"Test","%",0,100,10,1,doNothing,noEvent)
+  ,SUBMENU(subMenu)
+  ,SUBMENU(setLed)
+  ,OP("LED On",ledOn,enterEvent)
+  ,OP("LED Off",ledOff,enterEvent)
+  ,SUBMENU(selMenu)
+  ,SUBMENU(chooseMenu)
   ,EXIT("<Back")
 );
 
@@ -68,13 +148,10 @@ void setup() {
   encoder.begin();
   pinMode(encBtn,INPUT_PULLUP);
   lcd.begin(16,2);
-  int c=colors[optionColorHi][enabled][foreground];
-  Serial<<"color:"<<c<<endl;
 }
 
 void loop() {
   nav.poll();
-  //digitalWrite(LEDPIN, ledCtrl);
-  //digitalWrite(LED_BUILTIN,!digitalRead(LED_BUILTIN));
+  digitalWrite(LEDPIN, ledCtrl);
   delay(100);//simulate a delay as if other tasks are running
 }

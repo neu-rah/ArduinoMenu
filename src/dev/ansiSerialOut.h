@@ -21,8 +21,10 @@
         void printMenu(navNode &nav) override {
           idx_t ot=top;
           idx_t st=nav.root->showTitle?1:0;
+          Serial<<ANSI::xy(0,20)<<ANSI::setBackgroundColor(BLUE)<<ANSI::setForegroundColor(YELLOW)
+            <<"sel:"<<nav.sel<<" top:"<<top<<" "<<(nav.sel+1==nav.sz())<<" "<<(nav.sel-top)<<" "<<(maxY-st);
           while(nav.sel+st>=(top+maxY)) top++;
-          while(nav.sel<top) top--;
+          while(nav.sel<top||(top&&nav.sel+top<maxY-st)) top--;
           bool all=(top!=ot)||nav.target->dirty||drawn!=nav.target;
           if (all) {
             clear();

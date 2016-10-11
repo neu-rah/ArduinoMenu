@@ -22,7 +22,12 @@ using namespace Menu;
 #define LEDPIN A4
 
 result showEvent(eventMask e,navNode& nav,prompt& item) {
-  Serial<<ANSI::xy(0,13)<<ANSI::eraseLine()<<ANSI::setForegroundColor(WHITE)<<e<<" on "<<item;
+  Serial
+    <<ANSI::xy(0,13)
+    <<ANSI::setForegroundColor(WHITE)
+    <<ANSI::setBackgroundColor(BLACK)
+    <<ANSI::eraseLine()
+    <<e<<" on "<<item;
   return proceed;
 }
 

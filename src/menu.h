@@ -371,7 +371,7 @@
         inline idx_t sz() const {return memIdx(shadow().sz);}
         inline prompt* const * data() const {return shadow().data;}
         inline prompt& selected() const {return *(prompt*)memPtr(data()[sel]);}
-        inline bool wrap() const {return shadow().style&wrapStyle;}
+        inline bool wrap() const {return memWord(shadow().style)&wrapStyle;}
         /*inline result sysHandler(eventMask event, prompt &item, Stream &in, menuOut &out) const {
           return target->sysHandler(event,*this,item,in,out);
         }*/

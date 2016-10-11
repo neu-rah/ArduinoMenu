@@ -10,13 +10,13 @@
         LiquidCrystal& device;
         inline lcdOut(LiquidCrystal& o,int x,int y):menuOut(x,y),device(o) {}
         size_t write(uint8_t ch) override {return device.write(ch);}
-        void clearLine(int ln) override {
+        void clearLine(idx_t ln,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus) override {
         	setCursor(0,ln);
         	for(int n=0;n<maxX;n++) print(' ');
         	setCursor(0,ln);
         }
         void clear() override {device.clear();}
-        void setCursor(int x,int y) override {device.setCursor(x,y);}
+        void setCursor(idx_t x,idx_t y) override {device.setCursor(x,y);}
         void printMenu(navNode &nav) override {
           idx_t ot=top;
           while(nav.sel>=top+maxY) top++;

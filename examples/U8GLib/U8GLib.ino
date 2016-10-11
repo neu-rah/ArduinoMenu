@@ -113,9 +113,10 @@ MENU(mainMenu,"Main menu",zZz,noEvent,wrapStyle
 const uint8_t colors[][2][2] MEMMODE={
   {{0,0},{0,1}},//bgColor
   {{1,1},{1,0}},//fgColor
-  {{1,1},{0,0}},//valColor
-  {{1,1},{0,0}},//unitColor
+  {{1,0},{1,0}},//valColor <--- BUG: value select meaning edit makes bad combination with normal selection
+  {{1,1},{1,0}},//unitColor
   {{0,0},{1,1}},//cursorColor
+  {{0,0},{1,1}},//titleColor
 };
 
 serialOut outSerial(Serial);//the output device (just the serial port)

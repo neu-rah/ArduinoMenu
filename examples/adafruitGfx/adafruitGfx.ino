@@ -121,6 +121,7 @@ const uint16_t colors[][2][2] MEMMODE={
   {{WHITE,WHITE},{BLACK,BLACK}},//valColor
   {{WHITE,WHITE},{BLACK,BLACK}},//unitColor
   {{BLACK,BLACK},{WHITE,WHITE}},//cursorColor
+  {{BLACK,BLACK},{WHITE,WHITE}},//titleColor
 };
 
 serialOut outSerial(Serial);//the output device (just the serial port)

@@ -1,6 +1,6 @@
 Arduino Menu Library
 
-- BUG: TODO: reflect enable/disable
+- BUG: TODO: reflect enable/disable (serial and lcd menu)
 + color enumeration at base level
 + add list of output devices
 + add macros to build navRoot
@@ -11,7 +11,7 @@ Arduino Menu Library
 - split options into:
   * config (static MEMMODE)
   * options (dynamic => RAM)
-- use/draw title option for any menu
+- use/draw title option for any menu, and ignore it on single line devices!
 - dialogs and modal dialogs (static alloc)
 - alerts (dynamic)
 - errors (dynamic modal)
