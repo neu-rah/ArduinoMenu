@@ -11,7 +11,7 @@
         void clear() override {
           device.println("");device.println("");
         }
-        void clearLine(idx_t ln,colorDefs color,bool selected=false,status stat=enabledStatus) override {
+        void clearLine(idx_t ln,colorDefs color,bool selected=false,status stat=enabledStatus,bool edit=false) override {
           device.println("");
         }
         size_t write(uint8_t ch) override {return device.write(ch);}

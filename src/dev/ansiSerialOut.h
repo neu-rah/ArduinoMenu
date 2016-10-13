@@ -9,20 +9,33 @@
       public:
         idx_t posX=0;
         idx_t posY=0;
-        const uint8_t (&colors)[nColors][2][2];
-        inline ansiSerialOut(Print& o,const uint8_t (&c)[nColors][2][2],idx_t x,idx_t y,idx_t px=0,idx_t py=0)
+        const colorDef<uint8_t> (&colors)[nColors];
+        inline uint8_t getColor(colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) const {
+          return memByte(&(stat==enabledStatus?colors[color].enabled[selected+edit]:colors[color].disabled[selected]));
+        }
+        inline ansiSerialOut(Print& o,const colorDef<uint8_t> (&c)[nColors],idx_t x,idx_t y,idx_t px=0,idx_t py=0)
           :serialOut(o,x,y),posX(px),posY(py),colors(c) {}
+        menuOut& fill(
+          int x1, int y1, int x2, int y2,char ch=' ',
+          colorDefs color=bgColor,
+          bool selected=false,
+          status stat=enabledStatus,
+          bool edit=false) override {
+            *this<<ANSI::setBackgroundColor(getColor(color,selected,stat,edit));
+            *this<<ANSI::fill(x1+1,y1+1,x2+1,y2+1,ch);
+            return *this;
+        }
         void setCursor(idx_t x,idx_t y) override {*this<<ANSI::xy(posX+x+1,posY+y+1);}
         void clear() override {*this<<ANSI::eraseScreen();}
-        void clearLine(idx_t ln,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus) override {
-          *this<<ANSI::setBackgroundColor(memByte(&colors[color][selected][stat]));
+        void clearLine(idx_t ln,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) override {
+          *this<<ANSI::setBackgroundColor(getColor(color,selected,stat,edit));
           *this<<ANSI::fill(posX+1,posY+ln+1,maxX-posX+1,posY+ln+1);
         }
         void printMenu(navNode &nav) override {
           idx_t ot=top;
           idx_t st=nav.root->showTitle?1:0;
-          Serial<<ANSI::xy(0,20)<<ANSI::setBackgroundColor(BLUE)<<ANSI::setForegroundColor(YELLOW)
-            <<"sel:"<<nav.sel<<" top:"<<top<<" "<<(nav.sel+1==nav.sz())<<" "<<(nav.sel-top)<<" "<<(maxY-st);
+          /*Serial<<ANSI::xy(0,20)<<ANSI::setBackgroundColor(BLUE)<<ANSI::setForegroundColor(YELLOW)
+            <<"sel:"<<nav.sel<<" top:"<<top<<" "<<(nav.sel+1==nav.sz())<<" "<<(nav.sel-top)<<" "<<(maxY-st);*/
           while(nav.sel+st>=(top+maxY)) top++;
           while(nav.sel<top||(top&&nav.sel+top<maxY-st)) top--;
           bool all=(top!=ot)||nav.target->dirty||drawn!=nav.target;
@@ -54,8 +67,8 @@
           drawn=nav.target;
           //*this<<ANSI::reset();
         }
-        void setColor(colorDefs c,bool selected=false,status s=enabledStatus) override {
-          *this<<ANSI::setForegroundColor(memByte(&colors[c][selected][s]));
+        void setColor(colorDefs c,bool selected=false,status s=enabledStatus,bool e=false) override {
+          *this<<ANSI::setForegroundColor(getColor(c,selected,s,e));
         }
     };
 

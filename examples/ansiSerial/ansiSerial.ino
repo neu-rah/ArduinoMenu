@@ -21,6 +21,25 @@ using namespace Menu;
 
 #define LEDPIN A4
 
+// define menu colors --------------------------------------------------------
+//each color is in the format:
+//  {{disabled normal,disabled selected},{enabled normal,enabled selected, enabled editing}}
+//monochromatic color table
+const colorDef<uint8_t> colors[] MEMMODE={
+  {{BLUE,WHITE}  ,{BLUE,WHITE,WHITE}},//bgColor
+  {{BLACK,BLACK} ,{WHITE,BLUE,BLUE}},//fgColor
+  {{BLACK,BLACK} ,{YELLOW,YELLOW,RED}},//valColor
+  {{BLACK,BLACK} ,{WHITE,BLUE,YELLOW}},//unitColor
+  {{BLACK,BLACK} ,{BLACK,BLUE,RED}},//cursorColor
+  {{BLACK,BLACK}  ,{BLUE,RED,BLUE}},//titleColor
+};
+
+//define menu outputs ------------------------------------------------
+ansiSerialOut ansi(Serial,colors,20,8);//the output device, ansi-terminal Cols x Rows
+menuOut* outputs[]={&ansi};
+outputsList out(outputs,1);
+
+// menu aux functions and vars ------------------------------------------------
 result showEvent(eventMask e,navNode& nav,prompt& item) {
   Serial
     <<ANSI::xy(0,13)
@@ -58,6 +77,42 @@ result ledOff() {
   return proceed;
 }
 
+void putColor(
+  menuOut& out,
+  colorDefs def,
+  bool selected,
+  status stat,
+  bool edit
+  ,int x,int y
+) {
+    out.fill(x,y,x+8,y,' ',bgColor,selected,stat,edit);
+    out.setColor(def,selected,stat,edit);
+    out.setCursor(x,y);
+    out<<"XX";
+}
+
+void showColorDef(menuOut& out,colorDefs def,int x,int y) {
+  out<<ANSI::setBackgroundColor(BLACK)<<ANSI::setForegroundColor(WHITE);
+  out<<ANSI::xy(x+1,y+1)<<def<<ANSI::xy(x+16,y+1)<<"Disabled | Enabled | Editing  "<<ANSI::reset()<<endl;
+  out<<ANSI::setBackgroundColor(BLACK)<<ANSI::setForegroundColor(WHITE);
+  out<<ANSI::xy(x+1,y+2)<<"normal";
+  putColor(out, def, false, disabledStatus, false,x+15,y+1);
+  putColor(out, def, false, enabledStatus, false,x+25,y+1);
+  out<<ANSI::setBackgroundColor(BLACK)<<ANSI::setForegroundColor(WHITE);
+  out<<ANSI::xy(x+1,y+3)<<"selected";
+  putColor(out, def, true, disabledStatus, false,x+15,y+2);
+  putColor(out, def, true, enabledStatus, false,x+25,y+2);
+  putColor(out, def, true, enabledStatus, true,x+35,y+2);
+}
+
+void showColors(menuOut& o) {
+  out.clear();
+  for(int c=0;c<nColors;c++) showColorDef(o,c,0,c<<2);
+}
+
+void showOutColors();
+////////////////////////////////////////////////////////////////////////////////
+// menu structure
 TOGGLE(ledCtrl,setLed,"Led: ",doNothing,noEvent,noStyle//,doExit,enterEvent,noStyle
   ,VALUE("On",HIGH,doNothing,noEvent)
   ,VALUE("Off",LOW,doNothing,noEvent)
@@ -113,26 +168,21 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,OP("LED Off",ledOff,enterEvent)
   ,SUBMENU(selMenu)
   ,SUBMENU(chooseMenu)
+  ,OP("Show colors",showOutColors,enterEvent)
   ,EXIT("<Back")
 );
 
-// each color is in the format {{normal disabled,normal enabled},{selected disabled,selected enabled}}
-// monochromatic color table
-const uint8_t colors[][2][2] MEMMODE={
-  {{BLUE,BLUE},{WHITE,WHITE}},//bgColor
-  {{BLACK,WHITE},{BLACK,BLUE}},//fgColor
-  {{WHITE,YELLOW},{BLACK,RED}},//valColor
-  {{WHITE,WHITE},{BLACK,BLACK}},//unitColor
-  {{BLACK,BLACK},{WHITE,WHITE}},//cursorColor
-  {{BLUE,BLUE},{RED,RED}},//titleColor
-};
-
-ansiSerialOut ansi(Serial,colors,20,8);//the output device, ansi-terminal Cols x Rows
-menuOut* outputs[]={&ansi};
-outputsList out(outputs,1);
+////////////////////////////////////////////////////////////////////////
+// menu navigation root object
 NAVROOT(nav,mainMenu,2,Serial,out);
 
-//when menu is suspended
+//aux functions that uses nav
+void showOutColors() {
+  nav.sleep();
+  showColors(ansi);
+}
+
+//when menu is suspended -----------------------------------------------
 result idle(idleEvent e) {
   switch(e) {
     case idleStart:Serial<<"suspending menu!"<<endl;break;

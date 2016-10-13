@@ -141,16 +141,18 @@ result navNode::sysEvent(eventMask e,idx_t i) {
 }
 
 void navRoot::poll() {
+  if (sleeping) {
+    if (options.getCmdChar(enterCmd)==in.read()) wakeup();
+    return;
+  }
   if (suspended) {
     Serial<<"suspended"<<endl;
     if (in.available()&&in.read()==options.getCmdChar(enterCmd)) {
       options.idleTask(idleEnd);
       suspended=false;
     } else options.idleTask(idling);
-  } else if (in.available()) {
-    navFocus->navigate(node(),in.read(),in);
-  }
-  if (!suspended) printMenu();//previous actions can suspend the  menu
+  } else if (in.available()) navFocus->navigate(node(),in.read(),in);
+  if (!(sleeping||suspended)) printMenu();//previous actions can suspend the  menu
 }
 
 void navRoot::enter() {

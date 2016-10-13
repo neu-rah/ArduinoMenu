@@ -1,3 +1,18 @@
+/********************
+Sept 2014 ~ Sept. 2016 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
+creative commons license 3.0: Attribution-ShareAlike CC BY-SA
+This software is furnished "as is", without technical support, and with no
+warranty, express or implied, as to its usefulness for any purpose.
+
+Thread Safe: No
+Extensible: Yes
+
+menu library objects
+definitions and enumerations
+
+www.r-site.net
+***/
+
 #ifndef RSITE_ARDUINO_MENU_SYSTEM
   #define RSITE_ARDUINO_MENU_SYSTEM
   #include <Stream.h>
@@ -296,12 +311,19 @@
         menuOut() {}
         menuOut(idx_t x,idx_t y):maxX(x),maxY(y) {}
         virtual menuOut& operator<<(prompt const &p);
-        virtual void clearLine(idx_t ln,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus)=0;
+        virtual menuOut& fill(
+          int x1, int y1, int x2, int y2,char ch=' ',
+          colorDefs color=bgColor,
+          bool selected=false,
+          status stat=enabledStatus,
+          bool edit=false)
+          {return *this;}
+        virtual void clearLine(idx_t ln,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false)=0;
         virtual void clear()=0;
         virtual void setCursor(idx_t x,idx_t y)=0;
         virtual void printMenu(navNode &nav)=0;
         virtual void clearChanged(navNode &nav);
-        virtual void setColor(colorDefs c,bool selected=false,status s=enabledStatus) {}
+        virtual void setColor(colorDefs c,bool selected=false,status s=enabledStatus,bool edit=false) {}
         virtual void drawCursor(idx_t ln,bool selected,status stat) {
           setColor(cursorColor, selected, stat);
           write(selected?(stat==disabledStatus?options.disabledCursor:options.selectedCursor):' ');
@@ -394,6 +416,7 @@
         idx_t level=0;
         bool suspended=false;
         bool showTitle=true;
+        bool sleeping=false;//when sleeping poll will simply return
         navTarget* navFocus=NULL;
         navRoot(menuNode& root,navNode* path,idx_t d,Stream& in,outputsList &o)
           :out(o),in(in),path(path),maxDepth(d) {
@@ -414,6 +437,14 @@
         void poll();
         void enter();
         void exit();
+        inline void sleep() {
+          out.clear();sleeping=true;active().dirty=true;
+          Serial<<"Sleep in"<<endl;
+        }
+        inline void wakeup() {
+          out.clear();sleeping=false;active().dirty=true;
+          Serial<<"Sleep out"<<endl;
+        }
         inline void alert(char *msg,bool modal=true) {out.alert(msg);}
     };
 
@@ -423,10 +454,11 @@
       menuFieldShadow<T>& s=*(menuFieldShadow<T>*)shadow;
       reflex=target();
       prompt::printTo(i,nav,out);
-      out<<(this==nav.root->navFocus?(tunning?">":":"):" ");
-      out.setColor(valColor,this==nav.root->navFocus,enabled);
+      bool sel=this==nav.root->navFocus;
+      out<<(sel?(tunning?">":":"):" ");
+      out.setColor(valColor,sel,enabled,sel);
       out<<reflex;
-      out.setColor(unitColor,enabled);
+      out.setColor(unitColor,sel,enabled,sel);
       print_P(out,(const char*)memPtr(s.units));
     }
 
@@ -487,7 +519,7 @@
       out<<*(prompt*)this;
       idx_t at=menuVariant<T>::sync(menuVariant<T>::sync());
       out<<(this==&nav.root->active()?":":" ");
-      out.setColor(valColor,this==nav.root->navFocus,prompt::enabled);
+      out.setColor(valColor,this==nav.root->navFocus,prompt::enabled,true);
       out<<menuNode::operator[](at);
     }
 

@@ -74,7 +74,13 @@ www.r-site.net
       nColors//total number of colors
     };
 
-    enum status {disabledStatus,enabledStatus};
+    template<typename C>
+    struct colorDef {
+      C disabled[2];
+      C enabled[3];
+    };
+
+    enum status {disabledStatus=0,enabledStatus=1};
 
     #define FUNC_PARAMS eventMask event, navNode& nav, prompt &item
     #define FUNC_VALUES event,nav,item
@@ -144,6 +150,7 @@ www.r-site.net
     Print& operator<<(Print& o,result cmd);
     Print& operator<<(Print& o,eventMask e);
     Print& operator<<(Print& o,prompt const &p);
+    Print& operator<<(Print& o,colorDefs c);
 
   }
 

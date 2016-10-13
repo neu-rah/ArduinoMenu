@@ -73,3 +73,16 @@ Print& Menu::operator<<(Print& o,prompt const &p) {
   print_P(o,(const char*)memPtr(p.shadow->text));
   return o;
 }
+
+Print& Menu::operator<<(Print& o,colorDefs c) {
+  switch(c) {
+    case bgColor:o<<"bgColor";break;
+    case fgColor:o<<"fgColor";break;
+    case valColor:o<<"valColor";break;
+    case unitColor:o<<"unitColor";break;
+    case cursorColor:o<<"cursorColor";break;
+    case titleColor:o<<"titleColor";break;
+    default:o<<"color?";break;
+  }
+  return o;
+};
