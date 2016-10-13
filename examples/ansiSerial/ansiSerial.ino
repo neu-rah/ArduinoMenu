@@ -24,7 +24,6 @@ using namespace Menu;
 // define menu colors --------------------------------------------------------
 //each color is in the format:
 //  {{disabled normal,disabled selected},{enabled normal,enabled selected, enabled editing}}
-//monochromatic color table
 const colorDef<uint8_t> colors[] MEMMODE={
   {{BLUE,WHITE}  ,{BLUE,WHITE,WHITE}},//bgColor
   {{BLACK,BLACK} ,{WHITE,BLUE,BLUE}},//fgColor
@@ -178,7 +177,7 @@ NAVROOT(nav,mainMenu,2,Serial,out);
 
 //aux functions that uses nav
 void showOutColors() {
-  nav.sleep();
+  nav.idleOn();
   showColors(ansi);
 }
 

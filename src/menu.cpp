@@ -11,7 +11,7 @@ result Menu::doExit() {return quit;}
 action Menu::noAction(doNothing);
 
 //this is for idle (menu suspended)
-result Menu::inaction(idleEvent) {return proceed;}
+result Menu::inaction(menuOut& o,idleEvent) {return proceed;}
 
 void prompt::printTo(idx_t i,navNode &nav,menuOut& out) {out<<*this;}
 
@@ -28,24 +28,44 @@ void menuOut::clearChanged(navNode &nav) {
   }
 }
 
-void gfxOut::printMenu(navNode &nav) {
+void menuOut::printMenu(navNode &nav) {
   idx_t ot=top;
-  while(nav.sel>=top+maxY) top++;
-  while(nav.sel<top) top--;
-  if (top!=lastTop||lastSel!=nav.sel||top!=ot||drawn!=nav.target||nav.target->changed(nav,*this)) {
-    for(idx_t i=0;i<maxY;i++) {
-      if (i+top>=nav.sz()) break;
-      prompt& p=nav[i+top];
-      bool selected=nav.sel==i+top;
-      clearLine(i,bgColor,selected,p.enabled);
-      drawCursor(i,selected,p.enabled);
-      setColor(fgColor,selected,p.enabled);
-      setCursor(posX,posY+i);
-      p.printTo(i,nav,*this);
+  idx_t st=nav.root->showTitle?1:0;
+  while(nav.sel+st>=(top+maxY)) top++;
+  while(nav.sel<top||(top&&nav.sel+top<maxY-st)) top--;
+  bool all=redraw||(top!=ot)||nav.target->dirty||drawn!=nav.target;
+  if (all) {
+    Serial<<"printing menu "<<*(prompt*)nav.target<<endl;
+    clear();
+    if (st) {
+      setColor(titleColor,false);
+      clearLine(0);
+      setColor(titleColor,true);
+      setCursor(0,0);
+      *this<<"["<<*(prompt*)nav.target<<"]";
     }
-    lastTop=top;
-    lastSel=nav.sel;
   }
+  for(idx_t i=0;i<maxY-st;i++) {
+    int ist=i+st;
+    if (i+top>=nav.sz()) break;
+    prompt& p=nav[i+top];
+    if (all||p.changed(nav,*this)) {
+      Serial<<"printing prompt "<<p;Serial.flush();
+      bool selected=nav.sel==i+top;
+      bool ed=nav.target==&p;
+      Serial<<", vars";Serial.flush();
+      clearLine(ist,bgColor,selected,p.enabled,ed);
+      Serial<<", line cleared";Serial.flush();
+      setCursor(0,ist);
+      drawCursor(ist,selected,p.enabled,ed);
+      Serial<<", cursor drawn";Serial.flush();
+      setColor(fgColor,selected,p.enabled,ed);
+      Serial<<", color set";Serial.flush();
+      p.printTo(i+top,nav,*this);
+      Serial<<"<-printed!"<<endl;Serial.flush();
+    }
+  }
+  drawn=nav.target;
 }
 
 navRoot* navNode::root=NULL;
@@ -141,18 +161,19 @@ result navNode::sysEvent(eventMask e,idx_t i) {
 }
 
 void navRoot::poll() {
-  if (sleeping) {
-    if (options.getCmdChar(enterCmd)==in.read()) wakeup();
+  if (sleepTask) {
+    if (options.getCmdChar(enterCmd)==in.read()) idleOff();
+    out.idle(sleepTask,idling);
     return;
   }
   if (suspended) {
-    Serial<<"suspended"<<endl;
+    //Serial<<"suspended"<<endl;
     if (in.available()&&in.read()==options.getCmdChar(enterCmd)) {
-      options.idleTask(idleEnd);
+      out.idle(options.idleTask,idleEnd);
       suspended=false;
-    } else options.idleTask(idling);
+    } else out.idle(options.idleTask,idling);
   } else if (in.available()) navFocus->navigate(node(),in.read(),in);
-  if (!(sleeping||suspended)) printMenu();//previous actions can suspend the  menu
+  if (!(sleepTask||suspended)) printMenu();//previous actions can suspend the  menu
 }
 
 void navRoot::enter() {
@@ -191,7 +212,7 @@ void navRoot::exit() {
     if (level) level--;
     else {
       suspended=true;
-      options.idleTask(idleStart);
+      out.idle(options.idleTask,idleStart);
     }
   }
   active().dirty=true;

@@ -102,6 +102,7 @@ class altPrompt:public prompt {
 public:
   altPrompt(const promptShadow& p):prompt(p) {}
   void printTo(idx_t i,navNode &nav,menuOut& out) override {
+    Serial<<"special prompt printTo";Serial.flush();
     out<<"special prompt!";
   }
 };
@@ -114,11 +115,11 @@ MENU(subMenu,"Sub-Menu",showEvent,anyEvent,noStyle
   ,EXIT("<Back")
 );
 
-extern menu mainMenu;
+/*extern menu mainMenu;
 TOGGLE((mainMenu[1].enabled),togOp,"Op 2:",doNothing,noEvent,noStyle
   ,VALUE("Enabled",enabledStatus,doNothing,noEvent)
   ,VALUE("disabled",disabledStatus,doNothing,noEvent)
-);
+);*/
 
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,OP("Op1",action1,anyEvent)
@@ -142,12 +143,19 @@ NAVROOT(nav,mainMenu,2,in,out);//the navigation root object
 //#define debugPin A5
 
 void setup() {
+  pinMode(encBtn,INPUT_PULLUP);
+  pinMode(LEDPIN,OUTPUT);
   Serial.begin(115200);
   while(!Serial);
   Serial<<"Arduino Menu Library"<<endl;Serial.flush();
   encoder.begin();
-  pinMode(encBtn,INPUT_PULLUP);
   lcd.begin(16,2);
+  lcd.setCursor(0, 0);
+  lcd<<("Menu 3.0 LCD");
+  lcd.setCursor(0, 1);
+  lcd<<("r-site.net");
+  nav.showTitle=false;
+  delay(3000);
 }
 
 void loop() {

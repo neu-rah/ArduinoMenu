@@ -113,15 +113,16 @@ MENU(mainMenu,"Main menu",zZz,noEvent,wrapStyle
   ,EXIT("<Back")
 );
 
-// each color is in the format {{normal disabled,normal enabled},{selected disabled,selected enabled}}
-// monochromatic color table
-const uint16_t colors[][2][2] MEMMODE={
-  {{BLACK,BLACK},{BLACK,WHITE}},//bgColor
-  {{WHITE,WHITE},{WHITE,BLACK}},//fgColor
-  {{WHITE,WHITE},{BLACK,BLACK}},//valColor
-  {{WHITE,WHITE},{BLACK,BLACK}},//unitColor
-  {{BLACK,BLACK},{WHITE,WHITE}},//cursorColor
-  {{BLACK,BLACK},{WHITE,WHITE}},//titleColor
+// define menu colors --------------------------------------------------------
+//  {{disabled normal,disabled selected},{enabled normal,enabled selected, enabled editing}}
+//monochromatic color table
+const colorDef<uint16_t> colors[] MEMMODE={
+  {{BLACK,WHITE},{BLACK,WHITE,WHITE}},//bgColor
+  {{WHITE,BLACK},{WHITE,BLACK,BLACK}},//fgColor
+  {{WHITE,BLACK},{WHITE,BLACK,BLACK}},//valColor
+  {{WHITE,BLACK},{WHITE,BLACK,BLACK}},//unitColor
+  {{WHITE,BLACK},{BLACK,BLACK,BLACK}},//cursorColor
+  {{WHITE,BLACK},{BLACK,WHITE,WHITE}},//titleColor
 };
 
 serialOut outSerial(Serial);//the output device (just the serial port)

@@ -108,15 +108,17 @@ MENU(mainMenu,"Main menu",zZz,noEvent,wrapStyle
   ,EXIT("<Back")
 );
 
-// each color is in the format {{normal disabled,normal enabled},{selected disabled,selected enabled}}
-// monochromatic color table
-const uint8_t colors[][2][2] MEMMODE={
-  {{0,0},{0,1}},//bgColor
-  {{1,1},{1,0}},//fgColor
-  {{1,0},{1,0}},//valColor <--- BUG: value select meaning edit makes bad combination with normal selection
-  {{1,1},{1,0}},//unitColor
-  {{0,0},{1,1}},//cursorColor
-  {{0,0},{1,1}},//titleColor
+// define menu colors --------------------------------------------------------
+//each color is in the format:
+//  {{disabled normal,disabled selected},{enabled normal,enabled selected, enabled editing}}
+// this is a monochromatic color table
+const colorDef<uint8_t> colors[] MEMMODE={
+  {{0,0},{0,1,1}},//bgColor
+  {{1,1},{1,0,0}},//fgColor
+  {{1,0},{1,0,0}},//valColor
+  {{1,1},{1,0,0}},//unitColor
+  {{0,1},{0,0,1}},//cursorColor
+  {{0,0},{1,1,1}},//titleColor
 };
 
 serialOut outSerial(Serial);//the output device (just the serial port)
@@ -159,5 +161,5 @@ void loop() {
     nav.poll();
     digitalWrite(LEDPIN, ledCtrl);
   } while( u8g.nextPage() );
-  delay(300);//simulate a delay when other tasks are done
+  delay(100);//simulate a delay when other tasks are done
 }

@@ -34,28 +34,33 @@ namespace Menu {
 	  class menuGFX:public gfxOut {
 	    public:
 				Adafruit_GFX& gfx;
-				const uint16_t (&colors)[nColors][2][2];
-		    menuGFX(Adafruit_GFX& gfx,const uint16_t (&c)[nColors][2][2],int resX=6,int resY=9)
-			  	:gfxOut(gfx.width()/resX,gfx.height()/resY,resX,resY),colors(c),gfx(gfx) {}
+				const colorDef<uint16_t> (&colors)[nColors];
+		    menuGFX(Adafruit_GFX& gfx,const colorDef<uint16_t> (&c)[nColors],int resX=6,int resY=9)
+			  	:gfxOut(gfx.width()/resX,gfx.height()/resY,resX,resY,false),colors(c),gfx(gfx) {}
 
 				size_t write(uint8_t ch) override {return gfx.write(ch);}
 
-				void setColor(colorDefs c,bool selected=false,status s=enabledStatus) override {
-					gfx.setTextColor(memWord(&colors[c][selected][s]));
+				inline uint16_t getColor(colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) const {
+          return memWord(&(stat==enabledStatus?colors[color].enabled[selected+edit]:colors[color].disabled[selected]));
+        }
+
+				void setColor(colorDefs c,bool selected=false,status s=enabledStatus,bool e=false) override {
+					gfx.setTextColor(getColor(c,selected,s,e));
 				}
 
-				void clearLine(idx_t ln,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus) override {
-					gfx.fillRect(posX,posY+ln*resY,maxX*resX,resY,memWord(&colors[color][selected][stat]));
+				void clearLine(idx_t ln,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) override {
+					gfx.fillRect(posX,posY+ln*resY,maxX*resX,resY,getColor(color,selected,stat,edit));
 		    	//setCursor(0,ln);
 		    }
 		    void clear() override {
-					gfx.fillScreen(memWord(&colors[bgColor][false][enabledStatus]));
+					gfx.fillScreen(getColor(bgColor,false,enabledStatus,false));
 		    	//setCursor(0,0);
 		    }
 		    void setCursor(idx_t x,idx_t y) override {gfx.setCursor(x*resX,y*resY);}
 
-				void drawCursor(idx_t ln,bool selected,status stat) override {
-					gfx.drawRect(posX,posY+ln*resY,maxX*resX,resY,memWord(&colors[cursorColor][selected][stat]));
+				void drawCursor(idx_t ln,bool selected,status stat,bool edit=false) override {
+					gfxOut::drawCursor(ln,selected,stat);
+					gfx.drawRect(posX,posY+ln*resY,maxX*resX,resY,getColor(cursorColor,selected,enabledStatus,false));
 				}
 
 	  };

@@ -94,8 +94,8 @@ www.r-site.net
     result doExit();//do not enter a menu or exit the current one
 
     //idle function  type
-    typedef result (*idleFunc)(idleEvent);
-    result inaction(idleEvent e);
+    typedef result (*idleFunc)(menuOut& o,idleEvent);
+    result inaction(menuOut& o,idleEvent e);
 
     //template<void (*A)(eventMask event, navNode& nav, prompt &item, Stream &in)> result callCaster(eventMask event, navNode& nav, prompt &item, Stream &in);
     template<void (*A)(eventMask event, navNode& nav, prompt &item)> result callCaster(eventMask event, navNode& nav, prompt &item);

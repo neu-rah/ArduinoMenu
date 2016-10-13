@@ -25,9 +25,9 @@ www.r-site.net
       public:
 	      U8GLIB& gfx;
 				int8_t fontMargin=2;
-				const uint8_t (&colors)[nColors][2][2];
-	      menuU8G(U8GLIB& gfx,const uint8_t (&c)[nColors][2][2],idx_t resX=6,idx_t resY=9)
-					:gfxOut(gfx.getWidth()/resX,gfx.getHeight()/resY,resX,resY),colors(c),gfx(gfx) {
+				const colorDef<uint8_t> (&colors)[nColors];
+	      menuU8G(U8GLIB& gfx,const colorDef<uint8_t> (&c)[nColors],idx_t resX=6,idx_t resY=9)
+					:gfxOut(gfx.getWidth()/resX,gfx.getHeight()/resY,resX,resY,true),colors(c),gfx(gfx) {
 	        	gfx.setFontPosBottom(); // U8Glib font positioning
 	      }
 
@@ -36,12 +36,16 @@ www.r-site.net
 	          return 1;
 	      }
 
-				void setColor(colorDefs c,bool selected=false,status s=enabledStatus) override {
-					gfx.setColorIndex(memByte(&colors[c][selected][s]));
+				inline uint8_t getColor(colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) const {
+          return memByte(&(stat==enabledStatus?colors[color].enabled[selected+edit]:colors[color].disabled[selected]));
+        }
+
+				void setColor(colorDefs c,bool selected=false,status s=enabledStatus,bool edit=false) override {
+					gfx.setColorIndex(getColor(c,selected,s,edit));
 				}
 
-				void clearLine(idx_t ln,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus) override {
-						setColor(color,selected,stat);
+				void clearLine(idx_t ln,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) override {
+						setColor(color,selected,stat,edit);
 						gfx.drawBox(posX,posY+ln*resY,maxX*resX,resY);
 	          //setCursor(0,ln);
 	      }
@@ -52,7 +56,8 @@ www.r-site.net
 	          gfx.setPrintPos(posX+x*resX,posY+(y+1)*resY-fontMargin);
 	      }
 
-				void drawCursor(idx_t ln,bool selected,status stat) override {
+				void drawCursor(idx_t ln,bool selected,status stat,bool edit=false) override {
+					gfxOut::drawCursor(ln,selected,stat);
 					setColor(cursorColor,selected,stat);
 					gfx.drawFrame(posX,posY+ln*resY,maxX*resX,resY);
 				}
