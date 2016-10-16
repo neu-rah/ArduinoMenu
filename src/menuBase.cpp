@@ -86,3 +86,13 @@ Print& Menu::operator<<(Print& o,colorDefs c) {
   }
   return o;
 };
+
+Print& Menu::operator<<(Print& o,idleEvent e) {
+  switch(e) {
+    case idleStart:o<<"idleStart";break;
+    case idling:o<<"idling";break;
+    case idleEnd:o<<"idleEnd";break;
+    default: o<<"idelEvent?"<<(int)e;break;
+  }
+  return o;
+}

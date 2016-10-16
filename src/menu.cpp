@@ -33,9 +33,12 @@ void menuOut::printMenu(navNode &nav) {
   idx_t st=nav.root->showTitle?1:0;
   while(nav.sel+st>=(top+maxY)) top++;
   while(nav.sel<top||(top&&nav.sel+top<maxY-st)) top--;
-  bool all=redraw||(top!=ot)||nav.target->dirty||drawn!=nav.target;
+  bool all=redraw;
+  if (!(all||minimalRedraw))
+    for(idx_t i=0;i<maxY-st;i++)
+      if (all) break; else all|=nav[i+top].changed(nav,*this);
+  all|=(top!=ot)||nav.target->dirty||drawn!=nav.target;
   if (all) {
-    Serial<<"printing menu "<<*(prompt*)nav.target<<endl;
     clear();
     if (st) {
       setColor(titleColor,false);
@@ -50,19 +53,13 @@ void menuOut::printMenu(navNode &nav) {
     if (i+top>=nav.sz()) break;
     prompt& p=nav[i+top];
     if (all||p.changed(nav,*this)) {
-      Serial<<"printing prompt "<<p;Serial.flush();
       bool selected=nav.sel==i+top;
       bool ed=nav.target==&p;
-      Serial<<", vars";Serial.flush();
       clearLine(ist,bgColor,selected,p.enabled,ed);
-      Serial<<", line cleared";Serial.flush();
       setCursor(0,ist);
       drawCursor(ist,selected,p.enabled,ed);
-      Serial<<", cursor drawn";Serial.flush();
       setColor(fgColor,selected,p.enabled,ed);
-      Serial<<", color set";Serial.flush();
       p.printTo(i+top,nav,*this);
-      Serial<<"<-printed!"<<endl;Serial.flush();
     }
   }
   drawn=nav.target;
@@ -95,15 +92,11 @@ void navTarget::navigate(navNode& nav,char ch,Stream& in) {
 //generic navigation (aux function)
 void navNode::doNavigation(char ch,Stream& in) {
   idx_t osel=sel;
-  //idx_t otop=out.top;
   navCmds cmd=navKeys(ch);
-  //Serial<<ANSI::setBackgroundColor(BLACK)<<ANSI::setForegroundColor(WHITE);
-  //Serial<<ANSI::xy(0,20)<<"doNavigation "<<cmd<<" sel:"<<sel;
   switch(cmd) {
     case downCmd:
       sel--;
       if (sel<0) {if(wrap()) sel=sz()-1; else sel=0;}
-      //if (sel<top) top=sel;
       break;
     case upCmd:
       sel++;
@@ -116,7 +109,6 @@ void navNode::doNavigation(char ch,Stream& in) {
     case noCmd:
     default: break;
   }
-  //Serial<<ANSI::xy(0,21)<<"processed keys, sel:"<<sel;
   if (strchr(numericChars,ch)) {
     char at=ch-'1';
     if (at>=0&&at<sz()) {
@@ -128,7 +120,6 @@ void navNode::doNavigation(char ch,Stream& in) {
     if (target->sysStyles()&(_parentDraw|_isVariant))
       target->dirty=true;
     else {
-      //Serial<<" setting dirty on "<<osel<<" and "<<sel;
       operator[](osel).dirty=true;
       operator[](sel).dirty=true;
     }
@@ -140,9 +131,6 @@ void navNode::doNavigation(char ch,Stream& in) {
     assert(root);
     root->enter();
   }
-  /*if(otop!=top) {
-    target->prompt::dirty=true;
-  }*/
 }
 
 result navNode::event(eventMask e,idx_t i) {
@@ -163,17 +151,16 @@ result navNode::sysEvent(eventMask e,idx_t i) {
 void navRoot::poll() {
   if (sleepTask) {
     if (options.getCmdChar(enterCmd)==in.read()) idleOff();
-    out.idle(sleepTask,idling);
-    return;
-  }
-  if (suspended) {
-    //Serial<<"suspended"<<endl;
+    else out.idle(sleepTask,idling);
+  } else if (suspended) {
     if (in.available()&&in.read()==options.getCmdChar(enterCmd)) {
       out.idle(options.idleTask,idleEnd);
       suspended=false;
     } else out.idle(options.idleTask,idling);
-  } else if (in.available()) navFocus->navigate(node(),in.read(),in);
-  if (!(sleepTask||suspended)) printMenu();//previous actions can suspend the  menu
+  } else {//previous actions can suspend the  menu
+    if (in.available()) navFocus->navigate(node(),in.read(),in);
+    if (!(sleepTask||suspended)) printMenu();
+  }
 }
 
 void navRoot::enter() {
@@ -184,14 +171,13 @@ void navRoot::enter() {
     prompt& sel=selected();
     bool canNav=sel.canNav();
     bool isMenu=sel.isMenu();
-    result go=node().event(enterEvent);
+    result go=node().event(enterEvent);//item event sent here
     if (go==proceed&&isMenu&&canNav) {
       if (level<maxDepth) {
         active().dirty=true;
         menuNode* dest=(menuNode*)&selected();
         level++;
         node().target=dest;
-        //out.top=0;
         node().sel=0;
         active().dirty=true;
         sel.sysHandler(enterEvent,node(),selected());
@@ -205,8 +191,7 @@ void navRoot::enter() {
 }
 
 void navRoot::exit() {
-  if (selected().shadow->events&&exitEvent)
-    (*selected().shadow)(exitEvent,node(),selected());
+  node().event(exitEvent,node().sel);
   navFocus->dirty=true;
   if (navFocus->isMenu()) {
     if (level) level--;

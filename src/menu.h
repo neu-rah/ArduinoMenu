@@ -307,10 +307,11 @@ www.r-site.net
 				idx_t lastTop=-1;
 				idx_t lastSel=-1;
 				idx_t top=0;//first line to draw
-				bool redraw=false;
+				bool redraw=false;//redraw all menu every cycle, some display drivers require it
+				bool minimalRedraw=true;//redraw only changed options (avoids flicking on LCDS), not good for Serial
 				menuNode* drawn;
 				menuOut() {}
-				menuOut(idx_t x,idx_t y,bool r=false):maxX(x),maxY(y),redraw(r) {}
+				menuOut(idx_t x,idx_t y,bool r=false,bool minimal=true):maxX(x),maxY(y),redraw(r),minimalRedraw(minimal) {}
 				virtual menuOut& operator<<(prompt const &p);
 				virtual menuOut& fill(
 					int x1, int y1, int x2, int y2,char ch=' ',
@@ -385,17 +386,19 @@ www.r-site.net
 						menuOut& o=*outs[n];
 						switch(e) {
 							case idleStart:
-								(*f)(o,e);
-								if (!o.redraw) (*f)(o,e);
+								if ((*f)(o,e)==proceed) {
+									if (!o.redraw) return (*f)(o,idling);
+								} else return quit;
 								break;
 							case idling:
-								if (o.redraw) (*f)(o,e);
+								if (o.redraw) return (*f)(o,e);
 								break;
 							case idleEnd:
-								(*f)(o,e);
+								return (*f)(o,e);
 								break;
 						}
 					}
+					return proceed;
 				}
 		};
 

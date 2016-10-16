@@ -151,6 +151,7 @@ www.r-site.net
     Print& operator<<(Print& o,eventMask e);
     Print& operator<<(Print& o,prompt const &p);
     Print& operator<<(Print& o,colorDefs c);
+    Print& operator<<(Print& o,idleEvent e);
 
   }
 

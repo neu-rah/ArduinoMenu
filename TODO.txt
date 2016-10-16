@@ -1,6 +1,7 @@
 Arduino Menu Library
 
-- BUG: TODO: reflect enable/disable (serial and lcd menu)
++ BUG: TODO: reflect enable/disable (serial and lcd menu)
+  DONE: by centralizing the menuPrint
 + color enumeration at base level
 + add list of output devices
 + add macros to build navRoot

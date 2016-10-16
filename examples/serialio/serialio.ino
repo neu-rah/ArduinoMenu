@@ -73,6 +73,19 @@ MENU(subMenu,"Sub-Menu",showEvent,anyEvent,noStyle
   ,EXIT("<Back")
 );
 
+result alert(menuOut& o,idleEvent e) {
+  if (e==idling)
+    o<<"alert test"<<endl<<"press [select] to continue..."<<endl;
+  return proceed;
+}
+
+result doAlert(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out) {
+  //Serial<<"doAlert "<<e<<" start"<<endl;
+  nav.root->idleOn(alert);
+  //Serial<<"doAlert "<<e<<" end"<<endl;
+  return proceed;
+}
+
 MENU(mainMenu,"Main menu",zZz,noEvent,wrapStyle
   ,OP("Op1",action1,anyEvent)
   ,OP("Op2",action2,enterEvent)
@@ -83,6 +96,7 @@ MENU(mainMenu,"Main menu",zZz,noEvent,wrapStyle
   ,OP("LED Off",ledOff,enterEvent)
   ,SUBMENU(selMenu)
   ,SUBMENU(chooseMenu)
+  ,OP("Alert test",doAlert,enterEvent)
   ,EXIT("<Back")
 );
 
@@ -109,10 +123,20 @@ void setup() {
   while(!Serial);
   Serial<<"menu 3.0 test"<<endl;Serial.flush();
   options.idleTask=idle;//point a function to be used when menu is suspended
+  /*nav.node().sel=9;
+  Serial<<nav.selected()<<endl;
+  nav.idleOn(alert);
+  Serial<<"1st poll"<<endl;
+  nav.poll();
+  Serial<<"2nd poll"<<endl;
+  nav.poll();
+  Serial<<"3rd poll"<<endl;
+  nav.poll();
+  Serial<<"done"<<endl;*/
 }
 
 void loop() {
   nav.poll();
   digitalWrite(LEDPIN, ledCtrl);
-  delay(100);//simulate a delay when other tasks are done
+  delay(300);//simulate a delay when other tasks are done
 }
