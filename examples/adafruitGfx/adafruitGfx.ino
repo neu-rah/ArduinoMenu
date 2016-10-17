@@ -102,7 +102,7 @@ MENU(subMenu,"Sub-Menu",showEvent,anyEvent,noStyle
 
 result alert(menuOut& o,idleEvent e) {
   if (e==idling)
-    o<<"alert test"<<endl<<"press [select] to continue..."<<endl;
+    o<<"alert test"<<endl<<"press [select]"<<endl<<"to continue..."<<endl;
   return proceed;
 }
 
@@ -146,7 +146,7 @@ NAVROOT(nav,mainMenu,2,Serial,out);
 //when menu is suspended
 result idle(menuOut& o,idleEvent e) {
   if (e==idling)
-    o<<"suspended..."<<endl<<"Ok!";
+    o<<"suspended..."<<endl<<"press [select]"<<endl<<"to continue";
   return proceed;
 }
 

@@ -75,7 +75,7 @@ MENU(subMenu,"Sub-Menu",showEvent,anyEvent,noStyle
 
 result alert(menuOut& o,idleEvent e) {
   if (e==idling)
-    o<<"alert test"<<endl<<"press [select] to continue..."<<endl;
+    o<<"alert test"<<endl<<"press [select]"<<endl<<"to continue..."<<endl;
   return proceed;
 }
 
@@ -104,11 +104,12 @@ outputsList out(outputs,1);
 NAVROOT(nav,mainMenu,2,Serial,out);
 
 //when menu is suspended
-result idle(idleEvent e) {
+result idle(menuOut &o, idleEvent e) {
+  o.clear();
   switch(e) {
-    case idleStart:Serial<<"suspending menu!"<<endl;break;
-    case idling:Serial<<"suspended..."<<endl;break;
-    case idleEnd:Serial<<"resuming menu."<<endl;break;
+    case idleStart:o<<"suspending menu!"<<endl;break;
+    case idling:o<<"suspended..."<<endl;break;
+    case idleEnd:o<<"resuming menu."<<endl;break;
   }
   return proceed;
 }
@@ -121,16 +122,6 @@ void setup() {
   while(!Serial);
   Serial<<"menu 3.0 test"<<endl;Serial.flush();
   options.idleTask=idle;//point a function to be used when menu is suspended
-  /*nav.node().sel=9;
-  Serial<<nav.selected()<<endl;
-  nav.idleOn(alert);
-  Serial<<"1st poll"<<endl;
-  nav.poll();
-  Serial<<"2nd poll"<<endl;
-  nav.poll();
-  Serial<<"3rd poll"<<endl;
-  nav.poll();
-  Serial<<"done"<<endl;*/
 }
 
 void loop() {

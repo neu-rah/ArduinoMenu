@@ -121,6 +121,21 @@ TOGGLE((mainMenu[1].enabled),togOp,"Op 2:",doNothing,noEvent,noStyle
   ,VALUE("disabled",disabledStatus,doNothing,noEvent)
 );*/
 
+result alert(menuOut& o,idleEvent e) {
+  if (e==idling) {
+    o.setCursor(0,0);
+    o<<"alert test";
+    o.setCursor(0,1);
+    o<<"[select] to continue...";
+  }
+  return proceed;
+}
+
+result doAlert(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out) {
+  nav.root->idleOn(alert);
+  return proceed;
+}
+
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,OP("Op1",action1,anyEvent)
   ,OP("Op2",action2,enterEvent)
@@ -132,6 +147,7 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,OP("LED Off",ledOff,enterEvent)
   ,SUBMENU(selMenu)
   ,SUBMENU(chooseMenu)
+  ,OP("Alert test",doAlert,enterEvent)
   ,EXIT("<Back")
 );
 
@@ -140,7 +156,14 @@ menuOut* outputs[]={&outLCD};//list of output devices
 outputsList out(outputs,1);//outputs list with 2 outputs
 NAVROOT(nav,mainMenu,2,in,out);//the navigation root object
 
-//#define debugPin A5
+result idle(menuOut& o,idleEvent e) {
+  switch(e) {
+    case idleStart:o<<"suspending menu!";break;
+    case idling:o<<"suspended...";break;
+    case idleEnd:o<<"resuming menu.";break;
+  }
+  return proceed;
+}
 
 void setup() {
   pinMode(encBtn,INPUT_PULLUP);
@@ -150,12 +173,14 @@ void setup() {
   Serial<<"Arduino Menu Library"<<endl;Serial.flush();
   encoder.begin();
   lcd.begin(16,2);
+  options.idleTask=idle;//point a function to be used when menu is suspended
+  mainMenu[1].enabled=disabledStatus;
   lcd.setCursor(0, 0);
   lcd<<("Menu 3.0 LCD");
   lcd.setCursor(0, 1);
   lcd<<("r-site.net");
   nav.showTitle=false;
-  delay(3000);
+  delay(2000);
 }
 
 void loop() {

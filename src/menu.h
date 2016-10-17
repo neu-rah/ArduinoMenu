@@ -387,7 +387,10 @@ www.r-site.net
 						switch(e) {
 							case idleStart:
 								if ((*f)(o,e)==proceed) {
-									if (!o.redraw) return (*f)(o,idling);
+									if (!o.redraw) {
+										o.clear();//reset the coordinates and colors
+										return (*f)(o,idling);
+									}
 								} else return quit;
 								break;
 							case idling:

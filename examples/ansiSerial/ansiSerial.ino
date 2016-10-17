@@ -165,9 +165,8 @@ TOGGLE((mainMenu[1].enabled),togOp,"Op 2:",doNothing,noEvent,noStyle
 );
 
 result alert(menuOut& o,idleEvent e) {
-  if (e==idling) {
+  if (e==idling)
     o<<"alert test"<<endl<<"press [select] to continue..."<<endl;
-  }
   return proceed;
 }
 
