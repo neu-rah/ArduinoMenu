@@ -11,6 +11,14 @@ menu to ANSI serial terminal
 output: ANSI Serial terminal
 input: Serial
 
+draw color menu on ansi serial device
+to see the result on linux machines use:
+
+screen /dev/ttyUSBn 115200
+
+replace the port (/dev/ttyUSBn) with your appropriate port
+screen utility exits with [Ctrl+A \ y]
+
 www.r-site.net
 ***/
 
@@ -156,6 +164,18 @@ TOGGLE((mainMenu[1].enabled),togOp,"Op 2:",doNothing,noEvent,noStyle
   ,VALUE("disabled",disabledStatus,doNothing,noEvent)
 );
 
+result alert(menuOut& o,idleEvent e) {
+  if (e==idling) {
+    o<<"alert test"<<endl<<"press [select] to continue..."<<endl;
+  }
+  return proceed;
+}
+
+result doAlert(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out) {
+  nav.root->idleOn(alert);
+  return proceed;
+}
+
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,OP("Op1",action1,anyEvent)
   ,OP("Op2",action2,enterEvent)
@@ -168,6 +188,7 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,SUBMENU(selMenu)
   ,SUBMENU(chooseMenu)
   ,OP("Show colors",showOutColors,enterEvent)
+  ,OP("Alert test",doAlert,enterEvent)
   ,EXIT("<Back")
 );
 
@@ -182,11 +203,11 @@ void showOutColors() {
 }
 
 //when menu is suspended -----------------------------------------------
-result idle(idleEvent e) {
+result idle(menuOut& o,idleEvent e) {
   switch(e) {
-    case idleStart:Serial<<"suspending menu!"<<endl;break;
-    case idling:Serial<<"suspended..."<<endl;break;
-    case idleEnd:Serial<<"resuming menu."<<endl;break;
+    case idleStart:o<<"suspending menu!"<<endl;break;
+    case idling:o<<"suspended..."<<endl;break;
+    case idleEnd:o<<"resuming menu."<<endl;break;
   }
   return proceed;
 }

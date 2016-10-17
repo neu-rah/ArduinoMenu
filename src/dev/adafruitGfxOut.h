@@ -54,7 +54,8 @@ namespace Menu {
 		    }
 		    void clear() override {
 					gfx.fillScreen(getColor(bgColor,false,enabledStatus,false));
-		    	//setCursor(0,0);
+		    	setCursor(0,0);
+					setColor(fgColor);
 		    }
 		    void setCursor(idx_t x,idx_t y) override {gfx.setCursor(x*resX,y*resY);}
 

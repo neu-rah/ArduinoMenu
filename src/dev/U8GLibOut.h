@@ -32,8 +32,12 @@ www.r-site.net
 	      }
 
 				size_t write(uint8_t ch) override {
-	          gfx.write(ch); // print the ASCII correspoding char instead of print which display the decimal value of the char.
-	          return 1;
+					switch(ch) {//fix u8glib not respecting \n\r... add \t if you wish
+						case '\n': gfx.setPrintPos(posX+gfx.getPrintCol(), posY+gfx.getPrintRow()+resY-fontMargin);break;
+						case '\r': gfx.setPrintPos(0, gfx.getPrintRow());break;
+						default: return gfx.write(ch);
+					}
+					return 1;
 	      }
 
 				inline uint8_t getColor(colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) const {
@@ -45,15 +49,16 @@ www.r-site.net
 				}
 
 				void clearLine(idx_t ln,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) override {
-						setColor(color,selected,stat,edit);
-						gfx.drawBox(posX,posY+ln*resY,maxX*resX,resY);
-	          //setCursor(0,ln);
+					setColor(color,selected,stat,edit);
+					gfx.drawBox(posX,posY+ln*resY,maxX*resX,resY);
+          //setCursor(0,ln);
 	      }
 	      void clear() override {
-	          // No need to clear, the U8Glib display loop clear screen on each refresh
+					setCursor(0,0);
+					setColor(fgColor);
 	      }
 	      void setCursor(idx_t x,idx_t y) override {
-	          gfx.setPrintPos(posX+x*resX,posY+(y+1)*resY-fontMargin);
+          gfx.setPrintPos(posX+x*resX,posY+(y+1)*resY-fontMargin);
 	      }
 
 				void drawCursor(idx_t ln,bool selected,status stat,bool edit=false) override {

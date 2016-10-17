@@ -95,7 +95,7 @@ www.r-site.net
 
     //idle function  type
     typedef result (*idleFunc)(menuOut& o,idleEvent);
-    result inaction(menuOut& o,idleEvent e);
+    result inaction(menuOut& o,idleEvent e);//default idle function
 
     //template<void (*A)(eventMask event, navNode& nav, prompt &item, Stream &in)> result callCaster(eventMask event, navNode& nav, prompt &item, Stream &in);
     template<void (*A)(eventMask event, navNode& nav, prompt &item)> result callCaster(eventMask event, navNode& nav, prompt &item);

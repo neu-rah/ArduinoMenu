@@ -95,6 +95,18 @@ MENU(subMenu,"Sub-Menu",showEvent,anyEvent,noStyle
   ,EXIT("<Back")
 );
 
+result alert(menuOut& o,idleEvent e) {
+  if (e==idling) {
+    o<<"alert test"<<endl<<"press [select]"<<endl<<"to continue...";
+  }
+  return proceed;
+}
+
+result doAlert(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out) {
+  nav.root->idleOn(alert);
+  return proceed;
+}
+
 MENU(mainMenu,"Main menu",zZz,noEvent,wrapStyle
   ,OP("Op1",action1,anyEvent)
   ,OP("Op2",action2,enterEvent)
@@ -105,6 +117,7 @@ MENU(mainMenu,"Main menu",zZz,noEvent,wrapStyle
   ,OP("LED Off",ledOff,enterEvent)
   ,SUBMENU(selMenu)
   ,SUBMENU(chooseMenu)
+  ,OP("Alert test",doAlert,enterEvent)
   ,EXIT("<Back")
 );
 
@@ -122,18 +135,15 @@ const colorDef<uint8_t> colors[] MEMMODE={
 };
 
 serialOut outSerial(Serial);//the output device (just the serial port)
-menuU8G gfx(u8g,colors,5,12);
+menuU8G gfx(u8g,colors,6,10);
 menuOut* outputs[]={&gfx,&outSerial};
 outputsList out(outputs,2);
 NAVROOT(nav,mainMenu,2,Serial,out);
 
 //when menu is suspended
-result idle(idleEvent e) {
-  switch(e) {
-    case idleStart:Serial<<"suspending menu!"<<endl;break;
-    case idling:Serial<<"suspended..."<<endl;break;
-    case idleEnd:Serial<<"resuming menu."<<endl;break;
-  }
+result idle(menuOut& o,idleEvent e) {
+  if (e==idling)
+    o<<"suspended"<<endl<<"Press [select]"<<endl<<"to continue";
   return proceed;
 }
 
@@ -144,22 +154,25 @@ void setup() {
   Serial<<"menu 3.0 test"<<endl;Serial.flush();
   options.idleTask=idle;//point a function to be used when menu is suspended
   mainMenu[1].enabled=disabledStatus;
-  u8g.setFont(u8g_font_helvR08);
+  //u8g.setFont(u8g_font_helvR08);
+  u8g.setFont(u8g_font_6x10);
   u8g.firstPage();
   do {
     gfx.setCursor(0,0);
-    gfx.print("Menu 3.x test");
+    gfx<<"Menu 3.x test";
     gfx.setCursor(0,1);
-    gfx.print("on U8Glib");
+    gfx<<"on U8Glib";
   } while(u8g.nextPage());
-  delay(2000);
+  delay(1000);
+  //nav.sleepTask=alert;
 }
 
 void loop() {
+  nav.doInput();
   u8g.firstPage();
   do {
-    nav.poll();
+    nav.doOutput();
     digitalWrite(LEDPIN, ledCtrl);
   } while( u8g.nextPage() );
-  delay(100);//simulate a delay when other tasks are done
+  delay(200);//simulate a delay when other tasks are done
 }

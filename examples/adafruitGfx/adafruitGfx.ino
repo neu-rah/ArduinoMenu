@@ -100,6 +100,17 @@ MENU(subMenu,"Sub-Menu",showEvent,anyEvent,noStyle
   ,EXIT("<Back")
 );
 
+result alert(menuOut& o,idleEvent e) {
+  if (e==idling)
+    o<<"alert test"<<endl<<"press [select] to continue..."<<endl;
+  return proceed;
+}
+
+result doAlert(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out) {
+  nav.root->idleOn(alert);
+  return proceed;
+}
+
 MENU(mainMenu,"Main menu",zZz,noEvent,wrapStyle
   ,OP("Op1",action1,anyEvent)
   ,OP("Op2",action2,enterEvent)
@@ -110,6 +121,7 @@ MENU(mainMenu,"Main menu",zZz,noEvent,wrapStyle
   ,OP("LED Off",ledOff,enterEvent)
   ,SUBMENU(selMenu)
   ,SUBMENU(chooseMenu)
+  ,OP("Alert test",doAlert,enterEvent)
   ,EXIT("<Back")
 );
 
@@ -132,12 +144,9 @@ outputsList out(outputs,2);
 NAVROOT(nav,mainMenu,2,Serial,out);
 
 //when menu is suspended
-result idle(idleEvent e) {
-  switch(e) {
-    case idleStart:Serial<<"suspending menu!"<<endl;break;
-    case idling:Serial<<"suspended..."<<endl;break;
-    case idleEnd:Serial<<"resuming menu."<<endl;break;
-  }
+result idle(menuOut& o,idleEvent e) {
+  if (e==idling)
+    o<<"suspended..."<<endl<<"Ok!";
   return proceed;
 }
 
@@ -152,7 +161,7 @@ void setup() {
   SPI.begin();
   nokia.begin();
   nokia.clearDisplay();
-  nokia.print("Menu 3.x test on GFX");
+  nokia<<"Menu 3.x test on GFX"<<endl;;
   nokia.setContrast(50);
   nokia.display(); // show splashscreen
   delay(2000);

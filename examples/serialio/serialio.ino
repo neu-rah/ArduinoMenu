@@ -80,9 +80,7 @@ result alert(menuOut& o,idleEvent e) {
 }
 
 result doAlert(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out) {
-  //Serial<<"doAlert "<<e<<" start"<<endl;
   nav.root->idleOn(alert);
-  //Serial<<"doAlert "<<e<<" end"<<endl;
   return proceed;
 }
 

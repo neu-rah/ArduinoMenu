@@ -391,7 +391,10 @@ www.r-site.net
 								} else return quit;
 								break;
 							case idling:
-								if (o.redraw) return (*f)(o,e);
+								if (o.redraw) {
+									o.clear();//reset the coordinates and colors
+									return (*f)(o,e);
+								}
 								break;
 							case idleEnd:
 								return (*f)(o,e);
@@ -435,7 +438,7 @@ www.r-site.net
 				navNode* path;
 				idx_t maxDepth=0;
 				idx_t level=0;
-				bool suspended=false;
+				//bool suspended=false;
 				bool showTitle=true;
 				//bool sleeping=false;//when sleeping poll will simply return
 				idleFunc sleepTask=NULL;
@@ -456,6 +459,8 @@ www.r-site.net
 					else out.printMenu(node());
 				}
 				//inline bool changed() const {return node().changed(out);}
+				void doInput();
+				void doOutput();
 				void poll();
 				void enter();
 				void exit();
@@ -471,7 +476,7 @@ www.r-site.net
 					active().dirty=true;
 					out.clear();
 				}
-				inline void alert(char *msg,bool modal=true) {out.alert(msg);}
+				//inline void alert(char *msg,bool modal=true) {out.alert(msg);}
 		};
 
 		////////////////////////////////////////////////////////////////////////

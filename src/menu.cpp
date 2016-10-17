@@ -48,6 +48,7 @@ void menuOut::printMenu(navNode &nav) {
       *this<<"["<<*(prompt*)nav.target<<"]";
     }
   }
+  //Serial<<"printMenu maxY:"<<maxY<<endl;
   for(idx_t i=0;i<maxY-st;i++) {
     int ist=i+st;
     if (i+top>=nav.sz()) break;
@@ -79,9 +80,8 @@ bool menuNode::changed(const navNode &nav,const menuOut& out) {
 
 //aux function, turn input character into navigation command
 navCmds navNode::navKeys(char ch) {
-  for(uint8_t i=0;i<sizeof(options.navCodes)/sizeof(config::navCode);i++) {
+  for(uint8_t i=0;i<sizeof(options.navCodes)/sizeof(config::navCode);i++)
     if (options.navCodes[i].ch==ch) return options.navCodes[i].cmd;
-  }
   return noCmd;
 }
 
@@ -148,19 +148,28 @@ result navNode::sysEvent(eventMask e,idx_t i) {
   return p(e,*this,p);
 }
 
-void navRoot::poll() {
+void navRoot::doInput() {
+  if ((!sleepTask)&&in.available())
+    navFocus->navigate(node(),in.read(),in);
+}
+
+void navRoot::doOutput() {
   if (sleepTask) {
     if (options.getCmdChar(enterCmd)==in.read()) idleOff();
     else out.idle(sleepTask,idling);
-  } else if (suspended) {
-    if (in.available()&&in.read()==options.getCmdChar(enterCmd)) {
-      out.idle(options.idleTask,idleEnd);
-      suspended=false;
-    } else out.idle(options.idleTask,idling);
-  } else {//previous actions can suspend the  menu
+  } else if (!(sleepTask)) printMenu();
+}
+
+void navRoot::poll() {
+  doInput();
+  doOutput();
+  /*if (sleepTask) {
+    if (options.getCmdChar(enterCmd)==in.read()) idleOff();
+    else out.idle(sleepTask,idling);
+  } else {
     if (in.available()) navFocus->navigate(node(),in.read(),in);
-    if (!(sleepTask||suspended)) printMenu();
-  }
+    if (!(sleepTask)) printMenu();
+  }*/
 }
 
 void navRoot::enter() {
@@ -196,8 +205,7 @@ void navRoot::exit() {
   if (navFocus->isMenu()) {
     if (level) level--;
     else {
-      suspended=true;
-      out.idle(options.idleTask,idleStart);
+      idleOn(options.idleTask);
     }
   }
   active().dirty=true;

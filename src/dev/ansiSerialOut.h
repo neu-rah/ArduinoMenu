@@ -26,7 +26,7 @@
             return *this;
         }
         void setCursor(idx_t x,idx_t y) override {*this<<ANSI::xy(posX+x+1,posY+y+1);}
-        void clear() override {*this<<ANSI::eraseScreen();}
+        void clear() override {*this<<ANSI::eraseScreen()<<ANSI::xy(1,1);}
         void clearLine(idx_t ln,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) override {
           *this<<ANSI::setBackgroundColor(getColor(color,selected,stat,edit));
           *this<<ANSI::fill(posX+1,posY+ln+1,maxX-posX+1,posY+ln+1);
