@@ -42,7 +42,9 @@ const colorDef<uint8_t> colors[] MEMMODE={
 };
 
 //define menu outputs ------------------------------------------------
-ansiSerialOut ansi(Serial,colors,20,8);//the output device, ansi-terminal Cols x Rows
+const panel panels[] MEMMODE={{10,10,30,20}};
+panelsList pList(panels,1);
+ansiSerialOut ansi(Serial,colors,pList,20,8);//the output device, ansi-terminal Cols x Rows
 menuOut* outputs[]={&ansi};
 outputsList out(outputs,1);
 
@@ -215,9 +217,12 @@ void setup() {
   pinMode(LEDPIN,OUTPUT);
   Serial.begin(115200);
   while(!Serial);
+  while(!Serial.available()) {Serial<<".";delay(300);}
+  while(Serial.available()) Serial.read();
   Serial<<"menu 3.0 test"<<endl;Serial.flush();
   options.idleTask=idle;//point a function to be used when menu is suspended
   mainMenu[1].enabled=disabledStatus;
+  //ansi.clear();
 }
 
 void loop() {

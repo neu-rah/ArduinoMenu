@@ -28,9 +28,9 @@ void menuOut::clearChanged(navNode &nav) {
   }
 }
 
-void menuOut::printMenu(navNode &nav) {
+void menuOut::printMenu(navNode &nav,idx_t panelNr=0) {
   idx_t ot=top;
-  idx_t st=nav.root->showTitle?1:0;
+  idx_t st=(nav.root->showTitle&&maxY>1)?1:0;//do not use titles on single line devices!
   while(nav.sel+st>=(top+maxY)) top++;
   while(nav.sel<top||(top&&nav.sel+top<maxY-st)) top--;
   bool all=redraw;
@@ -48,7 +48,6 @@ void menuOut::printMenu(navNode &nav) {
       *this<<"["<<*(prompt*)nav.target<<"]";
     }
   }
-  //Serial<<"printMenu maxY:"<<maxY<<endl;
   for(idx_t i=0;i<maxY-st;i++) {
     int ist=i+st;
     if (i+top>=nav.sz()) break;

@@ -295,45 +295,66 @@ www.r-site.net
 		// Output
 		////////////////////////////////////////////////////////////////////////////
 
-		//navigation panels (min 1)
+		//navigation panels (min 1) describe output dimensions (in characters)
 		//this is a thing of output devices, some might have it
-		struct panel {unsigned char x,y,w,h;};
+		//having it at base avoids variable duplication.. so any output should have one
+
+		struct panel {idx_t x,y,w,h;};
+
+		class panelsList {
+			public:
+				const panel* panels;
+				const idx_t sz;
+				panelsList(const panel p[],idx_t sz):panels(p),sz(sz) {}
+				inline const panel operator[](idx_t i) {
+					assert(i<sz);
+					#ifdef USING_PGM
+						panel tmp;
+						memcpy_P(&tmp, &panels[i], sizeof(panel));
+						return tmp;
+					#else
+						return panels[i];
+					#endif
+				}
+		};
 
 		class menuOut:public Print {
 			public:
 				//device size (in characters)
 				idx_t maxX=80;
 				idx_t maxY=24;
+				//idx_t curpanelNr;
+				panelsList& panels;
 				idx_t lastTop=-1;
 				idx_t lastSel=-1;
 				idx_t top=0;//first line to draw
 				bool redraw=false;//redraw all menu every cycle, some display drivers require it
 				bool minimalRedraw=true;//redraw only changed options (avoids flicking on LCDS), not good for Serial
 				menuNode* drawn;
-				menuOut() {}
-				menuOut(idx_t x,idx_t y,bool r=false,bool minimal=true):maxX(x),maxY(y),redraw(r),minimalRedraw(minimal) {}
+				menuOut(idx_t x,idx_t y,panelsList &p,bool r=false,bool minimal=true)
+					:maxX(x),maxY(y),panels(p),redraw(r),minimalRedraw(minimal) {}
 				virtual menuOut& operator<<(prompt const &p);
 				virtual menuOut& fill(
 					int x1, int y1, int x2, int y2,char ch=' ',
 					colorDefs color=bgColor,
 					bool selected=false,
 					status stat=enabledStatus,
-					bool edit=false)
-					{return *this;}
-				virtual void clearLine(idx_t ln,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false)=0;
-				virtual void clear()=0;
-				virtual void setCursor(idx_t x,idx_t y)=0;
-				virtual void printMenu(navNode &nav);
+					bool edit=false
+				) {return *this;}
+				virtual void clearLine(idx_t ln,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false,idx_t panelNr=0)=0;
+				virtual void clear(idx_t panelNr=0)=0;
+				virtual void setCursor(idx_t x,idx_t y,idx_t panelNr=0)=0;
+				virtual void printMenu(navNode &nav,idx_t panelNr=0);
 				virtual void clearChanged(navNode &nav);
 				virtual void setColor(colorDefs c,bool selected=false,status s=enabledStatus,bool edit=false) {}
-				virtual void drawCursor(idx_t ln,bool selected,status stat,bool edit=false) {
+				virtual void drawCursor(idx_t ln,bool selected,status stat,bool edit=false,idx_t panelNr=0) {
 					setColor(cursorColor, selected, stat,edit);
 					write(selected?(stat==disabledStatus?options.disabledCursor:options.selectedCursor):' ');
 				}
-				void alert(char *msg) {
+				/*void alert(char *msg) {
 					clear();
 					*this<<msg<<endl;
-				}
+				}*/
 		};
 
 		class gfxOut:public menuOut {
@@ -342,8 +363,8 @@ www.r-site.net
 				idx_t resY=1;
 				idx_t posX=0;
 				idx_t posY=0;
-				gfxOut(idx_t x,idx_t y,idx_t rx,idx_t ry,idx_t px=0,idx_t py=0,bool r=true)
-					:menuOut(x,y,r),resX(rx),resY(ry),posX(px),posY(py) {}
+				gfxOut(idx_t x,idx_t y,idx_t rx,idx_t ry,panelsList &p,idx_t px=0,idx_t py=0,bool r=true)
+					:menuOut(x,y,p,r),resX(rx),resY(ry),posX(px),posY(py) {}
 				//void printMenu(navNode &nav) override;
 		};
 
@@ -364,7 +385,7 @@ www.r-site.net
 					for(int n=0;n<cnt;n++)
 						outs[n]->clearChanged(nav);
 				}
-				void alert(char *msg) const {for(int n=0;n<cnt;n++) outs[n]->alert(msg);}
+				//void alert(char *msg) const {for(int n=0;n<cnt;n++) outs[n]->alert(msg);}
 				void clearLine(idx_t ln,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus) const {
 					for(int n=0;n<cnt;n++) outs[n]->clearLine(ln,color,selected,stat);
 				}
