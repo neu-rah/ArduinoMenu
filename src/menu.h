@@ -15,7 +15,7 @@ www.r-site.net
 
 #ifndef RSITE_ARDUINO_MENU_SYSTEM
 	#define RSITE_ARDUINO_MENU_SYSTEM
-	#include <Stream.h>
+	//#include <Stream.h>
 	#include "menuBase.h"
 
 	namespace Menu {
@@ -307,7 +307,10 @@ www.r-site.net
 				const idx_t sz;
 				panelsList(const panel p[],idx_t sz):panels(p),sz(sz) {}
 				inline const panel operator[](idx_t i) {
-					assert(i<sz);
+					if (!(i<sz)) {
+						Serial<<endl<<"i:"<<i<<" sz:"<<sz<<endl;
+						assert(i<sz);
+					}
 					#ifdef USING_PGM
 						panel tmp;
 						memcpy_P(&tmp, &panels[i], sizeof(panel));
@@ -320,10 +323,6 @@ www.r-site.net
 
 		class menuOut:public Print {
 			public:
-				//device size (in characters)
-				idx_t maxX=80;
-				idx_t maxY=24;
-				//idx_t curpanelNr;
 				panelsList& panels;
 				idx_t lastTop=-1;
 				idx_t lastSel=-1;
@@ -331,8 +330,10 @@ www.r-site.net
 				bool redraw=false;//redraw all menu every cycle, some display drivers require it
 				bool minimalRedraw=true;//redraw only changed options (avoids flicking on LCDS), not good for Serial
 				menuNode* drawn;
-				menuOut(idx_t x,idx_t y,panelsList &p,bool r=false,bool minimal=true)
-					:maxX(x),maxY(y),panels(p),redraw(r),minimalRedraw(minimal) {}
+				menuOut(panelsList &p,bool r=false,bool minimal=true)
+					:panels(p),redraw(r),minimalRedraw(minimal) {}
+				inline idx_t maxX(idx_t i=0) const {return panels[i].w;}
+				inline idx_t maxY(idx_t i=0) const {return panels[i].h;}
 				virtual menuOut& operator<<(prompt const &p);
 				virtual menuOut& fill(
 					int x1, int y1, int x2, int y2,char ch=' ',
@@ -342,7 +343,8 @@ www.r-site.net
 					bool edit=false
 				) {return *this;}
 				virtual void clearLine(idx_t ln,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false,idx_t panelNr=0)=0;
-				virtual void clear(idx_t panelNr=0)=0;
+				virtual void clear()=0;
+				virtual void clear(idx_t panelNr)=0;
 				virtual void setCursor(idx_t x,idx_t y,idx_t panelNr=0)=0;
 				virtual void printMenu(navNode &nav,idx_t panelNr=0);
 				virtual void clearChanged(navNode &nav);
@@ -361,10 +363,8 @@ www.r-site.net
 			public:
 				idx_t resX=1;
 				idx_t resY=1;
-				idx_t posX=0;
-				idx_t posY=0;
-				gfxOut(idx_t x,idx_t y,idx_t rx,idx_t ry,panelsList &p,idx_t px=0,idx_t py=0,bool r=true)
-					:menuOut(x,y,p,r),resX(rx),resY(ry),posX(px),posY(py) {}
+				gfxOut(idx_t rx,idx_t ry,panelsList &p,bool r=true)
+					:menuOut(p,r),resX(rx),resY(ry) {}
 				//void printMenu(navNode &nav) override;
 		};
 
@@ -441,7 +441,7 @@ www.r-site.net
 				inline idx_t sz() const {return memIdx(shadow().sz);}
 				inline prompt* const * data() const {return shadow().data;}
 				inline prompt& selected() const {return *(prompt*)memPtr(data()[sel]);}
-				inline bool wrap() const {return memWord(shadow().style)&wrapStyle;}
+				inline bool wrap() const {return memWord(&shadow().style)&wrapStyle;}
 				/*inline result sysHandler(eventMask event, prompt &item, Stream &in, menuOut &out) const {
 					return target->sysHandler(event,*this,item,in,out);
 				}*/

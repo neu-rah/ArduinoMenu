@@ -31,11 +31,13 @@
         void setCursor(idx_t x,idx_t y,idx_t panelNr=0) override {
           *this<<ANSI::xy(x+1+panels[panelNr].x,y+1+panels[panelNr].y);
         }
-        void clear(idx_t panelNr=0) override {
-          const panel &p=panels[panelNr];
+        void clear() override {
+          *this<<ANSI::eraseScreen()<<ANSI::xy(1,1);
+        }
+        void clear(idx_t panelNr) override {
+          const panel p=panels[panelNr];
           fill(p.x,p.y,p.x+p.w,p.y+p.h);
-          //Serial<<"cleared "<<p.x<<","<<p.y<<","<<p.x+p.w<<","<<p.y+p.h<<endl;
-          //*this<<ANSI::eraseScreen()<<ANSI::xy(1,1);
+          setCursor(0,0);
         }
         void clearLine(
           idx_t ln,
@@ -45,7 +47,7 @@
           bool edit=false,
           idx_t panelNr=0
         ) override {
-          const panel &p=panels[panelNr];
+          const panel p=panels[panelNr];
           *this<<ANSI::setBackgroundColor(getColor(color,selected,stat,edit));
           *this<<ANSI::fill(p.x,ln+p.y+1,p.x+p.w,p.y+ln+1);
         }

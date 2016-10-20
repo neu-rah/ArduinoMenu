@@ -2,6 +2,10 @@
 
 using namespace Menu;
 
+#ifdef DEBUG
+  bool debugFlag=false;
+#endif
+
 template<void (*A)(eventMask event, navNode& nav, prompt &item, Stream &in)> result Menu::callCaster(eventMask event, navNode& nav, prompt &item, Stream &in) {A(event,nav,item,in);return proceed;}
 template<void (*A)(eventMask event, navNode& nav, prompt &item)> result Menu::callCaster(eventMask event, navNode& nav, prompt &item) {A(event,nav,item);return proceed;}
 template<void (*A)(eventMask event, navNode& nav)> result Menu::callCaster(eventMask event, navNode& nav) {A(event,nav);return proceed;}
@@ -96,3 +100,7 @@ Print& Menu::operator<<(Print& o,idleEvent e) {
   }
   return o;
 }
+
+#ifndef Arduino_h
+Print Serial;
+#endif

@@ -22,22 +22,26 @@ menuOut& menuOut::operator<<(const prompt& p) {
 
 void menuOut::clearChanged(navNode &nav) {
   nav.target->dirty=false;
-  for(idx_t i=0;i<maxY;i++) {
+  for(idx_t i=0;i<maxY();i++) {
     if (i+top>=nav.sz()) break;
     nav[i+top].dirty=false;
   }
 }
 
-void menuOut::printMenu(navNode &nav,idx_t panelNr=0) {
+void menuOut::printMenu(navNode &nav,idx_t panelNr) {
   idx_t ot=top;
-  idx_t st=(nav.root->showTitle&&maxY>1)?1:0;//do not use titles on single line devices!
-  while(nav.sel+st>=(top+maxY)) top++;
-  while(nav.sel<top||(top&&nav.sel+top<maxY-st)) top--;
+  idx_t st=(nav.root->showTitle&&maxY()>1)?1:0;//do not use titles on single line devices!
+  while(nav.sel+st>=(top+maxY())) top++;
+  while(nav.sel<top||(top&&nav.sel+top<maxY()-st)) top--;
   bool all=redraw;
+  setCursor(0,20);Serial<<"all:"<<all<<" minimalRedraw:"<<minimalRedraw<<endl;
   if (!(all||minimalRedraw))
-    for(idx_t i=0;i<maxY-st;i++)
-      if (all) break; else all|=nav[i+top].changed(nav,*this);
+    for(idx_t i=0;i<maxY()-st;i++) {
+      if (all||i+top>=nav.sz()) break;
+      else all|=nav[i+top].changed(nav,*this);
+    }
   all|=(top!=ot)||nav.target->dirty||drawn!=nav.target;
+  setCursor(0,21);Serial<<"all:"<<all<<" minimalRedraw:"<<minimalRedraw<<endl;
   if (all) {
     clear();
     if (st) {
@@ -48,15 +52,17 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr=0) {
       *this<<"["<<*(prompt*)nav.target<<"]";
     }
   }
-  for(idx_t i=0;i<maxY-st;i++) {
+  for(idx_t i=0;i<maxY()-st;i++) {
     int ist=i+st;
     if (i+top>=nav.sz()) break;
     prompt& p=nav[i+top];
     if (all||p.changed(nav,*this)) {
       bool selected=nav.sel==i+top;
       bool ed=nav.target==&p;
-      clearLine(ist,bgColor,selected,p.enabled,ed);
+      clearLine(ist,bgColor,selected,p.enabled);
       setCursor(0,ist);
+      setColor(fgColor,selected,p.enabled,ed);
+      Serial.flush();
       drawCursor(ist,selected,p.enabled,ed);
       setColor(fgColor,selected,p.enabled,ed);
       p.printTo(i+top,nav,*this);
@@ -70,7 +76,7 @@ navRoot* navNode::root=NULL;
 bool menuNode::changed(const navNode &nav,const menuOut& out) {
   if (nav.target!=this) return dirty;
   if (dirty) return true;
-  for(int i=0;i<out.maxY;i++) {
+  for(int i=0;i<out.maxY();i++) {
     if (i+out.top>=nav.sz()) break;
     if (operator[](i).changed(nav,out)) return true;
   }

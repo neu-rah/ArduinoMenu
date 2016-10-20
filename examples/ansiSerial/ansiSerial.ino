@@ -42,7 +42,7 @@ const colorDef<uint8_t> colors[] MEMMODE={
 };
 
 //define menu outputs ------------------------------------------------
-const panel panels[] MEMMODE={{10,10,30,20}};
+const panel panels[] MEMMODE={{0,0,20,18}};
 panelsList pList(panels,1);
 ansiSerialOut ansi(Serial,colors,pList,20,8);//the output device, ansi-terminal Cols x Rows
 menuOut* outputs[]={&ansi};
@@ -206,9 +206,9 @@ void showOutColors() {
 //when menu is suspended -----------------------------------------------
 result idle(menuOut& o,idleEvent e) {
   switch(e) {
-    case idleStart:o<<"suspending menu!"<<endl;break;
+    //case idleStart:o<<"suspending menu!"<<endl;break;
     case idling:o<<"suspended..."<<endl;break;
-    case idleEnd:o<<"resuming menu."<<endl;break;
+    //case idleEnd:o<<"resuming menu."<<endl;break;
   }
   return proceed;
 }
@@ -217,12 +217,17 @@ void setup() {
   pinMode(LEDPIN,OUTPUT);
   Serial.begin(115200);
   while(!Serial);
-  while(!Serial.available()) {Serial<<".";delay(300);}
-  while(Serial.available()) Serial.read();
+  /*while(!Serial.available()) {Serial<<".";delay(300);}
+  while(Serial.available()) Serial.read();*/
   Serial<<"menu 3.0 test"<<endl;Serial.flush();
   options.idleTask=idle;//point a function to be used when menu is suspended
   mainMenu[1].enabled=disabledStatus;
-  //ansi.clear();
+  delay(1000);
+  //ansi.printMenu(nav.node());
+  //ansi.printMenu(nav.node());
+  /*nav.doOutput();
+  debugFlag=true;
+  nav.doOutput();*/
 }
 
 void loop() {

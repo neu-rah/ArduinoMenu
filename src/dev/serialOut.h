@@ -8,10 +8,9 @@
         Print& device;
         idx_t lastLine=-1;
         inline serialOut(Print& o,panelsList &p,idx_t mx=20,idx_t my=10)
-          :menuOut(mx,my,p,false,false),device(o) {}
-        void clear(idx_t panelNr=0) override {
-          device<<endl;//device.println("");
-        }
+          :menuOut(p,false,false),device(o) {}
+          void clear() override {device<<endl;}
+          void clear(idx_t panelNr) override {device<<endl;}
         void clearLine(
           idx_t ln,
           colorDefs color,
