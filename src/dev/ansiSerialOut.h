@@ -11,10 +11,8 @@
         inline ansiSerialOut(
           Print& o,
           const colorDef<uint8_t> (&c)[nColors],
-          panelsList& p,
-          idx_t x,
-          idx_t y
-        ) :serialOut(o,p,x,y),colors(c) {}
+          panelsList& p
+        ) :serialOut(o,p,false,true),colors(c) {}
         inline uint8_t getColor(colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) const {
           return memByte(&(stat==enabledStatus?colors[color].enabled[selected+edit]:colors[color].disabled[selected]));
         }
@@ -32,7 +30,7 @@
           *this<<ANSI::xy(x+1+panels[panelNr].x,y+1+panels[panelNr].y);
         }
         void clear() override {
-          *this<<ANSI::eraseScreen()<<ANSI::xy(1,1);
+          *this<<ANSI::xy(maxX()+1,maxY())<<ANSI::eraseScreen()<<ANSI::xy(1,1);
         }
         void clear(idx_t panelNr) override {
           const panel p=panels[panelNr];

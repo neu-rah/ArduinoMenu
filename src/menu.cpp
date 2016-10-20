@@ -34,14 +34,12 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
   while(nav.sel+st>=(top+maxY())) top++;
   while(nav.sel<top||(top&&nav.sel+top<maxY()-st)) top--;
   bool all=redraw;
-  setCursor(0,20);Serial<<"all:"<<all<<" minimalRedraw:"<<minimalRedraw<<endl;
   if (!(all||minimalRedraw))
     for(idx_t i=0;i<maxY()-st;i++) {
       if (all||i+top>=nav.sz()) break;
       else all|=nav[i+top].changed(nav,*this);
     }
   all|=(top!=ot)||nav.target->dirty||drawn!=nav.target;
-  setCursor(0,21);Serial<<"all:"<<all<<" minimalRedraw:"<<minimalRedraw<<endl;
   if (all) {
     clear();
     if (st) {

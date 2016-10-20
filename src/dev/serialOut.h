@@ -7,8 +7,8 @@
       public:
         Print& device;
         idx_t lastLine=-1;
-        inline serialOut(Print& o,panelsList &p,idx_t mx=20,idx_t my=10)
-          :menuOut(p,false,false),device(o) {}
+        inline serialOut(Print& o,panelsList &p,bool r=false,bool m=false)
+          :menuOut(p,r,m),device(o) {}
           void clear() override {device<<endl;}
           void clear(idx_t panelNr) override {device<<endl;}
         void clearLine(

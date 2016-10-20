@@ -101,6 +101,18 @@ Print& Menu::operator<<(Print& o,idleEvent e) {
   return o;
 }
 
+Print& Menu::operator<<(Print& o,systemStyles s) {
+  if (s==_noStyle) o<<"_noStyle";
+  else {
+    bool first=true;
+    if (s&_menuData) {o<<"_menuData";first=false;}
+    if (s&_canNav) {o<<(first?"":"|")<<"_canNav";first=false;}
+    if (s&_parentDraw) {o<<(first?"":"|")<<"_parentDraw";first=false;}
+    if (s&_isVariant) {o<<(first?"":"|")<<"_isVariant";first=false;}
+  }
+  return o;
+}
+
 #ifndef Arduino_h
 Print Serial;
 #endif

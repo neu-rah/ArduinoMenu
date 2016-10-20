@@ -42,9 +42,9 @@ const colorDef<uint8_t> colors[] MEMMODE={
 };
 
 //define menu outputs ------------------------------------------------
-const panel panels[] MEMMODE={{0,0,20,18}};
+const panel panels[] MEMMODE={{0,0,20,10}};
 panelsList pList(panels,1);
-ansiSerialOut ansi(Serial,colors,pList,20,8);//the output device, ansi-terminal Cols x Rows
+ansiSerialOut ansi(Serial,colors,pList);//the output device, ansi-terminal Cols x Rows
 menuOut* outputs[]={&ansi};
 outputsList out(outputs,1);
 
@@ -152,11 +152,18 @@ public:
   }
 };
 
+MENU(subSubMenu,"Sub-Sub-Menu",doNothing,noEvent,noStyle
+  ,OP("SSub1",doNothing,noEvent)
+  ,OP("SSub2",doNothing,noEvent)
+  ,EXIT("<Back")
+);//just to test depth limit
+
 MENU(subMenu,"Sub-Menu",showEvent,anyEvent,noStyle
   ,OP("Sub1",showEvent,anyEvent)
   ,OP("Sub2",showEvent,anyEvent)
   ,OP("Sub3",showEvent,anyEvent)
-  ,altOP(altPrompt,"",showEvent,anyEvent)
+  ,altOP(altPrompt,"custom",showEvent,anyEvent)
+  ,SUBMENU(subSubMenu)
   ,EXIT("<Back")
 );
 
@@ -195,7 +202,7 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
 
 ////////////////////////////////////////////////////////////////////////
 // menu navigation root object
-NAVROOT(nav,mainMenu,2,Serial,out);
+NAVROOT(nav,mainMenu,1,Serial,out);
 
 //aux functions that uses nav
 void showOutColors() {
@@ -222,12 +229,7 @@ void setup() {
   Serial<<"menu 3.0 test"<<endl;Serial.flush();
   options.idleTask=idle;//point a function to be used when menu is suspended
   mainMenu[1].enabled=disabledStatus;
-  delay(1000);
-  //ansi.printMenu(nav.node());
-  //ansi.printMenu(nav.node());
-  /*nav.doOutput();
-  debugFlag=true;
-  nav.doOutput();*/
+  delay(2000);
 }
 
 void loop() {
