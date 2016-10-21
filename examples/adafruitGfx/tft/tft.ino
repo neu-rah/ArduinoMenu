@@ -159,7 +159,9 @@ Stream* inputsList[]={&encStream,&encButton,&Serial};
 chainStream<3> in(inputsList);//3 is the number of inputs
 
 //font size is 6x9
-const panel panels[] MEMMODE={{0,0,160/6,128/9}};
+//const panel panels[] MEMMODE={{0,0,160/6,128/9}};
+//testing smaller panels and positioning
+const panel panels[] MEMMODE={{2,2,15,10}};
 panelsList pList(panels,1);
 
 serialOut outSerial(Serial,pList);//the output device (just the serial port)
