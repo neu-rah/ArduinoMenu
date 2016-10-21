@@ -31,8 +31,16 @@ void menuOut::clearChanged(navNode &nav) {
 void menuOut::printMenu(navNode &nav,idx_t panelNr) {
   idx_t ot=top;
   idx_t st=(nav.root->showTitle&&maxY()>1)?1:0;//do not use titles on single line devices!
-  while(nav.sel+st>=(top+maxY())) top++;
-  while(nav.sel<top||(top&&nav.sel+top<maxY()-st)) top--;
+  while(nav.sel+st>=(top+maxY())) {
+    top++;
+    Serial<<"inrease top to:"<<top<<endl;
+  }
+  while(nav.sel<top||(top&&(nav.sel+top)<(maxY()-st))) {
+    top--;
+    Serial<<"decrease top to:"<<top<<" nav.sel:"<<nav.sel<<" maxY:"<<maxY()-st<<endl;
+    Serial<<"nav.sel<top:"<<(nav.sel<top)<<endl;
+    Serial<<"(nav.sel+top)>(maxY()-st)):"<<(nav.sel+top)<<">"<<(maxY()-st)<<"="<<((nav.sel+top)>(maxY()-st))<<endl;
+  }
   bool all=redraw;
   if (!(all||minimalRedraw))
     for(idx_t i=0;i<maxY()-st;i++) {
@@ -50,22 +58,26 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
       *this<<"["<<*(prompt*)nav.target<<"]";
     }
   }
+  bool any=all;
   for(idx_t i=0;i<maxY()-st;i++) {
     int ist=i+st;
     if (i+top>=nav.sz()) break;
     prompt& p=nav[i+top];
     if (all||p.changed(nav,*this)) {
+      any=true;
       bool selected=nav.sel==i+top;
       bool ed=nav.target==&p;
       clearLine(ist,bgColor,selected,p.enabled);
       setCursor(0,ist);
       setColor(fgColor,selected,p.enabled,ed);
-      Serial.flush();
+      char a=top+i+'1';
+      *this<<"["<<(a<='9'?a:'-')<<"]";
       drawCursor(ist,selected,p.enabled,ed);
       setColor(fgColor,selected,p.enabled,ed);
       p.printTo(i+top,nav,*this);
     }
   }
+  if (any) Serial<<"drawn -------------"<<endl;
   drawn=nav.target;
 }
 
@@ -152,7 +164,8 @@ result navNode::sysEvent(eventMask e,idx_t i) {
 }
 
 void navRoot::doInput() {
-  if ((!sleepTask)&&in.available())
+  //TODO: either remove the read or the in
+  while ((!sleepTask)&&in.available())
     navFocus->navigate(node(),in.read(),in);
 }
 
@@ -166,13 +179,6 @@ void navRoot::doOutput() {
 void navRoot::poll() {
   doInput();
   doOutput();
-  /*if (sleepTask) {
-    if (options.getCmdChar(enterCmd)==in.read()) idleOff();
-    else out.idle(sleepTask,idling);
-  } else {
-    if (in.available()) navFocus->navigate(node(),in.read(),in);
-    if (!(sleepTask)) printMenu();
-  }*/
 }
 
 void navRoot::enter() {
