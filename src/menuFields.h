@@ -18,7 +18,7 @@ warranty, express or implied, as to its usefulness for any purpose.
 Thread Safe: No
 Extensible: Yes
 
-v2.0 - 	Calling action on every elements
+v2.0 -	 Calling action on every elements
 
 ***/
 
@@ -33,14 +33,14 @@ v2.0 - 	Calling action on every elements
 	//	not that we dont need a function to be called on variable change,
 	//	but this function MUST be defined on menu levell, not on setting level
 	// rah Nov.2014
-  template<typename T>
-  class menuValue:public prompt {
-	  public:
-	  T value;
-    inline menuValue(const char * text,T value):prompt(text),value(value) {}
-    inline menuValue(const char * text,T value,promptAction action)
-    	:prompt(text,action),value(value) {}
-  };
+	template<typename T>
+	class menuValue:public prompt {
+		public:
+		T value;
+		inline menuValue(const char * text,T value):prompt(text),value(value) {}
+		inline menuValue(const char * text,T value,promptAction action)
+			:prompt(text,action),value(value) {}
+	};
 
 	//Prompt linked to a variable
 	//TODO: implement Escape on a field cancels the editting (undo) restoring the value
@@ -72,8 +72,8 @@ v2.0 - 	Calling action on every elements
 			print_P(p,text);
 			p.print(activeNode==this?(tunning?'>':':'):' ');
 		}
-    virtual void printValue(menuOut& p) {p.print(value);}
-    virtual void printUnit(menuOut& p) {print_P(p,units);}
+		virtual void printValue(menuOut& p) {p.print(value);}
+		virtual void printUnit(menuOut& p) {print_P(p,units);}
 		virtual void printTo(menuOut& p) {
 			printName(p);
 			p.print(activeNode==this?(tunning?'>':':'):' ');
@@ -81,46 +81,46 @@ v2.0 - 	Calling action on every elements
 			printUnit(p);
 		}
 		void clamp() {
-      if (value<low) value=low;
-      else if (value>high) value=high;
+			if (value<low) value=low;
+			else if (value>high) value=high;
 		}
 		//lazy drawing, we have no drawing position here... so we will ask the menu to redraw
 		virtual promptFeedback activate(menuOut& p,Stream&c,bool canExit=false) {
 			if (activeNode!=this) {
 				if (action(*this,p,c)) return true;;
-			  ox=activeNode->ox;
-			  oy=activeNode->oy;
+				ox=activeNode->ox;
+				oy=activeNode->oy;
 				previousMenu=(menu*)activeNode;
 				activeNode=this;
-      	p.lastSel=-1;
-      	previousMenu->printMenu(p,previousMenu->canExit);
+				p.lastSel=-1;
+				previousMenu->printMenu(p,previousMenu->canExit);
 			}
 			previousMenu->printMenu(p,previousMenu->canExit);
 			if (!c.available()) return 0;
 			if (strchr(numericChars,c.peek())) {//a numeric value was entered
-      	value=c.parseFloat();
-    		tunning=false;
-    		activeNode=previousMenu;
-    		c.flush();
-    		ch=menu::enterCode;
-      } else {
-			  ch=c.read();
-		    tmp=value;
-		    if (ch==menu::enterCode) {
-		    	if (tunning||!tune) {//then exit edition
-		    		tunning=false;
-		    		activeNode=previousMenu;
-		    		c.flush();
-		    	} else tunning=true;
-		    } else if (ch=='+') value+=tunning?tune:step;
-		    else if (ch=='-') value-=tunning?tune:step;
-		  }
-      clamp();
-      if (value!=tmp||ch==menu::enterCode) {
-      	func();//call update functions
-      	p.lastSel=-1;
-      	previousMenu->printMenu(p,previousMenu->canExit);
-      }
+				value=c.parseFloat();
+				tunning=false;
+				activeNode=previousMenu;
+				c.flush();
+				ch=menu::enterCode;
+			} else {
+				ch=c.read();
+				tmp=value;
+				if (ch==menu::enterCode) {
+					if (tunning||!tune) {//then exit edition
+						tunning=false;
+						activeNode=previousMenu;
+						c.flush();
+					} else tunning=true;
+				} else if (ch=='+') value+=tunning?tune:step;
+				else if (ch=='-') value-=tunning?tune:step;
+			}
+			clamp();
+			if (value!=tmp||ch==menu::enterCode) {
+				func();//call update functions
+				p.lastSel=-1;
+				previousMenu->printMenu(p,previousMenu->canExit);
+			}
 			return 0;
 		}
 	};
@@ -139,7 +139,7 @@ v2.0 - 	Calling action on every elements
 		public:
 		T& target;
 		menuVariant(T& target,const char *text,unsigned int sz,menuValue<T>* const data[]):
-	    menu(text,sz,(prompt**)data),target(target) {sync();}
+			menu(text,sz,(prompt**)data),target(target) {sync();}
 		virtual bool needRedraw(menuOut&p,bool selected) {
 			bool nr=((menuValue<T>*)pgmPtrNear(data[sel]))->value!=target;//||p.lastSel!=sel;
 			//T v=((menuValue<T>*)pgmPtrNear(data[sel]))->value;
@@ -148,10 +148,10 @@ v2.0 - 	Calling action on every elements
 		}
 		void sync() {//if possible make selection match the target value
 			sel=0;
-	  	for(int n=0;n<sz;n++)
-	  		if (((menuValue<T>*)pgmPtrNear(data[n]))->value==target)
-	  			sel=n;
-    }
+			for(int n=0;n<sz;n++)
+				if (((menuValue<T>*)pgmPtrNear(data[n]))->value==target)
+					sel=n;
+		}
 		virtual void printTo(menuOut& p) {
 			menuVariant<T>::sync();
 			print_P(p,text);
@@ -159,7 +159,7 @@ v2.0 - 	Calling action on every elements
 			((prompt*)pgmPtrNear(data[sel]))->printTo(p);
 			//print_P(p,((menuValue<T>*)pgmPtrNear(data[sel]))->text);
 		}
-  };
+	};
 
 	template<typename T>
 	class menuSelect: public menuVariant<T> {
@@ -175,10 +175,10 @@ v2.0 - 	Calling action on every elements
 				//T v=((menuValue<T>*)pgmPtrNear(menu::data[menu::sel]))->value;
 				//if (nr) Serial<<"Variant need redraw:"<<*this<<endl
 				/*Serial
-					<<"       value:"<<v<<endl
-					<<"      target:"<<menuVariant<T>::target
-					<<"         sel:"<<menu::sel
-					<<"     lastSel:"<<p.lastSel
+					<<"			 value:"<<v<<endl
+					<<"			target:"<<menuVariant<T>::target
+					<<"				 sel:"<<menu::sel
+					<<"		 lastSel:"<<p.lastSel
 					<<" lastDrawnOp:"<<lastDrawnOp
 					<<endl;;*/
 				//p.lastSel=menu::sel;
@@ -197,10 +197,10 @@ v2.0 - 	Calling action on every elements
 			if (menu::activeNode!=this) {
 				//Serial<<"first select"<<endl;
 				if (menuVariant<T>::action(*this,p,c)) return true;
-			  this->setPosition(menuNode::activeNode->ox,menuNode::activeNode->oy);
+				this->setPosition(menuNode::activeNode->ox,menuNode::activeNode->oy);
 				this->menu::previousMenu=(menu*)menu::activeNode;
 				menu::activeNode=this;
-			 	this->canExit=false;
+				 this->canExit=false;
 				if (p.top>menu::sel) p.top=menu::sel;
 				else if (menu::sel+1>p.maxY) p.top=menu::sel-p.maxY+1;
 				p.lastSel=-1;//redraw only affected option
@@ -217,7 +217,7 @@ v2.0 - 	Calling action on every elements
 					p.lastSel=-1;//redraw only affected option
 					//and exit
 					this->menu::activeNode=this->menu::previousMenu;
-				 	c.flush();//reset the encoder
+					 c.flush();//reset the encoder
 				}
 			}
 			//Serial<<"sel:"<<menu::sel<<" op:"<<op<<endl;
@@ -229,16 +229,16 @@ v2.0 - 	Calling action on every elements
 	class menuChoice: public menuVariant<T> {
 		public:
 		menuChoice(const char *text,unsigned int sz,menuValue<T>* const data[],T& target):
-	    menuVariant<T>(target,text,sz,data) {menuVariant<T>::sync();}
+			menuVariant<T>(target,text,sz,data) {menuVariant<T>::sync();}
 
 		//ignore canExit (this exists by select), however we could use a cancel option instead of Exit
 		promptFeedback activate(menuOut& p,Stream& c,bool) {
 			if (menu::activeNode!=this) {
 				if (menuVariant<T>::action(*this,p,c)) return true;
-			  this->setPosition(menuNode::activeNode->ox,menuNode::activeNode->oy);
+				this->setPosition(menuNode::activeNode->ox,menuNode::activeNode->oy);
 				this->menu::previousMenu=(menu*)menu::activeNode;
 				menu::activeNode=this;
-			 	this->canExit=false;
+				 this->canExit=false;
 				if (p.top>menu::sel) p.top=menu::sel;
 				else if (menu::sel+1>p.maxY) p.top=menu::sel-p.maxY+1;
 			}
@@ -253,7 +253,7 @@ v2.0 - 	Calling action on every elements
 					cp->activate(p,c,true);
 					//and exit
 					this->menu::activeNode=this->menu::previousMenu;
-				 	c.flush();//reset the encoder
+					 c.flush();//reset the encoder
 				}
 			}
 			return false;
@@ -264,13 +264,13 @@ v2.0 - 	Calling action on every elements
 		public:
 
 		menuToggle(const char *text,unsigned int sz,menuValue<T>* const data[],T& target):
-	    menuVariant<T>(target,text,sz,data) {menuVariant<T>::sync();}
+			menuVariant<T>(target,text,sz,data) {menuVariant<T>::sync();}
 
 		promptFeedback activate(menuOut& p,Stream& c,bool canExit) {
 			if (menuVariant<T>::action(*this,p,c)) return true;
 			this->menu::sel++;
 			if (this->menu::sel>=this->menu::sz) this->menu::sel=0;
-		 	p.lastSel=-1;//redraw only affected option
+			 p.lastSel=-1;//redraw only affected option
 			menuValue<T>* cp=(menuValue<T>*)pgmPtrNear(this->menu::data[menu::sel]);
 			this->menuVariant<T>::target=cp->value;
 			cp->activate(p,c,true);
