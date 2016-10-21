@@ -35,8 +35,9 @@ namespace Menu {
 	    public:
 				Adafruit_GFX& gfx;
 				const colorDef<uint16_t> (&colors)[nColors];
-		    menuGFX(Adafruit_GFX& gfx,const colorDef<uint16_t> (&c)[nColors],int resX=6,int resY=9)
-			  	:gfxOut(gfx.width()/resX,gfx.height()/resY,resX,resY,false),colors(c),gfx(gfx) {}
+		    menuGFX(Adafruit_GFX& gfx,const colorDef<uint16_t> (&c)[nColors],panelsList &p,idx_t resX=6,idx_t resY=9)
+					:gfxOut(resX,resY,p,false),colors(c),gfx(gfx) {}
+					//:gfxOut(gfx.width()/resX,gfx.height()/resY,resX,resY,false),colors(c),gfx(gfx) {}
 
 				size_t write(uint8_t ch) override {return gfx.write(ch);}
 
@@ -48,20 +49,23 @@ namespace Menu {
 					gfx.setTextColor(getColor(c,selected,s,e));
 				}
 
-				void clearLine(idx_t ln,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) override {
-					gfx.fillRect(posX,posY+ln*resY,maxX*resX,resY,getColor(color,selected,stat,edit));
+				void clearLine(idx_t ln,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false,idx_t panelNr=0) override {
+					const panel p=panels[panelNr];
+					gfx.fillRect(p.x*resX,(p.y+ln)*resY,maxX()*resX,resY,getColor(color,selected,stat,edit));
 		    	//setCursor(0,ln);
 		    }
 		    void clear() override {
 					gfx.fillScreen(getColor(bgColor,false,enabledStatus,false));
 		    	setCursor(0,0);
 					setColor(fgColor);
-		    }
-		    void setCursor(idx_t x,idx_t y) override {gfx.setCursor(x*resX,y*resY);}
+				}
+				virtual void clear(idx_t panelNr) override {clear();}
+		    void setCursor(idx_t x,idx_t y,idx_t panelNr=0) override {gfx.setCursor(x*resX,y*resY);}
 
-				void drawCursor(idx_t ln,bool selected,status stat,bool edit=false) override {
+				void drawCursor(idx_t ln,bool selected,status stat,bool edit=false,idx_t panelNr=0) override {
+					const panel p=panels[panelNr];
 					gfxOut::drawCursor(ln,selected,stat);
-					gfx.drawRect(posX,posY+ln*resY,maxX*resX,resY,getColor(cursorColor,selected,enabledStatus,false));
+					gfx.drawRect(p.x*resX,(p.y+ln)*resY,maxX()*resX,resY,getColor(cursorColor,selected,enabledStatus,false));
 				}
 
 	  };

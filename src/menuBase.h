@@ -23,27 +23,8 @@ www.r-site.net
   #endif
 
   #include <Arduino.h>
-  #ifdef Arduino_h
-    #include <Streaming.h>//https://github.com/scottdky/Streaming
-    #include <Assert4a.h> //https://github.com/nettigo/Assert4a
-  #else
-    //NOT READY YET... JUST MESSING WITH THE LIB FOR GENERIC C++
-    // thi sis far from done!
-    #include <cstdint>
-    #include <iostream>
-    #include <cassert>
-
-    using namespace std;
-
-    #define Stream istream
-    class Print:public ostream {
-      public:
-        virtual size_t write(uint8_t ch) {ostream::operator<<(ch);return 1;}
-    };
-
-    extern Print Serial;
-
-  #endif
+  #include <Streaming.h>//https://github.com/scottdky/Streaming
+  #include <Assert4a.h> //https://github.com/nettigo/Assert4a
   #include "macros.h"
 
   namespace Menu {

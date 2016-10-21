@@ -1,3 +1,5 @@
+#include <Arduino.h>
+
 /********************
 Sept. 2014 ~ Oct 2016 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
 creative commons license 3.0: Attribution-ShareAlike CC BY-SA
@@ -13,10 +15,12 @@ input: Serial
 www.r-site.net
 ***/
 
+#include <SPI.h>
 #include <menu.h>
-#include <SPI.h>//this display uses hardware SPI
+#include <dev/encoderIn.h>//for PCINT encoder
+#include <dev/keyIn.h>//for encoder button
+#include <dev/chainStream.h>//for mixing input stream (encoder+button)
 #include <Adafruit_GFX.h>
-//#include <Adafruit_ST7735.h> // Hardware-specific library
 #include <Adafruit_PCD8544.h>
 #include <dev/adafruitGfxOut.h>
 #include <dev/serialOut.h>
@@ -24,13 +28,19 @@ www.r-site.net
 
 using namespace Menu;
 
-#define LEDPIN A4
-
-#define GFX_DC 9
-#define GFX_CS 8
+//PCD8544 aka nokia5110
+#define GFX_DC  9
+#define GFX_CS  8
 #define GFX_RST 7
 
-Adafruit_PCD8544 nokia(GFX_DC,GFX_CS,GFX_RST);
+Adafruit_PCD8544 gfx(GFX_DC,GFX_CS,GFX_RST);
+
+#define LEDPIN A4
+
+// rotary encoder pins
+#define encA    2
+#define encB    3
+#define encBtn  4
 
 result zZz() {Serial<<"zZz"<<endl;return proceed;}
 
@@ -137,11 +147,25 @@ const colorDef<uint16_t> colors[] MEMMODE={
   {{WHITE,BLACK},{BLACK,WHITE,WHITE}},//titleColor
 };
 
-serialOut outSerial(Serial);//the output device (just the serial port)
-menuGFX outGFX(nokia,colors,6,10);//output device for LCD
+encoderIn encoder(encA,encB);//simple quad encoder driver
+encoderInStream encStream(encoder,4);// simple quad encoder fake Stream
+
+//a keyboard with only one key as the encoder button
+keyMap encBtn_map[]={{-encBtn,options.getCmdChar(enterCmd)}};//negative pin numbers use internal pull-up, this is on when low
+keyIn<1> encButton(encBtn_map);//1 is the number of keys
+
+//input from the encoder + encoder button + serial
+Stream* inputsList[]={&encStream,&encButton,&Serial};
+chainStream<3> in(inputsList);//3 is the number of inputs
+
+const panel panels[] MEMMODE={{0,0,20,10}};
+panelsList pList(panels,1);
+
+serialOut outSerial(Serial,pList);//the output device (just the serial port)
+menuGFX outGFX(gfx,colors,pList);//output device for LCD
 menuOut* outputs[]={&outGFX,&outSerial};
 outputsList out(outputs,2);
-NAVROOT(nav,mainMenu,2,Serial,out);
+NAVROOT(nav,mainMenu,2,in,out);
 
 //when menu is suspended
 result idle(menuOut& o,idleEvent e) {
@@ -158,20 +182,23 @@ void setup() {
   options.idleTask=idle;//point a function to be used when menu is suspended
   mainMenu[1].enabled=disabledStatus;
 
+  pinMode(encBtn, INPUT_PULLUP);
+  encoder.begin();
+
   SPI.begin();
-  nokia.begin();
-  nokia.clearDisplay();
-  nokia<<"Menu 3.x test on GFX"<<endl;;
-  nokia.setContrast(50);
-  nokia.display(); // show splashscreen
+  gfx.begin();
+  gfx.clearDisplay();
+  gfx<<"Menu 3.x test on GFX"<<endl;;
+  gfx.setContrast(50);
+  gfx.display(); // show splashscreen
   delay(2000);
-  nokia.clearDisplay();
-  nokia.display(); // show splashscreen
+  gfx.clearDisplay();
+  gfx.display(); // show splashscreen
 }
 
 void loop() {
   nav.poll();
-  nokia.display(); // show splashscreen
+  gfx.display(); // show splashscreen
   digitalWrite(LEDPIN, ledCtrl);
   delay(100);//simulate a delay when other tasks are done
 }
