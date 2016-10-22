@@ -330,6 +330,7 @@ www.r-site.net
 				idx_t top=0;//first line to draw
 				bool redraw=false;//redraw all menu every cycle, some display drivers require it
 				bool minimalRedraw=true;//redraw only changed options (avoids flicking on LCDS), not good for Serial
+				bool drawNumIndex=false;
 				menuNode* drawn;
 				menuOut(panelsList &p,bool r=false,bool minimal=true)
 					:panels(p),redraw(r),minimalRedraw(minimal) {}

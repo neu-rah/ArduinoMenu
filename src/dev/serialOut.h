@@ -8,7 +8,9 @@
         Print& device;
         idx_t lastLine=-1;
         inline serialOut(Print& o,panelsList &p,bool r=false,bool m=false)
-          :menuOut(p,r,m),device(o) {}
+          :menuOut(p,r,m),device(o) {
+            drawNumIndex=true;
+          }
         void clear() override {device<<endl;}
         void clear(idx_t panelNr) override {device<<endl;}
         void clearLine(

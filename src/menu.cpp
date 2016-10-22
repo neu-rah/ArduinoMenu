@@ -62,8 +62,10 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
       clearLine(ist,bgColor,selected,p.enabled);
       setCursor(0,ist);
       setColor(fgColor,selected,p.enabled,ed);
-      char a=top+i+'1';
-      *this<<"["<<(a<='9'?a:'-')<<"]";
+      if (drawNumIndex) {
+        char a=top+i+'1';
+        *this<<"["<<(a<='9'?a:'-')<<"]";
+      }
       drawCursor(ist,selected,p.enabled,ed);
       setColor(fgColor,selected,p.enabled,ed);
       p.printTo(i+top,nav,*this);
