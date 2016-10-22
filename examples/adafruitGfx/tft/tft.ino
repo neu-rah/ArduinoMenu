@@ -158,17 +158,18 @@ keyIn<1> encButton(encBtn_map);//1 is the number of keys
 Stream* inputsList[]={&encStream,&encButton,&Serial};
 chainStream<3> in(inputsList);//3 is the number of inputs
 
+#define textScale 1
 //font size is 6x9
-//const panel panels[] MEMMODE={{0,0,160/6,128/9}};
+//const panel panels[] MEMMODE={{0,0,160/6/textScale,128/9/textScale}};
 //testing smaller panels and positioning
-const panel panels[] MEMMODE={{2,2,15,10}};
+const panel panels[] MEMMODE={{0,0,18,8}};
 panelsList pList(panels,1);
 
 serialOut outSerial(Serial,pList);//the output device (just the serial port)
 //font size is 6x9
-menuGFX outGFX(gfx,colors,pList,6,9);//output device for LCD
+menuGFX outGFX(gfx,colors,pList,6*textScale,9*textScale);//output device for LCD
 menuOut* outputs[]={&outGFX,&outSerial};
-outputsList out(outputs,2);
+outputsList out(outputs,1);
 NAVROOT(nav,mainMenu,2,in,out);
 
 //when menu is suspended
@@ -185,6 +186,7 @@ void setup() {
   Serial<<"menu 3.0 test"<<endl;Serial.flush();
   options.idleTask=idle;//point a function to be used when menu is suspended
   mainMenu[1].enabled=disabledStatus;
+  nav.showTitle=false;
 
   pinMode(encBtn, INPUT_PULLUP);
   encoder.begin();
@@ -192,7 +194,9 @@ void setup() {
   SPI.begin();
   gfx.initR(INITR_BLACKTAB);
   gfx.setRotation(3);
-  //gfx.setTextWrap(false);
+  gfx.setTextSize(textScale);//test scalling
+  gfx.setTextWrap(false);
+  gfx.fillScreen(BLACK);
   gfx.setTextColor(ST7735_RED,ST7735_BLACK);
   gfx<<"Menu 3.x test on GFX"<<endl;;
   delay(2000);

@@ -31,16 +31,8 @@ void menuOut::clearChanged(navNode &nav) {
 void menuOut::printMenu(navNode &nav,idx_t panelNr) {
   idx_t ot=top;
   idx_t st=(nav.root->showTitle&&maxY()>1)?1:0;//do not use titles on single line devices!
-  while(nav.sel+st>=(top+maxY())) {
-    top++;
-    Serial<<"inrease top to:"<<top<<endl;
-  }
-  while(nav.sel<top||(top&&(nav.sel+top)<(maxY()-st))) {
-    top--;
-    Serial<<"decrease top to:"<<top<<" nav.sel:"<<nav.sel<<" maxY:"<<maxY()-st<<endl;
-    Serial<<"nav.sel<top:"<<(nav.sel<top)<<endl;
-    Serial<<"(nav.sel+top)>(maxY()-st)):"<<(nav.sel+top)<<">"<<(maxY()-st)<<"="<<((nav.sel+top)>(maxY()-st))<<endl;
-  }
+  while(nav.sel+st>=(top+maxY())) {top++;}
+  while(nav.sel<top||(top&&((nav.sz()-top)<maxY()-st))) {top--;}
   bool all=redraw;
   if (!(all||minimalRedraw))
     for(idx_t i=0;i<maxY()-st;i++) {

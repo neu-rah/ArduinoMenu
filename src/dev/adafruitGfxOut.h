@@ -59,10 +59,12 @@ namespace Menu {
 		    	setCursor(0,0);
 					setColor(fgColor);
 				}
+
 				virtual void clear(idx_t panelNr) override {clear();}
+
 		    void setCursor(idx_t x,idx_t y,idx_t panelNr=0) override {
 					const panel p=panels[panelNr];
-					gfx.setCursor((p.x+x)*resX,(p.y+y)*resY);
+					gfx.setCursor((p.x+x)*resX,(p.y+y)*resY+fontMarginY);
 				}
 
 				void drawCursor(idx_t ln,bool selected,status stat,bool edit=false,idx_t panelNr=0) override {

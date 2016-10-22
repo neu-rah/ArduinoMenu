@@ -364,6 +364,7 @@ www.r-site.net
 			public:
 				idx_t resX=1;
 				idx_t resY=1;
+				idx_t fontMarginY=1;//in pixels, compensate vertical font alignment
 				gfxOut(idx_t rx,idx_t ry,panelsList &p,bool r=true)
 					:menuOut(p,r),resX(rx),resY(ry) {}
 				//void printMenu(navNode &nav) override;
