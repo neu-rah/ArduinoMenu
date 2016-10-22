@@ -48,6 +48,41 @@ ansiSerialOut ansi(Serial,colors,pList);//the output device, ansi-terminal Cols 
 menuOut* outputs[]={&ansi};
 outputsList out(outputs,1);
 
+void putColor(
+  menuOut& out,
+  colorDefs def,
+  bool selected,
+  status stat,
+  bool edit
+  ,int x,int y
+) {
+    out.fill(x,y,x+8,y,' ',bgColor,selected,stat,edit);
+    out.setColor(def,selected,stat,edit);
+    out.setCursor(x,y);
+    out<<"XX";
+}
+
+void showColorDef(menuOut& out,colorDefs def,int x,int y) {
+  out<<ANSI::setBackgroundColor(BLACK)<<ANSI::setForegroundColor(WHITE);
+  out<<ANSI::xy(x+1,y+1)<<def<<ANSI::xy(x+16,y+1)<<"Disabled | Enabled | Editing  "<<ANSI::reset()<<endl;
+  out<<ANSI::setBackgroundColor(BLACK)<<ANSI::setForegroundColor(WHITE);
+  out<<ANSI::xy(x+1,y+2)<<"normal";
+  putColor(out, def, false, disabledStatus, false,x+15,y+1);
+  putColor(out, def, false, enabledStatus, false,x+25,y+1);
+  out<<ANSI::setBackgroundColor(BLACK)<<ANSI::setForegroundColor(WHITE);
+  out<<ANSI::xy(x+1,y+3)<<"selected";
+  putColor(out, def, true, disabledStatus, false,x+15,y+2);
+  putColor(out, def, true, enabledStatus, false,x+25,y+2);
+  putColor(out, def, true, enabledStatus, true,x+35,y+2);
+}
+
+void showColors(menuOut& o) {
+  out.clear();
+  for(int c=0;c<nColors;c++) showColorDef(o,c,0,c<<2);
+}
+
+void showOutColors();
+
 //menu definition ------------------------------------
 #include "menuDef.hpp"
 
@@ -65,7 +100,13 @@ void showOutColors() {
 result idle(menuOut& o,idleEvent e) {
   switch(e) {
     //case idleStart:o<<"suspending menu!"<<endl;break;
-    case idling:o<<"suspended..."<<endl;break;
+    case idling:
+      o
+      <<ANSI::xy(0,0)
+      <<ANSI::setBackgroundColor(BLACK)
+      <<ANSI::setForegroundColor(WHITE)
+      <<"suspended..."<<endl;
+      break;
     //case idleEnd:o<<"resuming menu."<<endl;break;
   }
   return proceed;

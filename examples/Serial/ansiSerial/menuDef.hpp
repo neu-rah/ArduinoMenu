@@ -12,7 +12,10 @@ result showEvent(eventMask e,navNode& nav,prompt& item) {
 int test=55;
 
 result action1(eventMask e,navNode& nav, prompt &item) {
-  Serial<<ANSI::xy(24,1+nav.root->showTitle)
+  Serial
+    <<ANSI::xy(0,13)
+    <<ANSI::setForegroundColor(WHITE)
+    <<ANSI::setBackgroundColor(BLACK)
     <<e<<" event on "<<item<<", proceed menu";
   Serial.flush();
   return proceed;
@@ -36,40 +39,6 @@ result ledOff() {
   return proceed;
 }
 
-void putColor(
-  menuOut& out,
-  colorDefs def,
-  bool selected,
-  status stat,
-  bool edit
-  ,int x,int y
-) {
-    out.fill(x,y,x+8,y,' ',bgColor,selected,stat,edit);
-    out.setColor(def,selected,stat,edit);
-    out.setCursor(x,y);
-    out<<"XX";
-}
-
-void showColorDef(menuOut& out,colorDefs def,int x,int y) {
-  out<<ANSI::setBackgroundColor(BLACK)<<ANSI::setForegroundColor(WHITE);
-  out<<ANSI::xy(x+1,y+1)<<def<<ANSI::xy(x+16,y+1)<<"Disabled | Enabled | Editing  "<<ANSI::reset()<<endl;
-  out<<ANSI::setBackgroundColor(BLACK)<<ANSI::setForegroundColor(WHITE);
-  out<<ANSI::xy(x+1,y+2)<<"normal";
-  putColor(out, def, false, disabledStatus, false,x+15,y+1);
-  putColor(out, def, false, enabledStatus, false,x+25,y+1);
-  out<<ANSI::setBackgroundColor(BLACK)<<ANSI::setForegroundColor(WHITE);
-  out<<ANSI::xy(x+1,y+3)<<"selected";
-  putColor(out, def, true, disabledStatus, false,x+15,y+2);
-  putColor(out, def, true, enabledStatus, false,x+25,y+2);
-  putColor(out, def, true, enabledStatus, true,x+35,y+2);
-}
-
-void showColors(menuOut& o) {
-  out.clear();
-  for(int c=0;c<nColors;c++) showColorDef(o,c,0,c<<2);
-}
-
-void showOutColors();
 ////////////////////////////////////////////////////////////////////////////////
 // menu structure
 TOGGLE(ledCtrl,setLed,"Led: ",doNothing,noEvent,noStyle//,doExit,enterEvent,noStyle
@@ -125,7 +94,14 @@ TOGGLE((mainMenu[1].enabled),togOp,"Op 2:",doNothing,noEvent,noStyle
 
 result alert(menuOut& o,idleEvent e) {
   if (e==idling)
-    o<<"alert test"<<endl<<"press [select] to continue..."<<endl;
+    o
+      <<ANSI::xy(0,0)
+      <<ANSI::setBackgroundColor(BLACK)
+      <<ANSI::setForegroundColor(WHITE)
+      <<"alert test"
+      <<endl
+      <<"press [select] to continue..."
+      <<endl;
   return proceed;
 }
 
