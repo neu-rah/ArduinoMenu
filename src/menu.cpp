@@ -85,7 +85,12 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
       drawCursor(ist,selected,p.enabled,ed,panelNr);
       setColor(fgColor,selected,p.enabled,ed);
       p.printTo(*nav.root,selected,*this);
-      if (selected&&p.isMenu()&&panels.sz>panelNr) previewMenu(*nav.root,*(menuNode*)&p,panelNr+1);
+      if (selected) {
+        if (panels.sz>panelNr) {
+          if(p.isMenu()) previewMenu(*nav.root,*(menuNode*)&p,panelNr+1);
+          else clear(panelNr+1);
+        }
+      }
     }
   }
   drawn=nav.target;
