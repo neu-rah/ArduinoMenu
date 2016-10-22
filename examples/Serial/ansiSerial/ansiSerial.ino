@@ -42,8 +42,8 @@ const colorDef<uint8_t> colors[] MEMMODE={
 };
 
 //define menu outputs ------------------------------------------------
-const panel panels[] MEMMODE={{0,0,20,10}};
-panelsList pList(panels,1);
+const panel panels[] MEMMODE={{0,0,20,10},{21,0,20,10}};
+panelsList pList(panels,2);
 ansiSerialOut ansi(Serial,colors,pList);//the output device, ansi-terminal Cols x Rows
 menuOut* outputs[]={&ansi};
 outputsList out(outputs,1);
@@ -62,14 +62,14 @@ result showEvent(eventMask e,navNode& nav,prompt& item) {
 int test=55;
 
 result action1(eventMask e,navNode& nav, prompt &item) {
-  Serial<<ANSI::xy(22,1+nav.root->showTitle)
+  Serial<<ANSI::xy(23,1+nav.root->showTitle)
     <<e<<" event on "<<item<<", proceed menu";
   Serial.flush();
   return proceed;
 }
 
 result action2(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out) {
-  Serial<<ANSI::xy(22,nav.sel+nav.root->showTitle)
+  Serial<<ANSI::xy(23,nav.sel+nav.root->showTitle)
     <<item<<" "<<e<<" event on "<<item<<", quiting menu.";
   Serial.flush();
   return quit;
@@ -230,6 +230,8 @@ void setup() {
   options.idleTask=idle;//point a function to be used when menu is suspended
   mainMenu[1].enabled=disabledStatus;
   delay(2000);
+  nav.showTitle=true;
+  //nav.printMenu(1);
 }
 
 void loop() {

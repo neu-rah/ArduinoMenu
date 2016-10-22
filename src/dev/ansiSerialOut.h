@@ -36,54 +36,21 @@
         }
         void clear(idx_t panelNr) override {
           const panel p=panels[panelNr];
-          fill(p.x,p.y,p.x+p.w,p.y+p.h);
-          setCursor(0,0);
+          fill(p.x,p.y,p.x+p.w-1,p.y+p.h-1);
+          setCursor(0,0,panelNr);
         }
         void clearLine(
           idx_t ln,
+          idx_t panelNr=0,
           colorDefs color=bgColor,
           bool selected=false,
           status stat=enabledStatus,
-          bool edit=false,
-          idx_t panelNr=0
+          bool edit=false
         ) override {
           const panel p=panels[panelNr];
           *this<<ANSI::setBackgroundColor(getColor(color,selected,stat,edit));
           *this<<ANSI::fill(p.x,ln+p.y+1,p.x+p.w,p.y+ln+1);
         }
-        /*void printMenu(navNode &nav,idx_t panelNr=0) override {
-          idx_t ot=top;
-          idx_t st=nav.root->showTitle?1:0;
-          while(nav.sel+st>=(top+maxY)) top++;
-          while(nav.sel<top||(top&&nav.sel+top<maxY-st)) top--;
-          bool all=(top!=ot)||nav.target->dirty||drawn!=nav.target;
-          if (all) {
-            clear();
-            if (st) {
-              setColor(titleColor,false);
-              clearLine(0);
-              setColor(titleColor,true);
-              setCursor(0,0);
-              *this<<"["<<*(prompt*)nav.target<<"]"<<endl;
-              //*this<<ANSI::reset();
-            }
-          }
-          for(idx_t i=0;i<maxY-st;i++) {
-            int ist=i+st;
-            if (i+top>=nav.sz()) break;
-            prompt& p=nav[i+top];
-            if (all||p.changed(nav,*this)) {
-              bool selected=nav.sel==i+top;
-              clearLine(ist,bgColor,selected,p.enabled);
-              setCursor(0,ist);
-              drawCursor(ist,selected,p.enabled);
-              setColor(fgColor,selected,p.enabled);
-              p.printTo(i+top,nav,*this);
-            }
-          }
-          drawn=nav.target;
-          //*this<<ANSI::reset();
-        }*/
         void setColor(colorDefs c,bool selected=false,status s=enabledStatus,bool e=false) override {
           *this<<ANSI::setForegroundColor(getColor(c,selected,s,e));
         }

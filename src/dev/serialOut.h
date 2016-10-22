@@ -15,11 +15,11 @@
         void clear(idx_t panelNr) override {device<<endl;}
         void clearLine(
           idx_t ln,
-          colorDefs color,
+          idx_t panelNr=0,
+          colorDefs color=bgColor,
           bool selected=false,
           status stat=enabledStatus,
-          bool edit=false,
-          idx_t panelNr=0
+          bool edit=false
         ) override {
           //device.println("");
         }

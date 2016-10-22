@@ -49,7 +49,7 @@ namespace Menu {
 					gfx.setTextColor(getColor(c,selected,s,e));
 				}
 
-				void clearLine(idx_t ln,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false,idx_t panelNr=0) override {
+				void clearLine(idx_t ln,idx_t panelNr=0,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) override {
 					const panel p=panels[panelNr];
 					gfx.fillRect(p.x*resX,(p.y+ln)*resY,maxX()*resX,resY,getColor(color,selected,stat,edit));
 		    	//setCursor(0,ln);

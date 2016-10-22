@@ -344,7 +344,7 @@ www.r-site.net
 					status stat=enabledStatus,
 					bool edit=false
 				) {return *this;}
-				virtual void clearLine(idx_t ln,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false,idx_t panelNr=0)=0;
+				virtual void clearLine(idx_t ln,idx_t panelNr=0,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false)=0;
 				virtual void clear()=0;
 				virtual void clear(idx_t panelNr)=0;
 				virtual void setCursor(idx_t x,idx_t y,idx_t panelNr=0)=0;
@@ -382,15 +382,15 @@ www.r-site.net
 					assert(i<cnt);
 					return *outs[i];
 				}
-				void printMenu(navNode& nav) const {
+				void printMenu(navNode& nav,idx_t panelNr=0) const {
 					for(int n=0;n<cnt;n++)
-						outs[n]->printMenu(nav);
+						outs[n]->printMenu(nav,panelNr);
 					for(int n=0;n<cnt;n++)
 						outs[n]->clearChanged(nav);
 				}
 				//void alert(char *msg) const {for(int n=0;n<cnt;n++) outs[n]->alert(msg);}
-				void clearLine(idx_t ln,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus) const {
-					for(int n=0;n<cnt;n++) outs[n]->clearLine(ln,color,selected,stat);
+				void clearLine(idx_t ln,idx_t panelNr=0,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus) const {
+					for(int n=0;n<cnt;n++) outs[n]->clearLine(ln,panelNr,color,selected,stat);
 				}
 				void clearChanged(navNode &nav) const {
 					for(int n=0;n<cnt;n++) outs[n]->clearChanged(nav);
@@ -402,8 +402,8 @@ www.r-site.net
 				void setColor(colorDefs c,bool selected=false,status s=enabledStatus) {
 					for(int n=0;n<cnt;n++) outs[n]->setColor(c,selected,s);
 				}
-				void drawCursor(idx_t ln,bool selected,status stat) {
-					for(int n=0;n<cnt;n++) outs[n]->drawCursor(ln,selected,stat);
+				void drawCursor(idx_t ln,bool selected,status stat,idx_t panelNr=0) {
+					for(int n=0;n<cnt;n++) outs[n]->drawCursor(ln,selected,stat,panelNr);
 				}
 				result idle(idleFunc f,idleEvent e) {
 					for(int n=0;n<cnt;n++) {
@@ -480,10 +480,10 @@ www.r-site.net
 				inline navNode& node() const {return path[level];}
 				inline menuNode& active() const {return *node().target;}
 				inline prompt& selected() const {return active()[node().sel];}
-				void printMenu() const {
+				void printMenu(idx_t panelNr=0) const {
 					if ((active().sysStyles()&_parentDraw)&&level)
-						out.printMenu(path[level-1]);
-					else out.printMenu(node());
+						out.printMenu(path[level-1],panelNr);
+					else out.printMenu(node(),panelNr);
 				}
 				//inline bool changed() const {return node().changed(out);}
 				void doInput();

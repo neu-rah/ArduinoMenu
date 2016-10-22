@@ -11,7 +11,7 @@
         inline lcdOut(LiquidCrystal& o,panelsList &p,bool r=false,bool m=true)
           :menuOut(p,r,m),device(o) {}
         size_t write(uint8_t ch) override {return device.write(ch);}
-        void clearLine(idx_t ln,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false,idx_t panelNr=0) override {
+        void clearLine(idx_t ln,idx_t panelNr=0,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) override {
         	setCursor(0,ln,panelNr);
         	for(int n=0;n<maxX();n++) print(' ');
         	setCursor(0,ln,panelNr);
