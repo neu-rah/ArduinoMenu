@@ -97,7 +97,7 @@ CHOOSE(chooseTest,chooseMenu,"Choose",doNothing,noEvent,noStyle
 class altPrompt:public prompt {
 public:
   altPrompt(const promptShadow& p):prompt(p) {}
-  void printTo(idx_t i,navNode &nav,menuOut& out) override {
+  void printTo(navRoot &root,bool sel,menuOut& out) override {
     out<<"special prompt!";
   }
 };

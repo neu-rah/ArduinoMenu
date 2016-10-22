@@ -50,7 +50,7 @@ www.r-site.net
 				inline bool canNav() const {return sysStyles()&_canNav;}//can receive navigation focus and process keys
 				inline bool isMenu() const {return sysStyles()&_menuData;}//has menu data list and can be a navNode target
 				inline bool isVariant() const {return sysStyles()&_isVariant;}//a menu as an enumerated field, connected to a variable value
-				virtual void printTo(idx_t i,navNode &nav,menuOut& out);//raw print to output device
+				virtual void printTo(navRoot &root,bool sel,menuOut& out);//raw print to output device
 				virtual bool changed(const navNode &nav,const menuOut& out) {return dirty;}
 				//this is the system version of enter handler, its used by elements like toggle
 				virtual result sysHandler(FUNC_PARAMS) {return proceed;}
@@ -132,7 +132,7 @@ www.r-site.net
 				T reflex;
 				menuField(const menuFieldShadow<T> & shadow):navTarget(shadow) {}
 				void navigate(navNode& nav,char ch,Stream& in) override;
-				void printTo(idx_t i,navNode &nav,menuOut& out) override;
+				void printTo(navRoot &root,bool sel,menuOut& out) override;
 				inline T& target() const {return *(T*)memPtr(((menuFieldShadow<T>*)shadow)->value);}
 				inline T getTypeValue(const T* from) const {
 					#ifdef USING_PGM
@@ -244,7 +244,7 @@ www.r-site.net
 					return dirty||reflex!=target();
 				}
 				void navigate(navNode& nav,char ch,Stream& in) override;
-				void printTo(idx_t i,navNode &nav,menuOut& out) override;
+				void printTo(navRoot &root,bool sel,menuOut& out) override;
 		};
 
 		template<typename T>//-------------------------------------------
@@ -257,7 +257,7 @@ www.r-site.net
 		class toggle:public menuVariant<T> {
 			public:
 				toggle(const menuNodeShadow& s):menuVariant<T>(s) {}
-				void printTo(idx_t i,navNode &nav,menuOut& out) override;
+				void printTo(navRoot &root,bool sel,menuOut& out) override;
 				//bool canNav() const override {return false;}//can receive navigation focus and process keys
 				result sysHandler(FUNC_PARAMS) override {
 					switch(event) {
@@ -336,11 +336,12 @@ www.r-site.net
 					status stat=enabledStatus,
 					bool edit=false
 				) {return *this;}
+				void previewMenu(navRoot& root,menuNode& menu,idx_t panelNr);
+				void printMenu(navNode &nav,idx_t panelNr=0);
 				virtual void clearLine(idx_t ln,idx_t panelNr=0,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false)=0;
 				virtual void clear()=0;
 				virtual void clear(idx_t panelNr)=0;
 				virtual void setCursor(idx_t x,idx_t y,idx_t panelNr=0)=0;
-				void printMenu(navNode &nav,idx_t panelNr=0);
 				virtual void clearChanged(navNode &nav);
 				virtual void setColor(colorDefs c,bool selected=false,status s=enabledStatus,bool edit=false) {}
 				virtual void drawCursor(idx_t ln,bool selected,status stat,bool edit=false,idx_t panelNr=0) {
@@ -500,12 +501,12 @@ www.r-site.net
 
 		////////////////////////////////////////////////////////////////////////
 		template<typename T>
-		void menuField<T>::printTo(idx_t i,navNode &nav,menuOut& out) {
+		void menuField<T>::printTo(navRoot &root,bool sel,menuOut& out) {
 			menuFieldShadow<T>& s=*(menuFieldShadow<T>*)shadow;
 			reflex=target();
-			prompt::printTo(i,nav,out);
-			bool ed=this==nav.root->navFocus;
-			bool sel=nav.sel==i;
+			prompt::printTo(root,sel,out);
+			bool ed=this==root.navFocus;
+			//bool sel=nav.sel==i;
 			out<<(sel?(tunning?'>':':'):' ');
 			out.setColor(valColor,sel,enabled,ed);
 			out<<reflex;
@@ -552,22 +553,22 @@ www.r-site.net
 		}
 
 		template<typename T>
-		void toggle<T>::printTo(idx_t i,navNode &nav,menuOut& out) {
+		void toggle<T>::printTo(navRoot &root,bool sel,menuOut& out) {
 			out<<*(prompt*)this;
 			idx_t at=menuVariant<T>::sync(menuVariant<T>::sync());
-			bool ed=this==nav.root->navFocus;
-			bool sel=nav.sel==i;
+			bool ed=this==root.navFocus;
+			//bool sel=nav.sel==i;
 			out.setColor(valColor,sel,prompt::enabled,ed);
 			out<<menuNode::operator[](at);
 		}
 
 		template<typename T>
-		void menuVariant<T>::printTo(idx_t i,navNode &nav,menuOut& out) {
+		void menuVariant<T>::printTo(navRoot &root,bool sel,menuOut& out) {
 			out<<*(prompt*)this;
 			idx_t at=menuVariant<T>::sync(menuVariant<T>::sync());
-			bool ed=this==nav.root->navFocus;
-			bool sel=nav.sel==i;
-			out<<(this==&nav.root->active()?':':' ');
+			bool ed=this==root.navFocus;
+			//bool sel=nav.sel==i;
+			out<<(this==&root.active()?':':' ');
 			out.setColor(valColor,sel,prompt::enabled,ed);
 			out<<menuNode::operator[](at);
 		}

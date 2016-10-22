@@ -299,7 +299,7 @@ This API is needed only to extend the menu. For regular usage only the poll func
 ### menu object functions
 
 ```c++
-virtual void printTo(idx_t i,navNode &nav,menuOut& out);
+virtual void printTo(navRoot &root,bool sel,menuOut& out);
 ```
 
 raw print to output device, each object can do its specialized print (one line)

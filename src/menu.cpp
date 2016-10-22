@@ -13,7 +13,7 @@ action Menu::noAction(doNothing);
 //this is for idle (menu suspended)
 result Menu::inaction(menuOut& o,idleEvent) {return proceed;}
 
-void prompt::printTo(idx_t i,navNode &nav,menuOut& out) {out<<*this;}
+void prompt::printTo(navRoot &root,bool sel,menuOut& out) {out<<*this;}
 
 menuOut& menuOut::operator<<(const prompt& p) {
   print_P(*this,(const char *)memPtr(p.shadow->text));
@@ -28,7 +28,7 @@ void menuOut::clearChanged(navNode &nav) {
   }
 }
 
-void menuOut::previewMenu(navRoor& root,menuNode& menu,idx_t panelNr) {
+void menuOut::previewMenu(navRoot& root,menuNode& menu,idx_t panelNr) {
   clear(panelNr);
   setColor(fgColor,false);
   setCursor(0,0,panelNr);
@@ -40,7 +40,7 @@ void menuOut::previewMenu(navRoor& root,menuNode& menu,idx_t panelNr) {
     setColor(fgColor,false,p.enabled);
     drawCursor(i,false,p.enabled,false,panelNr);
     setColor(fgColor,false,p.enabled,false);
-    p.printTo(i,nav,*this);
+    p.printTo(root,false,*this);
   }
 }
 
@@ -84,8 +84,8 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
       }
       drawCursor(ist,selected,p.enabled,ed,panelNr);
       setColor(fgColor,selected,p.enabled,ed);
-      p.printTo(i+top,nav,*this);
-      //if (selected&&panels.sz>panelNr) previewMenu(nav.root);
+      p.printTo(*nav.root,selected,*this);
+      if (selected&&p.isMenu()&&panels.sz>panelNr) previewMenu(*nav.root,*(menuNode*)&p,panelNr+1);
     }
   }
   drawn=nav.target;
