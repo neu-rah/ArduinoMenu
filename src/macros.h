@@ -143,4 +143,4 @@
 //The navigation root ------------------------------------------------------------------
 #define NAVROOT(id,menu,maxDepth,in,out)\
   navNode id##_path[maxDepth];\
-  navRoot id(menu,id##_path,maxDepth,in,out);
+  navRoot id(menu,id##_path,maxDepth-1,in,out);

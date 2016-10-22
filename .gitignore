@@ -3,3 +3,4 @@
 .gcc-flags.json
 .piolibdeps
 src/main.cpp
+examples/debug

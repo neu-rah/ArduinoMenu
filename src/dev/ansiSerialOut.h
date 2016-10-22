@@ -49,7 +49,7 @@
         ) override {
           const panel p=panels[panelNr];
           *this<<ANSI::setBackgroundColor(getColor(color,selected,stat,edit));
-          *this<<ANSI::fill(p.x,ln+p.y+1,p.x+p.w,p.y+ln+1);
+          *this<<ANSI::fill(p.x,ln+p.y+1,p.x+p.w-1,p.y+ln+1);
         }
         void setColor(colorDefs c,bool selected=false,status s=enabledStatus,bool e=false) override {
           *this<<ANSI::setForegroundColor(getColor(c,selected,s,e));

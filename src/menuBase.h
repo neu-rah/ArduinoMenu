@@ -16,7 +16,7 @@ www.r-site.net
 #ifndef RSITE_ARDUINO_MENU_SYSTEM_BASE
   #define RSITE_ARDUINO_MENU_SYSTEM_BASE
 
-  #define DEBUG
+  //#define DEBUG
 
   #ifdef DEBUG
     extern bool debugFlag;
@@ -149,14 +149,17 @@ www.r-site.net
     // TODO: make this a parametrized thing instead of a global reference
     extern config options;
 
-    Print& operator<<(Print& o,bool b);
-    Print& operator<<(Print& o,navCmds cmd);
-    Print& operator<<(Print& o,result cmd);
-    Print& operator<<(Print& o,eventMask e);
     Print& operator<<(Print& o,prompt const &p);
-    Print& operator<<(Print& o,colorDefs c);
-    Print& operator<<(Print& o,idleEvent e);
-    Print& operator<<(Print& o,systemStyles s);
+
+    #ifdef DEBUG
+      Print& operator<<(Print& o,bool b);
+      Print& operator<<(Print& o,navCmds cmd);
+      Print& operator<<(Print& o,result cmd);
+      Print& operator<<(Print& o,eventMask e);
+      Print& operator<<(Print& o,colorDefs c);
+      Print& operator<<(Print& o,idleEvent e);
+      Print& operator<<(Print& o,systemStyles s);
+    #endif
 
   }
 

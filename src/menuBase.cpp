@@ -19,99 +19,101 @@ int Menu::print_P(Print& s,const char* at) {
   return p-at;
 }
 
-Print& Menu::operator<<(Print& o,bool b) {
-  return o<<(b?"true":"false");
-}
-
-Print& Menu::operator<<(Print& o,result r) {
-  switch(r) {
-    case proceed: o<<"proceed";break;
-    case quit: o<<"quit";break;
-  }
-  return o;
-}
-
-const char* showEvent(eventMask e) {
-  switch(e) {
-    case noEvent:return "noEvent";
-    case activateEvent:return "activateEvent";
-    case enterEvent:return "enterEvent";
-    case exitEvent:return "exitEvent";
-    case returnEvent:return "returnEvent";
-    case focusEvent:return "focusEvent";
-    case blurEvent:return "blurEvent";
-    case selFocusEvent:return "selFocusEvent";
-    case selBlurEvent:return "selBlurEvent";
-    case anyEvent:return "anyEvent";
-    default: return "need to implement this print";
-  }
-}
-
-Print& Menu::operator<<(Print& o,eventMask e) {
-  if (e==noEvent||e==anyEvent) {o<<showEvent(e); return o;}
-  bool first=true;
-  for(int n=0;n<=6;n++) {
-    eventMask t=(eventMask)(1<<n);
-    if (t&e) {
-      o<<(first?"":"|")<<showEvent(t);
-      first=false;
-    }
-  }
-  return o;
-}
-
-Print& Menu::operator<<(Print& o,navCmds cmd) {
-  switch(cmd) {
-    case noCmd:o<<"noCmd";break;
-    case escCmd:o<<"escCmd";break;
-    case enterCmd:o<<"enterCmd";break;
-    case upCmd:o<<"upCmd";break;
-    case downCmd:o<<"downCmd";break;
-    case leftCmd:o<<"leftCmd";break;
-    case rightCmd:o<<"rightCmd";break;
-  }
-  return o;
-}
-
 Print& Menu::operator<<(Print& o,prompt const &p) {
   print_P(o,(const char*)memPtr(p.shadow->text));
   return o;
 }
 
-Print& Menu::operator<<(Print& o,colorDefs c) {
-  switch(c) {
-    case bgColor:o<<"bgColor";break;
-    case fgColor:o<<"fgColor";break;
-    case valColor:o<<"valColor";break;
-    case unitColor:o<<"unitColor";break;
-    case cursorColor:o<<"cursorColor";break;
-    case titleColor:o<<"titleColor";break;
-    default:o<<"color?";break;
+#ifdef DEBUG
+  Print& Menu::operator<<(Print& o,bool b) {
+    return o<<(b?"true":"false");
   }
-  return o;
-};
 
-Print& Menu::operator<<(Print& o,idleEvent e) {
-  switch(e) {
-    case idleStart:o<<"idleStart";break;
-    case idling:o<<"idling";break;
-    case idleEnd:o<<"idleEnd";break;
-    default: o<<"idelEvent?"<<(int)e;break;
+  Print& Menu::operator<<(Print& o,result r) {
+    switch(r) {
+      case proceed: o<<"proceed";break;
+      case quit: o<<"quit";break;
+    }
+    return o;
   }
-  return o;
-}
 
-Print& Menu::operator<<(Print& o,systemStyles s) {
-  if (s==_noStyle) o<<"_noStyle";
-  else {
+  const char* showEvent(eventMask e) {
+    switch(e) {
+      case noEvent:return "noEvent";
+      case activateEvent:return "activateEvent";
+      case enterEvent:return "enterEvent";
+      case exitEvent:return "exitEvent";
+      case returnEvent:return "returnEvent";
+      case focusEvent:return "focusEvent";
+      case blurEvent:return "blurEvent";
+      case selFocusEvent:return "selFocusEvent";
+      case selBlurEvent:return "selBlurEvent";
+      case anyEvent:return "anyEvent";
+      default: return "need to implement this print";
+    }
+  }
+
+  Print& Menu::operator<<(Print& o,eventMask e) {
+    if (e==noEvent||e==anyEvent) {o<<showEvent(e); return o;}
     bool first=true;
-    if (s&_menuData) {o<<"_menuData";first=false;}
-    if (s&_canNav) {o<<(first?"":"|")<<"_canNav";first=false;}
-    if (s&_parentDraw) {o<<(first?"":"|")<<"_parentDraw";first=false;}
-    if (s&_isVariant) {o<<(first?"":"|")<<"_isVariant";first=false;}
+    for(int n=0;n<=6;n++) {
+      eventMask t=(eventMask)(1<<n);
+      if (t&e) {
+        o<<(first?"":"|")<<showEvent(t);
+        first=false;
+      }
+    }
+    return o;
   }
-  return o;
-}
+
+  Print& Menu::operator<<(Print& o,navCmds cmd) {
+    switch(cmd) {
+      case noCmd:o<<"noCmd";break;
+      case escCmd:o<<"escCmd";break;
+      case enterCmd:o<<"enterCmd";break;
+      case upCmd:o<<"upCmd";break;
+      case downCmd:o<<"downCmd";break;
+      case leftCmd:o<<"leftCmd";break;
+      case rightCmd:o<<"rightCmd";break;
+    }
+    return o;
+  }
+
+  Print& Menu::operator<<(Print& o,colorDefs c) {
+    switch(c) {
+      case bgColor:o<<"bgColor";break;
+      case fgColor:o<<"fgColor";break;
+      case valColor:o<<"valColor";break;
+      case unitColor:o<<"unitColor";break;
+      case cursorColor:o<<"cursorColor";break;
+      case titleColor:o<<"titleColor";break;
+      default:o<<"color?";break;
+    }
+    return o;
+  };
+
+  Print& Menu::operator<<(Print& o,idleEvent e) {
+    switch(e) {
+      case idleStart:o<<"idleStart";break;
+      case idling:o<<"idling";break;
+      case idleEnd:o<<"idleEnd";break;
+      default: o<<"idelEvent?"<<(int)e;break;
+    }
+    return o;
+  }
+
+  Print& Menu::operator<<(Print& o,systemStyles s) {
+    if (s==_noStyle) o<<"_noStyle";
+    else {
+      bool first=true;
+      if (s&_menuData) {o<<"_menuData";first=false;}
+      if (s&_canNav) {o<<(first?"":"|")<<"_canNav";first=false;}
+      if (s&_parentDraw) {o<<(first?"":"|")<<"_parentDraw";first=false;}
+      if (s&_isVariant) {o<<(first?"":"|")<<"_isVariant";first=false;}
+    }
+    return o;
+  }
+#endif
 
 #ifndef Arduino_h
 Print Serial;

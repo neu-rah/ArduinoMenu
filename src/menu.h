@@ -19,6 +19,10 @@ www.r-site.net
 	//#include <Stream.h>
 	#include "menuBase.h"
 
+	#ifdef DEBUG
+	#define DEBUG_LED A4
+	#endif
+
 	namespace Menu {
 
 		// Menu objects and data
@@ -173,11 +177,7 @@ www.r-site.net
 			public:
 				menuValue(const menuValueShadow<T>& shadow):prompt(shadow) {}
 				#ifdef DEBUG
-				bool changed(const navNode &nav,const menuOut& out) override {
-					/*Serial<<"Value changed? TODO: remove call to this and this functions!"<<endl;
-					assert(false);*/
-					return false;
-				}
+				bool changed(const navNode &nav,const menuOut& out) override {return false;}
 				#endif
 				inline T getTypeValue(const T* from) const {
 					#ifdef USING_PGM
@@ -220,11 +220,10 @@ www.r-site.net
 				idx_t sync() {
 					menuVariantShadow<T>& s=*(menuVariantShadow<T>*)shadow;
 					for(idx_t i=0;i<sz();i++) {
-						//Serial<<"checking "<<i<<" "<<target()<<"=="<<((menuValue<T>*)&operator[](i))->target()<<endl;
 						if (((menuValue<T>*)&operator[](i))->target()==target()) return i;
 					}
 					#ifdef DEBUG
-					Serial<<"value out of range "<<target()<<endl;Serial.flush();
+					Serial<<F("value out of range ")<<target()<<endl;Serial.flush();
 					assert(false);
 					#endif
 					return -1;
@@ -233,17 +232,15 @@ www.r-site.net
 					menuVariantShadow<T>& s=*(menuVariantShadow<T>*)shadow;
 					#ifdef DEBUG
 					if (!(i>=0&&i<sz())){
-						Serial<<*(prompt*)this<<" : value out of range "<<i<<endl;
+						Serial<<*(prompt*)this<<F(" : value out of range ")<<i<<endl;
 					}
 					assert(i>=0&&i<sz());
 					#endif
 					target()=reflex=((menuValue<T>*)&operator[](i))->target();
-					//Serial<<"Set toggle value to :"<<s.value<<endl;
 					return i;
 				}
 				inline T& target() const {return *(T*)memPtr(((menuVariantShadow<T>*)shadow)->value);}
 				bool changed(const navNode &nav,const menuOut& out) override {
-					//if (dirty) Serial<<"menuVariant::shadow "<<target()<<"/"<<reflex<<endl;
 					return dirty||reflex!=target();
 				}
 				void navigate(navNode& nav,char ch,Stream& in) override;
@@ -287,9 +284,7 @@ www.r-site.net
 				choose(const menuNodeShadow& s):menuVariant<T>(s) {}
 				result sysHandler(FUNC_PARAMS) override;
 				bool changed(const navNode &nav,const menuOut& out) override {
-					//Serial<<"choose::changed "<<menuVariant<T>::reflex<<"=="<<menuVariant<T>::target()<<endl;Serial.flush();
 					return menuVariant<T>::changed(nav,out)||menuNode::changed(nav,out);
-					//return false;
 				}
 		};
 
@@ -308,10 +303,7 @@ www.r-site.net
 				const idx_t sz;
 				panelsList(const panel p[],idx_t sz):panels(p),sz(sz) {}
 				inline const panel operator[](idx_t i) {
-					if (!(i<sz)) {
-						Serial<<endl<<"i:"<<i<<" sz:"<<sz<<endl;
-						assert(i<sz);
-					}
+					assert(i<sz);
 					#ifdef USING_PGM
 						panel tmp;
 						memcpy_P(&tmp, &panels[i], sizeof(panel));
@@ -514,7 +506,7 @@ www.r-site.net
 			prompt::printTo(i,nav,out);
 			bool ed=this==nav.root->navFocus;
 			bool sel=nav.sel==i;
-			out<<(sel?(tunning?">":":"):" ");
+			out<<(sel?(tunning?'>':':'):' ');
 			out.setColor(valColor,sel,enabled,ed);
 			out<<reflex;
 			out.setColor(unitColor,sel,enabled,ed);
@@ -525,11 +517,9 @@ www.r-site.net
 
 		template<typename T>
 		void menuField<T>::navigate(navNode& nav,char ch,Stream& in) {
-			//Serial<<"menuField<T>::navigate"<<endl;
 			menuFieldShadow<T>& s=*(menuFieldShadow<T>*)shadow;
 			if (strchr(numericChars,in.peek())) {//a numeric value was entered
 				target()=(T)in.parseFloat();
-				//Serial<<"new parsed value:"<<target()<<endl;
 				tunning=false;
 				nav.root->exit();
 			} else {
@@ -537,7 +527,6 @@ www.r-site.net
 				navCmds cmd=nav.navKeys(ch);
 				switch(cmd) {
 					case enterCmd:
-						//Serial<<"enterCmd"<<endl;
 						if (tunning||options.nav2D||!tune()) {//then exit edition
 							tunning=false;
 							dirty=true;
@@ -546,12 +535,10 @@ www.r-site.net
 						dirty=true;
 						break;
 					case upCmd:
-						//Serial<<"upCmd"<<endl;
 						target()+=(tunning?tune():step())*(options.invertFieldKeys?-1:1);
 						dirty=true;
 						break;
 					case downCmd:
-						//Serial<<"downCmd"<<endl;
 						target()-=(tunning?tune():step())*(options.invertFieldKeys?-1:1);;
 						dirty=true;
 						break;
@@ -561,7 +548,6 @@ www.r-site.net
 					nav.event(enterEvent);
 				}
 			}
-			//Serial<<"value:"<<s.value<<endl;
 			clamp();
 		}
 
@@ -581,7 +567,7 @@ www.r-site.net
 			idx_t at=menuVariant<T>::sync(menuVariant<T>::sync());
 			bool ed=this==nav.root->navFocus;
 			bool sel=nav.sel==i;
-			out<<(this==&nav.root->active()?":":" ");
+			out<<(this==&nav.root->active()?':':' ');
 			out.setColor(valColor,sel,prompt::enabled,ed);
 			out<<menuNode::operator[](at);
 		}

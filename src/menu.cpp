@@ -47,7 +47,7 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
       clearLine(0,panelNr);
       setColor(titleColor,true);
       setCursor(0,0,panelNr);
-      *this<<"["<<*(prompt*)nav.target<<"]";
+      *this<<'['<<*(prompt*)nav.target<<']';
     }
   }
   //bool any=all;
@@ -64,7 +64,7 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
       setColor(fgColor,selected,p.enabled,ed);
       if (drawNumIndex) {
         char a=top+i+'1';
-        *this<<"["<<(a<='9'?a:'-')<<"]";
+        *this<<'['<<(a<='9'?a:'-')<<']';
       }
       drawCursor(ist,selected,p.enabled,ed,panelNr);
       setColor(fgColor,selected,p.enabled,ed);
@@ -174,6 +174,11 @@ void navRoot::poll() {
   doOutput();
 }
 
+result maxDepthError(menuOut& o,idleEvent e) {
+  o<<F("Error: maxDepth reached!\n\rincrease maxDepth on your scketch.");
+  return proceed;
+}
+
 void navRoot::enter() {
   if (
     selected().enabled
@@ -192,7 +197,7 @@ void navRoot::enter() {
         node().sel=0;
         active().dirty=true;
         sel.sysHandler(enterEvent,node(),selected());
-      }
+      } else idleOn(maxDepthError);
     } else if (go==quit&&!selected().isMenu()) exit();
     if (canNav) {
       navFocus=(navTarget*)&sel;
