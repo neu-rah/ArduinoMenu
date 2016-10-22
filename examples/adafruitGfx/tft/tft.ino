@@ -10,8 +10,8 @@ Thread Safe: No
 Extensible: Yes
 
 menu with adafruit GFX
-output: Nokia 5110 display (PDC8544 HW SPI)
-input: Serial
+output: 1.8" TFT 128*160 (ST7735 HW SPI)
+input: Serial + encoder
 www.r-site.net
 ***/
 
@@ -169,7 +169,7 @@ serialOut outSerial(Serial,pList);//the output device (just the serial port)
 //font size is 6x9
 menuGFX outGFX(gfx,colors,pList,6*textScale,9*textScale);//output device for LCD
 menuOut* outputs[]={&outGFX,&outSerial};
-outputsList out(outputs,1);
+outputsList out(outputs,2);
 NAVROOT(nav,mainMenu,2,in,out);
 
 //when menu is suspended

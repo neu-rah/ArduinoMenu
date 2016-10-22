@@ -10,16 +10,21 @@ Thread Safe: No
 Extensible: Yes
 
 menu with adafruit GFX
-output: Nokia 5110 display (PDC8544 HW SPI)
+output: Nokia 5110 display (PCD8544 HW SPI)
 input: Serial
 www.r-site.net
+
+this device with adafruits gfx is at memory limits!
+it is not able to use encoder and key stream...
+recomend to use U8Glib instead
+u8glib supports PCD8544 and uses less ram
 ***/
 
 #include <SPI.h>
 #include <menu.h>
-#include <dev/encoderIn.h>//for PCINT encoder
-#include <dev/keyIn.h>//for encoder button
-#include <dev/chainStream.h>//for mixing input stream (encoder+button)
+//#include <dev/encoderIn.h>//for PCINT encoder
+//#include <dev/keyIn.h>//for encoder button
+//#include <dev/chainStream.h>//for mixing input stream (encoder+button)
 #include <Adafruit_GFX.h>
 #include <Adafruit_PCD8544.h>
 #include <dev/adafruitGfxOut.h>
@@ -38,9 +43,9 @@ Adafruit_PCD8544 gfx(GFX_DC,GFX_CS,GFX_RST);
 #define LEDPIN A4
 
 // rotary encoder pins
-#define encA    2
+/*#define encA    2
 #define encB    3
-#define encBtn  4
+#define encBtn  4*/
 
 result zZz() {Serial<<"zZz"<<endl;return proceed;}
 
@@ -147,7 +152,7 @@ const colorDef<uint16_t> colors[] MEMMODE={
   {{WHITE,BLACK},{BLACK,WHITE,WHITE}},//titleColor
 };
 
-encoderIn encoder(encA,encB);//simple quad encoder driver
+/*encoderIn encoder(encA,encB);//simple quad encoder driver
 encoderInStream encStream(encoder,4);// simple quad encoder fake Stream
 
 //a keyboard with only one key as the encoder button
@@ -156,16 +161,17 @@ keyIn<1> encButton(encBtn_map);//1 is the number of keys
 
 //input from the encoder + encoder button + serial
 Stream* inputsList[]={&encStream,&encButton,&Serial};
-chainStream<3> in(inputsList);//3 is the number of inputs
-
-const panel panels[] MEMMODE={{0,0,20,10}};
+chainStream<3> in(inputsList);//3 is the number of inputs*/
+#define fontX 5
+#define fontY 9
+const panel panels[] MEMMODE={{0,0,84/fontX,48/fontY}};
 panelsList pList(panels,1);
 
 serialOut outSerial(Serial,pList);//the output device (just the serial port)
-menuGFX outGFX(gfx,colors,pList);//output device for LCD
+menuGFX outGFX(gfx,colors,pList,fontX,fontY);//output device for LCD with 5x8 font size
 menuOut* outputs[]={&outGFX,&outSerial};
 outputsList out(outputs,2);
-NAVROOT(nav,mainMenu,2,in,out);
+NAVROOT(nav,mainMenu,2,Serial,out);
 
 //when menu is suspended
 result idle(menuOut& o,idleEvent e) {
@@ -182,8 +188,8 @@ void setup() {
   options.idleTask=idle;//point a function to be used when menu is suspended
   mainMenu[1].enabled=disabledStatus;
 
-  pinMode(encBtn, INPUT_PULLUP);
-  encoder.begin();
+  //pinMode(encBtn, INPUT_PULLUP);
+  //encoder.begin();
 
   SPI.begin();
   gfx.begin();

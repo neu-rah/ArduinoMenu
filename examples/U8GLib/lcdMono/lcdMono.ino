@@ -15,11 +15,19 @@ Extensible: Yes
 
 #include <menu.h>
 #include <dev/serialOut.h>
+#include <dev/encoderIn.h>//for PCINT encoder
+#include <dev/keyIn.h>//for encoder button
+#include <dev/chainStream.h>//for mixing input stream (encoder+button)
 #include <dev/U8GLibOut.h>
 
 using namespace Menu;
 
 #define LEDPIN A4
+
+// rotary encoder pins
+#define encA    2
+#define encB    3
+#define encBtn  4
 
 #define U8_DC 9
 #define U8_CS 8
@@ -134,11 +142,27 @@ const colorDef<uint8_t> colors[] MEMMODE={
   {{0,0},{1,1,1}},//titleColor
 };
 
-serialOut outSerial(Serial);//the output device (just the serial port)
-menuU8G gfx(u8g,colors,6,10);
+encoderIn encoder(encA,encB);//simple quad encoder driver
+encoderInStream encStream(encoder,4);// simple quad encoder fake Stream
+
+//a keyboard with only one key as the encoder button
+keyMap encBtn_map[]={{-encBtn,options.getCmdChar(enterCmd)}};//negative pin numbers use internal pull-up, this is on when low
+keyIn<1> encButton(encBtn_map);//1 is the number of keys
+
+//input from the encoder + encoder button + serial
+Stream* inputsList[]={&encStream,&encButton,&Serial};
+chainStream<3> in(inputsList);//3 is the number of inputs
+
+#define fontX 6
+#define fontY 8
+const panel panels[] MEMMODE={{0,0,84/fontX,48/fontY}};
+panelsList pList(panels,1);
+
+serialOut outSerial(Serial,pList);//the output device (just the serial port)
+menuU8G gfx(u8g,colors,pList,fontX,fontY);
 menuOut* outputs[]={&gfx,&outSerial};
 outputsList out(outputs,2);
-NAVROOT(nav,mainMenu,2,Serial,out);
+NAVROOT(nav,mainMenu,2,in,out);
 
 //when menu is suspended
 result idle(menuOut& o,idleEvent e) {
@@ -154,8 +178,13 @@ void setup() {
   Serial<<"menu 3.0 test"<<endl;Serial.flush();
   options.idleTask=idle;//point a function to be used when menu is suspended
   mainMenu[1].enabled=disabledStatus;
+
+  pinMode(encBtn, INPUT_PULLUP);
+  encoder.begin();
+
   //u8g.setFont(u8g_font_helvR08);
-  u8g.setFont(u8g_font_6x10);
+  //u8g.setFont(u8g_font_6x10);
+  u8g.setFont(u8g_font_04b_03r);
   u8g.firstPage();
   do {
     gfx.setCursor(0,0);

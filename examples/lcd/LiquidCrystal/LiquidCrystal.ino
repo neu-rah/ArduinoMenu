@@ -7,7 +7,7 @@ warranty, express or implied, as to its usefulness for any purpose.
 Thread Safe: No
 Extensible: Yes
 
-menu output to standard arduino LCD
+menu output to standard arduino LCD (LiquidCrystal)
 output: LCD
 input: encoder and Serial
 www.r-site.net
@@ -151,7 +151,10 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,EXIT("<Back")
 );
 
-lcdOut outLCD(lcd,16,2);//output device for LCD
+const panel panels[] MEMMODE={{0,0,16,2}};
+panelsList pList(panels,1);
+
+lcdOut outLCD(lcd,pList);//output device for LCD
 menuOut* outputs[]={&outLCD};//list of output devices
 outputsList out(outputs,1);//outputs list with 2 outputs
 NAVROOT(nav,mainMenu,2,in,out);//the navigation root object
@@ -175,11 +178,11 @@ void setup() {
   lcd.begin(16,2);
   options.idleTask=idle;//point a function to be used when menu is suspended
   mainMenu[1].enabled=disabledStatus;
+  nav.showTitle=false;
   lcd.setCursor(0, 0);
   lcd<<("Menu 3.0 LCD");
   lcd.setCursor(0, 1);
   lcd<<("r-site.net");
-  nav.showTitle=false;
   delay(2000);
 }
 

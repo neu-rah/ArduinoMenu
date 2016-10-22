@@ -48,7 +48,7 @@ SELECT(selTest,selMenu,"Select",doNothing,noEvent,noStyle
 );
 
 int chooseTest=-1;
-CHOOSE(chooseTest,chooseMenu,"Choose ",doNothing,noEvent,noStyle
+CHOOSE(chooseTest,chooseMenu,"Choose",doNothing,noEvent,noStyle
   ,VALUE("First",1,doNothing,noEvent)
   ,VALUE("Second",2,doNothing,noEvent)
   ,VALUE("Third",3,doNothing,noEvent)
@@ -98,7 +98,10 @@ MENU(mainMenu,"Main menu",zZz,noEvent,wrapStyle
   ,EXIT("<Back")
 );
 
-serialOut outSerial(Serial);//the output device (just the serial port)
+const panel panels[] MEMMODE={{0,0,20,10}};
+panelsList pList(panels,1);
+
+serialOut outSerial(Serial,pList);//the output device (just the serial port)
 menuOut* outputs[]={&outSerial};
 outputsList out(outputs,1);
 NAVROOT(nav,mainMenu,2,Serial,out);

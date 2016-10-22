@@ -30,7 +30,7 @@ void menuOut::clearChanged(navNode &nav) {
 
 void menuOut::printMenu(navNode &nav,idx_t panelNr) {
   idx_t ot=top;
-  idx_t st=(nav.root->showTitle&&maxY()>1)?1:0;//do not use titles on single line devices!
+  idx_t st=(nav.root->showTitle&&(maxY()>1))?1:0;//do not use titles on single line devices!
   while(nav.sel+st>=(top+maxY())) {top++;}
   while(nav.sel<top||(top&&((nav.sz()-top)<maxY()-st))) {top--;}
   bool all=redraw;
@@ -50,13 +50,13 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
       *this<<"["<<*(prompt*)nav.target<<"]";
     }
   }
-  bool any=all;
+  //bool any=all;
   for(idx_t i=0;i<maxY()-st;i++) {
     int ist=i+st;
     if (i+top>=nav.sz()) break;
     prompt& p=nav[i+top];
     if (all||p.changed(nav,*this)) {
-      any=true;
+      //any=true;
       bool selected=nav.sel==i+top;
       bool ed=nav.target==&p;
       clearLine(ist,bgColor,selected,p.enabled);
@@ -69,7 +69,6 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
       p.printTo(i+top,nav,*this);
     }
   }
-  if (any) Serial<<"drawn -------------"<<endl;
   drawn=nav.target;
 }
 
