@@ -11,25 +11,20 @@ Extensible: Yes
 
 menu with adafruit GFX
 output: Nokia 5110 display (PCD8544 HW SPI)
-input: Serial
+input: Serial + encoder
 www.r-site.net
 
-this device with adafruits gfx is at memory limits!
-it is not able to use encoder and key stream...
-recomend to use U8Glib instead
-u8glib supports PCD8544 and uses less ram
 ***/
 
 #include <SPI.h>
 #include <menu.h>
-//#include <dev/encoderIn.h>//for PCINT encoder
-//#include <dev/keyIn.h>//for encoder button
-//#include <dev/chainStream.h>//for mixing input stream (encoder+button)
+#include <dev/encoderIn.h>//for PCINT encoder
+#include <dev/keyIn.h>//for encoder button
+#include <dev/chainStream.h>//for mixing input stream (encoder+button)
 #include <Adafruit_GFX.h>
 #include <Adafruit_PCD8544.h>
 #include <dev/adafruitGfxOut.h>
 #include <dev/serialOut.h>
-//#include <FreeMono9pt7b.h>
 
 using namespace Menu;
 
@@ -43,11 +38,11 @@ Adafruit_PCD8544 gfx(GFX_DC,GFX_CS,GFX_RST);
 #define LEDPIN A4
 
 // rotary encoder pins
-/*#define encA    2
+#define encA    2
 #define encB    3
-#define encBtn  4*/
+#define encBtn  4
 
-result zZz() {Serial<<"zZz"<<endl;return proceed;}
+result zZz() {Serial<<F("zZz")<<endl;return proceed;}
 
 result showEvent(eventMask e,navNode& nav,prompt& item) {
   Serial<<e<<" on "<<item<<endl;
@@ -57,12 +52,12 @@ result showEvent(eventMask e,navNode& nav,prompt& item) {
 int test=55;
 
 result action1(eventMask e) {
-  Serial<<e<<" action1 executed, proceed menu"<<endl;Serial.flush();
+  Serial<<e<<F(" action1 executed, proceed menu")<<endl;Serial.flush();
   return proceed;
 }
 
 result action2(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out) {
-  Serial<<item<<" "<<e<<" action2 executed, quiting menu"<<endl;
+  Serial<<item<<' '<<e<<F(" action2 executed, quiting menu")<<endl;
   return quit;
 }
 
@@ -144,15 +139,15 @@ MENU(mainMenu,"Main menu",zZz,noEvent,wrapStyle
 //  {{disabled normal,disabled selected},{enabled normal,enabled selected, enabled editing}}
 //monochromatic color table
 const colorDef<uint16_t> colors[] MEMMODE={
-  {{BLACK,WHITE},{BLACK,WHITE,WHITE}},//bgColor
-  {{WHITE,BLACK},{WHITE,BLACK,BLACK}},//fgColor
-  {{WHITE,BLACK},{WHITE,BLACK,BLACK}},//valColor
-  {{WHITE,BLACK},{WHITE,BLACK,BLACK}},//unitColor
-  {{WHITE,BLACK},{BLACK,BLACK,BLACK}},//cursorColor
-  {{WHITE,BLACK},{BLACK,WHITE,WHITE}},//titleColor
+  {{WHITE,BLACK},{WHITE,BLACK,BLACK}},//bgColor
+  {{BLACK,WHITE},{BLACK,WHITE,WHITE}},//fgColor
+  {{BLACK,WHITE},{BLACK,WHITE,WHITE}},//valColor
+  {{BLACK,WHITE},{BLACK,WHITE,WHITE}},//unitColor
+  {{BLACK,WHITE},{WHITE,WHITE,WHITE}},//cursorColor
+  {{BLACK,WHITE},{WHITE,BLACK,BLACK}},//titleColor
 };
 
-/*encoderIn encoder(encA,encB);//simple quad encoder driver
+encoderIn encoder(encA,encB);//simple quad encoder driver
 encoderInStream encStream(encoder,4);// simple quad encoder fake Stream
 
 //a keyboard with only one key as the encoder button
@@ -161,7 +156,8 @@ keyIn<1> encButton(encBtn_map);//1 is the number of keys
 
 //input from the encoder + encoder button + serial
 Stream* inputsList[]={&encStream,&encButton,&Serial};
-chainStream<3> in(inputsList);//3 is the number of inputs*/
+chainStream<3> in(inputsList);//3 is the number of inputs
+
 #define fontX 5
 #define fontY 9
 const panel panels[] MEMMODE={{0,0,84/fontX,48/fontY}};
@@ -171,7 +167,7 @@ serialOut outSerial(Serial,pList);//the output device (just the serial port)
 menuGFX outGFX(gfx,colors,pList,fontX,fontY);//output device for LCD with 5x8 font size
 menuOut* outputs[]={&outGFX,&outSerial};
 outputsList out(outputs,2);
-NAVROOT(nav,mainMenu,2,Serial,out);
+NAVROOT(nav,mainMenu,2,in,out);
 
 //when menu is suspended
 result idle(menuOut& o,idleEvent e) {
@@ -188,8 +184,8 @@ void setup() {
   options.idleTask=idle;//point a function to be used when menu is suspended
   mainMenu[1].enabled=disabledStatus;
 
-  //pinMode(encBtn, INPUT_PULLUP);
-  //encoder.begin();
+  pinMode(encBtn, INPUT_PULLUP);
+  encoder.begin();
 
   SPI.begin();
   gfx.begin();

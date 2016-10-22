@@ -138,13 +138,16 @@ MENU(mainMenu,"Main menu",zZz,noEvent,wrapStyle
 // define menu colors --------------------------------------------------------
 //  {{disabled normal,disabled selected},{enabled normal,enabled selected, enabled editing}}
 //monochromatic color table
+
+#define ST7735_GRAY RGB565(128,128,128)
+
 const colorDef<uint16_t> colors[] MEMMODE={
-  {{BLACK,BLACK},{BLACK,BLUE,BLUE}},//bgColor
-  {{GRAY,GRAY},{WHITE,WHITE,WHITE}},//fgColor
-  {{WHITE,BLACK},{YELLOW,YELLOW,RED}},//valColor
-  {{WHITE,BLACK},{WHITE,YELLOW,YELLOW}},//unitColor
-  {{WHITE,GRAY},{BLACK,BLUE,WHITE}},//cursorColor
-  {{WHITE,YELLOW},{BLUE,RED,RED}},//titleColor
+  {{ST7735_BLACK,ST7735_BLACK},{ST7735_BLACK,ST7735_BLUE,ST7735_BLUE}},//bgColor
+  {{ST7735_GRAY,ST7735_GRAY},{ST7735_WHITE,ST7735_WHITE,ST7735_WHITE}},//fgColor
+  {{ST7735_WHITE,ST7735_BLACK},{ST7735_YELLOW,ST7735_YELLOW,ST7735_RED}},//valColor
+  {{ST7735_WHITE,ST7735_BLACK},{ST7735_WHITE,ST7735_YELLOW,ST7735_YELLOW}},//unitColor
+  {{ST7735_WHITE,ST7735_GRAY},{ST7735_BLACK,ST7735_BLUE,ST7735_WHITE}},//cursorColor
+  {{ST7735_WHITE,ST7735_YELLOW},{ST7735_BLUE,ST7735_RED,ST7735_RED}},//titleColor
 };
 
 encoderIn encoder(encA,encB);//simple quad encoder driver
@@ -196,7 +199,7 @@ void setup() {
   gfx.setRotation(3);
   gfx.setTextSize(textScale);//test scalling
   gfx.setTextWrap(false);
-  gfx.fillScreen(BLACK);
+  gfx.fillScreen(ST7735_BLACK);
   gfx.setTextColor(ST7735_RED,ST7735_BLACK);
   gfx<<"Menu 3.x test on GFX"<<endl;;
   delay(2000);

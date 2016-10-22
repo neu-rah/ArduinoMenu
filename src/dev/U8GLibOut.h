@@ -49,7 +49,7 @@ www.r-site.net
 					gfx.setColorIndex(getColor(c,selected,s,edit));
 				}
 
-				void clearLine(idx_t ln,idx_t panelNr=0,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false,idx_t panelNr=0) override {
+				void clearLine(idx_t ln,idx_t panelNr=0,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) override {
 					const panel p=panels[panelNr];
 					setColor(color,selected,stat,edit);
 					gfx.drawBox(p.x*resX,(p.y+ln)*resY,maxX()*resX,resY);
