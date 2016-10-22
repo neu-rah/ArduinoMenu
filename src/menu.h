@@ -340,7 +340,7 @@ www.r-site.net
 				virtual void clear()=0;
 				virtual void clear(idx_t panelNr)=0;
 				virtual void setCursor(idx_t x,idx_t y,idx_t panelNr=0)=0;
-				virtual void printMenu(navNode &nav,idx_t panelNr=0);
+				void printMenu(navNode &nav,idx_t panelNr=0);
 				virtual void clearChanged(navNode &nav);
 				virtual void setColor(colorDefs c,bool selected=false,status s=enabledStatus,bool edit=false) {}
 				virtual void drawCursor(idx_t ln,bool selected,status stat,bool edit=false,idx_t panelNr=0) {

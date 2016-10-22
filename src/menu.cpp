@@ -28,14 +28,30 @@ void menuOut::clearChanged(navNode &nav) {
   }
 }
 
+void menuOut::previewMenu(navRoor& root,menuNode& menu,idx_t panelNr) {
+  clear(panelNr);
+  setColor(fgColor,false);
+  setCursor(0,0,panelNr);
+  for(idx_t i=0;i<maxY(panelNr);i++) {
+    if (i>=menu.sz()) break;
+    prompt& p=menu[i];
+    clearLine(i,panelNr,bgColor,false,p.enabled);
+    setCursor(0,i,panelNr);
+    setColor(fgColor,false,p.enabled);
+    drawCursor(i,false,p.enabled,false,panelNr);
+    setColor(fgColor,false,p.enabled,false);
+    p.printTo(i,nav,*this);
+  }
+}
+
 void menuOut::printMenu(navNode &nav,idx_t panelNr) {
   idx_t ot=top;
-  idx_t st=(nav.root->showTitle&&(maxY()>1))?1:0;//do not use titles on single line devices!
-  while(nav.sel+st>=(top+maxY())) {top++;}
-  while(nav.sel<top||(top&&((nav.sz()-top)<maxY()-st))) {top--;}
+  idx_t st=(nav.root->showTitle&&(maxY(panelNr)>1))?1:0;//do not use titles on single line devices!
+  while(nav.sel+st>=(top+maxY(panelNr))) {top++;}
+  while(nav.sel<top||(top&&((nav.sz()-top)<maxY(panelNr)-st))) {top--;}
   bool all=redraw||(top!=ot)||drawn!=nav.target;
   if (!(all||minimalRedraw))
-    for(idx_t i=0;i<maxY()-st;i++) {
+    for(idx_t i=0;i<maxY(panelNr)-st;i++) {
       if (all||i+top>=nav.sz()) break;
       else all|=nav[i+top].changed(nav,*this);
     }
@@ -51,7 +67,7 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
     }
   }
   //bool any=all;
-  for(idx_t i=0;i<maxY()-st;i++) {
+  for(idx_t i=0;i<maxY(panelNr)-st;i++) {
     int ist=i+st;
     if (i+top>=nav.sz()) break;
     prompt& p=nav[i+top];
@@ -69,6 +85,7 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
       drawCursor(ist,selected,p.enabled,ed,panelNr);
       setColor(fgColor,selected,p.enabled,ed);
       p.printTo(i+top,nav,*this);
+      //if (selected&&panels.sz>panelNr) previewMenu(nav.root);
     }
   }
   drawn=nav.target;
