@@ -122,6 +122,7 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,SUBMENU(selMenu)
   ,SUBMENU(chooseMenu)
   ,OP("Show colors",showOutColors,enterEvent)
+  ,OP("Show characters",showCharsMap,enterEvent)
   ,OP("Alert test",doAlert,enterEvent)
   ,EXIT("<Back")
 );

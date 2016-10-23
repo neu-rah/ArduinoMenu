@@ -42,7 +42,7 @@ const colorDef<uint8_t> colors[] MEMMODE={
 };
 
 //define menu outputs ------------------------------------------------
-const panel panels[] MEMMODE={{0,0,20,10},{21,0,20,10}};
+const panel panels[] MEMMODE={{1,1,16,10},{18,1,16,10}};
 panelsList pList(panels,2);
 ansiSerialOut ansi(Serial,colors,pList);//the output device, ansi-terminal Cols x Rows
 menuOut* outputs[]={&ansi};
@@ -76,12 +76,39 @@ void showColorDef(menuOut& out,colorDefs def,int x,int y) {
   putColor(out, def, true, enabledStatus, true,x+35,y+2);
 }
 
-void showColors(menuOut& o) {
-  out.clear();
-  for(int c=0;c<nColors;c++) showColorDef(o,c,0,c<<2);
+result showColors(menuOut& o,idleEvent e) {
+  switch(e) {
+    case idling: for(int c=0;c<nColors;c++) showColorDef(o,c,0,c<<2); break;
+    default:
+      o<<ANSI::reset()<<ANSI::xy(80,25)<<ANSI::eraseScreen()<<ANSI::xy(1,1);
+      break;
+  }
+  return proceed;
 }
 
-void showOutColors();
+result showChars(menuOut& o,idleEvent e) {
+  char box0[]="╭─┬╮";
+  char box1[]="│ ││";
+  char box2[]="├─┼┤";
+  char box3[]="╰─┴╯";
+  switch(e) {
+    case idling:
+      //o<<"len:"<<strlen(box_top);
+      o<<box0<<endl;
+      o<<box1<<endl;
+      o<<box2<<endl;
+      o<<box3<<endl;
+      break;
+    default:
+      o<<ANSI::reset()<<ANSI::xy(80,25)<<ANSI::eraseScreen()<<ANSI::xy(1,1);
+      break;
+  }
+  return proceed;
+}
+
+void showCharsMap(eventMask event, navNode& nav) {nav.root->idleOn(showChars);}
+
+void showOutColors(eventMask event, navNode& nav) {nav.root->idleOn(showColors);}
 
 //menu definition ------------------------------------
 #include "menuDef.hpp"
@@ -89,12 +116,6 @@ void showOutColors();
 ////////////////////////////////////////////////////////////////////////
 // menu navigation root object
 NAVROOT(nav,mainMenu,2,Serial,out);
-
-//aux functions that uses nav
-void showOutColors() {
-  nav.idleOn();
-  showColors(ansi);
-}
 
 //when menu is suspended -----------------------------------------------
 result idle(menuOut& o,idleEvent e) {
