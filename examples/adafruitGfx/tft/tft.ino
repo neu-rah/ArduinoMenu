@@ -17,13 +17,13 @@ www.r-site.net
 
 #include <SPI.h>
 #include <menu.h>
-#include <dev/encoderIn.h>//for PCINT encoder
+/*#include <dev/encoderIn.h>//for PCINT encoder
 #include <dev/keyIn.h>//for encoder button
-#include <dev/chainStream.h>//for mixing input stream (encoder+button)
+#include <dev/chainStream.h>//for mixing input stream (encoder+button)*/
 #include <Adafruit_GFX.h>
 #include <Adafruit_ST7735.h>
-#include <dev/adafruitGfxOut.h>
-#include <dev/serialOut.h>
+//#include <dev/adafruitGfxOut.h>
+//#include <dev/serialOut.h>
 //#include <FreeMono9pt7b.h>
 
 using namespace Menu;

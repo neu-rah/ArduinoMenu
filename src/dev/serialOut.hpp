@@ -1,6 +1,6 @@
 #ifndef RSITE_ARDUINO_MENU_SERIALOUT
   #define RSITE_ARDUINO_MENU_SERIALOUT
-  #include "../menu.h"
+  #include "../menu.hpp"
 
   namespace Menu {
     class serialOut:public menuOut {

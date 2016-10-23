@@ -14,7 +14,7 @@ we can have reverse logic (pull-ups) by entering negative pin numbers
 ex: -A0 means: pin A0 normally high, low when button pushed (reverse logic)
 ***/
 
-#include "../menu.h"
+#include "../menu.hpp"
 
 using namespace Menu;
 

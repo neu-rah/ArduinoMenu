@@ -17,7 +17,7 @@ www.r-site.net
 #ifndef RSITE_ARDUINOP_MENU_U8G
 	#define RSITE_ARDUINOP_MENU_U8G
   #include <U8glib.h>
-	#include "menu.h"
+	#include "menu.hpp"
 
   namespace Menu {
 

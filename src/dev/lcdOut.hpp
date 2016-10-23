@@ -1,6 +1,6 @@
 #ifndef RSITE_ARDUINO_MENU_LCDOUT
   #define RSITE_ARDUINO_MENU_LCDOUT
-  #include "../menu.h"
+  #include "../menu.hpp"
   #include <LiquidCrystal.h>
 
   namespace Menu {

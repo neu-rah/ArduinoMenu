@@ -44,6 +44,18 @@ void menuOut::previewMenu(navRoot& root,menuNode& menu,idx_t panelNr) {
   }
 }
 
+void menuOut::printMenu(navNode &nav) {
+  //determin panel number here
+  int k=min(nav.root->level,panels.sz-1);
+  if (usePreview&&k) k--;
+  Serial<<ANSI::xy(0,24)<<"k:"<<k;
+  for(int i=0;i<=k;i++) {
+    navNode &n=nav.root->path[nav.root->level-k+i];
+    Serial<<ANSI::xy(0,23-i)<<ANSI::setForegroundColor(WHITE)<<"printMenu "<<*(prompt*)n.target<<" on panel "<<i;
+    if (i==k) printMenu(n,i);
+    else previewMenu(*nav.root,*n.target,i);
+  }
+}
 void menuOut::printMenu(navNode &nav,idx_t panelNr) {
   idx_t ot=top;
   idx_t st=(nav.root->showTitle&&(maxY(panelNr)>1))?1:0;//do not use titles on single line devices!
@@ -85,11 +97,9 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
       drawCursor(ist,selected,p.enabled,ed,panelNr);
       setColor(fgColor,selected,p.enabled,ed);
       p.printTo(*nav.root,selected,*this);
-      if (selected) {
-        if (panels.sz>panelNr) {
-          if(p.isMenu()) previewMenu(*nav.root,*(menuNode*)&p,panelNr+1);
-          else clear(panelNr+1);
-        }
+      if (selected&&panels.sz>panelNr+1) {
+        if(p.isMenu()) previewMenu(*nav.root,*(menuNode*)&p,panelNr+1);
+        else clear(panelNr+1);
       }
     }
   }

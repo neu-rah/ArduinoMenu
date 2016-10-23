@@ -23,7 +23,6 @@ www.r-site.net
 ***/
 
 #include <menu.h>
-#include <dev/ansiSerialOut.h>
 
 using namespace Menu;
 
@@ -43,7 +42,7 @@ const colorDef<uint8_t> colors[] MEMMODE={
 
 //define menu outputs ------------------------------------------------
 const panel panels[] MEMMODE={{1,1,16,10},{18,1,16,10}};
-panelsList pList(panels,2);
+panelsList pList(panels,sizeof(panels)/sizeof(panel));
 ansiSerialOut ansi(Serial,colors,pList);//the output device, ansi-terminal Cols x Rows
 menuOut* outputs[]={&ansi};
 outputsList out(outputs,1);
@@ -58,13 +57,13 @@ void putColor(
 ) {
     out.fill(x,y,x+8,y,' ',bgColor,selected,stat,edit);
     out.setColor(def,selected,stat,edit);
-    out.setCursor(x,y);
+    out.setCursor(x,y-1);
     out<<"XX";
 }
 
 void showColorDef(menuOut& out,colorDefs def,int x,int y) {
   out<<ANSI::setBackgroundColor(BLACK)<<ANSI::setForegroundColor(WHITE);
-  out<<ANSI::xy(x+1,y+1)<<def<<ANSI::xy(x+16,y+1)<<"Disabled | Enabled | Editing  "<<ANSI::reset()<<endl;
+  out<<ANSI::xy(x+1,y+1)<<def<<ANSI::xy(x+16,y+1)<<"Disabled | Enabled | Editing  "<<endl;
   out<<ANSI::setBackgroundColor(BLACK)<<ANSI::setForegroundColor(WHITE);
   out<<ANSI::xy(x+1,y+2)<<"normal";
   putColor(out, def, false, disabledStatus, false,x+15,y+1);
@@ -80,7 +79,7 @@ result showColors(menuOut& o,idleEvent e) {
   switch(e) {
     case idling: for(int c=0;c<nColors;c++) showColorDef(o,c,0,c<<2); break;
     default:
-      o<<ANSI::reset()<<ANSI::xy(80,25)<<ANSI::eraseScreen()<<ANSI::xy(1,1);
+      o<<ANSI::xy(80,25)<<ANSI::eraseScreen()<<ANSI::xy(1,1);
       break;
   }
   return proceed;
@@ -100,7 +99,11 @@ result showChars(menuOut& o,idleEvent e) {
       o<<box3<<endl;
       break;
     default:
-      o<<ANSI::reset()<<ANSI::xy(80,25)<<ANSI::eraseScreen()<<ANSI::xy(1,1);
+      o<<ANSI::setForegroundColor(WHITE)
+        <<ANSI::setBackgroundColor(BLACK)
+        <<ANSI::xy(80,25)
+        <<ANSI::eraseScreen()
+        <<ANSI::xy(1,1);
       break;
   }
   return proceed;

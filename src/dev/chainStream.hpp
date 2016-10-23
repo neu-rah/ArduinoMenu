@@ -10,7 +10,7 @@ Extendable: Yes
 scan a chain of several input streams to provide input
 ***/
 
-#include "../menu.h"
+#include "../menu.hpp"
 
 #ifndef RSITE_CHAINSTREAM_DEF_H
 #define RSITE_CHAINSTREAM_DEF_H

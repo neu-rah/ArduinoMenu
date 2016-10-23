@@ -1,6 +1,6 @@
 #ifndef RSITE_ARDUINO_MENU_HTMLOUT
   #define RSITE_ARDUINO_MENU_HTMLOUT
-  #include "../menu.h"
+  #include "../menu.hpp"
 
   namespace Menu {
     class htmlOut:public menuOut {
