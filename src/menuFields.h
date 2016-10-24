@@ -183,6 +183,7 @@ v2.0 - 	Calling action on every elements
 		}
 		virtual void printTo(menuOut& p) {
 			//Serial<<"drawing menuSelect"<<endl;
+			menuVariant<T>::sync();
 			print_P(p,menu::text);
 			p.print(menu::activeNode==this?':':' ');
 			((prompt*)pgmPtrNear(menu::data[menu::sel]))->printTo(p);
