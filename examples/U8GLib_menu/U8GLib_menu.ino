@@ -46,6 +46,13 @@ promptFeedback quit() {
   return true;
 }
 
+int selTest=0;
+SELECT(selTest,selMenu,"Select",
+  VALUE("Zero",0),
+  VALUE("One",1),
+  VALUE("Two",2)
+);
+
 MENU(subMenu,"SubMenu"
   ,OP("TESTING LONG STRINGS",quit)
   ,FIELD(param,"Name","%",0,100,10,1)
@@ -69,6 +76,7 @@ CHOOSE(adc_prescale,sample_clock,"Clock"
 );
 
 MENU(mainMenu,"Main menu"
+  ,SUBMENU(selMenu)
   ,SUBMENU(subMenu)
   ,FIELD(param,"Name","%",0,100,10,1)
   ,SUBMENU(sample_clock)

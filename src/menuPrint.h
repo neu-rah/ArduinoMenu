@@ -31,7 +31,9 @@ www.r-site.net
 			println();
 		}
 		virtual void printMenu(menu& m,bool drawExit) {
-			if (drawn==&m&&m.sel==lastSel) return;
+			bool any=false;
+			for(int i=0;i<m.sz;i++) any|=m[i].needRedraw(*this,i==m.sel);
+			if ((!any)&&drawn==&m&&m.sel==lastSel) return;
 			clear();
 			int i=0;
 			for(;i<m.sz;i++)

@@ -65,7 +65,7 @@ SELECT(selTest,selMenu,"Select",
 );
 
 int chooseTest=-1;
-CHOOSE(chooseTest,chooseMenu,"Choose ",
+CHOOSE(chooseTest,chooseMenu,"Choose",
   VALUE("First",1),
   VALUE("Second",2),
   VALUE("Third",3),
@@ -106,4 +106,5 @@ void setup() {
 void loop() {
   mainMenu.poll(menu_out,Serial);
   digitalWrite(LEDPIN,ledCtrl);
+  delay(300);
 }

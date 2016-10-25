@@ -135,6 +135,7 @@ v2.0 - 	Calling action on every elements
 		menuVariant(T& target,const char *text,unsigned int sz,menuValue<T>* const data[]):
 	    menu(text,sz,(prompt**)data),target(target) {sync();}
 		virtual bool needRedraw(menuOut&p,bool selected) {
+			//Serial<<*(prompt*)this<<".needRedraw?"<<endl;
 			bool nr=((menuValue<T>*)pgmPtrNear(data[sel]))->value!=target;//||p.lastSel!=sel;
 			//T v=((menuValue<T>*)pgmPtrNear(data[sel]))->value;
 			//if (nr) Serial<<"Variant need redraw:"<<*this<<endl<<"value:"<<v<<" target:"<<target<<" sel:"<<sel<<" lastSel:"<<p.lastSel<<endl;;
@@ -158,31 +159,9 @@ v2.0 - 	Calling action on every elements
 	template<typename T>
 	class menuSelect: public menuVariant<T> {
 	public:
-		int lastDrawnOp;//using extra var because we are drawing the previous menu with updated field, lastSel refers to it and not the current field.
-		//lastSel is on the output device (future paralel output devices?) but it should be a focus chain on each output device to preserve
-		//this kind of information... till there we can not use paralle output devices! RA2016
 		menuSelect(const char *text,unsigned int sz,menuValue<T>* const data[],T& target):
 			menuVariant<T>(target,text,sz,data) {menuVariant<T>::sync();}
-		virtual bool needRedraw(menuOut&p,bool selected) {
-			if (selected) {
-				bool nr=lastDrawnOp!=menu::sel;//||((menuValue<T>*)pgmPtrNear(menu::data[menu::sel]))->value==menuVariant<T>::target;
-				//T v=((menuValue<T>*)pgmPtrNear(menu::data[menu::sel]))->value;
-				//if (nr) Serial<<"Variant need redraw:"<<*this<<endl
-				/*Serial
-					<<"       value:"<<v<<endl
-					<<"      target:"<<menuVariant<T>::target
-					<<"         sel:"<<menu::sel
-					<<"     lastSel:"<<p.lastSel
-					<<" lastDrawnOp:"<<lastDrawnOp
-					<<endl;;*/
-				//p.lastSel=menu::sel;
-				lastDrawnOp=menu::sel;
-				return nr;
-			}
-			return ((menuValue<T>*)pgmPtrNear(menu::data[menu::sel]))->value!=menuVariant<T>::target;
-		}
 		virtual void printTo(menuOut& p) {
-			//Serial<<"drawing menuSelect"<<endl;
 			menuVariant<T>::sync();
 			print_P(p,menu::text);
 			p.print(menu::activeNode==this?':':' ');
@@ -190,24 +169,22 @@ v2.0 - 	Calling action on every elements
 		}
 		promptFeedback activate(menuOut& p,Stream& c,bool) {
 			if (menu::activeNode!=this) {
-				//Serial<<"first select"<<endl;
 				if (menuVariant<T>::action(*this,p,c)) return true;
 			  this->setPosition(menuNode::activeNode->ox,menuNode::activeNode->oy);
-				this->menu::previousMenu=(menu*)menu::activeNode;
+				menu::previousMenu=(menu*)menu::activeNode;
 				menu::activeNode=this;
 			 	this->canExit=false;
 				if (p.top>menu::sel) p.top=menu::sel;
 				else if (menu::sel+1>p.maxY) p.top=menu::sel-p.maxY+1;
 				p.lastSel=-1;//redraw only affected option
 			}
+			int lsel=menu::sel;
 			int op=menu::menuKeys(p,c,false);
-			menu::previousMenu->menu::printMenu(p,menu::previousMenu->canExit);
 			if (op>=0&&op<this->menu::sz) {
-				//Serial<<"Selecting op:"<<op<<endl;
-				this->menu::sel=op;
+				menu::sel=op;
 				menuValue<T>* cp=(menuValue<T>*)pgmPtrNear(this->menu::data[op]);
 				if (cp->enabled) {
-					this->menuVariant<T>::target=cp->value;
+					menuVariant<T>::target=cp->value;
 					cp->activate(p,c,true);
 					p.lastSel=-1;//redraw only affected option
 					//and exit
@@ -215,6 +192,11 @@ v2.0 - 	Calling action on every elements
 				 	c.flush();//reset the encoder
 				}
 			}
+			if (menu::sel!=lsel) {
+				menuVariant<T>::target=((menuValue<T>*)&operator[](menu::sel))->value;
+				p.lastSel=-1;//redraw only affected option
+			}
+			menu::previousMenu->menu::printMenu(p,menu::previousMenu->canExit);
 			//Serial<<"sel:"<<menu::sel<<" op:"<<op<<endl;
 			return false;
 		}

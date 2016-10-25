@@ -153,7 +153,7 @@ void scrSaver() {
 
 //the quadEncoder
 quadEncoder quadEncoder(encA,encB);//simple quad encoder driver
-quadEncoderStream enc(quadEncoder,2);// simple quad encoder fake Stream
+quadEncoderStream enc(quadEncoder,4);// simple quad encoder fake Stream
 
 //a keyboard with only one key :D, this is the encoder button
 keyMap encBtn_map[]={{-encBtn,menu::enterCode}};//negative pin numbers means we have a pull-up, this is on when low
