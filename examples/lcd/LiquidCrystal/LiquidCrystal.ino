@@ -14,10 +14,6 @@ www.r-site.net
 ***/
 
 #include <menu.h>
-#include <dev/encoderIn.h>//for PCINT encoder
-#include <dev/keyIn.h>//for encoder button
-#include <dev/chainStream.h>//for mixing input stream (encoder+button)
-#include <dev/lcdOut.h>//for lcd output
 
 using namespace Menu;
 

@@ -41,8 +41,9 @@ const colorDef<uint8_t> colors[] MEMMODE={
 };
 
 //define menu outputs ------------------------------------------------
-const panel panels[] MEMMODE={{1,1,16,10},{18,1,16,10}};
-panelsList pList(panels,sizeof(panels)/sizeof(panel));
+const panel panels[] MEMMODE={{1,1,16,10},{18,1,16,10},{36,1,16,10}};
+menuNode* nodes[sizeof(panels)/sizeof(panel)];
+panelsList pList(panels,nodes,sizeof(panels)/sizeof(panel));
 ansiSerialOut ansi(Serial,colors,pList);//the output device, ansi-terminal Cols x Rows
 menuOut* outputs[]={&ansi};
 outputsList out(outputs,1);
@@ -148,7 +149,8 @@ void setup() {
   nav.showTitle=true;
   //nav.printMenu(1);
   //ansi.fill(1, 1, 2, 2, 'X');
-  delay(2000);
+  //Serial<<"pList[0]:{"<<pList[0].x<<","<<pList[0].y<<","<<pList[0].w<<","<<pList[0].h<<"}"<<endl;
+  delay(1000);
 }
 
 void loop() {

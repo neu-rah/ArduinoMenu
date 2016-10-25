@@ -300,8 +300,11 @@ www.r-site.net
 		class panelsList {
 			public:
 				const panel* panels;
+				menuNode** nodes;
 				const idx_t sz;
-				panelsList(const panel p[],idx_t sz):panels(p),sz(sz) {}
+				panelsList(const panel p[],menuNode* nodes[],idx_t sz):panels(p),nodes(nodes),sz(sz) {
+					for(int n=0;n<sz;n++) nodes[n]=NULL;
+				}
 				inline const panel operator[](idx_t i) {
 					assert(i<sz);
 					#ifdef USING_PGM

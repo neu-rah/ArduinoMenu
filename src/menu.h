@@ -1,3 +1,5 @@
+#define DEBUG
+
 #if ARDUINO < 100
   #include <WProgram.h>
 #else
