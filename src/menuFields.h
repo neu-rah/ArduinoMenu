@@ -193,7 +193,7 @@ v2.0 - 	Calling action on every elements
 				}
 			}
 			if (menu::sel!=lsel) {
-				menuVariant<T>::target=((menuValue<T>*)&operator[](menu::sel))->value;
+				menuVariant<T>::target=((menuValue<T>*)&menu::operator[](menu::sel))->value;
 				p.lastSel=-1;//redraw only affected option
 			}
 			menu::previousMenu->menu::printMenu(p,menu::previousMenu->canExit);
