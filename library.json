@@ -8,16 +8,6 @@
     "url": "https://github.com/neu-rah/ArduinoMenu",
     "branch": "dev"
   },
-  "dependencies": [
-    {
-      "name": "Streaming",
-      "lib-from-repo": "https://github.com/scottdky/Streaming"
-    },
-    {
-      "name": "Assert4a",
-      "lib-from-repo": "https://github.com/nettigo/Assert4a"
-    }
-  ],
   "frameworks": "arduino",
   "platforms": "*"
 }
