@@ -86,4 +86,4 @@ install:
    - unzip /tmp/Assert4a.zip -d /tmp/
 
 script:
-   - platformio ci --lib="." --lib="/tmp/Streaming-master" --lib="Assert4a-master" --board=nanoatmega328
+   - platformio ci --lib="." --lib="/tmp/Streaming-master" --lib="/tmp/Assert4a-master" --board=nanoatmega328
