@@ -79,11 +79,11 @@ env:
 install:
    - pip install -U platformio
 
-   - wget https://github.com/scottdky/Streaming/archive/master.zip -O /tmp/Streaming_source.zip
-   - unzip /tmp/Streaming_source.zip -d /tmp/
+   - wget https://github.com/scottdky/Streaming/archive/master.zip -O /tmp/Streaming.zip
+   - unzip /tmp/Streaming.zip -d /tmp/
 
-   - wget https://github.com/nettigo/Assert4a/archive/master.zip -O /tmp/Assert4A_source.zip
-   - unzip /tmp/Assert4A_source.zip -d /tmp/
+   - wget https://github.com/nettigo/Assert4a/archive/master.zip -O /tmp/Assert4a.zip
+   - unzip /tmp/Assert4a.zip -d /tmp/
 
 script:
-   - platformio ci --lib="." --board=nanoatmega328 --board=due --board=teensy31
+   - platformio ci --lib="." --lib="/tmp/Streaming-master" --lib="Assert4a-master" --board=nanoatmega328
