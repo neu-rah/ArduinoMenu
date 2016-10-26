@@ -340,6 +340,7 @@ www.r-site.net
 				idx_t lastTop=-1;
 				idx_t lastSel=-1;
 				idx_t top=0;//first line to draw
+				//TODO: turn this bool's into bitfield flags
 				bool redraw=false;//redraw all menu every cycle, some display drivers require it
 				bool minimalRedraw=true;//redraw only changed options (avoids flicking on LCDS), not good for Serial
 				bool drawNumIndex=false;

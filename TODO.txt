@@ -24,4 +24,4 @@ IDEA: generic input:
 - input parsing should be delivered to focused menu object to allow customization
 - then some chain or system wide functions can be called as aux. functions.
 - input classes should provide a parser to be called as aux function of any of the above and deliver cmds.
-  => that we gcan not accept Serial as input but use a specialized derivation instead
+  => that we can not accept Serial as input but use a specialized derivation instead

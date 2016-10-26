@@ -132,16 +132,23 @@ www.r-site.net
     extern const navCodesDef defaultNavCodes;
 
     struct config {
+      //this can be output specific
       const char selectedCursor;//='>';
       const char disabledCursor;//='-';
       //const char* exitText=exitTextMem;
+      //NOTE: this can be input specific
       const bool invertFieldKeys;//=false;//TODO: invert for encoder -> test this
       const bool nav2D;//=false;//TODO: use left|right keys? -> test this.. this should be device dependent and therefor need generic menu inputs
       const navCodesDef &navCodes;//=defaultNavCodes;
       inline char getCmdChar(navCmds cmd) const {return navCodes[cmd].ch;}
     };
 
-    // TODO: make this a parametrized thing instead of a global reference
+    // NOTE: make this a parametrized thing instead of a global reference
+    // a parametric thing will envolve a lot of reference passing
+    // however some overrides will need to access them but are not allowed to receive them by parameters
+    // putting them on the class would bind the instance to the options
+    // for its a pointer, user can change the pointer.
+    // TODO: distribute them by inputs and outputs
     extern config* options;
 
     Print& operator<<(Print& o,prompt const &p);
