@@ -9,18 +9,16 @@ The user function can be operated as a single action called on click/enter or as
 The system is designed as a non blocking polling system, allowing parallel task to run.
 
 ## Features
-- Small footprint on RAM and time.
+- Small footprint on RAM using PROGMEM on system where it is available.
 - Wide variety of input/output devices supported.
-- Low memory usage, using PROGMEM on systems where its is available.
 - Easy to define menus (macros).
 - Minimalistic user code base.
 - Fields edit values hooked to existing program variables (references).
 - Fields can edit variables of any type (templates).
-- Reflexive fields, showing variable changes.
+- Reflexive fields, showing variable changes done outside the menu system.
 - Numerical field edit and range validation.
 - Customizable (colors and cursors).
 - Able to work over Serial stream IO as a base level.
-- modularity, support for different devices in separate include files.
 - static allocation of RAM, avoiding heap fragmentation, all RAM needed to define menu structure is allocated at program statup.
 - events available for menus and prompts
 - simply returns when no input available and no draw needed
