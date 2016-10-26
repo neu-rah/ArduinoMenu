@@ -1,0 +1,45 @@
+{
+  "name": "ArduinoMenu",
+  "keywords": "Arduino, Menu, System, IO, Graphics, LCD, Encoder, Serial, interactivity",
+  "description": "AVR generic menu/interactivity system",
+  "repository":
+  {
+    "type": "git",
+    "url": "https://github.com/neu-rah/ArduinoMenu",
+    "branch": "dev"
+  },
+  "dependencies": [
+    {
+      "name": "Streaming",
+      "authors": "Scott Daniels",
+      "frameworks": "arduino"
+    },
+    {
+      "name": "AnsiStream",
+      "authors": "Rui Azevedo",
+      "frameworks": "arduino"
+    },
+    {
+      "name": "PCINT",
+      "authors": "Rui Azevedo",
+      "frameworks": "arduino"
+    },
+    {
+      "name": "Adafruit-GFX-Library",
+      "authors": "Adafruit Industries",
+      "frameworks": "arduino"
+    },
+    {
+      "name": "U8glib_Arduino",
+      "authors": "olikraus",
+      "frameworks": "arduino"
+    },
+    {
+      "name": "Assert4a",
+      "authors": "Nettigo",
+      "frameworks": "arduino"
+    }
+  ],
+  "frameworks": "arduino",
+  "platforms": "*"
+}
