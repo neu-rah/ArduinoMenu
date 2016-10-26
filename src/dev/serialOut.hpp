@@ -3,11 +3,14 @@
   #include "../menu.hpp"
 
   namespace Menu {
+
+    extern panelsList default_serial_panel_list;
+
     class serialOut:public menuOut {
       public:
         Print& device;
         idx_t lastLine=-1;
-        inline serialOut(Print& o,panelsList &p,bool r=false,bool m=false)
+        inline serialOut(Print& o,panelsList &p=default_serial_panel_list,bool r=false,bool m=false)
           :menuOut(p,r,m),device(o) {
             drawNumIndex=true;
           }

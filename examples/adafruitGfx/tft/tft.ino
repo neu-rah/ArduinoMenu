@@ -151,8 +151,8 @@ keyIn<1> encButton(encBtn_map);//1 is the number of keys
 
 MENU_INPUTS(in,&encStream,&encButton,&Serial);
 
-PANELS(serial_panels,{0,0,40,10});
-serialOut outSerial(Serial,serial_panels);//the output device (just the serial port)
+//PANELS(serial_panels,{0,0,40,10});
+serialOut outSerial(Serial);//,serial_panels);//the output device (just the serial port)
 
 #define textScale 1
 PANELS(gfx_panels,{0,0,14,8},{14,0,13,8});
