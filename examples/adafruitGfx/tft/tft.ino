@@ -178,7 +178,8 @@ void setup() {
   mainMenu[1].enabled=disabledStatus;
   //nav.showTitle=false;
 
-  pinMode(encBtn, INPUT_PULLUP);
+  //pinMode(encBtn, INPUT_PULLUP);
+  encButton.begin();
   encoder.begin();
 
   SPI.begin();

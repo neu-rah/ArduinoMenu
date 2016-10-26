@@ -36,6 +36,11 @@ public:
   int lastkey;
   unsigned long pressMills=0;
   keyIn<N>(keyMap k[]):keys(k),lastkey(-1) {}
+  void begin() {
+    for(int n=0;n<N;n++)
+      if (keys[n].pin<0) pinMode(-keys[n].pin,INPUT_PULLUP);
+      else pinMode(keys[n].pin,INPUT);
+  }
   int available(void) {
     //Serial<<"available"<<endl;
     int ch=peek();
