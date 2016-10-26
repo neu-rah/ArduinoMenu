@@ -1,7 +1,5 @@
 Arduino Menu Library
 
-+ BUG: TODO: reflect enable/disable (serial and lcd menu)
-  DONE: by centralizing the menuPrint
 + color enumeration at base level
 + add list of output devices
 + add macros to build navRoot
@@ -12,7 +10,7 @@ Arduino Menu Library
 - split options into:
   * config (static MEMMODE)
   * options (dynamic => RAM)
-- use/draw title option for any menu, and ignore it on single line devices!
++ use/draw title option for any menu, and ignore it on single line devices!
 - dialogs and modal dialogs (static alloc)
 - alerts (dynamic)
 - errors (dynamic modal)
@@ -21,10 +19,9 @@ Arduino Menu Library
 - textField?
     if so make it a submenu where text is a title and we navigate a pad/menu to choose letters and commands.
 
-generic input:
+IDEA: generic input:
 
 - input parsing should be delivered to focused menu object to allow customization
 - then some chain or system wide functions can be called as aux. functions.
 - input classes should provide a parser to be called as aux function of any of the above and deliver cmds.
   => that we gcan not accept Serial as input but use a specialized derivation instead
--

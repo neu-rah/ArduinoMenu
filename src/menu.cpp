@@ -139,12 +139,12 @@ navCmds navNode::navKeys(char ch) {
   return noCmd;
 }
 
-void navTarget::navigate(navNode& nav,char ch,Stream& in) {
-  nav.doNavigation(ch,in);
+void navTarget::navigate(navNode& nav,Stream& in) {
+  nav.doNavigation(in.read());
 }
 
 //generic navigation (aux function)
-void navNode::doNavigation(char ch,Stream& in) {
+void navNode::doNavigation(char ch) {
   idx_t osel=sel;
   navCmds cmd=navKeys(ch);
   switch(cmd) {
@@ -203,9 +203,8 @@ result navNode::sysEvent(eventMask e,idx_t i) {
 }
 
 void navRoot::doInput() {
-  //TODO: either remove the read or the in
   while ((!sleepTask)&&in.available())
-    navFocus->navigate(node(),in.read(),in);
+    navFocus->navigate(node(),in);
 }
 
 void navRoot::doOutput() {

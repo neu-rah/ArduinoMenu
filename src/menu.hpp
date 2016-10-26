@@ -63,7 +63,7 @@ www.r-site.net
 			public:
 				navTarget(const promptShadow& shadow):prompt(shadow) {}
 				//bool canNav() const override {return true;}
-				virtual void navigate(navNode& nav,char ch,Stream& in);
+				virtual void navigate(navNode& nav,Stream& in);
 		};
 
 		//--------------------------------------------------------------------------
@@ -131,7 +131,7 @@ www.r-site.net
 				bool tunning=false;
 				T reflex;
 				menuField(const menuFieldShadow<T> & shadow):navTarget(shadow) {}
-				void navigate(navNode& nav,char ch,Stream& in) override;
+				void navigate(navNode& nav,Stream& in) override;
 				void printTo(navRoot &root,bool sel,menuOut& out) override;
 				inline T& target() const {return *(T*)memPtr(((menuFieldShadow<T>*)shadow)->value);}
 				inline T getTypeValue(const T* from) const {
@@ -243,7 +243,7 @@ www.r-site.net
 				bool changed(const navNode &nav,const menuOut& out) override {
 					return dirty||reflex!=target();
 				}
-				void navigate(navNode& nav,char ch,Stream& in) override;
+				void navigate(navNode& nav,Stream& in) override;
 				void printTo(navRoot &root,bool sel,menuOut& out) override;
 		};
 
@@ -449,7 +449,6 @@ www.r-site.net
 		class navNode {
 			public:
 				idx_t sel=0;
-				//idx_t top=0;//TODO: send this to menuOut
 				menuNode* target;
 				static navRoot* root;
 				inline menuNodeShadow& shadow() const {return *(menuNodeShadow*)target->shadow;}
@@ -465,7 +464,7 @@ www.r-site.net
 				inline result sysEvent(eventMask e,idx_t i);//send event to item index i
 				inline result sysEvent(eventMask e) {return sysEvent(e,sel);}//send event to current item
 				navCmds navKeys(char ch);
-				void doNavigation(char ch,Stream& in);
+				void doNavigation(char ch);
 				inline bool changed(const menuOut& out) const {return target->changed(*this,out);}
 				inline prompt& operator[](idx_t i) const {return target->operator[](i);}
 		};
@@ -536,14 +535,14 @@ www.r-site.net
 		static const char* numericChars="0123456789.";
 
 		template<typename T>
-		void menuField<T>::navigate(navNode& nav,char ch,Stream& in) {
+		void menuField<T>::navigate(navNode& nav,Stream& in) {
 			menuFieldShadow<T>& s=*(menuFieldShadow<T>*)shadow;
 			if (strchr(numericChars,in.peek())) {//a numeric value was entered
 				target()=(T)in.parseFloat();
 				tunning=false;
 				nav.root->exit();
 			} else {
-				//char ch=in.read();
+				char ch=in.read();
 				navCmds cmd=nav.navKeys(ch);
 				switch(cmd) {
 					case enterCmd:
@@ -593,9 +592,10 @@ www.r-site.net
 		}
 
 		template<typename T>
-		void menuVariant<T>::navigate(navNode& nav,char ch,Stream& in) {
+		void menuVariant<T>::navigate(navNode& nav,Stream& in) {
+			char ch=in.read();
 			nav.sel=sync();
-			nav.doNavigation(ch,in);
+			nav.doNavigation(ch);
 			sync(nav.sel);
 			if (ch==options.navCodes[enterCmd].ch) nav.root->exit();
 		}

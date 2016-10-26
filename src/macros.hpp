@@ -37,7 +37,6 @@
   Stream* _inputs_##id[]={__VA_ARGS__};\
   chainStream<sizeof(_inputs_##id)/sizeof(Stream*)> id(_inputs_##id);
 
-//TODO: move id##_menuShadow to DEF_MENU
 #define MENU(id,text,aFn,mask,style,...) altMENU(menu,id,text,aFn,mask,style,__VA_ARGS__)
 #define altMENU(objType,id,text,aFn,mask,style,...)\
   FOR_EACH(DECL,__VA_ARGS__)\

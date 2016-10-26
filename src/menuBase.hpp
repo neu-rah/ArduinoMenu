@@ -131,8 +131,8 @@ www.r-site.net
       const char selectedCursor='>';
       const char disabledCursor='-';
       //const char* exitText=exitTextMem;
-      const bool invertFieldKeys=false;//invert for encoder
-      const bool nav2D=false;//use left|right keys?
+      const bool invertFieldKeys=false;//TODO: invert for encoder -> test this
+      const bool nav2D=false;//TODO: use left|right keys? -> test this.. this should be device dependent and therefor need generic menu inputs
       struct navCode {navCmds cmd;char ch;} navCodes[7]={
         {noCmd,-1},
         {escCmd,'/'},

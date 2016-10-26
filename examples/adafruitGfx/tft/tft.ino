@@ -157,9 +157,9 @@ serialOut outSerial(Serial);//,serial_panels);//the output device (just the seri
 #define textScale 1
 PANELS(gfx_panels,{0,0,14,8},{14,0,13,8});
 //font size is 6x9
-menuGFX outGFX(gfx,colors,gfx_panels,6*textScale,9*textScale);//output device for LCD
+menuGFX outGfx(gfx,colors,gfx_panels,6*textScale,9*textScale);//output device for LCD
 
-MENU_OUTPUTS(out,&outGFX,&outSerial);
+MENU_OUTPUTS(out,&outGfx,&outSerial);
 NAVROOT(nav,mainMenu,2,in,out);
 
 //when menu is suspended
@@ -176,7 +176,8 @@ void setup() {
   Serial<<"menu 3.0 test"<<endl;Serial.flush();
   options.idleTask=idle;//point a function to be used when menu is suspended
   mainMenu[1].enabled=disabledStatus;
-  //nav.showTitle=false;
+  //outGfx.usePreview=true;//reserve one panel for preview?
+  //nav.showTitle=false;//show menu title?
 
   //pinMode(encBtn, INPUT_PULLUP);
   encButton.begin();
