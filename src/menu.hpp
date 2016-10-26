@@ -295,7 +295,11 @@ www.r-site.net
 		//this is a thing of output devices, some might have it
 		//having it at base avoids variable duplication.. so any output should have one
 
-		struct panel {idx_t x,y,w,h;};
+		struct panel {
+			idx_t x,y,w,h;
+			inline idx_t maxX() const {return x+w;}
+			inline idx_t maxY() const {return y+h;}
+		};
 
 		class panelsList {
 			public:
@@ -317,6 +321,16 @@ www.r-site.net
 					#else
 						return panels[i];
 					#endif
+				}
+				idx_t maxX() const {
+					idx_t r=0;
+					for(int n=0;n<sz;n++) r=max(operator[](n).maxX(),r);
+					return r;
+				}
+				idx_t maxY() const {
+					idx_t r=0;
+					for(int n=0;n<sz;n++) r=max(operator[](n).maxY(),r);
+					return r;
 				}
 		};
 
@@ -343,13 +357,13 @@ www.r-site.net
 					status stat=enabledStatus,
 					bool edit=false
 				) {return *this;}
-				void previewMenu(navRoot& root,menuNode& menu,idx_t panelNr);
-				void printMenu(navNode &nav);
+				void previewMenu(navRoot& root,menuNode& menu,idx_t panelNr);//draw a preview on a panel
+				void printMenu(navNode &nav);//print menus and previews on panels
+				void clearChanged(navNode &nav);//clean up changed flags after everyone printed!
 				virtual void clearLine(idx_t ln,idx_t panelNr=0,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false)=0;
 				virtual void clear()=0;
 				virtual void clear(idx_t panelNr)=0;
 				virtual void setCursor(idx_t x,idx_t y,idx_t panelNr=0)=0;
-				virtual void clearChanged(navNode &nav);
 				virtual void setColor(colorDefs c,bool selected=false,status s=enabledStatus,bool edit=false) {}
 				virtual void drawCursor(idx_t ln,bool selected,status stat,bool edit=false,idx_t panelNr=0) {
 					setColor(cursorColor, selected, stat,edit);

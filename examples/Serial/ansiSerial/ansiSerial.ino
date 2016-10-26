@@ -87,17 +87,13 @@ result showColors(menuOut& o,idleEvent e) {
 }
 
 result showChars(menuOut& o,idleEvent e) {
-  char box0[]="╭─┬╮";
-  char box1[]="│ ││";
-  char box2[]="├─┼┤";
-  char box3[]="╰─┴╯";
   switch(e) {
     case idling:
       //o<<"len:"<<strlen(box_top);
-      o<<box0<<endl;
-      o<<box1<<endl;
-      o<<box2<<endl;
-      o<<box3<<endl;
+      o<<F("╭─┬╮")<<endl;
+      o<<F("│ ││")<<endl;
+      o<<F("├─┼┤")<<endl;
+      o<<F("╰─┴╯")<<endl;
       break;
     default:
       o<<ANSI::setForegroundColor(WHITE)

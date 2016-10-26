@@ -37,25 +37,12 @@ Adafruit_PCD8544 gfx(GFX_DC,GFX_CS,GFX_RST);
 #define encB    3
 #define encBtn  4
 
-result zZz() {Serial<<F("zZz")<<endl;return proceed;}
-
 result showEvent(eventMask e,navNode& nav,prompt& item) {
   Serial<<e<<" on "<<item<<endl;
   return proceed;
 }
 
 int test=55;
-
-result action1(eventMask e) {
-  Serial<<e<<F(" action1 executed, proceed menu")<<endl;Serial.flush();
-  return proceed;
-}
-
-result action2(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out) {
-  Serial<<item<<' '<<e<<F(" action2 executed, quiting menu")<<endl;
-  return quit;
-}
-
 int ledCtrl=LOW;
 
 result ledOn() {
@@ -98,9 +85,6 @@ public:
 };
 
 MENU(subMenu,"Sub-Menu",showEvent,anyEvent,noStyle
-  ,OP("Sub1",showEvent,anyEvent)
-  ,OP("Sub2",showEvent,anyEvent)
-  ,OP("Sub3",showEvent,anyEvent)
   ,altOP(altPrompt,"",showEvent,anyEvent)
   ,EXIT("<Back")
 );
@@ -116,9 +100,7 @@ result doAlert(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out
   return proceed;
 }
 
-MENU(mainMenu,"Main menu",zZz,noEvent,wrapStyle
-  ,OP("Op1",action1,anyEvent)
-  ,OP("Op2",action2,enterEvent)
+MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,FIELD(test,"Test","%",0,100,10,1,doNothing,noEvent)
   ,SUBMENU(subMenu)
   ,SUBMENU(setLed)
@@ -153,21 +135,26 @@ keyIn<1> encButton(encBtn_map);//1 is the number of keys
 Stream* inputsList[]={&encStream,&encButton,&Serial};
 chainStream<3> in(inputsList);//3 is the number of inputs
 
+/*const panel serial_panels[] MEMMODE={{0,0,40,10}};
+menuNode* serial_nodes[sizeof(serial_panels)/sizeof(panel)];
+panelsList serial_pList(serial_panels,serial_nodes,sizeof(serial_panels)/sizeof(panel));
+serialOut outSerial(Serial,serial_pList);//the output device (just the serial port)*/
+
 #define fontX 5
 #define fontY 9
 const panel panels[] MEMMODE={{0,0,84/fontX,48/fontY}};
-panelsList pList(panels,1);
+menuNode* nodes[sizeof(panels)/sizeof(panel)];
+panelsList pList(panels,nodes,sizeof(panels)/sizeof(panel));
 
-serialOut outSerial(Serial,pList);//the output device (just the serial port)
 menuGFX outGFX(gfx,colors,pList,fontX,fontY);//output device for LCD with 5x8 font size
-menuOut* outputs[]={&outGFX,&outSerial};
-outputsList out(outputs,2);
+menuOut* outputs[]={&outGFX};
+outputsList out(outputs,1);
 NAVROOT(nav,mainMenu,2,in,out);
 
 //when menu is suspended
 result idle(menuOut& o,idleEvent e) {
   if (e==idling)
-    o<<"suspended..."<<endl<<"press [select]"<<endl<<"to continue";
+    o<<F("suspended...")<<endl<<F("press [select]")<<endl<<F("to continue");
   return proceed;
 }
 
@@ -175,7 +162,7 @@ void setup() {
   pinMode(LEDPIN,OUTPUT);
   Serial.begin(115200);
   while(!Serial);
-  Serial<<"menu 3.0 test"<<endl;Serial.flush();
+  Serial<<F("menu 3.0 test")<<endl;Serial.flush();
   options.idleTask=idle;//point a function to be used when menu is suspended
   mainMenu[1].enabled=disabledStatus;
 
@@ -185,7 +172,7 @@ void setup() {
   SPI.begin();
   gfx.begin();
   gfx.clearDisplay();
-  gfx<<"Menu 3.x test on GFX"<<endl;;
+  gfx<<F("Menu 3.x test on GFX")<<endl;;
   gfx.setContrast(50);
   gfx.display(); // show splashscreen
   delay(2000);

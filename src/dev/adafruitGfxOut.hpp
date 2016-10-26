@@ -60,7 +60,10 @@ namespace Menu {
 					setColor(fgColor);
 				}
 
-				virtual void clear(idx_t panelNr) override {clear();}
+				virtual void clear(idx_t panelNr) override {
+					const panel p=panels[panelNr];
+					gfx.fillRect(p.x*resX,p.y*resY,p.w*resX,p.h*resY,getColor(bgColor,false,enabledStatus,false));
+				}
 
 		    void setCursor(idx_t x,idx_t y,idx_t panelNr=0) override {
 					const panel p=panels[panelNr];

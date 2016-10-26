@@ -36,8 +36,6 @@ Adafruit_ST7735 gfx(TFT_CS, TFT_DC, TFT_RST);
 #define encB    3
 #define encBtn  4
 
-result zZz() {Serial<<"zZz"<<endl;return proceed;}
-
 result showEvent(eventMask e,navNode& nav,prompt& item) {
   Serial<<e<<" on "<<item<<endl;
   return proceed;
@@ -115,7 +113,7 @@ result doAlert(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out
   return proceed;
 }
 
-MENU(mainMenu,"Main menu",zZz,noEvent,wrapStyle
+MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,OP("Op1",action1,anyEvent)
   ,OP("Op2",action2,enterEvent)
   ,FIELD(test,"Test","%",0,100,10,1,doNothing,noEvent)
@@ -155,14 +153,18 @@ keyIn<1> encButton(encBtn_map);//1 is the number of keys
 Stream* inputsList[]={&encStream,&encButton,&Serial};
 chainStream<3> in(inputsList);//3 is the number of inputs
 
-#define textScale 1
-//font size is 6x9
-//const panel panels[] MEMMODE={{0,0,160/6/textScale,128/9/textScale}};
-//testing smaller panels and positioning
-const panel panels[] MEMMODE={{0,0,18,8}};
-panelsList pList(panels,1);
 
-serialOut outSerial(Serial,pList);//the output device (just the serial port)
+const panel serial_panels[] MEMMODE={{0,0,40,10}};
+menuNode* serial_nodes[sizeof(serial_panels)/sizeof(panel)];
+panelsList serial_pList(serial_panels,serial_nodes,sizeof(serial_panels)/sizeof(panel));
+serialOut outSerial(Serial,serial_pList);//the output device (just the serial port)
+
+//gfx panels
+const panel panels[] MEMMODE={{0,0,14,8},{14,0,13,8}};
+menuNode* nodes[sizeof(panels)/sizeof(panel)];
+panelsList pList(panels,nodes,sizeof(panels)/sizeof(panel));
+
+#define textScale 1
 //font size is 6x9
 menuGFX outGFX(gfx,colors,pList,6*textScale,9*textScale);//output device for LCD
 menuOut* outputs[]={&outGFX,&outSerial};

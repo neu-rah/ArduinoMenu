@@ -28,6 +28,7 @@ void menuOut::clearChanged(navNode &nav) {
   }
 }
 
+// draw a menu preview on a panel
 void menuOut::previewMenu(navRoot& root,menuNode& menu,idx_t panelNr) {
   clear(panelNr);
   setColor(fgColor,false);
@@ -47,18 +48,12 @@ void menuOut::previewMenu(navRoot& root,menuNode& menu,idx_t panelNr) {
 //determin panel number here and distribute menu and previews among the panels
 void menuOut::printMenu(navNode &nav) {
   menuNode& focus=nav.root->active();
-  //Serial<<ANSI::xy(0,20)<<ANSI::setForegroundColor(WHITE);
-  //Serial<<"nav:"<<*(prompt*)nav.target<<" styles:"<<focus.sysStyles();
-  //Serial<<" level:"<<nav.root->level;
   int lvl=nav.root->level;
   if (focus.sysStyles()&_parentDraw) lvl--;
   int k=min(lvl,panels.sz-1);
   if (usePreview&&k) k--;
-  //Serial<<ANSI::xy(0,24)<<"k:"<<k;
   for(int i=0;i<k;i++) {
     navNode &n=nav.root->path[lvl-k+i];
-    //Serial<<ANSI::xy(0,23-i)<<ANSI::setForegroundColor(WHITE);
-    //Serial<<"printMenu "<<*(prompt*)n.target<<" on panel "<<i;
     if (!(minimalRedraw&&panels.nodes[i]==n.target)) {
       previewMenu(*nav.root,*n.target,i);
       panels.nodes[i]=n.target;
@@ -66,13 +61,13 @@ void menuOut::printMenu(navNode &nav) {
   }
   printMenu(nav,k);
   panels.nodes[k]=nav.target;//for cleaning purposes
-  //Serial<<ANSI::setBackgroundColor(BLACK)<<ANSI::setForegroundColor(WHITE)<<ANSI::xy(0,24)<<ANSI::eraseLine();
-  //Serial<<"clear panels from:"<<k+2<<" to "<<panels.sz-1<<"=";
   for(int i=k+2;i<panels.sz;i++) if (panels.nodes[i]) {
     clear(i);
     panels.nodes[i]=NULL;
   }
 }
+
+// generic (menuOut) print menu on a panel
 void menuOut::printMenu(navNode &nav,idx_t panelNr) {
   idx_t ot=top;
   idx_t st=(nav.root->showTitle&&(maxY(panelNr)>1))?1:0;//do not use titles on single line devices!

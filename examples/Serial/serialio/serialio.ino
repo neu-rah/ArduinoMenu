@@ -97,10 +97,10 @@ MENU(mainMenu,"Main menu",zZz,noEvent,wrapStyle
   ,EXIT("<Back")
 );
 
-const panel panels[] MEMMODE={{0,0,20,10}};
-panelsList pList(panels,1);
-
-serialOut outSerial(Serial,pList);//the output device (just the serial port)
+const panel serial_panels[] MEMMODE={{0,0,40,10}};
+menuNode* serial_nodes[sizeof(serial_panels)/sizeof(panel)];
+panelsList serial_pList(serial_panels,serial_nodes,sizeof(serial_panels)/sizeof(panel));
+serialOut outSerial(Serial,serial_pList);//the output device (just the serial port)
 menuOut* outputs[]={&outSerial};
 outputsList out(outputs,1);
 NAVROOT(nav,mainMenu,2,Serial,out);

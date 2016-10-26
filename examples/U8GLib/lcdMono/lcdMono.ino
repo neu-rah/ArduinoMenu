@@ -14,11 +14,6 @@ Extensible: Yes
 */
 
 #include <menu.h>
-#include <dev/serialOut.h>
-#include <dev/encoderIn.h>//for PCINT encoder
-#include <dev/keyIn.h>//for encoder button
-#include <dev/chainStream.h>//for mixing input stream (encoder+button)
-#include <dev/U8GLibOut.h>
 
 using namespace Menu;
 
@@ -153,12 +148,17 @@ keyIn<1> encButton(encBtn_map);//1 is the number of keys
 Stream* inputsList[]={&encStream,&encButton,&Serial};
 chainStream<3> in(inputsList);//3 is the number of inputs
 
+const panel serial_panels[] MEMMODE={{0,0,40,10}};
+menuNode* serial_nodes[sizeof(serial_panels)/sizeof(panel)];
+panelsList serial_pList(serial_panels,serial_nodes,sizeof(serial_panels)/sizeof(panel));
+serialOut outSerial(Serial,serial_pList);//the output device (just the serial port)
+
 #define fontX 6
 #define fontY 8
 const panel panels[] MEMMODE={{0,0,84/fontX,48/fontY}};
-panelsList pList(panels,1);
+menuNode* nodes[sizeof(panels)/sizeof(panel)];
+panelsList pList(panels,nodes,sizeof(panels)/sizeof(panel));
 
-serialOut outSerial(Serial,pList);//the output device (just the serial port)
 menuU8G gfx(u8g,colors,pList,fontX,fontY);
 menuOut* outputs[]={&gfx,&outSerial};
 outputsList out(outputs,2);

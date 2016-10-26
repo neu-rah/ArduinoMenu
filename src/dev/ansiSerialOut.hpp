@@ -32,7 +32,8 @@
           *this<<ANSI::xy(x+1+panels[panelNr].x,y+1+panels[panelNr].y);
         }
         void clear() override {
-          *this<<ANSI::xy(maxX()+1,maxY())<<ANSI::eraseScreen()<<ANSI::xy(1,1);
+          *this<<ANSI::xy(panels.maxX()+1,panels.maxY()+1)<<ANSI::eraseScreen()<<ANSI::xy(1,1);
+          panels.reset();
         }
         void clear(idx_t panelNr) override {
           const panel p=panels[panelNr];

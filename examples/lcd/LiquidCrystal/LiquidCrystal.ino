@@ -148,7 +148,8 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
 );
 
 const panel panels[] MEMMODE={{0,0,16,2}};
-panelsList pList(panels,1);
+menuNode* nodes[sizeof(panels)/sizeof(panel)];
+panelsList pList(panels,nodes,1);
 
 lcdOut outLCD(lcd,pList);//output device for LCD
 menuOut* outputs[]={&outLCD};//list of output devices
