@@ -55,15 +55,22 @@ void menuOut::printMenu(navNode &nav) {
   int k=min(lvl,panels.sz-1);
   if (usePreview&&k) k--;
   //Serial<<ANSI::xy(0,24)<<"k:"<<k;
-  for(int i=0;i<=k;i++) {
+  for(int i=0;i<k;i++) {
     navNode &n=nav.root->path[lvl-k+i];
     //Serial<<ANSI::xy(0,23-i)<<ANSI::setForegroundColor(WHITE);
     //Serial<<"printMenu "<<*(prompt*)n.target<<" on panel "<<i;
-    if (i==k) printMenu(n,i);
-    else if (!(minimalRedraw&&panels.nodes[i]==n.target)) {
+    if (!(minimalRedraw&&panels.nodes[i]==n.target)) {
       previewMenu(*nav.root,*n.target,i);
       panels.nodes[i]=n.target;
     }
+  }
+  printMenu(nav,k);
+  panels.nodes[k]=nav.target;//for cleaning purposes
+  //Serial<<ANSI::setBackgroundColor(BLACK)<<ANSI::setForegroundColor(WHITE)<<ANSI::xy(0,24)<<ANSI::eraseLine();
+  //Serial<<"clear panels from:"<<k+2<<" to "<<panels.sz-1<<"=";
+  for(int i=k+2;i<panels.sz;i++) if (panels.nodes[i]) {
+    clear(i);
+    panels.nodes[i]=NULL;
   }
 }
 void menuOut::printMenu(navNode &nav,idx_t panelNr) {
@@ -108,8 +115,10 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
       setColor(fgColor,selected,p.enabled,ed);
       p.printTo(*nav.root,selected,*this);
       if (selected&&panels.sz>panelNr+1) {
-        if(p.isMenu()) previewMenu(*nav.root,*(menuNode*)&p,panelNr+1);
-        else clear(panelNr+1);
+        if(p.isMenu()) {
+          previewMenu(*nav.root,*(menuNode*)&p,panelNr+1);
+          panels.nodes[panelNr+1]=&p;
+        } else if (panels.nodes[panelNr+1]) clear(panelNr+1);
       }
     }
   }

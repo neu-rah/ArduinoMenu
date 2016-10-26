@@ -303,7 +303,10 @@ www.r-site.net
 				menuNode** nodes;
 				const idx_t sz;
 				panelsList(const panel p[],menuNode* nodes[],idx_t sz):panels(p),nodes(nodes),sz(sz) {
-					for(int n=0;n<sz;n++) nodes[n]=NULL;
+					reset();
+				}
+				void reset(idx_t from=0) {
+					for(int n=from;n<sz;n++) nodes[n]=NULL;
 				}
 				inline const panel operator[](idx_t i) {
 					assert(i<sz);
