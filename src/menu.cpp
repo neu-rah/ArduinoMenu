@@ -110,7 +110,7 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
       if (selected&&panels.sz>panelNr+1) {
         if(p.isMenu()) {
           previewMenu(*nav.root,*(menuNode*)&p,panelNr+1);
-          panels.nodes[panelNr+1]=&p;
+          panels.nodes[panelNr+1]=(menuNode*)&p;
         } else if (panels.nodes[panelNr+1]) clear(panelNr+1);
       }
     }

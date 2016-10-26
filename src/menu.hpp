@@ -316,7 +316,7 @@ www.r-site.net
 				void reset(idx_t from=0) {
 					for(int n=from;n<sz;n++) nodes[n]=NULL;
 				}
-				inline const panel operator[](idx_t i) {
+				inline const panel operator[](idx_t i) const {
 					assert(i<sz);
 					#ifdef USING_PGM
 						panel tmp;
@@ -375,7 +375,7 @@ www.r-site.net
 					write(selected?(stat==disabledStatus?options->disabledCursor:options->selectedCursor):' ');
 				}
 			protected:
-				void menuOut::printMenu(navNode &nav,idx_t panelNr);
+				void printMenu(navNode &nav,idx_t panelNr);
 		};
 
 		class gfxOut:public menuOut {

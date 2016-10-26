@@ -85,5 +85,17 @@ install:
    - wget https://github.com/nettigo/Assert4a/archive/master.zip -O /tmp/Assert4a.zip
    - unzip /tmp/Assert4a.zip -d /tmp/
 
+   - wget https://github.com/adafruit/Adafruit-GFX-Library/archive/master.zip -O /tmp/Adafruit-GFX-Library-master.zip
+   - unzip /tmp/Adafruit-GFX-Library-master.zip -d /tmp/
+
+   - wget https://github.com/neu-rah/PCINT/archive/master.zip -O /tmp/PCINT-master.zip
+   - unzip /tmp/PCINT-master.zip -d /tmp/
+
+   - wget https://github.com/olikraus/U8glib_Arduino/archive/master.zip -O /tmp/U8glib_Arduino-master.zip
+   - unzip /tmp/U8glib_Arduino-master.zip -d /tmp/
+
+   - wget https://github.com/neu-rah/AnsiStream/archive/master.zip -O /tmp/AnsiStream-master.zip
+   - unzip /tmp/AnsiStream-master.zip -d /tmp/
+
 script:
-   - platformio ci --lib="." --lib="/tmp/Streaming-master" --lib="/tmp/Assert4a-master" --board=nanoatmega328
+   - platformio ci --lib="." --lib="/tmp/Streaming-master" --lib="/tmp/Assert4a-master" --lib="/tmp/Adafruit-GFX-Library-master" --lib="/tmp/PCINT-master" --lib="/tmp/U8glib_Arduino-master" --lib="/tmp/AnsiStream-master" --board=nanoatmega328
