@@ -140,7 +140,7 @@ void setup() {
   /*while(!Serial.available()) {Serial<<".";delay(300);}
   while(Serial.available()) Serial.read();*/
   Serial<<"menu 3.0 test"<<endl;Serial.flush();
-  options.idleTask=idle;//point a function to be used when menu is suspended
+  options->idleTask=idle;//point a function to be used when menu is suspended
   mainMenu[1].enabled=disabledStatus;
   nav.showTitle=true;
   //nav.printMenu(1);

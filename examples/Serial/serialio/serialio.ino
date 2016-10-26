@@ -123,7 +123,7 @@ void setup() {
   Serial.begin(115200);
   while(!Serial);
   Serial<<"menu 3.0 test"<<endl;Serial.flush();
-  options.idleTask=idle;//point a function to be used when menu is suspended
+  options->idleTask=idle;//point a function to be used when menu is suspended
 }
 
 void loop() {

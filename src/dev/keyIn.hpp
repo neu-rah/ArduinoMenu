@@ -75,7 +75,7 @@ public:
     //Serial<<"down time:"<<millis()-pressMills<<endl;
     pressMills=millis();
     lastkey=ch;
-    return longPress?options.getCmdChar(escCmd):tmp;//long press will result in escape
+    return longPress?options->getCmdChar(escCmd):tmp;//long press will result in escape
   }
   void flush() {}
   size_t write(uint8_t v) {return 0;}

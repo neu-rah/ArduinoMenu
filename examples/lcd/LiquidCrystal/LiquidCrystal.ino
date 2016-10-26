@@ -33,7 +33,7 @@ encoderIn encoder(encA,encB);//simple quad encoder driver
 encoderInStream encStream(encoder,4);// simple quad encoder fake Stream
 
 //a keyboard with only one key as the encoder button
-keyMap encBtn_map[]={{-encBtn,options.getCmdChar(enterCmd)}};//negative pin numbers use internal pull-up, this is on when low
+keyMap encBtn_map[]={{-encBtn,options->getCmdChar(enterCmd)}};//negative pin numbers use internal pull-up, this is on when low
 keyIn<1> encButton(encBtn_map);//1 is the number of keys
 
 //input from the encoder + encoder button + serial
@@ -173,7 +173,7 @@ void setup() {
   Serial<<"Arduino Menu Library"<<endl;Serial.flush();
   encoder.begin();
   lcd.begin(16,2);
-  options.idleTask=idle;//point a function to be used when menu is suspended
+  options->idleTask=idle;//point a function to be used when menu is suspended
   mainMenu[1].enabled=disabledStatus;
   nav.showTitle=false;
   lcd.setCursor(0, 0);

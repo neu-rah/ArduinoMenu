@@ -4,8 +4,6 @@
 #endif
 using namespace Menu;
 
-config Menu::options;
-
 result Menu::doNothing() {return proceed;}
 result Menu::doExit() {return quit;}
 action Menu::noAction(doNothing);
@@ -134,8 +132,8 @@ bool menuNode::changed(const navNode &nav,const menuOut& out) {
 
 //aux function, turn input character into navigation command
 navCmds navNode::navKeys(char ch) {
-  for(uint8_t i=0;i<sizeof(options.navCodes)/sizeof(config::navCode);i++)
-    if (options.navCodes[i].ch==ch) return options.navCodes[i].cmd;
+  for(uint8_t i=0;i<sizeof(options->navCodes)/sizeof(navCode);i++)
+    if (options->navCodes[i].ch==ch) return options->navCodes[i].cmd;
   return noCmd;
 }
 
@@ -209,7 +207,7 @@ void navRoot::doInput() {
 
 void navRoot::doOutput() {
   if (sleepTask) {
-    if (options.getCmdChar(enterCmd)==in.read()) idleOff();
+    if (options->getCmdChar(enterCmd)==in.read()) idleOff();
     else out.idle(sleepTask,idling);
   } else if (!(sleepTask)) printMenu();
 }
@@ -257,7 +255,7 @@ void navRoot::exit() {
   if (navFocus->isMenu()) {
     if (level) level--;
     else {
-      idleOn(options.idleTask);
+      idleOn(idleTask);
     }
   }
   active().dirty=true;

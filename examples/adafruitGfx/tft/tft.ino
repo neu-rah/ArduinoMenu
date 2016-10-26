@@ -146,7 +146,7 @@ encoderIn encoder(encA,encB);//simple quad encoder driver
 encoderInStream encStream(encoder,4);// simple quad encoder fake Stream
 
 //a keyboard with only one key as the encoder button
-keyMap encBtn_map[]={{-encBtn,options.getCmdChar(enterCmd)}};//negative pin numbers use internal pull-up, this is on when low
+keyMap encBtn_map[]={{-encBtn,options->getCmdChar(enterCmd)}};//negative pin numbers use internal pull-up, this is on when low
 keyIn<1> encButton(encBtn_map);//1 is the number of keys
 
 MENU_INPUTS(in,&encStream,&encButton,&Serial);
@@ -169,12 +169,15 @@ result idle(menuOut& o,idleEvent e) {
   return proceed;
 }
 
+config myOptions={'*','-',false,false,defaultNavCodes};
+
 void setup() {
+  options=&myOptions;
   pinMode(LEDPIN,OUTPUT);
   Serial.begin(115200);
   while(!Serial);
   Serial<<"menu 3.0 test"<<endl;Serial.flush();
-  options.idleTask=idle;//point a function to be used when menu is suspended
+  nav.idleTask=idle;//point a function to be used when menu is suspended
   mainMenu[1].enabled=disabledStatus;
   //outGfx.usePreview=true;//reserve one panel for preview?
   //nav.showTitle=false;//show menu title?

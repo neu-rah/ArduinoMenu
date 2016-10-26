@@ -127,27 +127,22 @@ www.r-site.net
 
     //config
     ///////////////////////////////////////////////////////////////////////////
+    struct navCode {navCmds cmd;char ch;};
+    typedef navCode navCodesDef[7];
+    extern const navCodesDef defaultNavCodes;
+
     struct config {
-      const char selectedCursor='>';
-      const char disabledCursor='-';
+      const char selectedCursor;//='>';
+      const char disabledCursor;//='-';
       //const char* exitText=exitTextMem;
-      const bool invertFieldKeys=false;//TODO: invert for encoder -> test this
-      const bool nav2D=false;//TODO: use left|right keys? -> test this.. this should be device dependent and therefor need generic menu inputs
-      struct navCode {navCmds cmd;char ch;} navCodes[7]={
-        {noCmd,-1},
-        {escCmd,'/'},
-        {enterCmd,'*'},
-        {upCmd,'+'},
-        {downCmd,'-'},
-        {leftCmd,'-'},
-        {rightCmd,'+'}
-      };
+      const bool invertFieldKeys;//=false;//TODO: invert for encoder -> test this
+      const bool nav2D;//=false;//TODO: use left|right keys? -> test this.. this should be device dependent and therefor need generic menu inputs
+      const navCodesDef &navCodes;//=defaultNavCodes;
       inline char getCmdChar(navCmds cmd) const {return navCodes[cmd].ch;}
-      idleFunc idleTask=inaction;
     };
 
     // TODO: make this a parametrized thing instead of a global reference
-    extern config options;
+    extern config* options;
 
     Print& operator<<(Print& o,prompt const &p);
 

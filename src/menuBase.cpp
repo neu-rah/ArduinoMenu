@@ -24,6 +24,19 @@ Print& Menu::operator<<(Print& o,prompt const &p) {
   return o;
 }
 
+const navCodesDef Menu::defaultNavCodes={
+  {noCmd,-1},
+  {escCmd,'/'},
+  {enterCmd,'*'},
+  {upCmd,'+'},
+  {downCmd,'-'},
+  {leftCmd,'-'},
+  {rightCmd,'+'}
+};
+
+config defaultOptions={'>','-',false,false,defaultNavCodes};
+config* Menu::options=&defaultOptions;
+
 #ifdef DEBUG
   Print& Menu::operator<<(Print& o,bool b) {
     return o<<(b?"true":"false");

@@ -367,7 +367,7 @@ www.r-site.net
 				virtual void setColor(colorDefs c,bool selected=false,status s=enabledStatus,bool edit=false) {}
 				virtual void drawCursor(idx_t ln,bool selected,status stat,bool edit=false,idx_t panelNr=0) {
 					setColor(cursorColor, selected, stat,edit);
-					write(selected?(stat==disabledStatus?options.disabledCursor:options.selectedCursor):' ');
+					write(selected?(stat==disabledStatus?options->disabledCursor:options->selectedCursor):' ');
 				}
 			protected:
 				void menuOut::printMenu(navNode &nav,idx_t panelNr);
@@ -479,7 +479,8 @@ www.r-site.net
 				//bool suspended=false;
 				bool showTitle=true;
 				//bool sleeping=false;//when sleeping poll will simply return
-				idleFunc sleepTask=NULL;
+				idleFunc idleTask=inaction;//to do when menu exits
+				idleFunc sleepTask=NULL;//user task suspending menu
 				navTarget* navFocus=NULL;
 				navRoot(menuNode& root,navNode* path,idx_t d,Stream& in,outputsList &o)
 					:out(o),in(in),path(path),maxDepth(d) {
@@ -546,7 +547,7 @@ www.r-site.net
 				navCmds cmd=nav.navKeys(ch);
 				switch(cmd) {
 					case enterCmd:
-						if (tunning||options.nav2D||!tune()) {//then exit edition
+						if (tunning||options->nav2D||!tune()) {//then exit edition
 							tunning=false;
 							dirty=true;
 							nav.root->exit();
@@ -554,16 +555,16 @@ www.r-site.net
 						dirty=true;
 						break;
 					case upCmd:
-						target()+=(tunning?tune():step())*(options.invertFieldKeys?-1:1);
+						target()+=(tunning?tune():step())*(options->invertFieldKeys?-1:1);
 						dirty=true;
 						break;
 					case downCmd:
-						target()-=(tunning?tune():step())*(options.invertFieldKeys?-1:1);;
+						target()-=(tunning?tune():step())*(options->invertFieldKeys?-1:1);;
 						dirty=true;
 						break;
 					default:break;
 				}
-				if (ch==options.getCmdChar(enterCmd)&&!tunning) {
+				if (ch==options->getCmdChar(enterCmd)&&!tunning) {
 					nav.event(enterEvent);
 				}
 			}
@@ -597,7 +598,7 @@ www.r-site.net
 			nav.sel=sync();
 			nav.doNavigation(ch);
 			sync(nav.sel);
-			if (ch==options.navCodes[enterCmd].ch) nav.root->exit();
+			if (ch==options->navCodes[enterCmd].ch) nav.root->exit();
 		}
 
 		template<typename T>
