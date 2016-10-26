@@ -10,12 +10,12 @@
   },
   "dependencies": [
     {
-      "name": "lib-from-repo",
-      "version": "https://github.com/scottdky/Streaming"
+      "name": "Streaming",
+      "lib-from-repo": "https://github.com/scottdky/Streaming"
     },
     {
-      "name": "lib-from-repo",
-      "version": "https://github.com/nettigo/Assert4a"
+      "name": "Assert4a",
+      "lib-from-repo": "https://github.com/nettigo/Assert4a"
     }
   ],
   "frameworks": "arduino",
