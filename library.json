@@ -10,34 +10,12 @@
   },
   "dependencies": [
     {
-      "name": "Streaming",
-      "authors": "Scott Daniels",
-      "frameworks": "arduino"
+      "name": "lib-from-repo",
+      "version": "https://github.com/scottdky/Streaming"
     },
     {
-      "name": "AnsiStream",
-      "authors": "Rui Azevedo",
-      "frameworks": "arduino"
-    },
-    {
-      "name": "PCINT",
-      "authors": "Rui Azevedo",
-      "frameworks": "arduino"
-    },
-    {
-      "name": "Adafruit-GFX-Library",
-      "authors": "Adafruit Industries",
-      "frameworks": "arduino"
-    },
-    {
-      "name": "U8glib_Arduino",
-      "authors": "olikraus",
-      "frameworks": "arduino"
-    },
-    {
-      "name": "Assert4a",
-      "authors": "Nettigo",
-      "frameworks": "arduino"
+      "name": "lib-from-repo",
+      "version": "https://github.com/nettigo/Assert4a"
     }
   ],
   "frameworks": "arduino",
