@@ -63,3 +63,21 @@
 #
 # script:
 #     - platformio ci --lib="." --board=TYPE_1 --board=TYPE_2 --board=TYPE_N
+
+language: python
+python:
+   - "2.7"
+
+sudo: false
+cache:
+   directories:
+       - "~/.platformio"
+
+env:
+   - PLATFORMIO_CI_SRC=examples
+
+install:
+   - pip install -U platformio
+
+script:
+   - platformio ci --lib="." --board=nanoatmega328 --board=due --board=teensy31

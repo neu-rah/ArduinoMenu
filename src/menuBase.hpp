@@ -132,7 +132,7 @@ www.r-site.net
     extern const navCodesDef defaultNavCodes;
 
     struct config {
-      //this can be output specific
+      //NOTE:this can be output specific
       const char selectedCursor;//='>';
       const char disabledCursor;//='-';
       //const char* exitText=exitTextMem;

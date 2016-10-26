@@ -288,13 +288,17 @@ www.r-site.net
 				}
 		};
 
+		// Input
+		////////////////////////////////////////////////////////////////////////////
+		class memuIn {
+			public:
+
+		};
+
 		// Output
 		////////////////////////////////////////////////////////////////////////////
 
 		//navigation panels (min 1) describe output dimensions (in characters)
-		//this is a thing of output devices, some might have it
-		//having it at base avoids variable duplication.. so any output should have one
-
 		struct panel {
 			idx_t x,y,w,h;
 			inline idx_t maxX() const {return x+w;}
