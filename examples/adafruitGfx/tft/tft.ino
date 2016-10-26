@@ -149,26 +149,17 @@ encoderInStream encStream(encoder,4);// simple quad encoder fake Stream
 keyMap encBtn_map[]={{-encBtn,options.getCmdChar(enterCmd)}};//negative pin numbers use internal pull-up, this is on when low
 keyIn<1> encButton(encBtn_map);//1 is the number of keys
 
-//input from the encoder + encoder button + serial
-Stream* inputsList[]={&encStream,&encButton,&Serial};
-chainStream<3> in(inputsList);//3 is the number of inputs
+MENU_INPUTS(in,&encStream,&encButton,&Serial);
 
-
-const panel serial_panels[] MEMMODE={{0,0,40,10}};
-menuNode* serial_nodes[sizeof(serial_panels)/sizeof(panel)];
-panelsList serial_pList(serial_panels,serial_nodes,sizeof(serial_panels)/sizeof(panel));
-serialOut outSerial(Serial,serial_pList);//the output device (just the serial port)
-
-//gfx panels
-const panel panels[] MEMMODE={{0,0,14,8},{14,0,13,8}};
-menuNode* nodes[sizeof(panels)/sizeof(panel)];
-panelsList pList(panels,nodes,sizeof(panels)/sizeof(panel));
+PANELS(serial_panels,{0,0,40,10});
+serialOut outSerial(Serial,serial_panels);//the output device (just the serial port)
 
 #define textScale 1
+PANELS(gfx_panels,{0,0,14,8},{14,0,13,8});
 //font size is 6x9
-menuGFX outGFX(gfx,colors,pList,6*textScale,9*textScale);//output device for LCD
-menuOut* outputs[]={&outGFX,&outSerial};
-outputsList out(outputs,2);
+menuGFX outGFX(gfx,colors,gfx_panels,6*textScale,9*textScale);//output device for LCD
+
+MENU_OUTPUTS(out,&outGFX,&outSerial);
 NAVROOT(nav,mainMenu,2,in,out);
 
 //when menu is suspended
@@ -185,7 +176,7 @@ void setup() {
   Serial<<"menu 3.0 test"<<endl;Serial.flush();
   options.idleTask=idle;//point a function to be used when menu is suspended
   mainMenu[1].enabled=disabledStatus;
-  nav.showTitle=false;
+  //nav.showTitle=false;
 
   pinMode(encBtn, INPUT_PULLUP);
   encoder.begin();

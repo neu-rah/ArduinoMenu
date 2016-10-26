@@ -24,6 +24,19 @@
 #define DECL(x) DECL_##x
 #define DEF(x) DEF_##x,
 
+#define PANELS(id,...)\
+  const panel _panels_##id[] MEMMODE={__VA_ARGS__};\
+  menuNode* _nodes_##id[sizeof(_panels_##id)/sizeof(panel)];\
+  panelsList id(_panels_##id,_nodes_##id,sizeof(_panels_##id)/sizeof(panel));
+
+#define MENU_OUTPUTS(id,...)\
+  menuOut* _outputs_##id[]={__VA_ARGS__};\
+  outputsList id(_outputs_##id,sizeof(_outputs_##id)/sizeof(menuOut*));
+
+#define MENU_INPUTS(id,...)\
+  Stream* _inputs_##id[]={__VA_ARGS__};\
+  chainStream<sizeof(_inputs_##id)/sizeof(Stream*)> id(_inputs_##id);
+
 //TODO: move id##_menuShadow to DEF_MENU
 #define MENU(id,text,aFn,mask,style,...) altMENU(menu,id,text,aFn,mask,style,__VA_ARGS__)
 #define altMENU(objType,id,text,aFn,mask,style,...)\

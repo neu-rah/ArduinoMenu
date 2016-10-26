@@ -1,3 +1,0 @@
-In file included from /home/azevedo/Sketchbook/LIBDEV/ArduinoMenu/src/menu.hpp:20:0:
-/home/azevedo/Sketchbook/LIBDEV/ArduinoMenu/src/menuBase.hpp:25:23: fatal error: Arduino.h: Ficheiro ou directoria inexistente
-compilation terminated.
