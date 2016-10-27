@@ -23,8 +23,8 @@ int timeOn=500;
 int timeOff=500;
 
 MENU(mainMenu, "Blink menu", doNothing, noEvent, wrapStyle
-  ,FIELD(timeOn,"On","ms",0,1000,100,10,doNothing,noEvent)
-  ,FIELD(timeOff,"Off","ms",0,1000,100,10,doNothing,noEvent)
+  ,FIELD(timeOn,"On","ms",0,1000,100,10,doNothing,noEvent,noStyle)
+  ,FIELD(timeOff,"Off","ms",0,1000,100,10,doNothing,noEvent,noStyle)
   ,EXIT("<Back")
 );
 
