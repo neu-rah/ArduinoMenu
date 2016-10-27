@@ -76,7 +76,11 @@ v2.0 - 	Calling action on every elements
 		}
 		void clamp() {
       if (value<low) value=low;
+#ifdef ONLY_UP_KEY
+      else if (value>high) value=low;
+#else
       else if (value>high) value=high;
+#endif
 		}
 		//lazy drawing, we have no drawing position here... so we will ask the menu to redraw
 		virtual promptFeedback activate(menuOut& p,Stream&c,bool canExit=false) {
