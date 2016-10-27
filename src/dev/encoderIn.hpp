@@ -41,7 +41,7 @@ quadrature encoder stream (fake, not using buffers)
   public:
     encoderIn &enc;//associated hardware encoderIn
     int sensivity;
-    int oldPos;
+    int oldPos=0;
     encoderInStream(encoderIn &enc,int sensivity):enc(enc), sensivity(sensivity) {}
     inline void setSensivity(int s) {sensivity=s;}
     int available(void) {return abs(enc.pos-oldPos)/sensivity;}

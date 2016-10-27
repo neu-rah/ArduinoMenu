@@ -218,7 +218,7 @@ www.r-site.net
 				T reflex;
 				menuVariant(const menuNodeShadow& s):menuNode(s) {}
 				idx_t sync() {
-					menuVariantShadow<T>& s=*(menuVariantShadow<T>*)shadow;
+					//menuVariantShadow<T>& s=*(menuVariantShadow<T>*)shadow;
 					for(idx_t i=0;i<sz();i++) {
 						if (((menuValue<T>*)&operator[](i))->target()==target()) return i;
 					}
@@ -262,7 +262,7 @@ www.r-site.net
 				result sysHandler(FUNC_PARAMS) override {
 					switch(event) {
 						case activateEvent: {
-							menuNodeShadow& s=*(menuNodeShadow*)prompt::shadow;
+							//menuNodeShadow& s=*(menuNodeShadow*)prompt::shadow;
 							idx_t at=menuVariant<T>::sync();
 							assert(at!=-1);
 							at++;
@@ -349,7 +349,7 @@ www.r-site.net
 				bool minimalRedraw=true;//redraw only changed options (avoids flicking on LCDS), not good for Serial
 				bool drawNumIndex=false;
 				bool usePreview=false;
-				menuNode* drawn;
+				menuNode* drawn=NULL;
 				menuOut(panelsList &p,bool r=false,bool minimal=true)
 					:panels(p),redraw(r),minimalRedraw(minimal) {}
 				inline idx_t maxX(idx_t i=0) const {return panels[i].w;}
@@ -542,7 +542,7 @@ www.r-site.net
 
 		template<typename T>
 		void menuField<T>::navigate(navNode& nav,Stream& in) {
-			menuFieldShadow<T>& s=*(menuFieldShadow<T>*)shadow;
+			//menuFieldShadow<T>& s=*(menuFieldShadow<T>*)shadow;
 			if (strchr(numericChars,in.peek())) {//a numeric value was entered
 				target()=(T)in.parseFloat();
 				tunning=false;
