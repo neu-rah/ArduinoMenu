@@ -229,7 +229,7 @@ www.r-site.net
 					return -1;
 				}
 				idx_t sync(idx_t i) {
-					menuVariantShadow<T>& s=*(menuVariantShadow<T>*)shadow;
+					//menuVariantShadow<T>& s=*(menuVariantShadow<T>*)shadow;
 					#ifdef DEBUG
 					if (!(i>=0&&i<sz())){
 						Serial<<*(prompt*)this<<F(" : value out of range ")<<i<<endl;

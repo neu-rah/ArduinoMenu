@@ -18,7 +18,7 @@ quadrature encoder stream (fake, not using buffers)
 
   class encoderIn {
   public:
-    volatile int pos;
+    volatile int pos=0;
     int pinA,pinB;
     encoderIn(int a,int b):pinA(a),pinB(b) {}
     void begin() {
