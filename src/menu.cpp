@@ -126,21 +126,11 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
 navRoot* navNode::root=NULL;
 
 bool menuNode::changed(const navNode &nav,const menuOut& out,bool sub) {
-  if (nav.target!=this) {
-    if (dirty) Serial<<endl<<out.deviceName<<" changed! 1"<<endl;
-    return dirty;
-  }
-  if (dirty) {
-    Serial<<endl<<out.deviceName<<" changed! 2"<<endl;
-    return true;
-  }
+  if (nav.target!=this) return dirty;
+  if (dirty) return true;
   if (sub) for(int i=0;i<out.maxY();i++) {
     if (i+out.top>=nav.sz()) break;
-    //if (out.deviceName=="Serial") Serial<<".";
-    if (operator[](i).changed(nav,out,false)) {
-      Serial<<endl<<out.deviceName<<" changed! 3"<<endl;
-      return true;
-    }
+    if (operator[](i).changed(nav,out,false)) return true;
   }
   return false;
 }

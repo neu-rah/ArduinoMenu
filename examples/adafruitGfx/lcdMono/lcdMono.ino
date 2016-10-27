@@ -11,8 +11,11 @@ Extensible: Yes
 
 menu with adafruit GFX
 output: Nokia 5110 display (PCD8544 HW SPI)
-input: Serial + encoder
+input: Serial
 www.r-site.net
+
+note: adafruit's gfx buffer eats too much ram on this device
+=> removed encoder to save ram
 
 ***/
 
@@ -33,9 +36,9 @@ Adafruit_PCD8544 gfx(GFX_DC,GFX_CS,GFX_RST);
 #define LEDPIN A4
 
 // rotary encoder pins
-#define encA    2
+/*#define encA    2
 #define encB    3
-#define encBtn  4
+#define encBtn  4*/
 
 result showEvent(eventMask e,navNode& nav,prompt& item) {
   Serial<<e<<" on "<<item<<endl;
@@ -101,7 +104,7 @@ result doAlert(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out
 }
 
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
-  ,FIELD(test,"Test","%",0,100,10,1,doNothing,noEvent)
+  ,FIELD(test,"Test","%",0,100,10,1,doNothing,noEvent,wrapStyle)
   ,SUBMENU(subMenu)
   ,SUBMENU(setLed)
   ,OP("LED On",ledOn,enterEvent)
@@ -124,7 +127,7 @@ const colorDef<uint16_t> colors[] MEMMODE={
   {{BLACK,WHITE},{WHITE,BLACK,BLACK}},//titleColor
 };
 
-encoderIn encoder(encA,encB);//simple quad encoder driver
+/*encoderIn encoder(encA,encB);//simple quad encoder driver
 encoderInStream encStream(encoder,4);// simple quad encoder fake Stream
 
 //a keyboard with only one key as the encoder button
@@ -133,7 +136,7 @@ keyIn<1> encButton(encBtn_map);//1 is the number of keys
 
 //input from the encoder + encoder button + serial
 Stream* inputsList[]={&encStream,&encButton,&Serial};
-chainStream<3> in(inputsList);//3 is the number of inputs
+chainStream<3> in(inputsList);//3 is the number of inputs*/
 
 /*const panel serial_panels[] MEMMODE={{0,0,40,10}};
 menuNode* serial_nodes[sizeof(serial_panels)/sizeof(panel)];
@@ -149,7 +152,7 @@ panelsList pList(panels,nodes,sizeof(panels)/sizeof(panel));
 menuGFX outGFX(gfx,colors,pList,fontX,fontY);//output device for LCD with 5x8 font size
 menuOut* outputs[]={&outGFX};
 outputsList out(outputs,1);
-NAVROOT(nav,mainMenu,2,in,out);
+NAVROOT(nav,mainMenu,2,Serial,out);
 
 //when menu is suspended
 result idle(menuOut& o,idleEvent e) {
@@ -163,11 +166,11 @@ void setup() {
   Serial.begin(115200);
   while(!Serial);
   Serial<<F("menu 3.0 test")<<endl;Serial.flush();
-  options->idleTask=idle;//point a function to be used when menu is suspended
+  nav.idleTask=idle;//point a function to be used when menu is suspended
   mainMenu[1].enabled=disabledStatus;
 
-  pinMode(encBtn, INPUT_PULLUP);
-  encoder.begin();
+  //pinMode(encBtn, INPUT_PULLUP);
+  //encoder.begin();
 
   SPI.begin();
   gfx.begin();

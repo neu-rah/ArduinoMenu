@@ -113,7 +113,7 @@ result doAlert(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out
 MENU(mainMenu,"Main menu",zZz,noEvent,wrapStyle
   ,OP("Op1",action1,anyEvent)
   ,OP("Op2",action2,enterEvent)
-  ,FIELD(test,"Test","%",0,100,10,1,doNothing,noEvent)
+  ,FIELD(test,"Test","%",0,100,10,1,doNothing,noEvent,wrapStyle)
   ,SUBMENU(subMenu)
   ,SUBMENU(setLed)
   ,OP("LED On",ledOn,enterEvent)
@@ -176,7 +176,7 @@ void setup() {
   Serial.begin(115200);
   while(!Serial);
   Serial<<"menu 3.0 test"<<endl;Serial.flush();
-  options->idleTask=idle;//point a function to be used when menu is suspended
+  nav.idleTask=idle;//point a function to be used when menu is suspended
   mainMenu[1].enabled=disabledStatus;
 
   pinMode(encBtn, INPUT_PULLUP);

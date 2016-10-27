@@ -136,7 +136,7 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,OP("Op1",action1,anyEvent)
   ,OP("Op2",action2,enterEvent)
   //,SUBMENU(togOp)
-  ,FIELD(test,"Test","%",0,100,10,1,doNothing,noEvent)
+  ,FIELD(test,"Test","%",0,100,10,1,doNothing,noEvent,wrapStyle)
   ,SUBMENU(subMenu)
   ,SUBMENU(setLed)
   ,OP("LED On",ledOn,enterEvent)
@@ -173,7 +173,7 @@ void setup() {
   Serial<<"Arduino Menu Library"<<endl;Serial.flush();
   encoder.begin();
   lcd.begin(16,2);
-  options->idleTask=idle;//point a function to be used when menu is suspended
+  nav.idleTask=idle;//point a function to be used when menu is suspended
   mainMenu[1].enabled=disabledStatus;
   nav.showTitle=false;
   lcd.setCursor(0, 0);
