@@ -16,8 +16,17 @@
         	for(int n=0;n<maxX();n++) print(' ');
         	setCursor(0,ln,panelNr);
         }
-        void clear() override {device.clear();}
-        void clear(idx_t panelNr) override {device<<endl;}
+        void clear() override {
+          device.clear();
+          panels.reset();
+        }
+        void clear(idx_t panelNr) override {
+          const panel p=panels[panelNr];
+          //device<<endl;
+          fill(p.x,p.y,p.x+p.w-1,p.y+p.h-1);
+          setCursor(0,0,panelNr);
+          panels.nodes[panelNr]=NULL;
+        }
         void setCursor(idx_t x,idx_t y,idx_t panelNr=0) override {
           const panel p=panels[panelNr];
           device.setCursor(p.x+x,p.y+y);

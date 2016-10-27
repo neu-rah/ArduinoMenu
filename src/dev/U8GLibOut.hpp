@@ -58,8 +58,15 @@ www.r-site.net
 	      void clear() override {
 					setCursor(0,0);
 					setColor(fgColor);
+					panels.reset();
 	      }
-				void clear(idx_t panelNr) override {clear();}
+				void clear(idx_t panelNr) override {
+					const panel p=panels[panelNr];
+					setColor(bgColor,false,enabledStatus,false);
+					gfx.drawBox(p.x*resX,p.y*resY,p.w*resX,p.h*resY);
+					//clear();
+					panels.nodes[panelNr]=NULL;
+				}
 	      void setCursor(idx_t x,idx_t y,idx_t panelNr=0) override {
 					const panel p=panels[panelNr];
           gfx.setPrintPos((p.x+x)*resX,(p.y+y+1)*resY-fontMargin);

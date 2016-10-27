@@ -73,7 +73,7 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
   idx_t st=(nav.root->showTitle&&(maxY(panelNr)>1))?1:0;//do not use titles on single line devices!
   while(nav.sel+st>=(top+maxY(panelNr))) {top++;}
   while(nav.sel<top||(top&&((nav.sz()-top)<maxY(panelNr)-st))) {top--;}
-  bool all=redraw||(top!=ot);//||drawn!=nav.target;
+  bool all=redraw||(top!=ot)||drawn!=nav.target||panels.nodes[panelNr]!=nav.target;
   if (!(all||minimalRedraw))
     all=all||nav.target->changed(nav,*this);
     /*for(idx_t i=0;i<maxY(panelNr)-st;i++) {
@@ -98,7 +98,7 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
     int ist=i+st;
     if (i+top>=nav.sz()) break;
     prompt& p=nav[i+top];
-    if (all||p.changed(nav,*this)) {
+    if (all||p.changed(nav,*this,false)) {
       //any=true;
       bool selected=nav.sel==i+top;
       bool ed=nav.target==&p;

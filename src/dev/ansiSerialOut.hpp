@@ -39,6 +39,7 @@
           const panel p=panels[panelNr];
           fill(p.x,p.y,p.x+p.w-1,p.y+p.h-1);
           setCursor(0,0,panelNr);
+          panels.nodes[panelNr]=NULL;
         }
         void clearLine(
           idx_t ln,

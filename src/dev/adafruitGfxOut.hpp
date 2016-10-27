@@ -43,6 +43,7 @@ namespace Menu {
 		    	//setCursor(0,ln);
 		    }
 		    void clear() override {
+					panels.reset();
 					gfx.fillScreen(getColor(bgColor,false,enabledStatus,false));
 		    	setCursor(0,0);
 					setColor(fgColor);
@@ -51,6 +52,7 @@ namespace Menu {
 				virtual void clear(idx_t panelNr) override {
 					const panel p=panels[panelNr];
 					gfx.fillRect(p.x*resX,p.y*resY,p.w*resX,p.h*resY,getColor(bgColor,false,enabledStatus,false));
+					panels.nodes[panelNr]=NULL;
 				}
 
 		    void setCursor(idx_t x,idx_t y,idx_t panelNr=0) override {

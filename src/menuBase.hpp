@@ -111,16 +111,16 @@ www.r-site.net
     struct actionRaw {callback hFn;};
     class action {
       public:
-    		callback hFn;//the hooked callback function
-    		inline action() {}
+        callback hFn;//the hooked callback function
+        inline action() {}
         //inline action(void (*f)()):hFn((callback)f) {}
         inline action(result (*f)()):hFn((callback)f) {}
-    		inline action(result (*f)(eventMask)):hFn((callback)f) {}
+        inline action(result (*f)(eventMask)):hFn((callback)f) {}
         inline action(result (*f)(eventMask,navNode&)):hFn((callback)f) {}
         //inline action(result (*f)(eventMask,navNode&,prompt&)):hFn((callback)f) {}
         //inline action(result (*f)(eventMask,navNode&,prompt&,Stream&)):hFn((callback)f) {}
-    		inline action(callback f):hFn(f) {}
-    		inline result operator()(FUNC_PARAMS) const {return ((callback)memPtr(hFn))(FUNC_VALUES);}
+        inline action(callback f):hFn(f) {}
+        inline result operator()(FUNC_PARAMS) const {return ((callback)memPtr(hFn))(FUNC_VALUES);}
     };
 
     extern action noAction;
