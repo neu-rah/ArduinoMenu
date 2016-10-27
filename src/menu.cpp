@@ -65,19 +65,24 @@ void menuOut::printMenu(navNode &nav) {
   }
 }
 
+//bool menuOut::changed
+
 // generic (menuOut) print menu on a panel
 void menuOut::printMenu(navNode &nav,idx_t panelNr) {
   idx_t ot=top;
   idx_t st=(nav.root->showTitle&&(maxY(panelNr)>1))?1:0;//do not use titles on single line devices!
   while(nav.sel+st>=(top+maxY(panelNr))) {top++;}
   while(nav.sel<top||(top&&((nav.sz()-top)<maxY(panelNr)-st))) {top--;}
-  bool all=redraw||(top!=ot)||drawn!=nav.target;
+  bool all=redraw||(top!=ot);//||drawn!=nav.target;
   if (!(all||minimalRedraw))
-    for(idx_t i=0;i<maxY(panelNr)-st;i++) {
+    all=all||nav.target->changed(nav,*this);
+    /*for(idx_t i=0;i<maxY(panelNr)-st;i++) {
       if (all||i+top>=nav.sz()) break;
       else all|=nav[i+top].changed(nav,*this);
-    }
-  all|=nav.target->dirty;
+    }*/
+  //all|=nav.target->dirty;
+  if (!(all||minimalRedraw)) return;
+  //Serial<<"printMenu on device "<<deviceName<<" all:"<<all<<endl;
   if (all) {
     clear(panelNr);
     if (st) {
@@ -120,12 +125,22 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
 
 navRoot* navNode::root=NULL;
 
-bool menuNode::changed(const navNode &nav,const menuOut& out) {
-  if (nav.target!=this) return dirty;
-  if (dirty) return true;
-  for(int i=0;i<out.maxY();i++) {
+bool menuNode::changed(const navNode &nav,const menuOut& out,bool sub) {
+  if (nav.target!=this) {
+    if (dirty) Serial<<endl<<out.deviceName<<" changed! 1"<<endl;
+    return dirty;
+  }
+  if (dirty) {
+    Serial<<endl<<out.deviceName<<" changed! 2"<<endl;
+    return true;
+  }
+  if (sub) for(int i=0;i<out.maxY();i++) {
     if (i+out.top>=nav.sz()) break;
-    if (operator[](i).changed(nav,out)) return true;
+    //if (out.deviceName=="Serial") Serial<<".";
+    if (operator[](i).changed(nav,out,false)) {
+      Serial<<endl<<out.deviceName<<" changed! 3"<<endl;
+      return true;
+    }
   }
   return false;
 }

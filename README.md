@@ -7,7 +7,7 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/ff2a9215b7644adda60453d850a36aa3)](https://www.codacy.com/app/ruihfazevedo/ArduinoMenu?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=neu-rah/ArduinoMenu&amp;utm_campaign=Badge_Grade)
 
 ## Purpose
-Full automated navigation system calling user funtions.
+Full automated navigation system.
 With this system you can define menus, submenus, input fields and other iteration objects that deal with all input/output and can call user defined handler as a result of user iteration.
 The user function can be operated as a single action called on click/enter or as a event driven function responding to focus In/Out or Enter/Esc events.
 The system is designed as a non blocking polling system, allowing parallel task to run.
@@ -28,12 +28,12 @@ MENU(mainMenu, "Blink menu", doNothing, noEvent, wrapStyle
   ,EXIT("<Back")
 );
 
-MENU_INPUTS(in,&Serial);
+MENU_INPUTS(in,&Serial);//Serial input
 
-serialOut outSerial(Serial);//,serial_panels);//the output device (just the serial port)
+serialOut outSerial(Serial);//Serial output
 
-MENU_OUTPUTS(out,&outSerial);
-NAVROOT(nav,mainMenu,1,in,out);
+MENU_OUTPUTS(out,&outSerial);//Outputs list
+NAVROOT(nav,mainMenu,1,in,out);//navigation root object (nav)
 
 void setup() {
   Serial.begin(115200);
@@ -42,7 +42,7 @@ void setup() {
 }
 
 void loop() {
-  nav.poll();
+  nav.poll();//run menu in non-blocking mode
   digitalWrite(LEDPIN, HIGH);
   delay(timeOn);
   digitalWrite(LEDPIN, LOW);

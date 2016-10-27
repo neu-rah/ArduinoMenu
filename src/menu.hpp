@@ -51,7 +51,7 @@ www.r-site.net
 				inline bool isMenu() const {return sysStyles()&_menuData;}//has menu data list and can be a navNode target
 				inline bool isVariant() const {return sysStyles()&_isVariant;}//a menu as an enumerated field, connected to a variable value
 				virtual void printTo(navRoot &root,bool sel,menuOut& out);//raw print to output device
-				virtual bool changed(const navNode &nav,const menuOut& out) {return dirty;}
+				virtual bool changed(const navNode &nav,const menuOut& out,bool sub=true) {return dirty;}
 				//this is the system version of enter handler, its used by elements like toggle
 				virtual result sysHandler(FUNC_PARAMS) {return proceed;}
 				inline result operator()(FUNC_PARAMS) const {return (*shadow)(FUNC_VALUES);}
@@ -94,7 +94,7 @@ www.r-site.net
 				inline prompt& operator[](idx_t i) const {
 					return *(prompt*)memPtr(((prompt**)memPtr(((menuNodeShadow*)shadow)->data))[i]);
 				}
-				bool changed(const navNode &nav,const menuOut& out) override;
+				bool changed(const navNode &nav,const menuOut& out,bool sub=true) override;
 				inline idx_t sz() const {return memIdx(((menuNodeShadow*)shadow)->sz);}
 				inline prompt** data() const {return (prompt**)memPtr(((menuNodeShadow*)shadow)->data);}
 		};
@@ -147,7 +147,7 @@ www.r-site.net
 				inline T high() const {return getTypeValue(&((menuFieldShadow<T>*)shadow)->high);}
 				inline T step() const {return getTypeValue(&((menuFieldShadow<T>*)shadow)->step);}
 				inline T tune() const {return	getTypeValue(&((menuFieldShadow<T>*)shadow)->tune);}
-				bool changed(const navNode &nav,const menuOut& out) override {
+				bool changed(const navNode &nav,const menuOut& out,bool sub=true) override {
 					return dirty||(reflex!=target());
 				}
 				void clamp() {
@@ -177,7 +177,7 @@ www.r-site.net
 			public:
 				menuValue(const menuValueShadow<T>& shadow):prompt(shadow) {}
 				#ifdef DEBUG
-				bool changed(const navNode &nav,const menuOut& out) override {return false;}
+				bool changed(const navNode &nav,const menuOut& out,bool sub=true) override {return false;}
 				#endif
 				inline T getTypeValue(const T* from) const {
 					#ifdef USING_PGM
@@ -240,9 +240,7 @@ www.r-site.net
 					return i;
 				}
 				inline T& target() const {return *(T*)memPtr(((menuVariantShadow<T>*)shadow)->value);}
-				bool changed(const navNode &nav,const menuOut& out) override {
-					return dirty||reflex!=target();
-				}
+				bool changed(const navNode &nav,const menuOut& out,bool sub=true) override;
 				void navigate(navNode& nav,Stream& in) override;
 				void printTo(navRoot &root,bool sel,menuOut& out) override;
 		};
@@ -283,7 +281,7 @@ www.r-site.net
 			public:
 				choose(const menuNodeShadow& s):menuVariant<T>(s) {}
 				result sysHandler(FUNC_PARAMS) override;
-				bool changed(const navNode &nav,const menuOut& out) override {
+				bool changed(const navNode &nav,const menuOut& out,bool sub=true) override {
 					return menuVariant<T>::changed(nav,out)||menuNode::changed(nav,out);
 				}
 		};
@@ -340,6 +338,9 @@ www.r-site.net
 
 		class menuOut:public Print {
 			public:
+				#ifdef DEBUG
+				const char* deviceName;
+				#endif
 				panelsList& panels;
 				idx_t lastTop=-1;
 				idx_t lastSel=-1;
@@ -402,14 +403,13 @@ www.r-site.net
 				void printMenu(navNode& nav) const {
 					for(int n=0;n<cnt;n++)
 						outs[n]->printMenu(nav);
-					for(int n=0;n<cnt;n++)
-						outs[n]->clearChanged(nav);
+					clearChanged(nav);
 				}
 				//void alert(char *msg) const {for(int n=0;n<cnt;n++) outs[n]->alert(msg);}
 				void clearLine(idx_t ln,idx_t panelNr=0,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus) const {
 					for(int n=0;n<cnt;n++) outs[n]->clearLine(ln,panelNr,color,selected,stat);
 				}
-				void clearChanged(navNode &nav) const {
+				void clearChanged(navNode& nav) const {
 					for(int n=0;n<cnt;n++) outs[n]->clearChanged(nav);
 				}
 				void clear() {for(int n=0;n<cnt;n++) outs[n]->clear();}
@@ -604,6 +604,13 @@ www.r-site.net
 			nav.doNavigation(ch);
 			sync(nav.sel);
 			if (ch==options->navCodes[enterCmd].ch) nav.root->exit();
+		}
+
+		template<typename T>
+		bool menuVariant<T>::changed(const navNode &nav,const menuOut& out,bool sub) {
+			if (out.deviceName=="Serial")
+				Serial<<*(prompt*)this<<" changed? "<<(dirty||reflex!=target())<<endl;
+			return dirty||reflex!=target();
 		}
 
 		template<typename T>

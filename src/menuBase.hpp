@@ -16,7 +16,7 @@ www.r-site.net
 #ifndef RSITE_ARDUINO_MENU_SYSTEM_BASE
   #define RSITE_ARDUINO_MENU_SYSTEM_BASE
 
-  //#define DEBUG
+  #define DEBUG
 
   #ifdef DEBUG
     extern bool debugFlag;

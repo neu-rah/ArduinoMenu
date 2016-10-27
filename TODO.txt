@@ -11,6 +11,7 @@ Arduino Menu Library
   * config (static MEMMODE)
   * options (dynamic => RAM)
 + use/draw title option for any menu, and ignore it on single line devices!
+- wrap nmenuField's https://github.com/neu-rah/ArduinoMenu/issues/58
 - dialogs and modal dialogs (static alloc)
 - alerts (dynamic)
 - errors (dynamic modal)
