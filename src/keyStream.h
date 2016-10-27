@@ -19,6 +19,11 @@ struct keyMap {
   int8_t code;
 };
 
+
+#ifndef BOUNCE_TICK
+#define BOUNCE_TICK 30
+#endif
+
 //if you hold/repeat a key for this ammount of time we will consider it an escape
 #ifndef ESCAPE_TIME
 #define ESCAPE_TIME 1500
@@ -38,8 +43,17 @@ public:
     if (lastkey==-1) {
       lastkey=ch;
       pressMills=millis();
-    } else if (ESCAPE_TIME&&millis()-pressMills>ESCAPE_TIME) return 1;
+    } 
+	else if (ch == -1 && millis()-pressMills < BOUNCE_TICK)
+	{
+		lastkey = -1;  //released = it's bounce. reset lastkey
+        return 0;
+	}
+	else if (ch != -1 && millis()-pressMills > BOUNCE_TICK) return 1;
+	else if (ESCAPE_TIME&&millis()-pressMills>ESCAPE_TIME) return 1;
+	
     if (ch==lastkey) return 0;
+	
     return 1;
     /*int cnt=0;
     for(int n=0;n<N;n++) {
