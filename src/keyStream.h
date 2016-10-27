@@ -49,9 +49,11 @@ public:
 		lastkey = -1;  //released = it's bounce. reset lastkey
         return 0;
 	}
+	else if (ch != -1 && millis()-pressMills > BOUNCE_TICK) return 1;
 	else if (ESCAPE_TIME&&millis()-pressMills>ESCAPE_TIME) return 1;
 	
     if (ch==lastkey) return 0;
+	
     return 1;
     /*int cnt=0;
     for(int n=0;n<N;n++) {
