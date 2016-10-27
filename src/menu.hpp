@@ -499,6 +499,7 @@ www.r-site.net
         inline navNode& node() const {return path[level];}
         inline menuNode& active() const {return *node().target;}
         inline prompt& selected() const {return active()[node().sel];}
+        inline bool changed(const menuOut& out) const {return node().changed(out);}
         void printMenu() const {
           if ((active().sysStyles()&_parentDraw)&&level)
             out.printMenu(path[level-1]);

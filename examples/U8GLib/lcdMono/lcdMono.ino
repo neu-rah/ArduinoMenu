@@ -198,10 +198,13 @@ void setup() {
 
 void loop() {
   nav.doInput();
-  u8g.firstPage();
-  do {
-    nav.doOutput();
-    digitalWrite(LEDPIN, ledCtrl);
-  } while( u8g.nextPage() );
-  delay(200);//simulate a delay when other tasks are done
+  if (nav.changed(gfx)) {//only draw if menu changed for gfx device
+    //change checking leaves more time for other tasks
+    u8g.firstPage();
+    do {
+      nav.doOutput();
+      digitalWrite(LEDPIN, ledCtrl);
+    } while( u8g.nextPage() );
+  }
+  delay(200);//simulate a delay when other tasks are running
 }
