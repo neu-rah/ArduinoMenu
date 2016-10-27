@@ -220,7 +220,10 @@ www.r-site.net
 				idx_t sync() {
 					//menuVariantShadow<T>& s=*(menuVariantShadow<T>*)shadow;
 					for(idx_t i=0;i<sz();i++) {
-						if (((menuValue<T>*)&operator[](i))->target()==target()) return i;
+						if (((menuValue<T>*)&operator[](i))->target()==target()) {
+							dirty=true;
+							return i;
+						}
 					}
 					#ifdef DEBUG
 					Serial<<F("value out of range ")<<target()<<endl;Serial.flush();
