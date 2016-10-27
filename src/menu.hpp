@@ -32,13 +32,16 @@ www.r-site.net
 			systemStyles sysStyles;
 			const char*text;
 			const eventMask events;//registered events
+			styles style;
 		};
 		class promptShadow:public action {
 			public:
 				systemStyles sysStyles=_noStyle;
 				const char*text;
 				const eventMask events=noEvent;//registered events
-				promptShadow(const char* t,action a=doNothing,eventMask e=noEvent):action(a),text(t),events(e) {}
+				styles style;
+				promptShadow(const char* t,action a=doNothing,eventMask e=noEvent,styles s=noStyle)
+					:action(a),text(t),events(e),style(s) {}
 		};
 		class prompt {
 			public:
@@ -47,6 +50,7 @@ www.r-site.net
 				const promptShadow* shadow;//constant read-only data (PROGMEM)
 				inline prompt(const promptShadow& shadow):shadow(&shadow) {}
 				inline systemStyles sysStyles() const {return (systemStyles)memWord(&shadow->sysStyles);}
+				inline styles getStyles() const {return (styles)memWord(&shadow->style);}
 				inline bool canNav() const {return sysStyles()&_canNav;}//can receive navigation focus and process keys
 				inline bool isMenu() const {return sysStyles()&_menuData;}//has menu data list and can be a navNode target
 				inline bool isVariant() const {return sysStyles()&_isVariant;}//a menu as an enumerated field, connected to a variable value
@@ -72,21 +76,16 @@ www.r-site.net
 			systemStyles sysStyles;
 			const char*text;
 			const eventMask events;//registered events
+			styles style;
 			idx_t sz;
 			prompt* const* data;
-			styles style;
-			//int width;//field or menu width
-			//int ox,oy;//coordinate origin displacement
 		};
 		class menuNodeShadow:public promptShadow {
 			public:
 				idx_t sz;
 				prompt* const* data;
-				styles style;
-				//int width;//field or menu width
-				//int ox,oy;//coordinate origin displacement
 				menuNodeShadow(const char* text,idx_t sz,prompt* const* data,action a,eventMask e,styles style)
-				:promptShadow(text,a,e),sz(sz),data(data),style(style) {}
+				:promptShadow(text,a,e,style),sz(sz),data(data) {}
 		};
 		class menuNode:public navTarget {
 			public:
@@ -112,6 +111,7 @@ www.r-site.net
 			systemStyles sysStyles;
 			const char*text;
 			const eventMask events;//registered events
+			styles style;
 			T* value;
 			const char* units;
 			const T low,high,step,tune;
@@ -122,8 +122,8 @@ www.r-site.net
 				T* value;
 				const char* units;
 				const T low,high,step,tune;
-				menuFieldShadow(T &value,const char * text,const char *units,T low,T high,T step,T tune,action a=doNothing,eventMask e=noEvent)
-					:value(&value),units(units),low(low),high(high),step(step),tune(tune),promptShadow(text,a,e) {}
+				menuFieldShadow(T &value,const char * text,const char *units,T low,T high,T step,T tune,action a=doNothing,eventMask e=noEvent,styles s=noStyle)
+					:value(&value),units(units),low(low),high(high),step(step),tune(tune),promptShadow(text,a,e,s) {}
 		};
 		template<typename T>
 		class menuField:public navTarget {
@@ -151,8 +151,13 @@ www.r-site.net
 					return dirty||(reflex!=target());
 				}
 				void clamp() {
-					if (target()<low()) target()=low();
-					else if (target()>high()) target()=high();
+					if (target()<low()) {
+						if (getStyles()&wrapStyle) target()=high();
+						else target()=low();
+					} else if (target()>high()) {
+						if (getStyles()&wrapStyle) target()=low();
+						else target()=high();
+					}
 				}
 		};
 
@@ -163,6 +168,7 @@ www.r-site.net
 			systemStyles sysStyles;
 			const char*text;
 			const eventMask events;//registered events
+			styles style;
 			T value;
 		};
 		template<typename T>
@@ -198,9 +204,9 @@ www.r-site.net
 			systemStyles sysStyles;
 			const char*text;
 			const eventMask events;//registered events
+			styles style;
 			idx_t sz;
 			prompt* const* data;
-			styles style;
 			//int width;//field or menu width
 			//int ox,oy;//coordinate origin displacement
 			T* value;

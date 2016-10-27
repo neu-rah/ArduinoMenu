@@ -49,9 +49,9 @@
     (systemStyles)(_menuData|_canNav),\
     id##_text,\
     mask,\
+    style,\
     sizeof(id##_data)/sizeof(prompt*),\
-    id##_data,\
-    style\
+    id##_data\
   };\
   const menuNodeShadow& id##Shadow=*(menuNodeShadow*)&id##ShadowRaw;\
   objType id(id##Shadow);
@@ -70,9 +70,9 @@
     ss,\
     id##_text,\
     mask,\
+    style,\
     sizeof(id##_data)/sizeof(prompt*),\
     id##_data,\
-    style,\
     &target\
   };\
   const MEMMODE menuVariantShadow<typeof(target)>& id##_Shadow=*(menuVariantShadow<typeof(target)>*)&id##ShadowRaw;\
@@ -104,11 +104,12 @@
     (callback)aFn,\
     _noStyle,\
     title_##cnt,\
-    mask\
+    mask,\
+    noStyle\
   };\
   const promptShadow& opShadow##cnt=*(promptShadow*)&opShadowRaw##cnt;\
   objType op##cnt(opShadow##cnt);
-#define DECL_FIELD_(cnt,objType,target,text,units,low,high,step,tune,action,mask)\
+#define DECL_FIELD_(cnt,objType,target,text,units,low,high,step,tune,action,mask,style)\
   const char fieldLabel##cnt[] MEMMODE=text;\
   const char fieldUnit##cnt[] MEMMODE=units;\
   const MEMMODE menuFieldShadowRaw<typeof(target)> fieldShadowRaw##cnt={\
@@ -116,6 +117,7 @@
     _canNav,\
     fieldLabel##cnt,\
     mask,\
+    style,\
     &target,\
     fieldUnit##cnt,\
     low,\
@@ -138,6 +140,7 @@
     _noStyle,\
     valueLabel##cnt,\
     mask,\
+    noStyle,\
     value\
   };\
   const menuValueShadow<typeof(target)>& choice##cnt##Shadow=\
