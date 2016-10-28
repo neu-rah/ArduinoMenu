@@ -73,7 +73,7 @@ SELECT(selTest,selMenu,"Select",doNothing,noEvent,noStyle
 );
 
 int chooseTest=-1;
-CHOOSE(chooseTest,chooseMenu,"Choose ",doNothing,noEvent,noStyle
+CHOOSE(chooseTest,chooseMenu,"Choose",doNothing,noEvent,noStyle
   ,VALUE("First",1,doNothing,noEvent)
   ,VALUE("Second",2,doNothing,noEvent)
   ,VALUE("Third",3,doNothing,noEvent)
@@ -85,8 +85,8 @@ CHOOSE(chooseTest,chooseMenu,"Choose ",doNothing,noEvent,noStyle
 class altPrompt:public prompt {
 public:
   altPrompt(const promptShadow& p):prompt(p) {}
-  void printTo(navRoot &root,bool sel,menuOut& out) override {
-    out<<"special prompt!";
+  idx_t printTo(navRoot &root,bool sel,menuOut& out,idx_t len) override {
+    return out.printRaw("special prompt!",len);;
   }
 };
 

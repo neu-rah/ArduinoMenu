@@ -70,7 +70,7 @@ SELECT(selTest,selMenu,"Select",doNothing,noEvent,noStyle
 );
 
 int chooseTest=-1;
-CHOOSE(chooseTest,chooseMenu,"Choose ",doNothing,noEvent,noStyle
+CHOOSE(chooseTest,chooseMenu,"Choose",doNothing,noEvent,noStyle
   ,VALUE("First",1,doNothing,noEvent)
   ,VALUE("Second",2,doNothing,noEvent)
   ,VALUE("Third",3,doNothing,noEvent)
@@ -82,8 +82,8 @@ CHOOSE(chooseTest,chooseMenu,"Choose ",doNothing,noEvent,noStyle
 class altPrompt:public prompt {
 public:
   altPrompt(const promptShadow& p):prompt(p) {}
-  void printTo(navRoot &root,bool sel,menuOut& out) override {
-    out<<"special prompt!";
+  idx_t printTo(navRoot &root,bool sel,menuOut& out,idx_t len) override {
+    return out.printRaw("special prompt!",len);;
   }
 };
 
@@ -152,7 +152,8 @@ panelsList pList(panels,nodes,sizeof(panels)/sizeof(panel));
 menuGFX outGFX(gfx,colors,pList,fontX,fontY);//output device for LCD with 5x8 font size
 menuOut* outputs[]={&outGFX};
 outputsList out(outputs,1);
-NAVROOT(nav,mainMenu,2,Serial,out);
+#define MAX_DEPTH 2
+NAVROOT(nav,mainMenu,MAX_DEPTH,Serial,out);
 
 //when menu is suspended
 result idle(menuOut& o,idleEvent e) {
@@ -167,7 +168,7 @@ void setup() {
   while(!Serial);
   Serial<<F("menu 3.0 test")<<endl;Serial.flush();
   nav.idleTask=idle;//point a function to be used when menu is suspended
-  mainMenu[1].enabled=disabledStatus;
+  //mainMenu[1].enabled=disabledStatus;
 
   //pinMode(encBtn, INPUT_PULLUP);
   //encoder.begin();
@@ -184,8 +185,13 @@ void setup() {
 }
 
 void loop() {
-  nav.poll();
-  gfx.display(); // show splashscreen
+  //nav.poll();//it can work like this, followed by the gfx.display()
+  //or on a need to draw basis
+  nav.doInput();
+  if (nav.changed(outGFX)) {
+    nav.doOutput();
+    gfx.display(); // show splashscreen
+  }
   digitalWrite(LEDPIN, ledCtrl);
   delay(100);//simulate a delay when other tasks are done
 }

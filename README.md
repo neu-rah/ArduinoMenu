@@ -100,8 +100,10 @@ Depending on the type of input or output other libraries might be needed. Essent
 
 - when using macros the menu is limited to 16 options (current macro limnit).
 - menus **must** have at least 2 options.
-- maximum 256 options.
+- maximum 127 options.
 - fast access (numeric keys) only supports 9 options (1 to 9)
+- prompts can overflow on panels with less than 4 characters width
+- menu system is character based, so choose monometric font to achieve best results, it will work with any font but can text can overflow if using non monometric fonts.
 
 ## Base
 
@@ -215,6 +217,7 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
 	- color enumeration at base level
 	- multiple output devices in parallel
 	- define exit as regular option
+	- limiting text width to prevent overflow
 
 ### 2.4
 - support for teensy (tested on 3.2)

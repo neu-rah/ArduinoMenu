@@ -89,8 +89,8 @@ CHOOSE(chooseTest,chooseMenu,"Choose",doNothing,noEvent,noStyle
 class altPrompt:public prompt {
 public:
   altPrompt(const promptShadow& p):prompt(p) {}
-  void printTo(navRoot &root,bool sel,menuOut& out) override {
-    out<<"special prompt!";
+  idx_t printTo(navRoot &root,bool sel,menuOut& out,idx_t len) override {
+    return out.printRaw("special prompt!",len);;
   }
 };
 
@@ -151,7 +151,7 @@ keyIn<1> encButton(encBtn_map);//1 is the number of keys
 
 MENU_INPUTS(in,&encStream,&encButton,&Serial);
 
-//PANELS(serial_panels,{0,0,40,10});
+//PANELS(serial_panels,{0,0,40,10});//or use default
 serialOut outSerial(Serial);//,serial_panels);//the output device (just the serial port)
 
 #define textScale 1
@@ -160,7 +160,9 @@ PANELS(gfx_panels,{0,0,14,8},{14,0,13,8});
 menuGFX outGfx(gfx,colors,gfx_panels,6*textScale,9*textScale);//output device for LCD
 
 MENU_OUTPUTS(out,&outGfx,&outSerial);
-NAVROOT(nav,mainMenu,2,in,out);
+
+#define MAX_DEPTH 2
+NAVROOT(nav,mainMenu,MAX_DEPTH,in,out);
 
 //when menu is suspended
 result idle(menuOut& o,idleEvent e) {
@@ -198,7 +200,7 @@ void setup() {
 }
 
 void loop() {
-  nav.poll();
+  nav.poll();//this device only draws when needed
   digitalWrite(LEDPIN, ledCtrl);
-  delay(100);//simulate a delay when other tasks are done
+  delay(300);//simulate a delay when other tasks are done
 }

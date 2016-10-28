@@ -16,7 +16,7 @@ www.r-site.net
 #ifndef RSITE_ARDUINO_MENU_SYSTEM_BASE
   #define RSITE_ARDUINO_MENU_SYSTEM_BASE
 
-  #define DEBUG
+  //#define DEBUG
 
   #ifdef DEBUG
     extern bool debugFlag;
@@ -43,7 +43,7 @@ www.r-site.net
     template<typename T> class choose;
 
     typedef int8_t idx_t;
-    int print_P(Print& s,const char* at);
+    idx_t print_P(Print& s,const char* at,idx_t sz=0);
 
     enum result {proceed=0,quit};
     enum systemStyles {_noStyle=0,_menuData=1,_canNav=2,_parentDraw=4,_isVariant=8};

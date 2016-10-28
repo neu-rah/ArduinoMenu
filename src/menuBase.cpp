@@ -13,10 +13,11 @@ template<void (*A)(eventMask event)> result Menu::callCaster(eventMask event) {A
 template<void (*A)()> result Menu::callCaster() {A();return proceed;}
 
 //MEMMODE AUX PRINT
-int Menu::print_P(Print& s,const char* at) {
+idx_t Menu::print_P(Print& s,const char* at,idx_t len) {
   const char* p=at;
-  while(uint8_t ch=memByte(at++)) s.write(ch);
-  return p-at;
+  uint8_t ch;
+  for(int n=0;(ch=memByte(at++))&&(len==0||n<len);n++) s.write(ch);
+  return at-p;
 }
 
 Print& Menu::operator<<(Print& o,prompt const &p) {

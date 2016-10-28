@@ -11,7 +11,18 @@ action Menu::noAction(doNothing);
 //this is for idle (menu suspended)
 result Menu::inaction(menuOut& o,idleEvent) {return proceed;}
 
-void prompt::printTo(navRoot &root,bool sel,menuOut& out) {out<<*this;}
+idx_t prompt::printRaw(menuOut& out,idx_t len) const {
+  return print_P(out,(const char *)memPtr(shadow->text),len);
+}
+
+idx_t prompt::printTo(navRoot &root,bool sel,menuOut& out,idx_t len) {return printRaw(out,len);}
+
+idx_t menuOut::printRaw(const char* at,idx_t len) {
+  const char* p=at;
+  uint8_t ch;
+  for(int n=0;(ch=*(at++))&&(len==0||n<len);n++) write(ch);
+  return at-p;
+}
 
 menuOut& menuOut::operator<<(const prompt& p) {
   print_P(*this,(const char *)memPtr(p.shadow->text));
@@ -39,7 +50,7 @@ void menuOut::previewMenu(navRoot& root,menuNode& menu,idx_t panelNr) {
     setColor(fgColor,false,p.enabled);
     drawCursor(i,false,p.enabled,false,panelNr);
     setColor(fgColor,false,p.enabled,false);
-    p.printTo(root,false,*this);
+    p.printTo(root,false,*this,panels[panelNr].w);
   }
 }
 
@@ -71,18 +82,16 @@ void menuOut::printMenu(navNode &nav) {
 void menuOut::printMenu(navNode &nav,idx_t panelNr) {
   idx_t ot=top;
   idx_t st=(nav.root->showTitle&&(maxY(panelNr)>1))?1:0;//do not use titles on single line devices!
-  while(nav.sel+st>=(top+maxY(panelNr))) {top++;}
-  while(nav.sel<top||(top&&((nav.sz()-top)<maxY(panelNr)-st))) {top--;}
-  bool all=redraw||(top!=ot)||drawn!=nav.target||panels.nodes[panelNr]!=nav.target;
-  if (!(all||minimalRedraw))
-    all=all||nav.target->changed(nav,*this);
-    /*for(idx_t i=0;i<maxY(panelNr)-st;i++) {
-      if (all||i+top>=nav.sz()) break;
-      else all|=nav[i+top].changed(nav,*this);
-    }*/
-  //all|=nav.target->dirty;
+  while(nav.sel+st>=(top+maxY(panelNr))) top++;
+  while(nav.sel<top||(top&&((nav.sz()-top)<maxY(panelNr)-st))) top--;
+  bool all=redraw
+    ||(top!=ot)
+    ||(drawn!=nav.target)
+    ||(panels.nodes[panelNr]!=nav.target);
+  if (!(all||minimalRedraw)) //non minimal draw will redraw all if any change
+    all|=nav.target->changed(nav,*this);
+  all|=nav.target->dirty;
   if (!(all||minimalRedraw)) return;
-  //Serial<<"printMenu on device "<<deviceName<<" all:"<<all<<endl;
   if (all) {
     clear(panelNr);
     if (st) {
@@ -93,13 +102,13 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
       *this<<'['<<*(prompt*)nav.target<<']';
     }
   }
-  //bool any=all;
+  panel pan=panels[panelNr];
   for(idx_t i=0;i<maxY(panelNr)-st;i++) {
     int ist=i+st;
     if (i+top>=nav.sz()) break;
     prompt& p=nav[i+top];
+    idx_t len=pan.w+1;
     if (all||p.changed(nav,*this,false)) {
-      //any=true;
       bool selected=nav.sel==i+top;
       bool ed=nav.target==&p;
       clearLine(ist,panelNr,bgColor,selected,p.enabled);
@@ -108,10 +117,12 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
       if (drawNumIndex) {
         char a=top+i+'1';
         *this<<'['<<(a<='9'?a:'-')<<']';
+        len-=3;
       }
       drawCursor(ist,selected,p.enabled,ed,panelNr);
+      len--;
       setColor(fgColor,selected,p.enabled,ed);
-      p.printTo(*nav.root,selected,*this);
+      if (len>0) p.printTo(*nav.root,selected,*this,len);
       if (selected&&panels.sz>panelNr+1) {
         if(p.isMenu()) {
           previewMenu(*nav.root,*(menuNode*)&p,panelNr+1);
@@ -121,6 +132,8 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
     }
   }
   drawn=nav.target;
+  //lastSel=nav.sel;
+  //lastTop=top;
 }
 
 navRoot* navNode::root=NULL;
@@ -130,7 +143,7 @@ bool menuNode::changed(const navNode &nav,const menuOut& out,bool sub) {
   if (dirty) return true;
   if (sub) for(int i=0;i<out.maxY();i++) {
     if (i+out.top>=nav.sz()) break;
-    if (operator[](i).changed(nav,out,false)) return true;
+    if (operator[](i+out.top).changed(nav,out,false)) return true;
   }
   return false;
 }
@@ -174,9 +187,9 @@ void navNode::doNavigation(char ch) {
     }
   }
   if(osel!=sel) {
-    if (target->sysStyles()&(_parentDraw|_isVariant))
+    if (target->sysStyles()&(_parentDraw|_isVariant)) {
       target->dirty=true;
-    else {
+    } else {
       operator[](osel).dirty=true;
       operator[](sel).dirty=true;
     }

@@ -14,8 +14,14 @@
           :menuOut(p,r,m),device(o) {
             drawNumIndex=true;
           }
-        void clear() override {device<<endl;}
-        void clear(idx_t panelNr) override {device<<endl;}
+        void clear() override {
+          device<<endl;
+          panels.reset();
+        }
+        void clear(idx_t panelNr) override {
+          device<<endl;
+          panels.nodes[panelNr]=NULL;
+        }
         void clearLine(
           idx_t ln,
           idx_t panelNr=0,

@@ -54,11 +54,12 @@ www.r-site.net
         inline bool canNav() const {return sysStyles()&_canNav;}//can receive navigation focus and process keys
         inline bool isMenu() const {return sysStyles()&_menuData;}//has menu data list and can be a navNode target
         inline bool isVariant() const {return sysStyles()&_isVariant;}//a menu as an enumerated field, connected to a variable value
-        virtual void printTo(navRoot &root,bool sel,menuOut& out);//raw print to output device
+        virtual idx_t printTo(navRoot &root,bool sel,menuOut& out,idx_t len);//raw print to output device
         virtual bool changed(const navNode &nav,const menuOut& out,bool sub=true) {return dirty;}
         //this is the system version of enter handler, its used by elements like toggle
         virtual result sysHandler(FUNC_PARAMS) {return proceed;}
         inline result operator()(FUNC_PARAMS) const {return (*shadow)(FUNC_VALUES);}
+        idx_t printRaw(menuOut& out,idx_t len) const;
     };
 
     //--------------------------------------------------------------------------
@@ -132,7 +133,7 @@ www.r-site.net
         T reflex;
         menuField(const menuFieldShadow<T> & shadow):navTarget(shadow) {}
         void navigate(navNode& nav,Stream& in) override;
-        void printTo(navRoot &root,bool sel,menuOut& out) override;
+        idx_t printTo(navRoot &root,bool sel,menuOut& out,idx_t len) override;
         inline T& target() const {return *(T*)memPtr(((menuFieldShadow<T>*)shadow)->value);}
         inline T getTypeValue(const T* from) const {
           #ifdef USING_PGM
@@ -251,7 +252,7 @@ www.r-site.net
         inline T& target() const {return *(T*)memPtr(((menuVariantShadow<T>*)shadow)->value);}
         bool changed(const navNode &nav,const menuOut& out,bool sub=true) override;
         void navigate(navNode& nav,Stream& in) override;
-        void printTo(navRoot &root,bool sel,menuOut& out) override;
+        idx_t printTo(navRoot &root,bool sel,menuOut& out,idx_t len) override;
     };
 
     template<typename T>//-------------------------------------------
@@ -264,7 +265,7 @@ www.r-site.net
     class toggle:public menuVariant<T> {
       public:
         toggle(const menuNodeShadow& s):menuVariant<T>(s) {}
-        void printTo(navRoot &root,bool sel,menuOut& out) override;
+        idx_t printTo(navRoot &root,bool sel,menuOut& out,idx_t len) override;
         //bool canNav() const override {return false;}//can receive navigation focus and process keys
         result sysHandler(FUNC_PARAMS) override {
           switch(event) {
@@ -357,6 +358,7 @@ www.r-site.net
           :panels(p),redraw(r),minimalRedraw(minimal) {}
         inline idx_t maxX(idx_t i=0) const {return panels[i].w;}
         inline idx_t maxY(idx_t i=0) const {return panels[i].h;}
+        idx_t printRaw(const char* at,idx_t len);
         virtual menuOut& operator<<(prompt const &p);
         virtual menuOut& fill(
           int x1, int y1, int x2, int y2,char ch=' ',
@@ -528,17 +530,26 @@ www.r-site.net
 
     ////////////////////////////////////////////////////////////////////////
     template<typename T>
-    void menuField<T>::printTo(navRoot &root,bool sel,menuOut& out) {
+    idx_t menuField<T>::printTo(navRoot &root,bool sel,menuOut& out,idx_t len) {
       menuFieldShadow<T>& s=*(menuFieldShadow<T>*)shadow;
       reflex=target();
-      prompt::printTo(root,sel,out);
+      idx_t l=prompt::printTo(root,sel,out,len);
       bool ed=this==root.navFocus;
       //bool sel=nav.sel==i;
-      out<<(sel?(tunning?'>':':'):' ');
-      out.setColor(valColor,sel,enabled,ed);
-      out<<reflex;
-      out.setColor(unitColor,sel,enabled,ed);
-      print_P(out,(const char*)memPtr(s.units));
+      if (l<len) {
+        out<<((root.navFocus==this&&sel)?(tunning?'>':':'):' ');
+        l++;
+        if (l<len) {
+          out.setColor(valColor,sel,enabled,ed);
+          //out<<reflex;
+          l+=out.print(reflex);//NOTE: this can exceed the limits!
+          if (l<len) {
+            out.setColor(unitColor,sel,enabled,ed);
+            l+=print_P(out,(const char*)memPtr(s.units),len);
+          }
+        }
+      }
+      return l;
     }
 
     static const char* numericChars="0123456789.";
@@ -580,24 +591,29 @@ www.r-site.net
     }
 
     template<typename T>
-    void toggle<T>::printTo(navRoot &root,bool sel,menuOut& out) {
-      out<<*(prompt*)this;
+    idx_t toggle<T>::printTo(navRoot &root,bool sel,menuOut& out,idx_t len) {
+      idx_t l=prompt::printTo(root,sel,out,len);
       idx_t at=menuVariant<T>::sync(menuVariant<T>::sync());
       bool ed=this==root.navFocus;
       //bool sel=nav.sel==i;
       out.setColor(valColor,sel,prompt::enabled,ed);
-      out<<menuNode::operator[](at);
+      //out<<menuNode::operator[](at);
+      if (len-l>0) l+=toggle<T>::operator[](at).printRaw(out,len-l);
+      return l;
     }
 
     template<typename T>
-    void menuVariant<T>::printTo(navRoot &root,bool sel,menuOut& out) {
-      out<<*(prompt*)this;
+    idx_t menuVariant<T>::printTo(navRoot &root,bool sel,menuOut& out,idx_t len) {
+      idx_t l=prompt::printTo(root,sel,out,len);
       idx_t at=menuVariant<T>::sync(menuVariant<T>::sync());
       bool ed=this==root.navFocus;
       //bool sel=nav.sel==i;
       out<<(this==&root.active()?':':' ');
+      l++;
       out.setColor(valColor,sel,prompt::enabled,ed);
-      out<<menuNode::operator[](at);
+      //out<<menuNode::operator[](at);
+      if (len-l>0) l+=operator[](at).printRaw(out,len-l);
+      return l;
     }
 
     template<typename T>
@@ -611,8 +627,6 @@ www.r-site.net
 
     template<typename T>
     bool menuVariant<T>::changed(const navNode &nav,const menuOut& out,bool sub) {
-      if (out.deviceName=="Serial")
-        Serial<<*(prompt*)this<<" changed? "<<(dirty||reflex!=target())<<endl;
       return dirty||reflex!=target();
     }
 
