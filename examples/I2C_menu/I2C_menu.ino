@@ -156,6 +156,9 @@ void setup()
   lcd.begin(16,2);
   lcd.home();
   lcd.print("Menu 2.x test");
+  menu::wrapMenus=true;
+  mainMenu[7].disable();
+  mainMenu[8].disable();
 }
 
 void loop()
