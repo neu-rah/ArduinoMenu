@@ -63,7 +63,7 @@ www.r-site.net
     };
 
     //--------------------------------------------------------------------------
-    // can receive navigation focus and prrocess keys
+    // can receive navigation focus and process keys
     class navTarget:public prompt {
       public:
         navTarget(const promptShadow& shadow):prompt(shadow) {}
