@@ -1,26 +1,25 @@
-//for using F. Malpartida LCD's driver
-//https://bitbucket.org/fmalpartida/new-liquidcrystal/wiki/Home
+//for using standard arduino LiquidCrystal driver
 
-#ifndef RSITE_ARDUINO_MENU_LCDOUT
-  #define RSITE_ARDUINO_MENU_LCDOUT
+#ifndef RSITE_ARDUINO_MENU_LIQUIDCRYSTALOUT
+  #define RSITE_ARDUINO_MENU__LIQUIDCRYSTALOUT
   #include "../menu.hpp"
-  #include <LCD.h>
+  #include <LiquidCrystal.h>
 
   namespace Menu {
 
-    class lcdOut:public menuOut {
+    class liquidCrystalOut:public menuOut {
       public:
-        LCD* device;
-        inline lcdOut(LCD* o,panelsList &p,bool r=false,bool m=true)
+        LiquidCrystal& device;
+        inline liquidCrystalOut(LiquidCrystal& o,panelsList &p,bool r=false,bool m=true)
           :menuOut(p,r,m),device(o) {}
-        size_t write(uint8_t ch) override {return device->write(ch);}
+        size_t write(uint8_t ch) override {return device.write(ch);}
         void clearLine(idx_t ln,idx_t panelNr=0,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) override {
         	setCursor(0,ln,panelNr);
         	for(int n=0;n<maxX();n++) print(' ');
         	setCursor(0,ln,panelNr);
         }
         void clear() override {
-          device->clear();
+          device.clear();
           panels.reset();
         }
         void clear(idx_t panelNr) override {
@@ -32,7 +31,7 @@
         }
         void setCursor(idx_t x,idx_t y,idx_t panelNr=0) override {
           const panel p=panels[panelNr];
-          device->setCursor(p.x+x,p.y+y);
+          device.setCursor(p.x+x,p.y+y);
         }
     };
 

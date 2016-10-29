@@ -150,7 +150,7 @@ const panel panels[] MEMMODE={{0,0,16,2}};
 menuNode* nodes[sizeof(panels)/sizeof(panel)];
 panelsList pList(panels,nodes,1);
 
-lcdOut outLCD(lcd,pList);//output device for LCD
+liquidCrystalOut outLCD(lcd,pList);//output device for LCD
 menuOut* outputs[]={&outLCD};//list of output devices
 outputsList out(outputs,1);//outputs list with 2 outputs
 NAVROOT(nav,mainMenu,2,in,out);//the navigation root object

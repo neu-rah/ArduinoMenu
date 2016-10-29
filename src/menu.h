@@ -14,6 +14,8 @@
 #include "dev/encoderIn.hpp"
 //#include "dev/htmlOut.hpp"
 #include "dev/keyIn.hpp"
+#include "dev/softKeyIn.hpp"
+#include "dev/liquidCrystalOut.hpp"
 #include "dev/lcdOut.hpp"
 #include "dev/serialOut.hpp"
 #include "dev/U8GLibOut.hpp"

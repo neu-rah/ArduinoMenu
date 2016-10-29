@@ -1,5 +1,9 @@
 /**************
 Sept. 2014 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
+
+Oct. 2016 - dontsovcmc (https://github.com/dontsovcmc) added debounce safe
+  https://github.com/neu-rah/ArduinoMenu/pull/60
+
 creative commons license 3.0: Attribution-ShareAlike CC BY-SA
 This software is furnished "as is", without technical support, and with no
 warranty, express or implied, as to its usefulness for any purpose.
@@ -20,6 +24,10 @@ using namespace Menu;
 
 #include "keyMapDef.hpp"
 
+#ifndef BOUNCE_TICK
+#define BOUNCE_TICK 30
+#endif
+
 //if you hold/repeat a key for this ammount of time we will consider it an escape
 #ifndef ESCAPE_TIME
 #define ESCAPE_TIME 1500
@@ -27,25 +35,28 @@ using namespace Menu;
 //emulate a stream keyboard, this is not using interrupts as a good driver should do
 // AND is not using a buffer either!
 template <int N>
-class keyIn:public Stream {
+class softKeyIn:public Stream {
 public:
   keyMap* keys;
   int lastkey;
   unsigned long pressMills=0;
-  keyIn<N>(keyMap k[]):keys(k),lastkey(-1) {}
-  void begin() {
-    for(int n=0;n<N;n++)
-      if (keys[n].pin<0) pinMode(-keys[n].pin,INPUT_PULLUP);
-      else pinMode(keys[n].pin,INPUT);
-  }
+  softKeyIn<N>(keyMap k[]):keys(k),lastkey(-1) {}
   int available(void) {
-    //Serial<<"available"<<endl;
     int ch=peek();
     if (lastkey==-1) {
       lastkey=ch;
       pressMills=millis();
-    } else if (ESCAPE_TIME&&millis()-pressMills>ESCAPE_TIME) return 1;
+    }
+	else if (ch == -1 && millis()-pressMills < BOUNCE_TICK)
+	{
+		lastkey = -1;  //released = it's bounce. reset lastkey
+    return 0;
+	}
+	else if (ch != -1 && millis()-pressMills > BOUNCE_TICK) return 1;
+	else if (ESCAPE_TIME&&millis()-pressMills>ESCAPE_TIME) return 1;
+
     if (ch==lastkey) return 0;
+
     return 1;
     /*int cnt=0;
     for(int n=0;n<N;n++) {
