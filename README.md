@@ -2,6 +2,8 @@ ArduinoMenu
 ===========
 AVR generic menu/interactivity system
 
+[![Build Status](https://travis-ci.org/neu-rah/ArduinoMenu.svg?branch=master)](https://travis-ci.org/neu-rah/ArduinoMenu)
+
 ## Features
 
 - Wide variety of input/output devices supported.
@@ -18,6 +20,7 @@ AVR generic menu/interactivity system
 - Able to work over Serial stream for regular or debug mode.
 - modularity, support for different devices in separate include files.
 
+[![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](http://creativecommons.org/licenses/by-nc-sa/4.0/)
 [![IMAGE ALT TEXT](https://img.youtube.com/vi/wHv5sU-HXVI/2.jpg)](https://youtu.be/wHv5sU-HXVI "Arduino menu 2.0 fields video") [![IMAGE ALT TEXT](https://img.youtube.com/vi/W-TRCziF67g/2.jpg)](https://youtu.be/W-TRCziF67g "Arduino menu basic features video")
 
 ## IO devices
