@@ -20,46 +20,23 @@
 #
 
 
-#
-# Template #1: General project. Test it using existing `platformio.ini`.
-#
+language: python
+python:
+   - "2.7"
 
-# language: python
-# python:
-#     - "2.7"
-#
-# sudo: false
-# cache:
-#     directories:
-#         - "~/.platformio"
-#
-# install:
-#     - pip install -U platformio
-#
-# script:
-#     - platformio run
+sudo: false
+cache:
+   directories:
+       - "~/.platformio"
 
+env:
+   - PLATFORMIO_CI_SRC=examples/serial_menu/serial_menu.ino
 
-#
-# Template #2: The project is intended to by used as a library with examples
-#
+install:
+   - pip install -U platformio
 
-# language: python
-# python:
-#     - "2.7"
-#
-# sudo: false
-# cache:
-#     directories:
-#         - "~/.platformio"
-#
-# env:
-#     - PLATFORMIO_CI_SRC=path/to/test/file.c
-#     - PLATFORMIO_CI_SRC=examples/file.ino
-#     - PLATFORMIO_CI_SRC=path/to/test/directory
-#
-# install:
-#     - pip install -U platformio
-#
-# script:
-#     - platformio ci --lib="." --board=TYPE_1 --board=TYPE_2 --board=TYPE_N
+   - wget https://github.com/neu-rah/PCINT/archive/master.zip -O /tmp/PCINT-master.zip
+   - unzip /tmp/PCINT-master.zip -d /tmp/
+
+script:
+   - platformio ci --lib="." --lib="/tmp/PCINT-master" --board=nanoatmega328
