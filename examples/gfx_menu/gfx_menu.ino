@@ -66,7 +66,7 @@ ruihfazevedo@rrob@gmail.com
 Adafruit_ST7735 tft(tftCS, dc, rst);
 
 //wire led here because default led is already used by hardware SPI
-#define LEDPIN A4
+#define LEDPIN A3
 
 //aux vars
 int ledCtrl=0;

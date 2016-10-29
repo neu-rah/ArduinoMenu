@@ -40,10 +40,10 @@ Extensible: Yes
 // ENCODER (aka rotary switch) PINS
 // rotary
 #if defined(__AVR_ATmega328__)||defined(__AVR_ATmega328P__)// uno and breaduinos
-  #define encA A2
-  #define encB 2
+  #define encA 2
+  #define encB 3
   //this encoder has a button here
-  #define encBtn A3
+  #define encBtn 4
   #define LEDPIN 13
 #elif defined(__AVR_ATmega2560__)
   #define encA 10
