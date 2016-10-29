@@ -33,7 +33,7 @@ using namespace Menu;
 
 Adafruit_PCD8544 gfx(GFX_DC,GFX_CS,GFX_RST);
 
-#define LEDPIN A4
+#define LEDPIN A3
 
 // rotary encoder pins
 /*#define encA    2

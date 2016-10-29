@@ -29,7 +29,7 @@ using namespace Menu;
 
 Adafruit_ST7735 gfx(TFT_CS, TFT_DC, TFT_RST);
 
-#define LEDPIN A4
+#define LEDPIN A3
 
 // rotary encoder pins
 #define encA    2

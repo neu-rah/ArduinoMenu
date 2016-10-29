@@ -2,7 +2,7 @@
 
 using namespace Menu;
 
-#define LEDPIN A4
+#define LEDPIN A3
 
 result zZz() {Serial<<"zZz"<<endl;return proceed;}
 

@@ -17,7 +17,7 @@ Extensible: Yes
 
 using namespace Menu;
 
-#define LEDPIN A4
+#define LEDPIN A3
 
 // rotary encoder pins
 #define encA    2

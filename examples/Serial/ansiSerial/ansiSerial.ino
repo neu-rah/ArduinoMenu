@@ -26,7 +26,7 @@ www.r-site.net
 
 using namespace Menu;
 
-#define LEDPIN A4
+#define LEDPIN A3
 
 // define menu colors --------------------------------------------------------
 //each color is in the format:
