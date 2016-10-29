@@ -34,7 +34,6 @@ ruihfazevedo@rrob@gmail.com
 #include <Adafruit_ST7735.h> // Hardware-specific library
 #include <menuGFX.h>
 
-#define LEDPIN A4
 
 #if defined(__AVR_ATmega2560__)
   ///////////////////////////////////////////////////////////////////////////
@@ -49,11 +48,11 @@ ruihfazevedo@rrob@gmail.com
   #define encB 12
   #define encBtn 13
 #elif defined(__AVR_ATmega328__) || defined(__AVR_ATmega328P__)
+  #define LEDPIN A3
   ///////////////////////////////////////////////////////////////////////////
   //TFT + SD
-  //#define sdCS  9//not using SD card
-  #define TFT_CS   A1
   #define TFT_DC   A0
+  #define TFT_CS   A1
   #define TFT_RST  A2
   ////////////////////////////////////////////
   // ENCODER (aka rotary switch) PINS
