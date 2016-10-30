@@ -33,9 +33,9 @@ LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);  // Set the LCD I
 //this encoder has a button here
 #define encBtn 4
 
-encoderIn encoder(encA,encB);//simple quad encoder driver
+encoderIn<encA,encB> encoder;//simple quad encoder driver
 #define ENC_SENSIVITY 4
-encoderInStream encStream(encoder,ENC_SENSIVITY);// simple quad encoder fake Stream
+encoderInStream<encA,encB> encStream(encoder,ENC_SENSIVITY);// simple quad encoder fake Stream
 
 //a keyboard with only one key as the encoder button
 keyMap encBtn_map[]={{-encBtn,options->getCmdChar(enterCmd)}};//negative pin numbers use internal pull-up, this is on when low

@@ -142,8 +142,8 @@ const colorDef<uint16_t> colors[] MEMMODE={
   {{ST7735_WHITE,ST7735_YELLOW},{ST7735_BLUE,ST7735_RED,ST7735_RED}},//titleColor
 };
 
-encoderIn encoder(encA,encB);//simple quad encoder driver
-encoderInStream encStream(encoder,4);// simple quad encoder fake Stream
+encoderIn<encA,encB> encoder;//simple quad encoder driver
+encoderInStream<encA,encB> encStream(encoder,4);// simple quad encoder fake Stream
 
 //a keyboard with only one key as the encoder button
 keyMap encBtn_map[]={{-encBtn,options->getCmdChar(enterCmd)}};//negative pin numbers use internal pull-up, this is on when low

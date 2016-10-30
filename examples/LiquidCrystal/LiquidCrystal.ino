@@ -29,8 +29,8 @@ LiquidCrystal lcd(RS, RW, EN, 4, 5, 6, 7);
 //this encoder has a button here
 #define encBtn A3
 
-encoderIn encoder(encA,encB);//simple quad encoder driver
-encoderInStream encStream(encoder,4);// simple quad encoder fake Stream
+encoderIn<encA,encB> encoder;//simple quad encoder driver
+encoderInStream<encA,encB> encStream(encoder,4);// simple quad encoder fake Stream
 
 //a keyboard with only one key as the encoder button
 keyMap encBtn_map[]={{-encBtn,options->getCmdChar(enterCmd)}};//negative pin numbers use internal pull-up, this is on when low

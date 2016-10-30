@@ -39,12 +39,12 @@ quadrature encoder stream (fake, not using buffers)
   //PCint handlers
   template<uint8_t pinA,uint8_t pinB>
   void encoderIn<pinA,pinB>::encoderInUpdateA(class encoderIn<pinA,pinB> *e) {
-    if (digitalRead(e->pinA)^digitalRead(e->pinB)) e->pos--;
+    if (digitalRead(pinA)^digitalRead(pinB)) e->pos--;
     else e->pos++;
   }
   template<uint8_t pinA,uint8_t pinB>
   void encoderIn<pinA,pinB>::encoderInUpdateB(class encoderIn<pinA,pinB> *e) {
-    if (digitalRead(e->pinA)^digitalRead(e->pinB)) e->pos++;
+    if (digitalRead(pinA)^digitalRead(pinB)) e->pos++;
     else e->pos--;
   }
 
