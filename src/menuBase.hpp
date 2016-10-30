@@ -69,7 +69,7 @@ www.r-site.net
 
     //color defs, then indexing by selected and enabled status
     enum colorDefs {
-      bgColor,
+      bgColor=0,
       fgColor,
       valColor,
       unitColor,

@@ -78,7 +78,7 @@ void showColorDef(menuOut& out,colorDefs def,int x,int y) {
 
 result showColors(menuOut& o,idleEvent e) {
   switch(e) {
-    case idling: for(int c=0;c<nColors;c++) showColorDef(o,c,0,c<<2); break;
+    case idling: for(int c=0;c<nColors;c++) showColorDef(o,(colorDefs)c,0,c<<2); break;
     default:
       o<<ANSI::xy(80,25)<<ANSI::eraseScreen()<<ANSI::xy(1,1);
       break;
