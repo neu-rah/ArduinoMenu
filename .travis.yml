@@ -101,4 +101,4 @@ install:
    - unzip /tmp/NewliquidCrystal_1.3.4.zip -d /tmp/
 
 script:
-   - platformio ci --lib="." --lib="/tmp/Streaming-master" --lib="/tmp/Assert4a-master" --lib="/tmp/Adafruit-GFX-Library-master" --lib="/tmp/PCINT-master" --lib="/tmp/U8glib_Arduino-master" --lib="/tmp/AnsiStream-master" --lib="NewliquidCrystal" --board=nanoatmega328
+   - platformio ci --lib="." --lib="/tmp/Streaming-master" --lib="/tmp/Assert4a-master" --lib="/tmp/Adafruit-GFX-Library-master" --lib="/tmp/PCINT-master" --lib="/tmp/U8glib_Arduino-master" --lib="/tmp/AnsiStream-master" --lib="/tmp/NewliquidCrystal" --board=nanoatmega328
