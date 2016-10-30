@@ -18,8 +18,4 @@
 #include "dev/lcdOut.hpp"
 #include "dev/serialOut.hpp"
 #include "dev/U8GLibOut.hpp"
-
-//this libs are not due compatible
-#ifndef ARDUINO_SAM_DUE
-  #include "dev/liquidCrystalOut.hpp"
-#endif
+#include "dev/liquidCrystalOut.hpp"

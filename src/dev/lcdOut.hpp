@@ -4,6 +4,7 @@
 #ifndef RSITE_ARDUINO_MENU_LCDOUT
   #define RSITE_ARDUINO_MENU_LCDOUT
   #include "../menu.hpp"
+  #include <Wire.h>
   #include <LCD.h>
 
   namespace Menu {
