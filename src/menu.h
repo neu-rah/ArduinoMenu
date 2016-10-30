@@ -15,7 +15,11 @@
 //#include "dev/htmlOut.hpp"
 #include "dev/keyIn.hpp"
 #include "dev/softKeyIn.hpp"
-#include "dev/liquidCrystalOut.hpp"
 #include "dev/lcdOut.hpp"
 #include "dev/serialOut.hpp"
 #include "dev/U8GLibOut.hpp"
+
+//this libs are not due compatible
+#ifndef ARDUINO_SAM_DUE
+  #include "dev/liquidCrystalOut.hpp"
+#endif

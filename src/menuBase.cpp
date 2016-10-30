@@ -128,7 +128,3 @@ config* Menu::options=&defaultOptions;
     return o;
   }
 #endif
-
-#ifndef Arduino_h
-Print Serial;
-#endif

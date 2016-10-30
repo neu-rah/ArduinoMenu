@@ -16,33 +16,47 @@ quadrature encoder stream (fake, not using buffers)
 
   #include <pcint.h> //https://github.com/neu-rah/PCINT
 
+  template<uint8_t pinA,uint8_t pinB>
   class encoderIn {
   public:
     volatile int pos=0;
-    int pinA,pinB;
-    encoderIn(int a,int b):pinA(a),pinB(b) {}
+    //int pinA,pinB;
+    //encoderIn<pinA,pinB>(int a,int b):pinA(a),pinB(b) {}
     void begin() {
       pinMode(pinA, INPUT);
       digitalWrite(pinA,1);
       pinMode(pinB, INPUT);
       digitalWrite(pinB,1);
       //attach pin change handlers
-      PCattachInterrupt(pinA, mixHandler((void(*)(void*))encoderInUpdateA,this), CHANGE);
-      PCattachInterrupt(pinB, mixHandler((void(*)(void*))encoderInUpdateB,this), CHANGE);
+      PCattachInterrupt<pinA>(mixHandler((void(*)(void*))encoderInUpdateA,this), CHANGE);
+      PCattachInterrupt<pinB>(mixHandler((void(*)(void*))encoderInUpdateB,this), CHANGE);
     }
     //PCint handlers
-    static void encoderInUpdateA(class encoderIn *e);
-    static void encoderInUpdateB(class encoderIn *e);
+    static void encoderInUpdateA(class encoderIn<pinA,pinB> *e);
+    static void encoderInUpdateB(class encoderIn<pinA,pinB> *e);
   };
+
+  //PCint handlers
+  template<uint8_t pinA,uint8_t pinB>
+  void encoderIn<pinA,pinB>::encoderInUpdateA(class encoderIn<pinA,pinB> *e) {
+    if (digitalRead(e->pinA)^digitalRead(e->pinB)) e->pos--;
+    else e->pos++;
+  }
+  template<uint8_t pinA,uint8_t pinB>
+  void encoderIn<pinA,pinB>::encoderInUpdateB(class encoderIn<pinA,pinB> *e) {
+    if (digitalRead(e->pinA)^digitalRead(e->pinB)) e->pos++;
+    else e->pos--;
+  }
 
   //emulate a stream based on encoderIn movement returning +/- for every 'sensivity' steps
   //buffer not needer because we have an accumulator
+  template<uint8_t pinA,uint8_t pinB>
   class encoderInStream:public Stream {
   public:
-    encoderIn &enc;//associated hardware encoderIn
+    encoderIn<pinA,pinB> &enc;//associated hardware encoderIn
     int sensivity;
     int oldPos=0;
-    encoderInStream(encoderIn &enc,int sensivity):enc(enc), sensivity(sensivity) {}
+    encoderInStream(encoderIn<pinA,pinB> &enc,int sensivity):enc(enc), sensivity(sensivity) {}
     inline void setSensivity(int s) {sensivity=s;}
     int available(void) {return abs(enc.pos-oldPos)/sensivity;}
     int peek(void) override {
@@ -65,5 +79,7 @@ quadrature encoder stream (fake, not using buffers)
     }
     void flush() {oldPos=enc.pos;}
     size_t write(uint8_t v) {oldPos=v;return 1;}
+
   };
+
 #endif
