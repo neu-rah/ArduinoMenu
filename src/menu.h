@@ -315,6 +315,7 @@ www.r-site.net
         const panel* panels;
         menuNode** nodes;
         const idx_t sz;
+        idx_t cur=0;
         panelsList(const panel p[],menuNode* nodes[],idx_t sz):panels(p),nodes(nodes),sz(sz) {
           reset();
         }

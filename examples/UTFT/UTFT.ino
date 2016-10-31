@@ -15,20 +15,19 @@ www.r-site.net
 
 #include <Arduino.h>
 #include <UTFT.h>
-#include <UTouch.h>
+#include <URTouch.h>
 #include <menu.h>
 #include <dev/utftOut.h>
+#include <dev/utouchIn.h>
 #include <dev/serialOut.h>
+#include <dev/chainStream.h>
 
 using namespace Menu;
 
 UTFT tft(CTE28,25,26,27,28);
-extern uint8_t SmallFont[];
-//extern uint8_t BigFont[];
+//extern uint8_t SmallFont[];
+extern uint8_t BigFont[];
 //extern uint8_t SevenSegNumFont[];
-
-UTouch  myTouch( 6, 5, 4, 3, 2);
-//menuUTouch menuTouch(myTouch,gfx);
 
 #define LEDPIN 13
 
@@ -111,10 +110,10 @@ result doAlert(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out
   return proceed;
 }
 
-MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
+MENU(mainMenu,"Main menu",doNothing,noEvent,noStyle
   ,OP("Op1",action1,anyEvent)
   ,OP("Op2",action2,enterEvent)
-  ,FIELD(test,"Test","%",0,100,10,1,doNothing,noEvent,wrapStyle)
+  ,FIELD(test,"Test","%",0,100,10,1,doNothing,noEvent,noStyle)
   ,SUBMENU(subMenu)
   ,SUBMENU(setLed)
   ,OP("LED On",ledOn,enterEvent)
@@ -139,15 +138,21 @@ const colorDef<uint16_t> colors[] MEMMODE={
 };
 
 //PANELS(serial_panels,{0,0,40,10});//or use default
-serialOut outSerial(Serial);//,serial_panels);//the output device (just the serial port)
+//serialOut outSerial(Serial);//,serial_panels);//the output device (just the serial port)
 
-PANELS(gfx_panels,{0,0,14,8},{14,0,13,8});
-menuUTFT outGfx(tft,colors,gfx_panels,8,12);//output device, latter set resolution from font measure
+PANELS(gfx_panels,{0,0,12,8},{13,0,12,8});
+menuUTFT outGfx(tft,colors,gfx_panels,16,16);//output device, latter set resolution from font measure
 
-MENU_OUTPUTS(out,&outGfx,&outSerial);
+MENU_OUTPUTS(out,&outGfx);
+
+extern navRoot nav;
+UTouch  uTouch( 6, 5, 4, 3, 2);
+menuUTouch touchPanel(uTouch,nav,outGfx);
+
+MENU_INPUTS(in,&touchPanel,&Serial);
 
 #define MAX_DEPTH 2
-NAVROOT(nav,mainMenu,MAX_DEPTH,Serial,out);
+NAVROOT(nav,mainMenu,MAX_DEPTH,in,out);
 
 //when menu is suspended
 result idle(menuOut& o,idleEvent e) {
@@ -158,22 +163,25 @@ result idle(menuOut& o,idleEvent e) {
   return proceed;
 }
 
+config myOptions={'>','-',true,false,defaultNavCodes};
+
 void setup() {
+  options=&myOptions;
   pinMode(LEDPIN,OUTPUT);
   Serial.begin(115200);
   while(!Serial);
   Serial<<"menu 3.0 test"<<endl;Serial.flush();
   nav.idleTask=idle;//point a function to be used when menu is suspended
-  mainMenu[1].enabled=disabledStatus;
+  //mainMenu[1].enabled=disabledStatus;
 
   tft.InitLCD();
   tft.setBrightness(4);
   tft.clrScr();
 
-  myTouch.InitTouch();
-  myTouch.setPrecision(PREC_MEDIUM);
+  uTouch.InitTouch();
+  uTouch.setPrecision(PREC_MEDIUM);//LOW, MEDIUM, HI, EXTREME
 
-  tft.setFont(SmallFont);
+  tft.setFont(BigFont);
   tft.setColor(0, 255, 0);
   tft.setBackColor(0, 0, 0);
 
@@ -181,6 +189,7 @@ void setup() {
   //outGfx.resY=tft.getFontYsize()+1;
   outGfx<<"Menu 3.x test on UTFT"<<endl;
   delay(1000);
+  tft.clrScr();
 }
 
 void loop() {

@@ -70,6 +70,7 @@ void menuOut::printMenu(navNode &nav) {
       panels.nodes[i]=n.target;
     }
   }
+  panels.cur=k;
   printMenu(nav,k);
   panels.nodes[k]=nav.target;//for cleaning purposes
   for(int i=k+2;i<panels.sz;i++) if (panels.nodes[i]) {
