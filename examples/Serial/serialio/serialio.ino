@@ -1,4 +1,5 @@
 #include <menu.h>
+#include <dev/serialOut.h>
 
 using namespace Menu;
 

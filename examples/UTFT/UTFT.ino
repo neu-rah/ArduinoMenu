@@ -8,8 +8,8 @@ Thread Safe: No
 Extensible: Yes
 
 menu with UTFT
-output: 3.2″ TFT LCD Module Display + Touch Panel PCB Adapter SD Card Socket 240X320
-input: Serial
+output: 3.2″ TFT LCD Module Display 240X320
+input: Serial + Touch Panel
 www.r-site.net
 ***/
 
@@ -18,6 +18,7 @@ www.r-site.net
 #include <UTouch.h>
 #include <menu.h>
 #include <dev/utftOut.h>
+#include <dev/serialOut.h>
 
 using namespace Menu;
 

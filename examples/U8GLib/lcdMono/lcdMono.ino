@@ -11,9 +11,20 @@ warranty, express or implied, as to its usefulness for any purpose.
 
 Thread Safe: No
 Extensible: Yes
+
+menu on U8GLib device
+output: Nokia 5110 display (PCD8544 HW SPI) + Serial
+input: Serial + encoder
+
 */
 
+#include <U8glib.h>
 #include <menu.h>
+#include <dev/encoderIn.h>
+#include <dev/keyIn.h>
+#include <dev/chainStream.h>
+#include <dev/serialOut.h>
+#include <dev/U8GLibOut.h>
 
 using namespace Menu;
 

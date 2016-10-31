@@ -14,6 +14,11 @@ www.r-site.net
 ***/
 
 #include <menu.h>
+#include <dev/liquidCrystalOut.h>
+#include <dev/serialOut.h>
+#include <dev/encoderIn.h>
+#include <dev/keyIn.h>
+#include <dev/chainStream.h>
 
 using namespace Menu;
 

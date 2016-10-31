@@ -21,8 +21,8 @@ screen utility exits with [Ctrl+A \ y]
 
 www.r-site.net
 ***/
-
 #include <menu.h>
+#include <dev/ansiSerialOut.h>
 
 using namespace Menu;
 

@@ -6,8 +6,8 @@ http://www.r-site.net/?at=//op%5B%40id=%273090%27%5D
 Sep.2014 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
 creative commons license 3.0: Attribution-ShareAlike CC BY-SA
 This software is furnished "as is", without technical support, and with no
-warranty, express or implied, as to its usefulness for any purpose.
 
+warranty, express or implied, as to its usefulness for any purpose.
 Thread Safe: No
 Extensible: Yes
 
@@ -18,11 +18,10 @@ http://playground.arduino.cc/Code/LCD3wires
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>//F. Malpartida LCD's driver
 #include <menu.h>//menu macros and objects
-//#include <menuLCDs.h>
-//#include <menuFields.h>
-//#include <quadEncoder.h>//quadrature encoder driver and fake stream
-//#include <keyStream.h>//keyboard driver and fake stream (for the encoder button)
-//#include <chainStream.h>// concatenate multiple input streams (this allows adding a button to the encoder)
+#include <dev/lcdOut.h>//malpartidas lcd menu output
+#include <dev/encoderIn.h>//quadrature encoder driver and fake stream
+#include <dev/keyIn.h>//keyboard driver and fake stream (for the encoder button)
+#include <dev/chainStream.h>// concatenate multiple input streams (this allows adding a button to the encoder)
 
 //LiquidCrystal_I2C lcd(0x27);//, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);  // Set the LCD I2C address
 LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);  // Set the LCD I2C address and pinout
