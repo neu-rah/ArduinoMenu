@@ -29,47 +29,47 @@
 
 #define PANELS(id,...)\
   const panel _panels_##id[] MEMMODE={__VA_ARGS__};\
-  menuNode* _nodes_##id[sizeof(_panels_##id)/sizeof(panel)];\
-  panelsList id(_panels_##id,_nodes_##id,sizeof(_panels_##id)/sizeof(panel));
+  Menu::menuNode* _nodes_##id[sizeof(_panels_##id)/sizeof(panel)];\
+  Menu::panelsList id(_panels_##id,_nodes_##id,sizeof(_panels_##id)/sizeof(panel));
 
 #define MENU_OUTPUTS(id,...)\
-  menuOut* _outputs_##id[]={__VA_ARGS__};\
-  outputsList id(_outputs_##id,sizeof(_outputs_##id)/sizeof(menuOut*));
+  Menu::menuOut* _outputs_##id[]={__VA_ARGS__};\
+  Menu::outputsList id(_outputs_##id,sizeof(_outputs_##id)/sizeof(Menu::menuOut*));
 
 #define MENU_INPUTS(id,...)\
   Stream* _inputs_##id[]={__VA_ARGS__};\
-  chainStream<sizeof(_inputs_##id)/sizeof(Stream*)> id(_inputs_##id);
+  Menu::chainStream<sizeof(_inputs_##id)/sizeof(Stream*)> id(_inputs_##id);
 
-#define MENU(id,text,aFn,mask,style,...) altMENU(menu,id,text,aFn,mask,style,__VA_ARGS__)
+#define MENU(id,text,aFn,mask,style,...) altMENU(Menu::menu,id,text,aFn,mask,style,__VA_ARGS__)
 #define altMENU(objType,id,text,aFn,mask,style,...)\
   FOR_EACH(DECL,__VA_ARGS__)\
   const char id##_text[] MEMMODE=text;\
-  prompt* const id##_data[] MEMMODE={\
+  Menu::prompt* const id##_data[] MEMMODE={\
     FOR_EACH(DEF,__VA_ARGS__)\
   };\
-  const MEMMODE menuNodeShadowRaw id##ShadowRaw={\
-    (callback)aFn,\
-    (systemStyles)(_menuData|_canNav),\
+  const MEMMODE Menu::menuNodeShadowRaw id##ShadowRaw={\
+    (Menu::callback)aFn,\
+    (Menu::systemStyles)(Menu::_menuData|Menu::_canNav),\
     id##_text,\
     mask,\
     style,\
-    sizeof(id##_data)/sizeof(prompt*),\
+    sizeof(id##_data)/sizeof(Menu::prompt*),\
     id##_data\
   };\
-  const menuNodeShadow& id##Shadow=*(menuNodeShadow*)&id##ShadowRaw;\
+  const Menu::menuNodeShadow& id##Shadow=*(Menu::menuNodeShadow*)&id##ShadowRaw;\
   objType id(id##Shadow);
 
-#define SELECT(...) altVARIANT(select,((systemStyles)(_menuData|_canNav|_parentDraw)),__VA_ARGS__)
-#define CHOOSE(...) altVARIANT(choose,((systemStyles)(_menuData|_canNav|_isVariant)),__VA_ARGS__)
-#define TOGGLE(...) altVARIANT(toggle,_menuData,__VA_ARGS__)
+#define SELECT(...) altVARIANT(select,((systemStyles)(Menu::_menuData|Menu::_canNav|Menu::_parentDraw)),__VA_ARGS__)
+#define CHOOSE(...) altVARIANT(choose,((systemStyles)(Menu::_menuData|Menu::_canNav|Menu::_isVariant)),__VA_ARGS__)
+#define TOGGLE(...) altVARIANT(toggle,Menu::_menuData,__VA_ARGS__)
 #define altVARIANT(objType,ss,target,id,text,action,mask,style,...)\
   const char id##_text[] MEMMODE=text;\
   XFOR_EACH(DECL_VALUE,target,__VA_ARGS__)\
-  prompt* const id##_data[] MEMMODE={\
+  Menu::prompt* const id##_data[] MEMMODE={\
     FOR_EACH(DEF,__VA_ARGS__)\
   };\
-  const MEMMODE menuVariantShadowRaw<typeof(target)> id##ShadowRaw={\
-    (callback)action,\
+  const MEMMODE Menu::menuVariantShadowRaw<typeof(target)> id##ShadowRaw={\
+    (Menu::callback)action,\
     ss,\
     id##_text,\
     mask,\
@@ -78,7 +78,7 @@
     id##_data,\
     &target\
   };\
-  const MEMMODE menuVariantShadow<typeof(target)>& id##_Shadow=*(menuVariantShadow<typeof(target)>*)&id##ShadowRaw;\
+  const MEMMODE Menu::menuVariantShadow<typeof(target)>& id##_Shadow=*(menuVariantShadow<typeof(target)>*)&id##ShadowRaw;\
   objType<typeof(target)> id (id##_Shadow);
 
 // bridging macros prepending id's to arguments list
@@ -86,38 +86,38 @@
 #define OP(...) altOP(prompt,__VA_ARGS__)
 #define altOP(...) OP_(__COUNTER__,__VA_ARGS__)
 #define EXIT(...) EXIT_(__COUNTER__,__VA_ARGS__)
-#define FIELD(...) altFIELD(menuField,__VA_ARGS__)
+#define FIELD(...) altFIELD(Menu::menuField,__VA_ARGS__)
 #define altFIELD(...) FIELD_(__COUNTER__,__VA_ARGS__)
 #define VALUE(...) VALUE_(__COUNTER__,__VA_ARGS__)
 
 //allocating space for elements and shadows -------------------------------------
 #define DECL_EXIT_(cnt,exitText)\
   const char title_##cnt[] MEMMODE=exitText;\
-  const MEMMODE promptShadowRaw opShadowRaw##cnt = {\
-    (callback)doExit,\
-    _noStyle,\
+  const MEMMODE Menu::promptShadowRaw opShadowRaw##cnt = {\
+    (Menu::callback)Menu::doExit,\
+    Menu::_noStyle,\
     title_##cnt,\
-    enterEvent\
+    Menu::enterEvent\
   };\
-  const promptShadow& opShadow##cnt=*(promptShadow*)&opShadowRaw##cnt;\
-  prompt op##cnt(opShadow##cnt);
+  const Menu::promptShadow& opShadow##cnt=*(Menu::promptShadow*)&opShadowRaw##cnt;\
+  Menu::prompt op##cnt(opShadow##cnt);
 #define DECL_OP_(cnt,objType,text,aFn,mask) \
   const char title_##cnt[] MEMMODE=text;\
-  const MEMMODE promptShadowRaw opShadowRaw##cnt={\
-    (callback)aFn,\
+  const MEMMODE Menu::promptShadowRaw opShadowRaw##cnt={\
+    (Menu::callback)aFn,\
     _noStyle,\
     title_##cnt,\
     mask,\
     noStyle\
   };\
-  const promptShadow& opShadow##cnt=*(promptShadow*)&opShadowRaw##cnt;\
+  const Menu::promptShadow& opShadow##cnt=*(promptShadow*)&opShadowRaw##cnt;\
   objType op##cnt(opShadow##cnt);
 #define DECL_FIELD_(cnt,objType,target,text,units,low,high,step,tune,action,mask,style)\
   const char fieldLabel##cnt[] MEMMODE=text;\
   const char fieldUnit##cnt[] MEMMODE=units;\
-  const MEMMODE menuFieldShadowRaw<typeof(target)> fieldShadowRaw##cnt={\
-    (callback)action,\
-    _canNav,\
+  const MEMMODE Menu::menuFieldShadowRaw<typeof(target)> fieldShadowRaw##cnt={\
+    (Menu::callback)action,\
+    Menu::_canNav,\
     fieldLabel##cnt,\
     mask,\
     style,\
@@ -128,7 +128,7 @@
     step,\
     tune\
   };\
-  const menuFieldShadow<typeof(target)>& _fieldShadow##cnt=*(menuFieldShadow<typeof(target)>*)&fieldShadowRaw##cnt;\
+  const Menu::menuFieldShadow<typeof(target)>& _fieldShadow##cnt=*(Menu::menuFieldShadow<typeof(target)>*)&fieldShadowRaw##cnt;\
   objType<typeof(target)> _menuField##cnt(_fieldShadow##cnt);
 #define DECL_TEXTFIELD_(cnt,target,...)\
   menuTextField _menuTextField##cnt(target,__VA_ARGS__);
@@ -138,17 +138,17 @@
 #define MK_VALUE(...) _MK_VALUE(__VA_ARGS__)
 #define _MK_VALUE(target,cnt,text,value,action,mask)\
   const char valueLabel##cnt[] MEMMODE=text;\
-  const MEMMODE menuValueShadowRaw<typeof(target)> choice##cnt##ShadowRaw={\
-    (callback)action,\
-    _noStyle,\
+  const MEMMODE Menu::menuValueShadowRaw<typeof(target)> choice##cnt##ShadowRaw={\
+    (Menu::callback)action,\
+    Menu::_noStyle,\
     valueLabel##cnt,\
     mask,\
-    noStyle,\
+    Menu::noStyle,\
     value\
   };\
-  const menuValueShadow<typeof(target)>& choice##cnt##Shadow=\
+  const Menu::menuValueShadow<typeof(target)>& choice##cnt##Shadow=\
     *(menuValueShadow<typeof(target)>*)&choice##cnt##ShadowRaw;\
-  menuValue<typeof(target)> menuValue##cnt(choice##cnt##Shadow);
+  Menu::menuValue<typeof(target)> menuValue##cnt(choice##cnt##Shadow);
 
 // when building a list of elements --------------------------------------------
 #define DEF_EXIT_(cnt,...) &op##cnt
@@ -160,5 +160,5 @@
 
 //The navigation root ------------------------------------------------------------------
 #define NAVROOT(id,menu,maxDepth,in,out)\
-  navNode id##_path[maxDepth];\
-  navRoot id(menu,id##_path,maxDepth-1,in,out);
+  Menu::navNode id##_path[maxDepth];\
+  Menu::navRoot id(menu,id##_path,maxDepth-1,in,out);
