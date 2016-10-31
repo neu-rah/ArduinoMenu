@@ -28,6 +28,8 @@ IDEA: generic input:
 - input classes should provide a parser to be called as aux function of any of the above and deliver cmds.
   => that we can not accept Serial as input but use a specialized derivation instead
 
+implemented:
+
 navigation path
 
 navRoot::pool

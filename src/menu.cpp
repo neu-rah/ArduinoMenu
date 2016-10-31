@@ -225,21 +225,16 @@ result navNode::sysEvent(eventMask e,idx_t i) {
 }
 
 void navRoot::doInput() {
-  while ((!sleepTask)&&in.available())//if not doing something else and there is input
+  if (sleepTask&&options->getCmdChar(enterCmd)==in.read()) idleOff();
+  else while ((!sleepTask)&&in.available())//if not doing something else and there is input
     navFocus->parseInput(node(),in);//deliver navigation input task to target...
 }
 
-void navRoot::doOutput() {
-  if (sleepTask) {
-    if (options->getCmdChar(enterCmd)==in.read()) idleOff();
-    else out.idle(sleepTask,idling);
-  } else if (!(sleepTask)) printMenu();
+void navRoot::doNav(navCmd cmd) {
+  if (sleepTask&&cmd.cmd==enterCmd) idleOff();
+  else if (!sleepTask) navFocus->doNav(node(),cmd);
 }
 
-void navRoot::poll() {
-  doInput();
-  doOutput();
-}
 
 result maxDepthError(menuOut& o,idleEvent e) {
   o<<F("Error: maxDepth reached!\n\rincrease maxDepth on your scketch.");

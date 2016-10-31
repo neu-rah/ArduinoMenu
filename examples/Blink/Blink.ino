@@ -4,6 +4,7 @@
 #include <dev/chainStream.h>
 
 #define LEDPIN 13
+#define MAX_DEPT 1
 
 int timeOn=500;
 int timeOff=500;
@@ -19,7 +20,7 @@ MENU_INPUTS(in,&Serial);
 Menu::serialOut outSerial(Serial);//,serial_panels);//the output device (just the serial port)
 
 MENU_OUTPUTS(out,&outSerial);
-NAVROOT(nav,mainMenu,1,in,out);
+NAVROOT(nav,mainMenu,MAX_DEPT,in,out);
 
 void setup() {
   Serial.begin(115200);

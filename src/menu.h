@@ -480,7 +480,8 @@ www.r-site.net
         result sysEvent(eventMask e,idx_t i);//send event to item index i
         inline result sysEvent(eventMask e) {return sysEvent(e,sel);}//send event to current item
         navCmd navKeys(char ch);
-        void doNavigation(navCmd cmd);
+        //inline void doNav(navCmd cmd) {target->doNav(*this,cmd);}
+        void doNavigation(navCmd cmd);//aux function
         inline bool changed(const menuOut& out) const {return target->changed(*this,out);}
         inline prompt& operator[](idx_t i) const {return target->operator[](i);}
     };
@@ -514,12 +515,16 @@ www.r-site.net
             out.printMenu(path[level-1]);
           else out.printMenu(node());
         }
-        //inline bool changed() const {return node().changed(out);}
+
+        //menu IO - external iteration functions
         void doInput();
-        void doOutput();
-        void poll();
-        void enter();
-        void exit();
+        inline void doOutput() {if (!sleepTask) printMenu();}
+        inline void poll() {doInput();doOutput();};//fire and forget mode
+        void doNav(navCmd cmd);//fly by wire mode
+        void enter();//aux function
+        void exit();//aux function
+
+        //enter leva idle mode ---------------------------------
         inline void idleOn(idleFunc task=inaction) {
           out.clear();
           sleepTask=task;
