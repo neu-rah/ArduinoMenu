@@ -14,9 +14,10 @@ www.r-site.net
 ***/
 
 #include <Arduino.h>
-#include <menu.h>
 #include <UTFT.h>
 #include <UTouch.h>
+#include <menu.h>
+#include <dev/utftOut.h>
 
 using namespace Menu;
 

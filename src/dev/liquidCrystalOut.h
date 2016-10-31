@@ -2,7 +2,7 @@
 
 #ifndef RSITE_ARDUINO_MENU_LIQUIDCRYSTALOUT
   #define RSITE_ARDUINO_MENU__LIQUIDCRYSTALOUT
-  #include "../menu.hpp"
+  #include "../menu.h"
   #include <LiquidCrystal.h>
 
   namespace Menu {

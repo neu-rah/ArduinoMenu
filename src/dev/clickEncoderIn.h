@@ -37,7 +37,7 @@
 
     #include <Arduino.h>
     #include <ClickEncoder.h>
-    #include "../menu.hpp"
+    #include "../menu.h"
 
     using namespace Menu;
 

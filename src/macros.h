@@ -1,4 +1,4 @@
-#include "baseMacros.hpp"
+#include "baseMacros.h"
 
 #ifdef ARDUINO_SAM_DUE
   #define MENU_USERAM

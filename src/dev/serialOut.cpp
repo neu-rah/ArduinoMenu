@@ -1,4 +1,4 @@
-#include "serialOut.hpp"
+#include "serialOut.h"
 
 namespace Menu {
   const panel default_serial_panels[] MEMMODE={{0,0,40,10}};

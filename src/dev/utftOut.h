@@ -20,7 +20,7 @@ UTFT library from:
 #ifndef RSITE_ARDUINO_MENU_UTFT
 	#define RSITE_ARDUINO_MENU_UTFT
 	#include <UTFT.h>
-	#include "../menu.hpp"
+	#include "../menu.h"
 
   namespace Menu {
 

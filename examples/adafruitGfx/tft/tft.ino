@@ -16,9 +16,14 @@ www.r-site.net
 ***/
 
 #include <SPI.h>
-#include <menu.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_ST7735.h>
+#include <menu.h>
+#include <dev/adafruitGfxOut.h>
+#include <dev/encoderIn.h>
+#include <dev/keyIn.h>
+#include <dev/chainStream.h>
+#include <dev/serialOut.h>
 
 using namespace Menu;
 

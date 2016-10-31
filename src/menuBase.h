@@ -25,7 +25,7 @@ www.r-site.net
   #include <Arduino.h>
   #include <Streaming.h>//https://github.com/scottdky/Streaming
   #include <Assert4a.h> //https://github.com/nettigo/Assert4a
-  #include "macros.hpp"
+  #include "macros.h"
 
   namespace Menu {
     //menu structure objects

@@ -13,7 +13,7 @@ www.r-site.net
 #ifndef RSITE_ARDUINOP_MENU_GFX
 	#define RSITE_ARDUINOP_MENU_GFX
 	#include <Adafruit_GFX.h>
-	#include "../menu.hpp"
+	#include "../menu.h"
 
 namespace Menu {
 

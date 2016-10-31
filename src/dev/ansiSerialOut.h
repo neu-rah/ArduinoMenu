@@ -1,7 +1,7 @@
 #ifndef RSITE_ARDUINO_MENU_ANSISERIALOUT
   #define RSITE_ARDUINO_MENU_ANSISERIALOUT
   #include <AnsiStream.h>
-  #include "serialOut.hpp"
+  #include "serialOut.h"
 
   namespace Menu {
 

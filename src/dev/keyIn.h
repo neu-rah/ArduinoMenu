@@ -14,11 +14,11 @@ we can have reverse logic (pull-ups) by entering negative pin numbers
 ex: -A0 means: pin A0 normally high, low when button pushed (reverse logic)
 ***/
 
-#include "../menu.hpp"
+#include "../menu.h"
 
 using namespace Menu;
 
-#include "keyMapDef.hpp"
+#include "keyMapDef.h"
 
 //if you hold/repeat a key for this ammount of time we will consider it an escape
 #ifndef ESCAPE_TIME
