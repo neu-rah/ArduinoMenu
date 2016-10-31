@@ -237,7 +237,7 @@ result navNode::sysEvent(eventMask e,idx_t i) {
 
 void navRoot::doInput() {
   if (sleepTask&&options->getCmdChar(enterCmd)==in.read()) idleOff();
-  else if (!sleepTask)//while ((!sleepTask)&&in.available())//if not doing something else and there is input
+  else if (!sleepTask&&in.available())//while ((!sleepTask)&&in.available())//if not doing something else and there is input
     navFocus->parseInput(node(),in);//deliver navigation input task to target...
 }
 
