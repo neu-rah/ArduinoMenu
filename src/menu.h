@@ -55,6 +55,7 @@ www.r-site.net
         inline bool canNav() const {return sysStyles()&_canNav;}//can receive navigation focus and process keys
         inline bool isMenu() const {return sysStyles()&_menuData;}//has menu data list and can be a navNode target
         inline bool isVariant() const {return sysStyles()&_isVariant;}//a menu as an enumerated field, connected to a variable value
+        inline bool parentDraw() const {return sysStyles()&_parentDraw;}//a menu as an enumerated field, connected to a variable value
         virtual idx_t printTo(navRoot &root,bool sel,menuOut& out,idx_t len);//raw print to output device
         virtual bool changed(const navNode &nav,const menuOut& out,bool sub=true) {return dirty;}
         //this is the system version of enter handler, its used by elements like toggle
@@ -482,7 +483,7 @@ www.r-site.net
         inline result sysEvent(eventMask e) {return sysEvent(e,sel);}//send event to current item
         navCmd navKeys(char ch);
         //inline void doNav(navCmd cmd) {target->doNav(*this,cmd);}
-        void doNavigation(navCmd cmd);//aux function
+        navCmd doNavigation(navCmd cmd);//aux function
         inline bool changed(const menuOut& out) const {return target->changed(*this,out);}
         inline prompt& operator[](idx_t i) const {return target->operator[](i);}
     };
@@ -522,8 +523,8 @@ www.r-site.net
         inline void doOutput() {if (!sleepTask) printMenu();}
         inline void poll() {doInput();doOutput();};//fire and forget mode
         void doNav(navCmd cmd);//fly by wire mode
-        void enter();//aux function
-        void exit();//aux function
+        navCmd enter();//aux function
+        navCmd exit();//aux function
 
         //enter leva idle mode ---------------------------------
         inline void idleOn(idleFunc task=inaction) {
@@ -638,10 +639,15 @@ www.r-site.net
 
     template<typename T>
     void menuVariant<T>::doNav(navNode& nav,navCmd cmd) {
+      Serial<<"variant::doNav "<<cmd.cmd<<endl;
       nav.sel=sync();
-      nav.doNavigation(cmd);
+      navCmd c=nav.doNavigation(cmd);
       sync(nav.sel);
-      if (cmd.cmd==enterCmd) nav.root->exit();
+      if (c.cmd==enterCmd) {
+        Serial<<"variant:enter!"<<endl;
+        Serial<<"exit variant"<<endl;
+        nav.root->exit();
+      }
     }
 
     template<typename T>

@@ -56,6 +56,7 @@ UTouch library from:
             if (ad>(out.resY>>1)&&(ad<<1)>out.resY) {
               dragging=true;//we consider it a drag
               scrlY-=(d>0?1:-1)*(out.resY/2);
+              //Serial<<"utouch moving"<<endl;
               return (d>0?options->navCodes[upCmd].ch:options->navCodes[downCmd].ch);
             }
           }  else {//start new touching
@@ -70,12 +71,14 @@ UTouch library from:
           touching=false;//touch ending
           if (dragging) return -1;
           int st=root.showTitle?1:0;
-          if (root.navFocus->isMenu()) {
+          if (root.navFocus->isMenu()&&!root.navFocus->parentDraw()) {
             int at=startY/out.resY;
+            Serial<<"utouch index select "<<((at>=st&&at<(m.sz()+st))?at-st+out.top+'1':-1)<<endl;
+            Serial<<"canNav:"<<root.navFocus->canNav()<<"isVariant:"<<root.navFocus->isVariant()<<endl;
             return (at>=st&&at<(m.sz()+st))?at-st+out.top+'1':-1;
           } else {//then its some sort of field
             prompt& a=m;//root.active();
-            Serial<<(memStrLen(a.shadow->text)*out.resX<startX?"enter":"escape")<<endl;
+            Serial<<"utouch "<<(memStrLen(a.shadow->text)*out.resX<startX?"enter":"escape")<<endl;
             return
               memStrLen(a.shadow->text)*out.resX<startX?
                 options->navCodes[enterCmd].ch:

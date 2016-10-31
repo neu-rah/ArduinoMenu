@@ -164,7 +164,7 @@ PANELS(gfx_panels,{0,0,14,8},{14,0,13,8});
 //font size is 6x9
 menuGFX outGfx(gfx,colors,gfx_panels,6*textScale,9*textScale);//output device for LCD
 
-MENU_OUTPUTS(out,&outGfx,&outSerial);
+MENU_OUTPUTS(out,&outGfx);//,&outSerial);
 
 #define MAX_DEPTH 2
 NAVROOT(nav,mainMenu,MAX_DEPTH,in,out);

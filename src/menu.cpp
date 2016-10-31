@@ -32,11 +32,11 @@ menuOut& menuOut::operator<<(const prompt& p) {
 }
 
 void menuOut::clearChanged(navNode &nav) {
-  if (nav.target->dirty) Serial<<"clear dirty "<<*(prompt*)nav.target<<" sz:"<<nav.sz()<<endl;
+  //if (nav.target->dirty) Serial<<"clear dirty "<<*(prompt*)nav.target<<" sz:"<<nav.sz()<<endl;
   nav.target->dirty=false;
   for(idx_t i=0;i<maxY();i++) {
     if (i+top>=nav.sz()) break;
-    if (nav[i+top].dirty) Serial<<"clear sub dirty "<<nav[i+top]<<endl;
+    //if (nav[i+top].dirty) Serial<<"clear sub dirty "<<nav[i+top]<<endl;
     nav[i+top].dirty=false;
   }
 }
@@ -93,12 +93,12 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
     ||(top!=ot)
     ||(drawn!=nav.target)
     ||(panels.nodes[panelNr]!=nav.target);
-  if (all) Serial<<"all 1"<<endl;
+  //if (all) Serial<<"all 1"<<endl;
   if (!(all||minimalRedraw)) //non minimal draw will redraw all if any change
     all|=nav.target->changed(nav,*this);
-  if (all) Serial<<"all 2"<<endl;
-  //all|=nav.target->dirty;
-  if (all) Serial<<"all 3 "<<*(prompt*)nav.target<<endl;
+  //if (all) Serial<<"all 2"<<endl;
+  all|=nav.target->dirty;
+  //if (all) Serial<<"all 3 "<<*(prompt*)nav.target<<endl;
   if (!(all||minimalRedraw)) return;
   if (all) {
     clear(panelNr);
@@ -111,15 +111,15 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
     }
   }
   panel pan=panels[panelNr];
-  if (all) Serial<<"all 4"<<endl;
-  bool any=all;
+  //if (all) Serial<<"all 4"<<endl;
+  //bool any=all;
   for(idx_t i=0;i<maxY(panelNr)-st;i++) {
     int ist=i+st;
     if (i+top>=nav.sz()) break;
     prompt& p=nav[i+top];
     idx_t len=pan.w+1;
     if (all||p.changed(nav,*this,false)) {
-      any=true;
+      //any=true;
       bool selected=nav.sel==i+top;
       bool ed=nav.target==&p;
       clearLine(ist,panelNr,bgColor,selected,p.enabled);
@@ -136,14 +136,14 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
       if (len>0) p.printTo(*nav.root,selected,*this,len);
       if (selected&&panels.sz>panelNr+1) {
         if(p.isMenu()) {
-          Serial<<"preview of:"<<p<<endl;
+          //Serial<<"preview of:"<<p<<endl;
           previewMenu(*nav.root,*(menuNode*)&p,panelNr+1);
           panels.nodes[panelNr+1]=(menuNode*)&p;
         } else if (panels.nodes[panelNr+1]) clear(panelNr+1);
       }
     }
   }
-  if (any) Serial<<"printMenu "<<*(prompt*)nav.target<<endl;
+  //if (any) Serial<<"printMenu "<<*(prompt*)nav.target<<endl;
   drawn=nav.target;
   lastSel=nav.sel;
   lastTop=top;
@@ -175,9 +175,9 @@ void navTarget::doNav(navNode& nav,navCmd cmd) {nav.doNavigation(cmd);}
 void navTarget::parseInput(navNode& nav,Stream& in) {doNav(nav,nav.navKeys(in.read()));}
 
 //generic navigation (aux function)
-void navNode::doNavigation(navCmd cmd) {
+navCmd navNode::doNavigation(navCmd cmd) {
   idx_t osel=sel;
-  //navCmds cmd=;
+  navCmd rCmd=cmd;
   switch(cmd.cmd) {
     case downCmd:
       sel--;
@@ -189,18 +189,19 @@ void navNode::doNavigation(navCmd cmd) {
       break;
     case escCmd:
       assert(root);
-      root->exit();
+      rCmd=root->exit();
       break;
     case enterCmd:
       assert(root);
-      root->enter();
+      rCmd=root->enter();
       break;
     case idxCmd: {
         char at=cmd.param-'1';
         if (at>=0&&at<sz()) {
           sel=at;
+          Serial<<"idxCmd:"<<sel<<endl;
           assert(root);
-          root->enter();
+          rCmd=root->enter();
         }
       }
       break;
@@ -218,6 +219,7 @@ void navNode::doNavigation(navCmd cmd) {
     event(blurEvent,osel);
     event(focusEvent,sel);
   }
+  return rCmd;
 }
 
 result navNode::event(eventMask e,idx_t i) {
@@ -252,16 +254,21 @@ result maxDepthError(menuOut& o,idleEvent e) {
   return proceed;
 }
 
-void navRoot::enter() {
+navCmd navRoot::enter() {
+  //Serial<<"navRoot::enter "<<selected()<<endl;
   if (
     selected().enabled
     &&selected().sysHandler(activateEvent,node(),selected())==proceed
   ) {
+    //Serial<<"sysHandler allowed activate"<<endl;
     prompt& sel=selected();
     bool canNav=sel.canNav();
     bool isMenu=sel.isMenu();
     result go=node().event(enterEvent);//item event sent here
+    //Serial<<"enterEvent returned "<<go<<" isMenu:"<<isMenu<<" canNav:"<<canNav<<endl;
+    navCmd rCmd=enterCmd;
     if (go==proceed&&isMenu&&canNav) {
+      //Serial<<"proceeding..."<<endl;
       if (level<maxDepth) {
         active().dirty=true;
         menuNode* dest=(menuNode*)&selected();
@@ -270,16 +277,22 @@ void navRoot::enter() {
         node().sel=0;
         active().dirty=true;
         sel.sysHandler(enterEvent,node(),selected());
-      } else idleOn(maxDepthError);
+        rCmd=enterCmd;
+      } else {
+        idleOn(maxDepthError);
+        rCmd=noCmd;
+      }
     } else if (go==quit&&!selected().isMenu()) exit();
     if (canNav) {
       navFocus=(navTarget*)&sel;
       navFocus->dirty=true;
     }
+    return rCmd;
   }
+  return noCmd;
 }
 
-void navRoot::exit() {
+navCmd navRoot::exit() {
   node().event(exitEvent,node().sel);
   navFocus->dirty=true;
   if (navFocus->isMenu()) {
@@ -290,4 +303,5 @@ void navRoot::exit() {
   }
   active().dirty=true;
   navFocus=&active();
+  return escCmd;
 }

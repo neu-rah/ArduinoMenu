@@ -189,9 +189,6 @@ void setup() {
   //outGfx.resY=tft.getFontYsize()+1;
   outGfx<<"Menu 3.x test on UTFT"<<endl;
   delay(1000);
-  tft.fillScr(VGA_GREEN);
-  outGfx.clear(1);
-  delay(2000);
   tft.clrScr();
 }
 
