@@ -20,6 +20,7 @@ UTFT library from:
 ***/
 #ifndef RSITE_ARDUINO_MENU_UTFT
 	#define RSITE_ARDUINO_MENU_UTFT
+
 	#include <UTFT.h>
 	#include "../menu.h"
 
@@ -81,7 +82,7 @@ UTFT library from:
 
 				void drawCursor(idx_t ln,bool selected,status stat,bool edit=false,idx_t panelNr=0) override {
 					const panel p=panels[panelNr];
-					gfxOut::drawCursor(ln,selected,stat,edit,panelNr);
+					gfxOut::drawCursor(ln,selected,stat);
 					gfx.setColor(getColor(cursorColor,selected,enabledStatus,false));
 					gfx.drawRect(p.x*resX,(p.y+ln)*resY,(p.x+p.maxX())*resX,(p.y+ln+1)*resY);
 				}

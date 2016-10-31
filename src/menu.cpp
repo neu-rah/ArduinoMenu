@@ -151,21 +151,23 @@ bool menuNode::changed(const navNode &nav,const menuOut& out,bool sub) {
 }
 
 //aux function, turn input character into navigation command
-navCmds navNode::navKeys(char ch) {
+navCmd navNode::navKeys(char ch) {
+  if (strchr(numericChars,ch))
+    return navCmd(idxCmd,ch);
   for(uint8_t i=0;i<sizeof(options->navCodes)/sizeof(navCode);i++)
     if (options->navCodes[i].ch==ch) return options->navCodes[i].cmd;
   return noCmd;
 }
 
 void navTarget::navigate(navNode& nav,Stream& in) {
-  nav.doNavigation(in.read());
+  nav.doNavigation(nav.navKeys(in.read()));
 }
 
 //generic navigation (aux function)
-void navNode::doNavigation(char ch) {
+void navNode::doNavigation(navCmd cmd) {
   idx_t osel=sel;
-  navCmds cmd=navKeys(ch);
-  switch(cmd) {
+  //navCmds cmd=;
+  switch(cmd.cmd) {
     case downCmd:
       sel--;
       if (sel<0) {if(wrap()) sel=sz()-1; else sel=0;}
@@ -178,15 +180,21 @@ void navNode::doNavigation(char ch) {
       assert(root);
       root->exit();
       break;
+    case enterCmd:
+      assert(root);
+      root->enter();
+      break;
+    case idxCmd: {
+        char at=cmd.param-'1';
+        if (at>=0&&at<sz()) {
+          sel=at;
+          assert(root);
+          root->enter();
+        }
+      }
+      break;
     case noCmd:
     default: break;
-  }
-  if (strchr(numericChars,ch)) {
-    char at=ch-'1';
-    if (at>=0&&at<sz()) {
-      sel=at;
-      cmd=enterCmd;
-    }
   }
   if(osel!=sel) {
     if (target->sysStyles()&(_parentDraw|_isVariant)) {
@@ -198,10 +206,6 @@ void navNode::doNavigation(char ch) {
     //send focus In/Out events
     event(blurEvent,osel);
     event(focusEvent,sel);
-  }
-  if(cmd==enterCmd) {
-    assert(root);
-    root->enter();
   }
 }
 

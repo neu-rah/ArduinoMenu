@@ -473,8 +473,8 @@ www.r-site.net
         result event(eventMask e) {return event(e,sel);}//send event to current item
         result sysEvent(eventMask e,idx_t i);//send event to item index i
         inline result sysEvent(eventMask e) {return sysEvent(e,sel);}//send event to current item
-        navCmds navKeys(char ch);
-        void doNavigation(char ch);
+        navCmd navKeys(char ch);
+        void doNavigation(navCmd cmd);
         inline bool changed(const menuOut& out) const {return target->changed(*this,out);}
         inline prompt& operator[](idx_t i) const {return target->operator[](i);}
     };
@@ -564,8 +564,8 @@ www.r-site.net
         nav.root->exit();
       } else {
         char ch=in.read();
-        navCmds cmd=nav.navKeys(ch);
-        switch(cmd) {
+        navCmd cmd=nav.navKeys(ch);
+        switch(cmd.cmd) {
           case enterCmd:
             if (tunning||options->nav2D||!tune()) {//then exit edition
               tunning=false;
@@ -621,7 +621,7 @@ www.r-site.net
     void menuVariant<T>::navigate(navNode& nav,Stream& in) {
       char ch=in.read();
       nav.sel=sync();
-      nav.doNavigation(ch);
+      nav.doNavigation(nav.navKeys(ch));
       sync(nav.sel);
       if (ch==options->navCodes[enterCmd].ch) nav.root->exit();
     }

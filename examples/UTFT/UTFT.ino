@@ -177,12 +177,9 @@ void setup() {
   tft.setColor(0, 255, 0);
   tft.setBackColor(0, 0, 0);
 
-  outGfx.resX=tft.getFontXsize();
-  outGfx.resY=tft.getFontYsize();
+  //outGfx.resX=tft.getFontXsize()+1;
+  //outGfx.resY=tft.getFontYsize()+1;
   outGfx<<"Menu 3.x test on UTFT"<<endl;
-  delay(1000);
-  tft.fillScr(VGA_GREEN);
-  outGfx.clear(1);
   delay(1000);
 }
 
