@@ -163,7 +163,7 @@ result idle(menuOut& o,idleEvent e) {
   return proceed;
 }
 
-config myOptions={'>','-',true,false,defaultNavCodes};
+config myOptions={'>','-',false,false,defaultNavCodes};
 
 void setup() {
   options=&myOptions;
@@ -189,11 +189,14 @@ void setup() {
   //outGfx.resY=tft.getFontYsize()+1;
   outGfx<<"Menu 3.x test on UTFT"<<endl;
   delay(1000);
+  tft.fillScr(VGA_GREEN);
+  outGfx.clear(1);
+  delay(2000);
   tft.clrScr();
 }
 
 void loop() {
   nav.poll();//this device only draws when needed
   digitalWrite(LEDPIN, ledCtrl);
-  delay(300);//simulate a delay when other tasks are done
+  delay(100);//simulate a delay when other tasks are done
 }

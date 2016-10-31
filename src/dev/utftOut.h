@@ -51,11 +51,14 @@ UTFT library from:
           gfx.setColor(getColor(c,selected,s,e));
 				}
 
+				inline int clipX(int x) {return x<0?0:x>gfx.getDisplayXSize()-1?gfx.getDisplayXSize()-1:x;}
+				inline int clipY(int y) {return y<0?0:y>gfx.getDisplayYSize()-1?gfx.getDisplayYSize()-1:y;}
+
         void clearLine(idx_t ln,idx_t panelNr=0,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) override {
 					const panel p=panels[panelNr];
 					uint16_t c=getColor(color,selected,stat,edit);
           gfx.setColor(c);
-					gfx.fillRect(p.x*resX,(p.y+ln)*resY,(p.x+p.maxX())*resX,(p.y+ln+1)*resY);
+					gfx.fillRect(clipX(p.x*resX),clipY((p.y+ln)*resY),clipX((p.x+p.maxX())*resX),clipY((p.y+ln+1)*resY));
 					gfx.setBackColor(c);
 		    	//setCursor(0,ln);
 		    }
@@ -70,7 +73,10 @@ UTFT library from:
         virtual void clear(idx_t panelNr) override {
 					const panel p=panels[panelNr];
           gfx.setColor(getColor(bgColor,false,enabledStatus,false));
-					gfx.fillRect(p.x*resX,p.y*resY,(p.x+p.w)*resX,(p.y+p.h)*resY);
+					gfx.fillRect(clipX(p.x*resX),clipY(p.y*resY),clipX((p.x+p.w)*resX),clipY((p.y+p.h)*resY));
+					//Serial<<"panel:"<<panelNr<<"("<<p.x<<","<<p.y<<","<<(p.x+p.w)<<","<<(p.y+p.h)<<")"<<endl;
+					//Serial<<"rect("<<p.x*resX<<","<<p.y*resY<<","<<(p.x+p.w)*resX<<","<<(p.y+p.h)*resY<<")"<<endl;
+					//Serial<<"fillRect("<<clipX(p.x*resX)<<","<<clipY(p.y*resY)<<","<<clipX((p.x+p.w)*resX)<<","<<clipY((p.y+p.h)*resY)<<")"<<endl;
 					panels.nodes[panelNr]=NULL;
 				}
 
@@ -84,7 +90,7 @@ UTFT library from:
 					const panel p=panels[panelNr];
 					gfxOut::drawCursor(ln,selected,stat);
 					gfx.setColor(getColor(cursorColor,selected,enabledStatus,false));
-					gfx.drawRect(p.x*resX,(p.y+ln)*resY,(p.x+p.maxX())*resX,(p.y+ln+1)*resY);
+					gfx.drawRect(clipX(p.x*resX),clipY((p.y+ln)*resY),clipX((p.x+p.maxX())*resX),clipY((p.y+ln+1)*resY));
 				}
 
         size_t write(uint8_t ch) override {

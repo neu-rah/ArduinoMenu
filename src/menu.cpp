@@ -32,9 +32,11 @@ menuOut& menuOut::operator<<(const prompt& p) {
 }
 
 void menuOut::clearChanged(navNode &nav) {
+  if (nav.target->dirty) Serial<<"clear dirty "<<*(prompt*)nav.target<<" sz:"<<nav.sz()<<endl;
   nav.target->dirty=false;
   for(idx_t i=0;i<maxY();i++) {
     if (i+top>=nav.sz()) break;
+    if (nav[i+top].dirty) Serial<<"clear sub dirty "<<nav[i+top]<<endl;
     nav[i+top].dirty=false;
   }
 }
@@ -91,9 +93,12 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
     ||(top!=ot)
     ||(drawn!=nav.target)
     ||(panels.nodes[panelNr]!=nav.target);
+  if (all) Serial<<"all 1"<<endl;
   if (!(all||minimalRedraw)) //non minimal draw will redraw all if any change
     all|=nav.target->changed(nav,*this);
-  all|=nav.target->dirty;
+  if (all) Serial<<"all 2"<<endl;
+  //all|=nav.target->dirty;
+  if (all) Serial<<"all 3 "<<*(prompt*)nav.target<<endl;
   if (!(all||minimalRedraw)) return;
   if (all) {
     clear(panelNr);
@@ -106,12 +111,15 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
     }
   }
   panel pan=panels[panelNr];
+  if (all) Serial<<"all 4"<<endl;
+  bool any=all;
   for(idx_t i=0;i<maxY(panelNr)-st;i++) {
     int ist=i+st;
     if (i+top>=nav.sz()) break;
     prompt& p=nav[i+top];
     idx_t len=pan.w+1;
     if (all||p.changed(nav,*this,false)) {
+      any=true;
       bool selected=nav.sel==i+top;
       bool ed=nav.target==&p;
       clearLine(ist,panelNr,bgColor,selected,p.enabled);
@@ -128,15 +136,17 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
       if (len>0) p.printTo(*nav.root,selected,*this,len);
       if (selected&&panels.sz>panelNr+1) {
         if(p.isMenu()) {
+          Serial<<"preview of:"<<p<<endl;
           previewMenu(*nav.root,*(menuNode*)&p,panelNr+1);
           panels.nodes[panelNr+1]=(menuNode*)&p;
         } else if (panels.nodes[panelNr+1]) clear(panelNr+1);
       }
     }
   }
+  if (any) Serial<<"printMenu "<<*(prompt*)nav.target<<endl;
   drawn=nav.target;
-  //lastSel=nav.sel;
-  //lastTop=top;
+  lastSel=nav.sel;
+  lastTop=top;
 }
 
 navRoot* navNode::root=NULL;
@@ -227,7 +237,7 @@ result navNode::sysEvent(eventMask e,idx_t i) {
 
 void navRoot::doInput() {
   if (sleepTask&&options->getCmdChar(enterCmd)==in.read()) idleOff();
-  else while ((!sleepTask)&&in.available())//if not doing something else and there is input
+  else if (!sleepTask)//while ((!sleepTask)&&in.available())//if not doing something else and there is input
     navFocus->parseInput(node(),in);//deliver navigation input task to target...
 }
 

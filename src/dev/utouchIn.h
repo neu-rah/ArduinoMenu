@@ -56,7 +56,7 @@ UTouch library from:
             if (ad>(out.resY>>1)&&(ad<<1)>out.resY) {
               dragging=true;//we consider it a drag
               scrlY-=(d>0?1:-1)*(out.resY/2);
-              return (d>0?options->navCodes[downCmd].ch:options->navCodes[upCmd].ch);
+              return (d>0?options->navCodes[upCmd].ch:options->navCodes[downCmd].ch);
             }
           }  else {//start new touching
             touching=true;
@@ -75,7 +75,11 @@ UTouch library from:
             return (at>=st&&at<(m.sz()+st))?at-st+out.top+'1':-1;
           } else {//then its some sort of field
             prompt& a=m;//root.active();
-            return memStrLen(a.shadow->text)*out.resX<startX?options->navCodes[enterCmd].ch:options->navCodes[escCmd].ch;
+            Serial<<(memStrLen(a.shadow->text)*out.resX<startX?"enter":"escape")<<endl;
+            return
+              memStrLen(a.shadow->text)*out.resX<startX?
+                options->navCodes[enterCmd].ch:
+                options->navCodes[escCmd].ch;
           }
         }
         return -1;
