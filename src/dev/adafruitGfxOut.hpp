@@ -24,7 +24,7 @@ namespace Menu {
 				Adafruit_GFX& gfx;
 				const colorDef<uint16_t> (&colors)[nColors];
 		    menuGFX(Adafruit_GFX& gfx,const colorDef<uint16_t> (&c)[nColors],panelsList &p,idx_t resX=6,idx_t resY=9)
-					:gfxOut(resX,resY,p,false),colors(c),gfx(gfx) {}
+					:gfxOut(resX,resY,p,false),gfx(gfx),colors(c) {}
 					//:gfxOut(gfx.width()/resX,gfx.height()/resY,resX,resY,false),colors(c),gfx(gfx) {}
 
 				size_t write(uint8_t ch) override {return gfx.write(ch);}
@@ -39,7 +39,7 @@ namespace Menu {
 
 				void clearLine(idx_t ln,idx_t panelNr=0,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) override {
 					const panel p=panels[panelNr];
-					gfx.fillRect(p.x*resX,(p.y+ln)*resY,maxX()*resX,resY,getColor(color,selected,stat,edit));
+					gfx.fillRect(p.x*resX,(p.y+ln)*resY,p.maxX()*resX,resY,getColor(color,selected,stat,edit));
 		    	//setCursor(0,ln);
 		    }
 		    void clear() override {
@@ -49,7 +49,7 @@ namespace Menu {
 					setColor(fgColor);
 				}
 
-				virtual void clear(idx_t panelNr) override {
+				void clear(idx_t panelNr) override {
 					const panel p=panels[panelNr];
 					gfx.fillRect(p.x*resX,p.y*resY,p.w*resX,p.h*resY,getColor(bgColor,false,enabledStatus,false));
 					panels.nodes[panelNr]=NULL;

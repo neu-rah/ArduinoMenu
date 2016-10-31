@@ -1,6 +1,8 @@
 #include "baseMacros.hpp"
 
-//#define MENU_USERAM
+#ifdef ARDUINO_SAM_DUE
+  #define MENU_USERAM
+#endif
 #if defined(pgm_read_ptr_near) && !defined(MENU_USERAM)
   //storing some values into avr flash memory (saving ram space)
   #define USING_PGM

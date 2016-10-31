@@ -15,6 +15,9 @@ quadrature encoder stream (fake, not using buffers)
   #define RSITE_ARDUINO_MENU_ENCODER
 
   #include <pcint.h> //https://github.com/neu-rah/PCINT
+  #include "../menu.hpp"
+
+  using namespace Menu;
 
   template<uint8_t pinA,uint8_t pinB>
   class encoderIn {
@@ -61,19 +64,19 @@ quadrature encoder stream (fake, not using buffers)
     int available(void) {return abs(enc.pos-oldPos)/sensivity;}
     int peek(void) override {
       int d=enc.pos-oldPos;
-      if (d<=-sensivity)return '-';
-      if (d>=sensivity) return '+';
+      if (d<=-sensivity)return options->navCodes[downCmd].ch;
+      if (d>=sensivity) return options->navCodes[upCmd].ch;
       return -1;
     }
     int read() override {
       int d=enc.pos-oldPos;
       if (d<=-sensivity) {
         oldPos-=sensivity;
-        return '-';
+        return options->navCodes[downCmd].ch;
       }
       if (d>=sensivity) {
         oldPos+=sensivity;
-        return '+';
+        return options->navCodes[upCmd].ch;
       }
       return -1;
     }

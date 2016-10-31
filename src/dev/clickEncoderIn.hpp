@@ -1,47 +1,51 @@
-/**************
+  /**************
 
- ClickEncoderStream.h
+  ClickEncoderStream.h
 
- Jun. 2016
- Modified by Christophe Persoz and Rui Azevedo.
- Based on keyStream.h developed by Rui Azevado.
- and ClickEncoder library by Peter Dannegger.
- https://github.com/christophepersoz/encoder
+  Jun. 2016
+  Modified by Christophe Persoz and Rui Azevedo.
+  Based on keyStream.h developed by Rui Azevado.
+  and ClickEncoder library by Peter Dannegger.
+  https://github.com/christophepersoz/encoder
 
- Sept. 2014 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
- creative commons license 3.0: Attribution-ShareAlike CC BY-SA
- This software is furnished "as is", without technical support, and with no
- warranty, express or implied, as to its usefulness for any purpose.
+  Sept. 2014 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
+  creative commons license 3.0: Attribution-ShareAlike CC BY-SA
+  This software is furnished "as is", without technical support, and with no
+  warranty, express or implied, as to its usefulness for any purpose.
 
- Thread Safe: No
- Extendable: Yes
+  Thread Safe: No
+  Extendable: Yes
 
- quick and dirty keyboard driver
- metaprog keyboard driver where N is the number of keys
- all keys are expected to be a pin (buttons)
- we can have reverse logic (pull-ups) by entering negative pin numbers
- ex: -A0 means: pin A0 normally high, low when button pushed (reverse logic)
- ***/
+  quick and dirty keyboard driver
+  metaprog keyboard driver where N is the number of keys
+  all keys are expected to be a pin (buttons)
+  we can have reverse logic (pull-ups) by entering negative pin numbers
+  ex: -A0 means: pin A0 normally high, low when button pushed (reverse logic)
+  ***/
 
 
 #ifndef __ClickEncoderStream_h__
-#define __ClickEncoderStream_h__
+  #define __ClickEncoderStream_h__
 
-// Arduino specific libraries
-#ifdef defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__) || defined(__AVR_ATmega328P__)
-#include <stdint.h>
-#include <avr/io.h>
-#include <avr/interrupt.h>
-#endif
+  #ifndef ARDUINO_SAM_DUE
+    // Arduino specific libraries
+    #if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__) || defined(__AVR_ATmega328P__)
+      #include <stdint.h>
+      #include <avr/io.h>
+      #include <avr/interrupt.h>
+    #endif
 
-#include <Arduino.h>
-#include <ClickEncoder.h>
+    #include <Arduino.h>
+    #include <ClickEncoder.h>
+    #include "../menu.hpp"
 
-/*  emulate a stream based on clickEncoder movement returning +/- for every 'sensivity' steps
- buffer not needer because we have an accumulator
- */
-class ClickEncoderStream:public Stream {
-public:
+    using namespace Menu;
+
+    /*  emulate a stream based on clickEncoder movement returning +/- for every 'sensivity' steps
+    buffer not needer because we have an accumulator
+    */
+    class ClickEncoderStream:public Stream {
+    public:
     ClickEncoder &enc; //associated hardware clickEncoder
     int8_t sensivity;
     int oldPos;
@@ -57,10 +61,10 @@ public:
 
     ClickEncoderStream(ClickEncoder &enc,int sensivity)
     :enc(enc),
-    pos(0),
+    sensivity(sensivity),
     oldPos(0),
-    btn(ClickEncoder::Open),
-    sensivity(sensivity) {
+    pos(0),
+    btn(ClickEncoder::Open) {
         pos = enc.getValue();
     }
 
@@ -74,29 +78,29 @@ public:
     }
 
     int peek(void) {
-        update();
+    update();
 
-        if (btn == ClickEncoder::Clicked)
-            return menu::enterCode;
+    if (btn == ClickEncoder::Clicked)
+      return options->navCodes[enterCmd].ch;//menu::enterCode;
 
-        if (btn == ClickEncoder::DoubleClicked)
-            return menu::escCode;
+    if (btn == ClickEncoder::DoubleClicked)
+      return options->navCodes[escCmd].ch;//menu::escCode;
 
-        int d = pos - oldPos;
-        if (d <= -sensivity)
-            return menu::downCode;
-        if (d >= sensivity)
-            return menu::upCode;
-        return -1;
+    int d = pos - oldPos;
+    if (d <= -sensivity)
+        return options->navCodes[downCmd].ch;//menu::downCode;
+    if (d >= sensivity)
+        return options->navCodes[upCmd].ch;//menu::upCode;
+    return -1;
     }
 
     int read()
     {
         int ch = peek();
         btn = ClickEncoder::Open;
-        if (ch == menu::upCode)
+        if (ch == options->navCodes[upCmd].ch)//menu::upCode)
             oldPos += sensivity;
-        else if (ch == menu::downCode)
+        else if (ch == options->navCodes[downCmd].ch)//menu::downCode)
             oldPos -= sensivity;
         return ch;
     }
@@ -110,7 +114,8 @@ public:
         oldPos = v;
         return 1;
     }
-};
+    };
 
+  #endif /*ARDUINO_SAM_DUE*/
 
 #endif /* ClickEncoderStream_h */

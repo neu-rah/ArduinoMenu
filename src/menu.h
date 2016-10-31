@@ -15,7 +15,11 @@
 //#include "dev/htmlOut.hpp"
 #include "dev/keyIn.hpp"
 #include "dev/softKeyIn.hpp"
-#include "dev/lcdOut.hpp"
 #include "dev/serialOut.hpp"
 #include "dev/U8GLibOut.hpp"
+#include "dev/utftOut.hpp"
 #include "dev/liquidCrystalOut.hpp"
+//#ifndef ARDUINO_SAM_DUE
+  #include "dev/lcdOut.hpp"
+  #include "dev/clickEncoderIn.hpp"
+//#endif

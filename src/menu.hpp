@@ -468,9 +468,9 @@ www.r-site.net
         /*inline result sysHandler(eventMask event, prompt &item, Stream &in, menuOut &out) const {
           return target->sysHandler(event,*this,item,in,out);
         }*/
-        inline result event(eventMask e,idx_t i);//send event to item index i
-        inline result event(eventMask e) {return event(e,sel);}//send event to current item
-        inline result sysEvent(eventMask e,idx_t i);//send event to item index i
+        result event(eventMask e,idx_t i);//send event to item index i
+        result event(eventMask e) {return event(e,sel);}//send event to current item
+        result sysEvent(eventMask e,idx_t i);//send event to item index i
         inline result sysEvent(eventMask e) {return sysEvent(e,sel);}//send event to current item
         navCmds navKeys(char ch);
         void doNavigation(char ch);
