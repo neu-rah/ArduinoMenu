@@ -1,3 +1,4 @@
+/* -*- C++ -*- */
 //for using F. Malpartida LCD's driver
 //https://bitbucket.org/fmalpartida/new-liquidcrystal/wiki/Home
 

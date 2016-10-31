@@ -1,3 +1,4 @@
+/* -*- C++ -*- */
 #ifndef RSITE_ARDUINO_MENU_HTMLOUT
   #define RSITE_ARDUINO_MENU_HTMLOUT
   #include "../menu.h"

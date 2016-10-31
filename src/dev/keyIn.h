@@ -1,3 +1,4 @@
+/* -*- C++ -*- */
 /**************
 Sept. 2014 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
 creative commons license 3.0: Attribution-ShareAlike CC BY-SA

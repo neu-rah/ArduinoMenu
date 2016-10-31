@@ -1,3 +1,4 @@
+/* -*- C++ -*- */
 #include "baseMacros.h"
 
 #ifdef ARDUINO_SAM_DUE

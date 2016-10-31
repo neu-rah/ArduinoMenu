@@ -1,3 +1,4 @@
+/* -*- C++ -*- */
 //generic macros - 2014
 //Rui Azevedo (ruihfazevedo@gmail.com)
 

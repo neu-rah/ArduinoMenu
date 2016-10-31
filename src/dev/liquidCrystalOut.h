@@ -1,3 +1,4 @@
+/* -*- C++ -*- */
 //for using standard arduino LiquidCrystal driver
 
 #ifndef RSITE_ARDUINO_MENU_LIQUIDCRYSTALOUT

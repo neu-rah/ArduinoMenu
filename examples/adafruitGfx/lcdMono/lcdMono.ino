@@ -20,9 +20,10 @@ note: adafruit's gfx buffer eats too much ram on this device
 ***/
 
 #include <SPI.h>
-#include <menu.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_PCD8544.h>
+#include <menu.h>
+#include <dev/adafruitGfxOut.h>
 
 using namespace Menu;
 

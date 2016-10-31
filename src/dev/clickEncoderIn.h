@@ -1,27 +1,28 @@
-  /**************
+/* -*- C++ -*- */
+/**************
 
-  ClickEncoderStream.h
+ClickEncoderStream.h
 
-  Jun. 2016
-  Modified by Christophe Persoz and Rui Azevedo.
-  Based on keyStream.h developed by Rui Azevado.
-  and ClickEncoder library by Peter Dannegger.
-  https://github.com/christophepersoz/encoder
+Jun. 2016
+Modified by Christophe Persoz and Rui Azevedo.
+Based on keyStream.h developed by Rui Azevado.
+and ClickEncoder library by Peter Dannegger.
+https://github.com/christophepersoz/encoder
 
-  Sept. 2014 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
-  creative commons license 3.0: Attribution-ShareAlike CC BY-SA
-  This software is furnished "as is", without technical support, and with no
-  warranty, express or implied, as to its usefulness for any purpose.
+Sept. 2014 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
+creative commons license 3.0: Attribution-ShareAlike CC BY-SA
+This software is furnished "as is", without technical support, and with no
+warranty, express or implied, as to its usefulness for any purpose.
 
-  Thread Safe: No
-  Extendable: Yes
+Thread Safe: No
+Extendable: Yes
 
-  quick and dirty keyboard driver
-  metaprog keyboard driver where N is the number of keys
-  all keys are expected to be a pin (buttons)
-  we can have reverse logic (pull-ups) by entering negative pin numbers
-  ex: -A0 means: pin A0 normally high, low when button pushed (reverse logic)
-  ***/
+quick and dirty keyboard driver
+metaprog keyboard driver where N is the number of keys
+all keys are expected to be a pin (buttons)
+we can have reverse logic (pull-ups) by entering negative pin numbers
+ex: -A0 means: pin A0 normally high, low when button pushed (reverse logic)
+***/
 
 
 #ifndef __ClickEncoderStream_h__
