@@ -69,7 +69,8 @@ www.r-site.net
       public:
         navTarget(const promptShadow& shadow):prompt(shadow) {}
         //bool canNav() const override {return true;}
-        virtual void navigate(navNode& nav,Stream& in);
+        virtual void parseInput(navNode& nav,Stream& in);
+        virtual void doNav(navNode& nav,navCmd cmd);
     };
 
     //--------------------------------------------------------------------------
@@ -133,7 +134,8 @@ www.r-site.net
         bool tunning=false;
         T reflex;
         menuField(const menuFieldShadow<T> & shadow):navTarget(shadow) {}
-        void navigate(navNode& nav,Stream& in) override;
+        void parseInput(navNode& nav,Stream& in) override;
+        void doNav(navNode& nav,navCmd cmd) override;
         idx_t printTo(navRoot &root,bool sel,menuOut& out,idx_t len) override;
         inline T& target() const {return *(T*)memPtr(((menuFieldShadow<T>*)shadow)->value);}
         inline T getTypeValue(const T* from) const {
@@ -252,7 +254,8 @@ www.r-site.net
         }
         inline T& target() const {return *(T*)memPtr(((menuVariantShadow<T>*)shadow)->value);}
         bool changed(const navNode &nav,const menuOut& out,bool sub=true) override;
-        void navigate(navNode& nav,Stream& in) override;
+        //void parseInput(navNode& nav,Stream& in) override;
+        void doNav(navNode& nav,navCmd cmd) override;
         idx_t printTo(navRoot &root,bool sel,menuOut& out,idx_t len) override;
     };
 
@@ -454,6 +457,9 @@ www.r-site.net
         }
     };
 
+    // input
+    ////////////////////////////////////////////////////////////////////////////
+
     // Navigation
     //////////////////////////////////////////////////////////////////////////
     class navNode {
@@ -556,38 +562,41 @@ www.r-site.net
     static const char* numericChars="0123456789.";
 
     template<typename T>
-    void menuField<T>::navigate(navNode& nav,Stream& in) {
+    void menuField<T>::parseInput(navNode& nav,Stream& in) {
       //menuFieldShadow<T>& s=*(menuFieldShadow<T>*)shadow;
       if (strchr(numericChars,in.peek())) {//a numeric value was entered
         target()=(T)in.parseFloat();
         tunning=false;
         nav.root->exit();
-      } else {
-        char ch=in.read();
-        navCmd cmd=nav.navKeys(ch);
-        switch(cmd.cmd) {
-          case enterCmd:
-            if (tunning||options->nav2D||!tune()) {//then exit edition
-              tunning=false;
-              dirty=true;
-              nav.root->exit();
-            } else tunning=true;
+        doNav(nav,noCmd);//just clamping
+      } else doNav(nav,nav.navKeys(in.read()));
+    }
+
+    template<typename T>
+    void menuField<T>::doNav(navNode& nav,navCmd cmd) {
+      switch(cmd.cmd) {
+        case enterCmd:
+          if (tunning||options->nav2D||!tune()) {//then exit edition
+            tunning=false;
             dirty=true;
-            break;
-          case upCmd:
-            target()+=(tunning?tune():step())*(options->invertFieldKeys?-1:1);
-            dirty=true;
-            break;
-          case downCmd:
-            target()-=(tunning?tune():step())*(options->invertFieldKeys?-1:1);;
-            dirty=true;
-            break;
-          default:break;
-        }
-        if (ch==options->getCmdChar(enterCmd)&&!tunning) {
-          nav.event(enterEvent);
-        }
+            nav.root->exit();
+            nav.event(enterEvent);
+          } else tunning=true;
+          dirty=true;
+          break;
+        case upCmd:
+          target()+=(tunning?tune():step())*(options->invertFieldKeys?-1:1);
+          dirty=true;
+          break;
+        case downCmd:
+          target()-=(tunning?tune():step())*(options->invertFieldKeys?-1:1);;
+          dirty=true;
+          break;
+        default:break;
       }
+      /*if (ch==options->getCmdChar(enterCmd)&&!tunning) {
+        nav.event(enterEvent);
+      }*/
       clamp();
     }
 
@@ -617,13 +626,16 @@ www.r-site.net
       return l;
     }
 
+    /*template<typename T>
+    void menuVariant<T>::parseInput(navNode& nav,Stream& in) {
+      char ch=in.read();*/
+
     template<typename T>
-    void menuVariant<T>::navigate(navNode& nav,Stream& in) {
-      char ch=in.read();
+    void menuVariant<T>::doNav(navNode& nav,navCmd cmd) {
       nav.sel=sync();
-      nav.doNavigation(nav.navKeys(ch));
+      nav.doNavigation(cmd);
       sync(nav.sel);
-      if (ch==options->navCodes[enterCmd].ch) nav.root->exit();
+      if (cmd.cmd==enterCmd) nav.root->exit();
     }
 
     template<typename T>

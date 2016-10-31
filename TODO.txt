@@ -27,3 +27,20 @@ IDEA: generic input:
 - then some chain or system wide functions can be called as aux. functions.
 - input classes should provide a parser to be called as aux function of any of the above and deliver cmds.
   => that we can not accept Serial as input but use a specialized derivation instead
+
+navigation path
+
+navRoot::pool
+  navRoot::doInput
+    navFocus->parseInput
+      - navTarget::parseInput
+        *navTarget::doNav (ok)
+          navNode::doNavigation(navCmd)
+      - menuField::parseInput
+        check numeric
+        *menuField::doNav
+          navigate value (navCmd)
+      - menuVariant::parseInput
+        *menuVariant::doNav
+          navNode::doNavigation(navCmd)
+          exit on enter key

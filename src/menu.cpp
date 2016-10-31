@@ -159,9 +159,9 @@ navCmd navNode::navKeys(char ch) {
   return noCmd;
 }
 
-void navTarget::navigate(navNode& nav,Stream& in) {
-  nav.doNavigation(nav.navKeys(in.read()));
-}
+void navTarget::doNav(navNode& nav,navCmd cmd) {nav.doNavigation(cmd);}
+
+void navTarget::parseInput(navNode& nav,Stream& in) {doNav(nav,nav.navKeys(in.read()));}
 
 //generic navigation (aux function)
 void navNode::doNavigation(navCmd cmd) {
@@ -225,8 +225,8 @@ result navNode::sysEvent(eventMask e,idx_t i) {
 }
 
 void navRoot::doInput() {
-  while ((!sleepTask)&&in.available())
-    navFocus->navigate(node(),in);
+  while ((!sleepTask)&&in.available())//if not doing something else and there is input
+    navFocus->parseInput(node(),in);//deliver navigation input task to target...
 }
 
 void navRoot::doOutput() {
