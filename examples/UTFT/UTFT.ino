@@ -183,7 +183,7 @@ void setup() {
   delay(1000);
   tft.fillScr(VGA_GREEN);
   outGfx.clear(1);
-  delay(5000);
+  delay(1000);
 }
 
 void loop() {

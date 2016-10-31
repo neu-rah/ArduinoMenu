@@ -31,7 +31,7 @@ UTFT library from:
       public:
         UTFT& gfx;
         const colorDef<uint16_t> (&colors)[nColors];
-        idx_t curX,curY;
+        int curX,curY;
         menuUTFT(UTFT& tft,const colorDef<uint16_t> (&c)[nColors],panelsList &p,idx_t resX,idx_t resY)
           :gfxOut(resX,resY,p,false),gfx(tft),colors(c),curX(0),curY(0) {}
         /*void init() {
@@ -78,6 +78,14 @@ UTFT library from:
     	    curX=(p.x+x)*resX;
     	    curY=(p.y+y)*resY+fontMarginY;
     	  }
+
+				void drawCursor(idx_t ln,bool selected,status stat,bool edit=false,idx_t panelNr=0) override {
+					const panel p=panels[panelNr];
+					gfxOut::drawCursor(ln,selected,stat,edit,panelNr);
+					gfx.setColor(getColor(cursorColor,selected,enabledStatus,false));
+					gfx.drawRect(p.x*resX,(p.y+ln)*resY,(p.x+p.maxX())*resX,(p.y+ln+1)*resY);
+				}
+
         size_t write(uint8_t ch) override {
           switch(ch) {
           case 0x0D://NL

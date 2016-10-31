@@ -20,7 +20,9 @@ idx_t prompt::printTo(navRoot &root,bool sel,menuOut& out,idx_t len) {return pri
 idx_t menuOut::printRaw(const char* at,idx_t len) {
   const char* p=at;
   uint8_t ch;
-  for(int n=0;(ch=*(at++))&&(len==0||n<len);n++) write(ch);
+  for(int n=0;(ch=*(at++))&&(len==0||n<len);n++) {
+    write(ch);
+  }
   return at-p;
 }
 
