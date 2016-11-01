@@ -26,6 +26,16 @@ idx_t menuOut::printRaw(const char* at,idx_t len) {
   return at-p;
 }
 
+void menuOut::doNav(navCmd cmd) {
+  switch(cmd.cmd) {
+    case scrlUpCmd:
+    case scrlDownCmd:
+      //DONE: need to use navNode instead of menuNode!
+      //TODO: use top for each navNode => do not use lastTop
+    default: assert(false);
+  }
+}
+
 menuOut& menuOut::operator<<(const prompt& p) {
   print_P(*this,(const char *)memPtr(p.shadow->text));
   return *this;
@@ -35,9 +45,9 @@ void menuOut::clearChanged(navNode &nav) {
   //if (nav.target->dirty) Serial<<"clear dirty "<<*(prompt*)nav.target<<" sz:"<<nav.sz()<<endl;
   nav.target->dirty=false;
   for(idx_t i=0;i<maxY();i++) {
-    if (i+top>=nav.sz()) break;
+    if (i+tops[nav.root->level]>=nav.sz()) break;
     //if (nav[i+top].dirty) Serial<<"clear sub dirty "<<nav[i+top]<<endl;
-    nav[i+top].dirty=false;
+    nav[i+tops[nav.root->level]].dirty=false;
   }
 }
 
@@ -67,14 +77,14 @@ void menuOut::printMenu(navNode &nav) {
   if (usePreview&&k) k--;
   for(int i=0;i<k;i++) {
     navNode &n=nav.root->path[lvl-k+i];
-    if (!(minimalRedraw&&panels.nodes[i]==n.target)) {
+    if (!(minimalRedraw&&panels.nodes[i]==&n)) {
       previewMenu(*nav.root,*n.target,i);
-      panels.nodes[i]=n.target;
+      panels.nodes[i]=&n;
     }
   }
   panels.cur=k;
   printMenu(nav,k);
-  panels.nodes[k]=nav.target;//for cleaning purposes
+  panels.nodes[k]=&nav;//for cleaning purposes
   for(int i=k+2;i<panels.sz;i++) if (panels.nodes[i]) {
     clear(i);
     panels.nodes[i]=NULL;
@@ -85,14 +95,14 @@ void menuOut::printMenu(navNode &nav) {
 
 // generic (menuOut) print menu on a panel
 void menuOut::printMenu(navNode &nav,idx_t panelNr) {
-  idx_t ot=top;
+  idx_t ot=tops[nav.root->level];
   idx_t st=(nav.root->showTitle&&(maxY(panelNr)>1))?1:0;//do not use titles on single line devices!
-  while(nav.sel+st>=(top+maxY(panelNr))) top++;
-  while(nav.sel<top||(top&&((nav.sz()-top)<maxY(panelNr)-st))) top--;
+  while(nav.sel+st>=(tops[nav.root->level]+maxY(panelNr))) tops[nav.root->level]++;
+  while(nav.sel<tops[nav.root->level]||(tops[nav.root->level]&&((nav.sz()-tops[nav.root->level])<maxY(panelNr)-st))) tops[nav.root->level]--;
   bool all=redraw
-    ||(top!=ot)
+    ||(tops[nav.root->level]!=ot)
     ||(drawn!=nav.target)
-    ||(panels.nodes[panelNr]!=nav.target);
+    ||(panels.nodes[panelNr]!=&nav);
   //if (all) Serial<<"all 1"<<endl;
   if (!(all||minimalRedraw)) //non minimal draw will redraw all if any change
     all|=nav.target->changed(nav,*this);
@@ -115,18 +125,18 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
   //bool any=all;
   for(idx_t i=0;i<maxY(panelNr)-st;i++) {
     int ist=i+st;
-    if (i+top>=nav.sz()) break;
-    prompt& p=nav[i+top];
+    if (i+tops[nav.root->level]>=nav.sz()) break;
+    prompt& p=nav[i+tops[nav.root->level]];
     idx_t len=pan.w+1;
     if (all||p.changed(nav,*this,false)) {
       //any=true;
-      bool selected=nav.sel==i+top;
+      bool selected=nav.sel==i+tops[nav.root->level];
       bool ed=nav.target==&p;
       clearLine(ist,panelNr,bgColor,selected,p.enabled);
       setCursor(0,ist,panelNr);
       setColor(fgColor,selected,p.enabled,ed);
       if (drawNumIndex) {
-        char a=top+i+'1';
+        char a=tops[nav.root->level]+i+'1';
         *this<<'['<<(a<='9'?a:'-')<<']';
         len-=3;
       }
@@ -138,15 +148,15 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
         if(p.isMenu()) {
           //Serial<<"preview of:"<<p<<endl;
           previewMenu(*nav.root,*(menuNode*)&p,panelNr+1);
-          panels.nodes[panelNr+1]=(menuNode*)&p;
+          //TODO: do we need preview pointers? panels.nodes[panelNr+1]=(menuNode*)&p;
         } else if (panels.nodes[panelNr+1]) clear(panelNr+1);
       }
     }
   }
   //if (any) Serial<<"printMenu "<<*(prompt*)nav.target<<endl;
   drawn=nav.target;
-  lastSel=nav.sel;
-  lastTop=top;
+  //lastSel=nav.sel;
+  //lastTop=top;
 }
 
 navRoot* navNode::root=NULL;
@@ -155,8 +165,8 @@ bool menuNode::changed(const navNode &nav,const menuOut& out,bool sub) {
   if (nav.target!=this) return dirty;
   if (dirty) return true;
   if (sub) for(int i=0;i<out.maxY();i++) {
-    if (i+out.top>=nav.sz()) break;
-    if (operator[](i+out.top).changed(nav,out,false)) return true;
+    if (i+out.tops[nav.root->level]>=nav.sz()) break;
+    if (operator[](i+out.tops[nav.root->level]).changed(nav,out,false)) return true;
   }
   return false;
 }
@@ -245,7 +255,14 @@ void navRoot::doInput() {
 
 void navRoot::doNav(navCmd cmd) {
   if (sleepTask&&cmd.cmd==enterCmd) idleOff();
-  else if (!sleepTask) navFocus->doNav(node(),cmd);
+  else if (!sleepTask) switch (cmd.cmd) {
+    case scrlUpCmd:
+    case scrlDownCmd:
+      out.doNav(cmd);
+      break;
+    default:
+      navFocus->doNav(node(),cmd);
+  }
 }
 
 

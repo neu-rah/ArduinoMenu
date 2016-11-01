@@ -29,7 +29,7 @@
 
 #define PANELS(id,...)\
   const panel _panels_##id[] MEMMODE={__VA_ARGS__};\
-  Menu::menuNode* _nodes_##id[sizeof(_panels_##id)/sizeof(panel)];\
+  Menu::navNode* _nodes_##id[sizeof(_panels_##id)/sizeof(panel)];\
   Menu::panelsList id(_panels_##id,_nodes_##id,sizeof(_panels_##id)/sizeof(panel));
 
 #define MENU_OUTPUTS(id,...)\

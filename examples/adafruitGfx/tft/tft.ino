@@ -157,16 +157,19 @@ keyIn<1> encButton(encBtn_map);//1 is the number of keys
 MENU_INPUTS(in,&encStream,&encButton,&Serial);
 
 //PANELS(serial_panels,{0,0,40,10});//or use default
-serialOut outSerial(Serial);//,serial_panels);//the output device (just the serial port)
+
+#define MAX_DEPTH 2
+idx_t serial_tops[MAX_DEPTH];
+serialOut outSerial(Serial,serial_tops);//,serial_panels);//the output device (just the serial port)
 
 #define textScale 1
 PANELS(gfx_panels,{0,0,14,8},{14,0,13,8});
+idx_t gfx_tops[MAX_DEPTH];
 //font size is 6x9
-menuGFX outGfx(gfx,colors,gfx_panels,6*textScale,9*textScale);//output device for LCD
+menuGFX outGfx(gfx,colors,gfx_tops,gfx_panels,6*textScale,9*textScale);//output device for LCD
 
 MENU_OUTPUTS(out,&outGfx);//,&outSerial);
 
-#define MAX_DEPTH 2
 NAVROOT(nav,mainMenu,MAX_DEPTH,in,out);
 
 //when menu is suspended

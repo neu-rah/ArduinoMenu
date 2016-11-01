@@ -314,10 +314,10 @@ www.r-site.net
     class panelsList {
       public:
         const panel* panels;
-        menuNode** nodes;
+        navNode** nodes;//TODO use navNode here!
         const idx_t sz;
         idx_t cur=0;
-        panelsList(const panel p[],menuNode* nodes[],idx_t sz):panels(p),nodes(nodes),sz(sz) {
+        panelsList(const panel p[],navNode* nodes[],idx_t sz):panels(p),nodes(nodes),sz(sz) {
           reset();
         }
         void reset(idx_t from=0) {
@@ -351,17 +351,18 @@ www.r-site.net
         const char* deviceName;
         #endif
         panelsList& panels;
-        idx_t lastTop=-1;
+        //idx_t lastTop=-1;
+        idx_t* tops;
         idx_t lastSel=-1;
-        idx_t top=0;//first line to draw
+        //idx_t top=0;//first line to draw
         //TODO: turn this bool's into bitfield flags
         bool redraw=false;//redraw all menu every cycle, some display drivers require it
         bool minimalRedraw=true;//redraw only changed options (avoids flicking on LCDS), not good for Serial
         bool drawNumIndex=false;
         bool usePreview=false;
         menuNode* drawn=NULL;
-        menuOut(panelsList &p,bool r=false,bool minimal=true)
-          :panels(p),redraw(r),minimalRedraw(minimal) {}
+        menuOut(idx_t *topsList,panelsList &p,bool r=false,bool minimal=true)
+          :tops(topsList),panels(p),redraw(r),minimalRedraw(minimal) {}
         inline idx_t maxX(idx_t i=0) const {return panels[i].w;}
         inline idx_t maxY(idx_t i=0) const {return panels[i].h;}
         idx_t printRaw(const char* at,idx_t len);
@@ -385,6 +386,7 @@ www.r-site.net
           setColor(cursorColor, selected, stat,edit);
           write(selected?(stat==disabledStatus?options->disabledCursor:options->selectedCursor):' ');
         }
+        void doNav(navCmd cmd);
       protected:
         void printMenu(navNode &nav,idx_t panelNr);
     };
@@ -394,8 +396,8 @@ www.r-site.net
         idx_t resX=1;
         idx_t resY=1;
         idx_t fontMarginY=1;//in pixels, compensate vertical font alignment
-        gfxOut(idx_t rx,idx_t ry,panelsList &p,bool r=true)
-          :menuOut(p,r),resX(rx),resY(ry) {}
+        gfxOut(idx_t rx,idx_t ry,idx_t* t,panelsList &p,bool r=true)
+          :menuOut(t,p,r),resX(rx),resY(ry) {}
         //void printMenu(navNode &nav) override;
     };
 
@@ -432,6 +434,7 @@ www.r-site.net
         void drawCursor(idx_t ln,bool selected,status stat,idx_t panelNr=0) {
           for(int n=0;n<cnt;n++) outs[n]->drawCursor(ln,selected,stat,panelNr);
         }
+        void doNav(navCmd cmd) {for(int n=0;n<cnt;n++) outs[n]->doNav(cmd);}
         result idle(idleFunc f,idleEvent e) {
           for(int n=0;n<cnt;n++) {
             menuOut& o=*outs[n];

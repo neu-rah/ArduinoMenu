@@ -12,7 +12,14 @@ Arduino Menu Library
   * options (dynamic => RAM)
 + use/draw title option for any menu, and ignore it on single line devices!
 + wrap menuField's https://github.com/neu-rah/ArduinoMenu/issues/58
-- BUG: alert is only showing on the first device
++ BUG: alert is only showing on the first device
+- use array of tops with path depth on each output device
+  => do not use lastTop!
+- implement scroll commands on ountput devices
+  => panels.nodes must use navNode* instead of menuNode*
+  => however previews have no assigned navNode!
+    1. just dont pint previews => do we need them?
+    2. use union
 - dialogs and modal dialogs (static alloc)
 - alerts (dynamic)
 - errors (dynamic modal)
@@ -20,6 +27,7 @@ Arduino Menu Library
 - custom field format (date/time)
 - textField?
     if so make it a submenu where text is a title and we navigate a pad/menu to choose letters and commands.
+
 
 IDEA: generic input:
 
@@ -36,13 +44,15 @@ navRoot::pool
   navRoot::doInput
     navFocus->parseInput
       - navTarget::parseInput
-        *navTarget::doNav (ok)
+        navTarget::doNav
           navNode::doNavigation(navCmd)
       - menuField::parseInput
         check numeric
-        *menuField::doNav
+        menuField::doNav
           navigate value (navCmd)
       - menuVariant::parseInput
-        *menuVariant::doNav
+        menuVariant::doNav
           navNode::doNavigation(navCmd)
           exit on enter key
+
+navRoot::doNav
