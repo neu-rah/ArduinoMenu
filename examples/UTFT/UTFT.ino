@@ -14,7 +14,7 @@ www.r-site.net
 ***/
 
 #include <Arduino.h>
-#include <UTFT.h>
+//#include <UTFT.h>
 #include <URTouch.h>
 #include <menu.h>
 #include <dev/utftOut.h>
@@ -140,8 +140,10 @@ const colorDef<uint16_t> colors[] MEMMODE={
 //PANELS(serial_panels,{0,0,40,10});//or use default
 //serialOut outSerial(Serial);//,serial_panels);//the output device (just the serial port)
 
+#define MAX_DEPTH 2
 PANELS(gfx_panels,{0,0,12,8},{13,0,12,8});
-menuUTFT outGfx(tft,colors,gfx_panels,16,16);//output device, latter set resolution from font measure
+idx_t gfx_tops[MAX_DEPTH];
+menuUTFT outGfx(tft,colors,gfx_tops,gfx_panels,16,16);//output device, latter set resolution from font measure
 
 MENU_OUTPUTS(out,&outGfx);
 
@@ -151,7 +153,6 @@ menuUTouch touchPanel(uTouch,nav,outGfx);
 
 MENU_INPUTS(in,&touchPanel,&Serial);
 
-#define MAX_DEPTH 2
 NAVROOT(nav,mainMenu,MAX_DEPTH,in,out);
 
 //when menu is suspended
@@ -168,8 +169,8 @@ config myOptions={'>','-',false,false,defaultNavCodes};
 void setup() {
   options=&myOptions;
   pinMode(LEDPIN,OUTPUT);
-  Serial.begin(115200);
   while(!Serial);
+  Serial.begin(115200);
   Serial<<"menu 3.x"<<endl;Serial.flush();
   nav.idleTask=idle;//point a function to be used when menu is suspended
   //mainMenu[1].enabled=disabledStatus;

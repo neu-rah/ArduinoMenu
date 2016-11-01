@@ -28,13 +28,16 @@ Print& Menu::operator<<(Print& o,prompt const &p) {
 }
 
 const navCodesDef Menu::defaultNavCodes={
-  {noCmd,-1},
+  {noCmd,0xff},
   {escCmd,'/'},
   {enterCmd,'*'},
   {upCmd,'+'},
   {downCmd,'-'},
   {leftCmd,'-'},
-  {rightCmd,'+'}
+  {rightCmd,'+'},
+  {idxCmd,'?'},
+  {scrlUpCmd,0x35},
+  {scrlUpCmd,0x36}
 };
 
 config defaultOptions={'>','-',false,false,defaultNavCodes};

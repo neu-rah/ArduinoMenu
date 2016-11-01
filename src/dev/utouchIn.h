@@ -56,8 +56,14 @@ UTouch library from:
             if (ad>(out.resY>>1)&&(ad<<1)>out.resY) {
               dragging=true;//we consider it a drag
               scrlY-=(d>0?1:-1)*(out.resY/2);
-              //Serial<<"utouch moving"<<endl;
-              return (d>0?options->navCodes[upCmd].ch:options->navCodes[downCmd].ch);
+              //prompt* nf=root.navFocus;
+              /*if (nf->isMenu()&&!nf->isVariant()) {
+                Serial<<"utouch scrolling "<<(d>0?"Up":"Down")<<endl;
+                return (d>0?options->navCodes[scrlUpCmd].ch:options->navCodes[scrlDownCmd].ch);
+              } else {*/
+                //Serial<<"utouch moving "<<(d>0?"Up":"Down")<<endl;
+                return (d>0?options->navCodes[upCmd].ch:options->navCodes[downCmd].ch);
+              //}
             }
           }  else {//start new touching
             touching=true;
@@ -73,14 +79,14 @@ UTouch library from:
           int st=root.showTitle?1:0;
           if (root.navFocus->isMenu()&&!root.navFocus->parentDraw()) {
             int at=startY/out.resY;
-            Serial<<"utouch index select "<<((at>=st&&at<(m.sz()+st))?at-st+out.top+'1':-1)<<endl;
-            Serial<<"canNav:"<<root.navFocus->canNav()<<"isVariant:"<<root.navFocus->isVariant()<<endl;
-            return (at>=st&&at<(m.sz()+st))?at-st+out.top+'1':-1;
+            //Serial<<"utouch index select "<<((at>=st&&at<(m.sz()+st))?at-st+out.top(root.node())+'1':-1)<<endl;
+            //Serial<<"canNav:"<<root.navFocus->canNav()<<"isVariant:"<<root.navFocus->isVariant()<<endl;
+            return (at>=st&&at<(m.sz()+st))?at-st+out.top(root.node())+'1':-1;
           } else {//then its some sort of field
             prompt& a=m;//root.active();
-            Serial<<"utouch "<<(memStrLen(a.shadow->text)*out.resX<startX?"enter":"escape")<<endl;
+            //Serial<<"utouch "<<(memStrLen(a.shadow->text)*out.resX<startX?"enter":"escape")<<endl;
             return
-              memStrLen(a.shadow->text)*out.resX<startX?
+              ((int)(memStrLen(a.shadow->text)*out.resX))<startX?
                 options->navCodes[enterCmd].ch:
                 options->navCodes[escCmd].ch;
           }

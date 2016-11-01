@@ -28,23 +28,23 @@ ex: -A0 means: pin A0 normally high, low when button pushed (reverse logic)
 #ifndef __ClickEncoderStream_h__
   #define __ClickEncoderStream_h__
 
+  #include <Arduino.h>
+
   #ifndef ARDUINO_SAM_DUE
     // Arduino specific libraries
     #if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__) || defined(__AVR_ATmega328P__)
       #include <stdint.h>
       #include <avr/io.h>
       #include <avr/interrupt.h>
+      #include <ClickEncoder.h>
     #endif
 
-    #include <Arduino.h>
-    #include <ClickEncoder.h>
     #include "../menu.h"
 
     namespace Menu {
 
-      /*  emulate a stream based on clickEncoder movement returning +/- for every 'sensivity' steps
-      buffer not needer because we have an accumulator
-      */
+      //emulate a stream based on clickEncoder movement returning +/- for every 'sensivity' steps
+      //buffer not needer because we have an accumulator
       class ClickEncoderStream:public Stream {
         public:
         ClickEncoder &enc; //associated hardware clickEncoder
@@ -118,6 +118,6 @@ ex: -A0 means: pin A0 normally high, low when button pushed (reverse logic)
       };
     }//namespace Menu
 
-  #endif /*ARDUINO_SAM_DUE*/
+  #endif
 
 #endif /* ClickEncoderStream_h */

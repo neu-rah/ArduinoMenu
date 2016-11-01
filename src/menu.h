@@ -365,6 +365,7 @@ www.r-site.net
           :tops(topsList),panels(p),redraw(r),minimalRedraw(minimal) {}
         inline idx_t maxX(idx_t i=0) const {return panels[i].w;}
         inline idx_t maxY(idx_t i=0) const {return panels[i].h;}
+        inline idx_t& top(navNode& nav) const;
         idx_t printRaw(const char* at,idx_t len);
         virtual menuOut& operator<<(prompt const &p);
         virtual menuOut& fill(
@@ -386,7 +387,7 @@ www.r-site.net
           setColor(cursorColor, selected, stat,edit);
           write(selected?(stat==disabledStatus?options->disabledCursor:options->selectedCursor):' ');
         }
-        void doNav(navCmd cmd);
+        void doNav(navCmd cmd,navNode &nav);
       protected:
         void printMenu(navNode &nav,idx_t panelNr);
     };
@@ -434,7 +435,7 @@ www.r-site.net
         void drawCursor(idx_t ln,bool selected,status stat,idx_t panelNr=0) {
           for(int n=0;n<cnt;n++) outs[n]->drawCursor(ln,selected,stat,panelNr);
         }
-        void doNav(navCmd cmd) {for(int n=0;n<cnt;n++) outs[n]->doNav(cmd);}
+        void doNav(navCmd cmd,class navNode &nav) {for(int n=0;n<cnt;n++) outs[n]->doNav(cmd,nav);}
         result idle(idleFunc f,idleEvent e) {
           for(int n=0;n<cnt;n++) {
             menuOut& o=*outs[n];
@@ -667,6 +668,8 @@ www.r-site.net
           return proceed;
       }
     }
+
+    idx_t& menuOut::top(navNode& nav) const {return tops[nav.root->level];}
 
   }//namespace Menu
 

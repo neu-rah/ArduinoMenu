@@ -21,6 +21,8 @@ UTFT library from:
 #ifndef RSITE_ARDUINO_MENU_UTFT
 	#define RSITE_ARDUINO_MENU_UTFT
 
+	#undef pgm_read_word
+	#undef pgm_read_byte
 	#include <UTFT.h>
 	#include "../menu.h"
 
@@ -33,8 +35,8 @@ UTFT library from:
         UTFT& gfx;
         const colorDef<uint16_t> (&colors)[nColors];
         int curX,curY;
-        menuUTFT(UTFT& tft,const colorDef<uint16_t> (&c)[nColors],panelsList &p,idx_t resX,idx_t resY)
-          :gfxOut(resX,resY,p,false),gfx(tft),colors(c),curX(0),curY(0) {}
+        menuUTFT(UTFT& tft,const colorDef<uint16_t> (&c)[nColors],idx_t* t,panelsList &p,idx_t resX,idx_t resY)
+          :gfxOut(resX,resY,t,p,false),gfx(tft),colors(c),curX(0),curY(0) {}
         /*void init() {
           //setup geometry
           resX=gfx.getFontXsize();

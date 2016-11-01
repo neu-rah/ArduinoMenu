@@ -8,7 +8,7 @@
 
   namespace Menu {
 
-    class liquidCrystalOut:public menuOut {
+/*    class liquidCrystalOut:public menuOut {
       public:
         LiquidCrystal& device;
         inline liquidCrystalOut(LiquidCrystal& o,panelsList &p,bool r=false,bool m=true)
@@ -34,7 +34,7 @@
           const panel p=panels[panelNr];
           device.setCursor(p.x+x,p.y+y);
         }
-    };
+    };*/
 
   }//namespace Menu
 #endif

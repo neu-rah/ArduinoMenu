@@ -1,7 +1,4 @@
 #include "menu.h"
-#ifdef DEBUG
-  #include <AnsiStream.h>
-#endif
 using namespace Menu;
 
 result Menu::doNothing() {return proceed;}
@@ -26,12 +23,23 @@ idx_t menuOut::printRaw(const char* at,idx_t len) {
   return at-p;
 }
 
-void menuOut::doNav(navCmd cmd) {
+void menuOut::doNav(navCmd cmd,navNode &nav) {
+  panel p=panels[nav.root->level];
+  idx_t t=top(nav)-1;
+  idx_t sz=nav.target->sz();
   switch(cmd.cmd) {
     case scrlUpCmd:
+      if (t) {
+        t--;
+        if (nav.sel>t+sz) nav.sel--;
+      }
+      break;
     case scrlDownCmd:
-      //DONE: need to use navNode instead of menuNode!
-      //TODO: use top for each navNode => do not use lastTop
+      if (t+p.h<sz) {
+        t++;
+        if (nav.sel<t) nav.sel++;
+      }
+      break;
     default: assert(false);
   }
 }
@@ -189,10 +197,16 @@ navCmd navNode::doNavigation(navCmd cmd) {
   idx_t osel=sel;
   navCmd rCmd=cmd;
   switch(cmd.cmd) {
+    /*case scrlUpCmd:
+      if (!target->isVariant())
+        root->out.doNav(cmd,*this);*/
     case downCmd:
       sel--;
       if (sel<0) {if(wrap()) sel=sz()-1; else sel=0;}
       break;
+    /*case scrlDownCmd:
+      if (!target->isVariant())
+        root->out.doNav(cmd,*this);*/
     case upCmd:
       sel++;
       if (sel>=sz()) {if(wrap()) sel=0; else sel=sz()-1;}
@@ -258,7 +272,7 @@ void navRoot::doNav(navCmd cmd) {
   else if (!sleepTask) switch (cmd.cmd) {
     case scrlUpCmd:
     case scrlDownCmd:
-      out.doNav(cmd);
+      out.doNav(cmd,node());
       break;
     default:
       navFocus->doNav(node(),cmd);
