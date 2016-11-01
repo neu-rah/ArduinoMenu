@@ -24,8 +24,9 @@ www.r-site.net
         inline ansiSerialOut(
           Print& o,
           const colorDef<uint8_t> (&c)[nColors],
+          idx_t* t,
           panelsList& p
-        ) :serialOut(o,p,false,true),colors(c) {
+        ) :serialOut(o,t,p,false,true),colors(c) {
           drawNumIndex=false;
         }
         inline uint8_t getColor(colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) const {

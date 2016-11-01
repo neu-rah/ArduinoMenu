@@ -98,13 +98,15 @@ MENU(mainMenu,"Main menu",zZz,noEvent,wrapStyle
   ,EXIT("<Back")
 );
 
+#define MAX_DEPTH 2
 const panel serial_panels[] MEMMODE={{0,0,40,10}};
-menuNode* serial_nodes[sizeof(serial_panels)/sizeof(panel)];
+navNode* serial_nodes[sizeof(serial_panels)/sizeof(panel)];
 panelsList serial_pList(serial_panels,serial_nodes,sizeof(serial_panels)/sizeof(panel));
-serialOut outSerial(Serial,serial_pList);//the output device (just the serial port)
+idx_t tops[MAX_DEPTH];
+serialOut outSerial(Serial,tops,serial_pList);//the output device (just the serial port)
 menuOut* outputs[]={&outSerial};
 outputsList out(outputs,1);
-NAVROOT(nav,mainMenu,2,Serial,out);
+NAVROOT(nav,mainMenu,MAX_DEPTH,Serial,out);
 
 //when menu is suspended
 result idle(menuOut &o, idleEvent e) {

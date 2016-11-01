@@ -41,10 +41,12 @@ const colorDef<uint8_t> colors[] MEMMODE={
 };
 
 //define menu outputs ------------------------------------------------
+#define MAX_DEPTH 2
 const panel panels[] MEMMODE={{1,1,16,10},{18,1,16,10},{36,1,16,10}};
-menuNode* nodes[sizeof(panels)/sizeof(panel)];
+navNode* nodes[sizeof(panels)/sizeof(panel)];
 panelsList pList(panels,nodes,sizeof(panels)/sizeof(panel));
-ansiSerialOut ansi(Serial,colors,pList);//the output device, ansi-terminal Cols x Rows
+idx_t ansi_tops[MAX_DEPTH];
+ansiSerialOut ansi(Serial,colors,ansi_tops,pList);//the output device, ansi-terminal Cols x Rows
 menuOut* outputs[]={&ansi};
 outputsList out(outputs,1);
 
@@ -115,7 +117,7 @@ void showOutColors(eventMask event, navNode& nav) {nav.root->idleOn(showColors);
 
 ////////////////////////////////////////////////////////////////////////
 // menu navigation root object
-NAVROOT(nav,mainMenu,2,Serial,out);
+NAVROOT(nav,mainMenu,MAX_DEPTH,Serial,out);
 
 //when menu is suspended -----------------------------------------------
 result idle(menuOut& o,idleEvent e) {
