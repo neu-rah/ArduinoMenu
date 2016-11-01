@@ -643,13 +643,13 @@ www.r-site.net
 
     template<typename T>
     void menuVariant<T>::doNav(navNode& nav,navCmd cmd) {
-      Serial<<"variant::doNav "<<cmd.cmd<<endl;
+      //Serial<<"variant::doNav "<<cmd.cmd<<endl;
       nav.sel=sync();
       navCmd c=nav.doNavigation(cmd);
       sync(nav.sel);
       if (c.cmd==enterCmd) {
-        Serial<<"variant:enter!"<<endl;
-        Serial<<"exit variant"<<endl;
+        //Serial<<"variant:enter!"<<endl;
+        //Serial<<"exit variant"<<endl;
         nav.root->exit();
       }
     }

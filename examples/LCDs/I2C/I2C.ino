@@ -25,6 +25,8 @@ http://playground.arduino.cc/Code/LCD3wires
   #include <dev/keyIn.h>//keyboard driver and fake stream (for the encoder button)
   #include <dev/chainStream.h>// concatenate multiple input streams (this allows adding a button to the encoder)
 
+  using namespace Menu;
+
   //LiquidCrystal_I2C lcd(0x27);//, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);  // Set the LCD I2C address
   LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);  // Set the LCD I2C address and pinout
 
@@ -153,13 +155,15 @@ http://playground.arduino.cc/Code/LCD3wires
   );
 
   const panel panels[] MEMMODE={{0,0,16,2}};
-  menuNode* nodes[sizeof(panels)/sizeof(panel)];
+  navNode* nodes[sizeof(panels)/sizeof(panel)];
   panelsList pList(panels,nodes,1);
 
-  lcdOut outLCD(&lcd,pList);//output device for LCD
+  #define MAX_DEPTH 2
+  idx_t tops[MAX_DEPTH];
+  lcdOut outLCD(&lcd,tops,pList);//output device for LCD
   menuOut* outputs[]={&outLCD};//list of output devices
   outputsList out(outputs,1);//outputs list with 2 outputs
-  NAVROOT(nav,mainMenu,2,in,out);//the navigation root object
+  NAVROOT(nav,mainMenu,MAX_DEPTH,in,out);//the navigation root object
 
   result idle(menuOut& o,idleEvent e) {
     switch(e) {

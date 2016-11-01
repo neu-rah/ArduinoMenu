@@ -17,7 +17,8 @@ MENU(mainMenu, "Blink menu", Menu::doNothing, Menu::noEvent, Menu::wrapStyle
 
 MENU_INPUTS(in,&Serial);
 
-Menu::serialOut outSerial(Serial);//,serial_panels);//the output device (just the serial port)
+Menu::idx_t tops[MAX_DEPT];
+Menu::serialOut outSerial(Serial,tops);//,serial_panels);//the output device (just the serial port)
 
 MENU_OUTPUTS(out,&outSerial);
 NAVROOT(nav,mainMenu,MAX_DEPT,in,out);
@@ -25,6 +26,9 @@ NAVROOT(nav,mainMenu,MAX_DEPT,in,out);
 void setup() {
   Serial.begin(115200);
   while(!Serial);
+  Serial.println("Menu 3.x");
+  Serial.println("Use keys + - * /");
+  Serial.println("to control the menu navigation");
   pinMode(LEDPIN, OUTPUT);
 }
 

@@ -7,15 +7,13 @@ warranty, express or implied, as to its usefulness for any purpose.
 Thread Safe: No
 Extensible: Yes
 
-menu with UTFT
+menu with UTFT (tested on arduino due)
 output: 3.2″ TFT LCD Module Display 240X320
 input: Serial + Touch Panel
 www.r-site.net
 ***/
 
 #include <Arduino.h>
-//#include <UTFT.h>
-#include <URTouch.h>
 #include <menu.h>
 #include <dev/utftOut.h>
 #include <dev/utouchIn.h>

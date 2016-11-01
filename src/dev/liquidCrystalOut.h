@@ -8,11 +8,11 @@
 
   namespace Menu {
 
-/*    class liquidCrystalOut:public menuOut {
+    class liquidCrystalOut:public menuOut {
       public:
         LiquidCrystal& device;
-        inline liquidCrystalOut(LiquidCrystal& o,panelsList &p,bool r=false,bool m=true)
-          :menuOut(p,r,m),device(o) {}
+        inline liquidCrystalOut(LiquidCrystal& o,idx_t *t,panelsList &p,bool r=false,bool m=true)
+          :menuOut(t,p,r,m),device(o) {}
         size_t write(uint8_t ch) override {return device.write(ch);}
         void clearLine(idx_t ln,idx_t panelNr=0,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) override {
         	setCursor(0,ln,panelNr);
@@ -34,7 +34,7 @@
           const panel p=panels[panelNr];
           device.setCursor(p.x+x,p.y+y);
         }
-    };*/
+    };
 
   }//namespace Menu
 #endif

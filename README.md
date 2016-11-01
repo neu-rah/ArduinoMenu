@@ -11,29 +11,34 @@ Full automated navigation system.
 With this system you can define menus, submenus, input fields and other iteration objects that deal with all input/output and can call user defined handler as a result of user iteration.
 The user function can be operated as a single action called on click/enter or as a event driven function responding to focus In/Out or Enter/Esc events.
 The system is designed as a non blocking polling system, allowing parallel task to run.
+Optionally the system can be operated in semi-automated mode, issuing navigation comand from user code.
 
 ## Simple Example
 ```c++
 #include <Arduino.h>
 #include <menu.h>
+#include <dev/serialOut.h>
+#include <dev/chainStream.h>
 
 #define LEDPIN 13
+#define MAX_DEPT 1
 
 int timeOn=500;
 int timeOff=500;
 
-MENU(mainMenu, "Blink menu", doNothing, noEvent, wrapStyle
-  ,FIELD(timeOn,"On","ms",0,1000,100,10,doNothing,noEvent,noStyle)
-  ,FIELD(timeOff,"Off","ms",0,1000,100,10,doNothing,noEvent,noStyle)
+MENU(mainMenu, "Blink menu", Menu::doNothing, Menu::noEvent, Menu::wrapStyle
+  ,FIELD(timeOn,"On","ms",0,1000,100,10, Menu::doNothing, Menu::noEvent, Menu::noStyle)
+  ,FIELD(timeOff,"Off","ms",0,1000,100,10,Menu::doNothing, Menu::noEvent, Menu::noStyle)
   ,EXIT("<Back")
 );
 
-MENU_INPUTS(in,&Serial);//Serial input
+MENU_INPUTS(in,&Serial);
 
-serialOut outSerial(Serial);//Serial output
+Menu::idx_t tops[MAX_DEPT];
+Menu::serialOut outSerial(Serial,tops);//,serial_panels);//the output device (just the serial port)
 
-MENU_OUTPUTS(out,&outSerial);//Outputs list
-NAVROOT(nav,mainMenu,1,in,out);//navigation root object (nav)
+MENU_OUTPUTS(out,&outSerial);
+NAVROOT(nav,mainMenu,MAX_DEPT,in,out);
 
 void setup() {
   Serial.begin(115200);
@@ -42,7 +47,7 @@ void setup() {
 }
 
 void loop() {
-  nav.poll();//run menu in non-blocking mode
+  nav.poll();
   digitalWrite(LEDPIN, HIGH);
   delay(timeOn);
   digitalWrite(LEDPIN, LOW);
@@ -67,6 +72,36 @@ void loop() {
 - events available for menus and prompts
 - simply returns when no input available and no draw needed.
 - lazy drawing, only draws when changed, avoiding time consumption and flicking.
+
+## user commands
+
+These commands are for semi-automated mode. User code can call the navigation root with them.
+
+example:
+```c++
+nav.doNav(upCmd);
+```
+
+**noCmd** do nothing
+
+**escCmd** escape/exit
+
+**enterCmd** enter current options
+
+**upCmd** move up
+
+**downCmd** move down
+
+**leftCmd** N/A
+
+**rightCmd** N/A
+
+**idxCmd** select option by index
+
+**scrlUpCmd** N/A
+
+**scrlDownCmd** N/A
+
 
 ## Menu structure elements (macros)
 

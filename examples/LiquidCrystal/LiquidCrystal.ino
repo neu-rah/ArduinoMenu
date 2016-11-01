@@ -152,13 +152,15 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
 );
 
 const panel panels[] MEMMODE={{0,0,16,2}};
-menuNode* nodes[sizeof(panels)/sizeof(panel)];
+navNode* nodes[sizeof(panels)/sizeof(panel)];
 panelsList pList(panels,nodes,1);
 
-liquidCrystalOut outLCD(lcd,pList);//output device for LCD
+#define MAX_DEPTH 2
+idx_t tops[MAX_DEPTH];
+liquidCrystalOut outLCD(lcd,tops,pList);//output device for LCD
 menuOut* outputs[]={&outLCD};//list of output devices
 outputsList out(outputs,1);//outputs list with 2 outputs
-NAVROOT(nav,mainMenu,2,in,out);//the navigation root object
+NAVROOT(nav,mainMenu,MAX_DEPTH,in,out);//the navigation root object
 
 result idle(menuOut& o,idleEvent e) {
   switch(e) {

@@ -27,8 +27,8 @@ www.r-site.net
 	      U8GLIB& gfx;
 				int8_t fontMargin=2;
 				const colorDef<uint8_t> (&colors)[nColors];
-	      menuU8G(U8GLIB& gfx,const colorDef<uint8_t> (&c)[nColors],panelsList &p,idx_t resX=6,idx_t resY=9)
-					:gfxOut(resX,resY,p,true),gfx(gfx),colors(c) {
+	      menuU8G(U8GLIB& gfx,const colorDef<uint8_t> (&c)[nColors],idx_t* t,panelsList &p,idx_t resX=6,idx_t resY=9)
+					:gfxOut(resX,resY,t,p,true),gfx(gfx),colors(c) {
 					//:gfxOut(gfx.getWidth()/resX,gfx.getHeight()/resY,resX,resY,true),colors(c),gfx(gfx) {
 	        	gfx.setFontPosBottom(); // U8Glib font positioning
 	      }

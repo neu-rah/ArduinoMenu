@@ -159,21 +159,25 @@ keyIn<1> encButton(encBtn_map);//1 is the number of keys
 Stream* inputsList[]={&encStream,&encButton,&Serial};
 chainStream<3> in(inputsList);//3 is the number of inputs
 
+#define MAX_DEPTH 2
+
 const panel serial_panels[] MEMMODE={{0,0,40,10}};
-menuNode* serial_nodes[sizeof(serial_panels)/sizeof(panel)];
+navNode* serial_nodes[sizeof(serial_panels)/sizeof(panel)];
 panelsList serial_pList(serial_panels,serial_nodes,sizeof(serial_panels)/sizeof(panel));
-serialOut outSerial(Serial,serial_pList);//the output device (just the serial port)
+idx_t serial_tops[MAX_DEPTH];
+serialOut outSerial(Serial,serial_tops,serial_pList);//the output device (just the serial port)
 
 #define fontX 6
 #define fontY 8
 const panel panels[] MEMMODE={{0,0,84/fontX,48/fontY}};
-menuNode* nodes[sizeof(panels)/sizeof(panel)];
+navNode* nodes[sizeof(panels)/sizeof(panel)];
 panelsList pList(panels,nodes,sizeof(panels)/sizeof(panel));
 
-menuU8G gfx(u8g,colors,pList,fontX,fontY);
+idx_t gfx_tops[MAX_DEPTH];
+menuU8G gfx(u8g,colors,gfx_tops,pList,fontX,fontY);
 menuOut* outputs[]={&gfx,&outSerial};
 outputsList out(outputs,2);
-NAVROOT(nav,mainMenu,2,in,out);
+NAVROOT(nav,mainMenu,MAX_DEPTH,in,out);
 
 //when menu is suspended
 result idle(menuOut& o,idleEvent e) {

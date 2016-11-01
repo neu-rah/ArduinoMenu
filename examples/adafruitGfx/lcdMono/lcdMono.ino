@@ -146,14 +146,15 @@ serialOut outSerial(Serial,serial_pList);//the output device (just the serial po
 
 #define fontX 5
 #define fontY 9
+#define MAX_DEPTH 2
 const panel panels[] MEMMODE={{0,0,84/fontX,48/fontY}};
-menuNode* nodes[sizeof(panels)/sizeof(panel)];
+navNode* nodes[sizeof(panels)/sizeof(panel)];
 panelsList pList(panels,nodes,sizeof(panels)/sizeof(panel));
 
-menuGFX outGFX(gfx,colors,pList,fontX,fontY);//output device for LCD with 5x8 font size
+idx_t gfx_tops[MAX_DEPTH];
+menuGFX outGFX(gfx,colors,gfx_tops,pList,fontX,fontY);//output device for LCD with 5x8 font size
 menuOut* outputs[]={&outGFX};
 outputsList out(outputs,1);
-#define MAX_DEPTH 2
 NAVROOT(nav,mainMenu,MAX_DEPTH,Serial,out);
 
 //when menu is suspended

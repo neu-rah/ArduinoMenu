@@ -130,7 +130,8 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,EXIT("<Back")
 );
 
-serialOut outSerial(Serial);// Serial output
+idx_t tops[MAX_DEPT];
+serialOut outSerial(Serial,tops);// Serial output
 
 MENU_OUTPUTS(out,&outSerial);
 NAVROOT(nav,mainMenu,MAX_DEPT,Serial,out);
