@@ -126,10 +126,14 @@ v2.1 - Add full support of SetPosition(x,y) to move the menu inside the screen (
     	:text(text),action(action),enabled(true) {}
     inline void enable() {enabled=true;}
     inline void disable() {enabled=false;}
+    virtual void printName(menuOut& p) {print_P(p,text);}
+    virtual void printValue(menuOut& p) {}
+    virtual void printUnit(menuOut& p) {}
     virtual void printTo(menuOut& p) {
-			//p.print(text);
-      print_P(p,text);
-		}
+        printName(p);
+        printValue(p);
+        printUnit(p);
+    }
     virtual bool needRedraw(menuOut&,bool) {return false;}
     virtual promptFeedback activate(menuOut& p,Stream&c,bool) {
       return action(*this,p,c);
