@@ -130,15 +130,9 @@ v2.1 - Add full support of SetPosition(x,y) to move the menu inside the screen (
     virtual void printValue(menuOut& p) {}
     virtual void printUnit(menuOut& p) {}
     virtual void printTo(menuOut& p) {
-<<<<<<< HEAD
         printName(p);
         printValue(p);
         printUnit(p);
-=======
-      printName(p);
-      printValue(p);
-      printUnit(p);
->>>>>>> valuecolor
     }
     virtual bool needRedraw(menuOut&,bool) {return false;}
     virtual promptFeedback activate(menuOut& p,Stream&c,bool) {

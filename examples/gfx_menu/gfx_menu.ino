@@ -33,7 +33,6 @@ ruihfazevedo@rrob@gmail.com
 #include <Adafruit_GFX.h>    // Core graphics library
 #include <Adafruit_ST7735.h> // Hardware-specific library
 #include <menuGFX.h>
-#include <menuFields.h>
 
 
 #if defined(__AVR_ATmega2560__)
@@ -52,40 +51,27 @@ ruihfazevedo@rrob@gmail.com
   #define LEDPIN A3
   ///////////////////////////////////////////////////////////////////////////
   //TFT + SD
-  //TFT + SD
-  //#define sdCS  9//not using SD card
-  #define tftCS A1
-  #define dc    A0
-  #define rst   A2
+  #define TFT_DC   A0
+  #define TFT_CS   A1
+  #define TFT_RST  A2
   ////////////////////////////////////////////
   // ENCODER (aka rotary switch) PINS
-  #define encA 2
-  #define encB 3
-  #define encBtn 4
+  #define encA    2
+  #define encB    3
+  #define encBtn  4
 #else
   #error "Uknown pinout"
 #endif
 
-Adafruit_ST7735 tft(tftCS, dc, rst);
-
-//wire led here because default led is already used by hardware SPI
-#define LEDPIN A3
+Adafruit_ST7735 tft(TFT_CS, TFT_DC, TFT_RST);
 
 //aux vars
 int ledCtrl=0;
-bool runMenu=false;
-bool scrSaverEnter=true;
 int percent;//just testing changing this var
-double fps=0;
-unsigned long lastFpsChk=0;
 int counter=0;
 
 ///////////////////////////////////////////////////////////////////////////
 //functions to wire as menu actions
-bool pauseMenu() {
-  runMenu=false;
-  scrSaverEnter=true;
-}
 bool ledOn() {
   Serial.println("set led on!");
   digitalWrite(LEDPIN,ledCtrl=1);
@@ -150,22 +136,8 @@ MENU(mainMenu,"Main menu",
   SUBMENU(selMenu),
   SUBMENU(chooseMenu),
   SUBMENU(subMenu),
-  FIELD(percent,"Percent","%",0,100,10,1),
-  FIELD(fps,"fps [","]",0,0,0,0),
-  FIELD(counter,"counter [","]",0,0,0,0),
-  OP("Exit",pauseMenu)
+  FIELD(percent,"Percent","%",0,100,10,1)
 );
-
-void scrSaver() {
-  if (scrSaverEnter) {
-    tft.fillScreen(ST7735_BLACK);
-    tft.print("|www.r-site.net|");
-    tft.setCursor(0,1);
-    tft.print("|click to enter|");
-    scrSaverEnter=false;
-  }
-}
-
 
 //the quadEncoder
 quadEncoder encoder(encA,encB);//simple quad encoder driver
@@ -180,7 +152,7 @@ Stream* in[]={&enc,&encButton};
 chainStream<2> quadEncoder_button(in);
 
 //alternative to previous but now we can input from Serial too...
-Stream* in3[]={&enc,&encButton,&Serial};
+Stream* in3[]={&enc,&encButton};
 chainStream<3> allIn(in3);
 
 //describing a menu output, alternatives so far are Serial or LiquidCrystal LCD
@@ -194,16 +166,16 @@ void setup() {
   tft.setRotation(3);
   tft.setTextWrap(false);
   tft.setTextColor(ST7735_RED,ST7735_BLACK);
-  tft.setTextSize(1);
-  gfx.resX*=1;//update resolution after font size change
-  gfx.resY*=1;//update resolution after font size change
+  //tft.setTextSize(2);
+  //gfx.resX*=2;//update resolution after font size change
+  //gfx.resY*=2;//update resolution after font size change
   tft.fillScreen(ST7735_BLACK);
   tft.print("Menu test on GFX");
   //testing menu limits (not using all the screen)
   //size is within screen limits even after rotation
   //this limits are not constrained, please ensure your text fits
   gfx.maxX=16;
-  gfx.maxY=10;
+  gfx.maxY=5;
   gfx.bgColor=SILVER;
   pinMode(encBtn, INPUT_PULLUP);
   encoder.begin();
@@ -212,16 +184,6 @@ void setup() {
 ///////////////////////////////////////////////////////////////////////////////
 // testing the menu system
 void loop() {
-  if (runMenu) mainMenu.poll(gfx,allIn);
-  else if (allIn.read()==menu::enterCode) runMenu=true;
-  else scrSaver();
-  //simulate the delay of your program... if this number rises too much the menu will have bad navigation experience
-  //if so, then the menu can be wired into a timmer... leaving the shorter end to your code while it is running
-  counter=millis()/1000%60;
-  int d=micros()-lastFpsChk;
-  if (d>0) {
-    fps=1000000.0/d;
-    lastFpsChk+=d;
-  }
-  delay(50);
+  mainMenu.poll(gfx,allIn);
+  digitalWrite(LEDPIN, ledCtrl);
 }
