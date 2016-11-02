@@ -25,8 +25,6 @@ www.r-site.net
   	unsigned char bgColor;
   	unsigned char enabledColor;
   	unsigned char disabledColor;
-		unsigned char enabledColorHi;
-		unsigned char disabledColorHi;
 
     U8GLIB& gfx;
     menuU8G(
@@ -36,15 +34,13 @@ www.r-site.net
     	unsigned char enabledColor=2,
     	unsigned char disabledColor=1,
     	uint8_t resX = 7,//6 font width
-    	uint8_t resY = 9 //9 font height + 2 pixels of spacing
+    	uint8_t resY = 8 //9 font height + 2 pixels of spacing
     )
 	  	:gfx(gfx),
 	  	bgColor(bgColor),
 	  	enabledColor(enabledColor),
 	  	disabledColor(disabledColor),
 	  	hiliteColor(hiliteColor),
-			enabledColorHi(bgColor),
-	  	disabledColorHi(bgColor),
 	  	menuOut(gfx.getWidth()/resX,gfx.getHeight()/resY,resX,resY)
         {
             // Small typefaces used to draw the menu, do not forget to report resX and resY
@@ -65,8 +61,9 @@ www.r-site.net
         // No need to clear, the U8Glib display loop clear screen on each refresh
     }
     virtual void setCursor(int x,int y) {
-        unsigned char xPxTextOffset = 4; // offset in pixels on text on x againt hightlight bar
-        gfx.setPrintPos(x*resX+xPxTextOffset,y*resY); // +4px Left font offset - optionnal
+        signed char xPxTextOffset = 2; //  x offset in pixels on text
+        signed char yPxTextOffset = -1; // y offset in pixels on text
+        gfx.setPrintPos(x*resX+xPxTextOffset,y*resY+yPxTextOffset);
     }
     virtual size_t write(uint8_t ch) {
         gfx.write(ch); // print the ASCII correspoding char instead of print which display the decimal value of the char.
@@ -77,7 +74,11 @@ www.r-site.net
         gfx.drawBox(posX*resX,posY*resY,maxX*resX,resY);
         gfx.setColorIndex(selected?(o.enabled?enabledColorHi:disabledColorHi):(o.enabled?enabledColor:disabledColor));
         setCursor(posX,posY+1); //+1 compensate the height of the font and the way how U8Glib works
-        o.printTo(*this);
+        //o.printTo(*this);
+	o.printName(*this);
+        gfx.setColorIndex(o.enabled?hiliteColor:selected?disabledColor:bgColor);
+        o.printValue(*this);
+        o.printUnit(*this);
     }
 		virtual void printMenu(menu& m,bool drawExit) {
 			//Serial<<"printing menu "<<m<<" top:"<<top<<endl;
