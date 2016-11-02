@@ -68,12 +68,18 @@ v2.0 - 	Calling action on every elements
 				return true;
 			}*/
 		}
-		virtual void printTo(menuOut& p) {
-			print_P(p,text);
+		virtual void printName(menuOut& p) {
+            //if (!enabled) p.print('*');
+            print_P(p,text);
 			p.print(activeNode==this?(tunning?'>':':'):' ');
-			p.print(value);
-			print_P(p,units);
 		}
+                virtual void printValue(menuOut& p) {p.print(value);}
+                virtual void printUnit(menuOut& p) {print_P(p,units);}
+                virtual void printTo(menuOut& p) {
+            		printName(p);
+            		printValue(p);
+            		printUnit(p);
+        	}
 		void clamp() {
       if (value<low) value=low;
 #ifdef ONLY_UP_KEY
@@ -151,12 +157,17 @@ v2.0 - 	Calling action on every elements
 	  		if (((menuValue<T>*)pgmPtrNear(data[n]))->value==target)
 	  			sel=n;
     }
+		virtual void printName(menuOut& p) {
+            		print_P(p,text);
+            		p.print(' ');
+        	}
+        	virtual void printValue(menuOut& p) {
+            		menuVariant<T>::sync();
+            		((prompt*)pgmPtrNear(data[sel]))->printTo(p);
+        	}
 		virtual void printTo(menuOut& p) {
-			menuVariant<T>::sync();
-			print_P(p,text);
-			p.print(' ');
-			((prompt*)pgmPtrNear(data[sel]))->printTo(p);
-			//print_P(p,((menuValue<T>*)pgmPtrNear(data[sel]))->text);
+            		printName(p);
+            		printValue(p);
 		}
   };
 
