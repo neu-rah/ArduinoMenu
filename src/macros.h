@@ -32,7 +32,7 @@
   Menu::navNode* _nodes_##id[sizeof(_panels_##id)/sizeof(panel)];\
   Menu::panelsList id(_panels_##id,_nodes_##id,sizeof(_panels_##id)/sizeof(panel));
 
-#define MENU_OUTPUTS(id,...)\
+#define _MENU_OUTPUTS(id,...)\
   Menu::menuOut* _outputs_##id[]={__VA_ARGS__};\
   Menu::outputsList id(_outputs_##id,sizeof(_outputs_##id)/sizeof(Menu::menuOut*));
 

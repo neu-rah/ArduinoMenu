@@ -159,16 +159,48 @@ MENU_INPUTS(in,&encStream,&encButton,&Serial);
 //PANELS(serial_panels,{0,0,40,10});//or use default
 
 #define MAX_DEPTH 2
-idx_t serial_tops[MAX_DEPTH];
-serialOut outSerial(Serial,serial_tops);//,serial_panels);//the output device (just the serial port)
+/*idx_t serial_tops[MAX_DEPTH];
+serialOut outSerial(Serial,serial_tops);//,serial_panels);//the output device (just the serial port)*/
+
+#define __SERIAL_OUT(id,port,maxDepth)\
+idx_t id##_tops[MAX_DEPTH];\
+serialOut id(port,id##_tops);\
+
 
 #define textScale 1
-PANELS(gfx_panels,{0,0,14,8},{14,0,13,8});
+/*PANELS(gfx_panels,{0,0,14,8},{14,0,13,8});
 idx_t gfx_tops[MAX_DEPTH];
 //font size is 6x9
-menuGFX outGfx(gfx,colors,gfx_tops,gfx_panels,6*textScale,9*textScale);//output device for LCD
+menuGFX outGfx(gfx,colors,gfx_tops,gfx_panels,6*textScale,9*textScale);//output device for LCD*/
 
-MENU_OUTPUTS(out,&outGfx);//,&outSerial);
+#define __GFX_OUT(id,maxDepth,gfx,colors,fontW,fontH,...)\
+PANELS(id##_panels,__VA_ARGS__);\
+idx_t id##_tops[maxDepth];\
+menuGfx id(gfx,colors,id##_tops,id##_panels,fontW,fontH);
+
+//DEF_SERIAL_OUT(outSerial,Serial,MAX_DEPTH);
+//DEF_GFX_OUT(outGfx,MAX_DEPTH,gfx,colors,6*textScale,9*textScale,{0,0,14,8},{14,0,13,8});
+
+#define SERIAL_OUT(...) _SERIAL_OUT(id,__COUNTER__##_out,__VA_ARGS__)
+#define GFX_OUT(...) _SERIAL_OUT(id,__COUNTER__##_out,__VA_ARGS__)
+
+#define REF_SERIAL_OUT(id,...) (&id)
+#define REF_GFX_OUT(id,...) (&id)
+
+//_MENU_OUTPUTS(out,&outGfx,&outSerial);
+
+#define MENU_OUTPUTS(id,maxDepth,...) \
+FOR_EACH(_,__VA_ARGS__)\
+Menu::menuOut* _outputs_##id[]={\
+  FOR_EACH(REF,__VA_ARGS__)\
+};\
+Menu::outputsList id##OutList(_outputs_##id,sizeof(_outputs_##id)/sizeof(Menu::menuOut*));
+
+MENU_OUTPUTS(mainOuts,MAX_DEPTH
+  ,SERIAL_OUT(Serial)
+  ,GFX_OUT(gfx,colors,6,9,{0,0,14,8},14,0,14,8)
+);
+
 
 NAVROOT(nav,mainMenu,MAX_DEPTH,in,out);
 
