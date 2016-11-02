@@ -25,6 +25,10 @@ www.r-site.net
   	unsigned char bgColor;
   	unsigned char enabledColor;
   	unsigned char disabledColor;
+		unsigned char enabledColorHi;
+		unsigned char disabledColorHi;
+		unsigned char valueColor;
+		unsigned char valueColorHi;
 
     U8GLIB& gfx;
     menuU8G(
@@ -33,6 +37,8 @@ www.r-site.net
     	unsigned char bgColor=0,
     	unsigned char enabledColor=2,
     	unsigned char disabledColor=1,
+			unsigned char valueColor=2,
+			unsigned char valueColorHi=2,
     	uint8_t resX = 7,//6 font width
     	uint8_t resY = 8 //9 font height + 2 pixels of spacing
     )
@@ -41,6 +47,10 @@ www.r-site.net
 	  	enabledColor(enabledColor),
 	  	disabledColor(disabledColor),
 	  	hiliteColor(hiliteColor),
+			enabledColorHi(bgColor),
+	  	disabledColorHi(bgColor),
+			valueColor(enabledColor),
+			valueColorHi(enabledColor),
 	  	menuOut(gfx.getWidth()/resX,gfx.getHeight()/resY,resX,resY)
         {
             // Small typefaces used to draw the menu, do not forget to report resX and resY
@@ -75,10 +85,10 @@ www.r-site.net
         gfx.setColorIndex(selected?(o.enabled?enabledColorHi:disabledColorHi):(o.enabled?enabledColor:disabledColor));
         setCursor(posX,posY+1); //+1 compensate the height of the font and the way how U8Glib works
         //o.printTo(*this);
-	o.printName(*this);
-        gfx.setColorIndex(o.enabled?hiliteColor:selected?disabledColor:bgColor);
-        o.printValue(*this);
-        o.printUnit(*this);
+				o.printName(*this);
+				gfx.setColorIndex(selected?valueColorHi:valueColor);
+				o.printValue(*this);
+				o.printUnit(*this);
     }
 		virtual void printMenu(menu& m,bool drawExit) {
 			//Serial<<"printing menu "<<m<<" top:"<<top<<endl;
