@@ -17,6 +17,7 @@ www.r-site.net
 
 #ifndef RSITE_ARDUINO_MENU_SYSTEM
   #define RSITE_ARDUINO_MENU_SYSTEM
+  #include <Arduino.h>
   //#include <Stream.h>
   #include "menuBase.h"
   #include "shadows.h"
@@ -257,14 +258,9 @@ www.r-site.net
 
     class menuOut:public Print {
       public:
-        #ifdef DEBUG
-        const char* deviceName;
-        #endif
-        panelsList& panels;
-        //idx_t lastTop=-1;
         idx_t* tops;
+        panelsList& panels;
         idx_t lastSel=-1;
-        //idx_t top=0;//first line to draw
         //TODO: turn this bool's into bitfield flags
         bool redraw=false;//redraw all menu every cycle, some display drivers require it
         bool minimalRedraw=true;//redraw only changed options (avoids flicking on LCDS), not good for Serial
@@ -464,7 +460,7 @@ www.r-site.net
     ////////////////////////////////////////////////////////////////////////
     template<typename T>
     idx_t menuField<T>::printTo(navRoot &root,bool sel,menuOut& out,idx_t len) {
-      menuFieldShadow<T>& s=*(menuFieldShadow<T>*)shadow;
+      //menuFieldShadow<T>& s=*(menuFieldShadow<T>*)shadow;
       reflex=target();
       idx_t l=prompt::printTo(root,sel,out,len);
       bool ed=this==root.navFocus;

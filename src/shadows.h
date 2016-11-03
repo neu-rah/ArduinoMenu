@@ -82,10 +82,10 @@
             return *from;
           #endif
         }
-        inline T _low() const {return getTypeValue(low);}
-        inline T _high() const {return getTypeValue(high);}
-        inline T _step() const {return getTypeValue(step);}
-        inline T _tune() const {return  getTypeValue(tune);}
+        inline T _low() const {return getTypeValue(&low);}
+        inline T _high() const {return getTypeValue(&high);}
+        inline T _step() const {return getTypeValue(&step);}
+        inline T _tune() const {return  getTypeValue(&tune);}
     };
 
     template<typename T>

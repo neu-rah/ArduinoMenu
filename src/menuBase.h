@@ -17,7 +17,7 @@ www.r-site.net
 #ifndef RSITE_ARDUINO_MENU_SYSTEM_BASE
   #define RSITE_ARDUINO_MENU_SYSTEM_BASE
 
-  #define DEBUG
+  //#define DEBUG
 
   #ifdef DEBUG
     extern bool debugFlag;
@@ -25,7 +25,10 @@ www.r-site.net
 
   #include <Arduino.h>
   #include <Streaming.h>//https://github.com/scottdky/Streaming
-  #include <Assert4a.h> //https://github.com/nettigo/Assert4a
+  #ifndef ARDUINO_SAM_DUE
+    #include <Assert4a.h> //https://github.com/nettigo/Assert4a
+  #endif
+  #define assert(x)
   #include "macros.h"
 
   namespace Menu {

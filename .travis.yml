@@ -14,56 +14,6 @@
 #   < http://docs.platformio.org/en/latest/userguide/cmd_ci.html >
 #
 #
-# Please choice one of the following templates (proposed below) and uncomment
-# it (remove "# " before each line) or use own configuration according to the
-# Travis CI documentation (see above).
-#
-
-
-#
-# Template #1: General project. Test it using existing `platformio.ini`.
-#
-
-# language: python
-# python:
-#     - "2.7"
-#
-# sudo: false
-# cache:
-#     directories:
-#         - "~/.platformio"
-#
-# install:
-#     - pip install -U platformio
-#
-# script:
-#     - platformio run
-
-
-#
-# Template #2: The project is intended to by used as a library with examples
-#
-
-# language: python
-# python:
-#     - "2.7"
-#
-# sudo: false
-# cache:
-#     directories:
-#         - "~/.platformio"
-#
-# env:
-#     - PLATFORMIO_CI_SRC=path/to/test/file.c
-#     - PLATFORMIO_CI_SRC=examples/file.ino
-#     - PLATFORMIO_CI_SRC=path/to/test/directory
-#
-# install:
-#     - pip install -U platformio
-#
-# script:
-#     - platformio ci --lib="." --board=TYPE_1 --board=TYPE_2 --board=TYPE_N
-
 language: python
 python:
    - "2.7"
@@ -75,6 +25,9 @@ cache:
 
 env:
    - PLATFORMIO_CI_SRC=examples/Blink/Blink.ino
+   - PLATFORMIO_CI_SRC=examples/Serial/serialio/serialio.ino
+   - PLATFORMIO_CI_SRC=examples/Serial/ansiSerial/ansiSerial.ino
+   - PLATFORMIO_CI_SRC=examples/codeCtrl/codeCtrl.ino
 
 install:
    - pip install -U platformio
@@ -101,4 +54,4 @@ install:
    - unzip /tmp/NewliquidCrystal_1.3.4.zip -d /tmp/
 
 script:
-   - platformio ci --lib="." --lib="/tmp/Streaming-master" --lib="/tmp/Assert4a-master" --lib="/tmp/Adafruit-GFX-Library-master" --lib="/tmp/PCINT-master" --lib="/tmp/U8glib_Arduino-master" --lib="/tmp/AnsiStream-master" --lib="/tmp/NewliquidCrystal" --board=nanoatmega328
+   - platformio ci --lib="." --lib="/tmp/Streaming-master" --lib="/tmp/Assert4a-master" --lib="/tmp/Adafruit-GFX-Library-master" --lib="/tmp/PCINT-master" --lib="/tmp/U8glib_Arduino-master" --lib="/tmp/AnsiStream-master" --lib="/tmp/NewliquidCrystal" --board=nanoatmega328 --board=teensy31 --board=due

@@ -1,10 +1,6 @@
 #include "menu.h"
 using namespace Menu;
 
-#ifdef DEBUG
-#include <Dump.h>
-#endif
-
 result Menu::doNothing() {return proceed;}
 result Menu::doExit() {return quit;}
 action Menu::noAction(doNothing);
