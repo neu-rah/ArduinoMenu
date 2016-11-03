@@ -86,7 +86,7 @@ UTouch library from:
             prompt& a=m;//root.active();
             //Serial<<"utouch "<<(memStrLen(a.shadow->text)*out.resX<startX?"enter":"escape")<<endl;
             return
-              ((int)(memStrLen(a.shadow->text)*out.resX))<startX?
+              ((int)(memStrLen(a.getText())*out.resX))<startX?
                 options->navCodes[enterCmd].ch:
                 options->navCodes[escCmd].ch;
           }

@@ -28,6 +28,11 @@ env:
    - PLATFORMIO_CI_SRC=examples/Serial/serialio/serialio.ino
    - PLATFORMIO_CI_SRC=examples/Serial/ansiSerial/ansiSerial.ino
    - PLATFORMIO_CI_SRC=examples/codeCtrl/codeCtrl.ino
+   - PLATFORMIO_CI_SRC=examples/adafruitGfx/lcdMono/lcdMono.ino
+   - PLATFORMIO_CI_SRC=examples/adafruitGfx/tft/tft.ino
+   - PLATFORMIO_CI_SRC=examples/LiquidCrystal/LiquidCrystal.ino
+   - PLATFORMIO_CI_SRC=examples/U8GLib/lcdMono/lcdMono.ino
+   - PLATFORMIO_CI_SRC=examples/UTFT/UTFT.ino
 
 install:
    - pip install -U platformio
