@@ -11,6 +11,12 @@ menu with UTFT (tested on arduino due)
 output: 3.2″ TFT LCD Module Display 240X320
 input: Serial + Touch Panel
 www.r-site.net
+
+UTFT library from:
+  http://www.rinkydinkelectronics.com/library.php?id=51
+  http://henningkarlsen.com/electronics/library.php?id=50 (old address)
+
+
 ***/
 
 #include <Arduino.h>
