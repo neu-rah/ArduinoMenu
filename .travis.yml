@@ -29,8 +29,10 @@ env:
    - PLATFORMIO_CI_SRC=examples/Serial/ansiSerial/ansiSerial.ino
    - PLATFORMIO_CI_SRC=examples/codeCtrl/codeCtrl.ino
    - PLATFORMIO_CI_SRC=examples/adafruitGfx/lcdMono/lcdMono.ino
-   - PLATFORMIO_CI_SRC=examples/adafruitGfx/tft/tft.ino
-   - PLATFORMIO_CI_SRC=examples/U8GLib/lcdMono/lcdMono.ino
+   
+# this tests use PCINT, not ok for teensy
+#   - PLATFORMIO_CI_SRC=examples/adafruitGfx/tft/tft.ino
+#   - PLATFORMIO_CI_SRC=examples/U8GLib/lcdMono/lcdMono.ino
 
 install:
    - pip install -U platformio
