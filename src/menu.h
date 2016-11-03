@@ -36,14 +36,18 @@ www.r-site.net
       styles style;
     };
     class promptShadow:public action {
-      public:
-        systemStyles sysStyles=_noStyle;
+      protected:
+        systemStyles sysStyles;
         const char*text;
-        const eventMask events=noEvent;//registered events
+        const eventMask events;//registered events (mask)
         styles style;
+      public:
         promptShadow(const char* t,action a=doNothing,eventMask e=noEvent,styles s=noStyle)
-          :action(a),text(t),events(e),style(s) {}
-        inline const char* getText() const {return text;}
+          :action(a),sysStyles(_noStyle),text(t),events(e),style(s) {}
+        inline const char* getText() const {return (const char*)memPtr(text);}
+        inline const systemStyles _sysStyles() const {return (systemStyles)memWord(&sysStyles);}
+        inline const eventMask _events() const {return (eventMask)memByte(&events);}
+        inline const styles _style() const {return (styles)memByte(&style);}
     };
     class prompt {
       friend class navNode;
@@ -55,8 +59,9 @@ www.r-site.net
         bool dirty=true;//needs to be  redrawn
         inline prompt(const promptShadow& shadow):shadow(&shadow) {}
         inline const char* getText() const {return shadow->getText();}
-        inline systemStyles sysStyles() const {return (systemStyles)memWord(&shadow->sysStyles);}
-        inline styles getStyles() const {return (styles)memWord(&shadow->style);}
+        inline const systemStyles sysStyles() const {return shadow->_sysStyles();}
+        inline const eventMask events() const {return shadow->_events();}
+        inline styles style() const {return shadow->_style();}
         inline bool canNav() const {return sysStyles()&_canNav;}//can receive navigation focus and process keys
         inline bool isMenu() const {return sysStyles()&_menuData;}//has menu data list and can be a navNode target
         inline bool isVariant() const {return sysStyles()&_isVariant;}//a menu as an enumerated field, connected to a variable value
@@ -90,21 +95,26 @@ www.r-site.net
       prompt* const* data;
     };
     class menuNodeShadow:public promptShadow {
-      public:
+      protected:
         idx_t sz;
         prompt* const* data;
+      public:
         menuNodeShadow(const char* text,idx_t sz,prompt* const* data,action a,eventMask e,styles style)
         :promptShadow(text,a,e,style),sz(sz),data(data) {}
+        idx_t _sz() const {return (idx_t)memIdx(sz);}
+        prompt* const* _data() const {return (prompt* const*)memPtr(data);}
+        inline prompt& operator[](idx_t i) const {
+          return *(prompt*)memPtr(((prompt**)_data())[i]);
+          //return *(prompt*)memPtr(((prompt**)memPtr(((menuNodeShadow*)shadow)->data))[i]);
+        }
     };
     class menuNode:public navTarget {
       public:
         menuNode(const menuNodeShadow& s):navTarget(s) {}
-        inline prompt& operator[](idx_t i) const {
-          return *(prompt*)memPtr(((prompt**)memPtr(((menuNodeShadow*)shadow)->data))[i]);
-        }
+        inline prompt& operator[](idx_t i) const {return ((menuNodeShadow*)shadow)->operator[](i);}
         bool changed(const navNode &nav,const menuOut& out,bool sub=true) override;
-        inline idx_t sz() const {return memIdx(((menuNodeShadow*)shadow)->sz);}
-        inline prompt** data() const {return (prompt**)memPtr(((menuNodeShadow*)shadow)->data);}
+        inline idx_t sz() const {return ((menuNodeShadow*)shadow)->_sz();}
+        inline prompt* const* data() const {return ((menuNodeShadow*)shadow)->_data();}
     };
 
     //--------------------------------------------------------------------------
@@ -127,12 +137,29 @@ www.r-site.net
     };
     template<typename T>
     class menuFieldShadow:public promptShadow {
-      public:
+      protected:
         T* value;
         const char* units;
         const T low,high,step,tune;
+      public:
         menuFieldShadow(T &value,const char * text,const char *units,T low,T high,T step,T tune,action a=doNothing,eventMask e=noEvent,styles s=noStyle)
           :value(&value),units(units),low(low),high(high),step(step),tune(tune),promptShadow(text,a,e,s) {}
+        inline T& target() const {return *(T*)memPtr(value);}
+        inline const char* _units() {return (const char*)memPtr(units);}
+        inline T getTypeValue(const T* from) const {
+          //TODO: dynamic versions require change of preprocessor to virtual
+          #ifdef USING_PGM
+            T tmp;
+            memcpy_P(&tmp, from, sizeof(T));
+            return tmp;
+          #else
+            return *from;
+          #endif
+        }
+        inline T _low() const {return getTypeValue(low);}
+        inline T _high() const {return getTypeValue(high);}
+        inline T _step() const {return getTypeValue(step);}
+        inline T _tune() const {return  getTypeValue(tune);}
     };
     template<typename T>
     class menuField:public navTarget {
@@ -143,29 +170,22 @@ www.r-site.net
         void parseInput(navNode& nav,Stream& in) override;
         void doNav(navNode& nav,navCmd cmd) override;
         idx_t printTo(navRoot &root,bool sel,menuOut& out,idx_t len) override;
-        inline T& target() const {return *(T*)memPtr(((menuFieldShadow<T>*)shadow)->value);}
-        inline T getTypeValue(const T* from) const {
-          #ifdef USING_PGM
-            T tmp;
-            memcpy_P(&tmp, from, sizeof(T));
-            return tmp;
-          #else
-            return *from;
-          #endif
-        }
-        inline T low() const {return getTypeValue(&((menuFieldShadow<T>*)shadow)->low);}
-        inline T high() const {return getTypeValue(&((menuFieldShadow<T>*)shadow)->high);}
-        inline T step() const {return getTypeValue(&((menuFieldShadow<T>*)shadow)->step);}
-        inline T tune() const {return  getTypeValue(&((menuFieldShadow<T>*)shadow)->tune);}
+        inline T& target() const {return ((menuFieldShadow<T>*)shadow)->target();}
+        inline const char* units() {return ((menuFieldShadow<T>*)shadow)->_units();}
+        inline T getTypeValue(const T* from) const {return ((menuFieldShadow<T>*)shadow)->getType(from);}
+        inline T low() const {return  ((menuFieldShadow<T>*)shadow)->_low();}
+        inline T high() const {return ((menuFieldShadow<T>*)shadow)->_high();}
+        inline T step() const {return ((menuFieldShadow<T>*)shadow)->_step();}
+        inline T tune() const {return ((menuFieldShadow<T>*)shadow)->_tune();}
         bool changed(const navNode &nav,const menuOut& out,bool sub=true) override {
           return dirty||(reflex!=target());
         }
         void clamp() {
           if (target()<low()) {
-            if (getStyles()&wrapStyle) target()=high();
+            if (style()&wrapStyle) target()=high();
             else target()=low();
           } else if (target()>high()) {
-            if (getStyles()&wrapStyle) target()=low();
+            if (style()&wrapStyle) target()=low();
             else target()=high();
           }
         }
@@ -183,8 +203,9 @@ www.r-site.net
     };
     template<typename T>
     class menuValueShadow:public promptShadow {
-      public:
+      protected:
         T value;
+      public:
         inline menuValueShadow(const char * text,T value,action a=doNothing,eventMask e=noEvent)
           :promptShadow(text,a,e),value(value) {}
     };
@@ -223,8 +244,9 @@ www.r-site.net
     };
     template<typename T>
     class menuVariantShadow:public menuNodeShadow {
-      public:
+      protected:
         T* value;
+      public:
         menuVariantShadow(const char* text,T &target,idx_t sz,prompt* const* data,action a,eventMask e,styles style)
         :menuNodeShadow(text,sz,data,a,e,style),value(&target) {}
     };
@@ -483,10 +505,10 @@ www.r-site.net
         idx_t sel=0;
         menuNode* target;
         static navRoot* root;
-        inline idx_t sz() const {return memIdx(shadow().sz);}
-        inline prompt* const * data() const {return shadow().data;}
+        inline idx_t sz() const {return target->sz();}
+        inline prompt* const * data() const {return target->data();}
         inline prompt& selected() const {return *(prompt*)memPtr(data()[sel]);}
-        inline bool wrap() const {return memWord(&shadow().style)&wrapStyle;}
+        inline bool wrap() const {return target->style()&wrapStyle;}
         /*inline result sysHandler(eventMask event, prompt &item, Stream &in, menuOut &out) const {
           return target->sysHandler(event,*this,item,in,out);
         }*/
@@ -573,7 +595,7 @@ www.r-site.net
           l+=out.print(reflex);//NOTE: this can exceed the limits!
           if (l<len) {
             out.setColor(unitColor,sel,enabled,ed);
-            l+=print_P(out,(const char*)memPtr(s.units),len);
+            l+=print_P(out,units(),len);
           }
         }
       }

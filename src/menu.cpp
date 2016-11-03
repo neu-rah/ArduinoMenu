@@ -13,7 +13,7 @@ action Menu::noAction(doNothing);
 result Menu::inaction(menuOut& o,idleEvent) {return proceed;}
 
 idx_t prompt::printRaw(menuOut& out,idx_t len) const {
-  return print_P(out,(const char *)memPtr(shadow->text),len);
+  return print_P(out,getText(),len);
 }
 
 idx_t prompt::printTo(navRoot &root,bool sel,menuOut& out,idx_t len) {return printRaw(out,len);}
@@ -255,7 +255,7 @@ navCmd navNode::doNavigation(navCmd cmd) {
 
 result navNode::event(eventMask e,idx_t i) {
   prompt& p=operator[](i);
-  eventMask m=(eventMask)memByte(&p.shadow->promptShadow::events);
+  eventMask m=p.events();
   eventMask me=(eventMask)(e&m);
   if (me) {
     return p(e,*this,p);
