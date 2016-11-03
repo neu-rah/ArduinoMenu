@@ -1,3 +1,5 @@
+#include <Arduino.h>
+
 /********************
 Arduino generic menu system
 U8GLib menu example
