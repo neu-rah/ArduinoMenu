@@ -23,7 +23,8 @@ note: adafruit's gfx buffer eats too much ram on this device
 #include <Adafruit_GFX.h>
 #include <Adafruit_PCD8544.h>
 #include <menu.h>
-#include <dev/adafruitGfxOut.h>
+#include <menuIO/adafruitGfxOut.h>
+//#include <menuIO/serialOut.h>
 
 using namespace Menu;
 
@@ -42,7 +43,7 @@ Adafruit_PCD8544 gfx(GFX_DC,GFX_CS,GFX_RST);
 #define encBtn  4*/
 
 result showEvent(eventMask e,navNode& nav,prompt& item) {
-  Serial<<e<<" on "<<item<<endl;
+  Serial<<e<<F(" on ")<<item<<endl;
   return proceed;
 }
 
@@ -63,39 +64,9 @@ TOGGLE(ledCtrl,setLed,"Led: ",doNothing,noEvent,noStyle//,doExit,enterEvent,noSt
   ,VALUE("Off",LOW,doNothing,noEvent)
 );
 
-int selTest=0;
-SELECT(selTest,selMenu,"Select",doNothing,noEvent,noStyle
-  ,VALUE("Zero",0,doNothing,noEvent)
-  ,VALUE("One",1,doNothing,noEvent)
-  ,VALUE("Two",2,doNothing,noEvent)
-);
-
-int chooseTest=-1;
-CHOOSE(chooseTest,chooseMenu,"Choose",doNothing,noEvent,noStyle
-  ,VALUE("First",1,doNothing,noEvent)
-  ,VALUE("Second",2,doNothing,noEvent)
-  ,VALUE("Third",3,doNothing,noEvent)
-  ,VALUE("Last",-1,doNothing,noEvent)
-);
-
-//customizing a prompt look!
-//by extending the prompt class
-class altPrompt:public prompt {
-public:
-  altPrompt(const promptShadow& p):prompt(p) {}
-  idx_t printTo(navRoot &root,bool sel,menuOut& out,idx_t len) override {
-    return out.printRaw("special prompt!",len);;
-  }
-};
-
-MENU(subMenu,"Sub-Menu",showEvent,anyEvent,noStyle
-  ,altOP(altPrompt,"",showEvent,anyEvent)
-  ,EXIT("<Back")
-);
-
 result alert(menuOut& o,idleEvent e) {
   if (e==idling)
-    o<<"alert test"<<endl<<"press [select]"<<endl<<"to continue..."<<endl;
+    o<<F("alert test")<<endl<<F("press [select]")<<endl<<F("to continue...")<<endl;
   return proceed;
 }
 
@@ -106,12 +77,9 @@ result doAlert(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out
 
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,FIELD(test,"Test","%",0,100,10,1,doNothing,noEvent,wrapStyle)
-  ,SUBMENU(subMenu)
   ,SUBMENU(setLed)
   ,OP("LED On",ledOn,enterEvent)
   ,OP("LED Off",ledOff,enterEvent)
-  ,SUBMENU(selMenu)
-  ,SUBMENU(chooseMenu)
   ,OP("Alert test",doAlert,enterEvent)
   ,EXIT("<Back")
 );
@@ -128,33 +96,17 @@ const colorDef<uint16_t> colors[] MEMMODE={
   {{BLACK,WHITE},{WHITE,BLACK,BLACK}},//titleColor
 };
 
-/*encoderIn encoder(encA,encB);//simple quad encoder driver
-encoderInStream encStream(encoder,4);// simple quad encoder fake Stream
-
-//a keyboard with only one key as the encoder button
-keyMap encBtn_map[]={{-encBtn,options->getCmdChar(enterCmd)}};//negative pin numbers use internal pull-up, this is on when low
-keyIn<1> encButton(encBtn_map);//1 is the number of keys
-
-//input from the encoder + encoder button + serial
-Stream* inputsList[]={&encStream,&encButton,&Serial};
-chainStream<3> in(inputsList);//3 is the number of inputs*/
-
-/*const panel serial_panels[] MEMMODE={{0,0,40,10}};
-menuNode* serial_nodes[sizeof(serial_panels)/sizeof(panel)];
-panelsList serial_pList(serial_panels,serial_nodes,sizeof(serial_panels)/sizeof(panel));
-serialOut outSerial(Serial,serial_pList);//the output device (just the serial port)*/
-
 #define fontX 5
 #define fontY 9
 #define MAX_DEPTH 2
-const panel panels[] MEMMODE={{0,0,84/fontX,48/fontY}};
-navNode* nodes[sizeof(panels)/sizeof(panel)];
-panelsList pList(panels,nodes,sizeof(panels)/sizeof(panel));
 
-idx_t gfx_tops[MAX_DEPTH];
-menuGFX outGFX(gfx,colors,gfx_tops,pList,fontX,fontY);//output device for LCD with 5x8 font size
-menuOut* outputs[]={&outGFX};
-outputsList out(outputs,1);
+#define MAX_DEPTH 2
+#define textScale 1
+MENU_OUTPUTS(out,MAX_DEPTH
+  ,ADAGFX_OUT(gfx,colors,fontX,fontY,{0,0,84/fontX,48/fontY})
+  ,NONE//must have at least 2 entryes
+);
+
 NAVROOT(nav,mainMenu,MAX_DEPTH,Serial,out);
 
 //when menu is suspended
@@ -188,12 +140,15 @@ void setup() {
 
 void loop() {
   //nav.poll();//it can work like this, followed by the gfx.display()
-  //or on a need to draw basis
+  //gfx.display();
+
+  //or on a need to draw basis:
   nav.doInput();
-  if (nav.changed(outGFX)) {
+  if (nav.changed(0)) {//only draw if changed
     nav.doOutput();
-    gfx.display(); // show splashscreen
+    gfx.display();
   }
+
   digitalWrite(LEDPIN, ledCtrl);
   delay(100);//simulate a delay when other tasks are done
 }

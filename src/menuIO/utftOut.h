@@ -30,12 +30,12 @@ UTFT library from:
 
     #define RGB565(r,g,b) ((((r>>3)<<11) | ((g>>2)<<5) | (b>>3)))
 
-    class menuUTFT:public gfxOut {
+    class utftOut:public gfxOut {
       public:
         UTFT& gfx;
         const colorDef<uint16_t> (&colors)[nColors];
         int curX,curY;
-        menuUTFT(UTFT& tft,const colorDef<uint16_t> (&c)[nColors],idx_t* t,panelsList &p,idx_t resX,idx_t resY)
+        utftOut(UTFT& tft,const colorDef<uint16_t> (&c)[nColors],idx_t* t,panelsList &p,idx_t resX,idx_t resY)
           :gfxOut(resX,resY,t,p,false),gfx(tft),colors(c),curX(0),curY(0) {}
         /*void init() {
           //setup geometry

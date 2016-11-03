@@ -20,10 +20,10 @@ http://playground.arduino.cc/Code/LCD3wires
   #include <Wire.h>
   #include <LiquidCrystal_I2C.h>//F. Malpartida LCD's driver
   #include <menu.h>//menu macros and objects
-  #include <dev/lcdOut.h>//malpartidas lcd menu output
-  #include <dev/encoderIn.h>//quadrature encoder driver and fake stream
-  #include <dev/keyIn.h>//keyboard driver and fake stream (for the encoder button)
-  #include <dev/chainStream.h>// concatenate multiple input streams (this allows adding a button to the encoder)
+  #include <menuIO/lcdOut.h>//malpartidas lcd menu output
+  #include <menuIO/encoderIn.h>//quadrature encoder driver and fake stream
+  #include <menuIO/keyIn.h>//keyboard driver and fake stream (for the encoder button)
+  #include <menuIO/chainStream.h>// concatenate multiple input streams (this allows adding a button to the encoder)
 
   using namespace Menu;
 
@@ -154,15 +154,21 @@ http://playground.arduino.cc/Code/LCD3wires
     ,EXIT("<Back")
   );
 
-  const panel panels[] MEMMODE={{0,0,16,2}};
+  #define MAX_DEPTH 2
+
+  /*const panel panels[] MEMMODE={{0,0,16,2}};
   navNode* nodes[sizeof(panels)/sizeof(panel)];
   panelsList pList(panels,nodes,1);
-
-  #define MAX_DEPTH 2
   idx_t tops[MAX_DEPTH];
   lcdOut outLCD(&lcd,tops,pList);//output device for LCD
   menuOut* outputs[]={&outLCD};//list of output devices
   outputsList out(outputs,1);//outputs list with 2 outputs
+  */
+
+  MENU_OUTPUTS(out,MAX_DEPTH
+    ,LCD_OUT(lcd,{0,0,16,20})
+    ,NONE
+  );
   NAVROOT(nav,mainMenu,MAX_DEPTH,in,out);//the navigation root object
 
   result idle(menuOut& o,idleEvent e) {

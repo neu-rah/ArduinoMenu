@@ -20,11 +20,11 @@ input: Serial + encoder
 
 #include <U8glib.h>
 #include <menu.h>
-#include <dev/encoderIn.h>
-#include <dev/keyIn.h>
-#include <dev/chainStream.h>
-#include <dev/serialOut.h>
-#include <dev/U8GLibOut.h>
+#include <menuIO/encoderIn.h>
+#include <menuIO/keyIn.h>
+#include <menuIO/chainStream.h>
+#include <menuIO/serialOut.h>
+#include <menuIO/U8GLibOut.h>
 
 using namespace Menu;
 
@@ -111,7 +111,7 @@ MENU(subMenu,"Sub-Menu",showEvent,anyEvent,noStyle
 
 result alert(menuOut& o,idleEvent e) {
   if (e==idling) {
-    o<<"alert test"<<endl<<"press [select]"<<endl<<"to continue...";
+    o<<F("alert test")<<endl<<F("press [select]")<<endl<<F("to continue...");
   }
   return proceed;
 }
@@ -159,30 +159,37 @@ keyIn<1> encButton(encBtn_map);//1 is the number of keys
 Stream* inputsList[]={&encStream,&encButton,&Serial};
 chainStream<3> in(inputsList);//3 is the number of inputs
 
+#define fontX 6
+#define fontY 8
 #define MAX_DEPTH 2
 
-const panel serial_panels[] MEMMODE={{0,0,40,10}};
+/*const panel serial_panels[] MEMMODE={{0,0,40,10}};
 navNode* serial_nodes[sizeof(serial_panels)/sizeof(panel)];
 panelsList serial_pList(serial_panels,serial_nodes,sizeof(serial_panels)/sizeof(panel));
 idx_t serial_tops[MAX_DEPTH];
 serialOut outSerial(Serial,serial_tops,serial_pList);//the output device (just the serial port)
 
-#define fontX 6
-#define fontY 8
 const panel panels[] MEMMODE={{0,0,84/fontX,48/fontY}};
 navNode* nodes[sizeof(panels)/sizeof(panel)];
 panelsList pList(panels,nodes,sizeof(panels)/sizeof(panel));
-
 idx_t gfx_tops[MAX_DEPTH];
-menuU8G gfx(u8g,colors,gfx_tops,pList,fontX,fontY);
-menuOut* outputs[]={&gfx,&outSerial};
-outputsList out(outputs,2);
+u8gLibOut gfx(u8g,colors,gfx_tops,pList,fontX,fontY);
+
+menuOut* const outputs[] MEMMODE={&gfx,&outSerial};
+outputsList out(outputs,2);*/
+
+//this macro replaces all the above commented lines
+MENU_OUTPUTS(out,MAX_DEPTH
+  ,U8GLIB_OUT(u8g,colors,fontX,fontY,{0,0,84/fontX,48/fontY})
+  ,SERIAL_OUT(Serial)
+);
+
 NAVROOT(nav,mainMenu,MAX_DEPTH,in,out);
 
 //when menu is suspended
 result idle(menuOut& o,idleEvent e) {
   if (e==idling)
-    o<<"suspended"<<endl<<"Press [select]"<<endl<<"to continue";
+    o<<F("suspended")<<endl<<F("Press [select]")<<endl<<F("to continue");
   return proceed;
 }
 
@@ -190,7 +197,7 @@ void setup() {
   pinMode(LEDPIN,OUTPUT);
   Serial.begin(115200);
   while(!Serial);
-  Serial<<"menu 3.0 test"<<endl;Serial.flush();
+  Serial<<F("menu 3.0 test")<<endl;Serial.flush();
   nav.idleTask=idle;//point a function to be used when menu is suspended
   mainMenu[1].enabled=disabledStatus;
 
@@ -202,18 +209,19 @@ void setup() {
   u8g.setFont(u8g_font_04b_03r);
   u8g.firstPage();
   do {
-    gfx.setCursor(0,0);
-    gfx<<"Menu 3.x test";
-    gfx.setCursor(0,1);
-    gfx<<"on U8Glib";
+    nav.out[0].setCursor(0,0);
+    nav.out[0]<<F("Menu 3.x test");
+    nav.out[0].setCursor(0,1);
+    nav.out[0]<<F("on U8Glib");
   } while(u8g.nextPage());
   delay(1000);
   //nav.sleepTask=alert;
 }
 
 void loop() {
+  Serial<<".";
   nav.doInput();
-  if (nav.changed(gfx)) {//only draw if menu changed for gfx device
+  if (nav.changed(0)) {//only draw if menu changed for gfx device
     //change checking leaves more time for other tasks
     u8g.firstPage();
     do {
@@ -221,5 +229,5 @@ void loop() {
       digitalWrite(LEDPIN, ledCtrl);
     } while( u8g.nextPage() );
   }
-  delay(200);//simulate a delay when other tasks are running
+  delay(100);//simulate a delay when other tasks are running
 }

@@ -15,10 +15,10 @@ www.r-site.net
 
 #include <Arduino.h>
 #include <menu.h>
-#include <dev/utftOut.h>
-#include <dev/utouchIn.h>
-#include <dev/serialOut.h>
-#include <dev/chainStream.h>
+#include <menuIO/utftOut.h>
+#include <menuIO/utouchIn.h>
+#include <menuIO/serialOut.h>
+#include <menuIO/chainStream.h>
 
 using namespace Menu;
 
@@ -139,19 +139,18 @@ const colorDef<uint16_t> colors[] MEMMODE={
 //serialOut outSerial(Serial);//,serial_panels);//the output device (just the serial port)
 
 #define MAX_DEPTH 2
+
 PANELS(gfx_panels,{0,0,12,8},{13,0,12,8});
 idx_t gfx_tops[MAX_DEPTH];
-menuUTFT outGfx(tft,colors,gfx_tops,gfx_panels,16,16);//output device, latter set resolution from font measure
+utftOut outGfx(tft,colors,gfx_tops,gfx_panels,16,16);//output device, latter set resolution from font measure
 
-MENU_OUTPUTS(out,&outGfx);
+MENU_OUTLIST(out,&outGfx);
 
 extern navRoot nav;
 UTouch  uTouch( 6, 5, 4, 3, 2);
 menuUTouch touchPanel(uTouch,nav,outGfx);
 
-MENU_INPUTS(in,&touchPanel,&Serial);
-
-NAVROOT(nav,mainMenu,MAX_DEPTH,in,out);
+NAVROOT(nav,mainMenu,MAX_DEPTH,touchPanel,out);
 
 //when menu is suspended
 result idle(menuOut& o,idleEvent e) {

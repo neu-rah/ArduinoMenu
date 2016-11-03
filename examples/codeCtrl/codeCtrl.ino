@@ -22,13 +22,13 @@ on this example only using
 
 #include <Arduino.h>
 #include <menu.h>
-#include <dev/serialOut.h>
-#include <dev/chainStream.h>
+#include <menuIO/serialOut.h>
+#include <menuIO/chainStream.h>
 
 using namespace Menu;
 
 #define LEDPIN 13
-#define MAX_DEPT 2
+#define MAX_DEPTH 2
 #define NAV_BTN 5
 #define SEL_BTN 6
 
@@ -130,11 +130,12 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,EXIT("<Back")
 );
 
-idx_t tops[MAX_DEPT];
-serialOut outSerial(Serial,tops);// Serial output
+MENU_OUTPUTS(out,MAX_DEPTH
+  ,SERIAL_OUT(Serial)
+  ,NONE//must have 2 items at least
+);
 
-MENU_OUTPUTS(out,&outSerial);
-NAVROOT(nav,mainMenu,MAX_DEPT,Serial,out);
+NAVROOT(nav,mainMenu,MAX_DEPTH,Serial,out);
 
 void setup() {
   Serial.begin(115200);

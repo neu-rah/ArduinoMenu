@@ -14,11 +14,11 @@ www.r-site.net
 ***/
 
 #include <menu.h>
-#include <dev/liquidCrystalOut.h>
-#include <dev/serialOut.h>
-#include <dev/encoderIn.h>
-#include <dev/keyIn.h>
-#include <dev/chainStream.h>
+#include <menuIO/liquidCrystalOut.h>
+#include <menuIO/serialOut.h>
+#include <menuIO/encoderIn.h>
+#include <menuIO/keyIn.h>
+#include <menuIO/chainStream.h>
 
 using namespace Menu;
 
@@ -156,10 +156,15 @@ navNode* nodes[sizeof(panels)/sizeof(panel)];
 panelsList pList(panels,nodes,1);
 
 #define MAX_DEPTH 2
-idx_t tops[MAX_DEPTH];
+/*idx_t tops[MAX_DEPTH];
 liquidCrystalOut outLCD(lcd,tops,pList);//output device for LCD
 menuOut* outputs[]={&outLCD};//list of output devices
-outputsList out(outputs,1);//outputs list with 2 outputs
+outputsList out(outputs,1);//outputs list with 2 outputs*/
+
+MENU_OUTPUTS(out, MAX_DEPTH
+  ,LIQUIDCRYSTAL_OUT(lcd,{0,0,16,20})
+  ,NONE
+);
 NAVROOT(nav,mainMenu,MAX_DEPTH,in,out);//the navigation root object
 
 result idle(menuOut& o,idleEvent e) {

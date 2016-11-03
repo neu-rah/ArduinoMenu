@@ -1,10 +1,10 @@
 #include <Arduino.h>
 #include <menu.h>
-#include <dev/serialOut.h>
-#include <dev/chainStream.h>
+#include <menuIO/serialOut.h>
+#include <menuIO/chainStream.h>
 
 #define LEDPIN 13
-#define MAX_DEPT 1
+#define MAX_DEPTH 1
 
 int timeOn=500;
 int timeOff=500;
@@ -17,11 +17,12 @@ MENU(mainMenu, "Blink menu", Menu::doNothing, Menu::noEvent, Menu::wrapStyle
 
 MENU_INPUTS(in,&Serial);
 
-Menu::idx_t tops[MAX_DEPT];
-Menu::serialOut outSerial(Serial,tops);//,serial_panels);//the output device (just the serial port)
+MENU_OUTPUTS(out,MAX_DEPTH
+  ,SERIAL_OUT(Serial)
+  ,NONE//must have 2 items at least
+);
 
-MENU_OUTPUTS(out,&outSerial);
-NAVROOT(nav,mainMenu,MAX_DEPT,in,out);
+NAVROOT(nav,mainMenu,MAX_DEPTH,in,out);
 
 void setup() {
   Serial.begin(115200);

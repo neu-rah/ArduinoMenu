@@ -20,11 +20,11 @@ namespace Menu {
 
 		#define RGB565(r,g,b) ((((r>>3)<<11) | ((g>>2)<<5) | (b>>3)))
 
-	  class menuGFX:public gfxOut {
+	  class adaGfxOut:public gfxOut {
 	    public:
 				Adafruit_GFX& gfx;
 				const colorDef<uint16_t> (&colors)[nColors];
-		    menuGFX(Adafruit_GFX& gfx,const colorDef<uint16_t> (&c)[nColors],idx_t* t,panelsList &p,idx_t resX=6,idx_t resY=9)
+		    adaGfxOut(Adafruit_GFX& gfx,const colorDef<uint16_t> (&c)[nColors],idx_t* t,panelsList &p,idx_t resX=6,idx_t resY=9)
 					:gfxOut(resX,resY,t,p,false),gfx(gfx),colors(c) {}
 					//:gfxOut(gfx.width()/resX,gfx.height()/resY,resX,resY,false),colors(c),gfx(gfx) {}
 
@@ -69,5 +69,5 @@ namespace Menu {
 
 	  };
 
-}; //namespace menuGFX
+}; //namespace adaGfxOut
 #endif

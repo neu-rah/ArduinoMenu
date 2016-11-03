@@ -22,14 +22,19 @@ www.r-site.net
 
   namespace Menu {
 
-    class menuU8G:public gfxOut {
+    class u8gLibOut:public gfxOut {
       public:
 	      U8GLIB& gfx;
 				int8_t fontMargin=2;
 				const colorDef<uint8_t> (&colors)[nColors];
-	      menuU8G(U8GLIB& gfx,const colorDef<uint8_t> (&c)[nColors],idx_t* t,panelsList &p,idx_t resX=6,idx_t resY=9)
-					:gfxOut(resX,resY,t,p,true),gfx(gfx),colors(c) {
-					//:gfxOut(gfx.getWidth()/resX,gfx.getHeight()/resY,resX,resY,true),colors(c),gfx(gfx) {
+	      u8gLibOut(
+					U8GLIB& gfx,
+					const colorDef<uint8_t> (&c)[nColors],
+					idx_t* t,
+					panelsList &p,
+					idx_t resX=6,
+					idx_t resY=9
+				) :gfxOut(resX,resY,t,p,true),gfx(gfx),colors(c) {
 	        	gfx.setFontPosBottom(); // U8Glib font positioning
 	      }
 

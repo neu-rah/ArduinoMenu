@@ -407,55 +407,58 @@ www.r-site.net
     class outputsList {
       public:
         int cnt=1;
-        menuOut** outs;
-        outputsList(menuOut* o[],int n):cnt(n),outs(o) {}
+        menuOut* const* outs;
+        outputsList(menuOut* const o[],int n):cnt(n),outs(o) {}
         menuOut& operator[](idx_t i) {
           assert(i<cnt);
-          return *outs[i];
+          return *(menuOut*)memPtr(outs[i]);
         }
         void printMenu(navNode& nav) const {
           for(int n=0;n<cnt;n++)
-            outs[n]->printMenu(nav);
+            ((menuOut*)memPtr(outs[n]))->printMenu(nav);
           clearChanged(nav);
         }
-        //void alert(char *msg) const {for(int n=0;n<cnt;n++) outs[n]->alert(msg);}
+        //void alert(char *msg) const {for(int n=0;n<cnt;n++) ((menuOut*)memPtr(outs[n]))->alert(msg);}
         void clearLine(idx_t ln,idx_t panelNr=0,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus) const {
-          for(int n=0;n<cnt;n++) outs[n]->clearLine(ln,panelNr,color,selected,stat);
+          for(int n=0;n<cnt;n++) ((menuOut*)memPtr(outs[n]))->clearLine(ln,panelNr,color,selected,stat);
         }
         void clearChanged(navNode& nav) const {
-          for(int n=0;n<cnt;n++) outs[n]->clearChanged(nav);
+          for(int n=0;n<cnt;n++) ((menuOut*)memPtr(outs[n]))->clearChanged(nav);
         }
-        void clear() {for(int n=0;n<cnt;n++) outs[n]->clear();}
+        void clear() {for(int n=0;n<cnt;n++) ((menuOut*)memPtr(outs[n]))->clear();}
         void setCursor(idx_t x,idx_t y) {
-          for(int n=0;n<cnt;n++) outs[n]->setCursor(x,y);
+          for(int n=0;n<cnt;n++) ((menuOut*)memPtr(outs[n]))->setCursor(x,y);
         }
         void setColor(colorDefs c,bool selected=false,status s=enabledStatus) {
-          for(int n=0;n<cnt;n++) outs[n]->setColor(c,selected,s);
+          for(int n=0;n<cnt;n++) ((menuOut*)memPtr(outs[n]))->setColor(c,selected,s);
         }
         void drawCursor(idx_t ln,bool selected,status stat,idx_t panelNr=0) {
-          for(int n=0;n<cnt;n++) outs[n]->drawCursor(ln,selected,stat,panelNr);
+          for(int n=0;n<cnt;n++) ((menuOut*)memPtr(outs[n]))->drawCursor(ln,selected,stat,panelNr);
         }
-        void doNav(navCmd cmd,class navNode &nav) {for(int n=0;n<cnt;n++) outs[n]->doNav(cmd,nav);}
+        void doNav(navCmd cmd,class navNode &nav) {for(int n=0;n<cnt;n++) ((menuOut*)memPtr(outs[n]))->doNav(cmd,nav);}
         result idle(idleFunc f,idleEvent e) {
           for(int n=0;n<cnt;n++) {
-            menuOut& o=*outs[n];
+            menuOut& o=*((menuOut*)memPtr(outs[n]));
             switch(e) {
               case idleStart:
                 if ((*f)(o,e)==proceed) {
                   if (!o.redraw) {
                     o.clear();//reset the coordinates and colors
-                    return (*f)(o,idling);
+                    result r=(*f)(o,idling);
+                    if (r==quit) return r;
                   }
                 } else return quit;
                 break;
               case idling:
                 if (o.redraw) {
                   o.clear();//reset the coordinates and colors
-                  return (*f)(o,e);
+                  result r=(*f)(o,e);
+                  if (r==quit) return r;
                 }
                 break;
               case idleEnd:
-                return (*f)(o,e);
+                result r=(*f)(o,e);
+                if (r==quit) return r;
                 break;
             }
           }
@@ -516,6 +519,7 @@ www.r-site.net
         inline menuNode& active() const {return *node().target;}
         inline prompt& selected() const {return active()[node().sel];}
         inline bool changed(const menuOut& out) const {return node().changed(out);}
+        inline bool changed(idx_t n) const {return node().changed(out[n]);}
         void printMenu() const {
           if ((active().sysStyles()&_parentDraw)&&level)
             out.printMenu(path[level-1]);

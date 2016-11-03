@@ -1,5 +1,5 @@
 #include <menu.h>
-#include <dev/serialOut.h>
+#include <menuIO/serialOut.h>
 
 using namespace Menu;
 
@@ -99,13 +99,12 @@ MENU(mainMenu,"Main menu",zZz,noEvent,wrapStyle
 );
 
 #define MAX_DEPTH 2
-const panel serial_panels[] MEMMODE={{0,0,40,10}};
-navNode* serial_nodes[sizeof(serial_panels)/sizeof(panel)];
-panelsList serial_pList(serial_panels,serial_nodes,sizeof(serial_panels)/sizeof(panel));
-idx_t tops[MAX_DEPTH];
-serialOut outSerial(Serial,tops,serial_pList);//the output device (just the serial port)
-menuOut* outputs[]={&outSerial};
-outputsList out(outputs,1);
+
+MENU_OUTPUTS(out,MAX_DEPTH
+  ,SERIAL_OUT(Serial)
+  ,NONE//must have 2 items at least
+);
+
 NAVROOT(nav,mainMenu,MAX_DEPTH,Serial,out);
 
 //when menu is suspended

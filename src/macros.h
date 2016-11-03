@@ -32,13 +32,82 @@
   Menu::navNode* _nodes_##id[sizeof(_panels_##id)/sizeof(panel)];\
   Menu::panelsList id(_panels_##id,_nodes_##id,sizeof(_panels_##id)/sizeof(panel));
 
-#define _MENU_OUTPUTS(id,...)\
-  Menu::menuOut* _outputs_##id[]={__VA_ARGS__};\
+#define MENU_OUTLIST(id,...)\
+  Menu::menuOut* const _outputs_##id[] MEMMODE ={__VA_ARGS__};\
   Menu::outputsList id(_outputs_##id,sizeof(_outputs_##id)/sizeof(Menu::menuOut*));
 
 #define MENU_INPUTS(id,...)\
   Stream* _inputs_##id[]={__VA_ARGS__};\
   Menu::chainStream<sizeof(_inputs_##id)/sizeof(Stream*)> id(_inputs_##id);
+
+#define SWAP(a,b,...) b,a,__VA_ARGS__
+#define CALL(a,b) CALL_(HEAD_##a,HEAD_##b,TAIL_##a,TAIL_##b)
+#define HEAD_ON(n,...) n
+#define TAIL_ON(a,...) __VA_ARGS__
+#define HEAD_WITH(n,...) n
+#define TAIL_WITH(a,...) __VA_ARGS__
+#define CALL_(...) CALL__(__VA_ARGS__)
+#define CALL__(a,b,...) a##_##b(__VA_ARGS__)
+
+#define SERIAL_OUT(...) ON(SERIAL_OUT,__COUNTER__,__VA_ARGS__)
+#define ANSISERIAL_OUT(...) ON(ANSISERIAL_OUT,__COUNTER__,__VA_ARGS__)
+#define LIQUIDCRYSTAL_OUT(...) ON(LIQUIDCRYSTAL_OUT,__COUNTER__,__VA_ARGS__)
+#define LCD_OUT(...) ON(LCD_OUT,__COUNTER__,__VA_ARGS__)
+#define ADAGFX_OUT(...) ON(ADAGFX_OUT,__COUNTER__,__VA_ARGS__)
+#define U8GLIB_OUT(...) ON(U8GLIB_OUT,__COUNTER__,__VA_ARGS__)
+#define UTFT_OUT(...) ON(UTFT_OUT,__COUNTER__,__VA_ARGS__)
+
+#define VAR_HEAD_NONE(...)
+
+#define VAR_SERIAL_OUT(id,md,n,port)\
+Menu::idx_t id##Tops##n[md];\
+Menu::serialOut id##n(port,id##Tops##n);
+
+#define VAR_ANSISERIAL_OUT(id,md,n,port,color,...)\
+Menu::idx_t id##Tops##n[md];\
+PANELS(id##Panels##n,__VA_ARGS__);\
+Menu::ansiSerialOut id##n(port,color,id##Tops##n,id##Panels##n);
+
+#define VAR_LIQUIDCRYSTAL_OUT(id,md,n,device,...)\
+Menu::idx_t id##Tops##n[md];\
+PANELS(id##Panels##n,__VA_ARGS__);\
+Menu::liquidCrystalOut id##n(device,id##Tops##n,id##Panels##n);
+
+#define VAR_LCD_OUT(id,md,n,device,...)\
+Menu::idx_t id##Tops##n[md];\
+PANELS(id##Panels##n,__VA_ARGS__);\
+Menu::lcdOut id##n(&device,id##Tops##n,id##Panels##n);
+
+#define VAR_ADAGFX_OUT(id,md,n,gfx,color,fontW,fontH,...)\
+Menu::idx_t id##Tops##n[md];\
+PANELS(id##Panels##n,__VA_ARGS__);\
+Menu::adaGfxOut id##n(gfx,color,id##Tops##n,id##Panels##n,fontW,fontH);
+
+#define VAR_U8GLIB_OUT(id,md,n,gfx,color,fontW,fontH,...)\
+Menu::idx_t id##Tops##n[md];\
+PANELS(id##Panels##n,__VA_ARGS__);\
+Menu::u8gLibOut id##n(gfx,color,id##Tops##n,id##Panels##n,fontW,fontH);
+
+#define VAR_UTFT_OUT(id,md,n,gfx,color,fontW,fontH,...)\
+Menu::idx_t id##Tops##n[md];\
+PANELS(id##Panels##n,__VA_ARGS__);\
+Menu::utftOut id##n(gfx,color,id##Tops##n,id##Panels##n,fontW,fontH);
+
+#define REF_HEAD_NONE(...)
+#define REF_SERIAL_OUT(id,md,n,...) &id##n,
+#define REF_ANSISERIAL_OUT(id,md,n,...) &id##n,
+#define REF_LIQUIDCRYSTAL_OUT(id,md,n,...) &id##n,
+#define REF_LCD_OUT(id,md,n,...) &id##n,
+#define REF_ADAGFX_OUT(id,md,n,...) &id##n,
+#define REF_U8GLIB_OUT(id,md,n,...) &id##n,
+#define REF_UTFT_OUT(id,md,n,...) &id##n,
+
+#define MENU_OUTPUTS(id,maxDepth,...)\
+	XFOR_EACH(CALL,WITH(VAR,id,maxDepth),__VA_ARGS__)\
+	Menu::menuOut* const id##_outPtrs[] MEMMODE={\
+	   XFOR_EACH(CALL,WITH(REF,id,maxDepth),__VA_ARGS__)\
+	};\
+Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
 
 #define MENU(id,text,aFn,mask,style,...) altMENU(Menu::menu,id,text,aFn,mask,style,__VA_ARGS__)
 #define altMENU(objType,id,text,aFn,mask,style,...)\
