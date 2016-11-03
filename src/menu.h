@@ -43,13 +43,18 @@ www.r-site.net
         styles style;
         promptShadow(const char* t,action a=doNothing,eventMask e=noEvent,styles s=noStyle)
           :action(a),text(t),events(e),style(s) {}
+        inline const char* getText() const {return text;}
     };
     class prompt {
+      friend class navNode;
+      friend class menuOut;
+      protected:
+        const promptShadow* shadow;//constant read-only data (PROGMEM)
       public:
         status enabled=enabledStatus;//ignore enter if false
         bool dirty=true;//needs to be  redrawn
-        const promptShadow* shadow;//constant read-only data (PROGMEM)
         inline prompt(const promptShadow& shadow):shadow(&shadow) {}
+        inline const char* getText() const {return shadow->getText();}
         inline systemStyles sysStyles() const {return (systemStyles)memWord(&shadow->sysStyles);}
         inline styles getStyles() const {return (styles)memWord(&shadow->style);}
         inline bool canNav() const {return sysStyles()&_canNav;}//can receive navigation focus and process keys
@@ -472,11 +477,12 @@ www.r-site.net
     // Navigation
     //////////////////////////////////////////////////////////////////////////
     class navNode {
+      protected:
+        inline menuNodeShadow& shadow() const {return *(menuNodeShadow*)target->shadow;}
       public:
         idx_t sel=0;
         menuNode* target;
         static navRoot* root;
-        inline menuNodeShadow& shadow() const {return *(menuNodeShadow*)target->shadow;}
         inline idx_t sz() const {return memIdx(shadow().sz);}
         inline prompt* const * data() const {return shadow().data;}
         inline prompt& selected() const {return *(prompt*)memPtr(data()[sel]);}

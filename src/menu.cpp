@@ -1,6 +1,10 @@
 #include "menu.h"
 using namespace Menu;
 
+#ifdef DEBUG
+#include <Dump.h>
+#endif
+
 result Menu::doNothing() {return proceed;}
 result Menu::doExit() {return quit;}
 action Menu::noAction(doNothing);
@@ -45,7 +49,7 @@ void menuOut::doNav(navCmd cmd,navNode &nav) {
 }
 
 menuOut& menuOut::operator<<(const prompt& p) {
-  print_P(*this,(const char *)memPtr(p.shadow->text));
+  print_P(*this,p.getText());
   return *this;
 }
 
@@ -118,6 +122,7 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
   all|=nav.target->dirty;
   //if (all) Serial<<"all 3 "<<*(prompt*)nav.target<<endl;
   if (!(all||minimalRedraw)) return;
+  panel pan=panels[panelNr];
   if (all) {
     clear(panelNr);
     if (st) {
@@ -125,10 +130,12 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
       clearLine(0,panelNr);
       setColor(titleColor,true);
       setCursor(0,0,panelNr);
-      *this<<'['<<*(prompt*)nav.target<<']';
+      print('[');
+      nav.target->prompt::printTo(*nav.root,true,*this,pan.w-1);
+      print(']');
+      //*this<<'['<<*(prompt*)nav.target<<']';
     }
   }
-  panel pan=panels[panelNr];
   //if (all) Serial<<"all 4"<<endl;
   //bool any=all;
   for(idx_t i=0;i<maxY(panelNr)-st;i++) {

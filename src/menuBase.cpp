@@ -23,7 +23,7 @@ idx_t Menu::print_P(Print& s,const char* at,idx_t len) {
 }
 
 Print& Menu::operator<<(Print& o,prompt const &p) {
-  print_P(o,(const char*)memPtr(p.shadow->text));
+  print_P(o,p.getText());
   return o;
 }
 
@@ -94,6 +94,7 @@ config* Menu::options=&defaultOptions;
       case downCmd:o<<"downCmd";break;
       case leftCmd:o<<"leftCmd";break;
       case rightCmd:o<<"rightCmd";break;
+      case idxCmd:o<<"idxCmd";break;
     }
     return o;
   }
