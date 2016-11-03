@@ -26,7 +26,11 @@ www.r-site.net
 
 using namespace Menu;
 
-#define LEDPIN A3
+#ifdef ARDUINO_SAM_DUE
+  #define LEDPIN 13
+#else
+  #define LEDPIN A3
+#endif
 
 // define menu colors --------------------------------------------------------
 //each color is in the format:

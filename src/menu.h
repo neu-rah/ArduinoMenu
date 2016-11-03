@@ -94,7 +94,7 @@ www.r-site.net
         idx_t printTo(navRoot &root,bool sel,menuOut& out,idx_t len) override;
         inline T& target() const {return ((menuFieldShadow<T>*)shadow)->target();}
         inline const char* units() {return ((menuFieldShadow<T>*)shadow)->_units();}
-        inline T getTypeValue(const T* from) const {return ((menuFieldShadow<T>*)shadow)->getType(from);}
+        inline T getTypeValue(const T* from) const {return ((menuFieldShadow<T>*)shadow)->getTypeValue(from);}
         inline T low() const {return  ((menuFieldShadow<T>*)shadow)->_low();}
         inline T high() const {return ((menuFieldShadow<T>*)shadow)->_high();}
         inline T step() const {return ((menuFieldShadow<T>*)shadow)->_step();}
@@ -121,16 +121,8 @@ www.r-site.net
         #ifdef DEBUG
         bool changed(const navNode &nav,const menuOut& out,bool sub=true) override {return false;}
         #endif
-        inline T getTypeValue(const T* from) const {
-          #ifdef USING_PGM
-            T tmp;
-            memcpy_P(&tmp, from, sizeof(T));
-            return tmp;
-          #else
-            return *from;
-          #endif
-        }
-        inline T target() const {return getTypeValue(&((menuValueShadow<T>*)shadow)->value);}
+        //inline T getTypeValue(const T* from) const {return &((menuValueShadow<T>*)shadow)->getTypeValue(from);}
+        inline T target() const {return ((menuValueShadow<T>*)shadow)->target();}
     };
 
     //--------------------------------------------------------------------------
@@ -164,7 +156,7 @@ www.r-site.net
           target()=reflex=((menuValue<T>*)&operator[](i))->target();
           return i;
         }
-        inline T& target() const {return *(T*)memPtr(((menuVariantShadow<T>*)shadow)->value);}
+        inline T& target() const {return ((menuVariantShadow<T>*)shadow)->target();}
         bool changed(const navNode &nav,const menuOut& out,bool sub=true) override;
         //void parseInput(navNode& nav,Stream& in) override;
         void doNav(navNode& nav,navCmd cmd) override;
@@ -193,7 +185,7 @@ www.r-site.net
               if (at>=menuNode::sz()) at=0;
               menuVariant<T>::sync(at);
               prompt::dirty=true;
-              (*menuNode::operator[](at).shadow)(FUNC_VALUES);
+              (menuNode::operator[](at))(FUNC_VALUES);
             }
             default:
               return proceed;

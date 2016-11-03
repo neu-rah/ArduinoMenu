@@ -3,8 +3,11 @@
 
 using namespace Menu;
 
-#define LEDPIN A3
-
+#ifdef ARDUINO_SAM_DUE
+  #define LEDPIN 13
+#else
+  #define LEDPIN A3
+#endif
 result zZz() {Serial<<"zZz"<<endl;return proceed;}
 
 result showEvent(eventMask e,navNode& nav,prompt& item) {

@@ -104,6 +104,17 @@
       public:
         inline menuValueShadow(const char * text,T value,action a=doNothing,eventMask e=noEvent)
           :promptShadow(text,a,e),value(value) {}
+        inline T getTypeValue(const T* from) const {
+          //TODO: dynamic versions require change of preprocessor to virtual
+          #ifdef USING_PGM
+            T tmp;
+            memcpy_P(&tmp, from, sizeof(T));
+            return tmp;
+          #else
+            return *from;
+          #endif
+        }
+        inline T target() const {return getTypeValue(&value);}
     };
 
     template<typename T>
@@ -126,6 +137,7 @@
       public:
         menuVariantShadow(const char* text,T &target,idx_t sz,prompt* const* data,action a,eventMask e,styles style)
         :menuNodeShadow(text,sz,data,a,e,style),value(&target) {}
+      inline T& target() const {return *((T*)memPtr(value));}
     };
   }//namespace Menu
 #endif
