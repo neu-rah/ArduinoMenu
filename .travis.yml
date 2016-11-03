@@ -56,11 +56,11 @@ install:
    - wget https://bitbucket.org/fmalpartida/new-liquidcrystal/downloads/NewliquidCrystal_1.3.4.zip -O /tmp/NewliquidCrystal_1.3.4.zip
    - unzip /tmp/NewliquidCrystal_1.3.4.zip -d /tmp/
 
-   - wget https://github.com/adafruit/Adafruit-PCD8544-Nokia-5110-LCD-library/archive/master.zip -O /tmp/Adafruit-PCD8544-Nokia-5110-LCD-library.zip
-   - unzip /tmp/Adafruit-PCD8544-Nokia-5110-LCD-library.zip -d /tmp/
+   - wget https://github.com/adafruit/Adafruit-PCD8544-Nokia-5110-LCD-library/archive/master.zip -O /tmp/Adafruit-PCD8544-Nokia-5110-LCD-library-master.zip
+   - unzip /tmp/Adafruit-PCD8544-Nokia-5110-LCD-library-master.zip -d /tmp/
 
-   - wget https://github.com/adafruit/Adafruit-ST7735-Library/archive/master.zip -O /tmp/Adafruit-ST7735-Library.zip
-   - unzip /tmp/Adafruit-ST7735-Library.zip -d /tmp/
+   - wget https://github.com/adafruit/Adafruit-ST7735-Library/archive/master.zip -O /tmp/Adafruit-ST7735-Library-master.zip
+   - unzip /tmp/Adafruit-ST7735-Library-master.zip -d /tmp/
 
 script:
-   - platformio ci --lib="." --lib="/tmp/Streaming-master" --lib="/tmp/Assert4a-master" --lib="/tmp/Adafruit-GFX-Library-master" --lib="/tmp/PCINT-master" --lib="/tmp/U8glib_Arduino-master" --lib="/tmp/AnsiStream-master" --lib="/tmp/NewliquidCrystal" --lib="/tmp/Adafruit-PCD8544-Nokia-5110-LCD-library" --lib="/tmp/Adafruit-ST7735-Library" --board=nanoatmega328 --board=teensy31 --board=due
+   - platformio ci --lib="." --lib="/tmp/Streaming-master" --lib="/tmp/Assert4a-master" --lib="/tmp/Adafruit-GFX-Library-master" --lib="/tmp/PCINT-master" --lib="/tmp/U8glib_Arduino-master" --lib="/tmp/AnsiStream-master" --lib="/tmp/NewliquidCrystal" --lib="/tmp/Adafruit-PCD8544-Nokia-5110-LCD-library-master" --lib="/tmp/Adafruit-ST7735-Library-master" --board=nanoatmega328 --board=teensy31 --board=due
