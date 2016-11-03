@@ -122,7 +122,7 @@ void showCharsMap(eventMask event, navNode& nav) {nav.root->idleOn(showChars);}
 void showOutColors(eventMask event, navNode& nav) {nav.root->idleOn(showColors);}
 
 //menu definition ------------------------------------
-#include "menuDef.hpp"
+#include "menuDef.h"
 
 ////////////////////////////////////////////////////////////////////////
 // menu navigation root object
