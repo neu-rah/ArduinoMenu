@@ -11,10 +11,8 @@
       public:
         Print& device;
         idx_t lastLine=-1;
-        inline serialOut(Print& o,idx_t* t,panelsList &p=default_serial_panel_list,bool r=false,bool m=false)
-          :menuOut(t,p,r,m),device(o) {
-            drawNumIndex=true;
-          }
+        inline serialOut(Print& o,idx_t* t,panelsList &p=default_serial_panel_list,menuOut::styles st=none)
+          :menuOut(t,p,(menuOut::styles)(st|menuOut::drawNumIndex)),device(o) {}
         void clear() override {
           device<<endl;
           panels.reset();

@@ -1,7 +1,7 @@
 /* -*- C++ -*- */
 #include "baseMacros.h"
 
-#ifdef ARDUINO_SAM_DUE
+#if defined(__arm__) | MCU == esp01_1m
   #define MENU_USERAM
 #endif
 #if defined(pgm_read_ptr_near) && !defined(MENU_USERAM)

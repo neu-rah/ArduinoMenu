@@ -254,13 +254,15 @@ www.r-site.net
         panelsList& panels;
         idx_t lastSel=-1;
         //TODO: turn this bool's into bitfield flags
-        bool redraw=false;//redraw all menu every cycle, some display drivers require it
+        enum styles {none=0<<0,redraw=1<<0,minimalRedraw=1<<1, drawNumIndex=1<<2, usePreview=1<<3} style;
+
+        /*bool redraw=false;//redraw all menu every cycle, some display drivers require it
         bool minimalRedraw=true;//redraw only changed options (avoids flicking on LCDS), not good for Serial
         bool drawNumIndex=false;
-        bool usePreview=false;
+        bool usePreview=false;*/
         menuNode* drawn=NULL;
-        menuOut(idx_t *topsList,panelsList &p,bool r=false,bool minimal=true)
-          :tops(topsList),panels(p),redraw(r),minimalRedraw(minimal) {}
+        menuOut(idx_t *topsList,panelsList &p,styles os=minimalRedraw)
+          :tops(topsList),panels(p),style(os) {}
         inline idx_t maxX(idx_t i=0) const {return panels[i].w;}
         inline idx_t maxY(idx_t i=0) const {return panels[i].h;}
         inline idx_t& top(navNode& nav) const;
@@ -286,6 +288,9 @@ www.r-site.net
           write(selected?(stat==disabledStatus?options->disabledCursor:options->selectedCursor):' ');
         }
         void doNav(navCmd cmd,navNode &nav);
+        enum fmtParts {fmtPanel,fmtTitle,fmtBody,fmtOp,fmtIdx,fmtCursor,fmtOpBody,fmtPreview};
+        virtual result fmtStart(fmtParts part,navNode &nav,idx_t panelNr,idx_t idx=-1) {}
+        virtual result fmtEnd(fmtParts part,navNode &nav,idx_t panelNr,idx_t idx=-1) {}
       protected:
         void printMenu(navNode &nav,idx_t panelNr);
     };
@@ -295,8 +300,8 @@ www.r-site.net
         idx_t resX=1;
         idx_t resY=1;
         idx_t fontMarginY=1;//in pixels, compensate vertical font alignment
-        gfxOut(idx_t rx,idx_t ry,idx_t* t,panelsList &p,bool r=true)
-          :menuOut(t,p,r),resX(rx),resY(ry) {}
+        gfxOut(idx_t rx,idx_t ry,idx_t* t,panelsList &p,menuOut::styles st=menuOut::redraw)
+          :menuOut(t,p,st),resX(rx),resY(ry) {}
         //void printMenu(navNode &nav) override;
     };
 
