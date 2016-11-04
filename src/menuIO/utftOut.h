@@ -36,7 +36,7 @@ UTFT library from:
         const colorDef<uint16_t> (&colors)[nColors];
         int curX,curY;
         utftOut(UTFT& tft,const colorDef<uint16_t> (&c)[nColors],idx_t* t,panelsList &p,idx_t resX,idx_t resY)
-          :gfxOut(resX,resY,t,p,false),gfx(tft),colors(c),curX(0),curY(0) {}
+          :gfxOut(resX,resY,t,p),gfx(tft),colors(c),curX(0),curY(0) {}
         /*void init() {
           //setup geometry
           resX=gfx.getFontXsize();

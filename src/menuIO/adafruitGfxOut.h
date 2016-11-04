@@ -25,7 +25,7 @@ namespace Menu {
 				Adafruit_GFX& gfx;
 				const colorDef<uint16_t> (&colors)[nColors];
 		    adaGfxOut(Adafruit_GFX& gfx,const colorDef<uint16_t> (&c)[nColors],idx_t* t,panelsList &p,idx_t resX=6,idx_t resY=9)
-					:gfxOut(resX,resY,t,p,false),gfx(gfx),colors(c) {}
+					:gfxOut(resX,resY,t,p),gfx(gfx),colors(c) {}
 					//:gfxOut(gfx.width()/resX,gfx.height()/resY,resX,resY,false),colors(c),gfx(gfx) {}
 
 				size_t write(uint8_t ch) override {return gfx.write(ch);}
