@@ -7,7 +7,7 @@
 #include <menuIO/serialOut.h>
 #include <menuIO/esp8266Out.h>
 
-//using namespace Menu;
+using namespace Menu;
 
 #define SERVER_PORT 80
 #define AP_SSID "r-site.net"
@@ -24,7 +24,7 @@ const char * httpHeaders[nrHttpResCodes]={
 
 #define OK httpHeaders[ok]
 
-/*class WiFiSessionOut:public esp8266Out {
+class WiFiSessionOut:public esp8266Out {
 public:
   WiFiSessionOut(
     const colorDef<esp8266Out::webColor> (&c)[nColors],
@@ -83,23 +83,23 @@ const colorDef<esp8266Out::webColor> colors[] MEMMODE={
   {{WHITE,BLACK},{WHITE,YELLOW,YELLOW}},//unitColor
   {{WHITE,GRAY},{BLACK,BLUE,WHITE}},//cursorColor
   {{WHITE,YELLOW},{BLUE,RED,RED}},//titleColor
-};*/
+};
 
-#define MAX_DEPTH 2
 //serialOut outSerial(Serial);//the output device (just the serial port)
+#define MAX_DEPTH 2
 //PANELS(serial_pList,{0,0,40,10});
 //navNode* serial_nodes[sizeof(serial_panels)/sizeof(panel)];
 //panelsList serial_pList(serial_panels,serial_nodes,sizeof(serial_panels)/sizeof(panel));
 //idx_t serial_tops[MAX_DEPTH];
 //serialOut outSerial(Serial,serial_tops,serial_pList);//the output device (just the serial port)
 
-/*idx_t tops[MAX_DEPTH];
+idx_t tops[MAX_DEPTH];
 PANELS(webPanels,{0,0,800,600});
 WiFiSessionOut wifiOut(colors,tops,webPanels);
 MENU_OUTLIST(out,&wifiOut);
-NAVROOT(nav,mainMenu,MAX_DEPTH,Serial,out);*/
+NAVROOT(nav,mainMenu,MAX_DEPTH,Serial,out);
 
-//config myOptions={'*','-',false,false,defaultNavCodes};
+config myOptions={'*','-',false,false,defaultNavCodes};
 
 void setup() {
   //options=&myOptions;
