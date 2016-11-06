@@ -14,11 +14,11 @@
         inline serialOut(Print& o,idx_t* t,panelsList &p=default_serial_panel_list,menuOut::styles st=none)
           :menuOut(t,p,(menuOut::styles)(st|menuOut::drawNumIndex)),device(o) {}
         void clear() override {
-          device<<endl;
+          println();
           panels.reset();
         }
         void clear(idx_t panelNr) override {
-          device<<endl;
+          println();
           panels.nodes[panelNr]=NULL;
         }
         void clearLine(
@@ -35,7 +35,7 @@
         void setCursor(idx_t x,idx_t y,idx_t panelNr=0) override {
           if (lastLine!=y) {
             lastLine=y;
-            device<<endl;
+            println();
           }
         };
     };

@@ -157,7 +157,10 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
       setColor(fgColor,selected,p.enabled,ed);
       if (drawNumIndex) {
         char a=tops[nav.root->level]+i+'1';
-        *this<<'['<<(a<='9'?a:'-')<<']';
+        print('[');
+        print(a<='9'?a:'-');
+        print(']');
+        //*this<<'['<<(a<='9'?a:'-')<<']';
         len-=3;
       }
       //<------idxEnd
@@ -311,7 +314,8 @@ void navRoot::doNav(navCmd cmd) {
 
 
 result maxDepthError(menuOut& o,idleEvent e) {
-  o<<F("Error: maxDepth reached!\n\rincrease maxDepth on your scketch.");
+  //o<<F("Error: maxDepth reached!\n\rincrease maxDepth on your scketch.");
+  o.print(F("Error: maxDepth reached!\n\rincrease maxDepth on your scketch."));
   return proceed;
 }
 

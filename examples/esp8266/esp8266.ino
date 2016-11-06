@@ -4,10 +4,10 @@
 
 #define max(a,b) (((a)>(b))?(a):(b))
 #include <menu.h>
-//#include <menuIO/serialOut.h>
+#include <menuIO/serialOut.h>
 #include <menuIO/esp8266Out.h>
 
-using namespace Menu;
+//using namespace Menu;
 
 #define SERVER_PORT 80
 #define AP_SSID "r-site.net"
@@ -24,7 +24,7 @@ const char * httpHeaders[nrHttpResCodes]={
 
 #define OK httpHeaders[ok]
 
-class WiFiSessionOut:public esp8266Out {
+/*class WiFiSessionOut:public esp8266Out {
 public:
   WiFiSessionOut(
     const colorDef<esp8266Out::webColor> (&c)[nColors],
@@ -83,7 +83,7 @@ const colorDef<esp8266Out::webColor> colors[] MEMMODE={
   {{WHITE,BLACK},{WHITE,YELLOW,YELLOW}},//unitColor
   {{WHITE,GRAY},{BLACK,BLUE,WHITE}},//cursorColor
   {{WHITE,YELLOW},{BLUE,RED,RED}},//titleColor
-};
+};*/
 
 #define MAX_DEPTH 2
 //serialOut outSerial(Serial);//the output device (just the serial port)
@@ -93,16 +93,16 @@ const colorDef<esp8266Out::webColor> colors[] MEMMODE={
 //idx_t serial_tops[MAX_DEPTH];
 //serialOut outSerial(Serial,serial_tops,serial_pList);//the output device (just the serial port)
 
-idx_t tops[MAX_DEPTH];
+/*idx_t tops[MAX_DEPTH];
 PANELS(webPanels,{0,0,800,600});
 WiFiSessionOut wifiOut(colors,tops,webPanels);
 MENU_OUTLIST(out,&wifiOut);
-NAVROOT(nav,mainMenu,MAX_DEPTH,Serial,out);
+NAVROOT(nav,mainMenu,MAX_DEPTH,Serial,out);*/
 
-config myOptions={'*','-',false,false,defaultNavCodes};
+//config myOptions={'*','-',false,false,defaultNavCodes};
 
 void setup() {
-  options=&myOptions;
+  //options=&myOptions;
   Serial<<".";
   Serial.begin(115200);
   while(!Serial);
@@ -137,21 +137,21 @@ void loop() {
 
   // Match the request
   if (req[0]=='G'&&!req.indexOf("GET /menu")) {
-    wifiOut.client=&client;
+    //wifiOut.client=&client;
     uint8_t ch=req[10];
     if (ch>='0'&&ch<='9') {
       //Serial<<"idxCmd:"<<ch-'0'<<endl;
-      nav.doNav(navCmd(idxCmd,ch));
+      //nav.doNav(navCmd(idxCmd,ch));
       client.print(OK);
       client.print(noCache);
       //nav.poll();
-      nav.doOutput();
+      //nav.doOutput();
       client<<endl;
       //client.flush();
       delay(1);
       //Serial.println("=== Response end.");
-    } else nav.doOutput();//else Serial<<"ch:"<<ch;
-    wifiOut.client=NULL;
+    } //else nav.doOutput();//else Serial<<"ch:"<<ch;
+    //wifiOut.client=NULL;
   } else {
     client.print(e404);
   }
