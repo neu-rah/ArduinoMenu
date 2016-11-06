@@ -64,11 +64,11 @@ public:
 
 void action1(eventMask event, navNode& nav, prompt &item) {
   Serial<<"action1 called!"<<endl;
-  nav.root->out[0]<<"This is action <b>1</b> web report"<<millis()/6000<<endl;
+  nav.root->out[0]<<"This is action <b>1</b> web report "<<millis()/1000<<endl;
 }
 void action2(eventMask event, navNode& nav, prompt &item) {
   Serial<<"action2 called!"<<endl;
-  nav.root->out[0]<<"This is action <b>2</b> web report "<<millis()/6000<<endl;
+  nav.root->out[0]<<"This is action <b>2</b> web report "<<millis()/1000<<endl;
 }
 
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
