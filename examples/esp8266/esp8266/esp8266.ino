@@ -64,9 +64,11 @@ public:
 
 void action1(eventMask event, navNode& nav, prompt &item) {
   Serial<<"action1 called!"<<endl;
+  nav.root->out[0]<<"This is action <b>1</b> web report"<<endl;
 }
 void action2(eventMask event, navNode& nav, prompt &item) {
   Serial<<"action2 called!"<<endl;
+  nav.root->out[0]<<"This is action <b>2</b> web report"<<endl;
 }
 
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
@@ -156,6 +158,7 @@ void loop() {
       if (ch>='0'&&ch<='9') {
         nav.doNav(navCmd(selCmd,ch));
         nav.doOutput();
+        client<<"<hr/>";
         nav.doNav(navCmd(enterCmd));
         delay(1);
       } else nav.doOutput();
