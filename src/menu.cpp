@@ -253,12 +253,15 @@ navCmd navNode::doNavigation(navCmd cmd) {
       assert(root);
       rCmd=root->enter();
       break;
+    case selCmd:
     case idxCmd: {
         char at=cmd.param-'1';
         if (at>=0&&at<=sz()) {
           sel=at;
-          assert(root);
-          rCmd=root->enter();
+          if (cmd.cmd==idxCmd) {
+            assert(root);
+            rCmd=root->enter();
+          }
         }
       }
       break;

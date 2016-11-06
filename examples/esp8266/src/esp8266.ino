@@ -15,9 +15,10 @@ using namespace Menu;
 
 WiFiServer server(SERVER_PORT);
 
-enum httpResCodes {ok,e404,noCache,nrHttpResCodes};
+enum httpResCodes {ok,docHtml,e404,noCache,nrHttpResCodes};
 const char * httpHeaders[nrHttpResCodes]={
-  "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n<!DOCTYPE HTML>\r\n",
+  "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n",
+  "<!DOCTYPE HTML>\r\n",
   "HTTP/1.0 404 Not Found\r\n",
   "Cache-Control: no-cache, no-store, must-revalidate\r\nPragma: no-cache\r\nExpires: 0\r\n",
 };
@@ -61,8 +62,12 @@ public:
   }
 };
 
-void action1() {Serial<<"action1 called!"<<endl;}
-void action2() {Serial<<"action2 called!"<<endl;}
+void action1(eventMask event, navNode& nav, prompt &item) {
+  Serial<<"action1 called!"<<endl;
+}
+void action2(eventMask event, navNode& nav, prompt &item) {
+  Serial<<"action2 called!"<<endl;
+}
 
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,OP("Op1",action1,enterEvent)
@@ -102,7 +107,7 @@ NAVROOT(nav,mainMenu,MAX_DEPTH,Serial,out);
 config myOptions={'*','-',false,false,defaultNavCodes};
 
 void setup() {
-  //options=&myOptions;
+  options=&myOptions;
   Serial<<".";
   Serial.begin(115200);
   while(!Serial);
@@ -136,26 +141,22 @@ void loop() {
   //Serial.println(req);client.flush();
 
   // Match the request
-  if (req[0]=='G'&&!req.indexOf("GET /menu")) {
-    //wifiOut.client=&client;
+  if (req.startsWith("GET /menu")) {
+    wifiOut.client=&client;
     uint8_t ch=req[10];
     if (ch>='0'&&ch<='9') {
-      //Serial<<"idxCmd:"<<ch-'0'<<endl;
-      //nav.doNav(navCmd(idxCmd,ch));
-      client.print(OK);
-      client.print(noCache);
-      //nav.poll();
-      //nav.doOutput();
+      client.print(httpHeaders[ok]);
+      client.print(httpHeaders[noCache]);
       client<<endl;
-      //client.flush();
+      client.print(httpHeaders[docHtml]);
+      nav.doNav(navCmd(selCmd,ch));
+      nav.doOutput();
+      nav.doNav(navCmd(enterCmd));
       delay(1);
-      //Serial.println("=== Response end.");
-    } //else nav.doOutput();//else Serial<<"ch:"<<ch;
-    //wifiOut.client=NULL;
+    } else nav.doOutput();
+    wifiOut.client=NULL;
   } else {
-    client.print(e404);
+    client.print(httpHeaders[e404]);
   }
-  //client.flush();
-  //client.stop();
   delay(500);
 }

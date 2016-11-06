@@ -53,7 +53,7 @@ www.r-site.net
     enum systemStyles {_noStyle=0,_menuData=1,_canNav=2,_parentDraw=4,_isVariant=8};
     enum styles {noStyle=0,wrapStyle=1};//,dontEnter=2};
     //representing parsed input codes (can be used with switch/case)
-    enum navCmds {noCmd=0,escCmd,enterCmd,upCmd,downCmd,leftCmd,rightCmd,idxCmd,scrlUpCmd,scrlDownCmd};
+    enum navCmds {noCmd=0,escCmd,enterCmd,upCmd,downCmd,leftCmd,rightCmd,idxCmd,selCmd,scrlUpCmd,scrlDownCmd};
     struct navCmd {
       navCmds cmd;
       idx_t param;
