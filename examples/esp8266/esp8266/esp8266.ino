@@ -34,10 +34,10 @@ public:
   ):esp8266Out(c,t,p) {}
   result fmtStart(fmtParts part,navNode &nav,idx_t panelNr,idx_t idx=-1) override {
     switch(part) {
-      case fmtPanel:*client<<"<html><body><div>";break;
-      case fmtTitle:*client<<"<h2>";break;
-      case fmtBody:*client<<"<ul>";break;
-      case fmtOp:*client<<"<li><a href=\"/menu/"<<idx+1<<"\">";break;
+      case fmtPanel:*client<<"<div class=\"panel\">";break;
+      case fmtTitle:*client<<"<h2 class=\"title\">";break;
+      case fmtBody:*client<<"<ul class=\"ops\">";break;
+      case fmtOp:*client<<"<li class=\"op\"><a href=\"/menu/"<<idx+1<<"\">";break;
       case fmtIdx:break;
       case fmtCursor:break;
       case fmtOpBody:break;
@@ -48,7 +48,7 @@ public:
   }
   result fmtEnd(fmtParts part,navNode &nav,idx_t panelNr,idx_t idx=-1) override {
     switch(part) {
-      case fmtPanel:*client<<"</div></body></html>";break;
+      case fmtPanel:*client<<"</div>";break;
       case fmtTitle:*client<<"</h2>";break;
       case fmtBody:*client<<"</ul>";break;
       case fmtOp:*client<<"</a></li>";break;
@@ -138,25 +138,30 @@ void loop() {
   //Serial<<"reading client"<<endl;
   // Read the first line of the request
   String req = client.readStringUntil('\r');
-  //Serial.println(req);client.flush();
 
   // Match the request
-  if (req.startsWith("GET /menu")) {
-    wifiOut.client=&client;
-    uint8_t ch=req[10];
-    if (ch>='0'&&ch<='9') {
+  if (req.startsWith("GET ")) {
+    if (req.startsWith("GET /favicon.ico")) {
+      client.print(httpHeaders[e404]);
+    } else if (req.startsWith("GET /menu")) {
+      Serial.println(req);
+      wifiOut.client=&client;
       client.print(httpHeaders[ok]);
       client.print(httpHeaders[noCache]);
       client<<endl;
       client.print(httpHeaders[docHtml]);
-      nav.doNav(navCmd(selCmd,ch));
-      nav.doOutput();
-      nav.doNav(navCmd(enterCmd));
-      delay(1);
-    } else nav.doOutput();
-    wifiOut.client=NULL;
-  } else {
-    client.print(httpHeaders[e404]);
-  }
-  delay(500);
+      client<<"<html><head><title>ArduinoMenu library OTA</title></head><body>";
+      uint8_t ch=req[10];
+      //Serial<<"ch:"<<ch<<endl;
+      if (ch>='0'&&ch<='9') {
+        nav.doNav(navCmd(selCmd,ch));
+        nav.doOutput();
+        nav.doNav(navCmd(enterCmd));
+        delay(1);
+      } else nav.doOutput();
+      client<<"</body></html>";
+      wifiOut.client=NULL;
+    } else client.print(httpHeaders[e404]);
+  } else client.print(httpHeaders[e404]);
+  delay(500);//this is not good, arbitrary delay not always enuf for the page... need a termination check
 }
