@@ -20,7 +20,8 @@ UTFT library from:
 ***/
 
 #include <Arduino.h>
-#include <menu.h>include <menuIO/utftOut.h>
+#include <menu.h>
+#include <menuIO/utftOut.h>
 #include <menuIO/utouchIn.h>
 #include <menuIO/serialOut.h>
 #include <menuIO/chainStream.h>
