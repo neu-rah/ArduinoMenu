@@ -25,6 +25,8 @@ Arduino Menu Library
 - errors (dynamic modal)
 - modal just blocks the cycle.
 - custom field format (date/time)
+- sleepTask should be abandoned also with escape or by returning quit
+- sleepTask (with params) and returning void is interpreted as quit -> change it!
 - textField?
     if so make it a submenu where text is a title and we navigate a pad/menu to choose letters and commands.
 

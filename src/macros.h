@@ -1,8 +1,11 @@
 /* -*- C++ -*- */
 #include "baseMacros.h"
 
-#if defined(__arm__) | MCU == esp01_1m
+#if defined(__arm__) | defined(ESP8266)
   #define MENU_USERAM
+#endif
+#ifdef ESP8266
+  #define typeof(x) __typeof__(x)
 #endif
 #if defined(pgm_read_ptr_near) && !defined(MENU_USERAM)
   //storing some values into avr flash memory (saving ram space)

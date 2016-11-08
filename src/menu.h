@@ -18,7 +18,7 @@ www.r-site.net
 #ifndef RSITE_ARDUINO_MENU_SYSTEM
   #define RSITE_ARDUINO_MENU_SYSTEM
   #include <Arduino.h>
-  //#include <Stream.h>
+  #include <Streaming.h>
   #include "menuBase.h"
   #include "shadows.h"
 
@@ -28,7 +28,7 @@ www.r-site.net
 
   namespace Menu {
 
-
+    #define _MAX(a,b) (((a)>(b))?(a):(b))
     // Menu objects and data
     //////////////////////////////////////////////////////////////////////////
     class prompt {
@@ -238,12 +238,12 @@ www.r-site.net
         }
         idx_t maxX() const {
           idx_t r=0;
-          for(int n=0;n<sz;n++) r=max(operator[](n).maxX(),r);
+          for(int n=0;n<sz;n++) r=_MAX(operator[](n).maxX(),r);
           return r;
         }
         idx_t maxY() const {
           idx_t r=0;
-          for(int n=0;n<sz;n++) r=max(operator[](n).maxY(),r);
+          for(int n=0;n<sz;n++) r=_MAX(operator[](n).maxY(),r);
           return r;
         }
     };
@@ -255,6 +255,7 @@ www.r-site.net
         idx_t lastSel=-1;
         //TODO: turn this bool's into bitfield flags
         enum styles {none=0<<0,redraw=1<<0,minimalRedraw=1<<1, drawNumIndex=1<<2, usePreview=1<<3} style;
+        enum fmtParts {fmtPanel,fmtTitle,fmtBody,fmtOp,fmtIdx,fmtCursor,fmtOpBody,fmtPreview};
 
         /*bool redraw=false;//redraw all menu every cycle, some display drivers require it
         bool minimalRedraw=true;//redraw only changed options (avoids flicking on LCDS), not good for Serial
@@ -288,9 +289,8 @@ www.r-site.net
           write(selected?(stat==disabledStatus?options->disabledCursor:options->selectedCursor):' ');
         }
         void doNav(navCmd cmd,navNode &nav);
-        enum fmtParts {fmtPanel,fmtTitle,fmtBody,fmtOp,fmtIdx,fmtCursor,fmtOpBody,fmtPreview};
-        virtual result fmtStart(fmtParts part,navNode &nav,idx_t panelNr,idx_t idx=-1) {}
-        virtual result fmtEnd(fmtParts part,navNode &nav,idx_t panelNr,idx_t idx=-1) {}
+        virtual result fmtStart(fmtParts part,navNode &nav,idx_t panelNr,idx_t idx=-1) {return proceed;}
+        virtual result fmtEnd(fmtParts part,navNode &nav,idx_t panelNr,idx_t idx=-1) {return proceed;}
       protected:
         void printMenu(navNode &nav,idx_t panelNr);
     };

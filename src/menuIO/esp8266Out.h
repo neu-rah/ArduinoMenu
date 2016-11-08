@@ -2,59 +2,83 @@
 #ifndef RSITE_ARDUINO_MENU_ESP8266OUT
   #define RSITE_ARDUINO_MENU_ESP8266OUT
   #include "../menu.h"
+  #include <ESP8266WiFi.h>
+  #include <WiFiClient.h>
+  #include <ESP8266WebServer.h>
+  #include <ESP8266mDNS.h>
 
   namespace Menu {
-    class esp8266Out:public menuOut {
-    public:
-      typedef const char* webColor;
-      const colorDef<webColor> (&colors)[nColors];
-      WiFiClient* client;
-      esp8266Out(
-        const colorDef<webColor> (&c)[nColors],
-        idx_t* t,
-        panelsList& p
-      ):menuOut(t,p,redraw),colors(c) {}
-      size_t write(uint8_t ch) override {return client->write(ch);}
-      inline webColor getColor(colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) const {
-        return (webColor)memPtr(&(stat==enabledStatus?colors[color].enabled[selected+edit]:colors[color].disabled[selected]));
-      }
-      menuOut& fill(
-        int x1, int y1, int x2, int y2,char ch=' ',
-        colorDefs color=bgColor,
-        bool selected=false,
-        status stat=enabledStatus,
-        bool edit=false) override {
-          /**client<<"<div styles=\""
-            <<"background--color:"<<getColor(color,selected,stat,edit)
-            <<" left:"<<x1<<" top:"<<y1<<" width:"<<x2-x1<<" height:"<<y2-y1;*/
-          return *this;
-      }
-      void setCursor(idx_t x,idx_t y,idx_t panelNr=0) override {
-        //*client<<"left:"<<x<<" top:"<<y;
-      }
-      void clear() override {panels.reset();}
-      void clear(idx_t panelNr) override {
-        setCursor(0,0,panelNr);
-        panels.nodes[panelNr]=NULL;
-      }
-      void clearLine(
-        idx_t ln,
-        idx_t panelNr=0,
-        colorDefs color=bgColor,
-        bool selected=false,
-        status stat=enabledStatus,
-        bool edit=false
-      ) override {
-        const panel p=panels[panelNr];
-        /**client<<"<li id=\"op"<<ln<<"\" styles=\" left:"<<p.x<<"px top:"<<ln+p.y
-          <<"px background-color:"<<getColor(color,selected,stat,edit)
-          <<" width:"<<p.x+p.w<<"px height:"<<p.y+ln<<"px\">";*/
-      }
-      void setColor(colorDefs c,bool selected=false,status s=enabledStatus,bool e=false) override {
-        /**client<<" color:"<<getColor(c,selected,s,e);*/
-      }
-    };
-  }//namespace Menu
 
+    class esp8266Out:public menuOut {
+      public:
+        typedef const char* webColor;
+        const colorDef<webColor> (&colors)[nColors];
+        esp8266Out(
+          const colorDef<webColor> (&c)[nColors],
+          idx_t* t,
+          panelsList& p
+        ):menuOut(t,p,redraw),colors(c) {}
+        //size_t write(uint8_t ch) override {return client->write(ch);}
+        inline webColor getColor(colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) const {
+          return (webColor)memPtr(&(stat==enabledStatus?colors[color].enabled[selected+edit]:colors[color].disabled[selected]));
+        }
+        menuOut& fill(
+          int x1, int y1, int x2, int y2,char ch=' ',
+          colorDefs color=bgColor,
+          bool selected=false,
+          status stat=enabledStatus,
+          bool edit=false) override {return *this;}
+        void setCursor(idx_t x,idx_t y,idx_t panelNr=0) override {}
+        void clear() override {panels.reset();}
+        void clear(idx_t panelNr) override {
+          setCursor(0,0,panelNr);
+          panels.nodes[panelNr]=NULL;
+        }
+        void clearLine(
+          idx_t ln,
+          idx_t panelNr=0,
+          colorDefs color=bgColor,
+          bool selected=false,
+          status stat=enabledStatus,
+          bool edit=false
+        ) override {}
+        void setColor(colorDefs c,bool selected=false,status s=enabledStatus,bool e=false) override {};
+        //template<typename T> esp8266Out& operator<<(T t)=0;
+    };
+
+    class esp8266_WiFiClientOut:public esp8266Out {
+      public:
+        WiFiClient* client;
+        esp8266_WiFiClientOut(
+          const colorDef<webColor> (&c)[nColors],
+          idx_t* t,
+          panelsList& p
+        ):esp8266Out(c,t,p) {}
+        template<typename T> inline esp8266_WiFiClientOut& operator<<(T t) {client->print(t);return *this;}
+        size_t write(uint8_t ch) override {return client->write(ch);}
+    };
+
+    template<typename T> inline String& operator<<(String& o,T t) {return o.operator+=(t);}
+
+    class esp8266_WebServerOut:public esp8266Out {
+      public:
+        String response;
+        ESP8266WebServer &server;
+        //using esp8266Out::esp8266Out;
+        esp8266_WebServerOut(
+          ESP8266WebServer &srv,
+          const colorDef<esp8266Out::webColor> (&c)[nColors],
+          idx_t* t,
+          panelsList& p
+        ):esp8266Out(c,t,p),server(srv) {}
+        size_t write(uint8_t ch) override {response<<(char)ch;return 1;}
+        template<typename T> inline esp8266_WebServerOut& operator<<(T t) {response<<t;return *this;}
+    };
+
+    //template<typename T> inline esp8266_WebServerOut& operator<<(esp8266_WebServerOut&o , T t) {return o.operator<<(t);}
+    //template<typename T> inline esp8266_WiFiClientOut& operator<<(esp8266_WiFiClientOut&o , T t) {return o.operator<<(t);}
+    //template<typename T> inline esp8266Out& operator<<(esp8266Out&o , T t) {return o.operator<<(t);}
+
+  }//namespace Menu
 
 #endif

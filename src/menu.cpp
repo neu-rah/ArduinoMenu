@@ -85,7 +85,7 @@ void menuOut::printMenu(navNode &nav) {
   if (usePreview&&k) k--;
   for(int i=0;i<k;i++) {
     navNode &n=nav.root->path[lvl-k+i];
-    if (!(minimalRedraw&&panels.nodes[i]==&n)) {
+    if (!((style&minimalRedraw)&&panels.nodes[i]==&n)) {
       previewMenu(*nav.root,*n.target,i);
       panels.nodes[i]=&n;
     }
@@ -107,14 +107,14 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
   idx_t st=(nav.root->showTitle&&(maxY(panelNr)>1))?1:0;//do not use titles on single line devices!
   while(nav.sel+st>=(tops[nav.root->level]+maxY(panelNr))) tops[nav.root->level]++;
   while(nav.sel<tops[nav.root->level]||(tops[nav.root->level]&&((nav.sz()-tops[nav.root->level])<maxY(panelNr)-st))) tops[nav.root->level]--;
-  bool all=redraw
+  bool all=(style&redraw)
     ||(tops[nav.root->level]!=ot)
     ||(drawn!=nav.target)
     ||(panels.nodes[panelNr]!=&nav);
-  if (!(all||minimalRedraw)) //non minimal draw will redraw all if any change
+  if (!(all||(style&minimalRedraw))) //non minimal draw will redraw all if any change
     all|=nav.target->changed(nav,*this);
   all|=nav.target->dirty;
-  if (!(all||minimalRedraw)) return;
+  if (!(all||(style&minimalRedraw))) return;
   panel pan=panels[panelNr];
 
   //-----> panel start

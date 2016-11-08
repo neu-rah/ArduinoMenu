@@ -28,7 +28,7 @@ Print& Menu::operator<<(Print& o,prompt const &p) {
 }
 
 const navCodesDef Menu::defaultNavCodes={
-  {noCmd,0xff},
+  {noCmd,(char)0xff},
   {escCmd,'/'},
   {enterCmd,'*'},
   {upCmd,'+'},
