@@ -300,7 +300,7 @@ www.r-site.net
         idx_t resX=1;
         idx_t resY=1;
         idx_t fontMarginY=1;//in pixels, compensate vertical font alignment
-        gfxOut(idx_t rx,idx_t ry,idx_t* t,panelsList &p,menuOut::styles st=menuOut::redraw)
+        gfxOut(idx_t rx,idx_t ry,idx_t* t,panelsList &p,menuOut::styles st=menuOut::minimalRedraw)
           :menuOut(t,p,st),resX(rx),resY(ry) {}
         //void printMenu(navNode &nav) override;
     };
@@ -544,10 +544,6 @@ www.r-site.net
       if (len-l>0) l+=operator[](at).printRaw(out,len-l);
       return l;
     }
-
-    /*template<typename T>
-    void menuVariant<T>::parseInput(navNode& nav,Stream& in) {
-      char ch=in.read();*/
 
     template<typename T>
     void menuVariant<T>::doNav(navNode& nav,navCmd cmd) {

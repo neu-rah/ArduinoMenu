@@ -138,5 +138,5 @@ void loop() {
   #ifndef ESP8266
   digitalWrite(LEDPIN, ledCtrl);
   #endif
-  delay(300);//simulate a delay when other tasks are done
+  delay(100);//simulate a delay when other tasks are done
 }

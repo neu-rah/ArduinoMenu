@@ -15,8 +15,8 @@
       class lcdOut:public menuOut {
         public:
           LCD* device;
-          inline lcdOut(LCD* o,idx_t *t,panelsList &p,bool r=false,bool m=true)
-            :menuOut(t,p,r,m),device(o) {}
+          inline lcdOut(LCD* o,idx_t *t,panelsList &p,menuOut::styles s=menuOut::minimalRedraw)
+            :menuOut(t,p,s),device(o) {}
           size_t write(uint8_t ch) override {return device->write(ch);}
           void clearLine(idx_t ln,idx_t panelNr=0,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) override {
           	setCursor(0,ln,panelNr);

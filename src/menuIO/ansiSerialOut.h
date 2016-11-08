@@ -26,7 +26,7 @@ www.r-site.net
           const colorDef<uint8_t> (&c)[nColors],
           idx_t* t,
           panelsList& p
-        ) :serialOut(o,t,p,menuOut::redraw),colors(c) {}
+        ) :serialOut(o,t,p,menuOut::minimalRedraw),colors(c) {}
         inline uint8_t getColor(colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) const {
           return memByte(&(stat==enabledStatus?colors[color].enabled[selected+edit]:colors[color].disabled[selected]));
         }

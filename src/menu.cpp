@@ -82,7 +82,7 @@ void menuOut::printMenu(navNode &nav) {
   int lvl=nav.root->level;
   if (focus.sysStyles()&_parentDraw) lvl--;
   int k=min(lvl,panels.sz-1);
-  if (usePreview&&k) k--;
+  if ((style&usePreview)&&k) k--;
   for(int i=0;i<k;i++) {
     navNode &n=nav.root->path[lvl-k+i];
     if (!((style&minimalRedraw)&&panels.nodes[i]==&n)) {
@@ -155,7 +155,7 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
       clearLine(ist,panelNr,bgColor,selected,p.enabled);
       setCursor(0,ist,panelNr);
       setColor(fgColor,selected,p.enabled,ed);
-      if (drawNumIndex) {
+      if (drawNumIndex&style) {
         char a=tops[nav.root->level]+i+'1';
         print('[');
         print(a<='9'?a:'-');
@@ -181,7 +181,9 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
         if(p.isMenu()) {
           //----->  previewStart
           previewMenu(*nav.root,*(menuNode*)&p,panelNr+1);
-          //TODO: do we need preview pointers? panels.nodes[panelNr+1]=(menuNode*)&p;
+          //TODO: do we need preview pointers?
+          //because now i use navNode* instead and its not available here
+          //panels.nodes[panelNr+1]=(menuNode*)&p;
           //<----  previewEnd
         } else if (panels.nodes[panelNr+1]) clear(panelNr+1);
       }

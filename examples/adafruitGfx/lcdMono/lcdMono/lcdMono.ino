@@ -65,7 +65,7 @@ TOGGLE(ledCtrl,setLed,"Led: ",doNothing,noEvent,noStyle//,doExit,enterEvent,noSt
 );
 
 result alert(menuOut& o,idleEvent e) {
-  if (e==idling)
+  //if (e==idling)
     o<<F("alert test")<<endl<<F("press [select]")<<endl<<F("to continue...")<<endl;
   return proceed;
 }
@@ -111,7 +111,7 @@ NAVROOT(nav,mainMenu,MAX_DEPTH,Serial,out);
 
 //when menu is suspended
 result idle(menuOut& o,idleEvent e) {
-  if (e==idling)
+  //if (e==idling)
     o<<F("suspended...")<<endl<<F("press [select]")<<endl<<F("to continue");
   return proceed;
 }

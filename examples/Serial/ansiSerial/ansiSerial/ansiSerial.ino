@@ -1,3 +1,5 @@
+#include <Arduino.h>
+
 /********************
 Oct. 2016 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
 creative commons license 3.0: Attribution-ShareAlike CC BY-SA
@@ -55,7 +57,7 @@ menuOut* outputs[]={&ansi};
 outputsList out(outputs,1);*/
 
 MENU_OUTPUTS(out,MAX_DEPTH
-  ,ANSISERIAL_OUT(Serial,colors,{1,1,16,10},{18,1,16,10},{36,1,16,10})
+  ,ANSISERIAL_OUT(Serial,colors,{1,1,16,10})//,{18,1,16,10},{36,1,16,10})
   ,NONE//must have 2 items at least
 );
 
