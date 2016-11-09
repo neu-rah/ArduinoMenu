@@ -143,7 +143,7 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
     int ist=i+st;
     if (i+tops[nav.root->level]>=nav.sz()) break;
     prompt& p=nav[i+tops[nav.root->level]];
-    idx_t len=pan.w+1;
+    idx_t len=pan.w;
     if (all||p.changed(nav,*this,false)) {
       //any=true;
       //-------> opStart
@@ -167,7 +167,7 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
       fmtEnd(fmtIdx,nav,panelNr,i);
       //------> cursorStart
       fmtStart(fmtCursor,nav,panelNr,i);
-      drawCursor(ist,selected,p.enabled,ed,panelNr);
+      drawCursor(ist,selected,p.enabled,ed,panelNr);//assuming only one character
       //<------ cursorEnd
       fmtEnd(fmtCursor,nav,panelNr,i);
       len--;

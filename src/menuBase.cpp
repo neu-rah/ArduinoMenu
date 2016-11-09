@@ -19,7 +19,7 @@ idx_t Menu::print_P(Print& s,const char* at,idx_t len) {
   for(int n=0;(ch=memByte(at++))&&(len==0||n<len);n++) {
     s.write(ch);
 }
-  return at-p;
+  return at-p-1;
 }
 
 Print& Menu::operator<<(Print& o,prompt const &p) {

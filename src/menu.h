@@ -533,16 +533,18 @@ www.r-site.net
 
     template<typename T>
     idx_t menuVariant<T>::printTo(navRoot &root,bool sel,menuOut& out,idx_t len) {
-      idx_t l=prompt::printTo(root,sel,out,len);
+      idx_t l=len;
+      l-=prompt::printTo(root,sel,out,len);
       idx_t at=menuVariant<T>::sync(menuVariant<T>::sync());
       bool ed=this==root.navFocus;
       //bool sel=nav.sel==i;
+      if (len-l<0) return 0;
       out<<(this==&root.active()?':':' ');
-      l++;
+      l--;
       out.setColor(valColor,sel,prompt::enabled,ed);
       //out<<menuNode::operator[](at);
-      if (len-l>0) l+=operator[](at).printRaw(out,len-l);
-      return l;
+      if (l>0) l-=operator[](at).printRaw(out,l);
+      return len-l;
     }
 
     template<typename T>
