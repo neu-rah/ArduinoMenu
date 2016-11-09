@@ -4,10 +4,9 @@
 
 [![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](http://creativecommons.org/licenses/by-nc-sa/4.0/)
 [![Build Status](https://travis-ci.org/neu-rah/ArduinoMenu.svg?branch=dev)](https://travis-ci.org/neu-rah/ArduinoMenu)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/ff2a9215b7644adda60453d850a36aa3)](https://www.codacy.com/app/ruihfazevedo/ArduinoMenu?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=neu-rah/ArduinoMenu&amp;utm_campaign=Badge_Grade)
 
 ## Purpose
-Full automated navigation system.
+Full automated or user code driven navigation system.
 With this system you can define menus, submenus, input fields and other iteration objects that deal with all input/output and can call user defined handler as a result of user iteration.
 The user function can be operated as a single action called on click/enter or as a event driven function responding to focus In/Out or Enter/Esc events.
 The system is designed as a non blocking polling system, allowing parallel task to run.
@@ -17,32 +16,36 @@ Optionally the system can be operated in semi-automated mode, issuing navigation
 ```c++
 #include <Arduino.h>
 #include <menu.h>
-#include <dev/serialOut.h>
-#include <dev/chainStream.h>
+#include <menuIO/serialOut.h>
+#include <menuIO/chainStream.h>
 
 #define LEDPIN 13
-#define MAX_DEPT 1
+#define MAX_DEPTH 1
 
-int timeOn=500;
-int timeOff=500;
+int timeOn=10;
+int timeOff=90;
 
 MENU(mainMenu, "Blink menu", Menu::doNothing, Menu::noEvent, Menu::wrapStyle
-  ,FIELD(timeOn,"On","ms",0,1000,100,10, Menu::doNothing, Menu::noEvent, Menu::noStyle)
-  ,FIELD(timeOff,"Off","ms",0,1000,100,10,Menu::doNothing, Menu::noEvent, Menu::noStyle)
+  ,FIELD(timeOn,"On","ms",0,500,100,10, Menu::doNothing, Menu::noEvent, Menu::noStyle)
+  ,FIELD(timeOff,"Off","ms",0,500,100,10,Menu::doNothing, Menu::noEvent, Menu::noStyle)
   ,EXIT("<Back")
 );
 
 MENU_INPUTS(in,&Serial);
 
-Menu::idx_t tops[MAX_DEPT];
-Menu::serialOut outSerial(Serial,tops);//,serial_panels);//the output device (just the serial port)
+MENU_OUTPUTS(out,MAX_DEPTH
+  ,SERIAL_OUT(Serial)
+  ,NONE//must have 2 items at least
+);
 
-MENU_OUTPUTS(out,&outSerial);
-NAVROOT(nav,mainMenu,MAX_DEPT,in,out);
+NAVROOT(nav,mainMenu,MAX_DEPTH,in,out);
 
 void setup() {
   Serial.begin(115200);
   while(!Serial);
+  Serial.println("Menu 3.x");
+  Serial.println("Use keys + - * /");
+  Serial.println("to control the menu navigation");
   pinMode(LEDPIN, OUTPUT);
 }
 
@@ -72,6 +75,152 @@ void loop() {
 - events available for menus and prompts
 - simply returns when no input available and no draw needed.
 - lazy drawing, only draws when changed, avoiding time consumption and flicking.
+
+## Menu structure elements (macros)
+
+This macros define read-only static menu structure.
+
+**OP** - define a prompt with associated action function
+
+OP(text,action,event mask)
+
+```c++
+result goFun() {Serial.println("done!");return proceed;}
+
+...
+OP("Go!",goFun,enterEvent)
+```
+
+Creates an 'anonymous' option as a parent menu element. This option is associated with an action function to be called according to elements mask.
+Prompt's are the menu basic structure, all other elements will share its poroperties. That is all can have a title, and action function and an event mask.
+The action function will be called on every event occourence.
+The action function can sen back some 'result' information to be interpreted nby the caller. The meaning of this result depends on the caller and they might ignore it.
+Current styles have no meaning on simnple prompts.
+
+**MENU** - define a menu
+
+MENU( id, title, action, events mask, styles, Option, Option, [Option,...])
+
+a menu object 'id' is statically created and can be refered in your sketch by its 'id'.
+
+```c++
+  MENU(myMenu,"Schedule",doNothing,noEvent,wrapStyle
+    ,OP("Op A", actionA,enterEvent)
+    ,OP("Op B",actionB,enterEvent)
+    ,OP("Op C",actionC,enterEvent)
+    ,FIELD(test,"Test","%",0,100,10,1,doNothing,noEvent,wrapStyle)
+  );
+
+  void setup() {
+    myMenu[2].disable();
+  }
+```
+
+**FIELD** - numeric field for editing and range validate a numeric variable (int, float, double, unsigned int, etc...)
+
+FIELD(var.name, title, units, min., max., step size,fine step size, action, events mask, styles)
+
+```c++
+int pwm=0;
+...
+FIELD(pwm,"Power","%",0,100,10,1,doNothing,noEvent,noStyle)
+```
+
+**SELECT** - define varible value by selecting from an enumerated list of possible values. Click to start, select, click to end.
+
+SELECT(var.name, id, title, action, events meask, styles, value, value [, value ...])
+
+This creates a static menu like structure associated with a variable, enumeratin all possible variable values.
+Changing the selection will change the variable value and also reflects variable changes done elsewhere.
+
+```c++
+int mode=0;
+SELECT(mode,selMenu,"Select",doNothing,noEvent,noStyle
+  ,VALUE("Eco",0,doNothing,noEvent)
+  ,VALUE("Normal",1,doNothing,noEvent)
+  ,VALUE("Full",2,doNothing,noEvent)
+);
+
+MENU(myMenu,"Schedule",doNothing,noEvent,wrapStyle
+  ,SUBMENU(selMenu)
+  ,...
+)
+
+```
+
+**TOGGLE** - define varible value by toggling from an enumerated list of possible values. Change value every click.
+
+TOGGLE(var.name, id, title, action, event mask, styles, value, value [,value ...])
+
+```c++
+int dir=LOW;
+TOGGLE(dir,dirPinMenu,"Dir: ",doNothing,noEvent,wrapStyle
+  ,VALUE("Up",HIGH,doNothing,noEvent)
+  ,VALUE("Down",LOW,doNothing,noEvent)
+);
+
+MENU(myMenu,"Schedule",doNothing,noEvent,wrapStyle
+  ,SUBMENU(disPinMenu)
+  ,...
+);
+```
+
+Creates a menu like structure enumerating all possible values of the associated var.
+
+**CHOOSE** -  define varible value by chosing from an enumerated list of possible values. Enumerated list of values shown as a submenu.
+
+CHOOSE(var.name, id, title, action, evant mask, styles, value, value [,valu ...])
+
+```c++
+int chooseTest=-1;
+CHOOSE(chooseTest,chooseMenu,"Choose",doNothing,noEvent,noStyle
+  ,VALUE("First",1,doNothing,noEvent)
+  ,VALUE("Second",2,doNothing,noEvent)
+  ,VALUE("Third",3,doNothing,noEvent)
+  ,VALUE("Last",-1,doNothing,noEvent)
+);
+
+MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
+  ,SUBMENU(chooseMenu)
+  ,...
+);
+```
+
+Creates a static menu like structure enumerating all possible values of the associated varible.
+
+**SUBMENU** - include a menu as submenu or a SELECT|TOGGLE|CHOOSE field.
+
+```c++
+MENU(myMenu,"Schedule",doNothing,noEvent,wrapStyle
+  ,OP("Op A", actionA,enterEvent)
+  ,OP("Op B",actionB,enterEvent)
+  ,OP("Op C",actionC,enterEvent)
+  ,FIELD(test,"Test","%",0,100,10,1,doNothing,noEvent,wrapStyle)
+);
+
+MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
+  ,SUBMENU(myMenu)
+  ,...
+);
+```
+
+include a menu or menu like structure as element of the current menu.
+
+**EXIT** - quick define special option to leave current menu.
+
+```c++
+EXIT("<Back")
+```
+
+Create an option that exits the curremt menu as default action.
+
+## styles
+
+Elements can have this static styles.
+
+**noStyle** accepts system defaults to this elements
+
+**wrapStyle** element values list have a circular arrangement.
 
 ## user commands
 
@@ -103,33 +252,13 @@ nav.doNav(upCmd);
 **scrlDownCmd** N/A
 
 
-## Menu structure elements (macros)
-
-**MENU** - define a menu
-
-**OP** - define a prompt with associated action function
-
-**FIELD** - numeric field for editing and range validate a numeric variable (int, float, double, unsigned int, etc...)
-
-**SELECT** - define varible value by selecting from an enumerated list of possible values. Click to start, select, click to end.
-
-**TOGGLE** - define varible value by toggling from an enumerated list of possible values. Change value every click.
-
-**CHOOSE** -  define varible value by chosing from an enumerated list of possible values. Enumerated list of values shown as a submenu.
-
-**SUBMENU** - include a menu as submenu or a SELECT|TOGGLE|CHOOSE field.
-
-**EXIT** - quick define special option to leave current menu.
-
 ## Dependencies
 This library depends on the following libraries:
 
-- Streaming https://github.com/scottdky/Streaming
-- Assert4a https://github.com/nettigo/Assert4a
+- Streaming https://github.com/scottdky/Streaming (on debug mode)
+- Assert4a https://github.com/nettigo/Assert4a (on debug mode)
 
-So, be sure to install them too.
-
-Depending on the type of input or output other libraries might be needed. Essentially any library needed for your devices.
+Depending on the type of input or output, other libraries might be needed. Essentially any library needed for your devices.
 
 ## Limits
 
@@ -138,7 +267,7 @@ Depending on the type of input or output other libraries might be needed. Essent
 - maximum 127 options.
 - fast access (numeric keys) only supports 9 options (1 to 9)
 - prompts can overflow on panels with less than 4 characters width
-- menu system is character based, so choose monometric font to achieve best results, it will work with any font but can text can overflow if using non monometric fonts.
+- menu system is character based, so choose monometric font to achieve best results, it will work with any font but the text can overflow.
 
 ## Base
 
@@ -146,6 +275,7 @@ Depending on the type of input or output other libraries might be needed. Essent
 - Line based menu organization.
 - Stream IO + specializations.
 
+## Version 2.x videos
 [![IMAGE ALT TEXT](https://img.youtube.com/vi/wHv5sU-HXVI/2.jpg)](https://youtu.be/wHv5sU-HXVI "Arduino menu 2.0 fields video") [![IMAGE ALT TEXT](https://img.youtube.com/vi/W-TRCziF67g/2.jpg)](https://youtu.be/W-TRCziF67g "Arduino menu basic features video")
 
 ## IO devices
@@ -182,64 +312,6 @@ Generic keyboard (no PCINT) - configurable for digital or analog keyboards (v2.x
 
 ClickEncoder https://github.com/0xPIT/encoder (not yest implemented on v3)
 
-## Menu definition example
-example of menu definition (c++ macros)
-
-```c++
-//a submenu
-TOGGLE(ledCtrl,setLed,"Led: ",doNothing,noEvent,noStyle//,doExit,enterEvent,noStyle
-  ,VALUE("On",HIGH,doNothing,noEvent)
-  ,VALUE("Off",LOW,doNothing,noEvent)
-);
-
-int selTest=0;//SELECT will link to this variable and change it as needed
-SELECT(selTest,selMenu,"Select",doNothing,noEvent,noStyle
-  ,VALUE("Zero",0,doNothing,noEvent)
-  ,VALUE("One",1,doNothing,noEvent)
-  ,VALUE("Two",2,doNothing,noEvent)
-);
-
-int chooseTest=-1;//CHOOSE will link to this variable and change it as needed
-CHOOSE(chooseTest,chooseMenu,"Choose",doNothing,noEvent,noStyle
-  ,VALUE("First",1,doNothing,noEvent)
-  ,VALUE("Second",2,doNothing,noEvent)
-  ,VALUE("Third",3,doNothing,noEvent)
-  ,VALUE("Last",-1,doNothing,noEvent)
-);
-
-//customizing a prompt look!
-//by extending the prompt class
-class altPrompt:public prompt {
-public:
-  altPrompt(const promptShadow& p):prompt(p) {}
-  void printTo(navRoot &root,bool sel,menuOut& out) override {
-    out<<"special prompt!";
-  }
-};
-
-MENU(subMenu,"Sub-Menu",showEvent,anyEvent,noStyle
-  ,OP("Sub1",showEvent,anyEvent)
-  ,OP("Sub2",showEvent,anyEvent)
-  ,OP("Sub3",showEvent,anyEvent)
-  ,altOP(altPrompt,"",showEvent,anyEvent)
-  ,EXIT("<Back")
-);
-
-MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
-  ,OP("Op1",action1,anyEvent)
-  ,OP("Op2",action2,enterEvent)
-  ,FIELD(test,"Test","%",0,100,10,1,doNothing,noEvent)
-  ,SUBMENU(subMenu)
-  ,SUBMENU(setLed)
-  ,OP("LED On",ledOn,enterEvent)
-  ,OP("LED Off",ledOff,enterEvent)
-  ,SUBMENU(selMenu)
-  ,SUBMENU(chooseMenu)
-  ,OP("Alert test",doAlert,enterEvent)
-  ,EXIT("<Back")
-);
-
-```
 ## History
 
 ### 3.0
