@@ -18,6 +18,7 @@ const char* password = "rsite.2011";
 
 ESP8266WebServer server(80);
 
+//not using colors yet
 const colorDef<esp8266Out::webColor> colors[] MEMMODE={
   {{BLACK,BLACK},{BLACK,BLUE,BLUE}},//bgColor
   {{GRAY,GRAY},{WHITE,WHITE,WHITE}},//fgColor
@@ -53,10 +54,12 @@ TOGGLE(ledCtrl,setLed,"Led: ",doNothing,noEvent,noStyle//,doExit,enterEvent,noSt
 );
 
 //the menu
+int timeOn;
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,SUBMENU(setLed)
   ,OP("Action A",action1,enterEvent)
   ,OP("Action B",action2,enterEvent)
+  ,FIELD(timeOn,"On","ms",0,500,100,10, doNothing, noEvent, noStyle)
 );
 
 MENU_OUTLIST(out,&serverOut);

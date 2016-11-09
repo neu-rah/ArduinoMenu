@@ -40,8 +40,8 @@ www.r-site.net
         status enabled=enabledStatus;//ignore enter if false
         bool dirty=true;//needs to be  redrawn
         inline prompt(const promptShadow& shadow):shadow(&shadow) {}
-        inline void enable() {enabled=true;}
-        inline void disable() {enabled=false;}
+        inline void enable() {enabled=enabledStatus;}
+        inline void disable() {enabled=disabledStatus;}
         inline const char* getText() const {return shadow->getText();}
         inline const systemStyles sysStyles() const {return shadow->_sysStyles();}
         inline const eventMask events() const {return shadow->_events();}
