@@ -345,16 +345,16 @@ www.r-site.net
             switch(e) {
               case idleStart:
                 if ((*f)(o,e)==proceed) {
-                  if (!o.redraw) {
-                    o.clear();//reset the coordinates and colors
+                  if (!(o.style&menuOut::redraw)) {
+                    //o.clear();//reset the coordinates and colors
                     result r=(*f)(o,idling);
                     if (r==quit) return r;
                   }
                 } else return quit;
                 break;
               case idling:
-                if (o.redraw) {
-                  o.clear();//reset the coordinates and colors
+                if (o.style&menuOut::redraw) {
+                  //o.clear();//reset the coordinates and colors
                   result r=(*f)(o,e);
                   if (r==quit) return r;
                 }
@@ -432,7 +432,10 @@ www.r-site.net
 
         //menu IO - external iteration functions
         void doInput();
-        inline void doOutput() {if (!sleepTask) printMenu();}
+        inline void doOutput() {
+          if (!sleepTask) printMenu();
+          else out.idle(sleepTask,idling);
+        }
         inline void poll() {doInput();doOutput();};//fire and forget mode
         void doNav(navCmd cmd);//fly by wire mode
         navCmd enter();//aux function

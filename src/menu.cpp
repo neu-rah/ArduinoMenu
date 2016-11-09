@@ -1,4 +1,5 @@
 #include "menu.h"
+#include <AnsiStream.h>
 using namespace Menu;
 
 result Menu::doNothing() {return proceed;}
@@ -81,6 +82,7 @@ void menuOut::printMenu(navNode &nav) {
   menuNode& focus=nav.root->active();
   int lvl=nav.root->level;
   if (focus.sysStyles()&_parentDraw) lvl--;
+  navNode& nn=nav.root->path[lvl];
   int k=min(lvl,panels.sz-1);
   if ((style&usePreview)&&k) k--;
   for(int i=0;i<k;i++) {
@@ -91,7 +93,7 @@ void menuOut::printMenu(navNode &nav) {
     }
   }
   panels.cur=k;
-  printMenu(nav,k);
+  printMenu(nn,k);
   panels.nodes[k]=&nav;//for cleaning purposes
   for(int i=k+2;i<panels.sz;i++) if (panels.nodes[i]) {
     clear(i);
@@ -103,12 +105,14 @@ void menuOut::printMenu(navNode &nav) {
 
 // generic (menuOut) print menu on a panel
 void menuOut::printMenu(navNode &nav,idx_t panelNr) {
-  idx_t ot=tops[nav.root->level];
+  //menuNode& focus=nav.root->active();
+  idx_t topi=nav.root->level-((nav.root->active().sysStyles()&_parentDraw)?1:0);
+  idx_t ot=tops[topi];
   idx_t st=(nav.root->showTitle&&(maxY(panelNr)>1))?1:0;//do not use titles on single line devices!
-  while(nav.sel+st>=(tops[nav.root->level]+maxY(panelNr))) tops[nav.root->level]++;
-  while(nav.sel<tops[nav.root->level]||(tops[nav.root->level]&&((nav.sz()-tops[nav.root->level])<maxY(panelNr)-st))) tops[nav.root->level]--;
+  while(nav.sel+st>=(tops[topi]+maxY(panelNr))) tops[topi]++;
+  while(nav.sel<tops[topi]||(tops[topi]&&((nav.sz()-tops[topi])<maxY(panelNr)-st))) tops[topi]--;
   bool all=(style&redraw)
-    ||(tops[nav.root->level]!=ot)
+    ||(tops[topi]!=ot)
     ||(drawn!=nav.target)
     ||(panels.nodes[panelNr]!=&nav);
   if (!(all||(style&minimalRedraw))) //non minimal draw will redraw all if any change
@@ -141,14 +145,14 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
   fmtStart(fmtBody,nav,panelNr);
   for(idx_t i=0;i<maxY(panelNr)-st;i++) {
     int ist=i+st;
-    if (i+tops[nav.root->level]>=nav.sz()) break;
-    prompt& p=nav[i+tops[nav.root->level]];
+    if (i+tops[topi]>=nav.sz()) break;
+    prompt& p=nav[i+tops[topi]];
     idx_t len=pan.w;
     if (all||p.changed(nav,*this,false)) {
       //any=true;
       //-------> opStart
       fmtStart(fmtOp,nav,panelNr,i);
-      bool selected=nav.sel==i+tops[nav.root->level];
+      bool selected=nav.sel==i+tops[topi];
       bool ed=nav.target==&p;
       //-----> idxStart
       fmtStart(fmtIdx,nav,panelNr,i);
@@ -156,7 +160,7 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
       setCursor(0,ist,panelNr);
       setColor(fgColor,selected,p.enabled,ed);
       if (drawNumIndex&style) {
-        char a=tops[nav.root->level]+i+'1';
+        char a=tops[topi]+i+'1';
         print('[');
         print(a<='9'?a:'-');
         print(']');
@@ -300,8 +304,9 @@ result navNode::sysEvent(eventMask e,idx_t i) {
 }
 
 void navRoot::doInput() {
-  if (sleepTask&&options->getCmdChar(enterCmd)==in.read()) idleOff();
-  else if (!sleepTask&&in.available())//while ((!sleepTask)&&in.available())//if not doing something else and there is input
+  if (sleepTask) {
+    if (options->getCmdChar(enterCmd)==in.read()) idleOff();
+  } else if (in.available())//while ((!sleepTask)&&in.available())//if not doing something else and there is input
     navFocus->parseInput(node(),in);//deliver navigation input task to target...
 }
 
