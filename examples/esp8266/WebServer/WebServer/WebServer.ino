@@ -159,6 +159,8 @@ String getContentType(String filename){
   return "text/plain";
 }
 
+template<typename T> HardwareSerial& operator<<(HardwareSerial& o,T t) {o.print(t);return o;}
+
 bool handleFileRead(String path){
   DBG_OUTPUT_PORT.println("handleFileRead: " + path);
   if(path.endsWith("/")) path += "index.htm";
@@ -167,11 +169,15 @@ bool handleFileRead(String path){
   if(SPIFFS.exists(pathWithGz) || SPIFFS.exists(path)){
     if(SPIFFS.exists(pathWithGz))
       path += ".gz";
+      Serial<<"file exists "<<path<<endl;
     File file = SPIFFS.open(path, "r");
+    Serial<<"file opened"<<endl;
     size_t sent = server.streamFile(file, contentType);
+    Serial<<"sent "<<sent<<" bytes"<<endl;
     file.close();
     return true;
   }
+  Serial<<"file not found"<<endl;
   return false;
 }
 
@@ -189,9 +195,14 @@ void setup(void){
   Serial.setDebugOutput(0);
   while(!Serial);
   delay(10);
-
-  WiFi.begin(ssid, password);
   Serial.println("");
+  Serial.println("Arduino menu webserver example");
+
+  SPIFFS.begin();
+
+  Serial.print("Connecting to ");
+  Serial.println(ssid);
+  WiFi.begin(ssid, password);
 
   // Wait for connection
   while (WiFi.status() != WL_CONNECTED) {
@@ -199,8 +210,7 @@ void setup(void){
     Serial.print(".");
   }
   Serial.println("");
-  Serial.print("Connected to ");
-  Serial.println(ssid);
+  Serial.println("Connected.");
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
 
@@ -211,10 +221,13 @@ void setup(void){
   nav.idleTask=idle;//point a function to be used when menu is suspended
 
   server.on("/favicon.ico",handleNotFound);
-  server.on("/logo.png",logo);
+  //server.on("/logo.png",logo);
 
   server.on("/", handleRoot);
 
+  server.on("/logo.png", HTTP_GET, [](){
+    if(!handleFileRead("/logo.png")) server.send(404, "text/plain", "FileNotFound");
+  });
   server.on("/r-site.css", HTTP_GET, [](){
     if(!handleFileRead("/r-site.css")) server.send(404, "text/plain", "FileNotFound");
   });

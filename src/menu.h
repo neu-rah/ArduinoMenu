@@ -25,7 +25,9 @@ www.r-site.net
   namespace Menu {
 
     #define _MAX(a,b) (((a)>(b))?(a):(b))
-    #define endl "\r\n"
+    #ifndef endl
+      #define endl "\r\n"
+    #endif
     // Menu objects and data
     //////////////////////////////////////////////////////////////////////////
 
