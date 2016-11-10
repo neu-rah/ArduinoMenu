@@ -21,7 +21,13 @@
               T::operator<<("<ul class=\"ops\">");
               break;
             case menuOut::fmtOp:
-              T::operator<<("<li class=\"op\"><a href=\"/")<<(idx+1)<<"\">";
+              T::operator<<("<li class=\"op\">");
+              Serial<<nav.selected().type();
+              switch (nav.selected().type()) {
+                case promptClass: T::operator<<("<a href=\"/")<<(idx+1)<<"\">";break;
+                case fieldClass: T::operator<<("<input class=\"field\" value=\"");break;
+                default: break;
+              }
               break;
             case menuOut::fmtIdx:break;
             case menuOut::fmtCursor:break;
@@ -43,7 +49,12 @@
               T::operator<<("</ul>");
               break;
             case menuOut::fmtOp:
-              T::operator<<("</a></li>");
+              switch (nav.selected().type()) {
+                case promptClass: T::operator<<("</a>");break;
+                case fieldClass: T::operator<<("\">");break;
+                default:break;
+              }
+              T::operator<<("</li>");
               break;
             case menuOut::fmtIdx:break;
             case menuOut::fmtCursor:break;

@@ -1,5 +1,4 @@
 #include "menu.h"
-#include <AnsiStream.h>
 using namespace Menu;
 
 result Menu::doNothing() {return proceed;}

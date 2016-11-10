@@ -18,19 +18,19 @@ www.r-site.net
 #ifndef RSITE_ARDUINO_MENU_SYSTEM
   #define RSITE_ARDUINO_MENU_SYSTEM
   #include <Arduino.h>
-  #include <Streaming.h>
+  //#include <Streaming.h>
   #include "menuBase.h"
   #include "shadows.h"
-
-  #ifdef DEBUG
-  #define DEBUG_LED A4
-  #endif
 
   namespace Menu {
 
     #define _MAX(a,b) (((a)>(b))?(a):(b))
+    #define endl "\r\n"
     // Menu objects and data
     //////////////////////////////////////////////////////////////////////////
+
+    enum classes {promptClass=0,fieldClass,toggleClass,selectClass,chooseClass,valueClass,menuClass};
+
     class prompt {
       friend class navNode;
       friend class menuOut;
@@ -39,6 +39,7 @@ www.r-site.net
       public:
         status enabled=enabledStatus;//ignore enter if false
         bool dirty=true;//needs to be  redrawn
+        virtual classes type() const {return promptClass;}
         inline prompt(const promptShadow& shadow):shadow(&shadow) {}
         inline void enable() {enabled=enabledStatus;}
         inline void disable() {enabled=disabledStatus;}
@@ -72,6 +73,7 @@ www.r-site.net
     class menuNode:public navTarget {
       public:
         menuNode(const menuNodeShadow& s):navTarget(s) {}
+        virtual classes type() const {return menuClass;}
         inline prompt& operator[](idx_t i) const {return ((menuNodeShadow*)shadow)->operator[](i);}
         bool changed(const navNode &nav,const menuOut& out,bool sub=true) override;
         inline idx_t sz() const {return ((menuNodeShadow*)shadow)->_sz();}
@@ -91,6 +93,7 @@ www.r-site.net
         bool tunning=false;
         T reflex;
         menuField(const menuFieldShadow<T> & shadow):navTarget(shadow) {}
+        virtual classes type() const {return fieldClass;}
         void parseInput(navNode& nav,Stream& in) override;
         void doNav(navNode& nav,navCmd cmd) override;
         idx_t printTo(navRoot &root,bool sel,menuOut& out,idx_t len) override;
@@ -125,6 +128,7 @@ www.r-site.net
         #endif
         //inline T getTypeValue(const T* from) const {return &((menuValueShadow<T>*)shadow)->getTypeValue(from);}
         inline T target() const {return ((menuValueShadow<T>*)shadow)->target();}
+        virtual classes type() const {return valueClass;}
     };
 
     //--------------------------------------------------------------------------
@@ -169,12 +173,14 @@ www.r-site.net
     class select:public menuVariant<T> {
       public:
         select(const menuNodeShadow& s):menuVariant<T>(s) {}
+        virtual classes type() const {return selectClass;}
     };
 
     template<typename T>//-------------------------------------------
     class toggle:public menuVariant<T> {
       public:
         toggle(const menuNodeShadow& s):menuVariant<T>(s) {}
+        virtual classes type() const {return toggleClass;}
         idx_t printTo(navRoot &root,bool sel,menuOut& out,idx_t len) override;
         //bool canNav() const override {return false;}//can receive navigation focus and process keys
         result sysHandler(FUNC_PARAMS) override {
@@ -200,6 +206,7 @@ www.r-site.net
     class choose:public menuVariant<T> {
       public:
         choose(const menuNodeShadow& s):menuVariant<T>(s) {}
+        virtual classes type() const {return chooseClass;}
         result sysHandler(FUNC_PARAMS) override;
         bool changed(const navNode &nav,const menuOut& out,bool sub=true) override {
           return menuVariant<T>::changed(nav,out)||menuNode::changed(nav,out);
@@ -250,6 +257,8 @@ www.r-site.net
         }
     };
 
+    //template<typename T> inline Print& operator<<(Print& o, T t) {o.print(t);return o;}
+
     class menuOut:public Print {
       public:
         idx_t* tops;
@@ -271,6 +280,7 @@ www.r-site.net
         inline idx_t& top(navNode& nav) const;
         idx_t printRaw(const char* at,idx_t len);
         virtual menuOut& operator<<(prompt const &p);
+        template<typename T> menuOut& operator<<(T o) {print(o);return *this;}
         virtual menuOut& fill(
           int x1, int y1, int x2, int y2,char ch=' ',
           colorDefs color=bgColor,
@@ -296,6 +306,8 @@ www.r-site.net
       protected:
         void printMenu(navNode &nav,idx_t panelNr);
     };
+
+    //template<typename T> inline menuOut& operator<<(menuOut& o,const T x) {return o.operator<<(x);}
 
     class gfxOut:public menuOut {
       public:
