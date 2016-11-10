@@ -12,7 +12,12 @@ idx_t prompt::printRaw(menuOut& out,idx_t len) const {
   return print_P(out,getText(),len);
 }
 
-idx_t prompt::printTo(navRoot &root,bool sel,menuOut& out,idx_t len) {return printRaw(out,len);}
+idx_t prompt::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) {
+  out.fmtStart(menuOut::fmtPrompt,root.node(),idx);
+  idx_t r=printRaw(out,len);
+  out.fmtEnd(menuOut::fmtPrompt,root.node(),idx);
+  return r;
+}
 
 idx_t menuOut::printRaw(const char* at,idx_t len) {
   const char* p=at;
@@ -72,7 +77,7 @@ void menuOut::previewMenu(navRoot& root,menuNode& menu,idx_t panelNr) {
     setColor(fgColor,false,p.enabled);
     drawCursor(i,false,p.enabled,false,panelNr);
     setColor(fgColor,false,p.enabled,false);
-    p.printTo(root,false,*this,panels[panelNr].w);
+    p.printTo(root,false,*this,i,panels[panelNr].w);
   }
 }
 
@@ -121,27 +126,27 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
   panel pan=panels[panelNr];
 
   //-----> panel start
-  fmtStart(fmtPanel,nav,panelNr);
+  fmtStart(fmtPanel,nav);
   if (all) {
     clear(panelNr);
     if (st) {
       ///------> titleStart
-      fmtStart(fmtTitle,nav,panelNr);
+      fmtStart(fmtTitle,nav,-1);
       setColor(titleColor,false);
       clearLine(0,panelNr);
       setColor(titleColor,true);
       setCursor(0,0,panelNr);
       print('[');
-      nav.target->prompt::printTo(*nav.root,true,*this,pan.w-1);
+      nav.target->prompt::printTo(*nav.root,true,*this,-1,pan.w-1);
       print(']');
       //*this<<'['<<*(prompt*)nav.target<<']';
       ///<----- titleEnd
-      fmtEnd(fmtTitle,nav,panelNr);
+      fmtEnd(fmtTitle,nav,-1);
     }
   }
   //bool any=all;
   //------> bodyStart
-  fmtStart(fmtBody,nav,panelNr);
+  fmtStart(fmtBody,nav);
   for(idx_t i=0;i<maxY(panelNr)-st;i++) {
     int ist=i+st;
     if (i+tops[topi]>=nav.sz()) break;
@@ -150,11 +155,11 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
     if (all||p.changed(nav,*this,false)) {
       //any=true;
       //-------> opStart
-      fmtStart(fmtOp,nav,panelNr,i);
+      fmtStart(fmtOp,nav,i);
       bool selected=nav.sel==i+tops[topi];
       bool ed=nav.target==&p;
       //-----> idxStart
-      fmtStart(fmtIdx,nav,panelNr,i);
+      fmtStart(fmtIdx,nav,i);
       clearLine(ist,panelNr,bgColor,selected,p.enabled);
       setCursor(0,ist,panelNr);
       setColor(fgColor,selected,p.enabled,ed);
@@ -167,19 +172,19 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
         len-=3;
       }
       //<------idxEnd
-      fmtEnd(fmtIdx,nav,panelNr,i);
+      fmtEnd(fmtIdx,nav,i);
       //------> cursorStart
-      fmtStart(fmtCursor,nav,panelNr,i);
+      fmtStart(fmtCursor,nav,i);
       drawCursor(ist,selected,p.enabled,ed,panelNr);//assuming only one character
       //<------ cursorEnd
-      fmtEnd(fmtCursor,nav,panelNr,i);
+      fmtEnd(fmtCursor,nav,i);
       len--;
       //---->opBodyStart
-      fmtStart(fmtOpBody,nav,panelNr,i);
+      fmtStart(fmtOpBody,nav,i);
       setColor(fgColor,selected,p.enabled,ed);
-      if (len>0) p.printTo(*nav.root,selected,*this,len);
+      if (len>0) p.printTo(*nav.root,selected,*this,i,len);
       //<---opBodyEnd
-      fmtEnd(fmtOpBody,nav,panelNr,i);
+      fmtEnd(fmtOpBody,nav,i);
       if (selected&&panels.sz>panelNr+1) {
         if(p.isMenu()) {
           //----->  previewStart
@@ -191,16 +196,16 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
         } else if (panels.nodes[panelNr+1]) clear(panelNr+1);
       }
       //opEnd
-      fmtEnd(fmtOp,nav,panelNr,i);
+      fmtEnd(fmtOp,nav,i);
     }
   }
   //<-----bodyEnd
-  fmtEnd(fmtBody,nav,panelNr);
+  fmtEnd(fmtBody,nav,-1);
   //if (any) Serial<<"printMenu "<<*(prompt*)nav.target<<endl;
   drawn=nav.target;
   //lastSel=nav.sel;
   //<---- panel end
-  fmtEnd(fmtPanel,nav,panelNr);
+  fmtEnd(fmtPanel,nav,-1);
 }
 
 navRoot* navNode::root=NULL;

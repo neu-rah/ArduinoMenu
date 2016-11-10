@@ -1,6 +1,7 @@
 #include <menu.h>
 #include <menuIO/esp8266Out.h>
 #include <menuIO/htmlFmt.h>
+#include <FS.h>
 
 using namespace Menu;
 
@@ -17,6 +18,7 @@ const char* password = "rsite.2011";
 #define YELLOW "gold"
 
 ESP8266WebServer server(80);
+#define DBG_OUTPUT_PORT Serial
 
 //not using colors yet
 const colorDef<esp8266Out::webColor> colors[] MEMMODE={
@@ -62,6 +64,13 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,FIELD(timeOn,"On","ms",0,500,100,10, doNothing, noEvent, noStyle)
 );
 
+result idle(menuOut& o,idleEvent e) {
+  //if (e==idling)
+  Serial.println("suspended");
+  o<<"suspended..."<<endl<<"press [select]"<<endl<<"to continue"<<endl<<(millis()%1000);
+  return quit;
+}
+
 MENU_OUTLIST(out,&serverOut);
 NAVROOT(nav,mainMenu,MAX_DEPTH,Serial,out);
 
@@ -77,6 +86,7 @@ void pageStart() {
     <<"<!DOCTYPE html>\r\n<html><head profile=\"http://www.w3.org/2005/10/profile\">"
     <<"<title>ArduinoMenu library OTA</title>"
     <<"<link rel=\"icon\" type=\"image/png\" href=\"/logo.png\">"
+    <<"<script type=\"text/javascript\" src=\"r-site.js\" ></script>"
     <<"<link rel=\"stylesheet\" type=\"text/css\" href=\"/r-site.css\"></head><body class=\"ArduinoMenu\">";
 }
 
@@ -132,18 +142,44 @@ void handleNotFound(){
   //digitalWrite(led, 0);
 }
 
+String getContentType(String filename){
+  if(server.hasArg("download")) return "application/octet-stream";
+  else if(filename.endsWith(".htm")) return "text/html";
+  else if(filename.endsWith(".html")) return "text/html";
+  else if(filename.endsWith(".css")) return "text/css";
+  else if(filename.endsWith(".js")) return "application/javascript";
+  else if(filename.endsWith(".png")) return "image/png";
+  else if(filename.endsWith(".gif")) return "image/gif";
+  else if(filename.endsWith(".jpg")) return "image/jpeg";
+  else if(filename.endsWith(".ico")) return "image/x-icon";
+  else if(filename.endsWith(".xml")) return "text/xml";
+  else if(filename.endsWith(".pdf")) return "application/x-pdf";
+  else if(filename.endsWith(".zip")) return "application/x-zip";
+  else if(filename.endsWith(".gz")) return "application/x-gzip";
+  return "text/plain";
+}
+
+bool handleFileRead(String path){
+  DBG_OUTPUT_PORT.println("handleFileRead: " + path);
+  if(path.endsWith("/")) path += "index.htm";
+  String contentType = getContentType(path);
+  String pathWithGz = path + ".gz";
+  if(SPIFFS.exists(pathWithGz) || SPIFFS.exists(path)){
+    if(SPIFFS.exists(pathWithGz))
+      path += ".gz";
+    File file = SPIFFS.open(path, "r");
+    size_t sent = server.streamFile(file, contentType);
+    file.close();
+    return true;
+  }
+  return false;
+}
+
 #include "logo.h"
 void logo() {
   server.setContentLength(sizeof(logoPng));
   server.sendHeader("Content-type", "image/png");
   server.sendContent_P(logoPng, sizeof(logoPng));
-}
-
-result idle(menuOut& o,idleEvent e) {
-  //if (e==idling)
-  Serial.println("suspended");
-  o<<"suspended..."<<endl<<"press [select]"<<endl<<"to continue"<<endl<<(millis()%1000);
-  return quit;
 }
 
 void setup(void){
@@ -179,11 +215,28 @@ void setup(void){
 
   server.on("/", handleRoot);
 
-  server.on("/r-site.css", []() {server.send(200, "text/css",
+  server.on("/r-site.css", HTTP_GET, [](){
+    if(!handleFileRead("/r-site.css")) server.send(404, "text/plain", "FileNotFound");
+  });
+  server.on("/r-site.js", HTTP_GET, [](){
+    if(!handleFileRead("/r-site.js")) server.send(404, "text/plain", "FileNotFound");
+  });
+  /*server.on("/r-site.css", []() {server.send(200, "text/css",
     "body {background-color:#132; color:#8a9;}\r\n"
     "#panel a {color: #acb; text-decoration: none;}\r\n"
     "#panel ul {list-style-type: none;}\r\n"
-  );});
+  );});*/
+
+  /*server.on("/r-site.js", []() {server.send(200, "text/javascript",
+    "alert('scripts loaded');"
+    "function updateField() {"
+    "}"
+    "function init() {"
+    "  var f=document.querySelector(\"input .field\");"
+    "  for(o in f) console.log(o);"
+    "}"
+    "window.onload = init();"
+  );});*/
 
   server.onNotFound(menuParser);
 

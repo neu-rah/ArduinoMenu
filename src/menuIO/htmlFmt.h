@@ -9,7 +9,7 @@
     class htmlFmt:public T {
       public:
         using T::T;
-        result fmtStart(menuOut::fmtParts part,navNode &nav,idx_t panelNr,idx_t idx=-1) override {
+        result fmtStart(menuOut::fmtParts part,navNode &nav,idx_t idx=-1) override {
           switch(part) {
             case menuOut::fmtPanel:
               T::operator<<("<div id=\"panel\" class=\"panel\">");
@@ -22,13 +22,10 @@
               break;
             case menuOut::fmtOp:
               T::operator<<("<li class=\"op\">");
-              Serial<<nav.selected().type();
-              switch (nav.selected().type()) {
-                case promptClass: T::operator<<("<a href=\"/")<<(idx+1)<<"\">";break;
-                case fieldClass: T::operator<<("<input class=\"field\" value=\"");break;
-                default: break;
-              }
               break;
+            case menuOut::fmtToggle:
+            case menuOut::fmtPrompt: if (idx>=0) *this<<"<a href=\"/"<<(idx+1)<<"\">";break;
+            case menuOut::fmtField: *this<<"<input class=\"field\" value=\"";break;
             case menuOut::fmtIdx:break;
             case menuOut::fmtCursor:break;
             case menuOut::fmtOpBody:break;
@@ -37,7 +34,7 @@
           }
           return proceed;
         }
-        result fmtEnd(menuOut::fmtParts part,navNode &nav,idx_t panelNr,idx_t idx=-1) override {
+        result fmtEnd(menuOut::fmtParts part,navNode &nav,idx_t idx=-1) override {
           switch(part) {
             case menuOut::fmtPanel:
               T::operator<<("</div>");
@@ -49,13 +46,11 @@
               T::operator<<("</ul>");
               break;
             case menuOut::fmtOp:
-              switch (nav.selected().type()) {
-                case promptClass: T::operator<<("</a>");break;
-                case fieldClass: T::operator<<("\">");break;
-                default:break;
-              }
               T::operator<<("</li>");
               break;
+            case menuOut::fmtToggle:
+            case menuOut::fmtPrompt:  if (idx>=0) *this<<"</a>";break;
+            case menuOut::fmtField: *this<<"\">";break;
             case menuOut::fmtIdx:break;
             case menuOut::fmtCursor:break;
             case menuOut::fmtOpBody:break;
