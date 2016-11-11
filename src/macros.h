@@ -58,6 +58,7 @@
 #define LCD_OUT(...) ON(LCD_OUT,__COUNTER__,__VA_ARGS__)
 #define ADAGFX_OUT(...) ON(ADAGFX_OUT,__COUNTER__,__VA_ARGS__)
 #define U8GLIB_OUT(...) ON(U8GLIB_OUT,__COUNTER__,__VA_ARGS__)
+#define U8G2_OUT(...) ON(U8G2_OUT,__COUNTER__,__VA_ARGS__)
 #define UTFT_OUT(...) ON(UTFT_OUT,__COUNTER__,__VA_ARGS__)
 
 #define VAR_HEAD_NONE(...)
@@ -91,6 +92,11 @@ Menu::idx_t id##Tops##n[md];\
 PANELS(id##Panels##n,__VA_ARGS__);\
 Menu::u8gLibOut id##n(gfx,color,id##Tops##n,id##Panels##n,fontW,fontH);
 
+#define VAR_U8G2_OUT(id,md,n,gfx,color,fontW,fontH,offsetX,offsetY,...)\
+Menu::idx_t id##Tops##n[md];\
+PANELS(id##Panels##n,__VA_ARGS__);\
+Menu::u8g2Out id##n(gfx,color,id##Tops##n,id##Panels##n,fontW,fontH,offsetX,offsetY);
+
 #define VAR_UTFT_OUT(id,md,n,gfx,color,fontW,fontH,...)\
 Menu::idx_t id##Tops##n[md];\
 PANELS(id##Panels##n,__VA_ARGS__);\
@@ -103,6 +109,7 @@ Menu::utftOut id##n(gfx,color,id##Tops##n,id##Panels##n,fontW,fontH);
 #define REF_LCD_OUT(id,md,n,...) &id##n,
 #define REF_ADAGFX_OUT(id,md,n,...) &id##n,
 #define REF_U8GLIB_OUT(id,md,n,...) &id##n,
+#define REF_U8G2_OUT(id,md,n,...) &id##n,
 #define REF_UTFT_OUT(id,md,n,...) &id##n,
 
 #define MENU_OUTPUTS(id,maxDepth,...)\
