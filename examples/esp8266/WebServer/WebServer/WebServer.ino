@@ -1,3 +1,21 @@
+/********************
+Arduino generic menu system
+WebServer menu example
+WebServer: https://github.com/esp8266/Arduino/tree/master/libraries/ESP8266WebServer
+
+Nov. 2016 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
+creative commons license 4.0: Attribution-ShareAlike CC BY-SA
+This software is furnished "as is", without technical support, and with no
+warranty, express or implied, as to its usefulness for any purpose.
+
+Thread Safe: No
+Extensible: Yes
+
+menu on web browser served by esp8266 device
+output: Web browser
+input: Web browser
+
+*/
 #include <menu.h>
 #include <menuIO/esp8266Out.h>
 #include <menuIO/htmlFmt.h>
@@ -101,9 +119,10 @@ void handleRoot() {
   pageEnd();
 }
 
+//old parsing
 void menuParser() {
   String uri=server.uri();
-  if (uri.startsWith("/")/*&&uri.length()==2*/) {
+  if (uri.startsWith("/")) {
     uint8_t ch=uri[1];
     if (ch>='0'&&ch<='9') {
       nav.doNav(navCmd(idxCmd,ch));
@@ -162,22 +181,22 @@ String getContentType(String filename){
 template<typename T> HardwareSerial& operator<<(HardwareSerial& o,T t) {o.print(t);return o;}
 
 bool handleFileRead(String path){
-  DBG_OUTPUT_PORT.println("handleFileRead: " + path);
+  //DBG_OUTPUT_PORT.println("handleFileRead: " + path);
   if(path.endsWith("/")) path += "index.htm";
   String contentType = getContentType(path);
   String pathWithGz = path + ".gz";
   if(SPIFFS.exists(pathWithGz) || SPIFFS.exists(path)){
     if(SPIFFS.exists(pathWithGz))
       path += ".gz";
-      Serial<<"file exists "<<path<<endl;
+      //Serial<<"file exists "<<path<<endl;
     File file = SPIFFS.open(path, "r");
-    Serial<<"file opened"<<endl;
+    //Serial<<"file opened"<<endl;
     size_t sent = server.streamFile(file, contentType);
-    Serial<<"sent "<<sent<<" bytes"<<endl;
+    //Serial<<"sent "<<sent<<" bytes"<<endl;
     file.close();
     return true;
   }
-  Serial<<"file not found"<<endl;
+  Serial<<"file not found "<<path<<endl;
   return false;
 }
 
@@ -187,6 +206,8 @@ void logo() {
   server.sendHeader("Content-type", "image/png");
   server.sendContent_P(logoPng, sizeof(logoPng));
 }
+
+inline void notfound() {server.send(404, "text/plain", "FileNotFound");}
 
 void setup(void){
   options=&myOptions;
@@ -226,13 +247,46 @@ void setup(void){
   server.on("/", handleRoot);
 
   server.on("/logo.png", HTTP_GET, [](){
-    if(!handleFileRead("/logo.png")) server.send(404, "text/plain", "FileNotFound");
+    if(!handleFileRead("/logo.png")) notfound();
   });
   server.on("/r-site.css", HTTP_GET, [](){
-    if(!handleFileRead("/r-site.css")) server.send(404, "text/plain", "FileNotFound");
+    if(!handleFileRead("/r-site.css")) notfound();
   });
   server.on("/r-site.js", HTTP_GET, [](){
-    if(!handleFileRead("/r-site.js")) server.send(404, "text/plain", "FileNotFound");
+    if(!handleFileRead("/r-site.js")) notfound();
+  });
+
+  enum webCmds {webActivate,webSetvalue}
+
+  server.on("/menu", HTTP_GET, [](){
+    //if (!server.uri().startsWith("/menu")) return;
+    Serial<<"/menu parser "<<server.args()<<" args"<<endl;
+    if (server.hasArg("at")) {// at selector
+      String at=server.arg("at");
+      Serial<<"at:"<<at<<endl;
+      prompt* p=mainMenu.selNode(at.c_str());
+      if (p) {
+        if (server.hasArg("cmd")) {
+          String cmd=server.arg("cmd");
+          Serial<<"cmd:"<<cmd<<endl;
+          char key=(server.hasArg("key")?server.arg("key"):"").c_str()[0];
+          p->doNav(navCmd(getCmd(cmd),key));
+        }
+        String r(serverOut.response);
+        serverOut.response.remove(0);
+        pageStart();//TODO, make this accept serverOut param and write to it avoiding this weird copy.. well we still need the copy to print processed menu first
+        nav.doOutput();
+        serverOut<<"<hr/>";
+        serverOut<<r;
+        //nav.doNav(navCmd(enterCmd));
+        pageEnd();
+        delay(1);
+
+        pageStart();
+        serverOut<<p->getText();//just gbecause eps8266 uses ram! (no PROGMEM  here)
+        pageEnd();
+      } else notfound();
+    }
   });
   /*server.on("/r-site.css", []() {server.send(200, "text/css",
     "body {background-color:#132; color:#8a9;}\r\n"
@@ -251,7 +305,8 @@ void setup(void){
     "window.onload = init();"
   );});*/
 
-  server.onNotFound(menuParser);
+  server.onNotFound(notfound);
+  //server.onNotFound(menuParser);
 
   server.begin();
   Serial.println("HTTP server started");
