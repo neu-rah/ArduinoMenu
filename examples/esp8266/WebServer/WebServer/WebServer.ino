@@ -256,22 +256,25 @@ void setup(void){
     if(!handleFileRead("/r-site.js")) notfound();
   });
 
-  enum webCmds {webActivate,webSetvalue}
-
   server.on("/menu", HTTP_GET, [](){
     //if (!server.uri().startsWith("/menu")) return;
     Serial<<"/menu parser "<<server.args()<<" args"<<endl;
     if (server.hasArg("at")) {// at selector
       String at=server.arg("at");
       Serial<<"at:"<<at<<endl;
-      prompt* p=mainMenu.selNode(at.c_str());
+      prompt* p=mainMenu.async(at.c_str());
       if (p) {
-        if (server.hasArg("cmd")) {
-          String cmd=server.arg("cmd");
-          Serial<<"cmd:"<<cmd<<endl;
-          char key=(server.hasArg("key")?server.arg("key"):"").c_str()[0];
-          p->doNav(navCmd(getCmd(cmd),key));
-        }
+        //execute command or enter
+        navCmds cmd=server.hasArg("cmd")?getCmd(server.arg("cmd")):enterCmd;
+        if (cmd==noCmd) cmd=navCmd;
+        Serial<<"cmd:"<<cmd<<endl;
+        char key=(server.hasArg("key")?server.arg("key"):"").c_str()[0];
+        if (cmd==enterCmd) p->doNav(navCmd(cmd,key));<-- missing navNode object!
+        p() <-- just do blind enter, need increment/decrement and edit status.
+        how to do both things without navNode
+        navNode is required for upCmd, downCmd, escCmd1
+
+
         String r(serverOut.response);
         serverOut.response.remove(0);
         pageStart();//TODO, make this accept serverOut param and write to it avoiding this weird copy.. well we still need the copy to print processed menu first

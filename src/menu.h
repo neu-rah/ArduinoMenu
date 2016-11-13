@@ -62,10 +62,11 @@ www.r-site.net
         virtual result sysHandler(FUNC_PARAMS) {return proceed;}
         inline result operator()(FUNC_PARAMS) const {return (*shadow)(FUNC_VALUES);}
         idx_t printRaw(menuOut& out,idx_t len) const;
-        virtual prompt* selNode(const char *uri) {
+        virtual prompt* async(const char *uri) {
           if ((!*uri)||(uri[0]=='/'&&!uri[1])) return this;
           return NULL;
         }
+        //virtual void doNav(navNode& nav,navCmd cmd) {if (cmd.cmd==enterCmd) event(enterEvent);}
 
     };
 
@@ -88,7 +89,7 @@ www.r-site.net
         bool changed(const navNode &nav,const menuOut& out,bool sub=true) override;
         inline idx_t sz() const {return ((menuNodeShadow*)shadow)->_sz();}
         inline prompt* const* data() const {return ((menuNodeShadow*)shadow)->_data();}
-        prompt* selNode(const char *uri) override {
+        prompt* async(const char *uri) override {
           if ((!*uri)||(uri[0]=='/'&&!uri[1])) return this;
           idx_t n=0;
           while (*uri) {
@@ -96,7 +97,7 @@ www.r-site.net
             if (d) n=n*10+((*d)-'0');
             uri++;
           }
-          return operator[](n).selNode(uri);
+          return operator[](n).async(uri);
         }
     };
 
