@@ -24,8 +24,14 @@
               T::operator<<("<li class=\"op\">");
               break;
             case menuOut::fmtToggle:
-            case menuOut::fmtPrompt: if (idx>=0) *this<<"<a href=\"/menu?at="<<(idx+1)<<"&cmd=enterCmd\">";break;
-            case menuOut::fmtField: *this<<"<input class=\"field\" value=\"\"";break;
+            case menuOut::fmtPrompt:
+              if (idx>=0) {
+                *this<<"<a href=\"/menu?at=";
+                nav.root->printPath(*this);
+                *this<<"/"<<idx<<"\">";
+              }
+              break;
+            case menuOut::fmtField: *this<<"<input class=\"field\" value=\"";break;
             case menuOut::fmtIdx:break;
             case menuOut::fmtCursor:break;
             case menuOut::fmtOpBody:break;

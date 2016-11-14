@@ -28,9 +28,13 @@ www.r-site.net
     static const char* numericChars="0123456789.";
 
     #define _MAX(a,b) (((a)>(b))?(a):(b))
-    #ifndef endl
+    #if defined(ESP8266)
+    // && !defined(endl)
       #define endl "\r\n"
     #endif
+
+    template<typename T> inline Print& operator<<(Print& o, T t) {o.print(t);return o;}
+
     // Menu objects and data
     //////////////////////////////////////////////////////////////////////////
 
@@ -59,12 +63,14 @@ www.r-site.net
         virtual idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len);//raw print to output device
         virtual bool changed(const navNode &nav,const menuOut& out,bool sub=true) {return dirty;}
         //this is the system version of enter handler, its used by elements like toggle
-        virtual result sysHandler(FUNC_PARAMS) {return proceed;}
+        virtual result sysHandler(SYS_FUNC_PARAMS) {return proceed;}
         inline result operator()(FUNC_PARAMS) const {return (*shadow)(FUNC_VALUES);}
         idx_t printRaw(menuOut& out,idx_t len) const;
-        virtual prompt* async(const char *uri) {
-          if ((!*uri)||(uri[0]=='/'&&!uri[1])) return this;
-          return NULL;
+        virtual bool async(const char *uri,navRoot& root,idx_t lvl) {
+          Serial<<*this<<" prompt::async "<<uri<<" lev:"<<lvl<<" ok:"<<((!*uri)||(uri[0]=='/'&&!uri[1]))<<endl;Serial.flush();
+          return ((!*uri)||(uri[0]=='/'&&!uri[1]));
+            /*return operator()(enterEvent,*this)==proceed;
+          return false;*/
         }
         //virtual void doNav(navNode& nav,navCmd cmd) {if (cmd.cmd==enterCmd) event(enterEvent);}
 
@@ -89,16 +95,7 @@ www.r-site.net
         bool changed(const navNode &nav,const menuOut& out,bool sub=true) override;
         inline idx_t sz() const {return ((menuNodeShadow*)shadow)->_sz();}
         inline prompt* const* data() const {return ((menuNodeShadow*)shadow)->_data();}
-        prompt* async(const char *uri) override {
-          if ((!*uri)||(uri[0]=='/'&&!uri[1])) return this;
-          idx_t n=0;
-          while (*uri) {
-            char* d=strchr(numericChars,uri[0]);
-            if (d) n=n*10+((*d)-'0');
-            uri++;
-          }
-          return operator[](n).async(uri);
-        }
+        bool async(const char *uri,navRoot& root,idx_t lvl=0) override;
     };
 
     //--------------------------------------------------------------------------
@@ -204,9 +201,9 @@ www.r-site.net
         virtual classes type() const {return toggleClass;}
         idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) override;
         //bool canNav() const override {return false;}//can receive navigation focus and process keys
-        result sysHandler(FUNC_PARAMS) override {
+        result sysHandler(SYS_FUNC_PARAMS) override {
           switch(event) {
-            case activateEvent: {
+              case activateEvent: {
               //menuNodeShadow& s=*(menuNodeShadow*)prompt::shadow;
               idx_t at=menuVariant<T>::sync();
               assert(at!=-1);
@@ -228,7 +225,7 @@ www.r-site.net
       public:
         choose(const menuNodeShadow& s):menuVariant<T>(s) {}
         virtual classes type() const {return chooseClass;}
-        result sysHandler(FUNC_PARAMS) override;
+        result sysHandler(SYS_FUNC_PARAMS) override;
         bool changed(const navNode &nav,const menuOut& out,bool sub=true) override {
           return menuVariant<T>::changed(nav,out)||menuNode::changed(nav,out);
         }
@@ -278,8 +275,6 @@ www.r-site.net
         }
     };
 
-    //template<typename T> inline Print& operator<<(Print& o, T t) {o.print(t);return o;}
-
     class menuOut:public Print {
       public:
         idx_t* tops;
@@ -301,7 +296,7 @@ www.r-site.net
         inline idx_t& top(navNode& nav) const;
         idx_t printRaw(const char* at,idx_t len);
         virtual menuOut& operator<<(prompt const &p);
-        template<typename T> menuOut& operator<<(T o) {print(o);return *this;}
+        template<typename T> menuOut& operator<<(T o) {(*(Print*)this)<<(o);return *this;}
         virtual menuOut& fill(
           int x1, int y1, int x2, int y2,char ch=' ',
           colorDefs color=bgColor,
@@ -459,6 +454,15 @@ www.r-site.net
         inline prompt& selected() const {return active()[node().sel];}
         inline bool changed(const menuOut& out) const {return node().changed(out);}
         inline bool changed(idx_t n) const {return node().changed(out[n]);}
+        inline bool async(const char* at) {
+          Serial<<*(prompt*)&active()<<" navRoot::async "<<at<<endl;Serial.flush();
+          if (sleepTask) idleOff();
+          return active().async(at, *this, 0);
+        }
+        menuOut& printPath(menuOut& o) const {
+          for(idx_t n=0;n<level;n++) o<<"/"<<path[n].sel;
+          return o;
+        }
         void printMenu() const {
           if ((active().sysStyles()&_parentDraw)&&level)
             out.printMenu(path[level-1]);
@@ -608,7 +612,7 @@ www.r-site.net
     }
 
     template<typename T>
-    result choose<T>::sysHandler(FUNC_PARAMS) {
+    result choose<T>::sysHandler(SYS_FUNC_PARAMS) {
       switch(event) {
         case enterEvent:
           nav.sel=menuVariant<T>::sync();

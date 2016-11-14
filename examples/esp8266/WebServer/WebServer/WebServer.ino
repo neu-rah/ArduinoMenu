@@ -23,6 +23,8 @@ input: Web browser
 
 using namespace Menu;
 
+//template<typename T> HardwareSerial& operator<<(HardwareSerial& o,T t) {o.print(t);return o;}
+
 const char* ssid = "r-site.net";
 const char* password = "rsite.2011";
 
@@ -178,8 +180,6 @@ String getContentType(String filename){
   return "text/plain";
 }
 
-template<typename T> HardwareSerial& operator<<(HardwareSerial& o,T t) {o.print(t);return o;}
-
 bool handleFileRead(String path){
   //DBG_OUTPUT_PORT.println("handleFileRead: " + path);
   if(path.endsWith("/")) path += "index.htm";
@@ -200,12 +200,12 @@ bool handleFileRead(String path){
   return false;
 }
 
-#include "logo.h"
+/*#include "logo.h"
 void logo() {
   server.setContentLength(sizeof(logoPng));
   server.sendHeader("Content-type", "image/png");
   server.sendContent_P(logoPng, sizeof(logoPng));
-}
+}*/ 
 
 inline void notfound() {server.send(404, "text/plain", "FileNotFound");}
 
@@ -262,19 +262,7 @@ void setup(void){
     if (server.hasArg("at")) {// at selector
       String at=server.arg("at");
       Serial<<"at:"<<at<<endl;
-      prompt* p=mainMenu.async(at.c_str());
-      if (p) {
-        //execute command or enter
-        navCmds cmd=server.hasArg("cmd")?getCmd(server.arg("cmd")):enterCmd;
-        if (cmd==noCmd) cmd=navCmd;
-        Serial<<"cmd:"<<cmd<<endl;
-        char key=(server.hasArg("key")?server.arg("key"):"").c_str()[0];
-        if (cmd==enterCmd) p->doNav(navCmd(cmd,key));<-- missing navNode object!
-        p() <-- just do blind enter, need increment/decrement and edit status.
-        how to do both things without navNode
-        navNode is required for upCmd, downCmd, escCmd1
-
-
+      if (nav.async(at.c_str())) {
         String r(serverOut.response);
         serverOut.response.remove(0);
         pageStart();//TODO, make this accept serverOut param and write to it avoiding this weird copy.. well we still need the copy to print processed menu first
@@ -286,7 +274,7 @@ void setup(void){
         delay(1);
 
         pageStart();
-        serverOut<<p->getText();//just gbecause eps8266 uses ram! (no PROGMEM  here)
+        //serverOut<<p->getText();//just gbecause eps8266 uses ram! (no PROGMEM  here)
         pageEnd();
       } else notfound();
     }
@@ -317,6 +305,9 @@ void setup(void){
 }
 
 void loop(void){
+  /*nav.doNav(navCmd(idxCmd,1));
+  nav.doNav(navCmd(enterCmd));
+  delay(300);*/
   serverOut.response.remove(0);
   server.handleClient();
   delay(1);

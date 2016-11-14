@@ -99,8 +99,10 @@ www.r-site.net
 
     enum status {disabledStatus=0,enabledStatus=1};
 
-    #define FUNC_PARAMS eventMask event, navNode& nav, prompt &item
-    #define FUNC_VALUES event,nav,item
+    #define SYS_FUNC_PARAMS eventMask event, navNode& nav, prompt &item
+    #define SYS_FUNC_VALUES event,nav,item
+    #define FUNC_PARAMS eventMask event, prompt &item
+    #define FUNC_VALUES event,item
 
     //callback function type
     typedef result (*callback)(FUNC_PARAMS);

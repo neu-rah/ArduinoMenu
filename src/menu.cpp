@@ -19,6 +19,24 @@ idx_t prompt::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) 
   return r;
 }
 
+bool menuNode::async(const char *uri,navRoot& root,idx_t lvl) {
+  Serial<<*(prompt*)this<<"menuNode::async "<<uri<<" lev:"<<lvl<<endl;
+  if ((!*uri)||(uri[0]=='/'&&!uri[1])) return this;
+  idx_t n=0;
+  while (*uri) {
+    char* d=strchr(numericChars,uri[0]);
+    if (d) n=n*10+((*d)-'0');
+    uri++;
+  }
+  if (root.path[lvl].target!=this) {
+    Serial<<"escaping"<<endl;
+    while(root.level>=lvl) root.doNav(escCmd);
+  }
+  Serial<<"doNav idxCmd:"<<n<<endl;Serial.flush();
+  root.doNav(navCmd(idxCmd,n));
+  return operator[](n).async(uri,root,++lvl);
+}
+
 idx_t menuOut::printRaw(const char* at,idx_t len) {
   const char* p=at;
   uint8_t ch;
@@ -297,14 +315,14 @@ result navNode::event(eventMask e,idx_t i) {
   eventMask m=p.events();
   eventMask me=(eventMask)(e&m);
   if (me) {
-    return p(e,*this,p);
+    return p(e,p);
   }
   return proceed;
 }
 
 result navNode::sysEvent(eventMask e,idx_t i) {
   prompt& p=operator[](i);
-  return p(e,*this,p);
+  return p(e,p);
 }
 
 void navRoot::doInput() {
@@ -315,6 +333,7 @@ void navRoot::doInput() {
 }
 
 void navRoot::doNav(navCmd cmd) {
+  Serial<<"navRoot::doNav "<<cmd.cmd<<" sleepTask:"<<(!!sleepTask)<<endl;
   if (sleepTask&&cmd.cmd==enterCmd) idleOff();
   else if (!sleepTask) switch (cmd.cmd) {
     case scrlUpCmd:
@@ -322,6 +341,7 @@ void navRoot::doNav(navCmd cmd) {
       out.doNav(cmd,node());//scroll is perceived better at output device
       break;
     default:
+      Serial<<"navFocus->doNav "<<cmd.param<<endl;
       navFocus->doNav(node(),cmd);
   }
 }
