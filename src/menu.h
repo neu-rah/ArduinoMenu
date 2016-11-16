@@ -150,7 +150,7 @@ www.r-site.net
     template<typename T>//-------------------------------------------
     class menuVariant:public menuNode {
       public:
-        T reflex;
+        idx_t reflex;
         menuVariant(const menuNodeShadow& s):menuNode(s) {}
         idx_t sync() {
           //menuVariantShadow<T>& s=*(menuVariantShadow<T>*)shadow;
@@ -174,7 +174,8 @@ www.r-site.net
           }
           assert(i>=0&&i<sz());
           #endif
-          target()=reflex=((menuValue<T>*)&operator[](i))->target();
+          reflex=i;
+          target()=((menuValue<T>*)&operator[](i))->target();
           return i;
         }
         inline T& target() const {return ((menuVariantShadow<T>*)shadow)->target();}
@@ -602,9 +603,10 @@ www.r-site.net
       if (len-l<0) return 0;
       out<<(this==&root.active()?':':' ');
       l--;
-      out.fmtStart(type()==selectClass?menuOut::fmtSelect:menuOut::fmtChoose,root.node(),idx);//TODO: can be shoose type!
-      out.setColor(valColor,sel,prompt::enabled,ed);
-      if (l>0) l-=operator[](at).printRaw(out,l);
+      if (out.fmtStart(type()==selectClass?menuOut::fmtSelect:menuOut::fmtChoose,root.node(),idx)==proceed) {
+        out.setColor(valColor,sel,prompt::enabled,ed);
+        if (l>0) l-=operator[](at).printRaw(out,l);
+      }
       out.fmtEnd(menuOut::fmtSelect,root.node(),idx);
       return len-l;
     }
@@ -621,7 +623,7 @@ www.r-site.net
 
     template<typename T>
     bool menuVariant<T>::changed(const navNode &nav,const menuOut& out,bool sub) {
-      return dirty||reflex!=target();
+      return dirty||((menuValue<T>*)&operator[](reflex))->target()!=target();
     }
 
     template<typename T>

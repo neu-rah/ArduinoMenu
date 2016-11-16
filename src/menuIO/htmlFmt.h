@@ -31,16 +31,24 @@
               break;
             case menuOut::fmtToggle:
             case menuOut::fmtPrompt:
-              if (idx>=0)
+              if (idx>=0&&(nav[idx].type()==promptClass||nav[idx].type()==toggleClass))
                 if (start) {
                   *this<<"<a class=\"aml_link\" href=\"/menu?at=";
                   nav.root->printPath(*this);
                   *this<<"/"<<idx<<"\">";
                 } else *this<<"</a>";
               break;
-            case menuOut::fmtSelect:
-              if (start) *this<<"choose«";
-              else *this<<"»";
+              case menuOut::fmtSelect:
+              case menuOut::fmtChoose:
+              if(!start) break;
+              *this<<"<select data-path=\"/menu?at=";
+              nav.root->printPath(*this);
+              *this<<"/"<<idx<<"\">";
+              *this<<"\">";
+              for(idx_t n=0;n<((menuNode*)&nav[idx])->sz();n++)
+                *this<<"<option"<<(n==((menuVariant<int>*)&nav[idx])->reflex?" selected":"")<<">"<<((menuNode*)&nav[idx])->operator[](n)<<"</option>";
+              *this<<"</select>";
+              return quit;
               break;
             case menuOut::fmtField:
               if (start) {
@@ -49,28 +57,16 @@
                 *this<<"\" value=\"";
               } else *this<<"\">";
               break;
-            case menuOut::fmtIdx:break;
+            /*case menuOut::fmtIdx:break;
             case menuOut::fmtCursor:break;
-            case menuOut::fmtOpBody:
-              switch(nav[idx].type()) {
-                case chooseClass:
-                  if(!start) break;
-                  *this<<"<select>";
-                  /*for(idx_t n=0;n<nav.sz();n++)
-                    *this<<"<option"<<(n==idx?" selected":"")<<">"<<nav[idx][n].getText()<<"</option>";*/
-                  *this<<"</select>";
-                default: break;
-              }
-              if (start) *this<<"[opBody "<<(idx>=0?nav[idx].type():noClass);
-              else *this<<"]";
-              break;
-            case menuOut::fmtPreview:break;
+            case menuOut::fmtOpBody:break;
+            case menuOut::fmtPreview:break;*/
             default:break;
           }
           return proceed;
         }
-        result fmtStart(menuOut::fmtParts part,navNode &nav,idx_t idx=-1) override {fmt(true,part,nav,idx);}
-        result fmtEnd(menuOut::fmtParts part,navNode &nav,idx_t idx=-1) override {fmt(false,part,nav,idx);}
+        result fmtStart(menuOut::fmtParts part,navNode &nav,idx_t idx=-1) override {return fmt(true,part,nav,idx);}
+        result fmtEnd(menuOut::fmtParts part,navNode &nav,idx_t idx=-1) override {return fmt(false,part,nav,idx);}
     };
   }//namespace
 #endif

@@ -7,11 +7,13 @@ input {
   border: solid 1px #354;
   border-radius: 3px;
 }
-input.aml_field {
+input.aml_field, .aml_ops select {
   background-color: #010;
   color: lime;
   border: solid 1px: lime;
   border-radius: 3px;
+}
+input.aml_field {
   text-align: right;
   width:5em;
 }

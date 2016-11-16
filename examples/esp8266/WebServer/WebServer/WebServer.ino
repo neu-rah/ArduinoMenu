@@ -40,16 +40,6 @@ const char* password = "rsite.2011";
 ESP8266WebServer server(80);
 #define DBG_OUTPUT_PORT Serial
 
-//not using colors yet.. guess i will leave this to css
-/*const colorDef<esp8266Out::webColor> colors[] MEMMODE={
-  {{BLACK,BLACK},{BLACK,BLUE,BLUE}},//bgColor
-  {{GRAY,GRAY},{WHITE,WHITE,WHITE}},//fgColor
-  {{WHITE,BLACK},{YELLOW,YELLOW,RED}},//valColor
-  {{WHITE,BLACK},{WHITE,YELLOW,YELLOW}},//unitColor
-  {{WHITE,GRAY},{BLACK,BLUE,WHITE}},//cursorColor
-  {{WHITE,YELLOW},{BLUE,RED,RED}},//titleColor
-};*/
-
 #define MAX_DEPTH 2
 idx_t tops[MAX_DEPTH];
 PANELS(webPanels,{0,0,30,20});
@@ -98,8 +88,10 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,OP("Action B",action2,enterEvent)
   ,FIELD(timeOn,"On","ms",0,500,100,10, doNothing, noEvent, noStyle)
   ,SUBMENU(selMenu)
-  //,SUBMENU(chooseMenu)
+  ,SUBMENU(chooseMenu)
 );
+
+inline String& operator<<(String &s,prompt &p) {return s+=p.getText();}
 
 result idle(menuOut& o,idleEvent e) {
   //if (e==idling)
@@ -165,36 +157,6 @@ void pageEnd() {
   server.send(200, "text/html", serverOut.response);
 }
 
-/*void handleRoot() {
-  pageStart();
-  nav.doOutput();
-  pageEnd();
-}*/
-
-//old parsing
-/*void menuParser() {
-  String uri=server.uri();
-  if (uri.startsWith("/")) {
-    uint8_t ch=uri[1];
-    if (ch>='0'&&ch<='9') {
-      nav.doNav(navCmd(idxCmd,ch));
-      String r(serverOut.response);
-      serverOut.response.remove(0);
-      pageStart();
-      nav.doOutput();
-      serverOut<<"<hr/>";
-      serverOut<<r;
-      //nav.doNav(navCmd(enterCmd));
-      pageEnd();
-      delay(1);
-    } else {
-      pageStart();
-      nav.doOutput();
-      pageEnd();
-    }
-  } else handleNotFound();
-}*/
-
 void handleNotFound(){
   //digitalWrite(led, 1);
   Serial.println("404 not found");
@@ -231,31 +193,20 @@ String getContentType(String filename){
 }
 
 bool handleFileRead(String path){
-  //DBG_OUTPUT_PORT.println("handleFileRead: " + path);
   if(path.endsWith("/")) path += "index.htm";
   String contentType = getContentType(path);
   String pathWithGz = path + ".gz";
   if(SPIFFS.exists(pathWithGz) || SPIFFS.exists(path)){
     if(SPIFFS.exists(pathWithGz))
       path += ".gz";
-      //Serial<<"file exists "<<path<<endl;
     File file = SPIFFS.open(path, "r");
-    //Serial<<"file opened"<<endl;
     size_t sent = server.streamFile(file, contentType);
-    //Serial<<"sent "<<sent<<" bytes"<<endl;
     file.close();
     return true;
   }
   Serial<<"file not found "<<path<<endl;
   return false;
 }
-
-/*#include "logo.h"
-void logo() {
-  server.setContentLength(sizeof(logoPng));
-  server.sendHeader("Content-type", "image/png");
-  server.sendContent_P(logoPng, sizeof(logoPng));
-}*/
 
 inline void notfound() {server.send(404, "text/plain", "FileNotFound");}
 
@@ -298,7 +249,6 @@ void setup(void){
   nav.idleTask=idle;//point a function to be used when menu is suspended
 
   server.on("/favicon.ico",handleNotFound);
-  //server.on("/logo.png",logo);
 
   server.on("/", HTTP_GET, [](){
     handleMenu();//no output will be done on this mode
@@ -332,7 +282,6 @@ void setup(void){
   });
 
   server.onNotFound(notfound);
-  //server.onNotFound(menuParser);
 
   server.begin();
   Serial.println("HTTP server started");
@@ -340,9 +289,6 @@ void setup(void){
 }
 
 void loop(void){
-  /*nav.doNav(navCmd(idxCmd,1));
-  nav.doNav(navCmd(enterCmd));
-  delay(300);*/
   serverOut.response.remove(0);
   server.handleClient();
   delay(1);

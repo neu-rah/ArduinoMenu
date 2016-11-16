@@ -32,7 +32,7 @@ bool menuNode::async(const char *uri,navRoot& root,idx_t lvl) {
   }
   if (root.path[lvl].target!=this) {
     Serial<<"escaping"<<endl;
-    while(root.level>=lvl) root.doNav(escCmd);
+    while(root.level>lvl) root.doNav(escCmd);
   }
   //Serial<<*(prompt*)this<<" doNav idxCmd:"<<n<<endl;Serial.flush();
   //if (this->operator[](n).type()!=fieldClass) {//do not enter edit mode on fields over async
