@@ -22,6 +22,13 @@ idx_t Menu::print_P(Print& s,const char* at,idx_t len) {
   return at-p-1;
 }
 
+/*static const char* cmdNames[] MEMMODE={"noCmd","escCmd","enterCmd","upCmd","downCmd","leftCmd","rightCmd","idxCmd","selCmd","scrlUpCmd","scrlDownCmd"};
+navCmds Menu::getCmd(String &name) {
+  for(int n=0;n<sizeof(cmdNames)/sizeof(char*);n++)
+    if (name==cmdNames[n]) return (navCmds)n;
+  return noCmd;
+}*/
+
 Print& Menu::operator<<(Print& o,prompt const &p) {
   print_P(o,p.getText());
   return o;
@@ -95,8 +102,13 @@ config* Menu::options=&defaultOptions;
       case leftCmd:o<<"leftCmd";break;
       case rightCmd:o<<"rightCmd";break;
       case idxCmd:o<<"idxCmd";break;
+      case selCmd:o<<"selCmd";break;
     }
     return o;
+  }
+
+  Print& Menu::operator<<(Print& o,navCmd cmd) {
+    return o<<"{"<<cmd.cmd<<","<<cmd.param<<"}";
   }
 
   Print& Menu::operator<<(Print& o,colorDefs c) {

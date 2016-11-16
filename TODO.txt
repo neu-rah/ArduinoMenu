@@ -15,7 +15,7 @@ Arduino Menu Library
 + BUG: alert is only showing on the first device
 - use array of tops with path depth on each output device
   => do not use lastTop!
-- implement scroll commands on ountput devices
+- implement scroll commands on output devices
   => panels.nodes must use navNode* instead of menuNode*
   => however previews have no assigned navNode!
     1. just dont pint previews => do we need them?
@@ -58,3 +58,11 @@ navRoot::pool
           exit on enter key
 
 navRoot::doNav
+
+still need navigation and iteration protocol
+
+iteration levels
+  0 - member functions <-- this is the best option for web
+  1 - event messages <- require navNode
+  2 - nav commands <- apply to root!
+  3 - input <- relly on nav path status

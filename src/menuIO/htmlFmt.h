@@ -9,50 +9,64 @@
     class htmlFmt:public T {
       public:
         using T::T;
-        result fmtStart(menuOut::fmtParts part,navNode &nav,idx_t panelNr,idx_t idx=-1) override {
+        result fmt(bool start,menuOut::fmtParts part,navNode &nav,idx_t idx=-1) {
+          assert(idx>=0&&idx<nav.sz());
+          //prompt* n=&nav[idx];
           switch(part) {
             case menuOut::fmtPanel:
-              T::operator<<("<div id=\"panel\" class=\"panel\">");
+              if (start) T::operator<<("<div class=\"aml_panel\">");
+              else T::operator<<("</div>");
               break;
             case menuOut::fmtTitle:
-              T::operator<<("<h2 class=\"title\">");
+              if (start) T::operator<<("<h2 class=\"aml_title\">");
+              else T::operator<<("</h2>");
               break;
             case menuOut::fmtBody:
-              T::operator<<("<ul class=\"ops\">");
+              if (start) T::operator<<("<ul class=\"aml_ops\">");
+              else T::operator<<("</ul>");
               break;
             case menuOut::fmtOp:
-              T::operator<<("<li class=\"op\"><a href=\"/")<<(idx+1)<<"\">";
+              if (start) T::operator<<("<li class=\"aml_op\">");
+              else T::operator<<("</li>");
               break;
-            case menuOut::fmtIdx:break;
+            case menuOut::fmtToggle:
+            case menuOut::fmtPrompt:
+              if (idx>=0&&(nav[idx].type()==promptClass||nav[idx].type()==toggleClass))
+                if (start) {
+                  *this<<"<a class=\"aml_link\" href=\"/menu?at=";
+                  nav.root->printPath(*this);
+                  *this<<"/"<<idx<<"\">";
+                } else *this<<"</a>";
+              break;
+              case menuOut::fmtSelect:
+              case menuOut::fmtChoose:
+              if(!start) break;
+              *this<<"<select data-path=\"/menu?at=";
+              nav.root->printPath(*this);
+              *this<<"/"<<idx<<"\">";
+              *this<<"\">";
+              for(idx_t n=0;n<((menuNode*)&nav[idx])->sz();n++)
+                *this<<"<option"<<(n==((menuVariant<int>*)&nav[idx])->reflex?" selected":"")<<">"<<((menuNode*)&nav[idx])->operator[](n)<<"</option>";
+              *this<<"</select>";
+              return quit;
+              break;
+            case menuOut::fmtField:
+              if (start) {
+                *this<<"<input class=\"aml_field\" data-path=\"/menu?at=/"<<idx;
+                nav.root->printPath(*this);
+                *this<<"\" value=\"";
+              } else *this<<"\">";
+              break;
+            /*case menuOut::fmtIdx:break;
             case menuOut::fmtCursor:break;
             case menuOut::fmtOpBody:break;
-            case menuOut::fmtPreview:break;
+            case menuOut::fmtPreview:break;*/
             default:break;
           }
           return proceed;
         }
-        result fmtEnd(menuOut::fmtParts part,navNode &nav,idx_t panelNr,idx_t idx=-1) override {
-          switch(part) {
-            case menuOut::fmtPanel:
-              T::operator<<("</div>");
-              break;
-            case menuOut::fmtTitle:
-              T::operator<<("</h2>");
-              break;
-            case menuOut::fmtBody:
-              T::operator<<("</ul>");
-              break;
-            case menuOut::fmtOp:
-              T::operator<<("</a></li>");
-              break;
-            case menuOut::fmtIdx:break;
-            case menuOut::fmtCursor:break;
-            case menuOut::fmtOpBody:break;
-            case menuOut::fmtPreview:break;
-            default:break;
-          }
-          return proceed;
-        }
+        result fmtStart(menuOut::fmtParts part,navNode &nav,idx_t idx=-1) override {return fmt(true,part,nav,idx);}
+        result fmtEnd(menuOut::fmtParts part,navNode &nav,idx_t idx=-1) override {return fmt(false,part,nav,idx);}
     };
   }//namespace
 #endif

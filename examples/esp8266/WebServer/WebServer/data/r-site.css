@@ -1,0 +1,27 @@
+body {
+  background-color:#132;
+  color:#8a9;
+  font-family: "Lucida Console", Monaco, monospace;
+}
+input {
+  border: solid 1px #354;
+  border-radius: 3px;
+}
+input.aml_field, .aml_ops select {
+  background-color: #010;
+  color: lime;
+  border: solid 1px: lime;
+  border-radius: 3px;
+}
+input.aml_field {
+  text-align: right;
+  width:5em;
+}
+.aml_ops {text-align: left;}
+.am_panel {display:inline-block;}
+.aml_panel a {color: #acb; text-decoration: none;}
+.aml_panel ul {list-style-type: none;}
+
+a {color: #578; text-decoration: none;}
+a:active {color: #578; text-decoration: none;}
+a:visited {color: #578; text-decoration: none;}

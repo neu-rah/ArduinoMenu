@@ -192,7 +192,7 @@ CHOOSE(chooseTest,chooseMenu,"Choose",doNothing,noEvent,noStyle
 class altPrompt:public prompt {
 public:
   altPrompt(const promptShadow& p):prompt(p) {}
-  idx_t printTo(navRoot &root,bool sel,menuOut& out,idx_t len) override {
+  idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) override {
     return out.printRaw("special prompt!",len);
   }
 };
@@ -267,6 +267,7 @@ result idle(menuOut& o,idleEvent e) {
       <<ANSI::setForegroundColor(WHITE)
       <<"suspended..."<<endl;
       break;
+    default: break;
     //case idleEnd:o<<"resuming menu."<<endl;break;
   }
   return proceed;

@@ -1,3 +1,4 @@
+/* -*- C++ -*- */
 #ifndef RSITE_ARDUINO_MENU_SHADOWS
   #define RSITE_ARDUINO_MENU_SHADOWS
 

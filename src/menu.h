@@ -15,22 +15,31 @@ www.r-site.net
 
 ***/
 
+
 #ifndef RSITE_ARDUINO_MENU_SYSTEM
   #define RSITE_ARDUINO_MENU_SYSTEM
   #include <Arduino.h>
-  #include <Streaming.h>
+  //#include <Streaming.h>
   #include "menuBase.h"
   #include "shadows.h"
 
-  #ifdef DEBUG
-  #define DEBUG_LED A4
-  #endif
-
   namespace Menu {
 
+    static const char* numericChars="0123456789.";
+
     #define _MAX(a,b) (((a)>(b))?(a):(b))
+    //#if defined(ESP8266)
+    // && !defined(endl)
+      #define endl "\r\n"
+    //#endif
+
+    template<typename T> inline Print& operator<<(Print& o, T t) {o.print(t);return o;}
+
     // Menu objects and data
     //////////////////////////////////////////////////////////////////////////
+
+    enum classes {noClass=0,promptClass,fieldClass,toggleClass,selectClass,chooseClass,valueClass,menuClass};
+
     class prompt {
       friend class navNode;
       friend class menuOut;
@@ -39,6 +48,7 @@ www.r-site.net
       public:
         status enabled=enabledStatus;//ignore enter if false
         bool dirty=true;//needs to be  redrawn
+        virtual classes type() const {return promptClass;}
         inline prompt(const promptShadow& shadow):shadow(&shadow) {}
         inline void enable() {enabled=enabledStatus;}
         inline void disable() {enabled=disabledStatus;}
@@ -50,12 +60,16 @@ www.r-site.net
         inline bool isMenu() const {return sysStyles()&_menuData;}//has menu data list and can be a navNode target
         inline bool isVariant() const {return sysStyles()&_isVariant;}//a menu as an enumerated field, connected to a variable value
         inline bool parentDraw() const {return sysStyles()&_parentDraw;}//a menu as an enumerated field, connected to a variable value
-        virtual idx_t printTo(navRoot &root,bool sel,menuOut& out,idx_t len);//raw print to output device
+        virtual idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len);//raw print to output device
         virtual bool changed(const navNode &nav,const menuOut& out,bool sub=true) {return dirty;}
         //this is the system version of enter handler, its used by elements like toggle
-        virtual result sysHandler(FUNC_PARAMS) {return proceed;}
+        virtual result sysHandler(SYS_FUNC_PARAMS) {return proceed;}
         inline result operator()(FUNC_PARAMS) const {return (*shadow)(FUNC_VALUES);}
         idx_t printRaw(menuOut& out,idx_t len) const;
+        virtual bool async(const char *uri,navRoot& root,idx_t lvl) {
+          return ((!*uri)||(uri[0]=='/'&&!uri[1]));
+        }
+
     };
 
     //--------------------------------------------------------------------------
@@ -72,10 +86,12 @@ www.r-site.net
     class menuNode:public navTarget {
       public:
         menuNode(const menuNodeShadow& s):navTarget(s) {}
+        virtual classes type() const {return menuClass;}
         inline prompt& operator[](idx_t i) const {return ((menuNodeShadow*)shadow)->operator[](i);}
         bool changed(const navNode &nav,const menuOut& out,bool sub=true) override;
         inline idx_t sz() const {return ((menuNodeShadow*)shadow)->_sz();}
         inline prompt* const* data() const {return ((menuNodeShadow*)shadow)->_data();}
+        bool async(const char *uri,navRoot& root,idx_t lvl=0) override;
     };
 
     //--------------------------------------------------------------------------
@@ -91,9 +107,10 @@ www.r-site.net
         bool tunning=false;
         T reflex;
         menuField(const menuFieldShadow<T> & shadow):navTarget(shadow) {}
+        virtual classes type() const {return fieldClass;}
         void parseInput(navNode& nav,Stream& in) override;
         void doNav(navNode& nav,navCmd cmd) override;
-        idx_t printTo(navRoot &root,bool sel,menuOut& out,idx_t len) override;
+        idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) override;
         inline T& target() const {return ((menuFieldShadow<T>*)shadow)->target();}
         inline const char* units() {return ((menuFieldShadow<T>*)shadow)->_units();}
         inline T getTypeValue(const T* from) const {return ((menuFieldShadow<T>*)shadow)->getTypeValue(from);}
@@ -104,6 +121,7 @@ www.r-site.net
         bool changed(const navNode &nav,const menuOut& out,bool sub=true) override {
           return dirty||(reflex!=target());
         }
+        bool async(const char *uri,navRoot& root,idx_t lvl) override;
         void clamp() {
           if (target()<low()) {
             if (style()&wrapStyle) target()=high();
@@ -125,13 +143,14 @@ www.r-site.net
         #endif
         //inline T getTypeValue(const T* from) const {return &((menuValueShadow<T>*)shadow)->getTypeValue(from);}
         inline T target() const {return ((menuValueShadow<T>*)shadow)->target();}
+        virtual classes type() const {return valueClass;}
     };
 
     //--------------------------------------------------------------------------
     template<typename T>//-------------------------------------------
     class menuVariant:public menuNode {
       public:
-        T reflex;
+        idx_t reflex;
         menuVariant(const menuNodeShadow& s):menuNode(s) {}
         idx_t sync() {
           //menuVariantShadow<T>& s=*(menuVariantShadow<T>*)shadow;
@@ -155,31 +174,34 @@ www.r-site.net
           }
           assert(i>=0&&i<sz());
           #endif
-          target()=reflex=((menuValue<T>*)&operator[](i))->target();
+          reflex=i;
+          target()=((menuValue<T>*)&operator[](i))->target();
           return i;
         }
         inline T& target() const {return ((menuVariantShadow<T>*)shadow)->target();}
         bool changed(const navNode &nav,const menuOut& out,bool sub=true) override;
         //void parseInput(navNode& nav,Stream& in) override;
         void doNav(navNode& nav,navCmd cmd) override;
-        idx_t printTo(navRoot &root,bool sel,menuOut& out,idx_t len) override;
+        idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) override;
     };
 
     template<typename T>//-------------------------------------------
     class select:public menuVariant<T> {
       public:
         select(const menuNodeShadow& s):menuVariant<T>(s) {}
+        virtual classes type() const {return selectClass;}
     };
 
     template<typename T>//-------------------------------------------
     class toggle:public menuVariant<T> {
       public:
         toggle(const menuNodeShadow& s):menuVariant<T>(s) {}
-        idx_t printTo(navRoot &root,bool sel,menuOut& out,idx_t len) override;
+        virtual classes type() const {return toggleClass;}
+        idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) override;
         //bool canNav() const override {return false;}//can receive navigation focus and process keys
-        result sysHandler(FUNC_PARAMS) override {
+        result sysHandler(SYS_FUNC_PARAMS) override {
           switch(event) {
-            case activateEvent: {
+              case activateEvent: {
               //menuNodeShadow& s=*(menuNodeShadow*)prompt::shadow;
               idx_t at=menuVariant<T>::sync();
               assert(at!=-1);
@@ -200,7 +222,8 @@ www.r-site.net
     class choose:public menuVariant<T> {
       public:
         choose(const menuNodeShadow& s):menuVariant<T>(s) {}
-        result sysHandler(FUNC_PARAMS) override;
+        virtual classes type() const {return chooseClass;}
+        result sysHandler(SYS_FUNC_PARAMS) override;
         bool changed(const navNode &nav,const menuOut& out,bool sub=true) override {
           return menuVariant<T>::changed(nav,out)||menuNode::changed(nav,out);
         }
@@ -256,8 +279,8 @@ www.r-site.net
         panelsList& panels;
         idx_t lastSel=-1;
         //TODO: turn this bool's into bitfield flags
-        enum styles {none=0<<0,redraw=1<<0,minimalRedraw=1<<1, drawNumIndex=1<<2, usePreview=1<<3} style;
-        enum fmtParts {fmtPanel,fmtTitle,fmtBody,fmtOp,fmtIdx,fmtCursor,fmtOpBody,fmtPreview};
+        enum styles {none=0<<0,redraw=1<<0,minimalRedraw=1<<1, drawNumIndex=1<<2, usePreview=1<<3, expandEnums=1<<4} style;
+        enum fmtParts {fmtPanel,fmtTitle,fmtBody,fmtOp,fmtIdx,fmtCursor,fmtOpBody,fmtPreview,fmtPrompt,fmtField,fmtToggle,fmtSelect,fmtChoose,fmtUnit};
 
         /*bool redraw=false;//redraw all menu every cycle, some display drivers require it
         bool minimalRedraw=true;//redraw only changed options (avoids flicking on LCDS), not good for Serial
@@ -271,6 +294,7 @@ www.r-site.net
         inline idx_t& top(navNode& nav) const;
         idx_t printRaw(const char* at,idx_t len);
         virtual menuOut& operator<<(prompt const &p);
+        template<typename T> menuOut& operator<<(T o) {(*(Print*)this)<<(o);return *this;}
         virtual menuOut& fill(
           int x1, int y1, int x2, int y2,char ch=' ',
           colorDefs color=bgColor,
@@ -291,11 +315,13 @@ www.r-site.net
           write(selected?(stat==disabledStatus?options->disabledCursor:options->selectedCursor):' ');
         }
         void doNav(navCmd cmd,navNode &nav);
-        virtual result fmtStart(fmtParts part,navNode &nav,idx_t panelNr,idx_t idx=-1) {return proceed;}
-        virtual result fmtEnd(fmtParts part,navNode &nav,idx_t panelNr,idx_t idx=-1) {return proceed;}
+        virtual result fmtStart(fmtParts part,navNode &nav,idx_t idx=-1) {return proceed;}
+        virtual result fmtEnd(fmtParts part,navNode &nav,idx_t idx=-1) {return proceed;}
       protected:
         void printMenu(navNode &nav,idx_t panelNr);
     };
+
+    //template<typename T> inline menuOut& operator<<(menuOut& o,const T x) {return o.operator<<(x);}
 
     class gfxOut:public menuOut {
       public:
@@ -426,6 +452,16 @@ www.r-site.net
         inline prompt& selected() const {return active()[node().sel];}
         inline bool changed(const menuOut& out) const {return node().changed(out);}
         inline bool changed(idx_t n) const {return node().changed(out[n]);}
+        inline bool async(const char* at) {
+          //Serial<<*(prompt*)&active()<<" navRoot::async "<<at<<endl;Serial.flush();
+          //if (sleepTask) idleOff();
+          navFocus=path[level].target;
+          return active().async(at, *this, 0);
+        }
+        menuOut& printPath(menuOut& o) const {
+          for(idx_t n=0;n<level;n++) o<<"/"<<path[n].sel;
+          return o;
+        }
         void printMenu() const {
           if ((active().sysStyles()&_parentDraw)&&level)
             out.printMenu(path[level-1]);
@@ -461,29 +497,31 @@ www.r-site.net
 
     ////////////////////////////////////////////////////////////////////////
     template<typename T>
-    idx_t menuField<T>::printTo(navRoot &root,bool sel,menuOut& out,idx_t len) {
+    idx_t menuField<T>::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) {
       //menuFieldShadow<T>& s=*(menuFieldShadow<T>*)shadow;
       reflex=target();
-      idx_t l=prompt::printTo(root,sel,out,len);
+      idx_t l=prompt::printTo(root,sel,out,idx,len);
       bool ed=this==root.navFocus;
       //bool sel=nav.sel==i;
       if (l<len) {
         out<<((root.navFocus==this&&sel)?(tunning?'>':':'):' ');
         l++;
         if (l<len) {
+          out.fmtStart(menuOut::fmtField,root.node(),idx);
           out.setColor(valColor,sel,enabled,ed);
           //out<<reflex;
           l+=out.print(reflex);//NOTE: this can exceed the limits!
+          out.fmtEnd(menuOut::fmtField,root.node(),idx);
           if (l<len) {
+            out.fmtStart(menuOut::fmtUnit,root.node(),idx);
             out.setColor(unitColor,sel,enabled,ed);
             l+=print_P(out,units(),len);
+            out.fmtEnd(menuOut::fmtUnit,root.node(),idx);
           }
         }
       }
       return l;
     }
-
-    static const char* numericChars="0123456789.";
 
     template<typename T>
     void menuField<T>::parseInput(navNode& nav,Stream& in) {
@@ -494,6 +532,21 @@ www.r-site.net
         nav.root->exit();
         doNav(nav,noCmd);//just clamping
       } else doNav(nav,nav.navKeys(in.read()));
+    }
+
+    template<typename T>
+    bool menuField<T>::async(const char *uri,navRoot& root,idx_t lvl) {
+      Serial<<"async menuField access ["<<uri<<"]"<<endl;Serial.flush();
+      if ((!*uri)||(uri[0]=='/'&&!uri[1])) return true;
+      else if (uri[0]=='/') {
+        Serial<<"parsing value!"<<endl;Serial.flush();
+        StringStream i(++uri);
+        Serial<<"Data:"<<uri<<endl;
+        parseInput(root.node(), i);
+        return true;
+      }
+      Serial<<"something else?!?!"<<endl;Serial.flush();
+      return true;
     }
 
     template<typename T>
@@ -525,53 +578,56 @@ www.r-site.net
     }
 
     template<typename T>
-    idx_t toggle<T>::printTo(navRoot &root,bool sel,menuOut& out,idx_t len) {
-      idx_t l=prompt::printTo(root,sel,out,len);
+    idx_t toggle<T>::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) {
+      idx_t l=prompt::printTo(root,sel,out,idx,len);
       idx_t at=menuVariant<T>::sync(menuVariant<T>::sync());
       bool ed=this==root.navFocus;
       //bool sel=nav.sel==i;
       out.setColor(valColor,sel,prompt::enabled,ed);
       //out<<menuNode::operator[](at);
-      if (len-l>0) l+=toggle<T>::operator[](at).printRaw(out,len-l);
+      if (len-l>0) {
+        out.fmtStart(menuOut::fmtToggle,root.node(),idx);
+        l+=toggle<T>::operator[](at).printRaw(out,len-l);
+        out.fmtEnd(menuOut::fmtToggle,root.node(),idx);
+      }
       return l;
     }
 
     template<typename T>
-    idx_t menuVariant<T>::printTo(navRoot &root,bool sel,menuOut& out,idx_t len) {
+    idx_t menuVariant<T>::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) {
       idx_t l=len;
-      l-=prompt::printTo(root,sel,out,len);
+      l-=prompt::printTo(root,sel,out,idx,len);
       idx_t at=menuVariant<T>::sync(menuVariant<T>::sync());
       bool ed=this==root.navFocus;
       //bool sel=nav.sel==i;
       if (len-l<0) return 0;
       out<<(this==&root.active()?':':' ');
       l--;
-      out.setColor(valColor,sel,prompt::enabled,ed);
-      //out<<menuNode::operator[](at);
-      if (l>0) l-=operator[](at).printRaw(out,l);
+      if (out.fmtStart(type()==selectClass?menuOut::fmtSelect:menuOut::fmtChoose,root.node(),idx)==proceed) {
+        out.setColor(valColor,sel,prompt::enabled,ed);
+        if (l>0) l-=operator[](at).printRaw(out,l);
+      }
+      out.fmtEnd(menuOut::fmtSelect,root.node(),idx);
       return len-l;
     }
 
     template<typename T>
     void menuVariant<T>::doNav(navNode& nav,navCmd cmd) {
-      //Serial<<"variant::doNav "<<cmd.cmd<<endl;
       nav.sel=sync();
       navCmd c=nav.doNavigation(cmd);
       sync(nav.sel);
       if (c.cmd==enterCmd) {
-        //Serial<<"variant:enter!"<<endl;
-        //Serial<<"exit variant"<<endl;
         nav.root->exit();
       }
     }
 
     template<typename T>
     bool menuVariant<T>::changed(const navNode &nav,const menuOut& out,bool sub) {
-      return dirty||reflex!=target();
+      return dirty||((menuValue<T>*)&operator[](reflex))->target()!=target();
     }
 
     template<typename T>
-    result choose<T>::sysHandler(FUNC_PARAMS) {
+    result choose<T>::sysHandler(SYS_FUNC_PARAMS) {
       switch(event) {
         case enterEvent:
           nav.sel=menuVariant<T>::sync();

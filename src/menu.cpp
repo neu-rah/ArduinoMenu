@@ -1,5 +1,4 @@
 #include "menu.h"
-//#include <AnsiStream.h>
 using namespace Menu;
 
 result Menu::doNothing() {return proceed;}
@@ -13,7 +12,36 @@ idx_t prompt::printRaw(menuOut& out,idx_t len) const {
   return print_P(out,getText(),len);
 }
 
-idx_t prompt::printTo(navRoot &root,bool sel,menuOut& out,idx_t len) {return printRaw(out,len);}
+idx_t prompt::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) {
+  out.fmtStart(menuOut::fmtPrompt,root.node(),idx);
+  idx_t r=printRaw(out,len);
+  out.fmtEnd(menuOut::fmtPrompt,root.node(),idx);
+  return r;
+}
+
+bool menuNode::async(const char *uri,navRoot& root,idx_t lvl) {
+  Serial<<*(prompt*)this<<" menuNode::async "<<uri<<" lev:"<<lvl<<endl;
+  if ((!*uri)||(uri[0]=='/'&&!uri[1])) return this;
+  uri++;
+  idx_t n=0;
+  while (*uri) {
+    char* d=strchr(numericChars,uri[0]);
+    if (d) n=n*10+((*d)-'0');
+    else break;
+    uri++;
+  }
+  if (root.path[lvl].target!=this) {
+    Serial<<"escaping"<<endl;
+    while(root.level>lvl) root.doNav(escCmd);
+  }
+  //Serial<<*(prompt*)this<<" doNav idxCmd:"<<n<<endl;Serial.flush();
+  //if (this->operator[](n).type()!=fieldClass) {//do not enter edit mode on fields over async
+    Serial<<"doNav idxCmd"<<endl;
+    root.doNav(navCmd(idxCmd,n));
+  //}
+  Serial<<"recurse on ["<<n<<"]-"<<operator[](n)<<" uri:"<<uri<<" lvl:"<<lvl<<endl;Serial.flush();
+  return operator[](n).async(uri,root,++lvl);
+}
 
 idx_t menuOut::printRaw(const char* at,idx_t len) {
   const char* p=at;
@@ -73,7 +101,7 @@ void menuOut::previewMenu(navRoot& root,menuNode& menu,idx_t panelNr) {
     setColor(fgColor,false,p.enabled);
     drawCursor(i,false,p.enabled,false,panelNr);
     setColor(fgColor,false,p.enabled,false);
-    p.printTo(root,false,*this,panels[panelNr].w);
+    p.printTo(root,false,*this,i,panels[panelNr].w);
   }
 }
 
@@ -122,27 +150,27 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
   panel pan=panels[panelNr];
 
   //-----> panel start
-  fmtStart(fmtPanel,nav,panelNr);
+  fmtStart(fmtPanel,nav);
   if (all) {
     clear(panelNr);
     if (st) {
       ///------> titleStart
-      fmtStart(fmtTitle,nav,panelNr);
+      fmtStart(fmtTitle,nav,-1);
       setColor(titleColor,false);
       clearLine(0,panelNr);
       setColor(titleColor,true);
       setCursor(0,0,panelNr);
       print('[');
-      nav.target->prompt::printTo(*nav.root,true,*this,pan.w-1);
+      nav.target->prompt::printTo(*nav.root,true,*this,-1,pan.w-1);
       print(']');
       //*this<<'['<<*(prompt*)nav.target<<']';
       ///<----- titleEnd
-      fmtEnd(fmtTitle,nav,panelNr);
+      fmtEnd(fmtTitle,nav,-1);
     }
   }
   //bool any=all;
   //------> bodyStart
-  fmtStart(fmtBody,nav,panelNr);
+  fmtStart(fmtBody,nav);
   for(idx_t i=0;i<maxY(panelNr)-st;i++) {
     int ist=i+st;
     if (i+tops[topi]>=nav.sz()) break;
@@ -151,11 +179,11 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
     if (all||p.changed(nav,*this,false)) {
       //any=true;
       //-------> opStart
-      fmtStart(fmtOp,nav,panelNr,i);
+      fmtStart(fmtOp,nav,i);
       bool selected=nav.sel==i+tops[topi];
       bool ed=nav.target==&p;
       //-----> idxStart
-      fmtStart(fmtIdx,nav,panelNr,i);
+      fmtStart(fmtIdx,nav,i);
       clearLine(ist,panelNr,bgColor,selected,p.enabled);
       setCursor(0,ist,panelNr);
       setColor(fgColor,selected,p.enabled,ed);
@@ -168,19 +196,19 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
         len-=3;
       }
       //<------idxEnd
-      fmtEnd(fmtIdx,nav,panelNr,i);
+      fmtEnd(fmtIdx,nav,i);
       //------> cursorStart
-      fmtStart(fmtCursor,nav,panelNr,i);
+      fmtStart(fmtCursor,nav,i);
       drawCursor(ist,selected,p.enabled,ed,panelNr);//assuming only one character
       //<------ cursorEnd
-      fmtEnd(fmtCursor,nav,panelNr,i);
+      fmtEnd(fmtCursor,nav,i);
       len--;
       //---->opBodyStart
-      fmtStart(fmtOpBody,nav,panelNr,i);
+      fmtStart(fmtOpBody,nav,i);
       setColor(fgColor,selected,p.enabled,ed);
-      if (len>0) p.printTo(*nav.root,selected,*this,len);
+      if (len>0) p.printTo(*nav.root,selected,*this,i,len);
       //<---opBodyEnd
-      fmtEnd(fmtOpBody,nav,panelNr,i);
+      fmtEnd(fmtOpBody,nav,i);
       if (selected&&panels.sz>panelNr+1) {
         if(p.isMenu()) {
           //----->  previewStart
@@ -192,16 +220,16 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
         } else if (panels.nodes[panelNr+1]) clear(panelNr+1);
       }
       //opEnd
-      fmtEnd(fmtOp,nav,panelNr,i);
+      fmtEnd(fmtOp,nav,i);
     }
   }
   //<-----bodyEnd
-  fmtEnd(fmtBody,nav,panelNr);
+  fmtEnd(fmtBody,nav,-1);
   //if (any) Serial<<"printMenu "<<*(prompt*)nav.target<<endl;
   drawn=nav.target;
   //lastSel=nav.sel;
   //<---- panel end
-  fmtEnd(fmtPanel,nav,panelNr);
+  fmtEnd(fmtPanel,nav,-1);
 }
 
 navRoot* navNode::root=NULL;
@@ -219,7 +247,7 @@ bool menuNode::changed(const navNode &nav,const menuOut& out,bool sub) {
 //aux function, turn input character into navigation command
 navCmd navNode::navKeys(char ch) {
   if (strchr(numericChars,ch)) {
-    return navCmd(idxCmd,ch);
+    return navCmd(idxCmd,ch-'1');
   }
   for(uint8_t i=0;i<sizeof(options->navCodes)/sizeof(navCode);i++)
     if (options->navCodes[i].ch==ch) return options->navCodes[i].cmd;
@@ -234,6 +262,7 @@ void navTarget::parseInput(navNode& nav,Stream& in) {doNav(nav,nav.navKeys(in.re
 
 //generic navigation (aux function)
 navCmd navNode::doNavigation(navCmd cmd) {
+  //Serial<<" doNavigation "<<cmd.cmd<<","<<cmd.param<<endl;
   idx_t osel=sel;
   navCmd rCmd=cmd;
   switch(cmd.cmd) {
@@ -261,11 +290,12 @@ navCmd navNode::doNavigation(navCmd cmd) {
       break;
     case selCmd:
     case idxCmd: {
-        char at=cmd.param-'1';
+        idx_t at=(idx_t)cmd.param;//-'1';send us numeric index pls!
         if (at>=0&&at<=sz()) {
           sel=at;
           if (cmd.cmd==idxCmd) {
             assert(root);
+            //Serial<<"indexing... "<<endl;
             rCmd=root->enter();
           }
         }
@@ -293,14 +323,14 @@ result navNode::event(eventMask e,idx_t i) {
   eventMask m=p.events();
   eventMask me=(eventMask)(e&m);
   if (me) {
-    return p(e,*this,p);
+    return p(e,p);
   }
   return proceed;
 }
 
 result navNode::sysEvent(eventMask e,idx_t i) {
   prompt& p=operator[](i);
-  return p(e,*this,p);
+  return p(e,p);
 }
 
 void navRoot::doInput() {
@@ -311,6 +341,7 @@ void navRoot::doInput() {
 }
 
 void navRoot::doNav(navCmd cmd) {
+  //Serial<<"navRoot::doNav "<<cmd.cmd<<" sleepTask:"<<(!!sleepTask)<<endl;
   if (sleepTask&&cmd.cmd==enterCmd) idleOff();
   else if (!sleepTask) switch (cmd.cmd) {
     case scrlUpCmd:
@@ -318,6 +349,7 @@ void navRoot::doNav(navCmd cmd) {
       out.doNav(cmd,node());//scroll is perceived better at output device
       break;
     default:
+      //Serial<<"navFocus->doNav "<<cmd.param<<endl;
       navFocus->doNav(node(),cmd);
   }
 }
