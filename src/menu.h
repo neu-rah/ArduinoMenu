@@ -28,17 +28,17 @@ www.r-site.net
     static const char* numericChars="0123456789.";
 
     #define _MAX(a,b) (((a)>(b))?(a):(b))
-    #if defined(ESP8266)
+    //#if defined(ESP8266)
     // && !defined(endl)
       #define endl "\r\n"
-    #endif
+    //#endif
 
     template<typename T> inline Print& operator<<(Print& o, T t) {o.print(t);return o;}
 
     // Menu objects and data
     //////////////////////////////////////////////////////////////////////////
 
-    enum classes {promptClass=0,fieldClass,toggleClass,selectClass,chooseClass,valueClass,menuClass};
+    enum classes {noClass=0,promptClass,fieldClass,toggleClass,selectClass,chooseClass,valueClass,menuClass};
 
     class prompt {
       friend class navNode;
@@ -67,12 +67,8 @@ www.r-site.net
         inline result operator()(FUNC_PARAMS) const {return (*shadow)(FUNC_VALUES);}
         idx_t printRaw(menuOut& out,idx_t len) const;
         virtual bool async(const char *uri,navRoot& root,idx_t lvl) {
-          Serial<<*this<<" prompt::async "<<uri<<" lev:"<<lvl<<" ok:"<<((!*uri)||(uri[0]=='/'&&!uri[1]))<<endl;Serial.flush();
           return ((!*uri)||(uri[0]=='/'&&!uri[1]));
-            /*return operator()(enterEvent,*this)==proceed;
-          return false;*/
         }
-        //virtual void doNav(navNode& nav,navCmd cmd) {if (cmd.cmd==enterCmd) event(enterEvent);}
 
     };
 
@@ -125,6 +121,7 @@ www.r-site.net
         bool changed(const navNode &nav,const menuOut& out,bool sub=true) override {
           return dirty||(reflex!=target());
         }
+        bool async(const char *uri,navRoot& root,idx_t lvl) override;
         void clamp() {
           if (target()<low()) {
             if (style()&wrapStyle) target()=high();
@@ -281,7 +278,7 @@ www.r-site.net
         panelsList& panels;
         idx_t lastSel=-1;
         //TODO: turn this bool's into bitfield flags
-        enum styles {none=0<<0,redraw=1<<0,minimalRedraw=1<<1, drawNumIndex=1<<2, usePreview=1<<3} style;
+        enum styles {none=0<<0,redraw=1<<0,minimalRedraw=1<<1, drawNumIndex=1<<2, usePreview=1<<3, expandEnums=1<<4} style;
         enum fmtParts {fmtPanel,fmtTitle,fmtBody,fmtOp,fmtIdx,fmtCursor,fmtOpBody,fmtPreview,fmtPrompt,fmtField,fmtToggle,fmtSelect,fmtChoose,fmtUnit};
 
         /*bool redraw=false;//redraw all menu every cycle, some display drivers require it
@@ -455,8 +452,9 @@ www.r-site.net
         inline bool changed(const menuOut& out) const {return node().changed(out);}
         inline bool changed(idx_t n) const {return node().changed(out[n]);}
         inline bool async(const char* at) {
-          Serial<<*(prompt*)&active()<<" navRoot::async "<<at<<endl;Serial.flush();
-          if (sleepTask) idleOff();
+          //Serial<<*(prompt*)&active()<<" navRoot::async "<<at<<endl;Serial.flush();
+          //if (sleepTask) idleOff();
+          navFocus=path[level].target;
           return active().async(at, *this, 0);
         }
         menuOut& printPath(menuOut& o) const {
@@ -533,6 +531,21 @@ www.r-site.net
         nav.root->exit();
         doNav(nav,noCmd);//just clamping
       } else doNav(nav,nav.navKeys(in.read()));
+    }
+
+    template<typename T>
+    bool menuField<T>::async(const char *uri,navRoot& root,idx_t lvl) {
+      Serial<<"async menuField access ["<<uri<<"]"<<endl;Serial.flush();
+      if ((!*uri)||(uri[0]=='/'&&!uri[1])) return true;
+      else if (uri[0]=='/') {
+        Serial<<"parsing value!"<<endl;Serial.flush();
+        StringStream i(++uri);
+        Serial<<"Data:"<<uri<<endl;
+        parseInput(root.node(), i);
+        return true;
+      }
+      Serial<<"something else?!?!"<<endl;Serial.flush();
+      return true;
     }
 
     template<typename T>

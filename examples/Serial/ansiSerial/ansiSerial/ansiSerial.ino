@@ -267,6 +267,7 @@ result idle(menuOut& o,idleEvent e) {
       <<ANSI::setForegroundColor(WHITE)
       <<"suspended..."<<endl;
       break;
+    default: break;
     //case idleEnd:o<<"resuming menu."<<endl;break;
   }
   return proceed;

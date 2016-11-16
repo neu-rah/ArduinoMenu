@@ -20,20 +20,26 @@ idx_t prompt::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) 
 }
 
 bool menuNode::async(const char *uri,navRoot& root,idx_t lvl) {
-  Serial<<*(prompt*)this<<"menuNode::async "<<uri<<" lev:"<<lvl<<endl;
+  Serial<<*(prompt*)this<<" menuNode::async "<<uri<<" lev:"<<lvl<<endl;
   if ((!*uri)||(uri[0]=='/'&&!uri[1])) return this;
+  uri++;
   idx_t n=0;
   while (*uri) {
     char* d=strchr(numericChars,uri[0]);
     if (d) n=n*10+((*d)-'0');
+    else break;
     uri++;
   }
   if (root.path[lvl].target!=this) {
     Serial<<"escaping"<<endl;
     while(root.level>=lvl) root.doNav(escCmd);
   }
-  Serial<<"doNav idxCmd:"<<n<<endl;Serial.flush();
-  root.doNav(navCmd(idxCmd,n));
+  //Serial<<*(prompt*)this<<" doNav idxCmd:"<<n<<endl;Serial.flush();
+  //if (this->operator[](n).type()!=fieldClass) {//do not enter edit mode on fields over async
+    Serial<<"doNav idxCmd"<<endl;
+    root.doNav(navCmd(idxCmd,n));
+  //}
+  Serial<<"recurse on ["<<n<<"]-"<<operator[](n)<<" uri:"<<uri<<" lvl:"<<lvl<<endl;Serial.flush();
   return operator[](n).async(uri,root,++lvl);
 }
 
@@ -241,7 +247,7 @@ bool menuNode::changed(const navNode &nav,const menuOut& out,bool sub) {
 //aux function, turn input character into navigation command
 navCmd navNode::navKeys(char ch) {
   if (strchr(numericChars,ch)) {
-    return navCmd(idxCmd,ch);
+    return navCmd(idxCmd,ch-'1');
   }
   for(uint8_t i=0;i<sizeof(options->navCodes)/sizeof(navCode);i++)
     if (options->navCodes[i].ch==ch) return options->navCodes[i].cmd;
@@ -256,6 +262,7 @@ void navTarget::parseInput(navNode& nav,Stream& in) {doNav(nav,nav.navKeys(in.re
 
 //generic navigation (aux function)
 navCmd navNode::doNavigation(navCmd cmd) {
+  //Serial<<" doNavigation "<<cmd.cmd<<","<<cmd.param<<endl;
   idx_t osel=sel;
   navCmd rCmd=cmd;
   switch(cmd.cmd) {
@@ -283,11 +290,12 @@ navCmd navNode::doNavigation(navCmd cmd) {
       break;
     case selCmd:
     case idxCmd: {
-        char at=cmd.param-'1';
+        idx_t at=(idx_t)cmd.param;//-'1';send us numeric index pls!
         if (at>=0&&at<=sz()) {
           sel=at;
           if (cmd.cmd==idxCmd) {
             assert(root);
+            //Serial<<"indexing... "<<endl;
             rCmd=root->enter();
           }
         }
@@ -333,7 +341,7 @@ void navRoot::doInput() {
 }
 
 void navRoot::doNav(navCmd cmd) {
-  Serial<<"navRoot::doNav "<<cmd.cmd<<" sleepTask:"<<(!!sleepTask)<<endl;
+  //Serial<<"navRoot::doNav "<<cmd.cmd<<" sleepTask:"<<(!!sleepTask)<<endl;
   if (sleepTask&&cmd.cmd==enterCmd) idleOff();
   else if (!sleepTask) switch (cmd.cmd) {
     case scrlUpCmd:
@@ -341,7 +349,7 @@ void navRoot::doNav(navCmd cmd) {
       out.doNav(cmd,node());//scroll is perceived better at output device
       break;
     default:
-      Serial<<"navFocus->doNav "<<cmd.param<<endl;
+      //Serial<<"navFocus->doNav "<<cmd.param<<endl;
       navFocus->doNav(node(),cmd);
   }
 }

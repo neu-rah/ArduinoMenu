@@ -102,8 +102,13 @@ config* Menu::options=&defaultOptions;
       case leftCmd:o<<"leftCmd";break;
       case rightCmd:o<<"rightCmd";break;
       case idxCmd:o<<"idxCmd";break;
+      case selCmd:o<<"selCmd";break;
     }
     return o;
+  }
+
+  Print& Menu::operator<<(Print& o,navCmd cmd) {
+    return o<<"{"<<cmd.cmd<<","<<cmd.param<<"}";
   }
 
   Print& Menu::operator<<(Print& o,colorDefs c) {
