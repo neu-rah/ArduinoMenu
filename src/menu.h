@@ -19,7 +19,7 @@ www.r-site.net
 #ifndef RSITE_ARDUINO_MENU_SYSTEM
   #define RSITE_ARDUINO_MENU_SYSTEM
   #include <Arduino.h>
-  //#include <Streaming.h>
+  #include <Streaming.h>
   #include "menuBase.h"
   #include "shadows.h"
 
@@ -29,11 +29,18 @@ www.r-site.net
 
     #define _MAX(a,b) (((a)>(b))?(a):(b))
     //#if defined(ESP8266)
-    // && !defined(endl)
+    //#if !defined(endl)
+    #ifndef ARDUINO_STREAMING
       #define endl "\r\n"
-    //#endif
+    #endif
 
-    template<typename T> inline Print& operator<<(Print& o, T t) {o.print(t);return o;}
+    // Streams
+    //////////////////////////////////////////////////////////////////////////
+    //template<typename T> inline Print& operator<<(Print& o, T t) {o.print(t);return o;}
+    Print& operator<<(Print& o,prompt const &p);
+    inline String& operator<<(String &s,prompt &p);
+    //template<typename T> HardwareSerial& operator<<(HardwareSerial& o,T t) {o.print(t);return o;}
+    //template<typename T> inline menuOut& operator<<(menuOut& o,const T x) {return o.operator<<(x);}
 
     // Menu objects and data
     //////////////////////////////////////////////////////////////////////////
@@ -294,7 +301,9 @@ www.r-site.net
         inline idx_t& top(navNode& nav) const;
         idx_t printRaw(const char* at,idx_t len);
         virtual menuOut& operator<<(prompt const &p);
+        #ifdef ESP8266
         template<typename T> menuOut& operator<<(T o) {(*(Print*)this)<<(o);return *this;}
+        #endif
         virtual menuOut& fill(
           int x1, int y1, int x2, int y2,char ch=' ',
           colorDefs color=bgColor,
@@ -320,8 +329,6 @@ www.r-site.net
       protected:
         void printMenu(navNode &nav,idx_t panelNr);
     };
-
-    //template<typename T> inline menuOut& operator<<(menuOut& o,const T x) {return o.operator<<(x);}
 
     class gfxOut:public menuOut {
       public:
@@ -459,7 +466,7 @@ www.r-site.net
           return active().async(at, *this, 0);
         }
         menuOut& printPath(menuOut& o) const {
-          for(idx_t n=0;n<level;n++) o<<"/"<<path[n].sel;
+          for(idx_t n=0;n<level;n++) o<<'/'<<path[n].sel;
           return o;
         }
         void printMenu() const {
@@ -536,16 +543,12 @@ www.r-site.net
 
     template<typename T>
     bool menuField<T>::async(const char *uri,navRoot& root,idx_t lvl) {
-      Serial<<"async menuField access ["<<uri<<"]"<<endl;Serial.flush();
       if ((!*uri)||(uri[0]=='/'&&!uri[1])) return true;
       else if (uri[0]=='/') {
-        Serial<<"parsing value!"<<endl;Serial.flush();
         StringStream i(++uri);
-        Serial<<"Data:"<<uri<<endl;
         parseInput(root.node(), i);
         return true;
       }
-      Serial<<"something else?!?!"<<endl;Serial.flush();
       return true;
     }
 
@@ -638,6 +641,7 @@ www.r-site.net
 
     idx_t& menuOut::top(navNode& nav) const {return tops[nav.root->level];}
 
+    inline String& operator<<(String &s,prompt &p) {return s+=p.getText();}
   }//namespace Menu
 
 #endif

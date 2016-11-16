@@ -20,7 +20,7 @@ idx_t prompt::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) 
 }
 
 bool menuNode::async(const char *uri,navRoot& root,idx_t lvl) {
-  Serial<<*(prompt*)this<<" menuNode::async "<<uri<<" lev:"<<lvl<<endl;
+  //Serial<<*(prompt*)this<<" menuNode::async "<<uri<<" lev:"<<lvl<<endl;
   if ((!*uri)||(uri[0]=='/'&&!uri[1])) return this;
   uri++;
   idx_t n=0;
@@ -31,15 +31,15 @@ bool menuNode::async(const char *uri,navRoot& root,idx_t lvl) {
     uri++;
   }
   if (root.path[lvl].target!=this) {
-    Serial<<"escaping"<<endl;
+    //Serial<<"escaping"<<endl;
     while(root.level>lvl) root.doNav(escCmd);
   }
   //Serial<<*(prompt*)this<<" doNav idxCmd:"<<n<<endl;Serial.flush();
   //if (this->operator[](n).type()!=fieldClass) {//do not enter edit mode on fields over async
-    Serial<<"doNav idxCmd"<<endl;
+    //Serial<<"doNav idxCmd"<<endl;
     root.doNav(navCmd(idxCmd,n));
   //}
-  Serial<<"recurse on ["<<n<<"]-"<<operator[](n)<<" uri:"<<uri<<" lvl:"<<lvl<<endl;Serial.flush();
+  //Serial<<"recurse on ["<<n<<"]-"<<operator[](n)<<" uri:"<<uri<<" lvl:"<<lvl<<endl;Serial.flush();
   return operator[](n).async(uri,root,++lvl);
 }
 

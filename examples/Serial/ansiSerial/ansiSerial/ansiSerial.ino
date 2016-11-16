@@ -21,6 +21,8 @@ screen /dev/ttyUSBn 115200
 replace the port (/dev/ttyUSBn) with your appropriate port
 screen utility exits with [Ctrl+A \ y]
 
+status: BUGGY!
+
 www.r-site.net
 ***/
 #include <menu.h>

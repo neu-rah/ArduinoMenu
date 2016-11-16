@@ -73,8 +73,16 @@ void loop() {
 - Supports multiple inputs and outputs in parallel.
 - static allocation of RAM, avoiding heap fragmentation, all RAM needed to define menu structure is allocated at program statup.
 - events available for menus and prompts
-- simply returns when no input available and no draw needed.
+- simply returns when no input available and no needed to draw.
 - lazy drawing, only draws when changed, avoiding time consumption and flicking.
+- sync/async navigation API functions
+- async navigation for stateless clients (as web)
+- web interface
+- Tested on Arduino: AVR, ARM, Teensy 3.2, ESP8266
+
+## Dependencies
+
+Streaming - https://github.com/scottdky/Streaming
 
 ## Menu structure elements (macros)
 

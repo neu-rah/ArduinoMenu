@@ -23,8 +23,6 @@ input: Web browser
 
 using namespace Menu;
 
-//template<typename T> HardwareSerial& operator<<(HardwareSerial& o,T t) {o.print(t);return o;}
-
 const char* ssid = "r-site.net";
 const char* password = "rsite.2011";
 
@@ -90,8 +88,6 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,SUBMENU(selMenu)
   ,SUBMENU(chooseMenu)
 );
-
-inline String& operator<<(String &s,prompt &p) {return s+=p.getText();}
 
 result idle(menuOut& o,idleEvent e) {
   //if (e==idling)

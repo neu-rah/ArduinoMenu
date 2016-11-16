@@ -177,8 +177,6 @@ www.r-site.net
     // TODO: distribute them by inputs and outputs
     extern config* options;
 
-    Print& operator<<(Print& o,prompt const &p);
-
     #ifdef DEBUG
       Print& operator<<(Print& o,bool b);
       Print& operator<<(Print& o,navCmds cmd);

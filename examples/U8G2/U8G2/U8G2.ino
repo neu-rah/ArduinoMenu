@@ -19,11 +19,14 @@ Extensible: Yes
 menu on U8G2 device
 output: Wemos D1 mini OLED Shield (SSD1306 64x48 I2C) + Serial
 input: Serial
+platform: espressif8266
 
 */
 
 #ifdef ESP8266
   #define typeof(x) __typeof__(x)
+  #include <SPI.h>
+  #include <Wire.h>
 #endif
 
 #include <menu.h>
@@ -92,7 +95,7 @@ CHOOSE(chooseTest,chooseMenu,"Choose",doNothing,noEvent,noStyle
 class altPrompt:public prompt {
 public:
   altPrompt(const promptShadow& p):prompt(p) {}
-  idx_t printTo(navRoot &root,bool sel,menuOut& out,idx_t len) override {
+  idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) override {
     return out.printRaw("special prompt!",len);;
   }
 };
@@ -192,11 +195,11 @@ void setup() {
   pinMode(LEDPIN,OUTPUT);
   Serial.begin(115200);
   while(!Serial);
-  Serial<<F("menu 3.0 test")<<endl;Serial.flush();
+  Serial<<"menu 3.0 test"<<endl;Serial.flush();
   u8g2_SetI2CAddress(u8g2.getU8g2(), 0x3d*2);
   u8g2.begin();
   u8g2.setFont(fontName);
-  
+
   nav.idleTask=idle;//point a function to be used when menu is suspended
   mainMenu[1].enabled=disabledStatus;
   nav.sleepTask=alert;
