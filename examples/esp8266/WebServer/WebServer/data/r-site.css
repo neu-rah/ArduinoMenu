@@ -10,7 +10,7 @@ input {
 input.aml_field, .aml_ops select {
   background-color: #010;
   color: lime;
-  border: solid 1px: lime;
+  border: solid 1px lime;
   border-radius: 3px;
 }
 input.aml_field {
