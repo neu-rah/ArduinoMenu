@@ -23,7 +23,7 @@ Extensible: Yes
 
 U8GLIB_PCD8544 u8g(U8_CS, U8_DC, U8_RST) ;
 
-menuU8G gfx(u8g,1,0,1,1,7,9);
+menuU8G gfx(u8g,1,0,1,1,1,0,7,9);
 
 bool runMenu=true;
 

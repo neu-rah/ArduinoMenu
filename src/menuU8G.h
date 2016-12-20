@@ -49,8 +49,8 @@ www.r-site.net
 	  	hiliteColor(hiliteColor),
 			enabledColorHi(bgColor),
 	  	disabledColorHi(bgColor),
-			valueColor(enabledColor),
-			valueColorHi(enabledColor),
+			valueColor(valueColor),
+			valueColorHi(valueColorHi),
 	  	menuOut(gfx.getWidth()/resX,gfx.getHeight()/resY,resX,resY)
         {
             // Small typefaces used to draw the menu, do not forget to report resX and resY
