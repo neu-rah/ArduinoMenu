@@ -81,12 +81,16 @@ void loop() {
 - Tested on Arduino: AVR, ARM, Teensy 3.2, ESP8266
 
 ## Dependencies
+This library depends on the following libraries:
 
-Streaming - https://github.com/scottdky/Streaming
+- Streaming https://github.com/scottdky/Streaming (on debug mode)
+- Assert4a https://github.com/nettigo/Assert4a (on debug mode)
+
+Depending on the type of input or output, other libraries might be needed. Essentially any library needed for your devices.
 
 ## Menu structure elements (macros)
 
-This macros define read-only static menu structure.
+This macros define read-only static menu structure (PROGMEM on system that support it).
 
 **OP** - define a prompt with associated action function
 
@@ -99,11 +103,10 @@ result goFun() {Serial.println("done!");return proceed;}
 OP("Go!",goFun,enterEvent)
 ```
 
-Creates an 'anonymous' option as a parent menu element. This option is associated with an action function to be called according to elements mask.
-Prompt's are the menu basic structure, all other elements will share its poroperties. That is all can have a title, and action function and an event mask.
+Creates an 'anonymous' option as a parent's menu element. This option is associated with an action function to be called according to elements mask.
+Prompt's are the menu basic structure, all other elements will share its poroperties. That is all can have a title, an action function and an event mask.
 The action function will be called on every event occourence.
-The action function can sen back some 'result' information to be interpreted nby the caller. The meaning of this result depends on the caller and they might ignore it.
-Current styles have no meaning on simnple prompts.
+The action function can send back some 'result' information to be interpreted by the caller. The meaning of this result depends on the caller and it might ignore it.
 
 **MENU** - define a menu
 
@@ -120,7 +123,7 @@ a menu object 'id' is statically created and can be refered in your sketch by it
   );
 
   void setup() {
-    myMenu[2].disable();
+    myMenu[2].disable();//example of disabling a menu option
   }
 ```
 
@@ -156,7 +159,7 @@ MENU(myMenu,"Schedule",doNothing,noEvent,wrapStyle
 
 ```
 
-**TOGGLE** - define varible value by toggling from an enumerated list of possible values. Change value every click.
+**TOGGLE** - set a variable value by toggling from an enumerated list of possible values. Change value every click.
 
 TOGGLE(var.name, id, title, action, event mask, styles, value, value [,value ...])
 
@@ -167,20 +170,21 @@ TOGGLE(dir,dirPinMenu,"Dir: ",doNothing,noEvent,wrapStyle
   ,VALUE("Down",LOW,doNothing,noEvent)
 );
 
+//hooking the toggle to a menu
 MENU(myMenu,"Schedule",doNothing,noEvent,wrapStyle
-  ,SUBMENU(disPinMenu)
+  ,SUBMENU(dirPinMenu)
   ,...
 );
 ```
 
-Creates a menu like structure enumerating all possible values of the associated var.
+Creates a menu-like structure enumerating all possible values of the associated var.
 
 **CHOOSE** -  define varible value by chosing from an enumerated list of possible values. Enumerated list of values shown as a submenu.
 
 CHOOSE(var.name, id, title, action, evant mask, styles, value, value [,valu ...])
 
 ```c++
-int chooseTest=-1;
+int chooseTest=-1;//some variable used by your code (not necessarly an int)
 CHOOSE(chooseTest,chooseMenu,"Choose",doNothing,noEvent,noStyle
   ,VALUE("First",1,doNothing,noEvent)
   ,VALUE("Second",2,doNothing,noEvent)
@@ -260,14 +264,6 @@ nav.doNav(upCmd);
 **scrlDownCmd** N/A
 
 
-## Dependencies
-This library depends on the following libraries:
-
-- Streaming https://github.com/scottdky/Streaming (on debug mode)
-- Assert4a https://github.com/nettigo/Assert4a (on debug mode)
-
-Depending on the type of input or output, other libraries might be needed. Essentially any library needed for your devices.
-
 ## Limits
 
 - when using macros the menu is limited to 16 options (current macro limnit).
@@ -293,7 +289,7 @@ Serial https://www.arduino.cc/en/Reference/Serial
 
 Standard arduino LCD library  https://www.arduino.cc/en/Reference/LiquidCrystal
 
-F Malpartida's LCDs (ex: i2c LCD) (not yet implemented on v3)
+F Malpartida's LCDs (ex: i2c LCD)
 https://bitbucket.org/fmalpartida/new-liquidcrystal/wiki/Home
 
 Adafruit's GFX devices
@@ -305,8 +301,14 @@ http://www.rinkydinkelectronics.com/library.php?id=51
 U8glib devices
 https://github.com/olikraus/U8glib_Arduino
 
+U8G2 devices
+https://github.com/olikraus/u8g2
+
 Serial ANSI terminal
 https://github.com/neu-rah/AnsiStream
+
+Web browser (experimental)
+when using ESP devices
 
 ### Input devices
 
@@ -319,6 +321,9 @@ Buttons - simple digital keyboard (builtin v2.x)
 Generic keyboard (no PCINT) - configurable for digital or analog keyboards (v2.x)
 
 ClickEncoder https://github.com/0xPIT/encoder (not yest implemented on v3)
+
+Web browser (experimental)
+when using ESP devices
 
 ## History
 

@@ -66,3 +66,17 @@ iteration levels
   1 - event messages <- require navNode
   2 - nav commands <- apply to root!
   3 - input <- relly on nav path status
+
+
+formating
+
+  1 - use fmt template class wrapping menuOut
+    + this is nice independente and interchangeable
+    - cannot print specialized field/values templates
+  2 - use derivation classes
+    - cant use multiple outputs on same structure
+  3 - use specialized function to print html
+    + outputs call specialized thing
+  4 - use generic format
+    + fmt should be used by elements and not by the output
+    - still field elements needs to print min/max for html

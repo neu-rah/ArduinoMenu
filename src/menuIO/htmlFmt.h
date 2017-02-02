@@ -14,7 +14,10 @@
           //prompt* n=&nav[idx];
           switch(part) {
             case menuOut::fmtPanel:
-              if (start) T::operator<<("<div class=\"aml_panel\">");
+              if (start)
+                *this
+                  <<"<div id=\""<<nav.target->hash()
+                  <<"\" class=\"aml_panel\">";
               else T::operator<<("</div>");
               break;
             case menuOut::fmtTitle:
@@ -26,7 +29,7 @@
               else T::operator<<("</ul>");
               break;
             case menuOut::fmtOp:
-              if (start) T::operator<<("<li class=\"aml_op\">");
+              if (start) *this<<"<li class=\"aml_op\" data-idx=\""<<idx<<"\">";
               else T::operator<<("</li>");
               break;
             case menuOut::fmtToggle:
@@ -38,21 +41,27 @@
                   *this<<"/"<<idx<<"\">";
                 } else *this<<"</a>";
               break;
-              case menuOut::fmtSelect:
-              case menuOut::fmtChoose:
+            case menuOut::fmtSelect:
+            case menuOut::fmtChoose:
               if(!start) break;
               *this<<"<select data-path=\"/menu?at=";
               nav.root->printPath(*this);
               *this<<"/"<<idx<<"\">";
               *this<<"\">";
               for(idx_t n=0;n<((menuNode*)&nav[idx])->sz();n++)
-                *this<<"<option"<<(n==((menuVariant<int>*)&nav[idx])->reflex?" selected":"")<<">"<<((menuNode*)&nav[idx])->operator[](n)<<"</option>";
+                *this
+                  <<"<option"<<(n==nav[idx].selected()?" selected":"")<<">"
+                  <<((menuNode*)&nav[idx])->operator[](n)<<"</option>";
               *this<<"</select>";
               return quit;
               break;
             case menuOut::fmtField:
               if (start) {
-                *this<<"<input class=\"aml_field\" data-path=\"/menu?at=/"<<idx;
+                *this<<"<input id=\""<<nav[idx].hash()<<"\" type=\"range\" data-idx=\""<<idx<<"\" min=\"";
+                nav[idx].printLow(*this);
+                *this<<"\" max=\"";
+                nav[idx].printHigh(*this);
+                *this<<"\" class=\"aml_field\" data-path=\"/menu?at=/"<<idx;
                 nav.root->printPath(*this);
                 *this<<"\" value=\"";
               } else *this<<"\">";

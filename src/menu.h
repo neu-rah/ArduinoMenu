@@ -55,6 +55,10 @@ www.r-site.net
       public:
         status enabled=enabledStatus;//ignore enter if false
         bool dirty=true;//needs to be  redrawn
+        inline uint16_t hash() const {
+          int tmp=(int)this;
+          return ((uint16_t*)&tmp)[sizeof(this)/sizeof(uint16_t)-1];
+        }
         virtual classes type() const {return promptClass;}
         inline prompt(const promptShadow& shadow):shadow(&shadow) {}
         inline void enable() {enabled=enabledStatus;}
@@ -73,9 +77,17 @@ www.r-site.net
         virtual result sysHandler(SYS_FUNC_PARAMS) {return proceed;}
         inline result operator()(FUNC_PARAMS) const {return (*shadow)(FUNC_VALUES);}
         idx_t printRaw(menuOut& out,idx_t len) const;
+        virtual prompt* seek(idx_t* uri,idx_t len) {return len?NULL:this;}
         virtual bool async(const char *uri,navRoot& root,idx_t lvl) {
           return ((!*uri)||(uri[0]=='/'&&!uri[1]));
         }
+
+        //some functions to use on htmlFmt
+        // for enumerations:
+        virtual idx_t selected() const {return 0;}
+        virtual void printValue(menuOut&) const {}
+        virtual void printHigh(menuOut&) const {}
+        virtual void printLow(menuOut&) const {}
 
     };
 
@@ -98,6 +110,7 @@ www.r-site.net
         bool changed(const navNode &nav,const menuOut& out,bool sub=true) override;
         inline idx_t sz() const {return ((menuNodeShadow*)shadow)->_sz();}
         inline prompt* const* data() const {return ((menuNodeShadow*)shadow)->_data();}
+        prompt* seek(idx_t* uri,idx_t len) override;
         bool async(const char *uri,navRoot& root,idx_t lvl=0) override;
     };
 
@@ -128,6 +141,9 @@ www.r-site.net
         bool changed(const navNode &nav,const menuOut& out,bool sub=true) override {
           return dirty||(reflex!=target());
         }
+        void printValue(menuOut& o) const override {o<<reflex;}
+        void printHigh(menuOut& o) const override {o<<high();}
+        void printLow(menuOut& o) const override {o<<low();}
         bool async(const char *uri,navRoot& root,idx_t lvl) override;
         void clamp() {
           if (target()<low()) {
@@ -190,6 +206,7 @@ www.r-site.net
         //void parseInput(navNode& nav,Stream& in) override;
         void doNav(navNode& nav,navCmd cmd) override;
         idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) override;
+        virtual idx_t selected() const {return reflex;}
     };
 
     template<typename T>//-------------------------------------------
@@ -432,6 +449,7 @@ www.r-site.net
         navCmd doNavigation(navCmd cmd);//aux function
         inline bool changed(const menuOut& out) const {return target->changed(*this,out);}
         inline prompt& operator[](idx_t i) const {return target->operator[](i);}
+        //inline void parseInput(Stream& in) {target->parseInput(*this,in);}
     };
 
     class navRoot {
@@ -459,6 +477,7 @@ www.r-site.net
         inline prompt& selected() const {return active()[node().sel];}
         inline bool changed(const menuOut& out) const {return node().changed(out);}
         inline bool changed(idx_t n) const {return node().changed(out[n]);}
+        //inline void parseInput(Stream& in) const {Serial<<"navRoot::parseInput"<<endl;;node().parseInput(in);}
         inline bool async(const char* at) {
           //Serial<<*(prompt*)&active()<<" navRoot::async "<<at<<endl;Serial.flush();
           //if (sleepTask) idleOff();
@@ -475,8 +494,20 @@ www.r-site.net
           else out.printMenu(node());
         }
 
+        //async printMenu on arbitrary menuOut device
+        void printMenu(menuOut& o) const {
+          if ((active().sysStyles()&_parentDraw)&&level)
+            o.printMenu(path[level-1]);
+          else o.printMenu(node());
+        }
+
         //menu IO - external iteration functions
-        void doInput();
+        void doInput(Stream& in);
+        inline void doInput(const char*in) {
+          StringStream inStr(in);
+          while(inStr.available()) doInput(inStr);
+        }
+        inline void doInput() {doInput(in);}
         inline void doOutput() {
           if (!sleepTask) printMenu();
           else out.idle(sleepTask,idling);
@@ -532,6 +563,7 @@ www.r-site.net
 
     template<typename T>
     void menuField<T>::parseInput(navNode& nav,Stream& in) {
+      //Serial<<"menuField::parseInput"<<endl;
       //menuFieldShadow<T>& s=*(menuFieldShadow<T>*)shadow;
       if (strchr(numericChars,in.peek())) {//a numeric value was entered
         target()=(T)in.parseFloat();
@@ -610,7 +642,7 @@ www.r-site.net
         out.setColor(valColor,sel,prompt::enabled,ed);
         if (l>0) l-=operator[](at).printRaw(out,l);
       }
-      out.fmtEnd(menuOut::fmtSelect,root.node(),idx);
+      out.fmtEnd(type()==selectClass?menuOut::fmtSelect:menuOut::fmtChoose,root.node(),idx);
       return len-l;
     }
 

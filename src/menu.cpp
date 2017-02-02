@@ -19,6 +19,13 @@ idx_t prompt::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) 
   return r;
 }
 
+prompt* menuNode::seek(idx_t* uri,idx_t len) {
+  if (len&&uri[0]>=0&&uri[0]<sz()) {
+    prompt& e=operator[](uri[0]);
+    assert(e.isMenu());
+    return e.seek(++uri,--len);
+  } else return NULL;
+}
 bool menuNode::async(const char *uri,navRoot& root,idx_t lvl) {
   //Serial<<*(prompt*)this<<" menuNode::async "<<uri<<" lev:"<<lvl<<endl;
   if ((!*uri)||(uri[0]=='/'&&!uri[1])) return this;
@@ -160,9 +167,9 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
       clearLine(0,panelNr);
       setColor(titleColor,true);
       setCursor(0,0,panelNr);
-      print('[');
+      //print('[');
       nav.target->prompt::printTo(*nav.root,true,*this,-1,pan.w-1);
-      print(']');
+      //print(']');
       //*this<<'['<<*(prompt*)nav.target<<']';
       ///<----- titleEnd
       fmtEnd(fmtTitle,nav,-1);
@@ -258,11 +265,12 @@ void navTarget::doNav(navNode& nav,navCmd cmd) {
   nav.doNavigation(cmd);
 }
 
-void navTarget::parseInput(navNode& nav,Stream& in) {doNav(nav,nav.navKeys(in.read()));}
+void navTarget::parseInput(navNode& nav,Stream& in) {
+  doNav(nav,nav.navKeys(in.read()));
+}
 
 //generic navigation (aux function)
 navCmd navNode::doNavigation(navCmd cmd) {
-  //Serial<<" doNavigation "<<cmd.cmd<<","<<cmd.param<<endl;
   idx_t osel=sel;
   navCmd rCmd=cmd;
   switch(cmd.cmd) {
@@ -333,7 +341,7 @@ result navNode::sysEvent(eventMask e,idx_t i) {
   return p(e,p);
 }
 
-void navRoot::doInput() {
+void navRoot::doInput(Stream& in) {
   if (sleepTask) {
     if (options->getCmdChar(enterCmd)==in.read()) idleOff();
   } else if (in.available())//while ((!sleepTask)&&in.available())//if not doing something else and there is input

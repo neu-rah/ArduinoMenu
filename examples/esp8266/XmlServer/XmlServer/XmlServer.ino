@@ -1,9 +1,9 @@
 /********************
 Arduino generic menu system
-WebServer menu example
-WebServer: https://github.com/esp8266/Arduino/tree/master/libraries/ESP8266WebServer
+XmlServer menu example
+based on WebServer: https://github.com/esp8266/Arduino/tree/master/libraries/ESP8266WebServer
 
-Nov. 2016 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
+Dec. 2016 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
 creative commons license 4.0: Attribution-ShareAlike CC BY-SA
 This software is furnished "as is", without technical support, and with no
 warranty, express or implied, as to its usefulness for any purpose.
@@ -12,37 +12,44 @@ Thread Safe: No
 Extensible: Yes
 
 menu on web browser served by esp8266 device
-output: Web browser
-input: Web browser
+output: ESP8266WebServer -> Web browser
+input: ESP8266WebSocket <- Web browser
+format: xml
 
 */
 #include <menu.h>
 #include <menuIO/esp8266Out.h>
-#include <menuIO/htmlFmt.h>
+#include <menuIO/xmlFmt.h>//to write a menu has html page
+//#include <menuIO/jsFmt.h>//to send javascript thru web socket (live update)
 #include <FS.h>
+#include <Hash.h>
+extern "C" {
+#include "user_interface.h"
+}
 
 using namespace Menu;
 
 const char* ssid = "r-site.net";
 const char* password = "rsite.2011";
+#ifdef DEBUG
+  // on debug mode I put aux files on external server to allow changes without SPIFF update
+  // on this mode the browser MUST be instructed to accept cross domain files
+  #define xslt "http://neurux:8080/menu.xslt"
+#else
+  #define xslt "/menu.xslt"
+#endif
 
-//define server and menu output to server
-//some IO definitions/options
-#define BLACK "#000"
-#define BLUE "navy"
-#define GRAY "#888"
-#define WHITE "white"
-#define RED "red"
-#define YELLOW "gold"
-
-ESP8266WebServer server(80);
-#define DBG_OUTPUT_PORT Serial
+#define HTTP_PORT 80
+#define WS_PORT 81
+#define USE_SERIAL Serial
+ESP8266WiFiMulti WiFiMulti;
+ESP8266WebServer server = ESP8266WebServer(80);
+WebSocketsServer webSocket = WebSocketsServer(81);
 
 #define MAX_DEPTH 2
 idx_t tops[MAX_DEPTH];
 PANELS(webPanels,{0,0,30,20});
-
-htmlFmt<esp8266_WebServerOut> serverOut(server,/*colors,*/tops,webPanels);
+xmlFmt<esp8266_WebServerOut> serverOut(server,tops,webPanels);
 
 //menu action functions
 result action1(eventMask event, navNode& nav, prompt &item) {
@@ -102,55 +109,60 @@ NAVROOT(nav,mainMenu,MAX_DEPTH,Serial,out);
 config myOptions={'*','-',false,false,defaultNavCodes};
 
 
-//const int led = 13;
+void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length) {
+  switch(type) {
+    case WStype_DISCONNECTED:
+      USE_SERIAL.printf("[%u] Disconnected!\n", num);
+      break;
+    case WStype_CONNECTED: {
+        IPAddress ip = webSocket.remoteIP(num);
+        USE_SERIAL.printf("[%u] Connected from %d.%d.%d.%d url: %s\n", num, ip[0], ip[1], ip[2], ip[3], payload);
+        webSocket.sendTXT(num, "console.log('ArduinoMenu Connected')");
+      }
+      break;
+    case WStype_TEXT:
+      USE_SERIAL.printf("[%u] get Text: %s\n", num, payload);
+      nav.async((const char*)payload);//this is slow!!!!!!!!
+      break;
+    case WStype_BIN: {
+        USE_SERIAL.printf("[WSc] get binary length: %u", length);
+        Serial<<endl;
+        /*for(int c=0;c<length;c++)
+          USE_SERIAL<<*(char*)(payload+c);*/
+        uint16_t id=*(uint16_t*) payload++;
+        idx_t len=*((idx_t*)++payload);
+        idx_t* pathBin=(idx_t*)++payload;
+        const char* inp=(const char*)(payload+len);
+        Serial<<"id:"<<id<<endl;
+        if (id==nav.active().hash()) {
+          Serial<<"id ok."<<endl;Serial.flush();
+          Serial<<"input:"<<inp<<endl;
+          //StringStream inStr(inp);
+          //while(inStr.available())
+          nav.doInput(inp);
+          webSocket.sendTXT(num, "binBusy=false;");//send javascript to unlock the state
+        } else Serial<<"id not ok!"<<endl;
+        Serial<<endl;
+      }
+      break;
+  }
+}
+
 void pageStart() {
   server.sendHeader("Cache-Control","no-cache, no-store, must-revalidate");
   server.sendHeader("Pragma","no-cache");
   server.sendHeader("Expires","0");
-  serverOut
-    <<"<!DOCTYPE html>\r\n<html><head profile=\"http://www.w3.org/2005/10/profile\">\r\n"
-    <<"<meta charset=\"utf-8\">\r\n"
-    <<"<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\r\n"
-    <<"<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\r\n"
-    <<"<title>ArduinoMenu library OTA</title>\r\n"
-    <<"<link rel=\"icon\" type=\"image/png\" href=\"/logo.png\">\r\n"
-    <<"<script src=\"https://code.jquery.com/jquery-3.1.1.slim.min.js\" integrity=\"sha256-/SIrNqv8h6QGKDuNoLGA4iret+kyesCkHGzVUUV0shc=\" crossorigin=\"anonymous\"></script>\r\n"
-    <<"<link href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css\" rel=\"stylesheet\" integrity=\"sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u\" crossorigin=\"anonymous\">\r\n"
-    <<"<script src=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js\" integrity=\"sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa\" crossorigin=\"anonymous\"></script>\r\n"
-    <<"<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->\r\n"
-    <<"<!--[if lt IE 9]>\r\n"
-    <<"  <script src=\"https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js\"></script>\r\n"
-    <<"  <script src=\"https://oss.maxcdn.com/respond/1.4.2/respond.min.js\"></script>\r\n"
-    <<"<![endif]-->\r\n"
-    <<"<script type=\"text/javascript\" src=\"r-site.js\" ></script>\r\n"
-    <<"<link rel=\"stylesheet\" type=\"text/css\" href=\"/index.css\">\r\n"
-    <<"<link rel=\"stylesheet\" type=\"text/css\" href=\"/r-site.css\">\r\n"
-    <<"<script>$(function() {init();});</script>\r\n"
-    <<"</head><body class=\"ArduinoMenu\">\r\n"
-    <<"<div class=\"site-wrapper\">\r\n"
-    <<"  <div class=\"site-wrapper-inner\">\r\n"
-    <<"    <div class=\"cover-container\">\r\n"
-    <<"      <div class=\"masthead clearfix\">\r\n"
-    <<"        <div class=\"inner\">\r\n"
-    <<"          <h3 class=\"masthead-brand\">ArduinoMenu library</h3>\r\n"
-    <<"          <nav>\r\n"
-    <<"            <ul class=\"nav masthead-nav\">\r\n"
-    <<"              <li class=\"active\"><a href=\"https://github.com/neu-rah/ArduinoMenu\">Home</a></li>\r\n"
-    <<"              <!--li><a href=\"#\">Features</a></li-->\r\n"
-    <<"              <li><a href=\"http://www.r-site.net\">Contact</a></li>\r\n"
-    <<"            </ul>\r\n"
-    <<"          </nav>\r\n"
-    <<"        </div>\r\n"
-    <<"      </div>\r\n"
-    <<"   <div class=\"inner cover\">\r\n";
+  serverOut<<
+    "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\r\n"
+    "<?xml-stylesheet type=\"text/xsl\" href=\""
+    xslt
+    "\"?>\r\n<menuLib>\r\n";
+    "<menuLib>\r\n";
 }
 
 void pageEnd() {
-  serverOut
-      <<"</div><div class=\"mastfoot\"><div class=\"inner\">\r\n"
-      <<"<p><a href=\"/\">back to control page</a> ArduinoMenu library <a href=\"https://github.com/neu-rah/ArduinoMenu\">https://github.com/neu-rah/ArduinoMenu</a>.</p>\r\n"
-      <<"</div></div></div></div></div></body></html>";
-  server.send(200, "text/html", serverOut.response);
+  serverOut<<"</menuLib>";
+  server.send(200, "text/xml", serverOut.response);
 }
 
 void handleNotFound(){
@@ -168,6 +180,7 @@ void handleNotFound(){
     message += " " + server.argName(i) + ": " + server.arg(i) + "\n";
   }
   server.send(404, "text/plain", message);
+  USE_SERIAL.println(message);
   //digitalWrite(led, 0);
 }
 
@@ -182,6 +195,8 @@ String getContentType(String filename){
   else if(filename.endsWith(".jpg")) return "image/jpeg";
   else if(filename.endsWith(".ico")) return "image/x-icon";
   else if(filename.endsWith(".xml")) return "text/xml";
+  else if(filename.endsWith(".xsl")) return "text/xml";
+  else if(filename.endsWith(".xslt")) return "text/xsl";
   else if(filename.endsWith(".pdf")) return "application/x-pdf";
   else if(filename.endsWith(".zip")) return "application/x-zip";
   else if(filename.endsWith(".gz")) return "application/x-gzip";
@@ -189,7 +204,7 @@ String getContentType(String filename){
 }
 
 bool handleFileRead(String path){
-  if(path.endsWith("/")) path += "index.htm";
+  if(path.endsWith("/")) path += "index.html";
   String contentType = getContentType(path);
   String pathWithGz = path + ".gz";
   if(SPIFFS.exists(pathWithGz) || SPIFFS.exists(path)){
@@ -204,7 +219,9 @@ bool handleFileRead(String path){
   return false;
 }
 
-inline void notfound() {server.send(404, "text/plain", "FileNotFound");}
+inline void notfound() {
+  server.send(404, "text/plain", "FileNotFound"+server.uri());
+}
 
 bool handleMenu(){
   if (server.hasArg("at"))
@@ -212,13 +229,26 @@ bool handleMenu(){
   else return true;
 }
 
-void setup(void){
-  options=&myOptions;
+void setup(){
+  options=&myOptions;//menu options
   Serial.begin(115200);
-  Serial.setDebugOutput(1);
-  Serial.setDebugOutput(0);
-  while(!Serial);
-  delay(10);
+  while(!Serial)
+  //USE_SERIAL.setDebugOutput(true);
+  Serial.println();
+  Serial.println();
+  Serial.println();
+
+  for(uint8_t t = 4; t > 0; t--) {
+      Serial.printf("[SETUP] BOOT WAIT %d...\n", t);
+      Serial.flush();
+      delay(1000);
+  }
+
+  // Serial.setDebugOutput(1);
+  // Serial.setDebugOutput(0);
+  // while(!Serial);
+  // delay(10);
+  wifi_station_set_hostname((char*)"ArduinoMenu");
   Serial.println("");
   Serial.println("Arduino menu webserver example");
 
@@ -226,17 +256,23 @@ void setup(void){
 
   Serial.print("Connecting to ");
   Serial.println(ssid);
-  WiFi.begin(ssid, password);
 
+  WiFiMulti.addAP("r-site.net", "rsite.2011");
+  while(WiFiMulti.run() != WL_CONNECTED) delay(100);
+  // WiFi.begin(ssid, password);
   // Wait for connection
-  while (WiFi.status() != WL_CONNECTED) {
+  /*while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
-  }
+  }*/
+  webSocket.begin();
   Serial.println("");
+  webSocket.onEvent(webSocketEvent);
   Serial.println("Connected.");
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
+
+  webSocket.begin();
 
   if (MDNS.begin("esp8266")) {
     Serial.println("MDNS responder started");
@@ -244,40 +280,31 @@ void setup(void){
 
   nav.idleTask=idle;//point a function to be used when menu is suspended
 
+  //we have none, so do not ask again! use a standard...
   server.on("/favicon.ico",handleNotFound);
 
-  server.on("/", HTTP_GET, [](){
+  server.on("/", HTTP_GET, []() {
     handleMenu();//no output will be done on this mode
     if(!handleFileRead("/index.html")) notfound();}//static page
   );
 
-  server.on("/logo.png", HTTP_GET, [](){
-    if(!handleFileRead("/logo.png")) notfound();
-  });
-  server.on("/r-site.css", HTTP_GET, [](){
-    if(!handleFileRead("/r-site.css")) notfound();
-  });
-  server.on("/r-site.js", HTTP_GET, [](){
-    if(!handleFileRead("/r-site.js")) notfound();
-  });
-
-  server.on("/index.css", HTTP_GET, [](){
-    if(!handleFileRead("/index.css")) notfound();
-  });
-
+  //menu xml server
   server.on("/menu", HTTP_GET, []() {
     handleMenu();
     String r(serverOut.response);
     serverOut.response.remove(0);
     pageStart();
     nav.doOutput();
-    serverOut<<"<hr/>";
+    serverOut<<"<output>";
     serverOut<<r;
+    serverOut<<"</output>";
     pageEnd();
     delay(1);
   });
 
-  server.onNotFound(notfound);
+  //file server, if MDNS handler not found.
+  //so, do not put sensitive info in the data files
+  server.onNotFound([](){if (!handleFileRead(server.uri())) notfound();});
 
   server.begin();
   Serial.println("HTTP server started");
@@ -286,6 +313,7 @@ void setup(void){
 
 void loop(void){
   serverOut.response.remove(0);
+  webSocket.loop();
   server.handleClient();
   delay(1);
 }
