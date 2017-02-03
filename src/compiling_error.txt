@@ -1,0 +1,2 @@
+/home/azevedo/Sketchbook/LIBDEV/ArduinoMenu/src/menu.h:21:23: fatal error: Arduino.h: Ficheiro ou directoria inexistente
+compilation terminated.
