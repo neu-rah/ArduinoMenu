@@ -224,6 +224,7 @@ include a menu or menu like structure as element of the current menu.
 EXIT("<Back")
 ```
 
+
 Create an option that exits the curremt menu as default action.
 
 ## styles
@@ -233,6 +234,36 @@ Elements can have this static styles.
 **noStyle** accepts system defaults to this elements
 
 **wrapStyle** element values list have a circular arrangement.
+
+##events
+
+this is used to for the filter mask and also send as a parameter to the event handler function.
+
+**noEvent** no event (use if you do not want an handler function)
+
+**activateEvent** the item is about to be active (system event)
+
+**enterEvent** entering navigation level (this menu is now active)
+
+**exitEvent** leaving navigation level
+
+**returnEvent** entering previous level (return)
+
+**focusEvent** element just gained focus
+
+**blurEvent** element about to lose focus
+
+**selFocusEvent** child just gained focus
+
+**selBlurEvent** child about to lose focus
+
+**anyEvent** all events
+
+events can be combined like:
+
+```c++
+enterEvent | exitEvent
+```
 
 ## user commands
 
