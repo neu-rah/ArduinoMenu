@@ -28,7 +28,7 @@
         }
         void clear(idx_t panelNr) override {
           const panel p=panels[panelNr];
-          fill(p.x,p.x+p.w-1,p.y,p.y+p.h-1);
+          fill(p.x,p.y,p.x+p.w-1,p.y+p.h-1);
           setCursor(0,0,panelNr);
           panels.nodes[panelNr]=NULL;
         }
