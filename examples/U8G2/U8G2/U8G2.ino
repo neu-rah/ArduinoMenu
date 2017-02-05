@@ -202,7 +202,6 @@ void setup() {
 
   nav.idleTask=idle;//point a function to be used when menu is suspended
   mainMenu[1].enabled=disabledStatus;
-  nav.sleepTask=alert;
 }
 
 void loop() {
