@@ -151,9 +151,9 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,EXIT("<Back")
 );
 
-const panel panels[] MEMMODE={{0,0,16,2}};
-navNode* nodes[sizeof(panels)/sizeof(panel)];
-panelsList pList(panels,nodes,1);
+//const panel panels[] MEMMODE={{0,0,16,2}};
+//navNode* nodes[sizeof(panels)/sizeof(panel)];
+//panelsList pList(panels,nodes,1);
 
 #define MAX_DEPTH 2
 /*idx_t tops[MAX_DEPTH];
@@ -162,7 +162,7 @@ menuOut* outputs[]={&outLCD};//list of output devices
 outputsList out(outputs,1);//outputs list with 2 outputs*/
 
 MENU_OUTPUTS(out, MAX_DEPTH
-  ,LIQUIDCRYSTAL_OUT(lcd,{0,0,16,20})
+  ,LIQUIDCRYSTAL_OUT(lcd,{0,0,16,2})
   ,NONE
 );
 NAVROOT(nav,mainMenu,MAX_DEPTH,in,out);//the navigation root object

@@ -166,7 +166,7 @@ http://playground.arduino.cc/Code/LCD3wires
   */
 
   MENU_OUTPUTS(out,MAX_DEPTH
-    ,LCD_OUT(lcd,{0,0,16,20})
+    ,LCD_OUT(lcd,{0,0,16,2})
     ,NONE
   );
   NAVROOT(nav,mainMenu,MAX_DEPTH,in,out);//the navigation root object
