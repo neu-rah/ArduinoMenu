@@ -16,6 +16,7 @@
   #define memWord(addr) (pgm_read_word(addr))
   #define memIdx(src) (pgm_read_byte(&src))
   #define memStrLen strlen_P
+  #define memEnum(addr) (sizeof(int)==1?memByte(addr):memWord(addr))
 #else
   //use ram on non-avr devices
   #define USING_RAM

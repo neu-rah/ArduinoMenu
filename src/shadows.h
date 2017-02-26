@@ -23,9 +23,9 @@
         promptShadow(const char* t,action a=doNothing,eventMask e=noEvent,styles s=noStyle)
           :action(a),sysStyles(_noStyle),text(t),events(e),style(s) {}
         inline const char* getText() const {return (const char*)memPtr(text);}
-        inline const systemStyles _sysStyles() const {return (systemStyles)memWord(&sysStyles);}
-        inline const eventMask _events() const {return (eventMask)memByte(&events);}
-        inline const styles _style() const {return (styles)memByte(&style);}
+        inline const systemStyles _sysStyles() const {return (systemStyles)memEnum(&sysStyles);}
+        inline const eventMask _events() const {return (eventMask)memEnum(&events);}
+        inline const styles _style() const {return (styles)memEnum(&style);}
     };
     struct menuNodeShadowRaw {
       actionRaw a;

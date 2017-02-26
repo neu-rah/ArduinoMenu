@@ -75,6 +75,7 @@ www.r-site.net
       blurEvent=1<<5,//element about to lose focus
       selFocusEvent=1<<6,//TODO:child just gained focus
       selBlurEvent=1<<7,//TODO:child about to lose focus
+      //updateEvent=1<<8,//Field value has been updated, not used yet
       anyEvent=~0
     };
     //events for the idle function
