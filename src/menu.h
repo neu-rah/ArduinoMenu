@@ -507,10 +507,12 @@ www.r-site.net
           StringStream inStr(in);
           while(inStr.available()) doInput(inStr);
         }
-        inline void doInput() {doInput(in);}
+        inline void doInput() {if (&in) doInput(in);}
         inline void doOutput() {
-          if (!sleepTask) printMenu();
-          else out.idle(sleepTask,idling);
+          if (&out) {
+            if (!sleepTask) printMenu();
+            else out.idle(sleepTask,idling);
+          }
         }
         inline void poll() {doInput();doOutput();};//fire and forget mode
         void doNav(navCmd cmd);//fly by wire mode
