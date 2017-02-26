@@ -243,5 +243,6 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
   Menu::navNode id##_path[maxDepth];\
   Menu::navRoot id(menu,id##_path,maxDepth-1,in,out);
 
-#define NO_INPUTS_NAV (*(Stream*)NULL)
-#define NO_OUTPUTS_NAV (*(outputsList*)NULL)
+//use zero length outputs list instead
+//#define NO_INPUTS_NAV (*(Stream*)NULL)
+//#define NO_OUTPUTS_NAV (*(outputsList*)NULL)

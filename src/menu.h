@@ -457,7 +457,7 @@ www.r-site.net
         outputsList &out;
         Stream& in;
         navNode* path;
-        idx_t maxDepth=0;
+        const idx_t maxDepth=0;
         idx_t level=0;
         //bool suspended=false;
         bool showTitle=true;
@@ -507,19 +507,17 @@ www.r-site.net
           StringStream inStr(in);
           while(inStr.available()) doInput(inStr);
         }
-        inline void doInput() {if (&in) doInput(in);}
+        inline void doInput() {doInput(in);}
         inline void doOutput() {
-          if (&out) {
-            if (!sleepTask) printMenu();
-            else out.idle(sleepTask,idling);
-          }
+          if (!sleepTask) printMenu();
+          else out.idle(sleepTask,idling);
         }
         inline void poll() {doInput();doOutput();};//fire and forget mode
         void doNav(navCmd cmd);//fly by wire mode
         navCmd enter();//aux function
         navCmd exit();//aux function
 
-        //enter leva idle mode ---------------------------------
+        //enter idle mode ---------------------------------
         inline void idleOn(idleFunc task=inaction) {
           out.clear();
           sleepTask=task;
