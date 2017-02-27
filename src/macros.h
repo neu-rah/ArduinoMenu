@@ -26,6 +26,7 @@
   #define memWord(addr) (*(addr))
   #define memIdx(src) (src)
   #define memStrLen strlen
+  #define memEnum(add) (*(addr))
 #endif
 
 #define DECL(x) DECL_##x
