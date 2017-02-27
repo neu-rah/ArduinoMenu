@@ -509,8 +509,10 @@ www.r-site.net
         }
         inline void doInput() {doInput(in);}
         inline void doOutput() {
+          //Serial<<"do out start"<<endl;Serial.flush();
           if (!sleepTask) printMenu();
           else out.idle(sleepTask,idling);
+          //Serial<<"do out end"<<endl;Serial.flush();
         }
         inline void poll() {doInput();doOutput();};//fire and forget mode
         void doNav(navCmd cmd);//fly by wire mode
