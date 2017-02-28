@@ -114,10 +114,9 @@ void menuOut::previewMenu(navRoot& root,menuNode& menu,idx_t panelNr) {
 
 //determin panel number here and distribute menu and previews among the panels
 void menuOut::printMenu(navNode &nav) {
-  //Serial<<"print menu"<<endl;Serial.flush();
   menuNode& focus=nav.root->active();
   int lvl=nav.root->level;
-  if (focus.sysStyles()&_parentDraw) lvl--;
+  if (focus.parentDraw()) lvl--;
   navNode& nn=nav.root->path[lvl];
   int k=min(lvl,panels.sz-1);
   if ((style&usePreview)&&k) k--;
@@ -142,18 +141,10 @@ void menuOut::printMenu(navNode &nav) {
 // generic (menuOut) print menu on a panel
 void menuOut::printMenu(navNode &nav,idx_t panelNr) {
   //menuNode& focus=nav.root->active();
-  idx_t topi=nav.root->level-((nav.root->active().sysStyles()&_parentDraw)?1:0);
+  idx_t topi=nav.root->level-((nav.root->active().parentDraw())?1:0);
   idx_t ot=tops[topi];
   idx_t st=(nav.root->showTitle&&(maxY(panelNr)>1))?1:0;//do not use titles on single line devices!
-  //Serial<<"DEBUG..."<<endl;Serial.flush();
-  //Serial<<"tops:"<<(unsigned int)tops<<endl;Serial.flush();
-  while(nav.sel+st>=(tops[topi]+maxY(panelNr))) {
-    //Serial<<"adjust"<<endl
-      //<<"nav.sel+st:"<<nav.sel+st<<endl
-      //<<"(tops[topi]+maxY(panelNr)):"<<(tops[topi]+maxY(panelNr))<<endl;
-    Serial.flush();
-    tops[topi]++;
-  }
+  while(nav.sel+st>=(tops[topi]+maxY(panelNr))) tops[topi]++;
   while(nav.sel<tops[topi]||(tops[topi]&&((nav.sz()-tops[topi])<maxY(panelNr)-st))) tops[topi]--;
   bool all=(style&redraw)
     ||(tops[topi]!=ot)
