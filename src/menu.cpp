@@ -272,21 +272,22 @@ void navTarget::parseInput(navNode& nav,Stream& in) {
 //generic navigation (aux function)
 navCmd navNode::doNavigation(navCmd cmd) {
   idx_t osel=sel;
+  idx_t nsel=sel;
   navCmd rCmd=cmd;
   switch(cmd.cmd) {
     /*case scrlUpCmd:
       if (!target->isVariant())
         root->out.doNav(cmd,*this);*/
     case downCmd:
-      sel--;
-      if (sel<0) {if(wrap()) sel=sz()-1; else sel=0;}
+      nsel--;
+      if (nsel<0) {if(wrap()) nsel=sz()-1; else nsel=0;}
       break;
     /*case scrlDownCmd:
       if (!target->isVariant())
         root->out.doNav(cmd,*this);*/
     case upCmd:
-      sel++;
-      if (sel>=sz()) {if(wrap()) sel=0; else sel=sz()-1;}
+      nsel++;
+      if (nsel>=sz()) {if(wrap()) nsel=0; else nsel=sz()-1;}
       break;
     case escCmd:
       assert(root);
@@ -300,7 +301,7 @@ navCmd navNode::doNavigation(navCmd cmd) {
     case idxCmd: {
         idx_t at=(idx_t)cmd.param;//-'1';send us numeric index pls!
         if (at>=0&&at<=sz()) {
-          sel=at;
+          nsel=at;
           if (cmd.cmd==idxCmd) {
             assert(root);
             //Serial<<"indexing... "<<endl;
@@ -312,16 +313,19 @@ navCmd navNode::doNavigation(navCmd cmd) {
     case noCmd:
     default: break;
   }
-  if(osel!=sel) {
+  if(osel!=nsel) {
     if (target->sysStyles()&(_parentDraw|_isVariant)) {
       target->dirty=true;
     } else {
       operator[](osel).dirty=true;
-      operator[](sel).dirty=true;
+      operator[](nsel).dirty=true;
     }
     //send focus In/Out events
+    if (selBlurEvent&target->events()) target->operator()(selBlurEvent,*this);
     event(blurEvent,osel);
-    event(focusEvent,sel);
+    sel=nsel;
+    event(focusEvent,nsel);
+    if (selFocusEvent&target->events()) target->operator()(selFocusEvent,*this);
   }
   return rCmd;
 }
@@ -331,7 +335,7 @@ result navNode::event(eventMask e,idx_t i) {
   eventMask m=p.events();
   eventMask me=(eventMask)(e&m);
   if (me) {
-    return p(e,p);
+    return p(e,*this,p);
   }
   return proceed;
 }

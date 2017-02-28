@@ -92,6 +92,7 @@ www.r-site.net
       nColors//total number of colors
     };
 
+    //this defines an array of disabled and enabled colors of yet unspecified color format C
     template<typename C>
     struct colorDef {
       C disabled[2];
