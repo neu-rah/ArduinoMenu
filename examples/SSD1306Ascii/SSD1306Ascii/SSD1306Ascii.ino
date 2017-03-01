@@ -1,14 +1,15 @@
-#include <menu.h>
-#include <menuIO/serialOut.h>
+#include <Arduino.h>
 
+#define I2C_ADDRESS 0x3C
+#include <Wire.h>
+#include "SSD1306Ascii.h"
+#include "SSD1306AsciiWire.h"
+
+#include <menu.h>
+#include <menuIO/SSD1306AsciiOut.h>
 using namespace Menu;
 
-#ifdef ARDUINO_SAM_DUE
-  #define LEDPIN 13
-#else
-  #define LEDPIN A3
-#endif
-result zZz() {Serial<<"zZz"<<endl;return proceed;}
+SSD1306AsciiWire oled;
 
 result showEvent(eventMask e,navNode& nav,prompt& item) {
   Serial<<e<<" on "<<item<<endl;
@@ -87,7 +88,7 @@ result doAlert(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out
   return proceed;
 }
 
-MENU(mainMenu,"Main menu",zZz,noEvent,wrapStyle
+MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,OP("Op1",action1,anyEvent)
   ,OP("Op2",action2,enterEvent)
   ,FIELD(test,"Test","%",0,100,10,1,doNothing,noEvent,wrapStyle)
@@ -103,11 +104,20 @@ MENU(mainMenu,"Main menu",zZz,noEvent,wrapStyle
 
 #define MAX_DEPTH 2
 
-MENU_OUTPUTS(out,MAX_DEPTH
-  ,SERIAL_OUT(Serial)
-  ,NONE//must have 2 items at least
-);
+#define fontW 5
+#define fontH 7
 
+//describing a menu output device without macros
+//define at least one panel for menu output
+const panel panels[] MEMMODE={{0,0,128/fontW,64/fontH}};
+navNode* nodes[sizeof(panels)/sizeof(panel)];//navNodes to store navigation status
+panelsList pList(panels,nodes,1);//a list of panels and nodes
+idx_t tops[MAX_DEPTH];//store cursor positions for each level
+SSD1306AsciiOut outOLED(&oled,tops,pList);//oled output device menu driver
+menuOut* outputs[]={&outOLED};//list of output devices
+outputsList out(outputs,1);//outputs list
+
+//macro to create navigation control root object (nav) using mainMenu
 NAVROOT(nav,mainMenu,MAX_DEPTH,Serial,out);
 
 //when menu is suspended
@@ -122,23 +132,18 @@ result idle(menuOut &o, idleEvent e) {
 }
 
 void setup() {
-  #ifndef ESP8266
-  pinMode(LEDPIN,OUTPUT);
-  digitalWrite(LEDPIN,HIGH);
-  #endif
-  delay(500);
   Serial.begin(115200);
   while(!Serial);
   Serial<<"menu 3.0 test"<<endl;Serial.flush();
+  Wire.begin();
+  oled.begin(&Adafruit128x64, I2C_ADDRESS);
+  oled.setFont(System5x7);
+  oled.clear();
+  oled.print("Hello world!");
   nav.idleTask=idle;//point a function to be used when menu is suspended
-  nav.idleOn();//this menu will start on idle state, press select to enter menu
-  //nav.doInput("323");
 }
 
 void loop() {
   nav.poll();
-  #ifndef ESP8266
-  digitalWrite(LEDPIN, ledCtrl);
-  #endif
   delay(100);//simulate a delay when other tasks are done
 }

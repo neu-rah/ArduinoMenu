@@ -106,7 +106,7 @@ result idle(menuOut& o,idleEvent e) {
 MENU_OUTLIST(out,&serverOut);
 NAVROOT(nav,mainMenu,MAX_DEPTH,Serial,out);
 
-config myOptions={'*','-',false,false,defaultNavCodes};
+config myOptions('*','-',false,false,defaultNavCodes,false,true);
 
 
 void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length) {

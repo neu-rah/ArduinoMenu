@@ -172,7 +172,7 @@ result idle(menuOut& o,idleEvent e) {
   return proceed;
 }
 
-config myOptions={'*','-',false,false,defaultNavCodes};
+config myOptions('*','-',false,false,defaultNavCodes);
 
 void setup() {
   options=&myOptions;

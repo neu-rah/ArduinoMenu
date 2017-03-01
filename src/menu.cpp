@@ -50,6 +50,12 @@ bool menuNode::async(const char *uri,navRoot& root,idx_t lvl) {
   return operator[](n).async(uri,root,++lvl);
 }
 
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+// menuOut - base menu output device
+//
+////////////////////////////////////////////////////////////////////////////////
 idx_t menuOut::printRaw(const char* at,idx_t len) {
   const char* p=at;
   uint8_t ch;
@@ -239,8 +245,16 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
   fmtEnd(fmtPanel,nav,-1);
 }
 
+//here we use navRoot pointer for all navNodes
+// => THERE CAN ONLY BE ONE navRoot
 navRoot* navNode::root=NULL;
 
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+// menuNode - any menu object that has a list of members
+//
+////////////////////////////////////////////////////////////////////////////////
 bool menuNode::changed(const navNode &nav,const menuOut& out,bool sub) {
   if (nav.target!=this) return dirty;
   if (dirty) return true;
@@ -250,6 +264,28 @@ bool menuNode::changed(const navNode &nav,const menuOut& out,bool sub) {
   }
   return false;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+// navTarget - any menu object that can process keys/input
+//
+////////////////////////////////////////////////////////////////////////////////
+
+void navTarget::doNav(navNode& nav,navCmd cmd) {
+  nav.doNavigation(cmd);
+}
+
+void navTarget::parseInput(navNode& nav,Stream& in) {
+  doNav(nav,nav.navKeys(in.read()));
+}
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+// navNode - Navigation layer controller
+//
+////////////////////////////////////////////////////////////////////////////////
 
 //aux function, turn input character into navigation command
 navCmd navNode::navKeys(char ch) {
@@ -261,15 +297,7 @@ navCmd navNode::navKeys(char ch) {
   return noCmd;
 }
 
-void navTarget::doNav(navNode& nav,navCmd cmd) {
-  nav.doNavigation(cmd);
-}
-
-void navTarget::parseInput(navNode& nav,Stream& in) {
-  doNav(nav,nav.navKeys(in.read()));
-}
-
-//generic navigation (aux function)
+// generic navigation (aux function)
 navCmd navNode::doNavigation(navCmd cmd) {
   idx_t osel=sel;
   idx_t nsel=sel;
@@ -302,18 +330,17 @@ navCmd navNode::doNavigation(navCmd cmd) {
         idx_t at=(idx_t)cmd.param;//-'1';send us numeric index pls!
         if (at>=0&&at<=sz()) {
           nsel=at;
-          if (cmd.cmd==idxCmd) {
-            assert(root);
+          //if (cmd.cmd==idxCmd) {
             //Serial<<"indexing... "<<endl;
-            rCmd=root->enter();
-          }
+            //rCmd=root->enter();//this enter must occour latter wrapped in events, because selection changed
+          //}
         }
       }
       break;
     case noCmd:
     default: break;
   }
-  if(osel!=nsel) {
+  if(osel!=nsel||cmd.cmd==selCmd||cmd.cmd==idxCmd) {//selection changed, must have been and idx/sel or an up/down movement
     if (target->sysStyles()&(_parentDraw|_isVariant)) {
       target->dirty=true;
     } else {
@@ -321,22 +348,29 @@ navCmd navNode::doNavigation(navCmd cmd) {
       operator[](nsel).dirty=true;
     }
     //send focus In/Out events
-    if (selBlurEvent&target->events()) target->operator()(selBlurEvent,*this);
+    if (selBlurEvent&target->events()) target->operator()(selBlurEvent,*target);
     event(blurEvent,osel);
     sel=nsel;
+    if (cmd.cmd==selCmd||cmd.cmd==idxCmd) {//do accelerator and enter the option
+      //Serial<<"index accel. "<<cmd<<(cmd.cmd&(selCmd|idxCmd))<<endl;
+      assert(root);
+      rCmd=root->enter();
+    }//other commands up/down just receive focus events
     event(focusEvent,nsel);
-    if (selFocusEvent&target->events()) target->operator()(selFocusEvent,*this);
-  }
+    if (selFocusEvent&target->events()) target->operator()(selFocusEvent,*target);
+  } //else its an enter/esc or a non-changing index!
+  //Serial<<"doNavigation returning "<<rCmd<<endl;
   return rCmd;
 }
 
 result navNode::event(eventMask e,idx_t i) {
+  //Serial<<endl<<"navNode::event:"<<e<<endl;
   prompt& p=operator[](i);
   eventMask m=p.events();
   eventMask me=(eventMask)(e&m);
   if (me) {
-    return p(e,*this,p);
-  }
+    return p(e,p);
+  } //else Serial<<"filtering out event "<<e<<endl;
   return proceed;
 }
 
@@ -412,14 +446,15 @@ navCmd navRoot::enter() {
 }
 
 navCmd navRoot::exit() {
-  node().event(exitEvent,node().sel);
+  //node().event(exitEvent,node().sel);
   navFocus->dirty=true;
   if (navFocus->isMenu()) {
     if (level) level--;
-    else {
+    else if (options->canExit) {
+      node().event(exitEvent,node().sel);
       idleOn(idleTask);
     }
-  }
+  } else node().event(exitEvent,node().sel);
   active().dirty=true;
   navFocus=&active();
   return escCmd;

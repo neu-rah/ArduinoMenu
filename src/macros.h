@@ -62,6 +62,7 @@
 #define U8GLIB_OUT(...) ON(U8GLIB_OUT,__COUNTER__,__VA_ARGS__)
 #define U8G2_OUT(...) ON(U8G2_OUT,__COUNTER__,__VA_ARGS__)
 #define UTFT_OUT(...) ON(UTFT_OUT,__COUNTER__,__VA_ARGS__)
+#define SSD1306ASCII_OUT(...) ON(SSD1306ASCII_OUT,__COUNTER__,__VA_ARGS__)
 
 #define VAR_HEAD_NONE(...)
 
