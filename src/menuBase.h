@@ -151,6 +151,21 @@ www.r-site.net
     extern const navCodesDef defaultNavCodes;
 
     struct config {
+      config(
+        char ecur='>',
+        char dcur='-',
+        bool inv=false,
+        bool n2d=false,
+        const navCodesDef &nc=defaultNavCodes,
+        bool useUpdateEvent=false,
+        bool canExit=false
+      ):selectedCursor(ecur),
+      disabledCursor(dcur),
+      invertFieldKeys(inv),
+      nav2D(n2d),
+      navCodes(nc),
+      useUpdateEvent(useUpdateEvent),
+      canExit(canExit) {}
       //NOTE:this can be output specific
       char selectedCursor;//='>';
       char disabledCursor;//='-';
