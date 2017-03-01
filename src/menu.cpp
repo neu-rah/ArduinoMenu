@@ -340,7 +340,7 @@ navCmd navNode::doNavigation(navCmd cmd) {
     case noCmd:
     default: break;
   }
-  if(osel!=nsel) {//selection changed, must have been and idx/sel or an up/down movement
+  if(osel!=nsel||cmd.cmd==selCmd||cmd.cmd==idxCmd) {//selection changed, must have been and idx/sel or an up/down movement
     if (target->sysStyles()&(_parentDraw|_isVariant)) {
       target->dirty=true;
     } else {
@@ -358,7 +358,7 @@ navCmd navNode::doNavigation(navCmd cmd) {
     }//other commands up/down just receive focus events
     event(focusEvent,nsel);
     if (selFocusEvent&target->events()) target->operator()(selFocusEvent,*target);
-  } //else its an enter/esc
+  } //else its an enter/esc or a non-changing index!
   //Serial<<"doNavigation returning "<<rCmd<<endl;
   return rCmd;
 }

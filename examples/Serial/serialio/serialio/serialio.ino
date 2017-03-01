@@ -131,9 +131,8 @@ void setup() {
   while(!Serial);
   Serial<<"menu 3.0 test"<<endl;Serial.flush();
   nav.idleTask=idle;//point a function to be used when menu is suspended
-  //StringStream inStr("322+*");
-  nav.doInput("323");
-  //while(inStr.available()) nav.doInput(inStr);
+  nav.idleOn();//this menu will start on idle state, press select to enter menu
+  //nav.doInput("323");
 }
 
 void loop() {
