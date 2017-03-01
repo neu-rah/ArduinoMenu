@@ -303,9 +303,8 @@ navCmd navNode::doNavigation(navCmd cmd) {
         if (at>=0&&at<=sz()) {
           nsel=at;
           if (cmd.cmd==idxCmd) {
-            assert(root);
             //Serial<<"indexing... "<<endl;
-            rCmd=root->enter();
+            //rCmd=root->enter();//this enter must occour latter wrapped in events, because selection changed
           }
         }
       }
@@ -313,7 +312,7 @@ navCmd navNode::doNavigation(navCmd cmd) {
     case noCmd:
     default: break;
   }
-  if(osel!=nsel) {
+  if(osel!=nsel) {//selection changed, must have been and idx/sel or an up/down movement
     if (target->sysStyles()&(_parentDraw|_isVariant)) {
       target->dirty=true;
     } else {
@@ -321,12 +320,16 @@ navCmd navNode::doNavigation(navCmd cmd) {
       operator[](nsel).dirty=true;
     }
     //send focus In/Out events
-    if (selBlurEvent&target->events()) target->operator()(selBlurEvent,*this);
+    if (selBlurEvent&target->events()) target->operator()(selBlurEvent,*target);
     event(blurEvent,osel);
     sel=nsel;
+    if (cmd.cmd==selCmd||cmd.cmd==idxCmd) {//do accelerator and enter the option
+      assert(root);
+      rCmd=root->enter();
+    }//other commands up/down just receive focus events
     event(focusEvent,nsel);
-    if (selFocusEvent&target->events()) target->operator()(selFocusEvent,*this);
-  }
+    if (selFocusEvent&target->events()) target->operator()(selFocusEvent,*target);
+  } //else its an enter/esc
   return rCmd;
 }
 
@@ -335,7 +338,7 @@ result navNode::event(eventMask e,idx_t i) {
   eventMask m=p.events();
   eventMask me=(eventMask)(e&m);
   if (me) {
-    return p(e,*this,p);
+    return p(e,p);
   }
   return proceed;
 }
