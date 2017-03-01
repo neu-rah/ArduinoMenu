@@ -15,7 +15,6 @@ www.r-site.net
 
 ***/
 
-
 #ifndef RSITE_ARDUINO_MENU_SYSTEM
   #define RSITE_ARDUINO_MENU_SYSTEM
   #include <Arduino.h>
@@ -611,10 +610,8 @@ www.r-site.net
         nav.event(enterEvent);
       }*/
       clamp();
-      if (dirty) {
-        //nav.event(updateEvent);
-        nav.event(enterEvent);
-      }
+      if (dirty)//sending enter or update event
+        nav.event(options->useUpdateEvent?updateEvent:enterEvent);
     }
 
     template<typename T>
@@ -669,6 +666,7 @@ www.r-site.net
     template<typename T>
     result choose<T>::sysHandler(SYS_FUNC_PARAMS) {
       switch(event) {
+        case updateEvent:
         case enterEvent:
           nav.sel=menuVariant<T>::sync();
         default:

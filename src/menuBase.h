@@ -14,6 +14,8 @@ definitions and enumerations
 www.r-site.net
 ***/
 
+//#define DEBUG
+
 #ifndef RSITE_ARDUINO_MENU_SYSTEM_BASE
   #define RSITE_ARDUINO_MENU_SYSTEM_BASE
 
@@ -75,7 +77,7 @@ www.r-site.net
       blurEvent=1<<5,//element about to lose focus
       selFocusEvent=1<<6,//TODO:child just gained focus
       selBlurEvent=1<<7,//TODO:child about to lose focus
-      //updateEvent=1<<8,//Field value has been updated, not used yet
+      updateEvent=1<<8,//Field value has been updated
       anyEvent=~0
     };
     //events for the idle function
@@ -150,14 +152,16 @@ www.r-site.net
 
     struct config {
       //NOTE:this can be output specific
-      const char selectedCursor;//='>';
-      const char disabledCursor;//='-';
+      char selectedCursor;//='>';
+      char disabledCursor;//='-';
       //const char* exitText=exitTextMem;
       //NOTE: this can be input specific
-      const bool invertFieldKeys;//=false;//TODO: invert for encoder -> test this
-      const bool nav2D;//=false;//TODO: use left|right keys? -> test this.. this should be device dependent and therefor need generic menu inputs
+      bool invertFieldKeys;//=false;//TODO: invert for encoder -> test this
+      bool nav2D;//=false;//TODO: use left|right keys? -> test this.. this should be device dependent and therefor need generic menu inputs
       const navCodesDef &navCodes;//=defaultNavCodes;
-      inline char getCmdChar(navCmds cmd) const {return navCodes[cmd].ch;}
+      bool useUpdateEvent;//=false, if false, when field value is changed use enterEvent instead.
+      bool canExit;//=true, if false do not exit from main menu
+      inline char getCmdChar(navCmds cmd) const {return navCodes[cmd].ch;}//return character assigned to this command
     };
 
     class StringStream:public Stream {
