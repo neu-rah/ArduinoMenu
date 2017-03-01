@@ -454,7 +454,7 @@ navCmd navRoot::exit() {
       node().event(exitEvent,node().sel);
       idleOn(idleTask);
     }
-  }
+  } else node().event(exitEvent,node().sel);
   active().dirty=true;
   navFocus=&active();
   return escCmd;
