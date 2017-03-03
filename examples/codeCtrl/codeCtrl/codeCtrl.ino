@@ -10,9 +10,9 @@ escCmd - exit
 enterCmd - enter current option or validate field and exit
 upCmd - move up or increment field value
 downCmd - move down or decrement field value
-leftCmd - move left or escape
-rightCmd - move right or enter
-idxCmd - enetr option by index
+leftCmd - move left or escape (not tested yet)
+rightCmd - move right or enter (not tested yet)
+idxCmd - enter option by index
 
 this mode allows you to implement ANY input device
 
@@ -32,7 +32,7 @@ using namespace Menu;
 #define NAV_BTN 5
 #define SEL_BTN 6
 
-result showEvent(eventMask e,navNode& nav,prompt& item) {
+result showEvent(eventMask e) {
   Serial<<e<<" on "<<item<<endl;
   return proceed;
 }
@@ -40,13 +40,13 @@ result showEvent(eventMask e,navNode& nav,prompt& item) {
 int test=55;
 
 result action1(eventMask e,navNode& nav, prompt &item) {
-  Serial<<e<<" event on "<<item<<", proceed menu"<<endl;
+  Serial<<endl<<e<<" event on Op1, proceed menu"<<endl;
   Serial.flush();
   return proceed;
 }
 
-result action2(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out) {
-  Serial<<item<<" "<<e<<" event on "<<item<<", quiting menu."<<endl;
+result action2(eventMask e) {
+  Serial<<endl<<e<<" event on Op2, quiting menu."<<endl;
   Serial.flush();
   return quit;
 }

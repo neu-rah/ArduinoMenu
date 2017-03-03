@@ -564,13 +564,11 @@ www.r-site.net
 
     template<typename T>
     void menuField<T>::parseInput(navNode& nav,Stream& in) {
-      //Serial<<"menuField::parseInput"<<endl;
-      //menuFieldShadow<T>& s=*(menuFieldShadow<T>*)shadow;
       if (strchr(numericChars,in.peek())) {//a numeric value was entered
-        target()=(T)in.parseFloat();
-        tunning=false;
-        nav.root->exit();
-        doNav(nav,noCmd);//just clamping
+        if (options->numValueInput) {
+          target()=(T)in.parseFloat();
+          doNav(nav,enterCmd);
+        } doNav(nav,escCmd);
       } else doNav(nav,nav.navKeys(in.read()));
     }
 
@@ -588,30 +586,32 @@ www.r-site.net
     template<typename T>
     void menuField<T>::doNav(navNode& nav,navCmd cmd) {
       switch(cmd.cmd) {
+        //by default esc and enter cmds do the same by changing the value
+        //it might be set by numeric parsing when allowed
+        case escCmd:
         case enterCmd:
-          if (tunning||options->nav2D||!tune()) {//then exit edition
-            tunning=false;
-            dirty=true;
+          if (menuField<T>::tunning||options->nav2D||!tune()) {//then exit edition
+            menuField<T>::tunning=false;
+            menuField<T>::dirty=true;
+            //Serial<<endl<<"end editing!"<<endl;
             nav.root->exit();
-          } else tunning=true;
-          dirty=true;
+          } else menuField<T>::tunning=true;
+          menuField<T>::dirty=true;
           break;
         case upCmd:
-          target()+=(tunning?tune():step())*(options->invertFieldKeys?-1:1);
-          dirty=true;
+          target()+=(menuField<T>::tunning?tune():step())*(options->invertFieldKeys?-1:1);
+          menuField<T>::dirty=true;
+          clamp();
+          nav.event(options->useUpdateEvent?updateEvent:enterEvent);
           break;
         case downCmd:
-          target()-=(tunning?tune():step())*(options->invertFieldKeys?-1:1);;
-          dirty=true;
+          target()-=(menuField<T>::tunning?tune():step())*(options->invertFieldKeys?-1:1);;
+          menuField<T>::dirty=true;
+          clamp();
+          nav.event(options->useUpdateEvent?updateEvent:enterEvent);
           break;
         default:break;
       }
-      /*if (ch==options->getCmdChar(enterCmd)&&!tunning) {
-        nav.event(enterEvent);
-      }*/
-      clamp();
-      if (dirty)//sending enter or update event
-        nav.event(options->useUpdateEvent?updateEvent:enterEvent);
     }
 
     template<typename T>

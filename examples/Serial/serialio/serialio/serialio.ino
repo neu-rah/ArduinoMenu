@@ -17,13 +17,13 @@ result showEvent(eventMask e,navNode& nav,prompt& item) {
 
 int test=55;
 
-result action1(eventMask e) {
-  Serial<<e<<" action1 executed, proceed menu"<<endl;Serial.flush();
+result action1(eventMask e, prompt &item, Stream &in, menuOut &out) {
+  Serial<<endl<<item<<" "<<e<<" action1 executed, proceed menu"<<endl;Serial.flush();
   return proceed;
 }
 
 result action2(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out) {
-  Serial<<item<<" "<<e<<" action2 executed, quiting menu"<<endl;
+  Serial<<endl<<item<<" "<<e<<" action2 executed, quiting menu"<<endl;
   return quit;
 }
 
@@ -130,8 +130,8 @@ void setup() {
   Serial.begin(115200);
   while(!Serial);
   Serial<<"menu 3.0 test"<<endl;Serial.flush();
-  nav.idleTask=idle;//point a function to be used when menu is suspended
-  nav.idleOn();//this menu will start on idle state, press select to enter menu
+  //nav.idleTask=idle;//point a function to be used when menu is suspended
+  //nav.idleOn();//this menu will start on idle state, press select to enter menu
   //nav.doInput("323");
 }
 

@@ -14,7 +14,7 @@ definitions and enumerations
 www.r-site.net
 ***/
 
-//#define DEBUG
+#define DEBUG
 
 #ifndef RSITE_ARDUINO_MENU_SYSTEM_BASE
   #define RSITE_ARDUINO_MENU_SYSTEM_BASE
@@ -158,7 +158,8 @@ www.r-site.net
         bool n2d=false,
         const navCodesDef &nc=defaultNavCodes,
         bool useUpdateEvent=false,
-        bool canExit=false
+        bool canExit=false,
+        bool numValueInput=true
       ):selectedCursor(ecur),
       disabledCursor(dcur),
       invertFieldKeys(inv),
@@ -176,6 +177,7 @@ www.r-site.net
       const navCodesDef &navCodes;//=defaultNavCodes;
       bool useUpdateEvent;//=false, if false, when field value is changed use enterEvent instead.
       bool canExit;//=true, if false do not exit from main menu
+      bool numValueInput;//=true if true fields parse numeric input values otherwise numbers will terminate the edit and be considered accels on the parent menu probably.
       inline char getCmdChar(navCmds cmd) const {return navCodes[cmd].ch;}//return character assigned to this command
     };
 

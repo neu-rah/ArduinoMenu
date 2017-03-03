@@ -12,6 +12,8 @@ The user function can be operated as a single action called on click/enter or as
 The system is designed as a non blocking polling system, allowing parallel task to run.
 Optionally the system can be operated in semi-automated mode, issuing navigation comand from user code.
 
+See the [wiki](https://github.com/neu-rah/ArduinoMenu/wiki)
+
 ## Simple Example
 ```c++
 #include <Arduino.h>
@@ -71,13 +73,14 @@ void loop() {
 - Customizable (colors and cursors).
 - Able to work over Serial stream IO as a base level.
 - Supports multiple inputs and outputs in parallel.
-- static allocation of RAM, avoiding heap fragmentation, all RAM needed to define menu structure is allocated at program statup.
+- static allocation of RAM, avoiding heap fragmentation, all RAM needed to define menu structure is allocated at program startup.
 - events available for menus and prompts
 - simply returns when no input available and no needed to draw.
 - lazy drawing, only draws when changed, avoiding time consumption and flicking.
 - sync/async navigation API functions
 - async navigation for stateless clients (as web)
 - web interface
+- can be confined to a display area (numeric fields can still overflow the area, user should take account for them)
 - Tested on Arduino: AVR, ARM, Teensy 3.2, ESP8266
 
 ## Dependencies
@@ -119,7 +122,7 @@ https://bitbucket.org/fmalpartida/new-liquidcrystal/wiki/Home
 Adafruit's GFX devices
 https://github.com/adafruit/Adafruit-GFX-Library
 
-UTFT devices (not yet implemented on v3)
+UTFT devices
 http://www.rinkydinkelectronics.com/library.php?id=51
 
 U8glib devices
@@ -131,8 +134,7 @@ https://github.com/olikraus/u8g2
 Serial ANSI terminal
 https://github.com/neu-rah/AnsiStream
 
-Web browser (experimental)
-when using ESP devices
+Web browser (experimental) when using ESP devices
 
 ### Input devices
 
@@ -140,14 +142,13 @@ Serial https://www.arduino.cc/en/Reference/Serial
 
 quadEncoder - Generic encoder using PCINT (builtin)
 
-Buttons - simple digital keyboard (builtin v2.x)
+Buttons - simple digital keyboard (builtin)
 
-Generic keyboard (no PCINT) - configurable for digital or analog keyboards (v2.x)
+Generic keyboard (no PCINT) - configurable for digital or analog keyboards (builtin)
 
-ClickEncoder https://github.com/0xPIT/encoder (not yest implemented on v3)
+ClickEncoder https://github.com/0xPIT/encoder (not yet tested on v3)
 
-Web browser (experimental)
-when using ESP devices
+Web browser (experimental) when using ESP devices
 
 ## History
 
@@ -212,4 +213,4 @@ more info at
 ## Repots
 please report errors, problems or enhancement ideas, I apreciate the feedback. Thanks.
 
-On issues report please specify the input and output drivers or devices.
+On issues report please specify the input and output drivers or devices as well as target platform.
