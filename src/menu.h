@@ -92,6 +92,7 @@ www.r-site.net
 
     //--------------------------------------------------------------------------
     // can receive navigation focus and process keys
+    // this is the minimal candidate for navRoot::navFocus
     class navTarget:public prompt {
       public:
         navTarget(const promptShadow& shadow):prompt(shadow) {}
@@ -101,6 +102,8 @@ www.r-site.net
     };
 
     //--------------------------------------------------------------------------
+    // has a data list that can be browsed
+    // this is the minimal canditate for navNode::target
     class menuNode:public navTarget {
       public:
         menuNode(const menuNodeShadow& s):navTarget(s) {}
@@ -568,7 +571,7 @@ www.r-site.net
         if (options->numValueInput) {
           target()=(T)in.parseFloat();
           doNav(nav,enterCmd);
-        } doNav(nav,escCmd);
+        } doNav(nav,idxCmd);
       } else doNav(nav,nav.navKeys(in.read()));
     }
 

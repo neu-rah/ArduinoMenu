@@ -1,6 +1,9 @@
 /* -*- C++ -*- */
 #include "baseMacros.h"
 
+
+//////////////////////////////////////////////////////////////////////////////
+// memory macros ------------------------------------------------------------
 #if defined(__arm__) | defined(ESP8266)
   #define MENU_USERAM
 #endif
@@ -29,6 +32,8 @@
   #define memEnum(addr) (*(addr))
 #endif
 
+/////////////////////////////////////////////////////////////////////////////
+// menu structure macros
 #define DECL(x) DECL_##x
 #define DEF(x) DEF_##x,
 
@@ -45,6 +50,7 @@
   Stream* _inputs_##id[]={__VA_ARGS__};\
   Menu::chainStream<sizeof(_inputs_##id)/sizeof(Stream*)> id(_inputs_##id);
 
+//some aux macros to define structures
 #define SWAP(a,b,...) b,a,__VA_ARGS__
 #define CALL(a,b) CALL_(HEAD_##a,HEAD_##b,TAIL_##a,TAIL_##b)
 #define HEAD_ON(n,...) n
@@ -66,6 +72,8 @@
 
 #define VAR_HEAD_NONE(...)
 
+///////////////////////////////////////////////////////////////////////////////
+// output device macros
 #define VAR_SERIAL_OUT(id,md,n,port)\
 Menu::idx_t id##Tops##n[md];\
 Menu::serialOut id##n(port,id##Tops##n);
@@ -169,7 +177,8 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
 #define altOP(...) OP_(__COUNTER__,__VA_ARGS__)
 #define EXIT(...) EXIT_(__COUNTER__,__VA_ARGS__)
 #define FIELD(...) altFIELD(Menu::menuField,__VA_ARGS__)
-#define altFIELD(...) FIELD_(__COUNTER__,__VA_ARGS__)
+#define EDIT(editor,...) FIELD_(__COUNTER__,editor,((systemStyles)(Menu::_canNav)),__VA_ARGS__)
+#define altFIELD(fieldObj,...) FIELD_(__COUNTER__,fieldObj,(systemStyles)(Menu::_canNav|Menu::_parentDraw),__VA_ARGS__)
 #define VALUE(...) VALUE_(__COUNTER__,__VA_ARGS__)
 
 //allocating space for elements and shadows -------------------------------------
@@ -194,12 +203,12 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
   };\
   const Menu::promptShadow& opShadow##cnt=*(promptShadow*)&opShadowRaw##cnt;\
   objType op##cnt(opShadow##cnt);
-#define DECL_FIELD_(cnt,objType,target,text,units,low,high,step,tune,action,mask,style)\
+#define DECL_FIELD_(cnt,objType,ss,target,text,units,low,high,step,tune,action,mask,style)\
   const char fieldLabel##cnt[] MEMMODE=text;\
   const char fieldUnit##cnt[] MEMMODE=units;\
   const MEMMODE Menu::menuFieldShadowRaw<typeof(target)> fieldShadowRaw##cnt={\
     (Menu::callback)action,\
-    Menu::_canNav,\
+    ss,\
     fieldLabel##cnt,\
     mask,\
     style,\

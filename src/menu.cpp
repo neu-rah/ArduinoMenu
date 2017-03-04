@@ -147,93 +147,99 @@ void menuOut::printMenu(navNode &nav) {
 // generic (menuOut) print menu on a panel
 void menuOut::printMenu(navNode &nav,idx_t panelNr) {
   //menuNode& focus=nav.root->active();
-  idx_t topi=nav.root->level-((nav.root->active().parentDraw())?1:0);
-  idx_t ot=tops[topi];
-  idx_t st=(nav.root->showTitle&&(maxY(panelNr)>1))?1:0;//do not use titles on single line devices!
-  while(nav.sel+st>=(tops[topi]+maxY(panelNr))) tops[topi]++;
-  while(nav.sel<tops[topi]||(tops[topi]&&((nav.sz()-tops[topi])<maxY(panelNr)-st))) tops[topi]--;
-  bool all=(style&redraw)
-    ||(tops[topi]!=ot)
-    ||(drawn!=nav.target)
-    ||(panels.nodes[panelNr]!=&nav);
-  if (!(all||(style&minimalRedraw))) //non minimal draw will redraw all if any change
-    all|=nav.target->changed(nav,*this);
-  all|=nav.target->dirty;
-  if (!(all||(style&minimalRedraw))) return;
-  panel pan=panels[panelNr];
+  if (!(nav.root->navFocus->parentDraw()||nav.root->navFocus->isMenu())) {
+    //on this case we have a navTarget object that draws himself
+    if (nav.root->navFocus->changed(nav,*this,false))
+      nav.root->navFocus->printTo(*nav.root,true,*this,nav.sel,maxX(panelNr));
+  } else {
+    idx_t topi=nav.root->level-((nav.root->active().parentDraw())?1:0);
+    idx_t ot=tops[topi];
+    idx_t st=(nav.root->showTitle&&(maxY(panelNr)>1))?1:0;//do not use titles on single line devices!
+    while(nav.sel+st>=(tops[topi]+maxY(panelNr))) tops[topi]++;
+    while(nav.sel<tops[topi]||(tops[topi]&&((nav.sz()-tops[topi])<maxY(panelNr)-st))) tops[topi]--;
+    bool all=(style&redraw)
+      ||(tops[topi]!=ot)
+      ||(drawn!=nav.target)
+      ||(panels.nodes[panelNr]!=&nav);
+    if (!(all||(style&minimalRedraw))) //non minimal draw will redraw all if any change
+      all|=nav.target->changed(nav,*this);
+    all|=nav.target->dirty;
+    if (!(all||(style&minimalRedraw))) return;
+    panel pan=panels[panelNr];
 
-  //-----> panel start
-  fmtStart(fmtPanel,nav);
-  if (all) {
-    clear(panelNr);
-    if (st) {
-      ///------> titleStart
-      fmtStart(fmtTitle,nav,-1);
-      setColor(titleColor,false);
-      clearLine(0,panelNr);
-      setColor(titleColor,true);
-      setCursor(0,0,panelNr);
-      //print('[');
-      nav.target->prompt::printTo(*nav.root,true,*this,-1,pan.w-1);
-      //print(']');
-      //*this<<'['<<*(prompt*)nav.target<<']';
-      ///<----- titleEnd
-      fmtEnd(fmtTitle,nav,-1);
+    //-----> panel start
+    fmtStart(fmtPanel,nav);
+    if (all) {
+      clear(panelNr);
+      if (st) {
+        ///------> titleStart
+        fmtStart(fmtTitle,nav,-1);
+        setColor(titleColor,false);
+        clearLine(0,panelNr);
+        setColor(titleColor,true);
+        setCursor(0,0,panelNr);
+        //print('[');
+        nav.target->prompt::printTo(*nav.root,true,*this,-1,pan.w-1);
+        //print(']');
+        //*this<<'['<<*(prompt*)nav.target<<']';
+        ///<----- titleEnd
+        fmtEnd(fmtTitle,nav,-1);
+      }
     }
-  }
-  //bool any=all;
-  //------> bodyStart
-  fmtStart(fmtBody,nav);
-  for(idx_t i=0;i<maxY(panelNr)-st;i++) {
-    int ist=i+st;
-    if (i+tops[topi]>=nav.sz()) break;
-    prompt& p=nav[i+tops[topi]];
-    idx_t len=pan.w;
-    if (all||p.changed(nav,*this,false)) {
-      //any=true;
-      //-------> opStart
-      fmtStart(fmtOp,nav,i);
-      bool selected=nav.sel==i+tops[topi];
-      bool ed=nav.target==&p;
-      //-----> idxStart
-      fmtStart(fmtIdx,nav,i);
-      clearLine(ist,panelNr,bgColor,selected,p.enabled);
-      setCursor(0,ist,panelNr);
-      setColor(fgColor,selected,p.enabled,ed);
-      if (drawNumIndex&style) {
-        char a=tops[topi]+i+'1';
-        print('[');
-        print(a<='9'?a:'-');
-        print(']');
-        //*this<<'['<<(a<='9'?a:'-')<<']';
-        len-=3;
+    //bool any=all;
+    //------> bodyStart
+    fmtStart(fmtBody,nav);
+    for(idx_t i=0;i<maxY(panelNr)-st;i++) {
+      int ist=i+st;
+      if (i+tops[topi]>=nav.sz()) break;
+      prompt& p=nav[i+tops[topi]];
+      idx_t len=pan.w;
+      if (all||p.changed(nav,*this,false)) {
+        //any=true;
+        //-------> opStart
+        fmtStart(fmtOp,nav,i);
+        bool selected=nav.sel==i+tops[topi];
+        bool ed=nav.target==&p;
+        //-----> idxStart
+        fmtStart(fmtIdx,nav,i);
+        clearLine(ist,panelNr,bgColor,selected,p.enabled);
+        setCursor(0,ist,panelNr);
+        setColor(fgColor,selected,p.enabled,ed);
+        if (drawNumIndex&style) {
+          char a=tops[topi]+i+'1';
+          print('[');
+          print(a<='9'?a:'-');
+          print(']');
+          //*this<<'['<<(a<='9'?a:'-')<<']';
+          len-=3;
+        }
+        //<------idxEnd
+        fmtEnd(fmtIdx,nav,i);
+        //------> cursorStart
+        fmtStart(fmtCursor,nav,i);
+        drawCursor(ist,selected,p.enabled,ed,panelNr);//assuming only one character
+        //<------ cursorEnd
+        fmtEnd(fmtCursor,nav,i);
+        len--;
+        //---->opBodyStart
+        fmtStart(fmtOpBody,nav,i);
+        setColor(fgColor,selected,p.enabled,ed);
+        if (len>0) p.printTo(*nav.root,selected,*this,i,len);
+        //<---opBodyEnd
+        fmtEnd(fmtOpBody,nav,i);
+        if (selected&&panels.sz>panelNr+1) {
+          if(p.isMenu()) {
+            //----->  previewStart
+            previewMenu(*nav.root,*(menuNode*)&p,panelNr+1);
+            //TODO: do we need preview pointers?
+            //because now i use navNode* instead and its not available here
+            //panels.nodes[panelNr+1]=(menuNode*)&p;
+            //<----  previewEnd
+          } else if (panels.nodes[panelNr+1]) clear(panelNr+1);
+        }
+        //opEnd
+        fmtEnd(fmtOp,nav,i);
       }
-      //<------idxEnd
-      fmtEnd(fmtIdx,nav,i);
-      //------> cursorStart
-      fmtStart(fmtCursor,nav,i);
-      drawCursor(ist,selected,p.enabled,ed,panelNr);//assuming only one character
-      //<------ cursorEnd
-      fmtEnd(fmtCursor,nav,i);
-      len--;
-      //---->opBodyStart
-      fmtStart(fmtOpBody,nav,i);
-      setColor(fgColor,selected,p.enabled,ed);
-      if (len>0) p.printTo(*nav.root,selected,*this,i,len);
-      //<---opBodyEnd
-      fmtEnd(fmtOpBody,nav,i);
-      if (selected&&panels.sz>panelNr+1) {
-        if(p.isMenu()) {
-          //----->  previewStart
-          previewMenu(*nav.root,*(menuNode*)&p,panelNr+1);
-          //TODO: do we need preview pointers?
-          //because now i use navNode* instead and its not available here
-          //panels.nodes[panelNr+1]=(menuNode*)&p;
-          //<----  previewEnd
-        } else if (panels.nodes[panelNr+1]) clear(panelNr+1);
-      }
-      //opEnd
-      fmtEnd(fmtOp,nav,i);
     }
   }
   //<-----bodyEnd

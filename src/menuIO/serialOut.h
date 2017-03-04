@@ -29,14 +29,13 @@
           status stat=enabledStatus,
           bool edit=false
         ) override {
-          //device.println("");
+          lastLine=-1;
+          device.println("");
         }
         size_t write(uint8_t ch) override {return device.write(ch);}
         void setCursor(idx_t x,idx_t y,idx_t panelNr=0) override {
-          if (lastLine!=y) {
-            lastLine=y;
-            println();
-          }
+          if (lastLine>=0&&lastLine!=y) println();
+          lastLine=y;
         };
     };
 

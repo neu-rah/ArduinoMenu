@@ -18,7 +18,6 @@ protected:
 public:
   cancelField(const menuFieldShadow<T>& shadow):menuField<T>(shadow),editing(false) {}
   void doNav(navNode& nav,navCmd cmd) override {
-    Serial<<endl<<"cmd:"<<cmd;
     if (!editing) {
       original=target();
       editing=true;
