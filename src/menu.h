@@ -570,8 +570,9 @@ www.r-site.net
       if (strchr(numericChars,in.peek())) {//a numeric value was entered
         if (options->numValueInput) {
           target()=(T)in.parseFloat();
+          tunning=true;
           doNav(nav,enterCmd);
-        } doNav(nav,idxCmd);
+        } else doNav(nav,idxCmd);
       } else doNav(nav,nav.navKeys(in.read()));
     }
 
@@ -591,6 +592,7 @@ www.r-site.net
       switch(cmd.cmd) {
         //by default esc and enter cmds do the same by changing the value
         //it might be set by numeric parsing when allowed
+        case idxCmd: Serial<<"menuField::doNav with idxCmd"<<endl;
         case escCmd:
         case enterCmd:
           if (menuField<T>::tunning||options->nav2D||!tune()) {//then exit edition

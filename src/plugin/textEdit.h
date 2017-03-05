@@ -25,10 +25,11 @@ the remaining parameters are the same as the regular FIELD
   #define RSITE_ARDUINO_MENU_CANCEL_FIELD
 
 #include "../menu.h"
+#include "cancelField.h"
 
 using namespace Menu;
 
-class cancelFieldOptions {
+class textEditOptions {
 public:
   static bool quitOnEsc;
   static bool accelSendEsc;
@@ -36,11 +37,9 @@ public:
 
 //custom field edit
 template<typename T>
-class cancelField:public menuField<T> {
+class textEdit:public cancelField<T> {
 public:
-  T original;//to use when canceling
-  bool editing;
-  cancelField(const menuFieldShadow<T>& shadow):menuField<T>(shadow),editing(false) {}
+  textEdit(const menuFieldShadow<T>& shadow):menuField<T>(shadow) {}
   void doNav(navNode& nav,navCmd cmd) override {
     if (!editing) {
       original=target();
@@ -49,16 +48,13 @@ public:
     switch(cmd.cmd) {
       case selCmd:
       case idxCmd:
-        Serial<<"IDX"<<endl;
         menuField<T>::tunning=true;//prepare for exit
         return menuField<T>::doNav(nav,cancelFieldOptions::accelSendEsc?escCmd:enterCmd);
       case escCmd:
         menuField<T>::tunning=editing=!cancelFieldOptions::quitOnEsc;
-        Serial<<"ESC"<<endl;
         target()=original;
         break;
       case enterCmd:
-        Serial<<"ENTER"<<endl;
         if (menuField<T>::tunning||options->nav2D||!menuField<T>::tune())
           editing=false;
         break;

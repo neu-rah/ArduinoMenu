@@ -27,16 +27,20 @@ using a plugin:
 #include <menuIO/serialOut.h>
 #include <plugin/cancelField.h>
 #include <plugin/barField.h>
+#include <plugin/textEdit.h>
 
 using namespace Menu;
 
 int test=55;
+
+char* name="Edit me...";
 
 //a menu using a plugin field
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,FIELD(test,"Original edit","%",0,100,10,1,doNothing,noEvent,wrapStyle)
   ,altFIELD(cancelField,test,"Cancelable edit","%",0,100,10,1,doNothing,enterEvent,wrapStyle)
   ,EDIT(barField,test,"Bar field","%",0,100,10,1,doNothing,noEvent,wrapStyle)
+  ,EDIT(textEdit,name,"Text")<-- need variadic!
 );
 
 #define MAX_DEPTH 2

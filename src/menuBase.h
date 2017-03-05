@@ -166,7 +166,8 @@ www.r-site.net
       nav2D(n2d),
       navCodes(nc),
       useUpdateEvent(useUpdateEvent),
-      canExit(canExit) {}
+      canExit(canExit),
+      numValueInput(numValueInput) {}
       //NOTE:this can be output specific
       char selectedCursor;//='>';
       char disabledCursor;//='-';
