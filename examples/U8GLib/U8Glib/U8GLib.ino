@@ -43,22 +43,26 @@ using namespace Menu;
 
 U8GLIB_PCD8544 u8g(U8_CS, U8_DC, U8_RST) ;
 
-result zZz() {Serial<<"zZz"<<endl;return proceed;}
+result zZz() {Serial.println("zZz");return proceed;}
 
 result showEvent(eventMask e,navNode& nav,prompt& item) {
-  Serial<<e<<" on "<<item<<endl;
+  Serial.print("event: ");
+  Serial.println(e);
   return proceed;
 }
 
 int test=55;
 
 result action1(eventMask e) {
-  Serial<<e<<" action1 executed, proceed menu"<<endl;Serial.flush();
+  Serial.print(e);
+  Serial.println(" action1 executed, proceed menu");
+  Serial.flush();
   return proceed;
 }
 
 result action2(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out) {
-  Serial<<item<<" "<<e<<" action2 executed, quiting menu"<<endl;
+  Serial.print(e);
+  Serial.print(" action2 executed, quiting menu");
   return quit;
 }
 
@@ -113,7 +117,9 @@ MENU(subMenu,"Sub-Menu",showEvent,anyEvent,noStyle
 
 result alert(menuOut& o,idleEvent e) {
   if (e==idling) {
-    o<<F("alert test")<<endl<<F("press [select]")<<endl<<F("to continue...");
+    o.println("alert test");
+    o.println("press [select]");
+    o.println("to continue...");
   }
   return proceed;
 }
@@ -190,8 +196,12 @@ NAVROOT(nav,mainMenu,MAX_DEPTH,in,out);
 
 //when menu is suspended
 result idle(menuOut& o,idleEvent e) {
-  if (e==idling)
-    o<<F("suspended")<<endl<<F("Press [select]")<<endl<<F("to continue");
+  o.clear();
+  switch(e) {
+    case idleStart:o.println("suspending menu!");break;
+    case idling:o.println("suspended...");break;
+    case idleEnd:o.println("resuming menu.");break;
+  }
   return proceed;
 }
 
@@ -199,7 +209,6 @@ void setup() {
   pinMode(LEDPIN,OUTPUT);
   Serial.begin(115200);
   while(!Serial);
-  Serial<<F("menu 3.0 test")<<endl;Serial.flush();
   nav.idleTask=idle;//point a function to be used when menu is suspended
   mainMenu[1].enabled=disabledStatus;
 
@@ -212,9 +221,9 @@ void setup() {
   u8g.firstPage();
   do {
     nav.out[0].setCursor(0,0);
-    nav.out[0]<<F("Menu 3.x test");
+    nav.out[0].print(F("Menu 3.x test"));
     nav.out[0].setCursor(0,1);
-    nav.out[0]<<F("on U8Glib");
+    nav.out[0].print(F("on U8Glib"));
   } while(u8g.nextPage());
   delay(1000);
   //nav.sleepTask=alert;

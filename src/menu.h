@@ -194,7 +194,7 @@ www.r-site.net
           //menuVariantShadow<T>& s=*(menuVariantShadow<T>*)shadow;
           #ifdef DEBUG
           if (!(i>=0&&i<sz())){
-            Serial.print(*(prompt*)this);
+            print_P(Serial,getText());
             Serial.print(F(" : value out of range "));
             Serial.println(i);
           }
