@@ -18,7 +18,9 @@ www.r-site.net
 #ifndef RSITE_ARDUINO_MENU_SYSTEM
   #define RSITE_ARDUINO_MENU_SYSTEM
   #include <Arduino.h>
-  #include <Streaming.h>
+  // #if !defined(ArduinoStream_h)
+  //   #include <Streaming.h>
+  // #endif
   #include "menuBase.h"
   #include "shadows.h"
 
@@ -29,10 +31,9 @@ www.r-site.net
     #define _MAX(a,b) (((a)>(b))?(a):(b))
     //#if defined(ESP8266)
     //#if !defined(endl)
-    #ifndef ARDUINO_STREAMING
-      #define endl "\r\n"
-    #endif
-
+    // #if !defined(ARDUINO_STREAMING) || !defined(ArduinoStream_h)
+    //   #define endl "\r\n"
+    // #endif
     // Streams
     //////////////////////////////////////////////////////////////////////////
     //template<typename T> inline Print& operator<<(Print& o, T t) {o.print(t);return o;}
@@ -140,9 +141,9 @@ www.r-site.net
         bool changed(const navNode &nav,const menuOut& out,bool sub=true) override {
           return dirty||(reflex!=target());
         }
-        void printValue(menuOut& o) const override {o<<reflex;}
-        void printHigh(menuOut& o) const override {o<<high();}
-        void printLow(menuOut& o) const override {o<<low();}
+        void printValue(menuOut& o) const override;
+        void printHigh(menuOut& o) const override;
+        void printLow(menuOut& o) const override;
         bool async(const char *uri,navRoot& root,idx_t lvl) override;
         void clamp() {
           if (target()<low()) {
@@ -484,7 +485,10 @@ www.r-site.net
           return active().async(at, *this, 0);
         }
         menuOut& printPath(menuOut& o) const {
-          for(idx_t n=0;n<level;n++) o<<'/'<<path[n].sel;
+          for(idx_t n=0;n<level;n++) {
+            o.print('/');
+            o.print(path[n].sel);
+          }
           return o;
         }
         void printMenu() const {
@@ -543,7 +547,7 @@ www.r-site.net
       bool ed=this==root.navFocus;
       //bool sel=nav.sel==i;
       if (l<len) {
-        out<<((root.navFocus==this&&sel)?(tunning?'>':':'):' ');
+        out.print((root.navFocus==this&&sel)?(tunning?'>':':'):' ');
         l++;
         if (l<len) {
           out.fmtStart(menuOut::fmtField,root.node(),idx);
@@ -615,6 +619,13 @@ www.r-site.net
     }
 
     template<typename T>
+    void menuField<T>::printValue(menuOut& o) const {o.print(reflex);}
+    template<typename T>
+    void menuField<T>::printHigh(menuOut& o) const {o.print(high());}
+    template<typename T>
+    void menuField<T>::printLow(menuOut& o) const {o.print(low());}
+
+    template<typename T>
     idx_t toggle<T>::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) {
       idx_t l=prompt::printTo(root,sel,out,idx,len);
       idx_t at=menuVariant<T>::sync(menuVariant<T>::sync());
@@ -638,7 +649,7 @@ www.r-site.net
       bool ed=this==root.navFocus;
       //bool sel=nav.sel==i;
       if (len-l<0) return 0;
-      out<<(this==&root.active()?':':' ');
+      out.print(this==&root.active()?':':' ');
       l--;
       if (out.fmtStart(type()==selectClass?menuOut::fmtSelect:menuOut::fmtChoose,root.node(),idx)==proceed) {
         out.setColor(valColor,sel,prompt::enabled,ed);
