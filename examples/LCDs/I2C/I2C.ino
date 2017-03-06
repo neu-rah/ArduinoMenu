@@ -51,20 +51,25 @@ http://playground.arduino.cc/Code/LCD3wires
   #define LEDPIN A3
 
   result showEvent(eventMask e,navNode& nav,prompt& item) {
-    Serial<<e<<" on "<<item<<endl;
+    Serial.print("event: ");
+    Serial.println(e);
     return proceed;
   }
 
   int test=55;
 
   result action1(eventMask e,navNode& nav, prompt &item) {
-    Serial<<e<<" event on "<<item<<", proceed menu"<<endl;
+    Serial.print("action1 event: ");
+    Serial.print(e);
+    Serial.println(", proceed menu");
     Serial.flush();
     return proceed;
   }
 
   result action2(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out) {
-    Serial<<item<<" "<<e<<" event on "<<item<<", quiting menu."<<endl;
+    Serial.print("action2 event: ");
+    Serial.print(e);
+    Serial.println(", quiting menu.");
     Serial.flush();
     return quit;
   }
@@ -127,9 +132,9 @@ http://playground.arduino.cc/Code/LCD3wires
   result alert(menuOut& o,idleEvent e) {
     if (e==idling) {
       o.setCursor(0,0);
-      o<<"alert test";
+      o.print("alert test");
       o.setCursor(0,1);
-      o<<"[select] to continue...";
+      o.print("[select] to continue...");
     }
     return proceed;
   }
@@ -173,9 +178,9 @@ http://playground.arduino.cc/Code/LCD3wires
 
   result idle(menuOut& o,idleEvent e) {
     switch(e) {
-      case idleStart:o<<"suspending menu!";break;
-      case idling:o<<"suspended...";break;
-      case idleEnd:o<<"resuming menu.";break;
+      case idleStart:o.print("suspending menu!");break;
+      case idling:o.print("suspended...");break;
+      case idleEnd:o.print("resuming menu.");break;
     }
     return proceed;
   }
@@ -185,16 +190,16 @@ http://playground.arduino.cc/Code/LCD3wires
     pinMode(LEDPIN,OUTPUT);
     Serial.begin(115200);
     while(!Serial);
-    Serial<<"Arduino Menu Library"<<endl;Serial.flush();
+    Serial.println("Arduino Menu Library");Serial.flush();
     encoder.begin();
     lcd.begin(16,2);
     nav.idleTask=idle;//point a function to be used when menu is suspended
     mainMenu[1].enabled=disabledStatus;
     nav.showTitle=false;
     lcd.setCursor(0, 0);
-    lcd<<("Menu 3.0 LCD");
+    lcd.print("Menu 3.0 LCD");
     lcd.setCursor(0, 1);
-    lcd<<("r-site.net");
+    lcd.print("r-site.net");
     delay(2000);
   }
 

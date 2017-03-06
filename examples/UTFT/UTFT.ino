@@ -36,19 +36,22 @@ extern uint8_t BigFont[];
 #define LEDPIN 13
 
 result showEvent(eventMask e,navNode& nav,prompt& item) {
-  Serial<<e<<" on "<<item<<endl;
+  Serial.print("event: ");
+  Serial.println(e);
   return proceed;
 }
 
 int test=55;
 
 result action1(eventMask e) {
-  Serial<<e<<" action1 executed, proceed menu"<<endl;Serial.flush();
+  Serial.print(e);
+  Serial.println(" action1 executed, proceed menu");Serial.flush();
   return proceed;
 }
 
 result action2(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out) {
-  Serial<<item<<" "<<e<<" action2 executed, quiting menu"<<endl;
+  Serial.print(e);
+  Serial.println(" action2 executed, quiting menu");
   return quit;
 }
 
@@ -104,7 +107,9 @@ MENU(subMenu,"Sub-Menu",showEvent,anyEvent,noStyle
 result alert(menuOut& o,idleEvent e) {
   if (e==idling) {
     o.setColor(fgColor);
-    o<<"alert test"<<endl<<"press [select]"<<endl<<"to continue..."<<endl;
+    o.println("alert test");
+    o.println("press [select]");
+    o.println("to continue...");
   }
   return proceed;
 }
@@ -162,7 +167,10 @@ NAVROOT(nav,mainMenu,MAX_DEPTH,touchPanel,out);
 result idle(menuOut& o,idleEvent e) {
   if (e==idling) {
     o.setColor(fgColor);
-    o<<"suspended..."<<endl<<"press [select]"<<endl<<"to continue"<<endl<<(millis()%1000);
+    o.println("suspended...");
+    o.println("press [select]");
+    o.println("to continue");
+    o.println(millis()%1000);
   }
   return proceed;
 }
@@ -174,7 +182,7 @@ void setup() {
   pinMode(LEDPIN,OUTPUT);
   while(!Serial);
   Serial.begin(115200);
-  Serial<<"menu 3.x"<<endl;Serial.flush();
+  Serial.println("menu 3.x");Serial.flush();
   nav.idleTask=idle;//point a function to be used when menu is suspended
   //mainMenu[1].enabled=disabledStatus;
 
@@ -191,7 +199,7 @@ void setup() {
 
   //outGfx.resX=tft.getFontXsize()+1;
   //outGfx.resY=tft.getFontYsize()+1;
-  outGfx<<"Menu 3.x on UTFT"<<endl;
+  outGfx.println("Menu 3.x on UTFT");
   delay(1000);
   tft.clrScr();
 }

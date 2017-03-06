@@ -184,7 +184,8 @@ www.r-site.net
             }
           }
           #ifdef DEBUG
-          Serial<<F("value out of range ")<<target()<<endl;Serial.flush();
+          Serial.print(F("value out of range "));
+          Serial.println(target());Serial.flush();
           assert(false);
           #endif
           return -1;
@@ -193,7 +194,9 @@ www.r-site.net
           //menuVariantShadow<T>& s=*(menuVariantShadow<T>*)shadow;
           #ifdef DEBUG
           if (!(i>=0&&i<sz())){
-            Serial<<*(prompt*)this<<F(" : value out of range ")<<i<<endl;
+            Serial.print(*(prompt*)this);
+            Serial.print(F(" : value out of range "));
+            Serial.println(i);
           }
           assert(i>=0&&i<sz());
           #endif
