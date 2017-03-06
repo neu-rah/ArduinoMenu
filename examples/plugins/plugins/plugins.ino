@@ -40,7 +40,8 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,FIELD(test,"Original edit","%",0,100,10,1,doNothing,noEvent,wrapStyle)
   ,altFIELD(cancelField,test,"Cancelable edit","%",0,100,10,1,doNothing,enterEvent,wrapStyle)
   ,EDIT(barField,test,"Bar field","%",0,100,10,1,doNothing,noEvent,wrapStyle)
-  ,EDIT(textEdit,name,"Text")<-- need variadic!
+  ,ITEM(textEdit,"Text",doNothing,noEvent,_canNav,name)
+  ,OP("Test",doNothing,noEvent)
 );
 
 #define MAX_DEPTH 2
@@ -56,7 +57,7 @@ void setup() {
   Serial.begin(115200);
   while(!Serial);
   options->numValueInput=false;//numeric keys in fields used as aceeletors instead
-  Serial<<"menu 3.x plugins"<<endl;Serial.flush();
+  //Serial<<"menu 3.x plugins"<<endl;Serial.flush();
   //setting some plugins otions
   barFieldOptions::fill="█";//this is an unicode character, your device might not support it
   barFieldOptions::empty="░";//if not stick with the defaults

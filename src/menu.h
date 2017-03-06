@@ -18,7 +18,9 @@ www.r-site.net
 #ifndef RSITE_ARDUINO_MENU_SYSTEM
   #define RSITE_ARDUINO_MENU_SYSTEM
   #include <Arduino.h>
-  #include <Streaming.h>
+  #if !defined(ArduinoStream_h)
+    #include <Streaming.h>
+  #endif
   #include "menuBase.h"
   #include "shadows.h"
 
@@ -29,7 +31,7 @@ www.r-site.net
     #define _MAX(a,b) (((a)>(b))?(a):(b))
     //#if defined(ESP8266)
     //#if !defined(endl)
-    #ifndef ARDUINO_STREAMING
+    #if !defined(ARDUINO_STREAMING) || !defined(ArduinoStream_h)
       #define endl "\r\n"
     #endif
 
@@ -44,7 +46,7 @@ www.r-site.net
     // Menu objects and data
     //////////////////////////////////////////////////////////////////////////
 
-    enum classes {noClass=0,promptClass,fieldClass,toggleClass,selectClass,chooseClass,valueClass,menuClass};
+    enum classes {noClass=0,promptClass,textFieldClass,fieldClass,toggleClass,selectClass,chooseClass,valueClass,menuClass};
 
     class prompt {
       friend class navNode;
@@ -255,6 +257,8 @@ www.r-site.net
         }
     };
 
+    ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
     // Output
     ////////////////////////////////////////////////////////////////////////////
 
@@ -299,6 +303,8 @@ www.r-site.net
         }
     };
 
+    ///////////////////////////////////////////////////////////////////////////
+    // base for all menu output devices
     class menuOut:public Print {
       public:
         idx_t* tops;
@@ -349,6 +355,7 @@ www.r-site.net
         void printMenu(navNode &nav,idx_t panelNr);
     };
 
+    //base for all graphics output devices
     class gfxOut:public menuOut {
       public:
         idx_t resX=1;
@@ -592,7 +599,7 @@ www.r-site.net
       switch(cmd.cmd) {
         //by default esc and enter cmds do the same by changing the value
         //it might be set by numeric parsing when allowed
-        case idxCmd: Serial<<"menuField::doNav with idxCmd"<<endl;
+        case idxCmd: //Serial<<"menuField::doNav with idxCmd"<<endl;
         case escCmd:
         case enterCmd:
           if (menuField<T>::tunning||options->nav2D||!tune()) {//then exit edition

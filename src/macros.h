@@ -180,6 +180,7 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
 #define EDIT(editor,...) FIELD_(__COUNTER__,editor,((systemStyles)(Menu::_canNav)),__VA_ARGS__)
 #define altFIELD(fieldObj,...) FIELD_(__COUNTER__,fieldObj,(systemStyles)(Menu::_canNav|Menu::_parentDraw),__VA_ARGS__)
 #define VALUE(...) VALUE_(__COUNTER__,__VA_ARGS__)
+#define ITEM(...) ITEM_(__COUNTER__,__VA_ARGS__)
 
 //allocating space for elements and shadows -------------------------------------
 #define DECL_EXIT_(cnt,exitText)\
@@ -192,6 +193,17 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
   };\
   const Menu::promptShadow& opShadow##cnt=*(Menu::promptShadow*)&opShadowRaw##cnt;\
   Menu::prompt op##cnt(opShadow##cnt);
+#define DECL_ITEM_(cnt,objType,text,aFn,mask,ss,...) \
+  const char title_##cnt[] MEMMODE=text;\
+  const MEMMODE Menu::promptShadowRaw opShadowRaw##cnt={\
+    (Menu::callback)aFn,\
+    ss,\
+    title_##cnt,\
+    mask,\
+    noStyle\
+  };\
+  const Menu::promptShadow& opShadow##cnt=*(promptShadow*)&opShadowRaw##cnt;\
+  objType op##cnt(opShadow##cnt,__VA_ARGS__);
 #define DECL_OP_(cnt,objType,text,aFn,mask) \
   const char title_##cnt[] MEMMODE=text;\
   const MEMMODE Menu::promptShadowRaw opShadowRaw##cnt={\
@@ -248,6 +260,7 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
 #define DEF_SUBMENU(id) &id
 #define DEF_VALUE(id) &id
 #define DEF_VALUE_(cnt,...) &menuValue##cnt
+#define DEF_ITEM_(cnt,...) &op##cnt
 
 //The navigation root ------------------------------------------------------------------
 #define NAVROOT(id,menu,maxDepth,in,out)\

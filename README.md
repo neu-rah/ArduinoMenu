@@ -152,6 +152,10 @@ Web browser (experimental) when using ESP devices
 
 ## History
 
+#### 3.1.1
+- Plugins test
+- Text fields
+
 ### 3.0
 	- complete revision of menu control system
 	- menu structure separated in ram objects and flash objects

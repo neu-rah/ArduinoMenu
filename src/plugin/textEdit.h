@@ -21,8 +21,8 @@ the remaining parameters are the same as the regular FIELD
 
 ***/
 
-#ifndef RSITE_ARDUINO_MENU_CANCEL_FIELD
-  #define RSITE_ARDUINO_MENU_CANCEL_FIELD
+#ifndef RSITE_ARDUINO_MENU_TEXT_EDIT
+  #define RSITE_ARDUINO_MENU_TEXT_EDIT
 
 #include "../menu.h"
 #include "cancelField.h"
@@ -36,31 +36,33 @@ public:
 };
 
 //custom field edit
-template<typename T>
-class textEdit:public cancelField<T> {
+class textEdit:public navTarget {
 public:
-  textEdit(const menuFieldShadow<T>& shadow):menuField<T>(shadow) {}
+  String value;
+  String original;
+  idx_t cursor=0;
+  bool editing;
+  textEdit(const promptShadow& shadow,char* value):navTarget(shadow),value(value) {}
   void doNav(navNode& nav,navCmd cmd) override {
+    Serial<<"textEdit::doNav:"<<cmd<<endl;
     if (!editing) {
-      original=target();
+      original=value;
       editing=true;
     }
     switch(cmd.cmd) {
       case selCmd:
       case idxCmd:
-        menuField<T>::tunning=true;//prepare for exit
-        return menuField<T>::doNav(nav,cancelFieldOptions::accelSendEsc?escCmd:enterCmd);
+        return navTarget::doNav(nav,cancelFieldOptions::accelSendEsc?escCmd:enterCmd);
       case escCmd:
-        menuField<T>::tunning=editing=!cancelFieldOptions::quitOnEsc;
-        target()=original;
+        editing=!cancelFieldOptions::quitOnEsc;
+        value=original;
         break;
       case enterCmd:
-        if (menuField<T>::tunning||options->nav2D||!menuField<T>::tune())
-          editing=false;
+        editing=false;
         break;
       default: break;
     }
-    menuField<T>::doNav(nav,cmd);
+    navTarget::doNav(nav,cmd);
   }
 };
 
