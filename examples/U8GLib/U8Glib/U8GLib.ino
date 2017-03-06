@@ -230,7 +230,6 @@ void setup() {
 }
 
 void loop() {
-  Serial<<".";
   nav.doInput();
   if (nav.changed(0)) {//only draw if menu changed for gfx device
     //change checking leaves more time for other tasks
