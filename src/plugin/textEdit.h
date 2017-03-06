@@ -10,15 +10,7 @@ Extensible: Yes
 
 www.r-site.net
 
-implementing a cancelable field
-this field restores the original value on escape
-
-use it as:
-
-altFIELD(cancelField,...);
-
-the remaining parameters are the same as the regular FIELD
-
+testing text edit field
 ***/
 
 #ifndef RSITE_ARDUINO_MENU_TEXT_EDIT

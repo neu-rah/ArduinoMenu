@@ -23,6 +23,8 @@ using a plugin:
 
 #include <Arduino.h>
 
+#include <SdFat.h>
+
 #include <menu.h>
 #include <menuIO/serialOut.h>
 #include <plugin/cancelField.h>
