@@ -33,20 +33,23 @@ using namespace Menu;
 #define SEL_BTN 6
 
 result showEvent(eventMask e) {
-  Serial<<e<<" on "<<item<<endl;
+  Serial.print("event: ");
+  Serial.println(e);
   return proceed;
 }
 
 int test=55;
 
 result action1(eventMask e,navNode& nav, prompt &item) {
-  Serial<<endl<<e<<" event on Op1, proceed menu"<<endl;
+  Serial.print("action1 event:");
+  Serial.println(e);
   Serial.flush();
   return proceed;
 }
 
 result action2(eventMask e) {
-  Serial<<endl<<e<<" event on Op2, quiting menu."<<endl;
+  Serial.print("actikon2 event:");
+  Serial.println(e);
   Serial.flush();
   return quit;
 }
@@ -103,9 +106,9 @@ MENU(subMenu,"Sub-Menu",doNothing,anyEvent,wrapStyle
 result alert(menuOut& o,idleEvent e) {
   if (e==idling) {
     o.setCursor(0,0);
-    o<<"alert test";
+    o.print("alert test");
     o.setCursor(0,1);
-    o<<"[select] to continue...";
+    o.print("[select] to continue...");
   }
   return proceed;
 }
