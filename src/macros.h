@@ -178,7 +178,7 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
 #define EXIT(...) EXIT_(__COUNTER__,__VA_ARGS__)
 #define FIELD(...) altFIELD(Menu::menuField,__VA_ARGS__)
 #define EDIT(editor,...) FIELD_(__COUNTER__,editor,((systemStyles)(Menu::_canNav)),__VA_ARGS__)
-#define altFIELD(fieldObj,...) FIELD_(__COUNTER__,fieldObj,(systemStyles)(Menu::_canNav|Menu::_parentDraw),__VA_ARGS__)
+#define altFIELD(fieldObj,...) FIELD_(__COUNTER__,fieldObj,((systemStyles)(Menu::_canNav|Menu::_parentDraw)),__VA_ARGS__)
 #define VALUE(...) VALUE_(__COUNTER__,__VA_ARGS__)
 #define ITEM(...) ITEM_(__COUNTER__,__VA_ARGS__)
 
