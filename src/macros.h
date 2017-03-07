@@ -148,9 +148,9 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
   const Menu::menuNodeShadow& id##Shadow=*(Menu::menuNodeShadow*)&id##ShadowRaw;\
   objType id(id##Shadow);
 
-#define SELECT(...) altVARIANT(select,((systemStyles)(Menu::_menuData|Menu::_canNav|Menu::_isVariant|Menu::_parentDraw)),__VA_ARGS__)
-#define CHOOSE(...) altVARIANT(choose,((systemStyles)(Menu::_menuData|Menu::_canNav|Menu::_isVariant)),__VA_ARGS__)
-#define TOGGLE(...) altVARIANT(toggle,((systemStyles)(Menu::_menuData|Menu::_isVariant)),__VA_ARGS__)
+#define SELECT(...) altVARIANT(select,((Menu::systemStyles)(Menu::_menuData|Menu::_canNav|Menu::_isVariant|Menu::_parentDraw)),__VA_ARGS__)
+#define CHOOSE(...) altVARIANT(choose,((Menu::systemStyles)(Menu::_menuData|Menu::_canNav|Menu::_isVariant)),__VA_ARGS__)
+#define TOGGLE(...) altVARIANT(toggle,((Menu::systemStyles)(Menu::_menuData|Menu::_isVariant)),__VA_ARGS__)
 #define altVARIANT(objType,ss,target,id,text,action,mask,style,...)\
   const char id##_text[] MEMMODE=text;\
   XFOR_EACH(DECL_VALUE,target,__VA_ARGS__)\
@@ -176,8 +176,8 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
 #define altOP(...) OP_(__COUNTER__,__VA_ARGS__)
 #define EXIT(...) EXIT_(__COUNTER__,__VA_ARGS__)
 #define FIELD(...) altFIELD(Menu::menuField,__VA_ARGS__)
-#define EDIT(editor,...) FIELD_(__COUNTER__,editor,((systemStyles)(Menu::_canNav)),__VA_ARGS__)
-#define altFIELD(fieldObj,...) FIELD_(__COUNTER__,fieldObj,((systemStyles)(Menu::_canNav|Menu::_parentDraw)),__VA_ARGS__)
+#define EDIT(editor,...) FIELD_(__COUNTER__,editor,((Menu::systemStyles)(Menu::_canNav)),__VA_ARGS__)
+#define altFIELD(fieldObj,...) FIELD_(__COUNTER__,fieldObj,((Menu::systemStyles)(Menu::_canNav|Menu::_parentDraw)),__VA_ARGS__)
 #define VALUE(...) VALUE_(__COUNTER__,__VA_ARGS__)
 #define ITEM(...) ITEM_(__COUNTER__,__VA_ARGS__)
 
