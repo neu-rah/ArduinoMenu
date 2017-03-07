@@ -10,6 +10,7 @@ Extendable: Yes
 
 quadrature encoder driver (PCINT)
 quadrature encoder stream (fake, not using buffers)
+
 */
 
 #ifndef RSITE_ARDUINO_MENU_ENCODER

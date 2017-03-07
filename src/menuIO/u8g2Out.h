@@ -1,4 +1,5 @@
 /* -*- C++ -*- */
+
 /********************
 Oct. 2016 Stephen Denne https://github.com/datacute
 Based on U8GLibOut.h from Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
@@ -47,7 +48,7 @@ namespace Menu {
 				switch(ch) {//fix u8g2 not respecting \n\r... add \t if you wish
 					case '\n': gfx.ty = gfx.ty+resY-fontMargin;break;
 					case '\r': gfx.tx = offsetX;break;
-					default: 
+					default:
 						{
 							gfx.drawGlyph(gfx.tx, gfx.ty, (uint16_t)ch);
 							gfx.tx += resX;

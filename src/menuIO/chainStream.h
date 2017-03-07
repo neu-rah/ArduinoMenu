@@ -9,6 +9,7 @@ Thread Safe: No
 Extendable: Yes
 
 scan a chain of several input streams to provide input
+
 ***/
 
 #ifndef RSITE_CHAINSTREAM_DEF_H

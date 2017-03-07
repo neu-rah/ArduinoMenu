@@ -12,7 +12,6 @@ menu library objects
 definitions and enumerations
 
 www.r-site.net
-
 ***/
 
 #ifndef RSITE_ARDUINO_MENU_SYSTEM

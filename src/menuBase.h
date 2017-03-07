@@ -12,6 +12,7 @@ base for menu library
 definitions and enumerations
 
 www.r-site.net
+
 ***/
 
 //#define DEBUG

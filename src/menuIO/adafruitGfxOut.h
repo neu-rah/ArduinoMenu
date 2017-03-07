@@ -10,6 +10,7 @@ Extensible: Yes
 
 Use graphics screens (adafruit library based) as menu output
 www.r-site.net
+
 ***/
 #ifndef RSITE_ARDUINOP_MENU_GFX
 	#define RSITE_ARDUINOP_MENU_GFX

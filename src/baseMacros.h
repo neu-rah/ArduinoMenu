@@ -2,6 +2,7 @@
 //generic macros - 2014
 //Rui Azevedo (ruihfazevedo@gmail.com)
 
+
 #define CONCATENATE(arg1, arg2)   CONCATENATE1(arg1, arg2)
 #define CONCATENATE1(arg1, arg2)  CONCATENATE2(arg1, arg2)
 #define CONCATENATE2(arg1, arg2)  arg1##arg2

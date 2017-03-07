@@ -1,4 +1,5 @@
 /* -*- C++ -*- */
+
 /********************
 Sept. 2016 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
 Original from: https://github.com/christophepersoz

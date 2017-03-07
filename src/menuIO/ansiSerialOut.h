@@ -10,6 +10,7 @@ Extensible: Yes
 
 Use ANSI codes over serial output
 www.r-site.net
+
 ***/
 #ifndef RSITE_ARDUINO_MENU_ANSISERIALOUT
   #define RSITE_ARDUINO_MENU_ANSISERIALOUT

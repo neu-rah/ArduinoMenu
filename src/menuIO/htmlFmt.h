@@ -1,4 +1,5 @@
 /* -*- C++ -*- */
+
 #ifndef RSITE_ARDUINO_MENU_HTMLFMT
   #define RSITE_ARDUINO_MENU_HTMLFMT
   #include "../menu.h"
