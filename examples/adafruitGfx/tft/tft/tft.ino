@@ -42,19 +42,23 @@ Adafruit_ST7735 gfx(TFT_CS, TFT_DC, TFT_RST);
 #define encBtn  4
 
 result showEvent(eventMask e,navNode& nav,prompt& item) {
-  Serial<<e<<" on "<<item<<endl;
+  Serial.print(F("event:"));
+  Serial.print(e);
   return proceed;
 }
 
 int test=55;
 
 result action1(eventMask e) {
-  Serial<<e<<" action1 executed, proceed menu"<<endl;Serial.flush();
+  Serial.print(e);
+  Serial.println(" action1 executed, proceed menu");
+  Serial.flush();
   return proceed;
 }
 
 result action2(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out) {
-  Serial<<item<<" "<<e<<" action2 executed, quiting menu"<<endl;
+  Serial.print(e);
+  Serial.println(" action2 executed, quiting menu");
   return quit;
 }
 
@@ -108,8 +112,11 @@ MENU(subMenu,"Sub-Menu",showEvent,anyEvent,noStyle
 );
 
 result alert(menuOut& o,idleEvent e) {
-  if (e==idling)
-    o<<"alert test"<<endl<<"press [select]"<<endl<<"to continue..."<<endl;
+  if (e==idling) {
+    o.println(F("alert test"));
+    o.println(F("press [select]"));
+    o.println(F("to continue..."));
+  }
   return proceed;
 }
 
@@ -167,8 +174,11 @@ NAVROOT(nav,mainMenu,MAX_DEPTH,in,out);
 
 //when menu is suspended
 result idle(menuOut& o,idleEvent e) {
-  if (e==idling)
-    o<<"suspended..."<<endl<<"press [select]"<<endl<<"to continue"<<endl<<(millis()%1000);
+  if (e==idling) {
+    o.println(F("suspended..."));
+    o.println(F("press [select]"));
+    o.println(F("to continue"));
+  }
   return proceed;
 }
 
@@ -179,7 +189,8 @@ void setup() {
   pinMode(LEDPIN,OUTPUT);
   Serial.begin(115200);
   while(!Serial);
-  Serial<<"menu 3.0 test"<<endl;Serial.flush();
+  Serial.println("menu 3.0 test");
+  Serial.flush();
   nav.idleTask=idle;//point a function to be used when menu is suspended
   mainMenu[1].enabled=disabledStatus;
   //outGfx.usePreview=true;//reserve one panel for preview?
@@ -196,7 +207,7 @@ void setup() {
   gfx.setTextWrap(false);
   gfx.fillScreen(ST7735_BLACK);
   gfx.setTextColor(ST7735_RED,ST7735_BLACK);
-  gfx<<"Menu 3.x test on GFX"<<endl;;
+  gfx.println("Menu 3.x test on GFX");
   delay(1000);
 }
 

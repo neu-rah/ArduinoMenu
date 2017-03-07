@@ -43,7 +43,8 @@ Adafruit_PCD8544 gfx(GFX_DC,GFX_CS,GFX_RST);
 #define encBtn  4*/
 
 result showEvent(eventMask e,navNode& nav,prompt& item) {
-  Serial<<e<<F(" on ")<<item<<endl;
+  Serial.print(F("event:"));
+  Serial.print(e);
   return proceed;
 }
 
@@ -66,7 +67,9 @@ TOGGLE(ledCtrl,setLed,"Led: ",doNothing,noEvent,noStyle//,doExit,enterEvent,noSt
 
 result alert(menuOut& o,idleEvent e) {
   //if (e==idling)
-    o<<F("alert test")<<endl<<F("press [select]")<<endl<<F("to continue...")<<endl;
+    o.println(F("alert test"));
+    o.println(F("press [select]"));
+    o.println(F("to continue..."));
   return proceed;
 }
 
@@ -112,7 +115,9 @@ NAVROOT(nav,mainMenu,MAX_DEPTH,Serial,out);
 //when menu is suspended
 result idle(menuOut& o,idleEvent e) {
   //if (e==idling)
-    o<<F("suspended...")<<endl<<F("press [select]")<<endl<<F("to continue");
+    o.println(F("suspended..."));
+    o.println(F("press [select]"));
+    o.println(F("to continue"));
   return proceed;
 }
 
@@ -120,7 +125,8 @@ void setup() {
   pinMode(LEDPIN,OUTPUT);
   Serial.begin(115200);
   while(!Serial);
-  Serial<<F("menu 3.0 test")<<endl;Serial.flush();
+  Serial.println(F("menu 3.0 test"));
+  Serial.flush();
   nav.idleTask=idle;//point a function to be used when menu is suspended
   //mainMenu[1].enabled=disabledStatus;
 
@@ -130,7 +136,7 @@ void setup() {
   SPI.begin();
   gfx.begin();
   gfx.clearDisplay();
-  gfx<<F("Menu 3.x test on GFX")<<endl;;
+  gfx.println(F("Menu 3.x test on GFX"));
   gfx.setContrast(50);
   gfx.display(); // show splashscreen
   delay(2000);

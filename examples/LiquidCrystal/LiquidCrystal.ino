@@ -48,20 +48,25 @@ chainStream<3> in(inputsList);//3 is the number of inputs
 #define LEDPIN 13
 
 result showEvent(eventMask e,navNode& nav,prompt& item) {
-  Serial<<e<<" on "<<item<<endl;
+  Serial.print("event: ");
+  Serial.println(e);
   return proceed;
 }
 
 int test=55;
 
 result action1(eventMask e,navNode& nav, prompt &item) {
-  Serial<<e<<" event on "<<item<<", proceed menu"<<endl;
+  Serial.print("action1 event: ");
+  Serial.print(e);
+  Serial.println(", proceed menu");
   Serial.flush();
   return proceed;
 }
 
 result action2(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out) {
-  Serial<<item<<" "<<e<<" event on "<<item<<", quiting menu."<<endl;
+  Serial.print("action2 event: ");
+  Serial.print(e);
+  Serial.print(", quiting menu.");
   Serial.flush();
   return quit;
 }
@@ -124,9 +129,9 @@ TOGGLE((mainMenu[1].enabled),togOp,"Op 2:",doNothing,noEvent,noStyle
 result alert(menuOut& o,idleEvent e) {
   if (e==idling) {
     o.setCursor(0,0);
-    o<<"alert test";
+    o.print("alert test");
     o.setCursor(0,1);
-    o<<"[select] to continue...";
+    o.print("[select] to continue...");
   }
   return proceed;
 }
@@ -169,9 +174,9 @@ NAVROOT(nav,mainMenu,MAX_DEPTH,in,out);//the navigation root object
 
 result idle(menuOut& o,idleEvent e) {
   switch(e) {
-    case idleStart:o<<"suspending menu!";break;
-    case idling:o<<"suspended...";break;
-    case idleEnd:o<<"resuming menu.";break;
+    case idleStart:o.print("suspending menu!");break;
+    case idling:o.print("suspended...");break;
+    case idleEnd:o.print("resuming menu.");break;
   }
   return proceed;
 }
@@ -181,16 +186,16 @@ void setup() {
   pinMode(LEDPIN,OUTPUT);
   Serial.begin(115200);
   while(!Serial);
-  Serial<<"Arduino Menu Library"<<endl;Serial.flush();
+  Serial.println("Arduino Menu Library");Serial.flush();
   encoder.begin();
   lcd.begin(16,2);
   nav.idleTask=idle;//point a function to be used when menu is suspended
   mainMenu[1].enabled=disabledStatus;
   nav.showTitle=false;
   lcd.setCursor(0, 0);
-  lcd<<("Menu 3.0 LCD");
+  lcd.print("Menu 3.0 LCD");
   lcd.setCursor(0, 1);
-  lcd<<("r-site.net");
+  lcd.print("r-site.net");
   delay(2000);
 }
 

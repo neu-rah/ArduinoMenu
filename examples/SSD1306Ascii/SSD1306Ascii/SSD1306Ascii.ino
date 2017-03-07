@@ -12,19 +12,22 @@ using namespace Menu;
 SSD1306AsciiWire oled;
 
 result showEvent(eventMask e,navNode& nav,prompt& item) {
-  Serial<<e<<" on "<<item<<endl;
+  Serial.print("event: ");
+  Serial.println(e);
   return proceed;
 }
 
 int test=55;
 
 result action1(eventMask e) {
-  Serial<<e<<" action1 executed, proceed menu"<<endl;Serial.flush();
+  Serial.print(e);
+  Serial.println(" action1 executed, proceed menu");Serial.flush();
   return proceed;
 }
 
 result action2(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out) {
-  Serial<<item<<" "<<e<<" action2 executed, quiting menu"<<endl;
+  Serial.print(e);
+  Serial.println(" action2 executed, quiting menu");
   return quit;
 }
 
@@ -79,7 +82,9 @@ MENU(subMenu,"Sub-Menu",showEvent,anyEvent,noStyle
 
 result alert(menuOut& o,idleEvent e) {
   //if (e==idling)
-    o<<"alert test"<<endl<<"press [select]"<<endl<<"to continue..."<<endl;
+    o.println("alert test");
+    o.println("press [select]");
+    o.println("to continue...");
   return proceed;
 }
 
@@ -124,9 +129,9 @@ NAVROOT(nav,mainMenu,MAX_DEPTH,Serial,out);
 result idle(menuOut &o, idleEvent e) {
   o.clear();
   switch(e) {
-    case idleStart:o<<"suspending menu!"<<endl;break;
-    case idling:o<<"suspended..."<<endl;break;
-    case idleEnd:o<<"resuming menu."<<endl;break;
+    case idleStart:o.println("suspending menu!");break;
+    case idling:o.println("suspended...");break;
+    case idleEnd:o.println("resuming menu.");break;
   }
   return proceed;
 }
@@ -134,7 +139,7 @@ result idle(menuOut &o, idleEvent e) {
 void setup() {
   Serial.begin(115200);
   while(!Serial);
-  Serial<<"menu 3.0 test"<<endl;Serial.flush();
+  Serial.println("menu 3.0 test");Serial.flush();
   Wire.begin();
   oled.begin(&Adafruit128x64, I2C_ADDRESS);
   oled.setFont(System5x7);
