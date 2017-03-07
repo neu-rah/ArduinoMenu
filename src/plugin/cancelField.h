@@ -43,7 +43,7 @@ public:
   cancelField(const menuFieldShadow<T>& shadow):menuField<T>(shadow),editing(false) {}
   void doNav(navNode& nav,navCmd cmd) override {
     if (!editing) {
-      original=target();
+      original=menuField<T>::target();
       editing=true;
     }
     switch(cmd.cmd) {
@@ -55,7 +55,7 @@ public:
       case escCmd:
         menuField<T>::tunning=editing=!cancelFieldOptions::quitOnEsc;
         //Serial<<"ESC"<<endl;
-        target()=original;
+        menuField<T>::target()=original;
         break;
       case enterCmd:
         //Serial<<"ENTER"<<endl;

@@ -64,7 +64,7 @@ public:
         out.clearLine(1);
         out.setCursor(1,0);
       }
-      int bar=map(target(),low(),high(),0,out.maxX());
+      int bar=map(menuField<T>::target(),menuField<T>::low(),menuField<T>::high(),0,out.maxX());
       for (int n=0;n<bar;n++) out.print(fill);
       for (int n=bar;n<out.maxX();n++) out.print(empty);
       return 0;
