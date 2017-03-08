@@ -23,19 +23,50 @@ using a plugin:
 
 #include <Arduino.h>
 
-#include <SdFat.h>
-
 #include <menu.h>
+
+//inputs
+#include <menuIO/encoderIn.h>
+#include <menuIO/keyIn.h>
+#include <menuIO/chainStream.h>
+
+//outputs
 #include <menuIO/serialOut.h>
+#include <menuIO/liquidCrystalOut.h>
+
+//include plugins
 #include <plugin/cancelField.h>
 #include <plugin/barField.h>
 #include <plugin/textEdit.h>
 
 using namespace Menu;
 
-int test=55;
+unsigned int test=55;
 
 char* name="Edit me...";
+
+// LCD /////////////////////////////////////////
+#define RS 8
+#define RW 3
+#define EN 9
+LiquidCrystal lcd(RS, RW, EN, 4, 5, 6, 7);
+
+// Encoder /////////////////////////////////////
+#define encA A2
+#define encB 2
+//this encoder has a button here
+#define encBtn A3
+
+encoderIn<encA,encB> encoder;//simple quad encoder driver
+encoderInStream<encA,encB> encStream(encoder,4);// simple quad encoder fake Stream
+
+//a keyboard with only one key as the encoder button
+keyMap encBtn_map[]={{-encBtn,options->getCmdChar(enterCmd)}};//negative pin numbers use internal pull-up, this is on when low
+keyIn<1> encButton(encBtn_map);//1 is the number of keys
+
+//input from the encoder + encoder button + serial
+Stream* inputsList[]={&encStream,&encButton,&Serial};
+chainStream<3> in(inputsList);//3 is the number of inputs
 
 //a menu using a plugin field
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
@@ -49,16 +80,16 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
 #define MAX_DEPTH 2
 
 MENU_OUTPUTS(out,MAX_DEPTH
+  ,LIQUIDCRYSTAL_OUT(lcd,{0,0,16,2})
   ,SERIAL_OUT(Serial)
-  ,NONE//must have 2 items at least
 );
 
-NAVROOT(nav,mainMenu,MAX_DEPTH,Serial,out);
+NAVROOT(nav,mainMenu,MAX_DEPTH,in,out);//the navigation root object
 
 void setup() {
   Serial.begin(115200);
   while(!Serial);
-  options->numValueInput=false;//numeric keys in fields used as aceeletors instead
+  options->numValueInput=false;//numeric keys in fields used as accelerators instead
   //Serial<<"menu 3.x plugins"<<endl;Serial.flush();
   //setting some plugins otions
   barFieldOptions::fill="█";//this is an unicode character, your device might not support it

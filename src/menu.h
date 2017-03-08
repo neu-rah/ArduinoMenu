@@ -148,13 +148,11 @@ www.r-site.net
         void printLow(menuOut& o) const override;
         bool async(const char *uri,navRoot& root,idx_t lvl) override;
         void clamp() {
-          if (target()<low()) {
-            if (style()&wrapStyle) target()=high();
-            else target()=low();
-          } else if (target()>high()) {
-            if (style()&wrapStyle) target()=low();
-            else target()=high();
-          }
+          //Serial.print("clamping ");Serial.println(target());
+          if (style()&wrapStyle)
+            target()=target()>high()?low():(target()<low()?high():target());
+          else
+            target()=constrain(target(),low(),high());
         }
     };
 

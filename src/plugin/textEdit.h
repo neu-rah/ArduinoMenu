@@ -36,7 +36,8 @@ public:
   bool editing;
   textEdit(const promptShadow& shadow,char* value):navTarget(shadow),value(value) {}
   void doNav(navNode& nav,navCmd cmd) override {
-    Serial<<"textEdit::doNav:"<<cmd<<endl;
+    Serial.print("textEdit::doNav:");
+    Serial.println(cmd);
     if (!editing) {
       original=value;
       editing=true;
