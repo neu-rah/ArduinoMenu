@@ -51,9 +51,10 @@ public:
       case idxCmd:
         //Serial<<"IDX"<<endl;
         menuField<T>::tunning=true;//prepare for exit
-        return menuField<T>::doNav(nav,cancelFieldOptions::accelSendEsc?escCmd:enterCmd);
+        return doNav(nav,cancelFieldOptions::accelSendEsc?escCmd:enterCmd);
       case escCmd:
-        menuField<T>::tunning=editing=!cancelFieldOptions::quitOnEsc;
+        editing=!cancelFieldOptions::quitOnEsc;
+        //menuField<T>::tunning=false;
         //Serial<<"ESC"<<endl;
         menuField<T>::target()=original;
         break;

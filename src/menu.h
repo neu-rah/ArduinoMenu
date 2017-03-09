@@ -603,11 +603,11 @@ www.r-site.net
         //it might be set by numeric parsing when allowed
         case idxCmd: //Serial<<"menuField::doNav with idxCmd"<<endl;
         case escCmd:
+          menuField<T>::tunning=true;//prepare for exit
         case enterCmd:
           if (menuField<T>::tunning||options->nav2D||!tune()) {//then exit edition
-            menuField<T>::tunning=false;
-            menuField<T>::dirty=true;
-            //Serial<<endl<<"end editing!"<<endl;
+            //menuField<T>::dirty=true;
+            menuField<T>::tunning=false;//prepare for exit
             nav.root->exit();
           } else menuField<T>::tunning=true;
           menuField<T>::dirty=true;

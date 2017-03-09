@@ -62,7 +62,7 @@ public:
       if (out.maxX()>1) {
         cancelField<T>::printTo(root,sel,out,idx,len);
         out.clearLine(1);
-        out.setCursor(1,0);
+        out.setCursor(0,1);
       }
       int bar=map(menuField<T>::target(),menuField<T>::low(),menuField<T>::high(),0,out.maxX());
       for (int n=0;n<bar;n++) out.print(fill);

@@ -27,7 +27,7 @@ using a plugin:
 
 //inputs
 #include <menuIO/encoderIn.h>
-#include <menuIO/keyIn.h>
+#include <menuIO/softKeyIn.h>
 #include <menuIO/chainStream.h>
 
 //outputs
@@ -41,9 +41,11 @@ using a plugin:
 
 using namespace Menu;
 
-unsigned int test=55;
+int test=55;
 
 char* name="Edit me...";
+
+#define LEDPIN 13
 
 // LCD /////////////////////////////////////////
 #define RS 8
@@ -58,44 +60,57 @@ LiquidCrystal lcd(RS, RW, EN, 4, 5, 6, 7);
 #define encBtn A3
 
 encoderIn<encA,encB> encoder;//simple quad encoder driver
-encoderInStream<encA,encB> encStream(encoder,4);// simple quad encoder fake Stream
+encoderInStream<encA,encB> encStream(encoder,3);// simple quad encoder fake Stream
 
 //a keyboard with only one key as the encoder button
 keyMap encBtn_map[]={{-encBtn,options->getCmdChar(enterCmd)}};//negative pin numbers use internal pull-up, this is on when low
-keyIn<1> encButton(encBtn_map);//1 is the number of keys
+softKeyIn<1> encButton(encBtn_map);//1 is the number of keys
 
 //input from the encoder + encoder button + serial
 Stream* inputsList[]={&encStream,&encButton,&Serial};
 chainStream<3> in(inputsList);//3 is the number of inputs
 
+void dot() {Serial.print("+");}
+
 //a menu using a plugin field
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
-  ,FIELD(test,"Original edit","%",0,100,10,1,doNothing,noEvent,wrapStyle)
-  ,altFIELD(cancelField,test,"Cancelable edit","%",0,100,10,1,doNothing,enterEvent,wrapStyle)
+  ,FIELD(test,"Original","%",0,100,10,1,doNothing,noEvent,wrapStyle)
+  ,FIELD(test,"O. Simple","%",0,100,1,0,doNothing,noEvent,wrapStyle)
+  ,altFIELD(cancelField,test,"Cancelable","%",0,100,10,1,doNothing,enterEvent,wrapStyle)
+  ,altFIELD(cancelField,test,"C. Simple","%",0,100,1,0,doNothing,enterEvent,wrapStyle)
   ,EDIT(barField,test,"Bar field","%",0,100,10,1,doNothing,noEvent,wrapStyle)
   ,ITEM(textEdit,"Text",doNothing,noEvent,_canNav,name)
-  ,OP("Test",doNothing,noEvent)
+  ,OP("Empty 0",dot,enterEvent)
+  ,EXIT("<Exit")
 );
 
 #define MAX_DEPTH 2
 
 MENU_OUTPUTS(out,MAX_DEPTH
-  ,LIQUIDCRYSTAL_OUT(lcd,{0,0,16,2})
   ,SERIAL_OUT(Serial)
+  ,LIQUIDCRYSTAL_OUT(lcd,{0,0,16,2})
 );
 
 NAVROOT(nav,mainMenu,MAX_DEPTH,in,out);//the navigation root object
 
 void setup() {
+  pinMode(encBtn,INPUT_PULLUP);
+  //pinMode(LEDPIN,OUTPUT);
   Serial.begin(115200);
   while(!Serial);
+  encoder.begin();
+  lcd.begin(16,2);
+  lcd.setCursor(0, 0);
+  lcd.print("Menu 3.0 LCD");
+  lcd.setCursor(0, 1);
+  lcd.print("r-site.net");
   options->numValueInput=false;//numeric keys in fields used as accelerators instead
   //Serial<<"menu 3.x plugins"<<endl;Serial.flush();
   //setting some plugins otions
-  barFieldOptions::fill="█";//this is an unicode character, your device might not support it
-  barFieldOptions::empty="░";//if not stick with the defaults
-  cancelFieldOptions::quitOnEsc=false;
-  cancelFieldOptions::accelSendEsc=false;
+  barFieldOptions::fill="\xFF";
+  //barFieldOptions::empty="░";//if not stick with the defaults
+  cancelFieldOptions::quitOnEsc=true;
+  cancelFieldOptions::accelSendEsc=true;//normal is enter
 }
 
 void loop() {

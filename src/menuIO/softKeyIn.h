@@ -24,9 +24,10 @@ ex: -A0 means: pin A0 normally high, low when button pushed (reverse logic)
   #define __softKeyIn_h__
 
   #include "../menu.h"
-  #include "keyMapDef.h"
 
   namespace Menu {
+
+    #include "keyMapDef.h"
 
     #ifndef BOUNCE_TICK
     #define BOUNCE_TICK 30
