@@ -1,5 +1,7 @@
 Arduino Menu Library
 
+- use multiple menus
+- check dynamic, if possible mixed
 + color enumeration at base level
 + add list of output devices
 + add macros to build navRoot

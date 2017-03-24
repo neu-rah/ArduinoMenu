@@ -27,7 +27,15 @@ prompt op2(op2Info);
 prompt* const menuData[] PROGMEM={&op1,&op2};
 //or just prompt* menuData[]={&op1,&op2}; on non avr devices
 const char menuTitle[] PROGMEM="Main menu";
-const menuNodeShadowRaw menuInfoRaw PROGMEM={doNothing,_noStyle,menuTitle,noEvent,wrapStyle,2,menuData};
+const menuNodeShadowRaw menuInfoRaw PROGMEM={
+  doNothing,
+  (systemStyles)(_menuData|_canNav),
+  menuTitle,
+  noEvent,
+  wrapStyle,
+  2,
+  menuData
+};
 const menuNodeShadow& menuInfo=*(menuNodeShadow*)&menuInfoRaw;
 //or just this line on non PROGMEM devices like teensy or esp8266 instead of the above three
 //menuNodeShadow menuInfo("Main menu",2,menuData,(callback)doNothing,noEvent,wrapStyle);
@@ -51,12 +59,23 @@ navRoot nav(mainMenu, nav_cursors, MAX_DEPTH-1, Serial, out);
 void op1Func() {Serial.println("Op 1 executed");}
 void op2Func() {Serial.println("Op 2 executed");}
 
+#include <Streaming.h>
+
 /////////////////////////////////////////////////////////////////////////////
 // arduiin osketch
 void setup() {
   Serial.begin(115200);
   while(!Serial);
   Serial.println("Menu initialized without macros.");
+  Serial<<"active:";
+  Serial<<*(prompt*)&nav.active();
+  Serial<<endl;
+  Serial<<"maxDepth:"<<nav.maxDepth<<endl;
+  Serial<<"Selected:";
+  Serial<<(*(prompt*)&nav.selected());
+  Serial<<endl;
+  Serial<<"active dirty:"<<nav.active().dirty<<endl;
+  // Serial<<":"<<nav.()<<endl;
 }
 
 void loop() {

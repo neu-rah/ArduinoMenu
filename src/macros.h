@@ -1,6 +1,8 @@
 /* -*- C++ -*- */
 #include "baseMacros.h"
 
+//#define MENU_USERAM
+
 //////////////////////////////////////////////////////////////////////////////
 // memory macros ------------------------------------------------------------
 #if defined(__arm__) | defined(ESP8266)
@@ -13,6 +15,7 @@
   //storing some values into avr flash memory (saving ram space)
   #define USING_PGM
   #define MEMMODE PROGMEM
+  #define constMEM const
   #define memPtr(src) pgm_read_ptr(&(src))
   #define memByte(addr) (pgm_read_byte(addr))
   #define memWord(addr) (pgm_read_word(addr))
@@ -23,6 +26,7 @@
   //use ram on non-avr devices
   #define USING_RAM
   #define MEMMODE
+  #define constMEM
   #define memPtr(src) (src)
   #define memByte(addr) (*(addr))
   #define memWord(addr) (*(addr))

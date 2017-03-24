@@ -16,14 +16,15 @@
     };
     class promptShadow:public action {
       protected:
+      public:
         systemStyles sysStyles;
         const char*text;
         const eventMask events;//registered events (mask)
         styles style;
       public:
-        promptShadow(const char* t,action a=doNothing,eventMask e=noEvent,styles s=noStyle)
-          :action(a),sysStyles(_noStyle),text(t),events(e),style(s) {}
-        inline const char* getText() const {return (const char*)memPtr(text);}
+        promptShadow(const char* t,action a=doNothing,eventMask e=noEvent,styles s=noStyle,systemStyles ss=_noStyle)
+          :action(a),sysStyles(ss),text(t),events(e),style(s) {}
+        inline constMEM char* getText() const {return (constMEM char*)memPtr(text);}
         inline const systemStyles _sysStyles() const {return (systemStyles)memEnum(&sysStyles);}
         inline const eventMask _events() const {return (eventMask)memEnum(&events);}
         inline const styles _style() const {return (styles)memEnum(&style);}
@@ -39,11 +40,12 @@
     };
     class menuNodeShadow:public promptShadow {
       protected:
+      public:
         idx_t sz;
         prompt* const* data;
       public:
-        menuNodeShadow(const char* text,idx_t sz,prompt* const* data,action a,eventMask e,styles style)
-        :promptShadow(text,a,e,style),sz(sz),data(data) {}
+        menuNodeShadow(const char* text,idx_t sz,prompt* const* data,action a,eventMask e,styles style,systemStyles ss=(systemStyles)(_menuData|_canNav))
+        :promptShadow(text,a,e,style,ss),sz(sz),data(data) {}
         idx_t _sz() const {return (idx_t)memIdx(sz);}
         prompt* const* _data() const {return (prompt* const*)memPtr(data);}
         inline prompt& operator[](idx_t i) const {
@@ -66,6 +68,7 @@
     template<typename T>
     class menuFieldShadow:public promptShadow {
       protected:
+      public:
         T* value;
         const char* units;
         const T low,high,step,tune;
@@ -102,6 +105,7 @@
     template<typename T>
     class menuValueShadow:public promptShadow {
       protected:
+      public:
         T value;
       public:
         inline menuValueShadow(const char * text,T value,action a=doNothing,eventMask e=noEvent)
@@ -135,6 +139,7 @@
     template<typename T>
     class menuVariantShadow:public menuNodeShadow {
       protected:
+      public:
         T* value;
       public:
         menuVariantShadow(const char* text,T &target,idx_t sz,prompt* const* data,action a,eventMask e,styles style)

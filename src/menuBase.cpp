@@ -5,6 +5,13 @@ using namespace Menu;
 
 #ifdef DEBUG
   bool debugFlag=false;
+  #if defined(USING_PGM)
+    const char* libMemMode="PGM";
+  #elif defined(USING_RAM)
+    const char* libMemMode="RAM";
+  #else
+    const char* libMemMode="ERROR!";
+  #endif
 #endif
 
 template<void (*A)(eventMask event, navNode& nav, prompt &item, Stream &in)> result Menu::callCaster(eventMask event, navNode& nav, prompt &item, Stream &in) {A(event,nav,item,in);return proceed;}

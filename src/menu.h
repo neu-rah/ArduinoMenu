@@ -22,6 +22,7 @@ www.r-site.net
   // #endif
   #include "menuBase.h"
   #include "shadows.h"
+  //#include "dyn.h"
 
   namespace Menu {
 
@@ -50,7 +51,8 @@ www.r-site.net
       friend class navNode;
       friend class menuOut;
       protected:
-        const promptShadow* shadow;//constant read-only data (PROGMEM)
+      public:
+        constMEM promptShadow* shadow;//constant read-only data (PROGMEM)
       public:
         status enabled=enabledStatus;//ignore enter if false
         bool dirty=true;//needs to be  redrawn
@@ -435,12 +437,15 @@ www.r-site.net
     // Navigation
     //////////////////////////////////////////////////////////////////////////
     class navNode {
+      friend class navRoot;
       protected:
         inline menuNodeShadow& shadow() const {return *(menuNodeShadow*)target->shadow;}
+        inline void useMenu(menuNode &menu) {target=&menu;reset();}
       public:
         idx_t sel=0;
         menuNode* target;
         static navRoot* root;
+        inline void reset() {sel=0;}
         inline idx_t sz() const {return target->sz();}
         inline prompt* const * data() const {return target->data();}
         inline prompt& selected() const {return *(prompt*)memPtr(data()[sel]);}
@@ -475,11 +480,21 @@ www.r-site.net
         navTarget* navFocus=NULL;
         navRoot(menuNode& root,navNode* path,idx_t d,Stream& in,outputsList &o)
           :out(o),in(in),path(path),maxDepth(d) {
-            navFocus=&root;
-            path[0].target=&root;
+            /*navFocus=&root;
+            path[0].target=&root;*/
+            useMenu(root);
             navNode::root=this;
             //for(int i=0;i<d;i++) path[i].root=this;
           }
+        void useMenu(const menuNode &menu) {
+          navFocus=&menu;
+          path[0].target=&menu;
+          reset();
+        }
+        inline void reset() {
+          level=0;
+          path[0].sel=0;
+        }
         inline navNode& node() const {return path[level];}
         inline menuNode& active() const {return *node().target;}
         inline prompt& selected() const {return active()[node().sel];}
