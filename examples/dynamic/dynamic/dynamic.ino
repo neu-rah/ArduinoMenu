@@ -2,14 +2,15 @@
 
 #include <menu.h>
 #include <menuIO/serialOut.h>
-
 #include <Streaming.h>
 
 using namespace Menu;
 
 //action functions
-void op1Func();
-void op2Func();
+// void op1Func();
+// void op2Func();
+void op1Func() {Serial.println("Op 1 executed");}
+void op2Func() {Serial.println("Op 2 executed");}
 
 //define "Op 1"
 promptShadow op1Info("Op 1",(callback)op1Func,enterEvent);
@@ -31,9 +32,6 @@ MENU_OUTPUTS(out,MAX_DEPTH
 );
 
 NAVROOT(nav,mainMenu,MAX_DEPTH,Serial,out);
-
-void op1Func() {Serial.println("Op 1 executed");}
-void op2Func() {Serial.println("Op 2 executed");}
 
 void setup() {
   Serial.begin(115200);

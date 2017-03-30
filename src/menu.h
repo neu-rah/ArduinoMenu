@@ -61,7 +61,7 @@ www.r-site.net
           return ((uint16_t*)&tmp)[sizeof(this)/sizeof(uint16_t)-1];
         }
         virtual classes type() const {return promptClass;}
-        inline prompt(const promptShadow& shadow):shadow(&shadow) {}
+        inline prompt(constMEM promptShadow& shadow):shadow(&shadow) {}
         inline void enable() {enabled=enabledStatus;}
         inline void disable() {enabled=disabledStatus;}
         inline const char* getText() const {return shadow->getText();}
@@ -97,7 +97,7 @@ www.r-site.net
     // this is the minimal candidate for navRoot::navFocus
     class navTarget:public prompt {
       public:
-        navTarget(const promptShadow& shadow):prompt(shadow) {}
+        navTarget(constMEM promptShadow& shadow):prompt(shadow) {}
         //bool canNav() const override {return true;}
         virtual void parseInput(navNode& nav,Stream& in);
         virtual void doNav(navNode& nav,navCmd cmd);
@@ -108,7 +108,7 @@ www.r-site.net
     // this is the minimal canditate for navNode::target
     class menuNode:public navTarget {
       public:
-        menuNode(const menuNodeShadow& s):navTarget(s) {}
+        menuNode(constMEM menuNodeShadow& s):navTarget(s) {}
         virtual classes type() const {return menuClass;}
         inline prompt& operator[](idx_t i) const {return ((menuNodeShadow*)shadow)->operator[](i);}
         bool changed(const navNode &nav,const menuOut& out,bool sub=true) override;
@@ -121,7 +121,7 @@ www.r-site.net
     //--------------------------------------------------------------------------
     class menu:public menuNode {
       public:
-        menu(const menuNodeShadow& shadow):menuNode(shadow) {}
+        menu(constMEM menuNodeShadow& shadow):menuNode(shadow) {}
     };
 
     //--------------------------------------------------------------------------
@@ -486,7 +486,7 @@ www.r-site.net
             navNode::root=this;
             //for(int i=0;i<d;i++) path[i].root=this;
           }
-        void useMenu(const menuNode &menu) {
+        void useMenu(constMEM menuNode &menu) {
           navFocus=&menu;
           path[0].target=&menu;
           reset();

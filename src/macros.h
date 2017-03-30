@@ -14,6 +14,7 @@
 #if defined(pgm_read_ptr_near) && !defined(MENU_USERAM)
   //storing some values into avr flash memory (saving ram space)
   #define USING_PGM
+  #warning "Using PGM"
   #define MEMMODE PROGMEM
   #define constMEM const
   #define memPtr(src) pgm_read_ptr(&(src))
@@ -24,6 +25,7 @@
   #define memEnum(addr) (sizeof(int)==1?memByte(addr):memWord(addr))
 #else
   //use ram on non-avr devices
+  #warning "Using RAM"
   #define USING_RAM
   #define MEMMODE
   #define constMEM
