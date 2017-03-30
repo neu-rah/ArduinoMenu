@@ -209,7 +209,7 @@ more info at
 
 [wiki](https://github.com/neu-rah/ArduinoMenu/wiki) pages, [issues](https://github.com/neu-rah/ArduinoMenu/issues?utf8=%E2%9C%93&q=) or [r-site.net](http://www.r-site.net/?lang=en&at=//op%5B@id=%273090%27%5D)
 
-## Repots
+## Reports
 please report errors, problems or enhancement ideas, I apreciate the feedback. Thanks.
 
 On issues report please specify the input and output drivers or devices.
