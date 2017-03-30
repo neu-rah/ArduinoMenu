@@ -12,6 +12,10 @@ menu library objects
 definitions and enumerations
 
 www.r-site.net
+
+thanks to sphh (https://github.com/sphh)
+for correcting unsigned values validation
+
 ***/
 
 #ifndef RSITE_ARDUINO_MENU_SYSTEM
@@ -149,12 +153,24 @@ www.r-site.net
         void printHigh(menuOut& o) const override;
         void printLow(menuOut& o) const override;
         bool async(const char *uri,navRoot& root,idx_t lvl) override;
-        void clamp() {
-          //Serial.print("clamping ");Serial.println(target());
-          if (style()&wrapStyle)
-            target()=target()>high()?low():(target()<low()?high():target());
-          else
-            target()=constrain(target(),low(),high());
+        void stepit(int increment) {
+          int thisstep = increment*(tunning?tune():step())*(options->invertFieldKeys?-1:1);
+          dirty=true;
+          if (thisstep < 0 && (target()-low()) < -thisstep) {
+            if (style()&wrapStyle) {
+              target() = high();
+            } else {
+              target() = low();
+            }
+          } else if (thisstep > 0 && (high()-target()) < thisstep) {
+            if (style()&wrapStyle) {
+              target() = low();
+            } else {
+              target() = high();
+            }
+          } else {
+            target() += thisstep;
+          }
         }
     };
 
@@ -620,27 +636,29 @@ www.r-site.net
         case escCmd:
           menuField<T>::tunning=true;//prepare for exit
         case enterCmd:
-          if (menuField<T>::tunning||options->nav2D||!tune()) {//then exit edition
-            //menuField<T>::dirty=true;
-            menuField<T>::tunning=false;//prepare for exit
+          if (tunning||options->nav2D||!tune()) {//then exit edition
+            tunning=false;
+            dirty=true;
+            target() = constrain(target(), low(), high());
+            nav.event(options->useUpdateEvent?updateEvent:enterEvent);
             nav.root->exit();
-          } else menuField<T>::tunning=true;
-          menuField<T>::dirty=true;
+            return;
+          } else tunning=true;
+          dirty=true;
           break;
         case upCmd:
-          target()+=(menuField<T>::tunning?tune():step())*(options->invertFieldKeys?-1:1);
-          menuField<T>::dirty=true;
-          clamp();
-          nav.event(options->useUpdateEvent?updateEvent:enterEvent);
+          stepit(1);
           break;
         case downCmd:
-          target()-=(menuField<T>::tunning?tune():step())*(options->invertFieldKeys?-1:1);;
-          menuField<T>::dirty=true;
-          clamp();
-          nav.event(options->useUpdateEvent?updateEvent:enterEvent);
+          stepit(-1);
           break;
         default:break;
       }
+      /*if (ch==options->getCmdChar(enterCmd)&&!tunning) {
+        nav.event(enterEvent);
+      }*/
+      if (dirty)//sending enter or update event
+        nav.event(options->useUpdateEvent?updateEvent:enterEvent);
     }
 
     template<typename T>
