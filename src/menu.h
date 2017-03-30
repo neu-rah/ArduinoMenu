@@ -66,6 +66,8 @@ for correcting unsigned values validation
         }
         virtual classes type() const {return promptClass;}
         inline prompt(constMEM promptShadow& shadow):shadow(&shadow) {}
+        // inline prompt(constMEM char* t,action a=doNothing,eventMask e=noEvent,styles s=noStyle,systemStyles ss=_noStyle)
+        //   :shadow(&promptShadow(t,a,e,s,ss)) {}
         inline void enable() {enabled=enabledStatus;}
         inline void disable() {enabled=disabledStatus;}
         inline const char* getText() const {return shadow->getText();}
@@ -102,6 +104,8 @@ for correcting unsigned values validation
     class navTarget:public prompt {
       public:
         navTarget(constMEM promptShadow& shadow):prompt(shadow) {}
+        // navTarget(constMEM char* t,action a=doNothing,eventMask e=noEvent,styles s=noStyle,systemStyles ss=_noStyle)
+        //   :prompt(t,a,e,s,ss) {}
         //bool canNav() const override {return true;}
         virtual void parseInput(navNode& nav,Stream& in);
         virtual void doNav(navNode& nav,navCmd cmd);
@@ -113,6 +117,8 @@ for correcting unsigned values validation
     class menuNode:public navTarget {
       public:
         menuNode(constMEM menuNodeShadow& s):navTarget(s) {}
+        // menuNode(constMEM char* text,idx_t sz,prompt* constMEM* data,action a,eventMask e,styles style,systemStyles ss=(systemStyles)(_menuData|_canNav))
+        // :navTarget(text,a,e,style,ss) {}
         virtual classes type() const {return menuClass;}
         inline prompt& operator[](idx_t i) const {return ((menuNodeShadow*)shadow)->operator[](i);}
         bool changed(const navNode &nav,const menuOut& out,bool sub=true) override;

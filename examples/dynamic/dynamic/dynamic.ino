@@ -15,15 +15,18 @@ void op2Func() {Serial.println("Op 2 executed");}
 //define "Op 1"
 promptShadow op1Info("Op 1",(callback)op1Func,enterEvent);
 prompt op1(op1Info);
+//prompt op1("Op 1",(callback)op1Func,enterEvent);
 
 //define "Op 2"
 promptShadow op2Info("Op 2",(callback)op2Func,enterEvent);
 prompt op2(op2Info);
+//prompt op2("Op 2",(callback)op2Func,enterEvent);
 
 //define the menu
 prompt* menuData[]={&op1,&op2};
 menuNodeShadow menuInfo("Main menu",2,menuData,(callback)doNothing,noEvent,wrapStyle);
 menuNode mainMenu(menuInfo);
+//menuNode mainMenu("Main menu",2,menuData,(callback)doNothing,noEvent,wrapStyle);
 
 #define MAX_DEPTH 1
 MENU_OUTPUTS(out,MAX_DEPTH
