@@ -228,9 +228,10 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
           previewMenu(*nav.root,*(menuNode*)&p,panelNr+1);
           //TODO: do we need preview pointers?
           //because now i use navNode* instead and its not available here
-          //panels.nodes[panelNr+1]=(menuNode*)&p;
+          panels.nodes[panelNr+1]=&nav;//signal this needs clean, avoid constant clean
           //<----  previewEnd
-        } else if (panels.nodes[panelNr+1]) clear(panelNr+1);
+        } else if (panels.nodes[panelNr+1])
+          clear(panelNr+1);
       }
       //opEnd
       fmtEnd(fmtOp,nav,i);
