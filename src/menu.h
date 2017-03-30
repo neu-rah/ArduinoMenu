@@ -13,6 +13,9 @@ definitions and enumerations
 
 www.r-site.net
 
+thanks to sphh (https://github.com/sphh)
+for correcting unsigned values validation
+
 ***/
 
 #ifndef RSITE_ARDUINO_MENU_SYSTEM
@@ -145,13 +148,23 @@ www.r-site.net
         void printHigh(menuOut& o) const override;
         void printLow(menuOut& o) const override;
         bool async(const char *uri,navRoot& root,idx_t lvl) override;
-        void clamp() {
-          if (target()<low()) {
-            if (style()&wrapStyle) target()=high();
-            else target()=low();
-          } else if (target()>high()) {
-            if (style()&wrapStyle) target()=low();
-            else target()=high();
+        void stepit(int increment) {
+          int thisstep = increment*(tunning?tune():step())*(options->invertFieldKeys?-1:1);
+          dirty=true;
+          if (thisstep < 0 && (target()-low()) < -thisstep) {
+            if (style()&wrapStyle) {
+              target() = high();
+            } else {
+              target() = low();
+            }
+          } else if (thisstep > 0 && (high()-target()) < thisstep) {
+            if (style()&wrapStyle) {
+              target() = low();
+            } else {
+              target() = high();
+            }
+          } else {
+            target() += thisstep;
           }
         }
     };
@@ -599,24 +612,24 @@ www.r-site.net
           if (tunning||options->nav2D||!tune()) {//then exit edition
             tunning=false;
             dirty=true;
+            target() = constrain(target(), low(), high());
+            nav.event(options->useUpdateEvent?updateEvent:enterEvent);
             nav.root->exit();
+            return;
           } else tunning=true;
           dirty=true;
           break;
         case upCmd:
-          target()+=(tunning?tune():step())*(options->invertFieldKeys?-1:1);
-          dirty=true;
+          stepit(1);
           break;
         case downCmd:
-          target()-=(tunning?tune():step())*(options->invertFieldKeys?-1:1);;
-          dirty=true;
+          stepit(-1);
           break;
         default:break;
       }
       /*if (ch==options->getCmdChar(enterCmd)&&!tunning) {
         nav.event(enterEvent);
       }*/
-      clamp();
       if (dirty)//sending enter or update event
         nav.event(options->useUpdateEvent?updateEvent:enterEvent);
     }
