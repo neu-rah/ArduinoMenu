@@ -7,39 +7,6 @@
 
 using namespace Menu;
 
-int test=55;
-
-//custom field edit
-//implementing a customized menu component
-//this components can be latter shared as plugins
-template<typename T>
-class cancelField:public menuField<T> {
-protected:
-  T original;//to use when canceling
-  bool editing;
-public:
-  cancelField(const menuFieldShadow<T>& shadow):menuField<T>(shadow),editing(false) {}
-  void doNav(navNode& nav,navCmd cmd) override {
-    if (!editing) {
-      original=target();
-      editing=true;
-    }
-    switch(cmd.cmd) {
-      case escCmd:
-        editing=false;
-        target()=original;
-        menuField<T>::tunning=true;
-        break;
-      case enterCmd:
-        if (menuField<T>::tunning||options->nav2D||!tune())
-          editing=false;
-        break;
-      default: break;
-    }
-    menuField<T>::doNav(nav,cmd);
-  }
-};
-
 /*
 The pad style!
 
@@ -57,15 +24,21 @@ flags: use current mechanism to consider extra pad case
   => does not favor extension
 */
 
+altMENU(menu,sub,"Sub",doNothing,noEvent,wrapStyle,_asPad
+  ,OP("Yes",doNothing,noEvent)
+  ,OP("No",doNothing,noEvent)
+);
+
 //a menu using a customized components
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   //,altFIELD(cancelField,test,"Custom edit","%",0,100,10,1,doNothing,enterEvent,wrapStyle)
   //,FIELD(test,"Original edit","%",0,100,10,1,doNothing,noEvent,wrapStyle)
-  ,OP("OP1",doNothing,noEvent)
-  ,OP("OP2",doNothing,noEvent)
+  ,SUBMENU(sub)
+  ,OP("Op1",doNothing,noEvent)
+  ,OP("Op2",doNothing,noEvent)
 );
 
-#define MAX_DEPTH 1
+#define MAX_DEPTH 2
 
 MENU_OUTPUTS(out,MAX_DEPTH
   ,SERIAL_OUT(Serial)

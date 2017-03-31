@@ -135,8 +135,8 @@ Menu::utftOut id##n(gfx,color,id##Tops##n,id##Panels##n,fontW,fontH);
 	};\
 Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
 
-#define MENU(id,text,aFn,mask,style,...) altMENU(Menu::menu,id,text,aFn,mask,style,__VA_ARGS__)
-#define altMENU(objType,id,text,aFn,mask,style,...)\
+#define MENU(id,text,aFn,mask,style,...) altMENU(Menu::menu,id,text,aFn,mask,style,(Menu::_menuData|Menu::_canNav),__VA_ARGS__)
+#define altMENU(objType,id,text,aFn,mask,style,ss,...)\
   FOR_EACH(DECL,__VA_ARGS__)\
   const char id##_text[] MEMMODE=text;\
   Menu::prompt* const id##_data[] MEMMODE={\
@@ -144,7 +144,7 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
   };\
   const MEMMODE Menu::menuNodeShadowRaw id##ShadowRaw={\
     (Menu::callback)aFn,\
-    (Menu::systemStyles)(Menu::_menuData|Menu::_canNav),\
+    (Menu::systemStyles)(ss|Menu::_menuData|Menu::_canNav),\
     id##_text,\
     mask,\
     style,\

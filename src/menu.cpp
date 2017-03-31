@@ -190,6 +190,10 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
     //bool any=all;
     //------> bodyStart
     fmtStart(fmtBody,nav);
+    setCursor(0,st,panelNr);//<-- PAD: start position
+    bool asPad=((prompt*)nav.target)->sysStyles()&_asPad;
+    Serial.print("asPad:");
+    Serial.println(asPad);
     for(idx_t i=0;i<maxY(panelNr)-st;i++) {
       int ist=i+st;
       if (i+tops[topi]>=nav.sz()) break;
@@ -203,10 +207,13 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
         bool ed=nav.target==&p;
         //-----> idxStart
         fmtStart(fmtIdx,nav,i);
-        clearLine(ist,panelNr,bgColor,selected,p.enabled);
-        setCursor(0,ist,panelNr);
+        if (!asPad) {//pad MUST be able of clearing part of a line!!!!!
+          clearLine(ist,panelNr,bgColor,selected,p.enabled);//<-- THIS IS DEPENDENT OF A DROP MENU!!!!
+          setCursor(0,ist,panelNr);//<-- THIS IS MAKING A DROP MENU!!!!
+        }
         setColor(fgColor,selected,p.enabled,ed);
-        if (drawNumIndex&style) {
+        //should we use accels on pads?
+        if (drawNumIndex&style) {//<-- THIS IS DEPENDENT OF A DROP MENU!!!!
           char a=tops[topi]+i+'1';
           print('[');
           print(a<='9'?a:'-');
@@ -218,6 +225,7 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
         fmtEnd(fmtIdx,nav,i);
         //------> cursorStart
         fmtStart(fmtCursor,nav,i);
+        //<-- THIS IS DEPENDENT OF A DROP MENU!!!!
         drawCursor(ist,selected,p.enabled,ed,panelNr);//assuming only one character
         //<------ cursorEnd
         fmtEnd(fmtCursor,nav,i);
@@ -232,9 +240,6 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
           if(p.isMenu()) {
             //----->  previewStart
             previewMenu(*nav.root,*(menuNode*)&p,panelNr+1);
-            //TODO: do we need preview pointers?
-            //because now i use navNode* instead and its not available here
-            //panels.nodes[panelNr+1]=(menuNode*)&p;
             panels.nodes[panelNr+1]=&nav;
             //<----  previewEnd
           } else if (panels.nodes[panelNr+1]) clear(panelNr+1);
@@ -336,7 +341,7 @@ navCmd navNode::doNavigation(navCmd cmd) {
     case selCmd:
     case idxCmd: {
         idx_t at=(idx_t)cmd.param;//-'1';send us numeric index pls!
-        if (at>=0&&at<=sz()) {
+        if (at>=0&&at<=sz()-1) {
           nsel=at;
           //if (cmd.cmd==idxCmd) {
             //Serial<<"indexing... "<<endl;
