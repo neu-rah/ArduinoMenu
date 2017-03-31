@@ -15,7 +15,7 @@ Arduino Menu Library
 + use/draw title option for any menu, and ignore it on single line devices!
 + wrap menuField's https://github.com/neu-rah/ArduinoMenu/issues/58
 + BUG: alert is only showing on the first device
-- use array of tops with path depth on each output device
++ use array of tops with path depth on each output device
   => do not use lastTop!
 - implement scroll commands on output devices
   => panels.nodes must use navNode* instead of menuNode*

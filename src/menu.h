@@ -359,9 +359,9 @@ for correcting unsigned values validation
           status stat=enabledStatus,
           bool edit=false
         ) {return *this;}
+        void clearChanged(navNode &nav);//clean up changed flags after everyone printed!
         void previewMenu(navRoot& root,menuNode& menu,idx_t panelNr);//draw a preview on a panel
         void printMenu(navNode &nav);//print menus and previews on panels
-        void clearChanged(navNode &nav);//clean up changed flags after everyone printed!
         virtual void clearLine(idx_t ln,idx_t panelNr=0,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false)=0;
         virtual void clear()=0;
         virtual void clear(idx_t panelNr)=0;

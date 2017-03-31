@@ -143,9 +143,9 @@ void menuOut::printMenu(navNode &nav) {
   }
 }
 
-//bool menuOut::changed
-
 // generic (menuOut) print menu on a panel
+// this function emits format messages
+// to be handler by format wrappers
 void menuOut::printMenu(navNode &nav,idx_t panelNr) {
   //menuNode& focus=nav.root->active();
   if (!(nav.root->navFocus->parentDraw()||nav.root->navFocus->isMenu())) {
@@ -235,6 +235,7 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
             //TODO: do we need preview pointers?
             //because now i use navNode* instead and its not available here
             //panels.nodes[panelNr+1]=(menuNode*)&p;
+            panels.nodes[panelNr+1]=&nav;
             //<----  previewEnd
           } else if (panels.nodes[panelNr+1]) clear(panelNr+1);
         }

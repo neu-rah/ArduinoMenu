@@ -23,12 +23,10 @@ using namespace Menu;
 
 class menuPadOptions {
 public:
-  static bool quitOnEsc;
-  static bool accelSendEsc;
 };
 
 //custom field edit
 class menuPad:public menuNode {
 public:
-  
+
 };

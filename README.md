@@ -1,6 +1,6 @@
 # ArduinoMenu 3
 
-**AVR generic menu/interactivity system**
+**Generic menu/interactivity system**
 
 [![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](http://creativecommons.org/licenses/by-nc-sa/4.0/)
 [![Build Status](https://travis-ci.org/neu-rah/ArduinoMenu.svg?branch=dev)](https://travis-ci.org/neu-rah/ArduinoMenu)
@@ -155,8 +155,9 @@ Web browser (experimental) when using ESP devices
 ## History
 
 #### 3.1.1
-- Plugins test
-- Text fields
+  - Plugins test
+  - Text fields scratch
+  - dynamic menu test
 
 ### 3.0
 	- complete revision of menu control system
@@ -171,40 +172,40 @@ Web browser (experimental) when using ESP devices
 	- limiting text width to prevent overflow
 
 ### 2.4
-- support for teensy (tested on 3.2)
-- new field type SELECT
-- reflexivity, fields reflect external changes to values
-- store field strings to progmem
-- automatic use of RAM on system without PROGMEM
+  - support for teensy (tested on 3.2)
+  - new field type SELECT
+  - reflexivity, fields reflect external changes to values
+  - store field strings to progmem
+  - automatic use of RAM on system without PROGMEM
 
 ### 2.3
 
-- action functions now need to return bool (only affects menus)
+  - action functions now need to return bool (only affects menus)
 
->**false** = continue menu
->
->**true** = exit menu
+  >**false** = continue menu
+  >
+  >**true** = exit menu
 
-- Support for U8GLib screens
-- alternative use ClickEncoder
-- using flash memory to store menu strings and lists (PROGMEM)
+  - Support for U8GLib screens
+  - alternative use ClickEncoder
+  - using flash memory to store menu strings and lists (PROGMEM)
 
 ### 2.0
 
-- non-blocking menu main cycle
-- Menufields as menu prompts with associated value
-  values can be:
-    numeric withing range
-    list of values toggled on click (for small lists)
-    list of values selected as submenu (for longer lists)
-- PCINT now supports Mega/2560 and possibly others
+  - non-blocking menu main cycle
+  - Menufields as menu prompts with associated value
+    values can be:
+      numeric withing range
+      list of values toggled on click (for small lists)
+      list of values selected as submenu (for longer lists)
+  - PCINT now supports Mega/2560 and possibly others
 
 ### 1.x
-- basic menu functionality
+  - basic menu functionality
 
 ## notes
 
-encoder now needs begin() to be called on setup
+encoder now needs begin() to be called on setup (2.x)
 
 input is read from generic streams, included simple streams for encoders and keyboards
 	- provided encoder driver uses internal pull-ups and reverse logic
@@ -216,7 +217,7 @@ more info at
 
 [wiki](https://github.com/neu-rah/ArduinoMenu/wiki) pages, [issues](https://github.com/neu-rah/ArduinoMenu/issues?utf8=%E2%9C%93&q=) or [r-site.net](http://www.r-site.net/?lang=en&at=//op%5B@id=%273090%27%5D)
 
-## Repots
+## Reports
 please report errors, problems or enhancement ideas, I apreciate the feedback. Thanks.
 
 On issues report please specify the input and output drivers or devices as well as target platform.
