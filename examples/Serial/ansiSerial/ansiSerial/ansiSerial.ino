@@ -49,7 +49,7 @@ const colorDef<uint8_t> colors[] MEMMODE={
 };
 
 //define menu outputs ------------------------------------------------
-#define MAX_DEPTH 2
+#define MAX_DEPTH 4
 /*const panel panels[] MEMMODE={{1,1,16,10},{18,1,16,10},{36,1,16,10}};
 navNode* nodes[sizeof(panels)/sizeof(panel)];
 panelsList pList(panels,nodes,sizeof(panels)/sizeof(panel));
@@ -199,9 +199,28 @@ public:
   }
 };
 
+MENU(bigMenu,"BigMenu",doNothing,noEvent,noStyle
+  ,OP("Op",doNothing,noEvent)
+  ,OP("Op",doNothing,noEvent)
+  ,OP("Op",doNothing,noEvent)
+  ,OP("Op",doNothing,noEvent)
+  ,OP("Op",doNothing,noEvent)
+  ,OP("Op",doNothing,noEvent)
+  ,OP("Op",doNothing,noEvent)
+  ,OP("Op",doNothing,noEvent)
+  ,OP("Op",doNothing,noEvent)
+  ,OP("Op",doNothing,noEvent)
+  ,OP("Op",doNothing,noEvent)
+  ,OP("Op",doNothing,noEvent)
+  ,OP("Op",doNothing,noEvent)
+  ,OP("Op",doNothing,noEvent)
+  ,OP("Op",doNothing,noEvent)
+);
+
 MENU(subSubMenu,"Sub-Sub-Menu",doNothing,noEvent,noStyle
   ,OP("SSub1",doNothing,noEvent)
   ,OP("SSub2",doNothing,noEvent)
+  ,SUBMENU(bigMenu)
   ,EXIT("<Back")
 );//just to test depth limit
 
@@ -279,8 +298,6 @@ void setup() {
   pinMode(LEDPIN,OUTPUT);
   Serial.begin(115200);
   while(!Serial);
-  /*while(!Serial.available()) {Serial<<".";delay(300);}
-  while(Serial.available()) Serial.read();*/
   Serial<<"menu 3.0 test"<<endl;Serial.flush();
   nav.idleTask=idle;//point a function to be used when menu is suspended
   mainMenu[1].enabled=disabledStatus;
@@ -294,5 +311,6 @@ void setup() {
 void loop() {
   nav.poll();
   digitalWrite(LEDPIN, ledCtrl);
+  //digitalWrite(LEDPIN,!digitalRead(LEDPIN));
   delay(100);//simulate a delay when other tasks are done
 }

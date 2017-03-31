@@ -21,9 +21,9 @@ for correcting unsigned values validation
 #ifndef RSITE_ARDUINO_MENU_SYSTEM
   #define RSITE_ARDUINO_MENU_SYSTEM
   #include <Arduino.h>
-  // #if !defined(ArduinoStream_h)
-  //   #include <Streaming.h>
-  // #endif
+  #if defined(DEBUG) //!defined(ArduinoStream_h)
+    #include <Streaming.h>
+  #endif
   #include "menuBase.h"
   #include "shadows.h"
   //#include "dyn.h"
@@ -552,8 +552,10 @@ for correcting unsigned values validation
         //menu IO - external iteration functions
         void doInput(Stream& in);
         inline void doInput(const char*in) {
+          //Serial<<"do in start"<<endl;Serial.flush();
           StringStream inStr(in);
           while(inStr.available()) doInput(inStr);
+          //Serial<<"do out end"<<endl;Serial.flush();
         }
         inline void doInput() {doInput(in);}
         inline void doOutput() {

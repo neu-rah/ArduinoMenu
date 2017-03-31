@@ -103,10 +103,27 @@ public:
   }
 };
 
+MENU(bigMenu,"BigMenu",doNothing,noEvent,noStyle
+  ,OP("Op",doNothing,noEvent)
+  ,OP("Op",doNothing,noEvent)
+  ,OP("Op",doNothing,noEvent)
+  ,OP("Op",doNothing,noEvent)
+  ,OP("Op",doNothing,noEvent)
+  ,OP("Op",doNothing,noEvent)
+  ,OP("Op",doNothing,noEvent)
+  ,OP("Op",doNothing,noEvent)
+  ,OP("Op",doNothing,noEvent)
+  ,OP("Op",doNothing,noEvent)
+  ,OP("Op",doNothing,noEvent)
+  ,OP("Op",doNothing,noEvent)
+  ,OP("Op",doNothing,noEvent)
+  ,OP("Op",doNothing,noEvent)
+  ,OP("Op",doNothing,noEvent)
+  ,EXIT("<Back")
+);
+
 MENU(subMenu,"Sub-Menu",showEvent,anyEvent,noStyle
-  ,OP("Sub1",showEvent,anyEvent)
-  ,OP("Sub2",showEvent,anyEvent)
-  ,OP("Sub3",showEvent,anyEvent)
+  ,SUBMENU(bigMenu)
   ,altOP(altPrompt,"",showEvent,anyEvent)
   ,EXIT("<Back")
 );
@@ -163,7 +180,7 @@ keyIn<1> encButton(encBtn_map);//1 is the number of keys
 
 MENU_INPUTS(in,&encStream,&encButton,&Serial);
 
-#define MAX_DEPTH 2
+#define MAX_DEPTH 4
 #define textScale 1
 MENU_OUTPUTS(out,MAX_DEPTH
   ,ADAGFX_OUT(gfx,colors,6*textScale,9*textScale,{0,0,14,8},{14,0,14,8})
