@@ -20,7 +20,6 @@
             :cursorOut(t,p,s),device(o) {}
           size_t write(uint8_t ch) override {return device->write(ch);}
           void clear() override {
-            Serial.println("Clearing LCD");
             device->clear();
             panels.reset();
           }
