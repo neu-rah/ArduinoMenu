@@ -155,7 +155,8 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
   } else {
     idx_t topi=nav.root->level-((nav.root->active().parentDraw())?1:0);
     idx_t ot=tops[topi];
-    idx_t st=(nav.root->showTitle&&(maxY(panelNr)>1))?1:0;//do not use titles on single line devices!
+    bool asPad=((prompt*)nav.target)->sysStyles()&_asPad;
+    idx_t st=(nav.root->showTitle&&(asPad||(maxY(panelNr)>1)))?1:0;//do not use titles on single line devices!
     while(nav.sel+st>=(tops[topi]+maxY(panelNr))) tops[topi]++;
     while(nav.sel<tops[topi]||(tops[topi]&&((nav.sz()-tops[topi])<maxY(panelNr)-st))) tops[topi]--;
     bool all=(style&redraw)
@@ -181,26 +182,20 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
         setCursor(0,0,panelNr);
         //print('[');
         nav.target->prompt::printTo(*nav.root,true,*this,-1,pan.w-1);
+        if (asPad) print(":");
         //print(']');
-        //*this<<'['<<*(prompt*)nav.target<<']';
         ///<----- titleEnd
         fmtEnd(fmtTitle,nav,-1);
       }
     }
-    //bool any=all;
     //------> bodyStart
     fmtStart(fmtBody,nav);
-    setCursor(0,st,panelNr);//<-- PAD: start position
-    bool asPad=((prompt*)nav.target)->sysStyles()&_asPad;
-    // Serial.print("asPad:");
-    // Serial.println(asPad);
     for(idx_t i=0;i<maxY(panelNr)-st;i++) {
       int ist=i+st;
       if (i+tops[topi]>=nav.sz()) break;
       prompt& p=nav[i+tops[topi]];
       idx_t len=pan.w;
       if (all||p.changed(nav,*this,false)) {
-        //any=true;
         //-------> opStart
         fmtStart(fmtOp,nav,i);
         bool selected=nav.sel==i+tops[topi];
@@ -213,27 +208,32 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
         }
         setColor(fgColor,selected,p.enabled,ed);
         //should we use accels on pads?
-        if (drawNumIndex&style) {//<-- THIS IS DEPENDENT OF A DROP MENU!!!!
+        if ((!asPad)&&(drawNumIndex&style)) {//<-- NO INDEX FOR PADS
           char a=tops[topi]+i+'1';
           print('[');
           print(a<='9'?a:'-');
           print(']');
-          //*this<<'['<<(a<='9'?a:'-')<<']';
           len-=3;
         }
         //<------idxEnd
         fmtEnd(fmtIdx,nav,i);
         //------> cursorStart
         fmtStart(fmtCursor,nav,i);
-        //<-- THIS IS DEPENDENT OF A DROP MENU!!!!
-        drawCursor(ist,selected,p.enabled,ed,panelNr);//assuming only one character
+        if (asPad&&selected) print("[");
+        else drawCursor(ist,selected,p.enabled,ed,panelNr);//assuming only one character
         //<------ cursorEnd
         fmtEnd(fmtCursor,nav,i);
         len--;
         //---->opBodyStart
         fmtStart(fmtOpBody,nav,i);
         setColor(fgColor,selected,p.enabled,ed);
-        if (len>0) p.printTo(*nav.root,selected,*this,i,len);
+        if (len>0) len=p.printTo(*nav.root,selected,*this,i,len);
+        if (len>0) {
+          if (asPad) {
+            print(selected?"]":" ");
+            len--;
+          }
+        }
         //<---opBodyEnd
         fmtEnd(fmtOpBody,nav,i);
         if (selected&&panels.sz>panelNr+1) {
