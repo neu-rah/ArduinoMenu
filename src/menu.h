@@ -159,8 +159,8 @@ for correcting unsigned values validation
         void printHigh(menuOut& o) const override;
         void printLow(menuOut& o) const override;
         bool async(const char *uri,navRoot& root,idx_t lvl) override;
-        void stepit(int increment) {
-          int thisstep = increment*(tunning?tune():step())*(options->invertFieldKeys?-1:1);
+        void stepit(T increment) {
+          T thisstep = increment*(tunning?tune():step())*(options->invertFieldKeys?-1:1);
           dirty=true;
           if (thisstep < 0 && (target()-low()) < -thisstep) {
             if (style()&wrapStyle) {
@@ -378,7 +378,38 @@ for correcting unsigned values validation
         void printMenu(navNode &nav,idx_t panelNr);
     };
 
-    //base for all graphics output devices
+    //for devices that can position a print cursor (like LCD's)
+    class cursorOut:public menuOut {
+    public:
+      cursorOut(idx_t *topsList,panelsList &p,styles os=minimalRedraw)
+        :menuOut(topsList,p,os) {}
+      void clearLine(idx_t ln,idx_t panelNr=0,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) override {
+        setCursor(0,ln,panelNr);
+        for(int n=0;n<maxX();n++) print(' ');
+        setCursor(0,ln,panelNr);
+      }
+      void clear(idx_t panelNr) override {
+        const panel p=panels[panelNr];
+        fill(p.x,p.y,p.x+p.w-1,p.y+p.h-1);
+        setCursor(0,0,panelNr);
+        panels.nodes[panelNr]=NULL;
+      }
+      menuOut& fill(
+        int x1, int y1, int x2, int y2,char ch=' ',
+        colorDefs color=bgColor,
+        bool selected=false,
+        status stat=enabledStatus,
+        bool edit=false
+      ) override {
+        for(int r=y1;r<=y2;r++) {
+          setCursor(x1,r);
+          for(int c=x1;c<=x2;c++)
+            write(ch);
+        }
+        return *this;
+      }
+    };
+
     class gfxOut:public menuOut {
       public:
         idx_t resX=1;
