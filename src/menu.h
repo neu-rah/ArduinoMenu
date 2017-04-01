@@ -148,8 +148,8 @@ for correcting unsigned values validation
         void printHigh(menuOut& o) const override;
         void printLow(menuOut& o) const override;
         bool async(const char *uri,navRoot& root,idx_t lvl) override;
-        void stepit(int increment) {
-          int thisstep = increment*(tunning?tune():step())*(options->invertFieldKeys?-1:1);
+        void stepit(T increment) {
+          T thisstep = increment*(tunning?tune():step())*(options->invertFieldKeys?-1:1);
           dirty=true;
           if (thisstep < 0 && (target()-low()) < -thisstep) {
             if (style()&wrapStyle) {
