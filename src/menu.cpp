@@ -192,8 +192,8 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
     fmtStart(fmtBody,nav);
     setCursor(0,st,panelNr);//<-- PAD: start position
     bool asPad=((prompt*)nav.target)->sysStyles()&_asPad;
-    Serial.print("asPad:");
-    Serial.println(asPad);
+    // Serial.print("asPad:");
+    // Serial.println(asPad);
     for(idx_t i=0;i<maxY(panelNr)-st;i++) {
       int ist=i+st;
       if (i+tops[topi]>=nav.sz()) break;
