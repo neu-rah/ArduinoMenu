@@ -51,7 +51,8 @@ www.r-site.net
 
     enum result {proceed=0,quit};
     enum systemStyles {_noStyle=0,_menuData=1,_canNav=1<<1,_parentDraw=1<<2,_isVariant=1<<3,_asPad=1<<4};
-    enum styles {noStyle=0,wrapStyle=1};//,dontEnter=2};
+    //showTitle and noTitle override the default
+    enum styles {noStyle=0,wrapStyle=1,showTitle=2,noTitle=4};//,dontEnter=2};
     //representing parsed input codes (can be used with switch/case)
     enum navCmds {noCmd=0,escCmd,enterCmd,upCmd,downCmd,leftCmd,rightCmd,idxCmd,selCmd,scrlUpCmd,scrlDownCmd};
     struct navCmd {
