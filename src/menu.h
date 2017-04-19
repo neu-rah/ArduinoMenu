@@ -148,26 +148,33 @@ for correcting unsigned values validation
         void printHigh(menuOut& o) const override;
         void printLow(menuOut& o) const override;
         bool async(const char *uri,navRoot& root,idx_t lvl) override;
-        void stepit(T increment) {
-          T thisstep = increment*(tunning?tune():step())*(options->invertFieldKeys?-1:1);
+        void stepit(int increment) {
+          int sign = increment*(options->invertFieldKeys?-1:1);
+          T thisstep = tunning?tune():step();
           dirty=true;
-          if (thisstep < 0 && (target()-low()) < -thisstep) {
-            if (style()&wrapStyle) {
-              target() = high();
+          if (sign > 0) {
+            if ((high()-target()) < thisstep) {
+              if (style()&wrapStyle) {
+                target() = low();
+              } else {
+                target() = high();
+              }
             } else {
-              target() = low();
-            }
-          } else if (thisstep > 0 && (high()-target()) < thisstep) {
-            if (style()&wrapStyle) {
-              target() = low();
-            } else {
-              target() = high();
+              target() += thisstep;
             }
           } else {
-            target() += thisstep;
+            if ((target()-low()) < thisstep) {
+              if (style()&wrapStyle) {
+                target() = high();
+              } else {
+                target() = low();
+              }
+            } else {
+              target() -= thisstep;
+            }
           }
         }
-    };
+      };
 
     //--------------------------------------------------------------------------
     template<typename T>
