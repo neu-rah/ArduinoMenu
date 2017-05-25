@@ -120,7 +120,7 @@ https://bitbucket.org/fmalpartida/new-liquidcrystal/wiki/Home
 Adafruit's GFX devices
 https://github.com/adafruit/Adafruit-GFX-Library
 
-UTFT devices (not yet implemented on v3)
+UTFT devices
 http://www.rinkydinkelectronics.com/library.php?id=51
 
 U8glib devices
