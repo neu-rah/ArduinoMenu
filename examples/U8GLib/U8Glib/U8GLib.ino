@@ -33,8 +33,8 @@ using namespace Menu;
 #define LEDPIN A3
 
 // rotary encoder pins
-#define encA    2
-#define encB    3
+#define encA    5
+#define encB    6
 #define encBtn  4
 
 #define U8_DC 9
