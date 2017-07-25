@@ -12,7 +12,7 @@ Full automated or user code driven navigation system.
 With this system you can define menus, submenus, input fields and other iteration objects that deal with all input/output and can call user defined handler as a result of user iteration.
 The user function can be operated as a single action called on click/enter or as a event driven function responding to focus In/Out or Enter/Esc events.
 The system is designed as a non blocking polling system, allowing parallel task to run.
-Optionally the system can be operated in semi-automated mode, issuing navigation comand from user code.
+Optionally the system can be operated in semi-automated mode, issuing navigation command from user code.
 
 ## Simple Example
 ```c++
