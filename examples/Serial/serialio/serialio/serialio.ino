@@ -3,11 +3,11 @@
 
 using namespace Menu;
 
-#ifdef ARDUINO_SAM_DUE
-  #define LEDPIN 13
-#else
-  #define LEDPIN A3
-#endif
+// #ifdef ARDUINO_SAM_DUE
+//   #define LEDPIN 13
+// #else
+  #define LEDPIN LED_BUILTIN
+// #endif
 result zZz() {Serial.println("zZz");return proceed;}
 
 result showEvent(eventMask e,navNode& nav,prompt& item) {
@@ -133,11 +133,11 @@ void setup() {
   digitalWrite(LEDPIN,HIGH);
   #endif
   delay(500);
-  Serial.begin(115200);
+  Serial.begin(9600);
   while(!Serial);
   Serial.println("menu 3.0 test");Serial.flush();
-  nav.idleTask=idle;//point a function to be used when menu is suspended
-  nav.idleOn();//this menu will start on idle state, press select to enter menu
+  //nav.idleTask=idle;//point a function to be used when menu is suspended
+  //nav.idleOn();//this menu will start on idle state, press select to enter menu
   //nav.doInput("323");
 }
 
