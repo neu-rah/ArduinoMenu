@@ -47,7 +47,7 @@ install:
    - wget https://github.com/neu-rah/PCINT/archive/master.zip -O /tmp/PCINT-master.zip
    - unzip /tmp/PCINT-master.zip -d /tmp/
 
-   - wget https://github.com/olikraus/u8glib/archive/master.zip -O /tmp/U8glib_Arduino-master.zip
+   - wget https://github.com/olikraus/U8glib_Arduino/archive/master.zip -O /tmp/U8glib_Arduino-master.zip
    - unzip /tmp/U8glib_Arduino-master.zip -d /tmp/
 
    - wget https://github.com/neu-rah/AnsiStream/archive/master.zip -O /tmp/AnsiStream-master.zip
