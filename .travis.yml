@@ -19,6 +19,7 @@ python:
    - "2.7"
 
 sudo: false
+dist: precise
 cache:
    directories:
        - "~/.platformio"
