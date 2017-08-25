@@ -51,6 +51,7 @@ config defaultOptions={'>','-',false,false,Menu::defaultNavCodes,false,true};
 config* Menu::options=&defaultOptions;
 
 #ifdef DEBUG
+
   Print& Menu::operator<<(Print& o,bool b) {
     return o<<(b?"true":"false");
   }
@@ -103,6 +104,7 @@ config* Menu::options=&defaultOptions;
       case rightCmd:o<<"rightCmd";break;
       case idxCmd:o<<"idxCmd";break;
       case selCmd:o<<"selCmd";break;
+      default:o<<"? "<<cmd;break;
     }
     return o;
   }

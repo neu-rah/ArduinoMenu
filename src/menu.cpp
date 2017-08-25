@@ -450,8 +450,10 @@ navCmd navRoot::exit() {
   //node().event(exitEvent,node().sel);
   navFocus->dirty=true;
   if (navFocus->isMenu()) {
-    if (level) level--;
-    else if (options->canExit) {
+    if (level) {
+      level--;
+      node().event(exitEvent,node().sel);
+    } else if (options->canExit) {
       node().event(exitEvent,node().sel);
       idleOn(idleTask);
     }
