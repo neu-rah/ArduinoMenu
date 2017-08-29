@@ -30,10 +30,12 @@ www.r-site.net
 
 using namespace Menu;
 
+#ifndef DEBUG
 Print& operator<<(Print&o, Menu::prompt&p) {
   print_P(o,p.getText());
   return o;
 }
+#endif
 
 #ifdef ARDUINO_SAM_DUE
   #define LEDPIN 13
