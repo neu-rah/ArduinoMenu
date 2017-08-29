@@ -64,6 +64,15 @@ void textField::doNav(navNode& nav,navCmd cmd) {
         edited=true;
       }
       break;
+    case escCmd:
+      dirty=true;
+      if (charEdit) charEdit=false;
+      else {
+        edited=false;
+        cursor=0;
+        nav.root->exit();
+      }
+      break;
     case upCmd:
       if (charEdit) {
         const char* v=validator(cursor);

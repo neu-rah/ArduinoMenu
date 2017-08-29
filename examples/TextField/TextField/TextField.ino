@@ -6,7 +6,7 @@ using namespace Menu;
 #define LEDPIN LED_BUILTIN
 
 //examples of validating character sequences
-char* const sigNum="+-0123456789.";
+char* const sigNum PROGMEM="+-0123456789.";
 char* const binary PROGMEM="01";
 char* const numeric PROGMEM="0123456789";
 char* const hexChars PROGMEM="0123456789ABCDEF";
@@ -19,7 +19,7 @@ char* const names PROGMEM=" 0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOP
 //define "Op 1"
 char* const validData[] PROGMEM={hexChars,hexChars};//individual character validators
 const char op1Text[] PROGMEM="Name";//field name
-const textFieldShadowRaw op1InfoRaw PROGMEM={doNothing,_noStyle|_canNav,op1Text,enterEvent,noStyle,2,validData};//PROGMEM static stuff
+const textFieldShadowRaw op1InfoRaw PROGMEM={doNothing,_noStyle|_canNav,"Name",enterEvent,noStyle,2,validData};//PROGMEM static stuff
 const textFieldShadow& op1Info=*(textFieldShadow*)&op1InfoRaw;//hacking c++ to use progmem (hugly)
 textField op1("AA",op1Info);//text length not enforced to match validators length yet
 //TODO: consider also a single validator for all field, either as a special case of this or as a separate class
