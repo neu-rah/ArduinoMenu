@@ -39,11 +39,13 @@ for correcting unsigned values validation
     // #endif
     // Streams
     //////////////////////////////////////////////////////////////////////////
+    #ifdef DEBUG
     //template<typename T> inline Print& operator<<(Print& o, T t) {o.print(t);return o;}
     Print& operator<<(Print& o,prompt const &p);
     inline String& operator<<(String &s,prompt &p);
     //template<typename T> HardwareSerial& operator<<(HardwareSerial& o,T t) {o.print(t);return o;}
     //template<typename T> inline menuOut& operator<<(menuOut& o,const T x) {return o.operator<<(x);}
+    #endif
 
     // Menu objects and data
     //////////////////////////////////////////////////////////////////////////
@@ -340,9 +342,11 @@ for correcting unsigned values validation
         inline idx_t maxY(idx_t i=0) const {return panels[i].h;}
         inline idx_t& top(navNode& nav) const;
         idx_t printRaw(const char* at,idx_t len);
+        #ifdef DEBUG
         virtual menuOut& operator<<(prompt const &p);
         #ifdef ESP8266
         template<typename T> menuOut& operator<<(T o) {(*(Print*)this)<<(o);return *this;}
+        #endif
         #endif
         virtual menuOut& fill(
           int x1, int y1, int x2, int y2,char ch=' ',
@@ -744,7 +748,9 @@ for correcting unsigned values validation
 
     idx_t& menuOut::top(navNode& nav) const {return tops[nav.root->level];}
 
+    #ifdef DEBUG
     inline String& operator<<(String &s,prompt &p) {return s+=p.getText();}
+    #endif
   }//namespace Menu
 
 #endif
