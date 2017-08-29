@@ -30,6 +30,11 @@ www.r-site.net
 
 using namespace Menu;
 
+Print& operator<<(Print&o, Menu::prompt&p) {
+  print_P(o,p.getText());
+  return o;
+}
+
 #ifdef ARDUINO_SAM_DUE
   #define LEDPIN 13
 #else
@@ -296,7 +301,7 @@ result idle(menuOut& o,idleEvent e) {
 
 void setup() {
   pinMode(LEDPIN,OUTPUT);
-  Serial.begin(115200);
+  Serial.begin(9600);
   while(!Serial);
   Serial<<"menu 3.0 test"<<endl;Serial.flush();
   nav.idleTask=idle;//point a function to be used when menu is suspended
