@@ -50,6 +50,74 @@ bool menuNode::async(const char *uri,navRoot& root,idx_t lvl) {
   return operator[](n).async(uri,root,++lvl);
 }
 
+void textField::doNav(navNode& nav,navCmd cmd) {
+  //Serial.println("textField doNav!");
+  switch(cmd.cmd) {
+    case enterCmd:
+      if (edited&&!charEdit) {
+        edited=false;
+        cursor=0;
+        nav.root->exit();
+      } else {
+        charEdit=!charEdit;
+        dirty=true;
+        edited=true;
+      }
+      break;
+    case upCmd:
+      if (charEdit) {
+        const char* v=validator(cursor);
+        char *at=strchr(v,text[cursor]);
+        idx_t pos=at?at-v+1:1;
+        if (pos>=strlen(v)) pos=0;
+        text[cursor]=v[pos];
+        dirty=true;
+      } else {
+        if(cursor<strlen(text)-1) cursor++;
+        edited=false;
+      }
+      dirty=true;
+      break;
+    case downCmd:
+      if (charEdit) {
+        const char* v=validator(cursor);
+        char *at=strchr(v,text[cursor]);//at is not stored on the class to save memory
+        idx_t pos=at?at-v-1:0;
+        if (pos<0) pos=strlen(v)-1;
+        text[cursor]=v[pos];
+        dirty=true;
+      } else {
+        if (cursor) cursor--;
+        edited=false;
+      }
+      dirty=true;
+      break;
+    default:break;
+  }
+}
+
+idx_t textField::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) {
+  // out.fmtStart(menuOut::fmtPrompt,root.node(),idx);
+  idx_t at=0;
+  bool editing=this==root.navFocus;
+  idx_t l=navTarget::printTo(root,sel,out,idx,len);
+  if (l<len) {
+    out.write(editing?":":" ");
+    l++;
+  }
+  while(text[at]&&l++<len)
+    if (at==cursor&&editing) {
+      startCursor(out);
+      out.write(text[at++]);
+      endCursor(out);
+    } else out.write(text[at++]);
+  // out.fmtEnd(menuOut::fmtPrompt,root.node(),idx);
+  return l;
+}
+//TODO: this functions should go to out device
+void textField::startCursor(menuOut& out) {out.write(charEdit?">":"[");}
+void textField::endCursor(menuOut& out) {out.write(charEdit?"<":"]");}
+
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////

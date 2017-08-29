@@ -3,8 +3,8 @@
 Custom sub-menu prompt used as exit confirmation
 the Exit option on this example presents only the "Exit" text
 but the submenu really as an "Exit?" text for confirmation
-choosing "yes" will suspend the menu and possibly do other stuff
-while "no" will just return to previous menu
+choosing "Yes" will suspend the menu and possibly do other stuff
+while "Cancel" will just return to previous menu.
 
 */
 
@@ -28,7 +28,7 @@ result systemExit();
 
 //using the customized menu class
 //note that first parameter is the class name
-altMENU(confirmExit,subMenu,"Exit?",doNothing,anyEvent,noStyle
+altMENU(confirmExit,subMenu,"Exit?",doNothing,noEvent,wrapStyle
   ,OP("Yes",systemExit,enterEvent)
   ,EXIT("Cancel")
 );
