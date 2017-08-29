@@ -29,10 +29,12 @@ navCmds Menu::getCmd(String &name) {
   return noCmd;
 }*/
 
+#ifdef DEBUG
 Print& Menu::operator<<(Print& o,prompt const &p) {
   print_P(o,p.getText());
   return o;
 }
+#endif
 
 const navCodesDef Menu::defaultNavCodes={
   {noCmd,(char)0xff},

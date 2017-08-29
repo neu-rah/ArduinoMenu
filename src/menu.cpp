@@ -86,10 +86,12 @@ void menuOut::doNav(navCmd cmd,navNode &nav) {
   }
 }
 
+#ifdef DEBUG
 menuOut& menuOut::operator<<(const prompt& p) {
   print_P(*this,p.getText());
   return *this;
 }
+#endif
 
 void menuOut::clearChanged(navNode &nav) {
   //if (nav.target->dirty) Serial<<"clear dirty "<<*(prompt*)nav.target<<" sz:"<<nav.sz()<<endl;
