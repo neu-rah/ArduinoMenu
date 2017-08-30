@@ -112,26 +112,20 @@ for correcting unsigned values validation
     };
 
     //--------------------------------------------------------------------------
-    // has a data list that can be browsed
-    // this is the minimal canditate for navNode::target
-    class menuNode:public navTarget {
-      public:
-        menuNode(constMEM menuNodeShadow& s):navTarget(s) {}
-        // menuNode(constMEM char* text,idx_t sz,prompt* constMEM* data,action a,eventMask e,styles style,systemStyles ss=(systemStyles)(_menuData|_canNav))
-        // :navTarget(text,a,e,style,ss) {}
-        virtual classes type() const {return menuClass;}
-        inline prompt& operator[](idx_t i) const {return ((menuNodeShadow*)shadow)->operator[](i);}
-        bool changed(const navNode &nav,const menuOut& out,bool sub=true) override;
-        inline idx_t sz() const {return ((menuNodeShadow*)shadow)->_sz();}
-        inline prompt* const* data() const {return ((menuNodeShadow*)shadow)->_data();}
-        prompt* seek(idx_t* uri,idx_t len) override;
-        bool async(const char *uri,navRoot& root,idx_t lvl=0) override;
-    };
-
-    //--------------------------------------------------------------------------
-    class menu:public menuNode {
-      public:
-        menu(constMEM menuNodeShadow& shadow):menuNode(shadow) {}
+    class textField:public navTarget {
+    public:
+      char* text;
+      // int hash=0;//not implemented yet
+      bool charEdit=false;
+      bool edited=false;
+      idx_t cursor=0;
+      textField(char* t,const textFieldShadow& shadow):text(t),navTarget(shadow) {}
+      const char* validator(int i) {return ((textFieldShadow*)shadow)->operator[](i);}
+      void doNav(navNode& nav,navCmd cmd) override;
+      idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) override;
+      //TODO: this functions should go to the output device
+      void startCursor(menuOut& out);
+      void endCursor(menuOut& out);
     };
 
     //--------------------------------------------------------------------------
@@ -159,26 +153,33 @@ for correcting unsigned values validation
         void printHigh(menuOut& o) const override;
         void printLow(menuOut& o) const override;
         bool async(const char *uri,navRoot& root,idx_t lvl) override;
-        void stepit(T increment) {
-          T thisstep = increment*(tunning?tune():step())*(options->invertFieldKeys?-1:1);
+        void stepit(int increment) {
+          int sign = increment*(options->invertFieldKeys?-1:1);
+          T thisstep = tunning?tune():step();
           dirty=true;
-          if (thisstep < 0 && (target()-low()) < -thisstep) {
-            if (style()&wrapStyle) {
-              target() = high();
+          if (sign > 0) {
+            if ((high()-target()) < thisstep) {
+              if (style()&wrapStyle) {
+                target() = low();
+              } else {
+                target() = high();
+              }
             } else {
-              target() = low();
-            }
-          } else if (thisstep > 0 && (high()-target()) < thisstep) {
-            if (style()&wrapStyle) {
-              target() = low();
-            } else {
-              target() = high();
+              target() += thisstep;
             }
           } else {
-            target() += thisstep;
+            if ((target()-low()) < thisstep) {
+              if (style()&wrapStyle) {
+                target() = high();
+              } else {
+                target() = low();
+              }
+            } else {
+              target() -= thisstep;
+            }
           }
         }
-    };
+      };
 
     //--------------------------------------------------------------------------
     template<typename T>
@@ -191,6 +192,25 @@ for correcting unsigned values validation
         //inline T getTypeValue(const T* from) const {return &((menuValueShadow<T>*)shadow)->getTypeValue(from);}
         inline T target() const {return ((menuValueShadow<T>*)shadow)->target();}
         virtual classes type() const {return valueClass;}
+    };
+
+    //--------------------------------------------------------------------------
+    class menuNode:public navTarget {
+      public:
+        menuNode(const menuNodeShadow& s):navTarget(s) {}
+        virtual classes type() const {return menuClass;}
+        inline prompt& operator[](idx_t i) const {return ((menuNodeShadow*)shadow)->operator[](i);}
+        bool changed(const navNode &nav,const menuOut& out,bool sub=true) override;
+        inline idx_t sz() const {return ((menuNodeShadow*)shadow)->_sz();}
+        inline prompt* const* data() const {return ((menuNodeShadow*)shadow)->_data();}
+        prompt* seek(idx_t* uri,idx_t len) override;
+        bool async(const char *uri,navRoot& root,idx_t lvl=0) override;
+    };
+
+    //--------------------------------------------------------------------------
+    class menu:public menuNode {
+      public:
+        menu(const menuNodeShadow& shadow):menuNode(shadow) {}
     };
 
     //--------------------------------------------------------------------------

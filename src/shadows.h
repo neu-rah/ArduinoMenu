@@ -29,6 +29,29 @@
         inline const eventMask _events() const {return (eventMask)memEnum(&events);}
         inline const styles _style() const {return (styles)memEnum(&style);}
     };
+    struct textFieldShadowRaw {
+      actionRaw a;
+      systemStyles sysStyles;
+      const char*text;
+      const eventMask events;//registered events
+      styles style;
+      idx_t sz;
+      char* const* validators;
+    };
+    class textFieldShadow:public promptShadow {
+      protected:
+        idx_t sz;
+        char* const* validators;
+      public:
+        textFieldShadow(const char* name,idx_t sz,char* const* v,action a,eventMask e,styles style)
+        :promptShadow(text,a,e,style),sz(sz),validators(v) {}
+        idx_t _sz() const {return (idx_t)memIdx(sz);}
+        char* const* _validators() const {return (char* const*)memPtr(validators);}
+        inline char* operator[](idx_t i) const {
+          return (char*)memPtr(((char**)_validators())[i]);
+          //return *(prompt*)memPtr(((prompt**)memPtr(((menuNodeShadow*)shadow)->data))[i]);
+        }
+    };
     struct menuNodeShadowRaw {
       actionRaw a;
       systemStyles sysStyles;

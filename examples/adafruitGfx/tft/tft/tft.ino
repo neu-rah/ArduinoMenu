@@ -37,8 +37,8 @@ Adafruit_ST7735 gfx(TFT_CS, TFT_DC, TFT_RST);
 #define LEDPIN A3
 
 // rotary encoder pins
-#define encA    2
-#define encB    3
+#define encA    5
+#define encB    6
 #define encBtn  4
 
 result showEvent(eventMask e,navNode& nav,prompt& item) {

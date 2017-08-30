@@ -5,14 +5,14 @@
 [![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](http://creativecommons.org/licenses/by-nc-sa/4.0/)
 [![Build Status](https://travis-ci.org/neu-rah/ArduinoMenu.svg?branch=dev)](https://travis-ci.org/neu-rah/ArduinoMenu)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/ruihfazevedo)
+[![Join Gitter](https://img.shields.io/badge/GITTER-join%20chat-green.svg)](https://gitter.im/ArduinoMenu/Lobby)
 
 ## Purpose
 Full automated or user code driven navigation system.
 With this system you can define menus, submenus, input fields and other iteration objects that deal with all input/output and can call user defined handler as a result of user iteration.
 The user function can be operated as a single action called on click/enter or as a event driven function responding to focus In/Out or Enter/Esc events.
 The system is designed as a non blocking polling system, allowing parallel task to run.
-Optionally the system can be operated in semi-automated mode, issuing navigation comand from user code.
-Minimize RAM usage by using a static menu structure stored in flash memory.
+Optionally the system can be operated in semi-automated mode, issuing navigation command from user code.
 
 See the [wiki](https://github.com/neu-rah/ArduinoMenu/wiki)
 

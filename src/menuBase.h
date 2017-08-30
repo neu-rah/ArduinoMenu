@@ -15,6 +15,8 @@ www.r-site.net
 
 ***/
 
+// #define DEBUG
+
 #ifndef RSITE_ARDUINO_MENU_SYSTEM_BASE
   #define RSITE_ARDUINO_MENU_SYSTEM_BASE
 

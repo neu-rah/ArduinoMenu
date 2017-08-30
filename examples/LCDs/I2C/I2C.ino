@@ -31,8 +31,8 @@ http://playground.arduino.cc/Code/LCD3wires
   LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);  // Set the LCD I2C address and pinout
 
   // Encoder /////////////////////////////////////
-  #define encA 2
-  #define encB 3
+  #define encA 5
+  #define encB 6
   //this encoder has a button here
   #define encBtn 4
 
