@@ -19,7 +19,7 @@ char* const names PROGMEM=" 0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOP
 //define "Op 1"
 char* const validData[] PROGMEM={hexChars,hexChars};//individual character validators
 const char op1Text[] PROGMEM="Name";//field name
-const textFieldShadowRaw op1InfoRaw PROGMEM={doNothing,_noStyle|_canNav,"Name",enterEvent,noStyle,2,validData};//PROGMEM static stuff
+const textFieldShadowRaw op1InfoRaw PROGMEM={doNothing,_noStyle|_canNav,op1Text,enterEvent,noStyle,2,validData};//PROGMEM static stuff
 const textFieldShadow& op1Info=*(textFieldShadow*)&op1InfoRaw;//hacking c++ to use progmem (hugly)
 textField op1("AA",op1Info);//text length not enforced to match validators length yet
 //TODO: consider also a single validator for all field, either as a special case of this or as a separate class
