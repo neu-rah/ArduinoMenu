@@ -35,11 +35,11 @@ env:
 install:
    - pip install -U platformio
 
-  #  - wget https://github.com/scottdky/Streaming/archive/master.zip -O /tmp/Streaming.zip
-  #  - unzip /tmp/Streaming.zip -d /tmp/
+   - wget https://github.com/scottdky/Streaming/archive/master.zip -O /tmp/Streaming.zip
+   - unzip /tmp/Streaming.zip -d /tmp/
 
-   - wget https://github.com/nettigo/Assert4a/archive/master.zip -O /tmp/Assert4a.zip
-   - unzip /tmp/Assert4a.zip -d /tmp/
+  #  - wget https://github.com/nettigo/Assert4a/archive/master.zip -O /tmp/Assert4a.zip
+  #  - unzip /tmp/Assert4a.zip -d /tmp/
 
    - wget https://github.com/adafruit/Adafruit-GFX-Library/archive/master.zip -O /tmp/Adafruit-GFX-Library-master.zip
    - unzip /tmp/Adafruit-GFX-Library-master.zip -d /tmp/
