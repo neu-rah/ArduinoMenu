@@ -5,30 +5,37 @@
 
 using namespace Menu;
 
+#ifndef DEBUG
+Print& operator<<(Print&o, Menu::prompt&p) {
+  print_P(o,p.getText());
+  return o;
+}
+#endif
+
 //define "Op 1"
 void op1Func();
-const char op1Text[] PROGMEM="Op 1";
-const promptShadowRaw op1InfoRaw PROGMEM={(callback)op1Func,_noStyle,op1Text,enterEvent,noStyle};
-const promptShadow& op1Info=*(promptShadow*)&op1InfoRaw;
+constMEM char op1Text[] PROGMEM="Op 1";
+constMEM promptShadowRaw op1InfoRaw PROGMEM={(callback)op1Func,_noStyle,op1Text,enterEvent,noStyle};
+constMEM promptShadow& op1Info=*(promptShadow*)&op1InfoRaw;
 //or just this line on non PROGMEM devices like teensy or esp8266 instead of the above three
 //promptShadow op1Info("Op 1",(callback)op1Func,enterEvent);
 prompt op1(op1Info);
 
 //define "Op 2"
 void op2Func();
-const char op2Text[] PROGMEM="Op 2";
-const promptShadowRaw op2InfoRaw PROGMEM={(callback)op2Func,_noStyle,op2Text,enterEvent,noStyle};
-const promptShadow& op2Info=*(promptShadow*)&op2InfoRaw;
+constMEM char op2Text[] PROGMEM="Op 2";
+constMEM promptShadowRaw op2InfoRaw PROGMEM={(callback)op2Func,_noStyle,op2Text,enterEvent,noStyle};
+constMEM promptShadow& op2Info=*(promptShadow*)&op2InfoRaw;
 //or just this line on non PROGMEM devices like teensy or esp8266 instead of the above three
 //promptShadow op2Info("Op 2",(callback)op2Func,enterEvent);
 prompt op2(op2Info);
 
 //define the menu
-prompt* const menuData[] PROGMEM={&op1,&op2};
+prompt* constMEM menuData[] PROGMEM={&op1,&op2};
 //or just prompt* menuData[]={&op1,&op2}; on non avr devices
-const char menuTitle[] PROGMEM="Main menu";
-const menuNodeShadowRaw menuInfoRaw PROGMEM={
-  doNothing,
+constMEM char menuTitle[] PROGMEM="Main menu";
+constMEM menuNodeShadowRaw menuInfoRaw PROGMEM={
+  (callback)doNothing,
   (systemStyles)(_menuData|_canNav),
   menuTitle,
   noEvent,
@@ -36,7 +43,7 @@ const menuNodeShadowRaw menuInfoRaw PROGMEM={
   2,
   menuData
 };
-const menuNodeShadow& menuInfo=*(menuNodeShadow*)&menuInfoRaw;
+constMEM menuNodeShadow& menuInfo=*(menuNodeShadow*)&menuInfoRaw;
 //or just this line on non PROGMEM devices like teensy or esp8266 instead of the above three
 //menuNodeShadow menuInfo("Main menu",2,menuData,(callback)doNothing,noEvent,wrapStyle);
 menuNode mainMenu(menuInfo);

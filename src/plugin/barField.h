@@ -52,7 +52,7 @@ public:
 template<typename T>
 class barField:public cancelField<T>,public barFieldOptions {
 public:
-  barField(const menuFieldShadow<T>& shadow):cancelField<T>(shadow) {}
+  barField(constMEM menuFieldShadow<T>& shadow):cancelField<T>(shadow) {}
   idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) override {
     bool ed=this==root.navFocus;
     if (ed) {

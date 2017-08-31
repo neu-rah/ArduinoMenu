@@ -1,16 +1,16 @@
 #include <Arduino.h>
 
 #include <Wire.h>
-#include <LiquidCrystal_I2C.h>//F. Malpartida LCD's driver
+// #include <LiquidCrystal_I2C.h>//F. Malpartida LCD's driver
 #include <menu.h>
 #include <menuIO/serialOut.h>
-#include <menuIO/lcdOut.h>//malpartidas lcd menu output
+// #include <menuIO/lcdOut.h>//malpartidas lcd menu output
 
 #include <Streaming.h>
 
 using namespace Menu;
 
-LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);  // Set the LCD I2C address and pinout
+// LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);  // Set the LCD I2C address and pinout
 
 /*
 The pad style!
@@ -47,16 +47,17 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
 
 MENU_OUTPUTS(out,MAX_DEPTH
   ,SERIAL_OUT(Serial)
-  ,LCD_OUT(lcd,{0,0,20,4})
+  ,NONE
+  // ,LCD_OUT(lcd,{0,0,20,4})
 );
 
 NAVROOT(nav,mainMenu,MAX_DEPTH,Serial,out);
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(9600);
   while(!Serial);
-  Serial<<"menu 3.0 testing custom fields"<<endl;Serial.flush();
-  lcd.begin(20,4);
+  Serial<<"menu 3.0 testing pad style"<<endl;Serial.flush();
+  // lcd.begin(20,4);
 }
 
 void loop() {

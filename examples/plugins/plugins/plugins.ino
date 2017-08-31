@@ -96,7 +96,7 @@ NAVROOT(nav,mainMenu,MAX_DEPTH,in,out);//the navigation root object
 void setup() {
   pinMode(encBtn,INPUT_PULLUP);
   //pinMode(LEDPIN,OUTPUT);
-  Serial.begin(115200);
+  Serial.begin(9600);
   while(!Serial);
   encoder.begin();
   lcd.begin(16,2);

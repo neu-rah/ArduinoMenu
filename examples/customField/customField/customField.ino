@@ -17,20 +17,20 @@ protected:
   T original;//to use when canceling
   bool editing;
 public:
-  cancelField(const menuFieldShadow<T>& shadow):menuField<T>(shadow),editing(false) {}
+  cancelField(constMEM menuFieldShadow<T>& shadow):menuField<T>(shadow),editing(false) {}
   void doNav(navNode& nav,navCmd cmd) override {
     if (!editing) {
-      original=target();
+      original=menuField<T>::target();
       editing=true;
     }
     switch(cmd.cmd) {
       case escCmd:
         editing=false;
-        target()=original;
+        menuField<T>::target()=original;
         menuField<T>::tunning=true;
         break;
       case enterCmd:
-        if (menuField<T>::tunning||options->nav2D||!tune())
+        if (menuField<T>::tunning||options->nav2D||!menuField<T>::tune())
           editing=false;
         break;
       default: break;

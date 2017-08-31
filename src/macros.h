@@ -207,7 +207,7 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
     mask,\
     noStyle\
   };\
-  const Menu::promptShadow& opShadow##cnt=*(promptShadow*)&opShadowRaw##cnt;\
+  constMEM Menu::promptShadow& opShadow##cnt=*(promptShadow*)&opShadowRaw##cnt;\
   objType op##cnt(opShadow##cnt,__VA_ARGS__);
 #define DECL_OP_(cnt,objType,text,aFn,mask) \
   const char title_##cnt[] MEMMODE=text;\

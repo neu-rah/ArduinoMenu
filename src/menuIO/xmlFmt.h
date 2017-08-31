@@ -6,6 +6,26 @@
 
   namespace Menu {
 
+    Print& operator<<(Print&o, Menu::prompt&p) {
+      print_P(o,p.getText());
+      return o;
+    }
+
+    menuOut& operator<<(menuOut&o, idx_t i) {
+      o.print(i);
+      return o;
+    }
+
+    menuOut& operator<<(menuOut&o, const char* p) {
+      print_P(o,p);
+      return o;
+    }
+
+    Print& operator<<(Print&o, const char* p) {
+      print_P(o,p);
+      return o;
+    }
+
     menuOut& operator<<(menuOut&o,classes c) {
       switch(c) {
         case noClass:return o<<"noClass";break;

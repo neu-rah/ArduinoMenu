@@ -16,7 +16,7 @@ using namespace Menu;
 //customizing a menu prompt look
 class confirmExit:public menu {
 public:
-  confirmExit(const menuNodeShadow& shadow):menu(shadow) {}
+  confirmExit(constMEM menuNodeShadow& shadow):menu(shadow) {}
   idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) override {
     return out.printRaw("Exit",len);
   }
@@ -28,7 +28,7 @@ result systemExit();
 
 //using the customized menu class
 //note that first parameter is the class name
-altMENU(confirmExit,subMenu,"Exit?",doNothing,noEvent,wrapStyle
+altMENU(confirmExit,subMenu,"Exit?",doNothing,noEvent,wrapStyle,(Menu::_menuData|Menu::_canNav)
   ,OP("Yes",systemExit,enterEvent)
   ,EXIT("Cancel")
 );

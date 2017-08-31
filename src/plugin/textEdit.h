@@ -34,7 +34,7 @@ public:
   String original;
   idx_t cursor=0;
   bool editing;
-  textEdit(const promptShadow& shadow,char* value):navTarget(shadow),value(value) {}
+  textEdit(constMEM promptShadow& shadow,char* value):navTarget(shadow),value(value) {}
   void doNav(navNode& nav,navCmd cmd) override {
     Serial.print("textEdit::doNav:");
     Serial.println(cmd);

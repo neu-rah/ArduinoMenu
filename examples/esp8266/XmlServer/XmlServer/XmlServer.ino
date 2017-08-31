@@ -20,6 +20,7 @@ format: xml
 #include <menu.h>
 #include <menuIO/esp8266Out.h>
 #include <menuIO/xmlFmt.h>//to write a menu has html page
+#include <Streaming.h>
 //#include <menuIO/jsFmt.h>//to send javascript thru web socket (live update)
 #include <FS.h>
 #include <Hash.h>
@@ -37,6 +38,11 @@ const char* password = "rsite.2011";
   #define xslt "http://neurux:8080/menu.xslt"
 #else
   #define xslt "/menu.xslt"
+  #define endl "\r\n"
+  menuOut& operator<<(menuOut&o, long unsigned int i) {
+    o.print(i);
+    return o;
+  }
 #endif
 
 #define HTTP_PORT 80

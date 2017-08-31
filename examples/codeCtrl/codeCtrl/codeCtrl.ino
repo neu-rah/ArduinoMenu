@@ -89,7 +89,7 @@ CHOOSE(chooseTest,chooseMenu,"Choose",doNothing,noEvent,wrapStyle
 //by extending the prompt class
 class altPrompt:public prompt {
 public:
-  altPrompt(const promptShadow& p):prompt(p) {}
+  altPrompt(constMEM promptShadow& p):prompt(p) {}
   idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) override {
     return out.printRaw("special prompt!",len);;
   }

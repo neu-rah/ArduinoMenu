@@ -1,3 +1,5 @@
+#include <Arduino.h>
+
 /********************
 Arduino generic menu system
 Arduino menu on I2C LCD example
@@ -109,7 +111,7 @@ http://playground.arduino.cc/Code/LCD3wires
   //by extending the prompt class
   class altPrompt:public prompt {
   public:
-    altPrompt(const promptShadow& p):prompt(p) {}
+    altPrompt(constMEM promptShadow& p):prompt(p) {}
     idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) override {
       return out.printRaw("special prompt!",len);;
     }

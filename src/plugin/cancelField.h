@@ -40,7 +40,7 @@ class cancelField:public menuField<T> {
 public:
   T original;//to use when canceling
   bool editing;
-  cancelField(const menuFieldShadow<T>& shadow):menuField<T>(shadow),editing(false) {}
+  cancelField(constMEM menuFieldShadow<T>& shadow):menuField<T>(shadow),editing(false) {}
   void doNav(navNode& nav,navCmd cmd) override {
     if (!editing) {
       original=menuField<T>::target();
