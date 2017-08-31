@@ -121,7 +121,7 @@ for correcting unsigned values validation
       bool charEdit=false;
       bool edited=false;
       idx_t cursor=0;
-      textField(char* t,const textFieldShadow& shadow):text(t),navTarget(shadow) {}
+      textField(char* t,constMEM textFieldShadow& shadow):text(t),navTarget(shadow) {}
       const char* validator(int i) {return ((textFieldShadow*)shadow)->operator[](i);}
       void doNav(navNode& nav,navCmd cmd) override;
       idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) override;
@@ -136,7 +136,7 @@ for correcting unsigned values validation
       public:
         bool tunning=false;
         T reflex;
-        menuField(const menuFieldShadow<T> & shadow):navTarget(shadow) {}
+        menuField(constMEM menuFieldShadow<T> & shadow):navTarget(shadow) {}
         virtual classes type() const {return fieldClass;}
         void parseInput(navNode& nav,Stream& in) override;
         void doNav(navNode& nav,navCmd cmd) override;
@@ -199,7 +199,7 @@ for correcting unsigned values validation
     //--------------------------------------------------------------------------
     class menuNode:public navTarget {
       public:
-        menuNode(const menuNodeShadow& s):navTarget(s) {}
+        menuNode(constMEM menuNodeShadow& s):navTarget(s) {}
         virtual classes type() const {return menuClass;}
         inline prompt& operator[](idx_t i) const {return ((menuNodeShadow*)shadow)->operator[](i);}
         bool changed(const navNode &nav,const menuOut& out,bool sub=true) override;
@@ -212,7 +212,7 @@ for correcting unsigned values validation
     //--------------------------------------------------------------------------
     class menu:public menuNode {
       public:
-        menu(const menuNodeShadow& shadow):menuNode(shadow) {}
+        menu(constMEM menuNodeShadow& shadow):menuNode(shadow) {}
     };
 
     //--------------------------------------------------------------------------

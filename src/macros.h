@@ -151,7 +151,7 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
     sizeof(id##_data)/sizeof(Menu::prompt*),\
     id##_data\
   };\
-  const Menu::menuNodeShadow& id##Shadow=*(Menu::menuNodeShadow*)&id##ShadowRaw;\
+  constMEM Menu::menuNodeShadow& id##Shadow=*(Menu::menuNodeShadow*)&id##ShadowRaw;\
   objType id(id##Shadow);
 
 #define SELECT(...) altVARIANT(Menu::select,((systemStyles)(Menu::_menuData|Menu::_canNav|Menu::_isVariant|Menu::_parentDraw)),__VA_ARGS__)
@@ -196,7 +196,7 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
     title_##cnt,\
     Menu::enterEvent\
   };\
-  const Menu::promptShadow& opShadow##cnt=*(Menu::promptShadow*)&opShadowRaw##cnt;\
+  constMEM Menu::promptShadow& opShadow##cnt=*(Menu::promptShadow*)&opShadowRaw##cnt;\
   Menu::prompt op##cnt(opShadow##cnt);
 #define DECL_ITEM_(cnt,objType,text,aFn,mask,ss,...) \
   const char title_##cnt[] MEMMODE=text;\
@@ -236,7 +236,7 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
     step,\
     tune\
   };\
-  const Menu::menuFieldShadow<typeof(target)>& _fieldShadow##cnt=*(Menu::menuFieldShadow<typeof(target)>*)&fieldShadowRaw##cnt;\
+  constMEM Menu::menuFieldShadow<typeof(target)>& _fieldShadow##cnt=*(Menu::menuFieldShadow<typeof(target)>*)&fieldShadowRaw##cnt;\
   objType<typeof(target)> _menuField##cnt(_fieldShadow##cnt);
 #define DECL_TEXTFIELD_(cnt,target,...)\
   menuTextField _menuTextField##cnt(target,__VA_ARGS__);
