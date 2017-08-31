@@ -4,4 +4,3 @@
 .piolibdeps
 src/main.cpp
 examples/debug
-lib
