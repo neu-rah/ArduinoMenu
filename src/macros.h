@@ -173,7 +173,7 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
     id##_data,\
     &target\
   };\
-  const MEMMODE Menu::menuVariantShadow<typeof(target)>& id##_Shadow=*(menuVariantShadow<typeof(target)>*)&id##ShadowRaw;\
+  constMEM MEMMODE Menu::menuVariantShadow<typeof(target)>& id##_Shadow=*(menuVariantShadow<typeof(target)>*)&id##ShadowRaw;\
   objType<typeof(target)> id (id##_Shadow);
 
 // bridging macros prepending id's to arguments list
@@ -218,7 +218,7 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
     mask,\
     noStyle\
   };\
-  const Menu::promptShadow& opShadow##cnt=*(promptShadow*)&opShadowRaw##cnt;\
+  constMEM Menu::promptShadow& opShadow##cnt=*(promptShadow*)&opShadowRaw##cnt;\
   objType op##cnt(opShadow##cnt);
 #define DECL_FIELD_(cnt,objType,ss,target,text,units,low,high,step,tune,action,mask,style)\
   const char fieldLabel##cnt[] MEMMODE=text;\
@@ -254,7 +254,7 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
     Menu::noStyle,\
     value\
   };\
-  const Menu::menuValueShadow<typeof(target)>& choice##cnt##Shadow=\
+  constMEM Menu::menuValueShadow<typeof(target)>& choice##cnt##Shadow=\
     *(menuValueShadow<typeof(target)>*)&choice##cnt##ShadowRaw;\
   Menu::menuValue<typeof(target)> menuValue##cnt(choice##cnt##Shadow);
 

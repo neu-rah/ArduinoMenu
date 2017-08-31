@@ -187,7 +187,7 @@ for correcting unsigned values validation
     template<typename T>
     class menuValue:public prompt {
       public:
-        menuValue(const menuValueShadow<T>& shadow):prompt(shadow) {}
+        menuValue(constMEM menuValueShadow<T>& shadow):prompt(shadow) {}
         #ifdef DEBUG
         bool changed(const navNode &nav,const menuOut& out,bool sub=true) override {return false;}
         #endif
@@ -220,7 +220,7 @@ for correcting unsigned values validation
     class menuVariant:public menuNode {
       public:
         idx_t reflex;
-        menuVariant(const menuNodeShadow& s):menuNode(s) {}
+        menuVariant(constMEM menuNodeShadow& s):menuNode(s) {}
         idx_t sync() {
           //menuVariantShadow<T>& s=*(menuVariantShadow<T>*)shadow;
           for(idx_t i=0;i<sz();i++) {
@@ -261,14 +261,14 @@ for correcting unsigned values validation
     template<typename T>//-------------------------------------------
     class select:public menuVariant<T> {
       public:
-        select(const menuNodeShadow& s):menuVariant<T>(s) {}
+        select(constMEM menuNodeShadow& s):menuVariant<T>(s) {}
         virtual classes type() const {return selectClass;}
     };
 
     template<typename T>//-------------------------------------------
     class toggle:public menuVariant<T> {
       public:
-        toggle(const menuNodeShadow& s):menuVariant<T>(s) {}
+        toggle(constMEM menuNodeShadow& s):menuVariant<T>(s) {}
         virtual classes type() const {return toggleClass;}
         idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) override;
         //bool canNav() const override {return false;}//can receive navigation focus and process keys
@@ -294,7 +294,7 @@ for correcting unsigned values validation
     template<typename T>//-------------------------------------------
     class choose:public menuVariant<T> {
       public:
-        choose(const menuNodeShadow& s):menuVariant<T>(s) {}
+        choose(constMEM menuNodeShadow& s):menuVariant<T>(s) {}
         virtual classes type() const {return chooseClass;}
         result sysHandler(SYS_FUNC_PARAMS) override;
         bool changed(const navNode &nav,const menuOut& out,bool sub=true) override {
