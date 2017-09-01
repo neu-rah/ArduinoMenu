@@ -11,10 +11,21 @@ warranty, express or implied, as to its usefulness for any purpose.
 Thread Safe: No
 Extensible: Yes
 
-menu on web browser served by esp8266 device
+menu on web browser served by esp8266 device (experimental)
 output: ESP8266WebServer -> Web browser
 input: ESP8266WebSocket <- Web browser
 format: xml
+
+this requires the data folder to be stored on esp8266 spiff
+for development purposes some files are left external,
+therefor requiring an external webserver to provide them (just for dev purposes)
+i'm using nodejs http-server (https://www.npmjs.com/package/http-server)
+to static serve content from the data folder. This allows me to quick change
+the files without having to upload them to SPIFFS
+also gateway ssid and password are stored on this code (bellow),
+so don't forget to change it.
+'dynamic' list of detected wi-fi and password request would require the new
+added textField (also experimental).
 
 */
 #include <menu.h>
