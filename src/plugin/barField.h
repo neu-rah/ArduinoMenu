@@ -25,7 +25,11 @@ but hopefully simpler to write
 
 use it as:
 
-EDIT(barField,...);
+altFIELD(barField,...)
+
+or
+
+BARFIELD(...)
 
 the remaining parameters are the same as the regular FIELD
 
@@ -39,6 +43,7 @@ the remaining parameters are the same as the regular FIELD
 
 using namespace Menu;
 
+#define BARFIELD(...) altFIELD(barField,__VA_ARGS__)
 
 class barFieldOptions {
 public:

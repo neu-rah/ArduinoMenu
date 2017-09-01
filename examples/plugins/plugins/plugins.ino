@@ -10,15 +10,20 @@ Extensible: Yes
 
 www.r-site.net
 
-using plugins, in this example an alternative field that responds to
-escape by restoring the original value and terminating edit.
+unlike native objects, pluggins can be device specific, so some pluggins might
+not work on all devices.
 
 all sorts of plugins may be available in the future and if you customize
 a component and think it of interest of others please do pull request.
 
 contrubutions and contrubutors are welcome.
 
-using a plugin:
+Cancelable fields - restore original value on escape (long encoder press)
+barField - numeric field edit with a graph bar
+
+changes:
+ITEM macro, like OP but do allow custom system styles and extra arguments at end
+
 ***/
 
 #include <Arduino.h>
@@ -37,7 +42,6 @@ using a plugin:
 //include plugins
 #include <plugin/cancelField.h>
 #include <plugin/barField.h>
-#include <plugin/textEdit.h>
 
 using namespace Menu;
 
@@ -60,7 +64,7 @@ LiquidCrystal lcd(RS, RW, EN, 4, 5, 6, 7);
 #define encBtn A3
 
 encoderIn<encA,encB> encoder;//simple quad encoder driver
-encoderInStream<encA,encB> encStream(encoder,3);// simple quad encoder fake Stream
+encoderInStream<encA,encB> encStream(encoder,4);// simple quad encoder fake Stream
 
 //a keyboard with only one key as the encoder button
 keyMap encBtn_map[]={{-encBtn,options->getCmdChar(enterCmd)}};//negative pin numbers use internal pull-up, this is on when low
@@ -72,15 +76,26 @@ chainStream<3> in(inputsList);//3 is the number of inputs
 
 void dot() {Serial.print("+");}
 
+char* const hexChars PROGMEM="0123456789ABCDEF";
+char* constMEM validData[] PROGMEM={hexChars,hexChars};//individual character validators
+
+constMEM char op1Text[] PROGMEM="Name";//field name
+constMEM textFieldShadowRaw op1InfoRaw PROGMEM={(callback)doNothing,(Menu::systemStyles)(_noStyle|_canNav|_parentDraw),op1Text,enterEvent,noStyle,2,validData};//PROGMEM static stuff
+constMEM textFieldShadow& op1Info=*(textFieldShadow*)&op1InfoRaw;//hacking c++ to use progmem (hugly)
+textField op1("AA",op1Info);//text length not enforced to match validators length yet
+
 //a menu using a plugin field
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
-  ,FIELD(test,"Original","%",0,100,10,1,doNothing,noEvent,wrapStyle)
-  ,FIELD(test,"O. Simple","%",0,100,1,0,doNothing,noEvent,wrapStyle)
-  ,altFIELD(cancelField,test,"Cancelable","%",0,100,10,1,doNothing,enterEvent,wrapStyle)
-  ,altFIELD(cancelField,test,"C. Simple","%",0,100,1,0,doNothing,enterEvent,wrapStyle)
-  ,EDIT(barField,test,"Bar field","%",0,100,10,1,doNothing,noEvent,wrapStyle)
-  ,ITEM(textEdit,"Text",doNothing,noEvent,_canNav,name)
-  ,OP("Empty 0",dot,enterEvent)
+  ,FIELD(test,"Original","%",0,100,10,1,doNothing,noEvent,wrapStyle)//normal numeric field (2 edit levels)
+  ,FIELD(test,"O. Simple","%",0,100,1,0,doNothing,noEvent,wrapStyle)//normal numeric field (1 edit level)
+  ,altFIELD(cancelField,test,"Cancelable","%",0,100,10,1,doNothing,enterEvent,wrapStyle)//cancelable field (2 edit levels)
+  ,altFIELD(cancelField,test,"C. Simple","%",0,100,1,0,doNothing,enterEvent,wrapStyle)//cancelable field (1 edit level)
+  // ,EDIT(barField,test,"Bar field","%",0,100,10,1,doNothing,noEvent,wrapStyle)//numeric field with a bar
+  //,altFIELD(barField,test,"Bar field","%",0,100,10,1,doNothing,noEvent,wrapStyle)//numeric field with a bar
+  ,BARFIELD(test,"Bar field","%",0,100,10,1,doNothing,noEvent,wrapStyle)//numeric field with a bar
+  //,ITEM(textEdit,"Text",doNothing,noEvent,_canNav,name)
+  ,OBJ(op1)
+  ,OP("Empty 0",dot,enterEvent)//just an empty regular option
   ,EXIT("<Exit")
 );
 

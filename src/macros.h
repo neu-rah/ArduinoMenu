@@ -182,10 +182,13 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
 #define altOP(...) OP_(__COUNTER__,__VA_ARGS__)
 #define EXIT(...) EXIT_(__COUNTER__,__VA_ARGS__)
 #define FIELD(...) altFIELD(Menu::menuField,__VA_ARGS__)
-#define EDIT(editor,...) FIELD_(__COUNTER__,editor,((Menu::systemStyles)(Menu::_canNav)),__VA_ARGS__)
+//#define EDIT(editor,...) FIELD_(__COUNTER__,editor,((Menu::systemStyles)(Menu::_canNav)),__VA_ARGS__)
 #define altFIELD(fieldObj,...) FIELD_(__COUNTER__,fieldObj,((Menu::systemStyles)(Menu::_canNav|Menu::_parentDraw)),__VA_ARGS__)
 #define VALUE(...) VALUE_(__COUNTER__,__VA_ARGS__)
 #define ITEM(...) ITEM_(__COUNTER__,__VA_ARGS__)
+#define OBJ(...) OBJ_(__VA_ARGS__)
+#define DEF_OBJ_(o) (&o)
+#define DECL_OBJ_(...)
 
 //allocating space for elements and shadows -------------------------------------
 #define DECL_EXIT_(cnt,exitText)\
@@ -238,8 +241,6 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
   };\
   constMEM Menu::menuFieldShadow<typeof(target)>& _fieldShadow##cnt=*(Menu::menuFieldShadow<typeof(target)>*)&fieldShadowRaw##cnt;\
   objType<typeof(target)> _menuField##cnt(_fieldShadow##cnt);
-#define DECL_TEXTFIELD_(cnt,target,...)\
-  menuTextField _menuTextField##cnt(target,__VA_ARGS__);
 #define DECL_SUBMENU(id)
 #define DECL_VALUE(target,...) MK_VALUE(target, _##__VA_ARGS__)
 #define _VALUE_(...)  __VA_ARGS__
