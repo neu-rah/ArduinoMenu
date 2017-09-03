@@ -144,6 +144,8 @@ for correcting unsigned values validation
         virtual bool canTune()=0;
         virtual void constrainField()=0;
         virtual void stepit(int increment)=0;
+        virtual idx_t printReflex(menuOut& o) const =0;
+        idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) override;
     };
     //--------------------------------------------------------------------------
     template<typename T>
@@ -153,6 +155,7 @@ for correcting unsigned values validation
         menuField(constMEM menuFieldShadow<T> & shadow):fieldBase(shadow) {}
         bool canTune() override {return !!tune();}
         void constrainField() override {target() = constrain(target(), low(), high());}
+        idx_t printReflex(menuOut& o) const override;
         void parseInput(navNode& nav,Stream& in) override;
         idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) override;
         inline T& target() const {return ((menuFieldShadow<T>*)shadow)->target();}
@@ -656,30 +659,13 @@ for correcting unsigned values validation
 
     ////////////////////////////////////////////////////////////////////////
     template<typename T>
+    idx_t menuField<T>::printReflex(menuOut& o) const {return o.print(reflex);}
+
+    template<typename T>
     idx_t menuField<T>::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) {
       //menuFieldShadow<T>& s=*(menuFieldShadow<T>*)shadow;
       reflex=target();
-      idx_t l=prompt::printTo(root,sel,out,idx,len);
-      bool ed=this==root.navFocus;
-      //bool sel=nav.sel==i;
-      if (l<len) {
-        out.print((root.navFocus==this&&sel)?(tunning?'>':':'):' ');
-        l++;
-        if (l<len) {
-          out.fmtStart(menuOut::fmtField,root.node(),idx);
-          out.setColor(valColor,sel,enabled,ed);
-          //out<<reflex;
-          l+=out.print(reflex);//NOTE: this can exceed the limits!
-          out.fmtEnd(menuOut::fmtField,root.node(),idx);
-          if (l<len) {
-            out.fmtStart(menuOut::fmtUnit,root.node(),idx);
-            out.setColor(unitColor,sel,enabled,ed);
-            l+=print_P(out,units(),len);
-            out.fmtEnd(menuOut::fmtUnit,root.node(),idx);
-          }
-        }
-      }
-      return l;
+      return fieldBase::printTo(root,sel,out,idx,len);
     }
 
     template<typename T>

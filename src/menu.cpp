@@ -596,3 +596,27 @@ void fieldBase::doNav(navNode& nav,navCmd cmd) {
   if (dirty)//sending enter or update event
     nav.event(options->useUpdateEvent?updateEvent:enterEvent);
 }
+
+idx_t fieldBase::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) {
+  idx_t l=prompt::printTo(root,sel,out,idx,len);
+  bool ed=this==root.navFocus;
+  //bool sel=nav.sel==i;
+  if (l<len) {
+    out.print((root.navFocus==this&&sel)?(tunning?'>':':'):' ');
+    l++;
+    if (l<len) {
+      out.fmtStart(menuOut::fmtField,root.node(),idx);
+      out.setColor(valColor,sel,enabled,ed);
+      //out<<reflex;
+      l+=printReflex(out);//NOTE: this can exceed the limits!
+      out.fmtEnd(menuOut::fmtField,root.node(),idx);
+      if (l<len) {
+        out.fmtStart(menuOut::fmtUnit,root.node(),idx);
+        out.setColor(unitColor,sel,enabled,ed);
+        l+=print_P(out,units(),len);
+        out.fmtEnd(menuOut::fmtUnit,root.node(),idx);
+      }
+    }
+  }
+  return l;
+}
