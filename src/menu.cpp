@@ -620,3 +620,45 @@ idx_t fieldBase::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t le
   }
   return l;
 }
+
+/////////////////////////////////////////////////////////////////
+idx_t menuVariantBase::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) {
+  idx_t l=len;
+  l-=prompt::printTo(root,sel,out,idx,len);
+  idx_t at=sync(sync());
+  bool ed=this==root.navFocus;
+  //bool sel=nav.sel==i;
+  if (len-l<0) return 0;
+  out.print(this==&root.active()?':':' ');
+  l--;
+  if (out.fmtStart(type()==selectClass?menuOut::fmtSelect:menuOut::fmtChoose,root.node(),idx)==proceed) {
+    out.setColor(valColor,sel,prompt::enabled,ed);
+    if (l>0) l-=operator[](at).printRaw(out,l);
+  }
+  out.fmtEnd(type()==selectClass?menuOut::fmtSelect:menuOut::fmtChoose,root.node(),idx);
+  return len-l;
+}
+
+idx_t menuVariantBase::togglePrintTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) {
+  idx_t l=prompt::printTo(root,sel,out,idx,len);
+  idx_t at=sync(sync());
+  bool ed=this==root.navFocus;
+  //bool sel=nav.sel==i;
+  out.setColor(valColor,sel,prompt::enabled,ed);
+  //out<<menuNode::operator[](at);
+  if (len-l>0) {
+    out.fmtStart(menuOut::fmtToggle,root.node(),idx);
+    l+=operator[](at).printRaw(out,len-l);
+    out.fmtEnd(menuOut::fmtToggle,root.node(),idx);
+  }
+  return l;
+}
+
+void menuVariantBase::doNav(navNode& nav,navCmd cmd) {
+  nav.sel=sync();
+  navCmd c=nav.doNavigation(cmd);
+  sync(nav.sel);
+  if (c.cmd==enterCmd) {
+    nav.root->exit();
+  }
+}

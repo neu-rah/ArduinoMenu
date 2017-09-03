@@ -234,12 +234,21 @@ for correcting unsigned values validation
     };
 
     //--------------------------------------------------------------------------
-    template<typename T>//-------------------------------------------
-    class menuVariant:public menuNode {
+    class menuVariantBase:public menuNode {
+      public:
+        menuVariantBase(constMEM menuNodeShadow& s):menuNode(s) {}
+        virtual idx_t sync()=0;
+        virtual idx_t sync(idx_t i)=0;
+        idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) override;
+        idx_t togglePrintTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len);
+        void doNav(navNode& nav,navCmd cmd) override;
+    };
+    template<typename T>
+    class menuVariant:public menuVariantBase {
       public:
         idx_t reflex;
-        menuVariant(constMEM menuNodeShadow& s):menuNode(s) {}
-        idx_t sync() {
+        menuVariant(constMEM menuNodeShadow& s):menuVariantBase(s) {}
+        idx_t sync() override {
           //menuVariantShadow<T>& s=*(menuVariantShadow<T>*)shadow;
           for(idx_t i=0;i<sz();i++) {
             if (((menuValue<T>*)&operator[](i))->target()==target()) {
@@ -254,7 +263,7 @@ for correcting unsigned values validation
           #endif
           return -1;
         }
-        idx_t sync(idx_t i) {
+        idx_t sync(idx_t i) override {
           //menuVariantShadow<T>& s=*(menuVariantShadow<T>*)shadow;
           #ifdef DEBUG
           if (!(i>=0&&i<sz())){
@@ -271,8 +280,7 @@ for correcting unsigned values validation
         inline T& target() const {return ((menuVariantShadow<T>*)shadow)->target();}
         bool changed(const navNode &nav,const menuOut& out,bool sub=true) override;
         //void parseInput(navNode& nav,Stream& in) override;
-        void doNav(navNode& nav,navCmd cmd) override;
-        idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) override;
+        //idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) override;
         virtual idx_t selected() const {return reflex;}
     };
 
@@ -691,47 +699,14 @@ for correcting unsigned values validation
 
     template<typename T>
     idx_t toggle<T>::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) {
-      idx_t l=prompt::printTo(root,sel,out,idx,len);
-      idx_t at=menuVariant<T>::sync(menuVariant<T>::sync());
-      bool ed=this==root.navFocus;
-      //bool sel=nav.sel==i;
-      out.setColor(valColor,sel,prompt::enabled,ed);
-      //out<<menuNode::operator[](at);
-      if (len-l>0) {
-        out.fmtStart(menuOut::fmtToggle,root.node(),idx);
-        l+=toggle<T>::operator[](at).printRaw(out,len-l);
-        out.fmtEnd(menuOut::fmtToggle,root.node(),idx);
-      }
-      return l;
+      return togglePrintTo(root,sel,out,idx,len);
     }
 
-    template<typename T>
+/*    template<typename T>
     idx_t menuVariant<T>::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) {
-      idx_t l=len;
-      l-=prompt::printTo(root,sel,out,idx,len);
       idx_t at=menuVariant<T>::sync(menuVariant<T>::sync());
-      bool ed=this==root.navFocus;
-      //bool sel=nav.sel==i;
-      if (len-l<0) return 0;
-      out.print(this==&root.active()?':':' ');
-      l--;
-      if (out.fmtStart(type()==selectClass?menuOut::fmtSelect:menuOut::fmtChoose,root.node(),idx)==proceed) {
-        out.setColor(valColor,sel,prompt::enabled,ed);
-        if (l>0) l-=operator[](at).printRaw(out,l);
-      }
-      out.fmtEnd(type()==selectClass?menuOut::fmtSelect:menuOut::fmtChoose,root.node(),idx);
-      return len-l;
-    }
-
-    template<typename T>
-    void menuVariant<T>::doNav(navNode& nav,navCmd cmd) {
-      nav.sel=sync();
-      navCmd c=nav.doNavigation(cmd);
-      sync(nav.sel);
-      if (c.cmd==enterCmd) {
-        nav.root->exit();
-      }
-    }
+      return menuVariantBase::printTo(root,sel,out,idx,len);
+    }*/
 
     template<typename T>
     bool menuVariant<T>::changed(const navNode &nav,const menuOut& out,bool sub) {
