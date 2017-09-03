@@ -133,6 +133,7 @@ for correcting unsigned values validation
     };
 
     //--------------------------------------------------------------------------
+    //using this fieldBase saves 418 flash bytes per field template instantiation
     class fieldBase:public navTarget {
       public:
         bool tunning=false;
