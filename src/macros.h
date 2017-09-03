@@ -232,8 +232,8 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
     fieldLabel##cnt,\
     mask,\
     style,\
-    &target,\
     fieldUnit##cnt,\
+    &target,\
     low,\
     high,\
     step,\

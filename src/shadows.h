@@ -77,6 +77,21 @@
         }
     };
 
+    struct fieldBaseShadowRaw {
+      actionRaw a;
+      systemStyles sysStyles;
+      const char*text;
+      const eventMask events;//registered events
+      styles style;
+      const char* units;
+    };
+    class fieldBaseShadow:public promptShadow {
+      public:
+        const char* units;
+        fieldBaseShadow(const char * text,const char *units,action a=doNothing,eventMask e=noEvent,styles s=noStyle)
+          :units(units),promptShadow(text,a,e,s) {}
+        inline const char* _units() {return (const char*)memPtr(units);}
+    };
     template<typename T>
     struct menuFieldShadowRaw {
       actionRaw a;
@@ -84,22 +99,20 @@
       const char*text;
       const eventMask events;//registered events
       styles style;
-      T* value;
       const char* units;
+      T* value;
       const T low,high,step,tune;
     };
     template<typename T>
-    class menuFieldShadow:public promptShadow {
+    class menuFieldShadow:public fieldBaseShadow {
       protected:
       public:
         T* value;
-        const char* units;
         const T low,high,step,tune;
       public:
         menuFieldShadow(T &value,const char * text,const char *units,T low,T high,T step,T tune,action a=doNothing,eventMask e=noEvent,styles s=noStyle)
-          :value(&value),units(units),low(low),high(high),step(step),tune(tune),promptShadow(text,a,e,s) {}
+          :value(&value),low(low),high(high),step(step),tune(tune),fieldBaseShadow(text,units,a,e,s) {}
         inline T& target() const {return *(T*)memPtr(value);}
-        inline const char* _units() {return (const char*)memPtr(units);}
         inline T getTypeValue(const T* from) const {
           //TODO: dynamic versions require change of preprocessor to virtual
           #ifdef USING_PGM

@@ -139,6 +139,7 @@ for correcting unsigned values validation
         fieldBase(constMEM promptShadow& shadow):navTarget(shadow) {}
         virtual classes type() const {return fieldClass;}
         bool async(const char *uri,navRoot& root,idx_t lvl) override;
+        inline const char* units() {return ((fieldBaseShadow*)shadow)->_units();}
     };
     //--------------------------------------------------------------------------
     template<typename T>
@@ -150,7 +151,6 @@ for correcting unsigned values validation
         void doNav(navNode& nav,navCmd cmd) override;
         idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) override;
         inline T& target() const {return ((menuFieldShadow<T>*)shadow)->target();}
-        inline const char* units() {return ((menuFieldShadow<T>*)shadow)->_units();}
         inline T getTypeValue(const T* from) const {return ((menuFieldShadow<T>*)shadow)->getTypeValue(from);}
         inline T low() const {return  ((menuFieldShadow<T>*)shadow)->_low();}
         inline T high() const {return ((menuFieldShadow<T>*)shadow)->_high();}
