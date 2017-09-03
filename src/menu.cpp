@@ -563,3 +563,36 @@ bool fieldBase::async(const char *uri,navRoot& root,idx_t lvl) {
   }
   return true;
 }
+
+void fieldBase::doNav(navNode& nav,navCmd cmd) {
+  switch(cmd.cmd) {
+    //by default esc and enter cmds do the same by changing the value
+    //it might be set by numeric parsing when allowed
+    case idxCmd: //Serial<<"menuField::doNav with idxCmd"<<endl;
+    case escCmd:
+      tunning=true;//prepare for exit
+    case enterCmd:
+      if (tunning||options->nav2D||!canTune()) {//then exit edition
+        tunning=false;
+        dirty=true;
+        constrainField();
+        nav.event(options->useUpdateEvent?updateEvent:enterEvent);
+        nav.root->exit();
+        return;
+      } else tunning=true;
+      dirty=true;
+      break;
+    case upCmd:
+      stepit(1);
+      break;
+    case downCmd:
+      stepit(-1);
+      break;
+    default:break;
+  }
+  /*if (ch==options->getCmdChar(enterCmd)&&!tunning) {
+    nav.event(enterEvent);
+  }*/
+  if (dirty)//sending enter or update event
+    nav.event(options->useUpdateEvent?updateEvent:enterEvent);
+}

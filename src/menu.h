@@ -140,6 +140,10 @@ for correcting unsigned values validation
         virtual classes type() const {return fieldClass;}
         bool async(const char *uri,navRoot& root,idx_t lvl) override;
         inline const char* units() {return ((fieldBaseShadow*)shadow)->_units();}
+        void doNav(navNode& nav,navCmd cmd) override;
+        virtual bool canTune()=0;
+        virtual void constrainField()=0;
+        virtual void stepit(int increment)=0;
     };
     //--------------------------------------------------------------------------
     template<typename T>
@@ -147,8 +151,9 @@ for correcting unsigned values validation
       public:
         T reflex;
         menuField(constMEM menuFieldShadow<T> & shadow):fieldBase(shadow) {}
+        bool canTune() override {return !!tune();}
+        void constrainField() override {target() = constrain(target(), low(), high());}
         void parseInput(navNode& nav,Stream& in) override;
-        void doNav(navNode& nav,navCmd cmd) override;
         idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) override;
         inline T& target() const {return ((menuFieldShadow<T>*)shadow)->target();}
         inline T getTypeValue(const T* from) const {return ((menuFieldShadow<T>*)shadow)->getTypeValue(from);}
@@ -164,7 +169,7 @@ for correcting unsigned values validation
           void printHigh(menuOut& o) const override;
           void printLow(menuOut& o) const override;
         #endif
-        void stepit(int increment) {
+        void stepit(int increment) override {
           int sign = increment*(options->invertFieldKeys?-1:1);
           T thisstep = tunning?tune():step();
           dirty=true;
@@ -686,40 +691,6 @@ for correcting unsigned values validation
           doNav(nav,enterCmd);
         } else doNav(nav,idxCmd);
       } else doNav(nav,nav.navKeys(in.read()));
-    }
-
-    template<typename T>
-    void menuField<T>::doNav(navNode& nav,navCmd cmd) {
-      switch(cmd.cmd) {
-        //by default esc and enter cmds do the same by changing the value
-        //it might be set by numeric parsing when allowed
-        case idxCmd: //Serial<<"menuField::doNav with idxCmd"<<endl;
-        case escCmd:
-          menuField<T>::tunning=true;//prepare for exit
-        case enterCmd:
-          if (tunning||options->nav2D||!tune()) {//then exit edition
-            tunning=false;
-            dirty=true;
-            target() = constrain(target(), low(), high());
-            nav.event(options->useUpdateEvent?updateEvent:enterEvent);
-            nav.root->exit();
-            return;
-          } else tunning=true;
-          dirty=true;
-          break;
-        case upCmd:
-          stepit(1);
-          break;
-        case downCmd:
-          stepit(-1);
-          break;
-        default:break;
-      }
-      /*if (ch==options->getCmdChar(enterCmd)&&!tunning) {
-        nav.event(enterEvent);
-      }*/
-      if (dirty)//sending enter or update event
-        nav.event(options->useUpdateEvent?updateEvent:enterEvent);
     }
 
     #ifdef DEBUG
