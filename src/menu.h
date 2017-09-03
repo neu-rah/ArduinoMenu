@@ -138,6 +138,7 @@ for correcting unsigned values validation
         bool tunning=false;
         fieldBase(constMEM promptShadow& shadow):navTarget(shadow) {}
         virtual classes type() const {return fieldClass;}
+        bool async(const char *uri,navRoot& root,idx_t lvl) override;
     };
     //--------------------------------------------------------------------------
     template<typename T>
@@ -163,7 +164,6 @@ for correcting unsigned values validation
           void printHigh(menuOut& o) const override;
           void printLow(menuOut& o) const override;
         #endif
-        bool async(const char *uri,navRoot& root,idx_t lvl) override;
         void stepit(int increment) {
           int sign = increment*(options->invertFieldKeys?-1:1);
           T thisstep = tunning?tune():step();
@@ -686,17 +686,6 @@ for correcting unsigned values validation
           doNav(nav,enterCmd);
         } else doNav(nav,idxCmd);
       } else doNav(nav,nav.navKeys(in.read()));
-    }
-
-    template<typename T>
-    bool menuField<T>::async(const char *uri,navRoot& root,idx_t lvl) {
-      if ((!*uri)||(uri[0]=='/'&&!uri[1])) return true;
-      else if (uri[0]=='/') {
-        StringStream i(++uri);
-        parseInput(root.node(), i);
-        return true;
-      }
-      return true;
     }
 
     template<typename T>

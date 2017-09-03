@@ -553,3 +553,13 @@ navCmd navRoot::exit() {
   navFocus=&active();
   return escCmd;
 }
+
+bool fieldBase::async(const char *uri,navRoot& root,idx_t lvl) {
+  if ((!*uri)||(uri[0]=='/'&&!uri[1])) return true;
+  else if (uri[0]=='/') {
+    StringStream i(++uri);
+    parseInput(root.node(), i);
+    return true;
+  }
+  return true;
+}
