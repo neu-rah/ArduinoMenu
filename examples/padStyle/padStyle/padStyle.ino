@@ -12,26 +12,15 @@ using namespace Menu;
 
 // LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);  // Set the LCD I2C address and pinout
 
-/*
-The pad style!
+result justQuit() {
+  Serial.println();
+  Serial.println("default action for yes/no pad field");
+  return quit;
+}
 
-fmt: is for an output device, this is about a menu!
-  => use a redirecting format (redirect draw to structures)
-  => use a structure format handler
-  => does not scale well!
-
-plugins: they customize menu structures but menu structures do not receive draw requests!
-  => make menu structures receive text requests, still someone has to do the print
-
-flags: use current mechanism to consider extra pad case
-  => just complicates current code
-  => everything remains in place
-  => does not favor extension
-*/
-
-altMENU(menu,sub,"Sub",doNothing,noEvent,wrapStyle,_asPad
-  ,OP("Yes",doNothing,noEvent)
-  ,OP("No",doNothing,noEvent)
+altMENU(menu,sub,"Pad menu.",doNothing,noEvent,wrapStyle,_asPad
+  ,OP("Yes",justQuit,enterEvent)
+  ,OP("No",justQuit,enterEvent)
 );
 
 //a menu using a customized components
@@ -46,9 +35,9 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
 #define MAX_DEPTH 2
 
 MENU_OUTPUTS(out,MAX_DEPTH
+  // ,LCD_OUT(lcd,{0,0,20,4})
   ,SERIAL_OUT(Serial)
   ,NONE
-  // ,LCD_OUT(lcd,{0,0,20,4})
 );
 
 NAVROOT(nav,mainMenu,MAX_DEPTH,Serial,out);
