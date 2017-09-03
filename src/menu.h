@@ -699,7 +699,7 @@ for correcting unsigned values validation
 
     template<typename T>
     idx_t toggle<T>::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) {
-      return togglePrintTo(root,sel,out,idx,len);
+      return menuVariantBase::togglePrintTo(root,sel,out,idx,len);
     }
 
 /*    template<typename T>
