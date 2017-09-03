@@ -131,13 +131,18 @@ for correcting unsigned values validation
     };
 
     //--------------------------------------------------------------------------
-    template<typename T>
-    class menuField:public navTarget {
+    class fieldBase:public navTarget {
       public:
         bool tunning=false;
-        T reflex;
-        menuField(constMEM menuFieldShadow<T> & shadow):navTarget(shadow) {}
+        fieldBase(constMEM promptShadow& shadow):navTarget(shadow) {}
         virtual classes type() const {return fieldClass;}
+    };
+    //--------------------------------------------------------------------------
+    template<typename T>
+    class menuField:public fieldBase {
+      public:
+        T reflex;
+        menuField(constMEM menuFieldShadow<T> & shadow):fieldBase(shadow) {}
         void parseInput(navNode& nav,Stream& in) override;
         void doNav(navNode& nav,navCmd cmd) override;
         idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) override;
