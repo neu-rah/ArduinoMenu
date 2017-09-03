@@ -94,9 +94,11 @@ for correcting unsigned values validation
         //some functions to use on htmlFmt
         // for enumerations:
         virtual idx_t selected() const {return 0;}
-        virtual void printValue(menuOut&) const {}
-        virtual void printHigh(menuOut&) const {}
-        virtual void printLow(menuOut&) const {}
+        #ifdef DEBUG
+          virtual void printValue(menuOut&) const {}
+          virtual void printHigh(menuOut&) const {}
+          virtual void printLow(menuOut&) const {}
+        #endif
 
     };
 
@@ -156,9 +158,11 @@ for correcting unsigned values validation
         bool changed(const navNode &nav,const menuOut& out,bool sub=true) override {
           return dirty||(reflex!=target());
         }
-        void printValue(menuOut& o) const override;
-        void printHigh(menuOut& o) const override;
-        void printLow(menuOut& o) const override;
+        #ifdef DEBUG
+          void printValue(menuOut& o) const override;
+          void printHigh(menuOut& o) const override;
+          void printLow(menuOut& o) const override;
+        #endif
         bool async(const char *uri,navRoot& root,idx_t lvl) override;
         void stepit(int increment) {
           int sign = increment*(options->invertFieldKeys?-1:1);
@@ -729,12 +733,14 @@ for correcting unsigned values validation
         nav.event(options->useUpdateEvent?updateEvent:enterEvent);
     }
 
-    template<typename T>
-    void menuField<T>::printValue(menuOut& o) const {o.print(reflex);}
-    template<typename T>
-    void menuField<T>::printHigh(menuOut& o) const {o.print(high());}
-    template<typename T>
-    void menuField<T>::printLow(menuOut& o) const {o.print(low());}
+    #ifdef DEBUG
+      template<typename T>
+      void menuField<T>::printValue(menuOut& o) const {o.print(reflex);}
+      template<typename T>
+      void menuField<T>::printHigh(menuOut& o) const {o.print(high());}
+      template<typename T>
+      void menuField<T>::printLow(menuOut& o) const {o.print(low());}
+    #endif
 
     template<typename T>
     idx_t toggle<T>::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) {
