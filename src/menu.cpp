@@ -108,6 +108,10 @@ void textField::doNav(navNode& nav,navCmd cmd) {
 
 idx_t textField::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) {
   // out.fmtStart(menuOut::fmtPrompt,root.node(),idx);
+  Serial.print("textField::print idx:");
+  Serial.print(idx);
+  Serial.print(" len:");
+  Serial.println(len);
   idx_t at=0;
   bool editing=this==root.navFocus;
   idx_t l=navTarget::printTo(root,sel,out,idx,len);
@@ -115,12 +119,15 @@ idx_t textField::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t le
     out.write(editing?":":" ");
     l++;
   }
+  idx_t c=l;
   while(buffer()[at]&&l++<len)
     if (at==cursor&&editing) {
-      out.startCursor(charEdit);
-      out.write(buffer()[at++]);
-      out.endCursor(charEdit);
+      c=l;
+      out.startCursor(charEdit);//draw textual cursor or color code start
+      out.write(buffer()[at++]);//draw focused character
+      out.endCursor(charEdit);//draw textual cursor or color code end
     } else out.write(buffer()[at++]);
+    out.editCursor(c,1,charEdit);//reposition a non text cursor
   // out.fmtEnd(menuOut::fmtPrompt,root.node(),idx);
   return l;
 }
