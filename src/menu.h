@@ -118,18 +118,17 @@ for correcting unsigned values validation
     //--------------------------------------------------------------------------
     class textField:public navTarget {
     public:
-      char* text;
+      //char* text;
       // int hash=0;//not implemented yet
       bool charEdit=false;
       bool edited=false;
       idx_t cursor=0;
-      textField(char* t,constMEM textFieldShadow& shadow):text(t),navTarget(shadow) {}
-      const char* validator(int i) {return ((textFieldShadow*)shadow)->operator[](i);}
+      textField(constMEM textFieldShadow& shadow):navTarget(shadow) {}
+      inline char* buffer() const {return ((textFieldShadow*)shadow)->_buffer();}
+      inline idx_t sz() const {return ((textFieldShadow*)shadow)->_sz();}
+      const char* validator(int i) {return ((textFieldShadow*)shadow)->operator[](i%sz());}
       void doNav(navNode& nav,navCmd cmd) override;
       idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) override;
-      //TODO: this functions should go to the output device
-      void startCursor(menuOut& out);
-      void endCursor(menuOut& out);
     };
 
     //--------------------------------------------------------------------------
@@ -424,6 +423,8 @@ for correcting unsigned values validation
         void doNav(navCmd cmd,navNode &nav);
         virtual result fmtStart(fmtParts part,navNode &nav,idx_t idx=-1) {return proceed;}
         virtual result fmtEnd(fmtParts part,navNode &nav,idx_t idx=-1) {return proceed;}
+        virtual void startCursor(bool charEdit) {write(charEdit?">":"[");}
+        virtual void endCursor(bool charEdit) {write(charEdit?"<":"]");}
       protected:
         void printMenu(navNode &nav,idx_t panelNr);
     };

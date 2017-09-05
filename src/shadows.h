@@ -35,17 +35,20 @@
       const char*text;
       const eventMask events;//registered events
       styles style;
-      idx_t sz;
+      char* buffer;
       char* const* validators;
+      idx_t sz;
     };
     class textFieldShadow:public promptShadow {
       protected:
-        idx_t sz;
-        char* const* validators;
       public:
-        textFieldShadow(const char* name,idx_t sz,char* const* v,action a,eventMask e,styles style)
-        :promptShadow(text,a,e,style),sz(sz),validators(v) {}
+        char* buffer;
+        char* const* validators;
+        idx_t sz;
+        textFieldShadow(const char*label,char* b,idx_t sz,char* const* v,action a,eventMask e,styles style)
+        :promptShadow(label,a,e,style),buffer(b),validators(v),sz(sz) {}
         idx_t _sz() const {return (idx_t)memIdx(sz);}
+        char* _buffer() const {return (char*)memPtr(buffer);}
         char* const* _validators() const {return (char* const*)memPtr(validators);}
         inline char* operator[](idx_t i) const {
           return (char*)memPtr(((char**)_validators())[i]);

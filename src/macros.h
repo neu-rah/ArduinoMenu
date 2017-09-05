@@ -182,6 +182,7 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
 #define altOP(...) OP_(__COUNTER__,__VA_ARGS__)
 #define EXIT(...) EXIT_(__COUNTER__,__VA_ARGS__)
 #define FIELD(...) altFIELD(Menu::menuField,__VA_ARGS__)
+#define EDIT(...) EDIT_(__COUNTER__,textField,(Menu::systemStyles)(_noStyle|_canNav|_parentDraw),__VA_ARGS__)
 //#define EDIT(editor,...) FIELD_(__COUNTER__,editor,((Menu::systemStyles)(Menu::_canNav)),__VA_ARGS__)
 #define altFIELD(fieldObj,...) FIELD_(__COUNTER__,fieldObj,((Menu::systemStyles)(Menu::_canNav|Menu::_parentDraw)),__VA_ARGS__)
 #define VALUE(...) VALUE_(__COUNTER__,__VA_ARGS__)
@@ -241,6 +242,20 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
   };\
   constMEM Menu::menuFieldShadow<typeof(target)>& _fieldShadow##cnt=*(Menu::menuFieldShadow<typeof(target)>*)&fieldShadowRaw##cnt;\
   objType<typeof(target)> _menuField##cnt(_fieldShadow##cnt);
+#define DECL_EDIT_(cnt,objType,ss,label,buf,valid,action,mask,style)\
+  const char textFieldLabel##cnt[] MEMMODE=label;\
+  const MEMMODE Menu::textFieldShadowRaw textFieldShadowRaw##cnt={\
+    (Menu::callback)action,\
+    ss,\
+    textFieldLabel##cnt,\
+    mask,\
+    style,\
+    buf,\
+    valid,\
+    sizeof(buf)-1\
+  };\
+  constMEM Menu::textFieldShadow& _fieldShadow##cnt=*(Menu::textFieldShadow*)&textFieldShadowRaw##cnt;\
+  objType _textField##cnt(_fieldShadow##cnt);
 #define DECL_SUBMENU(id)
 #define DECL_VALUE(target,...) MK_VALUE(target, _##__VA_ARGS__)
 #define _VALUE_(...)  __VA_ARGS__
@@ -263,6 +278,7 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
 #define DEF_EXIT_(cnt,...) &op##cnt
 #define DEF_OP_(cnt,...) &op##cnt
 #define DEF_FIELD_(cnt,...) &_menuField##cnt
+#define DEF_EDIT_(cnt,...) &_textField##cnt
 #define DEF_SUBMENU(id) &id
 #define DEF_VALUE(id) &id
 #define DEF_VALUE_(cnt,...) &menuValue##cnt

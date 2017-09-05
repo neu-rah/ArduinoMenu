@@ -77,13 +77,13 @@ void textField::doNav(navNode& nav,navCmd cmd) {
     case upCmd:
       if (charEdit) {
         const char* v=validator(cursor);
-        char *at=strchr(v,text[cursor]);
+        char *at=strchr(v,buffer()[cursor]);
         idx_t pos=at?at-v+1:1;
         if (pos>=strlen(v)) pos=0;
-        text[cursor]=v[pos];
+        buffer()[cursor]=v[pos];
         dirty=true;
       } else {
-        if(cursor<strlen(text)-1) cursor++;
+        if(cursor<strlen(buffer())-1) cursor++;
         edited=false;
       }
       dirty=true;
@@ -91,10 +91,10 @@ void textField::doNav(navNode& nav,navCmd cmd) {
     case downCmd:
       if (charEdit) {
         const char* v=validator(cursor);
-        char *at=strchr(v,text[cursor]);//at is not stored on the class to save memory
+        char *at=strchr(v,buffer()[cursor]);//at is not stored on the class to save memory
         idx_t pos=at?at-v-1:0;
         if (pos<0) pos=strlen(v)-1;
-        text[cursor]=v[pos];
+        buffer()[cursor]=v[pos];
         dirty=true;
       } else {
         if (cursor) cursor--;
@@ -115,18 +115,15 @@ idx_t textField::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t le
     out.write(editing?":":" ");
     l++;
   }
-  while(text[at]&&l++<len)
+  while(buffer()[at]&&l++<len)
     if (at==cursor&&editing) {
-      startCursor(out);
-      out.write(text[at++]);
-      endCursor(out);
-    } else out.write(text[at++]);
+      out.startCursor(charEdit);
+      out.write(buffer()[at++]);
+      out.endCursor(charEdit);
+    } else out.write(buffer()[at++]);
   // out.fmtEnd(menuOut::fmtPrompt,root.node(),idx);
   return l;
 }
-//TODO: this functions should go to out device
-void textField::startCursor(menuOut& out) {out.write(charEdit?">":"[");}
-void textField::endCursor(menuOut& out) {out.write(charEdit?"<":"]");}
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
