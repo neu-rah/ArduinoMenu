@@ -252,7 +252,7 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
     style,\
     buf,\
     valid,\
-    sizeof(buf)-1\
+    sizeof(valid)/sizeof(char*)\
   };\
   constMEM Menu::textFieldShadow& _fieldShadow##cnt=*(Menu::textFieldShadow*)&textFieldShadowRaw##cnt;\
   objType _textField##cnt(_fieldShadow##cnt);

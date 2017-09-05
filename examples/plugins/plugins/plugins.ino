@@ -29,6 +29,9 @@ ITEM macro, like OP but do allow custom system styles and extra arguments at end
 #include <Arduino.h>
 
 #include <menu.h>
+#ifdef DEBUG
+#include <Dump.h>
+#endif
 
 //inputs
 #include <menuIO/encoderIn.h>
@@ -74,28 +77,18 @@ softKeyIn<1> encButton(encBtn_map);//1 is the number of keys
 Stream* inputsList[]={&encStream,&encButton,&Serial};
 chainStream<3> in(inputsList);//3 is the number of inputs
 
-void dot() {Serial.print("+");}
-
-char* const hexChars PROGMEM="0123456789ABCDEF";
-char* constMEM validData[] PROGMEM={hexChars,hexChars};//individual character validators
-
-constMEM char op1Text[] PROGMEM="Name";//field name
-constMEM textFieldShadowRaw op1InfoRaw PROGMEM={(callback)doNothing,(Menu::systemStyles)(_noStyle|_canNav|_parentDraw),op1Text,enterEvent,noStyle,2,validData};//PROGMEM static stuff
-constMEM textFieldShadow& op1Info=*(textFieldShadow*)&op1InfoRaw;//hacking c++ to use progmem (hugly)
-textField op1("AA",op1Info);//text length not enforced to match validators length yet
+char* const hexDigit PROGMEM="0123456789ABCDEF";
+char* const hexNr[] PROGMEM={"0","x",hexDigit,hexDigit};
+char buf1[]="0x11";
 
 //a menu using a plugin field
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
+  ,BARFIELD(test,"Bar field","%",0,100,10,1,doNothing,noEvent,wrapStyle)//numeric field with a bar
   ,FIELD(test,"Original","%",0,100,10,1,doNothing,noEvent,wrapStyle)//normal numeric field (2 edit levels)
   ,FIELD(test,"O. Simple","%",0,100,1,0,doNothing,noEvent,wrapStyle)//normal numeric field (1 edit level)
   ,altFIELD(cancelField,test,"Cancelable","%",0,100,10,1,doNothing,enterEvent,wrapStyle)//cancelable field (2 edit levels)
   ,altFIELD(cancelField,test,"C. Simple","%",0,100,1,0,doNothing,enterEvent,wrapStyle)//cancelable field (1 edit level)
-  // ,EDIT(barField,test,"Bar field","%",0,100,10,1,doNothing,noEvent,wrapStyle)//numeric field with a bar
-  //,altFIELD(barField,test,"Bar field","%",0,100,10,1,doNothing,noEvent,wrapStyle)//numeric field with a bar
-  ,BARFIELD(test,"Bar field","%",0,100,10,1,doNothing,noEvent,wrapStyle)//numeric field with a bar
-  //,ITEM(textEdit,"Text",doNothing,noEvent,_canNav,name)
-  ,OBJ(op1)
-  ,OP("Empty 0",dot,enterEvent)//just an empty regular option
+  ,EDIT("Hex",buf1,hexNr,doNothing,noEvent,noStyle)
   ,EXIT("<Exit")
 );
 
@@ -116,7 +109,7 @@ void setup() {
   encoder.begin();
   lcd.begin(16,2);
   lcd.setCursor(0, 0);
-  lcd.print("Menu 3.0 LCD");
+  lcd.print("Menu 3.x LCD");
   lcd.setCursor(0, 1);
   lcd.print("r-site.net");
   options->numValueInput=false;//numeric keys in fields used as accelerators instead
@@ -126,9 +119,12 @@ void setup() {
   //barFieldOptions::empty="░";//if not stick with the defaults
   cancelFieldOptions::quitOnEsc=true;
   cancelFieldOptions::accelSendEsc=true;//normal is enter
+  #ifdef DEBUG
+  dumpPgm(Serial,(textFieldShadowRaw*)mainMenu[5].shadow,sizeof(textFieldShadowRaw));
+  #endif
 }
 
 void loop() {
   nav.poll();
-  delay(100);//simulate a delay when other tasks are done
+  delay(100);//simulate other tasks delay
 }

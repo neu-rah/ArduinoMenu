@@ -126,7 +126,16 @@ for correcting unsigned values validation
       textField(constMEM textFieldShadow& shadow):navTarget(shadow) {}
       inline char* buffer() const {return ((textFieldShadow*)shadow)->_buffer();}
       inline idx_t sz() const {return ((textFieldShadow*)shadow)->_sz();}
-      const char* validator(int i) {return ((textFieldShadow*)shadow)->operator[](i%sz());}
+      const char* validator(int i) {
+        Serial.println();
+        Serial.print("validator idx:");
+        Serial.print(i);
+        Serial.print("validators sz:");
+        Serial.print(sz());
+        Serial.print("sel validator:");
+        Serial.println(i%sz());
+        return ((textFieldShadow*)shadow)->operator[](i%sz());
+      }
       void doNav(navNode& nav,navCmd cmd) override;
       idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) override;
     };
