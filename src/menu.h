@@ -423,8 +423,10 @@ for correcting unsigned values validation
         void doNav(navCmd cmd,navNode &nav);
         virtual result fmtStart(fmtParts part,navNode &nav,idx_t idx=-1) {return proceed;}
         virtual result fmtEnd(fmtParts part,navNode &nav,idx_t idx=-1) {return proceed;}
-        virtual void startCursor(bool charEdit) {write(charEdit?">":"[");}
-        virtual void endCursor(bool charEdit) {write(charEdit?"<":"]");}
+        //text editor cursors
+        virtual idx_t startCursor(bool charEdit) {write(charEdit?">":"[");return 1;}
+        virtual idx_t endCursor(bool charEdit) {write(charEdit?"<":"]");return 1;}
+        virtual idx_t editCursor(idx_t x,idx_t y,bool editing,bool charEdit) {return 0;}
       protected:
         void printMenu(navNode &nav,idx_t panelNr);
     };

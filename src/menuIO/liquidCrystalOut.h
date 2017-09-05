@@ -23,6 +23,18 @@
           const panel p=panels[panelNr];
           device.setCursor(p.x+x,p.y+y);
         }
+        virtual idx_t startCursor(bool charEdit) {return 0;}
+        virtual idx_t endCursor(bool charEdit) {return 0;}
+        virtual idx_t editCursor(idx_t x,idx_t y,bool editing,bool charEdit) {
+          //text editor cursor
+          device.noBlink();
+          device.noCursor();
+          if (editing) {
+            device.setCursor(x, y);
+            if (charEdit) device.cursor();
+            else device.blink();
+          }
+        }
     };
 
   }//namespace Menu
