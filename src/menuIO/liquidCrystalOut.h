@@ -34,6 +34,7 @@
             if (charEdit) device.cursor();
             else device.blink();
           }
+          return 0;
         }
     };
 

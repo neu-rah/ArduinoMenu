@@ -69,6 +69,17 @@ www.r-site.net
         void setColor(colorDefs c,bool selected=false,status s=enabledStatus,bool e=false) override {
           *this<<ANSI::setForegroundColor(getColor(c,selected,s,e));
         }
+        virtual idx_t startCursor(bool charEdit) {
+          if (charEdit) *this<<ANSI::inverseOn();
+          else *this<<ANSI::boldOn();
+          return 0;
+        }
+        virtual idx_t endCursor(bool charEdit) {
+          if (charEdit) *this<<ANSI::inverseOff();
+          else *this<<ANSI::boldOff();
+          return 0;
+        }
+        virtual idx_t editCursor(idx_t x,idx_t y,bool editing,bool charEdit) {return 0;}
     };
 
   }//namespace Menu
