@@ -37,9 +37,15 @@ Adafruit_ST7735 gfx(TFT_CS, TFT_DC, TFT_RST);
 #define LEDPIN A3
 
 // rotary encoder pins
-#define encA    5
-#define encB    6
-#define encBtn  4
+#ifdef DEBUG
+  #define encA    2
+  #define encB    3
+  #define encBtn  4
+#else
+  #define encA    5
+  #define encB    6
+  #define encBtn  4
+#endif
 
 result showEvent(eventMask e,navNode& nav,prompt& item) {
   Serial.print(F("event:"));
@@ -142,6 +148,10 @@ result doAlert(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out
   return proceed;
 }
 
+char* const hexDigit PROGMEM="0123456789ABCDEF";
+char* const hexNr[] PROGMEM={"0","x",hexDigit,hexDigit};
+char buf1[]="0x11";
+
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,OP("Op1",action1,anyEvent)
   ,OP("Op2",action2,enterEvent)
@@ -153,6 +163,7 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,SUBMENU(selMenu)
   ,SUBMENU(chooseMenu)
   ,OP("Alert test",doAlert,enterEvent)
+  ,EDIT("Hex",buf1,hexNr,doNothing,noEvent,noStyle)
   ,EXIT("<Back")
 );
 
@@ -204,7 +215,7 @@ config myOptions('*','-',false,false,defaultNavCodes);
 void setup() {
   options=&myOptions;
   pinMode(LEDPIN,OUTPUT);
-  Serial.begin(115200);
+  Serial.begin(9600);
   while(!Serial);
   Serial.println("menu 3.0 test");
   Serial.flush();

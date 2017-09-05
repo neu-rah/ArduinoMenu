@@ -68,6 +68,9 @@ namespace Menu {
 					gfx.drawRect(p.x*resX,(p.y+ln)*resY,maxX()*resX,resY,getColor(cursorColor,selected,enabledStatus,false));
 				}
 
+				virtual idx_t startCursor(bool charEdit) {setColor(valColor,true,enabledStatus,charEdit);return 0;}
+        virtual idx_t endCursor(bool charEdit) {setColor(fgColor,true,enabledStatus,true);return 0;}
+        virtual idx_t editCursor(idx_t x,idx_t y,bool editing,bool charEdit) {return 0;}
 	  };
 
 }; //namespace adaGfxOut
