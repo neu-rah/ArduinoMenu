@@ -5,3 +5,10 @@
 src/main.cpp
 examples/debug
 lib
+.travis.yml
+!/.travis.yml
+platformio.ini
+/TODO.txt
+/classes.odg
+.gitignore
+!/.gitignore

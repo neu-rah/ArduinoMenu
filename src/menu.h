@@ -427,6 +427,8 @@ for correcting unsigned values validation
         virtual idx_t startCursor(bool charEdit) {write(charEdit?">":"[");return 1;}
         virtual idx_t endCursor(bool charEdit) {write(charEdit?"<":"]");return 1;}
         virtual idx_t editCursor(idx_t x,idx_t y,bool editing,bool charEdit) {return 0;}
+        virtual void rect(idx_t pabelNr,idx_t x,idx_t y,idx_t w=1,idx_t h=1,colorDefs c=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) {}
+        virtual void box(idx_t pabelNr,idx_t x,idx_t y,idx_t w=1,idx_t h=1,colorDefs c=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) {}
       protected:
         void printMenu(navNode &nav,idx_t panelNr);
     };
@@ -471,6 +473,12 @@ for correcting unsigned values validation
         gfxOut(idx_t rx,idx_t ry,idx_t* t,panelsList &p,menuOut::styles st=menuOut::minimalRedraw)
           :menuOut(t,p,st),resX(rx),resY(ry) {}
         //void printMenu(navNode &nav) override;
+        virtual idx_t startCursor(bool charEdit) {
+          //gfx.drawBox(p.x*resX,(p.y+ln)*resY,maxX()*resX,resY);
+          setColor(valColor,true,enabledStatus,charEdit);return 0;
+        }
+        virtual idx_t endCursor(bool charEdit) {setColor(valColor,true,enabledStatus,true);return 0;}
+        virtual idx_t editCursor(idx_t x,idx_t y,bool editing,bool charEdit) {return 0;}
     };
 
     //list of output devices

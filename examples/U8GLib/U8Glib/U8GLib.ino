@@ -33,8 +33,8 @@ using namespace Menu;
 #define LEDPIN A3
 
 // rotary encoder pins
-#define encA    5
-#define encB    6
+#define encA    2
+#define encB    3
 #define encBtn  4
 
 #define U8_DC 9
@@ -129,6 +129,10 @@ result doAlert(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out
   return proceed;
 }
 
+char* const hexDigit PROGMEM="0123456789ABCDEF";
+char* const hexNr[] PROGMEM={"0","x",hexDigit,hexDigit};
+char buf1[]="0x11";
+
 MENU(mainMenu,"Main menu",zZz,noEvent,wrapStyle
   ,OP("Op1",action1,anyEvent)
   ,OP("Op2",action2,enterEvent)
@@ -140,6 +144,7 @@ MENU(mainMenu,"Main menu",zZz,noEvent,wrapStyle
   ,SUBMENU(selMenu)
   ,SUBMENU(chooseMenu)
   ,OP("Alert test",doAlert,enterEvent)
+  ,EDIT("Hex",buf1,hexNr,doNothing,noEvent,noStyle)
   ,EXIT("<Back")
 );
 
@@ -150,7 +155,7 @@ MENU(mainMenu,"Main menu",zZz,noEvent,wrapStyle
 const colorDef<uint8_t> colors[] MEMMODE={
   {{0,0},{0,1,1}},//bgColor
   {{1,1},{1,0,0}},//fgColor
-  {{1,0},{1,0,0}},//valColor
+  {{1,1},{1,0,0}},//valColor
   {{1,1},{1,0,0}},//unitColor
   {{0,1},{0,0,1}},//cursorColor
   {{0,0},{1,1,1}},//titleColor
@@ -160,7 +165,7 @@ encoderIn<encA,encB> encoder;//simple quad encoder driver
 encoderInStream<encA,encB> encStream(encoder,4);// simple quad encoder fake Stream
 
 //a keyboard with only one key as the encoder button
-keyMap encBtn_map[]={{-encBtn,options->getCmdChar(enterCmd)}};//negative pin numbers use internal pull-up, this is on when low
+keyMap encBtn_map[]={{-encBtn,options->getCmdChar(enterCmd)}};//negative pin numbers use internal pull-up, on = low
 keyIn<1> encButton(encBtn_map);//1 is the number of keys
 
 //input from the encoder + encoder button + serial
@@ -207,12 +212,13 @@ result idle(menuOut& o,idleEvent e) {
 
 void setup() {
   pinMode(LEDPIN,OUTPUT);
-  Serial.begin(115200);
+  Serial.begin(9600);
   while(!Serial);
   nav.idleTask=idle;//point a function to be used when menu is suspended
   mainMenu[1].enabled=disabledStatus;
 
   pinMode(encBtn, INPUT_PULLUP);
+  encButton.begin();
   encoder.begin();
 
   //u8g.setFont(u8g_font_helvR08);

@@ -51,6 +51,16 @@ namespace Menu {
 					setColor(fgColor);
 				}
 
+				void box(idx_t pabelNr,idx_t x,idx_t y,idx_t w=1,idx_t h=1,colorDefs c=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) override {
+					const panel p=panels[panelNr];
+					gfx.drawRect(p.x*resX,p.y*resY,p.w*resX,p.h*resY,getColor(c,selected,stat,edit));
+				}
+
+				void rect(idx_t pabelNr,idx_t x,idx_t y,idx_t w=1,idx_t h=1,colorDefs c=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) override {
+					const panel p=panels[panelNr];
+					gfx.fillRect(p.x*resX,p.y*resY,p.w*resX,p.h*resY,getColor(c,selected,stat,edit));
+				}
+
 				void clear(idx_t panelNr) override {
 					const panel p=panels[panelNr];
 					gfx.fillRect(p.x*resX,p.y*resY,p.w*resX,p.h*resY,getColor(bgColor,false,enabledStatus,false));
@@ -67,10 +77,6 @@ namespace Menu {
 					gfxOut::drawCursor(ln,selected,stat);
 					gfx.drawRect(p.x*resX,(p.y+ln)*resY,maxX()*resX,resY,getColor(cursorColor,selected,enabledStatus,false));
 				}
-
-				virtual idx_t startCursor(bool charEdit) {setColor(valColor,true,enabledStatus,charEdit);return 0;}
-        virtual idx_t endCursor(bool charEdit) {setColor(fgColor,true,enabledStatus,true);return 0;}
-        virtual idx_t editCursor(idx_t x,idx_t y,bool editing,bool charEdit) {return 0;}
 	  };
 
 }; //namespace adaGfxOut
