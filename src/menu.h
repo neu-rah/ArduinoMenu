@@ -80,7 +80,7 @@ for correcting unsigned values validation
         inline bool isMenu() const {return sysStyles()&_menuData;}//has menu data list and can be a navNode target
         inline bool isVariant() const {return sysStyles()&_isVariant;}//a menu as an enumerated field, connected to a variable value
         inline bool parentDraw() const {return sysStyles()&_parentDraw;}//a menu as an enumerated field, connected to a variable value
-        virtual idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len);//raw print to output device
+        virtual idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr=0);//raw print to output device
         virtual bool changed(const navNode &nav,const menuOut& out,bool sub=true) {return dirty;}
         //this is the system version of enter handler, its used by elements like toggle
         virtual result sysHandler(SYS_FUNC_PARAMS) {return proceed;}
@@ -128,7 +128,7 @@ for correcting unsigned values validation
       inline idx_t sz() const {return ((textFieldShadow*)shadow)->_sz();}
       const char* validator(int i) {return ((textFieldShadow*)shadow)->operator[](i%sz());}
       void doNav(navNode& nav,navCmd cmd) override;
-      idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) override;
+      idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr=0) override;
     };
 
     //--------------------------------------------------------------------------
@@ -145,7 +145,7 @@ for correcting unsigned values validation
         virtual void constrainField()=0;
         virtual void stepit(int increment)=0;
         virtual idx_t printReflex(menuOut& o) const =0;
-        idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) override;
+        idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr=0) override;
     };
     //--------------------------------------------------------------------------
     template<typename T>
@@ -157,7 +157,7 @@ for correcting unsigned values validation
         void constrainField() override {target() = constrain(target(), low(), high());}
         idx_t printReflex(menuOut& o) const override;
         void parseInput(navNode& nav,Stream& in) override;
-        idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) override;
+        idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr=0) override;
         inline T& target() const {return ((menuFieldShadow<T>*)shadow)->target();}
         inline T getTypeValue(const T* from) const {return ((menuFieldShadow<T>*)shadow)->getTypeValue(from);}
         inline T low() const {return  ((menuFieldShadow<T>*)shadow)->_low();}
@@ -238,8 +238,8 @@ for correcting unsigned values validation
         menuVariantBase(constMEM menuNodeShadow& s):menuNode(s) {}
         virtual idx_t sync()=0;
         virtual idx_t sync(idx_t i)=0;
-        idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) override;
-        idx_t togglePrintTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len);
+        idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr=0) override;
+        idx_t togglePrintTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr);
         void doNav(navNode& nav,navCmd cmd) override;
     };
     template<typename T>
@@ -295,7 +295,7 @@ for correcting unsigned values validation
       public:
         toggle(constMEM menuNodeShadow& s):menuVariant<T>(s) {}
         virtual classes type() const {return toggleClass;}
-        idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) override;
+        idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr=0) override;
         //bool canNav() const override {return false;}//can receive navigation focus and process keys
         result sysHandler(SYS_FUNC_PARAMS) override {
           switch(event) {
@@ -424,11 +424,11 @@ for correcting unsigned values validation
         virtual result fmtStart(fmtParts part,navNode &nav,idx_t idx=-1) {return proceed;}
         virtual result fmtEnd(fmtParts part,navNode &nav,idx_t idx=-1) {return proceed;}
         //text editor cursors
-        virtual idx_t startCursor(bool charEdit) {write(charEdit?">":"[");return 1;}
-        virtual idx_t endCursor(bool charEdit) {write(charEdit?"<":"]");return 1;}
-        virtual idx_t editCursor(idx_t x,idx_t y,bool editing,bool charEdit) {return 0;}
-        virtual void rect(idx_t pabelNr,idx_t x,idx_t y,idx_t w=1,idx_t h=1,colorDefs c=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) {}
-        virtual void box(idx_t pabelNr,idx_t x,idx_t y,idx_t w=1,idx_t h=1,colorDefs c=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) {}
+        virtual idx_t startCursor(navRoot& root,idx_t x,idx_t y,bool charEdit,idx_t panelNr=0) {write(charEdit?">":"[");return 1;}
+        virtual idx_t endCursor(navRoot& root,idx_t x,idx_t y,bool charEdit,idx_t panelNr=0) {write(charEdit?"<":"]");return 1;}
+        virtual idx_t editCursor(navRoot& root,idx_t x,idx_t y,bool editing,bool charEdit,idx_t panelNr=0) {return 0;}
+        virtual void rect(idx_t panelNr,idx_t x,idx_t y,idx_t w=1,idx_t h=1,colorDefs c=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) {}
+        virtual void box(idx_t panelNr,idx_t x,idx_t y,idx_t w=1,idx_t h=1,colorDefs c=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) {}
       protected:
         void printMenu(navNode &nav,idx_t panelNr);
     };
@@ -470,15 +470,21 @@ for correcting unsigned values validation
         idx_t resX=1;
         idx_t resY=1;
         idx_t fontMarginY=1;//in pixels, compensate vertical font alignment
-        gfxOut(idx_t rx,idx_t ry,idx_t* t,panelsList &p,menuOut::styles st=menuOut::minimalRedraw)
-          :menuOut(t,p,st),resX(rx),resY(ry) {}
-        //void printMenu(navNode &nav) override;
-        virtual idx_t startCursor(bool charEdit) {
-          //gfx.drawBox(p.x*resX,(p.y+ln)*resY,maxX()*resX,resY);
-          setColor(valColor,true,enabledStatus,charEdit);return 0;
+        gfxOut(idx_t rx,idx_t ry,idx_t* t,panelsList &p,menuOut::styles st=menuOut::minimalRedraw,idx_t fontMargin=1)
+          :menuOut(t,p,st),resX(rx),resY(ry) {
+            resY+=fontMarginY<<1;
+          }
+        idx_t startCursor(navRoot& root,idx_t x,idx_t y,bool charEdit,idx_t panelNr) override {
+          //rect(panelNr,  x,  y, 2, 2, bgColor, true, enabledStatus, false);
+          if (!charEdit)
+            rect(panelNr,  x,  y, 1, 1, bgColor, false, enabledStatus, false);
+          setColor(valColor,true,enabledStatus,true);
+          return 0;
         }
-        virtual idx_t endCursor(bool charEdit) {setColor(valColor,true,enabledStatus,true);return 0;}
-        virtual idx_t editCursor(idx_t x,idx_t y,bool editing,bool charEdit) {return 0;}
+        idx_t endCursor(navRoot& root,idx_t x,idx_t y,bool charEdit,idx_t panelNr) override {
+          setColor(fgColor,true,enabledStatus,true);return 0;
+        }
+        idx_t editCursor(navRoot& root,idx_t x,idx_t y,bool editing,bool charEdit,idx_t panelNr) override {return 0;}
     };
 
     //list of output devices
@@ -682,10 +688,10 @@ for correcting unsigned values validation
     idx_t menuField<T>::printReflex(menuOut& o) const {return o.print(reflex);}
 
     template<typename T>
-    idx_t menuField<T>::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) {
+    idx_t menuField<T>::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr) {
       //menuFieldShadow<T>& s=*(menuFieldShadow<T>*)shadow;
       reflex=target();
-      return fieldBase::printTo(root,sel,out,idx,len);
+      return fieldBase::printTo(root,sel,out,idx,len,panelNr);
     }
 
     template<typename T>
@@ -709,8 +715,8 @@ for correcting unsigned values validation
     #endif
 
     template<typename T>
-    idx_t toggle<T>::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) {
-      return menuVariantBase::togglePrintTo(root,sel,out,idx,len);
+    idx_t toggle<T>::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr) {
+      return menuVariantBase::togglePrintTo(root,sel,out,idx,len,panelNr);
     }
 
 /*    template<typename T>

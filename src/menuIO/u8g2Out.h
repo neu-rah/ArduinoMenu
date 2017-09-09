@@ -25,7 +25,7 @@ namespace Menu {
 	class u8g2Out:public gfxOut {
 		public:
 			U8G2& gfx;
-			int8_t fontMargin=1;
+			//int8_t fontMargin=1;
 			int8_t offsetX=0;
 			int8_t offsetY=0;
 			const colorDef<uint8_t> (&colors)[nColors];

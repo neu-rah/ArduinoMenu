@@ -13,7 +13,7 @@ idx_t prompt::printRaw(menuOut& out,idx_t len) const {
   return print_P(out,getText(),len);
 }
 
-idx_t prompt::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) {
+idx_t prompt::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr) {
   out.fmtStart(menuOut::fmtPrompt,root.node(),idx);
   idx_t r=printRaw(out,len);
   out.fmtEnd(menuOut::fmtPrompt,root.node(),idx);
@@ -106,24 +106,29 @@ void textField::doNav(navNode& nav,navCmd cmd) {
   }
 }
 
-idx_t textField::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) {
+idx_t textField::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr) {
   // out.fmtStart(menuOut::fmtPrompt,root.node(),idx);
   idx_t at=0;
   bool editing=this==root.navFocus;
-  idx_t l=navTarget::printTo(root,sel,out,idx,len);
+  idx_t l=navTarget::printTo(root,sel,out,idx,len,panelNr);
   if (l<len) {
     out.write(editing?":":" ");
     l++;
   }
   idx_t c=l;
+  idx_t top=out.tops[root.level];
+  idx_t tit=root.showTitle?1:0;
+  idx_t line=idx+tit;
+  // Serial<<"idx:"<<idx<<" top:"<<top<<" title:"<<tit<<endl;
+  // Serial<<"idx-top:"<<(idx-top)<<" idx+tit:"<<idx+tit<<endl;
   while(buffer()[at]&&l++<len)
     if (at==cursor&&editing) {
       c=l;
-      l+=out.startCursor(charEdit);//draw textual cursor or color code start
+      l+=out.startCursor(root,c,line,charEdit);//draw textual cursor or color code start
       out.write(buffer()[at++]);//draw focused character
-      l+=out.endCursor(charEdit);//draw textual cursor or color code end
+      l+=out.endCursor(root,c,line,charEdit);//draw textual cursor or color code end
     } else out.write(buffer()[at++]);
-  l+=out.editCursor(c,1,editing,charEdit);//reposition a non text cursor
+  l+=out.editCursor(root,c,line,editing,charEdit);//reposition a non text cursor
   return l;
 }
 
@@ -193,7 +198,7 @@ void menuOut::previewMenu(navRoot& root,menuNode& menu,idx_t panelNr) {
     setColor(fgColor,false,p.enabled);
     drawCursor(i,false,p.enabled,false,panelNr);
     setColor(fgColor,false,p.enabled,false);
-    p.printTo(root,false,*this,i,panels[panelNr].w);
+    p.printTo(root,false,*this,i,panels[panelNr].w,panelNr);
   }
 }
 
@@ -229,7 +234,7 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
   if (!(nav.root->navFocus->parentDraw()||nav.root->navFocus->isMenu())) {
     //on this case we have a navTarget object that draws himself
     if (nav.root->navFocus->changed(nav,*this,false))
-      nav.root->navFocus->printTo(*nav.root,true,*this,nav.sel,maxX(panelNr));
+      nav.root->navFocus->printTo(*nav.root,true,*this,nav.sel,maxX(panelNr),panelNr);
   } else {
     idx_t topi=nav.root->level-((nav.root->active().parentDraw())?1:0);
     idx_t ot=tops[topi];
@@ -259,7 +264,7 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
         setColor(titleColor,true);
         setCursor(0,0,panelNr);
         //print('[');
-        nav.target->prompt::printTo(*nav.root,true,*this,-1,pan.w-1);
+        nav.target->prompt::printTo(*nav.root,true,*this,-1,pan.w-1,panelNr);
         if (asPad) print(":");
         //print(']');
         ///<----- titleEnd
@@ -305,7 +310,7 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
         //---->opBodyStart
         fmtStart(fmtOpBody,nav,i);
         setColor(fgColor,selected,p.enabled,ed);
-        if (len>0) len=p.printTo(*nav.root,selected,*this,i,len);
+        if (len>0) len=p.printTo(*nav.root,selected,*this,i,len,panelNr);
         if (len>0) {
           if (asPad) {
             print(selected?"]":" ");
@@ -596,8 +601,8 @@ void fieldBase::doNav(navNode& nav,navCmd cmd) {
     nav.event(options->useUpdateEvent?updateEvent:enterEvent);
 }
 
-idx_t fieldBase::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) {
-  idx_t l=prompt::printTo(root,sel,out,idx,len);
+idx_t fieldBase::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr) {
+  idx_t l=prompt::printTo(root,sel,out,idx,len,panelNr);
   bool ed=this==root.navFocus;
   //bool sel=nav.sel==i;
   if (l<len) {
@@ -621,9 +626,9 @@ idx_t fieldBase::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t le
 }
 
 /////////////////////////////////////////////////////////////////
-idx_t menuVariantBase::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) {
+idx_t menuVariantBase::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr) {
   idx_t l=len;
-  l-=prompt::printTo(root,sel,out,idx,len);
+  l-=prompt::printTo(root,sel,out,idx,len,panelNr);
   idx_t at=sync(sync());
   bool ed=this==root.navFocus;
   //bool sel=nav.sel==i;
@@ -638,8 +643,8 @@ idx_t menuVariantBase::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,id
   return len-l;
 }
 
-idx_t menuVariantBase::togglePrintTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) {
-  idx_t l=prompt::printTo(root,sel,out,idx,len);
+idx_t menuVariantBase::togglePrintTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr) {
+  idx_t l=prompt::printTo(root,sel,out,idx,len,panelNr);
   idx_t at=sync(sync());
   bool ed=this==root.navFocus;
   //bool sel=nav.sel==i;

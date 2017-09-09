@@ -1,6 +1,6 @@
 {
   "name": "ArduinoMenu",
-  "keywords": "Arduino, Menu, System, IO, Graphics, LCD, Encoder, Serial, interactivity",
+  "keywords": "menu, display, lcd, tft, buttons, encoder, io, control",
   "description": "AVR generic menu/interactivity system",
   "repository":
   {

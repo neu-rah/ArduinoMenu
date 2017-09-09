@@ -26,7 +26,7 @@ www.r-site.net
     class u8gLibOut:public gfxOut {
       public:
 	      U8GLIB& gfx;
-				int8_t fontMargin=2;
+				//int8_t fontMarginY=1;
 				const colorDef<uint8_t> (&colors)[nColors];
 	      u8gLibOut(
 					U8GLIB& gfx,
@@ -41,7 +41,7 @@ www.r-site.net
 
 				size_t write(uint8_t ch) override {
 					switch(ch) {//fix u8glib not respecting \n\r... add \t if you wish
-						case '\n': gfx.setPrintPos(gfx.getPrintCol(), gfx.getPrintRow()+resY-fontMargin);break;
+						case '\n': gfx.setPrintPos(gfx.getPrintCol(), gfx.getPrintRow()+resY-fontMarginY);break;
 						case '\r': gfx.setPrintPos(0, gfx.getPrintRow());break;
 						default: return gfx.write(ch);
 					}
@@ -59,7 +59,7 @@ www.r-site.net
 				void clearLine(idx_t ln,idx_t panelNr=0,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) override {
 					const panel p=panels[panelNr];
 					setColor(color,selected,stat,edit);
-					gfx.drawBox(p.x*resX,(p.y+ln)*resY,maxX()*resX,resY);
+					gfx.drawBox(p.x*resX,(p.y+ln)*resY,maxX()*resX,resY+(fontMarginY<<1));
           //setCursor(0,ln);
 	      }
 	      void clear() override {
@@ -70,13 +70,30 @@ www.r-site.net
 				void clear(idx_t panelNr) override {
 					const panel p=panels[panelNr];
 					setColor(bgColor,false,enabledStatus,false);
-					gfx.drawBox(p.x*resX,p.y*resY,p.w*resX,p.h*resY);
+					gfx.drawBox(p.x*resX,p.y*resY,p.w*resX,p.h*resY+(fontMarginY<<1));
 					//clear();
 					panels.nodes[panelNr]=NULL;
 				}
+				void box(idx_t panelNr,idx_t x,idx_t y,idx_t w=1,idx_t h=1,colorDefs c=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) override {
+					const panel p=panels[panelNr];
+					setColor(c,selected,stat,edit);
+					gfx.drawFrame((p.x+x)*resX,(p.y+y)*resY,w*resX,h*resY+(fontMarginY<<1));
+				}
+
+				void rect(idx_t panelNr,idx_t x,idx_t y,idx_t w=1,idx_t h=1,colorDefs c=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) override {
+					const panel p=panels[panelNr];
+					/*Serial.println();
+					Serial.print("U8GLib rect ");
+					Serial.print(x*resX);
+					Serial.print(",");
+					Serial.println(y*resY);*/
+					setColor(c,selected,stat,edit);
+					gfx.drawBox((p.x+x)*resX,(p.y+y-1)*resY,w*resX,h*resY+(fontMarginY<<1));
+				}
+
 	      void setCursor(idx_t x,idx_t y,idx_t panelNr=0) override {
 					const panel p=panels[panelNr];
-          gfx.setPrintPos((p.x+x)*resX,(p.y+y+1)*resY-fontMargin);
+          gfx.setPrintPos((p.x+x)*resX,(p.y+y+1)*resY-fontMarginY);
 	      }
 
 				void drawCursor(idx_t ln,bool selected,status stat,bool edit=false,idx_t panelNr=0) override {

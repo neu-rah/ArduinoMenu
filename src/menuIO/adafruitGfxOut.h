@@ -51,14 +51,14 @@ namespace Menu {
 					setColor(fgColor);
 				}
 
-				void box(idx_t pabelNr,idx_t x,idx_t y,idx_t w=1,idx_t h=1,colorDefs c=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) override {
+				void box(idx_t panelNr,idx_t x,idx_t y,idx_t w=1,idx_t h=1,colorDefs c=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) override {
 					const panel p=panels[panelNr];
-					gfx.drawRect(p.x*resX,p.y*resY,p.w*resX,p.h*resY,getColor(c,selected,stat,edit));
+					gfx.drawRect((p.x+x)*resX,(p.y+y)*resY,w*resX,h*resY,getColor(c,selected,stat,edit));
 				}
 
-				void rect(idx_t pabelNr,idx_t x,idx_t y,idx_t w=1,idx_t h=1,colorDefs c=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) override {
+				void rect(idx_t panelNr,idx_t x,idx_t y,idx_t w=1,idx_t h=1,colorDefs c=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) override {
 					const panel p=panels[panelNr];
-					gfx.fillRect(p.x*resX,p.y*resY,p.w*resX,p.h*resY,getColor(c,selected,stat,edit));
+					gfx.fillRect((p.x+x)*resX,(p.y+y)*resY,w*resX,h*resY,getColor(c,selected,stat,edit));
 				}
 
 				void clear(idx_t panelNr) override {

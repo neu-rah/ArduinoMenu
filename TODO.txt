@@ -1,5 +1,6 @@
 Arduino Menu Library
 
+- BUG: u8glib draw cause multiple draw on serial - detach output draws!
 - use multiple menus
 - check dynamic, if possible mixed
 + color enumeration at base level
@@ -29,8 +30,10 @@ Arduino Menu Library
 - custom field format (date/time)
 - sleepTask should be abandoned also with escape or by returning quit
 - sleepTask (with params) and returning void is interpreted as quit -> change it!
-- textField?
-    if so make it a submenu where text is a title and we navigate a pad/menu to choose letters and commands.
++ textField?
+    - if so make it a submenu where text is a title and we navigate a pad/menu to choose letters and commands.
+    + endup being a specific class with per character reusable validators
+    - need text cursor for monocrome gfx display! (u8glib)
 
 
 IDEA: generic input:

@@ -102,7 +102,7 @@ CHOOSE(chooseTest,chooseMenu,"Choose",doNothing,noEvent,noStyle
 class altPrompt:public prompt {
 public:
   altPrompt(constMEM promptShadow& p):prompt(p) {}
-  idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) override {
+  idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr) override {
     return out.printRaw("special prompt!",len);;
   }
 };
@@ -134,7 +134,7 @@ char* const hexNr[] PROGMEM={"0","x",hexDigit,hexDigit};
 char buf1[]="0x11";
 
 MENU(mainMenu,"Main menu",zZz,noEvent,wrapStyle
-  ,OP("Op1",action1,anyEvent)
+/*  ,OP("Op1",action1,anyEvent)
   ,OP("Op2",action2,enterEvent)
   ,FIELD(test,"Test","%",0,100,10,1,doNothing,noEvent,wrapStyle)
   ,SUBMENU(subMenu)
@@ -143,9 +143,9 @@ MENU(mainMenu,"Main menu",zZz,noEvent,wrapStyle
   ,OP("LED Off",ledOff,enterEvent)
   ,SUBMENU(selMenu)
   ,SUBMENU(chooseMenu)
-  ,OP("Alert test",doAlert,enterEvent)
-  ,EDIT("Hex",buf1,hexNr,doNothing,noEvent,noStyle)
+  ,OP("Alert test",doAlert,enterEvent)*/
   ,EXIT("<Back")
+  ,EDIT("Hex",buf1,hexNr,doNothing,noEvent,noStyle)
 );
 
 // define menu colors --------------------------------------------------------
@@ -173,7 +173,7 @@ Stream* inputsList[]={&encStream,&encButton,&Serial};
 chainStream<3> in(inputsList);//3 is the number of inputs
 
 #define fontX 6
-#define fontY 8
+#define fontY 10
 #define MAX_DEPTH 2
 
 /*const panel serial_panels[] MEMMODE={{0,0,40,10}};
@@ -215,23 +215,33 @@ void setup() {
   Serial.begin(9600);
   while(!Serial);
   nav.idleTask=idle;//point a function to be used when menu is suspended
-  mainMenu[1].enabled=disabledStatus;
+  //mainMenu[1].enabled=disabledStatus;
 
   pinMode(encBtn, INPUT_PULLUP);
   encButton.begin();
   encoder.begin();
 
   //u8g.setFont(u8g_font_helvR08);
-  //u8g.setFont(u8g_font_6x10);
-  u8g.setFont(u8g_font_04b_03r);
+  u8g.setFont(u8g_font_6x10);
+  //u8g.setFont(u8g_font_04b_03r);
   u8g.firstPage();
   do {
+    u8g.setColorIndex(1);
+    /*u8g.drawFrame(0,0,84,48);
+    for(int n=0;n<5;n++)
+      nav.out[0].rect(0,n,n,1,1,bgColor,true);*/
     nav.out[0].setCursor(0,0);
     nav.out[0].print(F("Menu 3.x test"));
     nav.out[0].setCursor(0,1);
     nav.out[0].print(F("on U8Glib"));
   } while(u8g.nextPage());
   delay(1000);
+  u8g.firstPage();
+  do {
+    nav.out[0].clearLine(0,0,bgColor,true);
+  } while(u8g.nextPage());
+  delay(1000);
+  //while(digitalRead(4));
   //nav.sleepTask=alert;
 }
 
@@ -243,6 +253,11 @@ void loop() {
     do {
       nav.doOutput();
       digitalWrite(LEDPIN, ledCtrl);
+      u8g.drawFrame(0,0,84,48);
+      // for(int r=0;r<84;r+=fontX)
+      //   u8g.drawVLine(r,0,48);
+      // for(int c=0;c<48;c+=fontY)
+      //   u8g.drawHLine(0,c,84);
     } while( u8g.nextPage() );
   }
   delay(100);//simulate a delay when other tasks are running
