@@ -1,11 +1,13 @@
 #include <Arduino.h>
+#include <Streaming.h>
 
 /********************
 Arduino generic menu system
-U8GLib menu example
-U8Glib: https://github.com/olikraus/U8glib_Arduino
+U8G2 menu example
+U8G2: https://github.com/olikraus/u8g2
 
-Jul.2016 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
+Oct. 2016 Stephen Denne https://github.com/datacute
+Based on example from Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
 Original from: https://github.com/christophepersoz
 creative commons license 3.0: Attribution-ShareAlike CC BY-SA
 This software is furnished "as is", without technical support, and with no
@@ -14,34 +16,29 @@ warranty, express or implied, as to its usefulness for any purpose.
 Thread Safe: No
 Extensible: Yes
 
-menu on U8GLib device
-output: Nokia 5110 display (PCD8544 HW SPI) + Serial
-input: Serial + encoder
+menu on U8G2 device
+output: Wemos D1 mini OLED Shield (SSD1306 64x48 I2C) + Serial
+input: Serial
+platform: espressif8266
 
 */
 
-#include <U8glib.h>
+#ifdef ESP8266
+  #define typeof(x) __typeof__(x)
+  #include <SPI.h>
+  #include <Wire.h>
+#endif
+
 #include <menu.h>
-#include <menuIO/encoderIn.h>
-#include <menuIO/keyIn.h>
 #include <menuIO/chainStream.h>
 #include <menuIO/serialOut.h>
-#include <menuIO/U8GLibOut.h>
+#include <menuIO/u8g2Out.h>
 
 using namespace Menu;
 
-#define LEDPIN A3
+#define LEDPIN LED_BUILTIN
 
-// rotary encoder pins
-#define encA    2
-#define encB    3
-#define encBtn  4
-
-#define U8_DC 9
-#define U8_CS 8
-#define U8_RST 7
-
-U8GLIB_PCD8544 u8g(U8_CS, U8_DC, U8_RST) ;
+U8G2_SSD1306_128X64_NONAME_F_SW_I2C u8g2(U8G2_R0, SCL, SDA);
 
 result zZz() {Serial.println("zZz");return proceed;}
 
@@ -66,14 +63,14 @@ result action2(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out
   return quit;
 }
 
-int ledCtrl=LOW;
+int ledCtrl=HIGH;
 
 result ledOn() {
-  ledCtrl=HIGH;
+  ledCtrl=LOW;
   return proceed;
 }
 result ledOff() {
-  ledCtrl=LOW;
+  ledCtrl=HIGH;
   return proceed;
 }
 
@@ -129,11 +126,7 @@ result doAlert(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out
   return proceed;
 }
 
-char* const hexDigit PROGMEM="0123456789ABCDEF";
-char* const hexNr[] PROGMEM={"0","x",hexDigit,hexDigit};
-char buf1[]="0x11";
-
-MENU(mainMenu,"Main menu",zZz,noEvent,wrapStyle
+MENU(mainMenu,"Main menu",zZz,noEvent,noStyle
   ,OP("Op1",action1,anyEvent)
   ,OP("Op2",action2,enterEvent)
   ,FIELD(test,"Test","%",0,100,10,1,doNothing,noEvent,wrapStyle)
@@ -144,7 +137,6 @@ MENU(mainMenu,"Main menu",zZz,noEvent,wrapStyle
   ,SUBMENU(selMenu)
   ,SUBMENU(chooseMenu)
   ,OP("Alert test",doAlert,enterEvent)
-  ,EDIT("Hex",buf1,hexNr,doNothing,noEvent,noStyle)
   ,EXIT("<Back")
 );
 
@@ -155,25 +147,20 @@ MENU(mainMenu,"Main menu",zZz,noEvent,wrapStyle
 const colorDef<uint8_t> colors[] MEMMODE={
   {{0,0},{0,1,1}},//bgColor
   {{1,1},{1,0,0}},//fgColor
-  {{1,1},{1,0,0}},//valColor
+  {{1,0},{1,0,0}},//valColor
   {{1,1},{1,0,0}},//unitColor
   {{0,1},{0,0,1}},//cursorColor
   {{0,0},{1,1,1}},//titleColor
 };
 
-encoderIn<encA,encB> encoder;//simple quad encoder driver
-encoderInStream<encA,encB> encStream(encoder,4);// simple quad encoder fake Stream
+Stream* inputsList[]={&Serial};
+chainStream<1> in(inputsList);//1 is the number of inputs
 
-//a keyboard with only one key as the encoder button
-keyMap encBtn_map[]={{-encBtn,options->getCmdChar(enterCmd)}};//negative pin numbers use internal pull-up, on = low
-keyIn<1> encButton(encBtn_map);//1 is the number of keys
-
-//input from the encoder + encoder button + serial
-Stream* inputsList[]={&encStream,&encButton,&Serial};
-chainStream<3> in(inputsList);//3 is the number of inputs
-
-#define fontX 6
-#define fontY 9
+#define fontName u8g2_font_5x7_tf
+#define fontX 5
+#define fontY 8
+#define offsetX 32
+#define offsetY 16
 #define MAX_DEPTH 2
 
 /*const panel serial_panels[] MEMMODE={{0,0,40,10}};
@@ -193,11 +180,11 @@ outputsList out(outputs,2);*/
 
 //this macro replaces all the above commented lines
 MENU_OUTPUTS(out,MAX_DEPTH
-  ,U8GLIB_OUT(u8g,colors,fontX,fontY,{0,0,84/fontX,48/fontY})
+  ,U8G2_OUT(u8g2,colors,fontX,fontY,offsetX,offsetY,{0,0,64/fontX,48/fontY})
   ,SERIAL_OUT(Serial)
 );
 
-NAVROOT(nav,mainMenu,MAX_DEPTH,in,out);
+NAVROOT(nav,mainMenu,MAX_DEPTH,Serial,out);
 
 //when menu is suspended
 result idle(menuOut& o,idleEvent e) {
@@ -214,48 +201,24 @@ void setup() {
   pinMode(LEDPIN,OUTPUT);
   Serial.begin(9600);
   while(!Serial);
+  Serial.println("menu 3.0 test");Serial.flush();
+  u8g2_SetI2CAddress(u8g2.getU8g2(), 0x3d*2);
+  u8g2.begin();
+  u8g2.setFont(fontName);
+
   nav.idleTask=idle;//point a function to be used when menu is suspended
   mainMenu[1].enabled=disabledStatus;
-
-  pinMode(encBtn, INPUT_PULLUP);
-  encButton.begin();
-  encoder.begin();
-
-  //u8g.setFont(u8g_font_helvR08);
-  u8g.setFont(u8g_font_6x10);
-  //u8g.setFont(u8g_font_04b_03r);
-  u8g.firstPage();
-  do {
-    u8g.setColorIndex(1);
-    nav.out[0].setCursor(0,0);
-    nav.out[0].print(F("Menu 3.x test"));
-    nav.out[0].setCursor(0,1);
-    nav.out[0].print(F("on U8Glib"));
-  } while(u8g.nextPage());
-  delay(1000);
-  /*u8g.firstPage();
-  do {
-    nav.out[0].clearLine(0,0,bgColor,true);
-  } while(u8g.nextPage());
-  delay(1000);*/
-  //while(digitalRead(4));
-  //nav.sleepTask=alert;
 }
 
 void loop() {
   nav.doInput();
   if (nav.changed(0)) {//only draw if menu changed for gfx device
     //change checking leaves more time for other tasks
-    u8g.firstPage();
+    u8g2.firstPage();
     do {
       nav.doOutput();
       digitalWrite(LEDPIN, ledCtrl);
-      //u8g.drawFrame(0,0,84,48);
-      // for(int r=0;r<84;r+=fontX)
-      //   u8g.drawVLine(r,0,48);
-      // for(int c=0;c<48;c+=fontY)
-      //   u8g.drawHLine(0,c,84);
-    } while( u8g.nextPage() );
+    } while(u8g2.nextPage());
   }
   delay(100);//simulate a delay when other tasks are running
 }

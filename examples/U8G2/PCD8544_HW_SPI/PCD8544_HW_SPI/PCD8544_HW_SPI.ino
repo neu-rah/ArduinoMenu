@@ -17,9 +17,9 @@ Thread Safe: No
 Extensible: Yes
 
 menu on U8G2 device
-output: Wemos D1 mini OLED Shield (SSD1306 64x48 I2C) + Serial
+output: Nokia 5110 display (PCD8544 HW SPI) + Serial
 input: Serial
-platform: espressif8266
+MCU: Nano328p
 
 */
 
@@ -38,7 +38,11 @@ using namespace Menu;
 
 #define LEDPIN LED_BUILTIN
 
-U8G2_SSD1306_128X64_NONAME_F_SW_I2C u8g2(U8G2_R0, SCL, SDA);
+#define U8_DC 9
+#define U8_CS 8
+#define U8_RST 7
+
+U8G2_PCD8544_84X48_1_4W_HW_SPI u8g2(U8G2_R0, U8_CS, U8_DC , U8_RST);
 
 result zZz() {Serial.println("zZz");return proceed;}
 
@@ -99,7 +103,7 @@ CHOOSE(chooseTest,chooseMenu,"Choose",doNothing,noEvent,noStyle
 class altPrompt:public prompt {
 public:
   altPrompt(constMEM promptShadow& p):prompt(p) {}
-  idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) override {
+  idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr) override {
     return out.printRaw("special prompt!",len);;
   }
 };
@@ -126,6 +130,10 @@ result doAlert(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out
   return proceed;
 }
 
+char* const hexDigit PROGMEM="0123456789ABCDEF";
+char* const hexNr[] PROGMEM={"0","x",hexDigit,hexDigit};
+char buf1[]="0x11";
+
 MENU(mainMenu,"Main menu",zZz,noEvent,noStyle
   ,OP("Op1",action1,anyEvent)
   ,OP("Op2",action2,enterEvent)
@@ -137,6 +145,7 @@ MENU(mainMenu,"Main menu",zZz,noEvent,noStyle
   ,SUBMENU(selMenu)
   ,SUBMENU(chooseMenu)
   ,OP("Alert test",doAlert,enterEvent)
+  ,EDIT("Hex",buf1,hexNr,doNothing,noEvent,noStyle)
   ,EXIT("<Back")
 );
 
@@ -147,7 +156,7 @@ MENU(mainMenu,"Main menu",zZz,noEvent,noStyle
 const colorDef<uint8_t> colors[] MEMMODE={
   {{0,0},{0,1,1}},//bgColor
   {{1,1},{1,0,0}},//fgColor
-  {{1,0},{1,0,0}},//valColor
+  {{1,1},{1,0,0}},//valColor
   {{1,1},{1,0,0}},//unitColor
   {{0,1},{0,0,1}},//cursorColor
   {{0,0},{1,1,1}},//titleColor
@@ -158,9 +167,9 @@ chainStream<1> in(inputsList);//1 is the number of inputs
 
 #define fontName u8g2_font_5x7_tf
 #define fontX 5
-#define fontY 8
-#define offsetX 32
-#define offsetY 16
+#define fontY 10
+#define offsetX 0
+#define offsetY 0
 #define MAX_DEPTH 2
 
 /*const panel serial_panels[] MEMMODE={{0,0,40,10}};
@@ -180,7 +189,7 @@ outputsList out(outputs,2);*/
 
 //this macro replaces all the above commented lines
 MENU_OUTPUTS(out,MAX_DEPTH
-  ,U8G2_OUT(u8g2,colors,fontX,fontY,offsetX,offsetY,{0,0,64/fontX,48/fontY})
+  ,U8G2_OUT(u8g2,colors,fontX,fontY,offsetX,offsetY,{0,0,84/fontX,48/fontY})
   ,SERIAL_OUT(Serial)
 );
 
@@ -199,10 +208,9 @@ result idle(menuOut& o,idleEvent e) {
 
 void setup() {
   pinMode(LEDPIN,OUTPUT);
-  Serial.begin(115200);
+  Serial.begin(9600);
   while(!Serial);
   Serial.println("menu 3.0 test");Serial.flush();
-  u8g2_SetI2CAddress(u8g2.getU8g2(), 0x3d*2);
   u8g2.begin();
   u8g2.setFont(fontName);
 

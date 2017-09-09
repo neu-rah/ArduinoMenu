@@ -37,6 +37,9 @@ www.r-site.net
 					idx_t resY=9
 				) :gfxOut(resX,resY,t,p,menuOut::redraw),gfx(gfx),colors(c) {
 	        	gfx.setFontPosBottom(); // U8Glib font positioning
+						//gfx.setFontPosTop();
+						//gfx.setFontPosCenter();
+						//gfx.setFontPosBaseline();
 	      }
 
 				size_t write(uint8_t ch) override {
@@ -59,7 +62,7 @@ www.r-site.net
 				void clearLine(idx_t ln,idx_t panelNr=0,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) override {
 					const panel p=panels[panelNr];
 					setColor(color,selected,stat,edit);
-					gfx.drawBox(p.x*resX,(p.y+ln)*resY,maxX()*resX,resY+(fontMarginY<<1));
+					gfx.drawBox(p.x*resX,(p.y+ln)*resY,maxX()*resX,resY/*+(fontMarginY<<1)*/);
           //setCursor(0,ln);
 	      }
 	      void clear() override {
@@ -70,25 +73,20 @@ www.r-site.net
 				void clear(idx_t panelNr) override {
 					const panel p=panels[panelNr];
 					setColor(bgColor,false,enabledStatus,false);
-					gfx.drawBox(p.x*resX,p.y*resY,p.w*resX,p.h*resY+(fontMarginY<<1));
+					gfx.drawBox(p.x*resX,p.y*resY,p.w*resX,p.h*resY/*+(fontMarginY<<1)*/);
 					//clear();
 					panels.nodes[panelNr]=NULL;
 				}
 				void box(idx_t panelNr,idx_t x,idx_t y,idx_t w=1,idx_t h=1,colorDefs c=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) override {
 					const panel p=panels[panelNr];
 					setColor(c,selected,stat,edit);
-					gfx.drawFrame((p.x+x)*resX,(p.y+y)*resY,w*resX,h*resY+(fontMarginY<<1));
+					gfx.drawFrame((p.x+x)*resX,(p.y+y)*resY,w*resX,h*resY/*+(fontMarginY<<1)*/);
 				}
 
 				void rect(idx_t panelNr,idx_t x,idx_t y,idx_t w=1,idx_t h=1,colorDefs c=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) override {
 					const panel p=panels[panelNr];
-					/*Serial.println();
-					Serial.print("U8GLib rect ");
-					Serial.print(x*resX);
-					Serial.print(",");
-					Serial.println(y*resY);*/
 					setColor(c,selected,stat,edit);
-					gfx.drawBox((p.x+x)*resX,(p.y+y-1)*resY,w*resX,h*resY+(fontMarginY<<1));
+					gfx.drawBox((p.x+x)*resX,(p.y+y-1)*resY,w*resX,h*resY/*+(fontMarginY<<1)*/);
 				}
 
 	      void setCursor(idx_t x,idx_t y,idx_t panelNr=0) override {
@@ -99,8 +97,10 @@ www.r-site.net
 				void drawCursor(idx_t ln,bool selected,status stat,bool edit=false,idx_t panelNr=0) override {
 					const panel p=panels[panelNr];
 					gfxOut::drawCursor(ln,selected,stat);
-					setColor(cursorColor,selected,stat);
-					gfx.drawFrame(p.x*resX,(p.y+ln)*resY,maxX()*resX,resY);
+					if (stat==disabledStatus) {
+						setColor(cursorColor,selected,stat);
+						gfx.drawFrame(p.x*resX,(p.y+ln)*resY,maxX()*resX,resY/*+(fontMarginY<<1)*/);
+					}
 				}
   	};
 }

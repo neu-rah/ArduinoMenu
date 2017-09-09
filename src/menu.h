@@ -470,10 +470,8 @@ for correcting unsigned values validation
         idx_t resX=1;
         idx_t resY=1;
         idx_t fontMarginY=1;//in pixels, compensate vertical font alignment
-        gfxOut(idx_t rx,idx_t ry,idx_t* t,panelsList &p,menuOut::styles st=menuOut::minimalRedraw,idx_t fontMargin=1)
-          :menuOut(t,p,st),resX(rx),resY(ry) {
-            resY+=fontMarginY<<1;
-          }
+        gfxOut(idx_t rx,idx_t ry,idx_t* t,panelsList &p,menuOut::styles st=menuOut::minimalRedraw,idx_t fontMarginY=1)
+          :menuOut(t,p,st),resX(rx),resY(ry) {}
         idx_t startCursor(navRoot& root,idx_t x,idx_t y,bool charEdit,idx_t panelNr) override {
           //rect(panelNr,  x,  y, 2, 2, bgColor, true, enabledStatus, false);
           if (!charEdit)

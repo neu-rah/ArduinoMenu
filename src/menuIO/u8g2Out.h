@@ -25,7 +25,7 @@ namespace Menu {
 	class u8g2Out:public gfxOut {
 		public:
 			U8G2& gfx;
-			//int8_t fontMargin=1;
+			//int8_t fontMarginY=1;
 			int8_t offsetX=0;
 			int8_t offsetY=0;
 			const colorDef<uint8_t> (&colors)[nColors];
@@ -46,7 +46,7 @@ namespace Menu {
 
 			size_t write(uint8_t ch) override {
 				switch(ch) {//fix u8g2 not respecting \n\r... add \t if you wish
-					case '\n': gfx.ty = gfx.ty+resY-fontMargin;break;
+					case '\n': gfx.ty = gfx.ty+resY-fontMarginY;break;
 					case '\r': gfx.tx = offsetX;break;
 					default:
 						{
@@ -68,7 +68,7 @@ namespace Menu {
 			void clearLine(idx_t ln,idx_t panelNr=0,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) override {
 				const panel p=panels[panelNr];
 				setColor(color,selected,stat,edit);
-				gfx.drawBox(p.x*resX + offsetX - 1,(p.y+ln)*resY + offsetY - fontMargin,maxX()*resX + fontMargin + fontMargin,resY + fontMargin + fontMargin);
+				gfx.drawBox(p.x*resX + offsetX - 1,(p.y+ln)*resY + offsetY /*- fontMarginY*/,maxX()*resX /*+ fontMarginY*/ /*+ fontMarginY*/,resY /*+ fontMarginY*/ /*+ fontMarginY*/);
 				//setCursor(0,ln);
 			}
 			void clear() override {
@@ -83,17 +83,29 @@ namespace Menu {
 				//clear();
 				panels.nodes[panelNr]=NULL;
 			}
+			void box(idx_t panelNr,idx_t x,idx_t y,idx_t w=1,idx_t h=1,colorDefs c=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) override {
+				const panel p=panels[panelNr];
+				setColor(c,selected,stat,edit);
+				gfx.drawFrame((p.x+x)*resX,(p.y+y)*resY,w*resX,h*resY/*+(fontMarginY<<1)*/);
+			}
+
+			void rect(idx_t panelNr,idx_t x,idx_t y,idx_t w=1,idx_t h=1,colorDefs c=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) override {
+				const panel p=panels[panelNr];
+				setColor(c,selected,stat,edit);
+				gfx.drawBox((p.x+x)*resX,(p.y+y-1)*resY,w*resX,h*resY/*+(fontMarginY<<1)*/);
+			}
+
 			void setCursor(idx_t x,idx_t y,idx_t panelNr=0) override {
 				const panel p=panels[panelNr];
 				gfx.tx = (p.x+x)*resX + offsetX;
-				gfx.ty = (p.y+y+1)*resY-fontMargin + offsetY;
+				gfx.ty = (p.y+y+1)*resY-fontMarginY + offsetY;
 			}
 
 			void drawCursor(idx_t ln,bool selected,status stat,bool edit=false,idx_t panelNr=0) override {
 				const panel p=panels[panelNr];
 				gfxOut::drawCursor(ln,selected,stat);
 				setColor(cursorColor,selected,stat);
-				gfx.drawFrame(p.x*resX + offsetX - fontMargin,(p.y+ln)*resY + offsetY - fontMargin,maxX()*resX + fontMargin + fontMargin,resY + fontMargin + fontMargin);
+				gfx.drawFrame(p.x*resX + offsetX /*- fontMarginY*/,(p.y+ln)*resY + offsetY /*- fontMarginY*/,maxX()*resX /*+ fontMarginY*/ /*+ fontMarginY*/,resY /*+ fontMarginY*/ /*+ fontMarginY*/);
 			}
 	};
 }
