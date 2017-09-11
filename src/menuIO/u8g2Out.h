@@ -85,13 +85,11 @@ namespace Menu {
 			}
 			void box(idx_t panelNr,idx_t x,idx_t y,idx_t w=1,idx_t h=1,colorDefs c=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) override {
 				const panel p=panels[panelNr];
-				setColor(c,selected,stat,edit);
-				gfx.drawFrame((p.x+x)*resX,(p.y+y)*resY,w*resX,h*resY/*+(fontMarginY<<1)*/);
+				gfx.drawFrame((p.x+x)*resX,(p.y+y-1)*resY,w*resX,h*resY/*+(fontMarginY<<1)*/);
 			}
 
 			void rect(idx_t panelNr,idx_t x,idx_t y,idx_t w=1,idx_t h=1,colorDefs c=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) override {
 				const panel p=panels[panelNr];
-				setColor(c,selected,stat,edit);
 				gfx.drawBox((p.x+x)*resX,(p.y+y-1)*resY,w*resX,h*resY/*+(fontMarginY<<1)*/);
 			}
 

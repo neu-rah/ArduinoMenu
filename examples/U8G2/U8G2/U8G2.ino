@@ -17,9 +17,9 @@ Thread Safe: No
 Extensible: Yes
 
 menu on U8G2 device
-output: Nokia 5110 display (PCD8544 HW SPI) + Serial
+output: Wemos D1 mini OLED Shield (SSD1306 64x48 I2C) + Serial
 input: Serial
-MCU: Nano328p
+mcu: nano328p
 
 */
 
@@ -38,13 +38,51 @@ using namespace Menu;
 
 #define LEDPIN LED_BUILTIN
 
-#define U8_DC 9
-#define U8_CS 8
-#define U8_RST 7
+#define U8G2OUT PCD8544
+// #define U8G2OUT SSD1306
 
-U8G2_PCD8544_84X48_1_4W_HW_SPI u8g2(U8G2_R0, U8_CS, U8_DC , U8_RST);
+#ifndef U8G2OUT
+  #error U8G2OUT not defined! edit the scketch to choose one.
+#elif (U8G2OUT==PCD8544)
+  #include <SPI.h>
+  #define USE_HWSPI
+  #define U8_DC 9
+  #define U8_CS 8
+  #define U8_RST 7
+  #define fontName u8g2_font_5x7_tf
+  #define fontX 5
+  #define fontY 10
+  #define offsetX 0
+  #define offsetY 0
+  #define U8_Width 85
+  #define U8_Height 49
+  U8G2_PCD8544_84X48_1_4W_HW_SPI u8g2(U8G2_R0, U8_CS, U8_DC , U8_RST);
+#elif (U8G2OUT==SSD1306)
+  #include <Wire.h>
+  #define fontName u8g2_font_5x7_tf
+  #define fontX 5
+  #define fontY 8
+  #define offsetX 0
+  #define offsetY 0
+  #define offsetX 32
+  #define offsetY 16
+  #define U8_Width 64
+  #define U8_Height 48
+  U8G2_SSD1306_128X64_NONAME_F_SW_I2C u8g2(U8G2_R0, SCL, SDA);
+#endif
 
-result zZz() {Serial.println("zZz");return proceed;}
+// define menu colors --------------------------------------------------------
+//each color is in the format:
+//  {{disabled normal,disabled selected},{enabled normal,enabled selected, enabled editing}}
+// this is a monochromatic color table
+const colorDef<uint8_t> colors[] MEMMODE={
+  {{0,0},{0,1,1}},//bgColor
+  {{1,1},{1,0,0}},//fgColor
+  {{1,1},{1,0,0}},//valColor
+  {{1,1},{1,0,0}},//unitColor
+  {{0,1},{0,0,1}},//cursorColor
+  {{0,0},{1,1,1}},//titleColor
+};
 
 result showEvent(eventMask e,navNode& nav,prompt& item) {
   Serial.print("event: ");
@@ -134,7 +172,7 @@ char* const hexDigit PROGMEM="0123456789ABCDEF";
 char* const hexNr[] PROGMEM={"0","x",hexDigit,hexDigit};
 char buf1[]="0x11";
 
-MENU(mainMenu,"Main menu",zZz,noEvent,noStyle
+MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,OP("Op1",action1,anyEvent)
   ,OP("Op2",action2,enterEvent)
   ,FIELD(test,"Test","%",0,100,10,1,doNothing,noEvent,wrapStyle)
@@ -149,27 +187,9 @@ MENU(mainMenu,"Main menu",zZz,noEvent,noStyle
   ,EXIT("<Back")
 );
 
-// define menu colors --------------------------------------------------------
-//each color is in the format:
-//  {{disabled normal,disabled selected},{enabled normal,enabled selected, enabled editing}}
-// this is a monochromatic color table
-const colorDef<uint8_t> colors[] MEMMODE={
-  {{0,0},{0,1,1}},//bgColor
-  {{1,1},{1,0,0}},//fgColor
-  {{1,1},{1,0,0}},//valColor
-  {{1,1},{1,0,0}},//unitColor
-  {{0,1},{0,0,1}},//cursorColor
-  {{0,0},{1,1,1}},//titleColor
-};
-
 Stream* inputsList[]={&Serial};
 chainStream<1> in(inputsList);//1 is the number of inputs
 
-#define fontName u8g2_font_5x7_tf
-#define fontX 5
-#define fontY 10
-#define offsetX 0
-#define offsetY 0
 #define MAX_DEPTH 2
 
 /*const panel serial_panels[] MEMMODE={{0,0,40,10}};
@@ -189,7 +209,7 @@ outputsList out(outputs,2);*/
 
 //this macro replaces all the above commented lines
 MENU_OUTPUTS(out,MAX_DEPTH
-  ,U8G2_OUT(u8g2,colors,fontX,fontY,offsetX,offsetY,{0,0,84/fontX,48/fontY})
+  ,U8G2_OUT(u8g2,colors,fontX,fontY,offsetX,offsetY,{0,0,U8_Width/fontX,U8_Height/fontY})
   ,SERIAL_OUT(Serial)
 );
 
@@ -211,11 +231,19 @@ void setup() {
   Serial.begin(9600);
   while(!Serial);
   Serial.println("menu 3.0 test");Serial.flush();
+  #ifdef USE_HWSPI
+    SPI.begin();
+  #endif
+  #ifdef USE_HWI2C
+    u8g2_SetI2CAddress(u8g2.getU8g2(), 0x3d*2);
+  #endif
   u8g2.begin();
   u8g2.setFont(fontName);
 
-  nav.idleTask=idle;//point a function to be used when menu is suspended
+  //nav.idleTask=idle;//point a function to be used when menu is suspended
   mainMenu[1].enabled=disabledStatus;
+
+  u8g2.setFontMode(0);//enable transparent font
 }
 
 void loop() {

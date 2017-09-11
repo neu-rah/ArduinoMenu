@@ -473,10 +473,11 @@ for correcting unsigned values validation
         gfxOut(idx_t rx,idx_t ry,idx_t* t,panelsList &p,menuOut::styles st=menuOut::minimalRedraw,idx_t fontMarginY=1)
           :menuOut(t,p,st),resX(rx),resY(ry) {}
         idx_t startCursor(navRoot& root,idx_t x,idx_t y,bool charEdit,idx_t panelNr) override {
-          //rect(panelNr,  x,  y, 2, 2, bgColor, true, enabledStatus, false);
-          if (!charEdit)
+          if (charEdit) {
             rect(panelNr,  x,  y, 1, 1, bgColor, false, enabledStatus, false);
-          setColor(valColor,true,enabledStatus,true);
+            setColor(fgColor,false,enabledStatus,false);
+          } else
+            box(panelNr,  x,  y, 1, 1, bgColor, false, enabledStatus, false);
           return 0;
         }
         idx_t endCursor(navRoot& root,idx_t x,idx_t y,bool charEdit,idx_t panelNr) override {

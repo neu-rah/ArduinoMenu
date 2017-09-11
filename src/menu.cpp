@@ -116,11 +116,9 @@ idx_t textField::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t le
     l++;
   }
   idx_t c=l;
-  idx_t top=out.tops[root.level];
+  //idx_t top=out.tops[root.level];
   idx_t tit=root.showTitle?1:0;
   idx_t line=idx+tit;
-  // Serial<<"idx:"<<idx<<" top:"<<top<<" title:"<<tit<<endl;
-  // Serial<<"idx-top:"<<(idx-top)<<" idx+tit:"<<idx+tit<<endl;
   while(buffer()[at]&&l++<len)
     if (at==cursor&&editing) {
       c=l;
