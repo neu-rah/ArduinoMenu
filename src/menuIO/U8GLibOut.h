@@ -35,11 +35,8 @@ www.r-site.net
 					panelsList &p,
 					idx_t resX=6,
 					idx_t resY=9
-				) :gfxOut(resX,resY,t,p,menuOut::redraw),gfx(gfx),colors(c) {
+				) :gfxOut(resX,resY,t,p,menuOut::redraw|menuOut::rasterDraw),gfx(gfx),colors(c) {
 	        	gfx.setFontPosBottom(); // U8Glib font positioning
-						//gfx.setFontPosTop();
-						//gfx.setFontPosCenter();
-						//gfx.setFontPosBaseline();
 	      }
 
 				size_t write(uint8_t ch) override {
@@ -63,7 +60,6 @@ www.r-site.net
 					const panel p=panels[panelNr];
 					setColor(color,selected,stat,edit);
 					gfx.drawBox(p.x*resX,(p.y+ln)*resY,maxX()*resX,resY/*+(fontMarginY<<1)*/);
-          //setCursor(0,ln);
 	      }
 	      void clear() override {
 					setCursor(0,0);
@@ -74,7 +70,6 @@ www.r-site.net
 					const panel p=panels[panelNr];
 					setColor(bgColor,false,enabledStatus,false);
 					gfx.drawBox(p.x*resX,p.y*resY,p.w*resX,p.h*resY/*+(fontMarginY<<1)*/);
-					//clear();
 					panels.nodes[panelNr]=NULL;
 				}
 				void box(idx_t panelNr,idx_t x,idx_t y,idx_t w=1,idx_t h=1,colorDefs c=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) override {

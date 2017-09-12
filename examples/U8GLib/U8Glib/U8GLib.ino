@@ -43,8 +43,6 @@ using namespace Menu;
 
 U8GLIB_PCD8544 u8g(U8_CS, U8_DC, U8_RST) ;
 
-result zZz() {Serial.println("zZz");return proceed;}
-
 result showEvent(eventMask e,navNode& nav,prompt& item) {
   Serial.print("event: ");
   Serial.println(e);
@@ -77,7 +75,7 @@ result ledOff() {
   return proceed;
 }
 
-TOGGLE(ledCtrl,setLed,"Led: ",doNothing,noEvent,noStyle//,doExit,enterEvent,noStyle
+TOGGLE(ledCtrl,setLed,"Led: ",doNothing,noEvent,noStyle
   ,VALUE("On",HIGH,doNothing,noEvent)
   ,VALUE("Off",LOW,doNothing,noEvent)
 );
@@ -133,7 +131,7 @@ char* const hexDigit PROGMEM="0123456789ABCDEF";
 char* const hexNr[] PROGMEM={"0","x",hexDigit,hexDigit};
 char buf1[]="0x11";
 
-MENU(mainMenu,"Main menu",zZz,noEvent,wrapStyle
+MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,OP("Op1",action1,anyEvent)
   ,OP("Op2",action2,enterEvent)
   ,FIELD(test,"Test","%",0,100,10,1,doNothing,noEvent,wrapStyle)
@@ -172,24 +170,10 @@ keyIn<1> encButton(encBtn_map);//1 is the number of keys
 Stream* inputsList[]={&encStream,&encButton,&Serial};
 chainStream<3> in(inputsList);//3 is the number of inputs
 
+//fontY should now account for fontMarginY
 #define fontX 6
 #define fontY 9
 #define MAX_DEPTH 2
-
-/*const panel serial_panels[] MEMMODE={{0,0,40,10}};
-navNode* serial_nodes[sizeof(serial_panels)/sizeof(panel)];
-panelsList serial_pList(serial_panels,serial_nodes,sizeof(serial_panels)/sizeof(panel));
-idx_t serial_tops[MAX_DEPTH];
-serialOut outSerial(Serial,serial_tops,serial_pList);//the output device (just the serial port)
-
-const panel panels[] MEMMODE={{0,0,84/fontX,48/fontY}};
-navNode* nodes[sizeof(panels)/sizeof(panel)];
-panelsList pList(panels,nodes,sizeof(panels)/sizeof(panel));
-idx_t gfx_tops[MAX_DEPTH];
-u8gLibOut gfx(u8g,colors,gfx_tops,pList,fontX,fontY);
-
-menuOut* const outputs[] MEMMODE={&gfx,&outSerial};
-outputsList out(outputs,2);*/
 
 //this macro replaces all the above commented lines
 MENU_OUTPUTS(out,MAX_DEPTH
@@ -233,29 +217,15 @@ void setup() {
     nav.out[0].print(F("on U8Glib"));
   } while(u8g.nextPage());
   delay(1000);
-  /*u8g.firstPage();
-  do {
-    nav.out[0].clearLine(0,0,bgColor,true);
-  } while(u8g.nextPage());
-  delay(1000);*/
-  //while(digitalRead(4));
-  //nav.sleepTask=alert;
 }
 
 void loop() {
   nav.doInput();
+  digitalWrite(LEDPIN, ledCtrl);
   if (nav.changed(0)) {//only draw if menu changed for gfx device
-    //change checking leaves more time for other tasks
+    //because this code clears the screen, if always called then screen will blink
     u8g.firstPage();
-    do {
-      nav.doOutput();
-      digitalWrite(LEDPIN, ledCtrl);
-      //u8g.drawFrame(0,0,84,48);
-      // for(int r=0;r<84;r+=fontX)
-      //   u8g.drawVLine(r,0,48);
-      // for(int c=0;c<48;c+=fontY)
-      //   u8g.drawHLine(0,c,84);
-    } while( u8g.nextPage() );
+    do nav.doOutput(); while(u8g.nextPage());
   }
-  delay(100);//simulate a delay when other tasks are running
+  delay(100);//simulate other tasks delay
 }

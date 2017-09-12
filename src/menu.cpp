@@ -173,14 +173,34 @@ menuOut& menuOut::operator<<(const prompt& p) {
 }
 #endif
 
+void outputsList::printMenu(navNode& nav) const {
+  for(int n=0;n<cnt;n++) {
+    menuOut& o=*((menuOut*)memPtr(outs[n]));
+    //Serial<<endl;
+    //print_P(Serial,nav.target->getText());
+    //Serial<<" "<<n<<" changed: "<<nav.changed(o);
+    if (nav.changed(o)||(o.style&(menuOut::rasterDraw)))
+      o.printMenu(nav);
+  }
+  clearChanged(nav);
+  /*for(int n=0;n<cnt;n++) {
+    menuOut& o=*((menuOut*)memPtr(outs[n]));
+    Serial<<endl<<n<<" after: "<<nav.changed(o)<<endl;
+  }*/
+}
+
 void menuOut::clearChanged(navNode &nav) {
   //if (nav.target->dirty) Serial<<"clear dirty "<<*(prompt*)nav.target<<" sz:"<<nav.sz()<<endl;
   nav.target->dirty=false;
-  for(idx_t i=0;i<maxY();i++) {
-    if (i+tops[nav.root->level]>=nav.sz()) break;
-    //if (nav[i+top].dirty) Serial<<"clear sub dirty "<<nav[i+top]<<endl;
-    nav[i+tops[nav.root->level]].dirty=false;
+  //Serial<<"clearChanged ";
+  idx_t t=tops[nav.root->level];
+  for(idx_t i=0;i<maxY();i++,t++) {//only signal visible
+    //Serial<<"["<<t<<"]";
+    if (t>=nav.sz()) break;//menu ended
+    nav[t].dirty=false;
+    //Serial<<".";
   }
+  //Serial<<" "<<nav.target->dirty<<endl;
 }
 
 // draw a menu preview on a panel
@@ -352,9 +372,10 @@ navRoot* navNode::root=NULL;
 bool menuNode::changed(const navNode &nav,const menuOut& out,bool sub) {
   if (nav.target!=this) return dirty;
   if (dirty) return true;
-  if (sub) for(int i=0;i<out.maxY();i++) {
-    if (i+out.tops[nav.root->level]>=nav.sz()) break;
-    if (operator[](i+out.tops[nav.root->level]).changed(nav,out,false)) return true;
+  idx_t t=out.tops[nav.root->level];
+  if (sub) for(int i=0;i<out.maxY();i++,t++) {
+    if (t>=nav.sz()) break;
+    if (operator[](t).changed(nav,out,false)) return true;
   }
   return false;
 }
@@ -458,13 +479,12 @@ navCmd navNode::doNavigation(navCmd cmd) {
 }
 
 result navNode::event(eventMask e,idx_t i) {
-  //Serial<<endl<<"navNode::event:"<<e<<endl;
   prompt& p=operator[](i);
   eventMask m=p.events();
   eventMask me=(eventMask)(e&m);
   if (me) {
     return p(e,p);
-  } //else Serial<<"filtering out event "<<e<<endl;
+  }
   return proceed;
 }
 
@@ -481,7 +501,6 @@ void navRoot::doInput(Stream& in) {
 }
 
 void navRoot::doNav(navCmd cmd) {
-  //Serial<<"navRoot::doNav "<<cmd.cmd<<" sleepTask:"<<(!!sleepTask)<<endl;
   if (sleepTask&&cmd.cmd==enterCmd) idleOff();
   else if (!sleepTask) switch (cmd.cmd) {
     case scrlUpCmd:
@@ -489,33 +508,27 @@ void navRoot::doNav(navCmd cmd) {
       out.doNav(cmd,node());//scroll is perceived better at output device
       break;
     default:
-      //Serial<<"navFocus->doNav "<<cmd.param<<endl;
       navFocus->doNav(node(),cmd);
   }
 }
 
 
 result maxDepthError(menuOut& o,idleEvent e) {
-  //o<<F("Error: maxDepth reached!\n\rincrease maxDepth on your scketch.");
   o.print(F("Error: maxDepth reached!\n\rincrease maxDepth on your scketch."));
   return proceed;
 }
 
 navCmd navRoot::enter() {
-  //Serial<<"navRoot::enter "<<selected()<<endl;
   if (
     selected().enabled
     &&selected().sysHandler(activateEvent,node(),selected())==proceed
   ) {
-    //Serial<<"sysHandler allowed activate"<<endl;
     prompt& sel=selected();
     bool canNav=sel.canNav();
     bool isMenu=sel.isMenu();
     result go=node().event(enterEvent);//item event sent here
-    //Serial<<"enterEvent returned "<<go<<" isMenu:"<<isMenu<<" canNav:"<<canNav<<endl;
     navCmd rCmd=enterCmd;
     if (go==proceed&&isMenu&&canNav) {
-      //Serial<<"proceeding..."<<endl;
       if (level<maxDepth) {
         active().dirty=true;
         menuNode* dest=(menuNode*)&selected();
@@ -540,7 +553,6 @@ navCmd navRoot::enter() {
 }
 
 navCmd navRoot::exit() {
-  //node().event(exitEvent,node().sel);
   navFocus->dirty=true;
   if (navFocus->isMenu()) {
     if (level) {

@@ -68,8 +68,6 @@ for correcting unsigned values validation
         }
         virtual classes type() const {return promptClass;}
         inline prompt(constMEM promptShadow& shadow):shadow(&shadow) {}
-        // inline prompt(constMEM char* t,action a=doNothing,eventMask e=noEvent,styles s=noStyle,systemStyles ss=_noStyle)
-        //   :shadow(&promptShadow(t,a,e,s,ss)) {}
         inline void enable() {enabled=enabledStatus;}
         inline void disable() {enabled=disabledStatus;}
         inline const char* getText() const {return shadow->getText();}
@@ -118,7 +116,6 @@ for correcting unsigned values validation
     //--------------------------------------------------------------------------
     class textField:public navTarget {
     public:
-      //char* text;
       // int hash=0;//not implemented yet
       bool charEdit=false;
       bool edited=false;
@@ -248,38 +245,31 @@ for correcting unsigned values validation
         idx_t reflex;
         menuVariant(constMEM menuNodeShadow& s):menuVariantBase(s) {}
         idx_t sync() override {
-          //menuVariantShadow<T>& s=*(menuVariantShadow<T>*)shadow;
-          for(idx_t i=0;i<sz();i++) {
-            if (((menuValue<T>*)&operator[](i))->target()==target()) {
-              dirty=true;
-              return i;
-            }
-          }
+          for(idx_t i=0;i<sz();i++)
+            if (((menuValue<T>*)&operator[](i))->target()==target()) return i;
           #ifdef DEBUG
-          Serial.print(F("value out of range "));
-          Serial.println(target());Serial.flush();
-          assert(false);
+            Serial.print(F("value out of range "));
+            Serial.println(target());Serial.flush();
+            assert(false);
           #endif
           return -1;
         }
         idx_t sync(idx_t i) override {
-          //menuVariantShadow<T>& s=*(menuVariantShadow<T>*)shadow;
           #ifdef DEBUG
-          if (!(i>=0&&i<sz())){
-            print_P(Serial,getText());
-            Serial.print(F(" : value out of range "));
-            Serial.println(i);
-          }
-          assert(i>=0&&i<sz());
+            if (!(i>=0&&i<sz())){
+              print_P(Serial,getText());
+              Serial.print(F(" : value out of range "));
+              Serial.println(i);
+            }
+            assert(i>=0&&i<sz());
           #endif
+          if (i!=reflex) dirty=true;
           reflex=i;
           target()=((menuValue<T>*)&operator[](i))->target();
           return i;
         }
         inline T& target() const {return ((menuVariantShadow<T>*)shadow)->target();}
         bool changed(const navNode &nav,const menuOut& out,bool sub=true) override;
-        //void parseInput(navNode& nav,Stream& in) override;
-        //idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) override;
         virtual idx_t selected() const {return reflex;}
     };
 
@@ -296,11 +286,9 @@ for correcting unsigned values validation
         toggle(constMEM menuNodeShadow& s):menuVariant<T>(s) {}
         virtual classes type() const {return toggleClass;}
         idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr=0) override;
-        //bool canNav() const override {return false;}//can receive navigation focus and process keys
         result sysHandler(SYS_FUNC_PARAMS) override {
           switch(event) {
               case activateEvent: {
-              //menuNodeShadow& s=*(menuNodeShadow*)prompt::shadow;
               idx_t at=menuVariant<T>::sync();
               assert(at!=-1);
               at++;
@@ -312,7 +300,6 @@ for correcting unsigned values validation
             default:
               return proceed;
           }
-          //return proceed;
         }
     };
 
@@ -381,13 +368,9 @@ for correcting unsigned values validation
         panelsList& panels;
         idx_t lastSel=-1;
         //TODO: turn this bool's into bitfield flags
-        enum styles {none=0<<0,redraw=1<<0,minimalRedraw=1<<1, drawNumIndex=1<<2, usePreview=1<<3, expandEnums=1<<4} style;
+        enum styles {none=0<<0,redraw=1<<0,minimalRedraw=1<<1, drawNumIndex=1<<2, usePreview=1<<3, expandEnums=1<<4,rasterDraw=1<<5} style;
         enum fmtParts {fmtPanel,fmtTitle,fmtBody,fmtOp,fmtIdx,fmtCursor,fmtOpBody,fmtPreview,fmtPrompt,fmtField,fmtToggle,fmtSelect,fmtChoose,fmtUnit};
 
-        /*bool redraw=false;//redraw all menu every cycle, some display drivers require it
-        bool minimalRedraw=true;//redraw only changed options (avoids flicking on LCDS), not good for Serial
-        bool drawNumIndex=false;
-        bool usePreview=false;*/
         menuNode* drawn=NULL;
         menuOut(idx_t *topsList,panelsList &p,styles os=minimalRedraw)
           :tops(topsList),panels(p),style(os) {}
@@ -396,10 +379,10 @@ for correcting unsigned values validation
         inline idx_t& top(navNode& nav) const;
         idx_t printRaw(const char* at,idx_t len);
         #ifdef DEBUG
-        virtual menuOut& operator<<(prompt const &p);
-        #ifdef ESP8266
-        template<typename T> menuOut& operator<<(T o) {(*(Print*)this)<<(o);return *this;}
-        #endif
+          virtual menuOut& operator<<(prompt const &p);
+          #ifdef ESP8266
+            template<typename T> menuOut& operator<<(T o) {(*(Print*)this)<<(o);return *this;}
+          #endif
         #endif
         virtual menuOut& fill(
           int x1, int y1, int x2, int y2,char ch=' ',
@@ -432,6 +415,8 @@ for correcting unsigned values validation
       protected:
         void printMenu(navNode &nav,idx_t panelNr);
     };
+
+    //inline menuOut::styles operator | (menuOut::styles a, menuOut::styles b) {return (menuOut::styles)(a|b);}
 
     //for devices that can position a print cursor (like LCD's)
     class cursorOut:public menuOut {
@@ -497,12 +482,7 @@ for correcting unsigned values validation
           assert(i<cnt);
           return *(menuOut*)memPtr(outs[i]);
         }
-        void printMenu(navNode& nav) const {
-          for(int n=0;n<cnt;n++)
-            ((menuOut*)memPtr(outs[n]))->printMenu(nav);
-          clearChanged(nav);
-        }
-        //void alert(char *msg) const {for(int n=0;n<cnt;n++) ((menuOut*)memPtr(outs[n]))->alert(msg);}
+        void printMenu(navNode& nav) const;
         void clearLine(idx_t ln,idx_t panelNr=0,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus) const {
           for(int n=0;n<cnt;n++) ((menuOut*)memPtr(outs[n]))->clearLine(ln,panelNr,color,selected,stat);
         }
@@ -527,7 +507,6 @@ for correcting unsigned values validation
               case idleStart:
                 if ((*f)(o,e)==proceed) {
                   if (!(o.style&menuOut::redraw)) {
-                    //o.clear();//reset the coordinates and colors
                     result r=(*f)(o,idling);
                     if (r==quit) return r;
                   }
@@ -535,7 +514,6 @@ for correcting unsigned values validation
                 break;
               case idling:
                 if (o.style&menuOut::redraw) {
-                  //o.clear();//reset the coordinates and colors
                   result r=(*f)(o,e);
                   if (r==quit) return r;
                 }
@@ -569,19 +547,14 @@ for correcting unsigned values validation
         inline prompt* const * data() const {return target->data();}
         inline prompt& selected() const {return *(prompt*)memPtr(data()[sel]);}
         inline bool wrap() const {return target->style()&wrapStyle;}
-        /*inline result sysHandler(eventMask event, prompt &item, Stream &in, menuOut &out) const {
-          return target->sysHandler(event,*this,item,in,out);
-        }*/
         result event(eventMask e,idx_t i);//send event to item index i
         result event(eventMask e) {return event(e,sel);}//send event to current item
         result sysEvent(eventMask e,idx_t i);//send system event to item index i
         inline result sysEvent(eventMask e) {return sysEvent(e,sel);}//send event to current item
         navCmd navKeys(char ch);
-        //inline void doNav(navCmd cmd) {target->doNav(*this,cmd);}
         navCmd doNavigation(navCmd cmd);//aux function
         inline bool changed(const menuOut& out) const {return target->changed(*this,out);}
         inline prompt& operator[](idx_t i) const {return target->operator[](i);}
-        //inline void parseInput(Stream& in) {target->parseInput(*this,in);}
     };
 
     class navRoot {
@@ -591,19 +564,14 @@ for correcting unsigned values validation
         navNode* path;
         const idx_t maxDepth=0;
         idx_t level=0;
-        //bool suspended=false;
         bool showTitle=true;
-        //bool sleeping=false;//when sleeping poll will simply return
         idleFunc idleTask=inaction;//to do when menu exits
         idleFunc sleepTask=NULL;//user task suspending menu
         navTarget* navFocus=NULL;
         navRoot(menuNode& root,navNode* path,idx_t d,Stream& in,outputsList &o)
           :out(o),in(in),path(path),maxDepth(d) {
-            /*navFocus=&root;
-            path[0].target=&root;*/
             useMenu(root);
             navNode::root=this;
-            //for(int i=0;i<d;i++) path[i].root=this;
           }
         void useMenu(constMEM menuNode &menu) {
           navFocus=&menu;
@@ -619,10 +587,7 @@ for correcting unsigned values validation
         inline prompt& selected() const {return active()[node().sel];}
         inline bool changed(const menuOut& out) const {return node().changed(out);}
         inline bool changed(idx_t n) const {return node().changed(out[n]);}
-        //inline void parseInput(Stream& in) const {Serial<<"navRoot::parseInput"<<endl;;node().parseInput(in);}
         inline bool async(const char* at) {
-          //Serial<<*(prompt*)&active()<<" navRoot::async "<<at<<endl;Serial.flush();
-          //if (sleepTask) idleOff();
           navFocus=path[level].target;
           return active().async(at, *this, 0);
         }
@@ -649,17 +614,13 @@ for correcting unsigned values validation
         //menu IO - external iteration functions
         void doInput(Stream& in);
         inline void doInput(const char*in) {
-          //Serial<<"do in start"<<endl;Serial.flush();
           StringStream inStr(in);
           while(inStr.available()) doInput(inStr);
-          //Serial<<"do out end"<<endl;Serial.flush();
         }
         inline void doInput() {doInput(in);}
         inline void doOutput() {
-          //Serial<<"do out start"<<endl;Serial.flush();
           if (!sleepTask) printMenu();
           else out.idle(sleepTask,idling);
-          //Serial<<"do out end"<<endl;Serial.flush();
         }
         inline void poll() {doInput();doOutput();};//fire and forget mode
         void doNav(navCmd cmd);//fly by wire mode
@@ -679,7 +640,6 @@ for correcting unsigned values validation
           active().dirty=true;
           out.clear();
         }
-        //inline void alert(char *msg,bool modal=true) {out.alert(msg);}
     };
 
     ////////////////////////////////////////////////////////////////////////
@@ -688,7 +648,6 @@ for correcting unsigned values validation
 
     template<typename T>
     idx_t menuField<T>::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr) {
-      //menuFieldShadow<T>& s=*(menuFieldShadow<T>*)shadow;
       reflex=target();
       return fieldBase::printTo(root,sel,out,idx,len,panelNr);
     }
@@ -717,12 +676,6 @@ for correcting unsigned values validation
     idx_t toggle<T>::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr) {
       return menuVariantBase::togglePrintTo(root,sel,out,idx,len,panelNr);
     }
-
-/*    template<typename T>
-    idx_t menuVariant<T>::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) {
-      idx_t at=menuVariant<T>::sync(menuVariant<T>::sync());
-      return menuVariantBase::printTo(root,sel,out,idx,len);
-    }*/
 
     template<typename T>
     bool menuVariant<T>::changed(const navNode &nav,const menuOut& out,bool sub) {
