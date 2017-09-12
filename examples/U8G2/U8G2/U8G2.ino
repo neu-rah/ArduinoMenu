@@ -36,7 +36,8 @@ mcu: nano328p
 
 using namespace Menu;
 
-#define LEDPIN LED_BUILTIN
+// #define LEDPIN LED_BUILTIN
+#define LEDPIN A3
 
 #define U8G2OUT PCD8544
 // #define U8G2OUT SSD1306
@@ -51,11 +52,11 @@ using namespace Menu;
   #define U8_RST 7
   #define fontName u8g2_font_5x7_tf
   #define fontX 5
-  #define fontY 10
+  #define fontY 9
   #define offsetX 0
   #define offsetY 0
-  #define U8_Width 85
-  #define U8_Height 49
+  #define U8_Width 84
+  #define U8_Height 48
   U8G2_PCD8544_84X48_1_4W_HW_SPI u8g2(U8G2_R0, U8_CS, U8_DC , U8_RST);
 #elif (U8G2OUT==SSD1306)
   #include <Wire.h>
@@ -108,11 +109,11 @@ result action2(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out
 int ledCtrl=HIGH;
 
 result ledOn() {
-  ledCtrl=LOW;
+  ledCtrl=HIGH;
   return proceed;
 }
 result ledOff() {
-  ledCtrl=HIGH;
+  ledCtrl=LOW;
   return proceed;
 }
 
@@ -192,22 +193,6 @@ chainStream<1> in(inputsList);//1 is the number of inputs
 
 #define MAX_DEPTH 2
 
-/*const panel serial_panels[] MEMMODE={{0,0,40,10}};
-navNode* serial_nodes[sizeof(serial_panels)/sizeof(panel)];
-panelsList serial_pList(serial_panels,serial_nodes,sizeof(serial_panels)/sizeof(panel));
-idx_t serial_tops[MAX_DEPTH];
-serialOut outSerial(Serial,serial_tops,serial_pList);//the output device (just the serial port)
-
-const panel panels[] MEMMODE={{0,0,84/fontX,48/fontY}};
-navNode* nodes[sizeof(panels)/sizeof(panel)];
-panelsList pList(panels,nodes,sizeof(panels)/sizeof(panel));
-idx_t gfx_tops[MAX_DEPTH];
-u8gLibOut gfx(u8g,colors,gfx_tops,pList,fontX,fontY);
-
-menuOut* const outputs[] MEMMODE={&gfx,&outSerial};
-outputsList out(outputs,2);*/
-
-//this macro replaces all the above commented lines
 MENU_OUTPUTS(out,MAX_DEPTH
   ,U8G2_OUT(u8g2,colors,fontX,fontY,offsetX,offsetY,{0,0,U8_Width/fontX,U8_Height/fontY})
   ,SERIAL_OUT(Serial)
@@ -240,21 +225,18 @@ void setup() {
   u8g2.begin();
   u8g2.setFont(fontName);
 
-  //nav.idleTask=idle;//point a function to be used when menu is suspended
+  //disable second option
   mainMenu[1].enabled=disabledStatus;
-
-  u8g2.setFontMode(0);//enable transparent font
+  nav.idleTask=idle;//point a function to be used when menu is suspended
 }
 
 void loop() {
   nav.doInput();
+  digitalWrite(LEDPIN, ledCtrl);
   if (nav.changed(0)) {//only draw if menu changed for gfx device
     //change checking leaves more time for other tasks
     u8g2.firstPage();
-    do {
-      nav.doOutput();
-      digitalWrite(LEDPIN, ledCtrl);
-    } while(u8g2.nextPage());
+    do nav.doOutput(); while(u8g2.nextPage());
   }
-  delay(100);//simulate a delay when other tasks are running
+  delay(100);//simulate other tasks delay
 }
