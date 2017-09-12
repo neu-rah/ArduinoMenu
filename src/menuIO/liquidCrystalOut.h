@@ -3,7 +3,7 @@
 //for using standard arduino LiquidCrystal driver
 
 #ifndef RSITE_ARDUINO_MENU_LIQUIDCRYSTALOUT
-  #define RSITE_ARDUINO_MENU__LIQUIDCRYSTALOUT
+  #define RSITE_ARDUINO_MENU_LIQUIDCRYSTALOUT
   #include "../menu.h"
   #include <LiquidCrystal.h>
 
