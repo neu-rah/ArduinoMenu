@@ -416,7 +416,7 @@ for correcting unsigned values validation
         void printMenu(navNode &nav,idx_t panelNr);
     };
 
-    //inline menuOut::styles operator | (menuOut::styles a, menuOut::styles b) {return (menuOut::styles)(a|b);}
+    inline menuOut::styles operator | (menuOut::styles a, menuOut::styles b) {return (menuOut::styles)(a|b);}
 
     //for devices that can position a print cursor (like LCD's)
     class cursorOut:public menuOut {
