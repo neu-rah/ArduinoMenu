@@ -123,9 +123,9 @@ result idle(menuOut& o,idleEvent e) {
 
 void setup() {
   pinMode(LEDPIN,OUTPUT);
-  Serial.begin(115200);
+  Serial.begin(9600);
   while(!Serial);
-  Serial.println(F("menu 3.0 test"));
+  Serial.println(F("menu 3.x test"));
   Serial.flush();
   nav.idleTask=idle;//point a function to be used when menu is suspended
   //mainMenu[1].enabled=disabledStatus;
