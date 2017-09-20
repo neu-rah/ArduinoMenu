@@ -12,7 +12,7 @@
       public:
         Print& device;
         idx_t lastLine=-1;
-        inline serialOut(Print& o,idx_t* t,panelsList &p=default_serial_panel_list,menuOut::styles st=none)
+        inline serialOut(Print& o,idx_t* t,panelsList &p=default_serial_panel_list,menuOut::styles st=menuOut::none)
           :menuOut(t,p,(menuOut::styles)(st|menuOut::drawNumIndex)),device(o) {}
         void clear() override {
           println();

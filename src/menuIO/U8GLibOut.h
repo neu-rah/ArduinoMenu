@@ -35,7 +35,7 @@ www.r-site.net
 					panelsList &p,
 					idx_t resX=6,
 					idx_t resY=9
-				) :gfxOut(resX,resY,t,p,menuOut::redraw|menuOut::rasterDraw),gfx(gfx),colors(c) {
+				) :gfxOut(resX,resY,t,p,(menuOut::styles)(menuOut::redraw|menuOut::rasterDraw)),gfx(gfx),colors(c) {
 	        	gfx.setFontPosBottom(); // U8Glib font positioning
 	      }
 
