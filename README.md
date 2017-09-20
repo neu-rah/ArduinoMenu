@@ -154,6 +154,11 @@ Web browser (experimental) when using ESP devices
 
 ## History
 
+#### 4.0.0
+  - Added text edit fields with validation
+  - Added input busrst config option
+  - More examples
+
 #### 3.1.1
   - Plugins test
   - Text fields scratch
