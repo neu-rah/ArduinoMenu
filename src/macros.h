@@ -11,7 +11,7 @@
 #if defined(ESP8266) | defined(CORE_TEENSY)
   #define typeof(x) __typeof__(x)
 #endif
-#if defined(pgm_read_ptr_near) && !defined(MENU_USERAM)
+#if defined(USE_PGM) || (defined(pgm_read_ptr_near) && !defined(MENU_USERAM))
   //storing some values into avr flash memory (saving ram space)
   #define USING_PGM
   #warning "Using PGM"
