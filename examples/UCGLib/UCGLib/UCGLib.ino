@@ -1,39 +1,39 @@
 /********************
 Arduino generic menu system
-U8x8 menu example
-U8x8: https://github.com/olikraus/Ucglib_Arduino
+UCGLib menu example
+UCGLib: https://github.com/olikraus/Ucglib_Arduino
 
 Sep. 2017 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
 creative commons license 3.0: Attribution-ShareAlike CC BY-SA
 This software is furnished "as is", without technical support, and with no
 warranty, express or implied, as to its usefulness for any purpose.
 
-menu on U8x8 device
-output: PCD8544 (Nokia 5110)
+menu on UCGLib device
+output: ST7735
 input: Serial
 mcu: nano328p
-
 */
 
-#include <Arduino.h>
 #include <SPI.h>
-#include <Wire.h>
+#include <Ucglib.h>
 #include <menu.h>
 #include <menuIO/serialOut.h>
-#include <menuIO/U8x8Out.h>
-#include <U8x8lib.h>
+#include <menuIO/UCGLibOut.h>
 
 using namespace Menu;
 
-#define LEDPIN LED_BUILTIN
+#define UC_Width 160
+#define UC_Height 128
 
-#define U8_DC 9
-#define U8_CS 8
-#define U8_RST 7
-#define U8_Width 84
-#define U8_Height 48
+#define UC_CS   A1
+#define UC_DC   A0
+#define UC_RST  A2
 
-U8X8_PCD8544_84X48_4W_HW_SPI u8x8(U8_CS, U8_DC , U8_RST);
+//font size plus margins
+#define fontX 6
+#define fontY 11
+
+Ucglib_ST7735_18x128x160_HWSPI ucg(UC_DC , UC_CS, UC_RST);
 
 char* const hexDigit PROGMEM="0123456789ABCDEF";
 char* const hexNr[] PROGMEM={"0","x",hexDigit,hexDigit};
@@ -47,9 +47,29 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
 
 #define MAX_DEPTH 1
 
+//define colors
+#define BLACK {0,0,0}
+#define BLUE {0,0,255}
+#define GRAY {128,128,128}
+#define WHITE {255,255,255}
+#define YELLOW {255,255,0}
+#define RED {255,0,0}
+
+const colorDef<rgb> colors[] MEMMODE={
+  {{BLACK,BLACK},{BLACK,BLUE,BLUE}},//bgColor
+  {{GRAY,GRAY},{WHITE,WHITE,WHITE}},//fgColor
+  {{WHITE,BLACK},{YELLOW,YELLOW,RED}},//valColor
+  {{WHITE,BLACK},{WHITE,YELLOW,YELLOW}},//unitColor
+  {{WHITE,GRAY},{BLACK,BLUE,WHITE}},//cursorColor
+  {{WHITE,YELLOW},{BLUE,RED,RED}},//titleColor
+};
+
+#define offsetX 0
+#define offsetY 0
+
 MENU_OUTPUTS(out,MAX_DEPTH
+  ,UCG_OUT(ucg,colors,fontX,fontY,offsetX,offsetY,{0,0,UC_Width/fontX,UC_Height/fontY})
   ,SERIAL_OUT(Serial)
-  ,U8X8_OUT(u8x8,{0,0,10,6})
 );
 
 NAVROOT(nav,mainMenu,MAX_DEPTH,Serial,out);
@@ -68,11 +88,11 @@ idx_t serialTops[MAX_DEPTH]={0};
 serialOut outSerial(*(Print*)&Serial,serialTops);
 
 //define outputs controller
-idx_t u8x8_tops[MAX_DEPTH];
-PANELS(u8x8Panels,{0,0,U8_Width/8,U8_Height/8});
-U8x8Out u8x8Out(u8x8,u8x8_tops,u8x8Panels);
+idx_t ucg_tops[MAX_DEPTH];
+PANELS(ucgPanels,{0,0,UC_Width/fontX,UC_Height/fontY});
+UCGLibOut ucgOut(ucg,colors,ucg_tops,ucgPanels,fontX,fontY);
 
-menuOut* const outputs[] MEMMODE={&outSerial,&u8x8Out};//list of output devices
+menuOut* const outputs[] MEMMODE={&outSerial,&ucgOut};//list of output devices
 outputsList out(outputs,2);//outputs list controller
 
 //define navigation root and aux objects
@@ -81,18 +101,22 @@ navRoot nav(mainMenu, nav_cursors, MAX_DEPTH-1, Serial, out);*/
 
 void setup(void)
 {
-  pinMode(LEDPIN,OUTPUT);
   Serial.begin(9600);
   while(!Serial);
-  Serial.println("Menu 3.x test");
-  u8x8.begin();
-  u8x8.setFont(u8x8_font_chroma48medium8_r);
-  u8x8.drawString(0,0,"Menu 3.x");
+  ucg.begin(UCG_FONT_MODE_TRANSPARENT);
+  ucg.clearScreen();
+  ucg.setFont(ucg_font_courB08_tr);//choose fized width font (monometric)
+  ucg.setRotate90();
+  ucg.setColor(255,255,255);
+  ucg.setFontPosTop();
+  ucg.print("Menu 4.x ucg");
   delay(1000);
+  ucg.clearScreen();
+  ucg.setRotate90();
+  ucg.setFontPosBottom();
 }
 
 void loop(void)
 {
   nav.poll();
-  delay(100);
 }
