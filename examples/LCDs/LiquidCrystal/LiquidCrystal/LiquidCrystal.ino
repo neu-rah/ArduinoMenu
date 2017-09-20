@@ -32,7 +32,7 @@ LiquidCrystal lcd(RS, RW, EN, 4, 5, 6, 7);
 
 // Encoder /////////////////////////////////////
 #define encA A2
-#define encB A4
+#define encB A1
 //this encoder has a button here
 #define encBtn A3
 
@@ -191,7 +191,7 @@ result idle(menuOut& o,idleEvent e) {
 void setup() {
   pinMode(encBtn,INPUT_PULLUP);
   pinMode(LEDPIN,OUTPUT);
-  Serial.begin(115200);
+  Serial.begin(9600);
   while(!Serial);
   Serial.println("Arduino Menu Library");Serial.flush();
   encoder.begin();

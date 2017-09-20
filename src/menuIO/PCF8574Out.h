@@ -26,20 +26,6 @@
             const panel p=panels[panelNr];
             device->setCursor(p.x+x,p.y+y);
           }
-          menuOut& fill(
-            int x1, int y1, int x2, int y2,char ch=' ',
-            colorDefs color=bgColor,
-            bool selected=false,
-            status stat=enabledStatus,
-            bool edit=false
-          ) override {
-            for(int r=y1;r<=y2;r++) {
-              setCursor(x1,r);
-              for(int c=x1;c<=x2;c++)
-                write(ch);
-            }
-            return *this;
-          }
           idx_t startCursor(navRoot& root,idx_t x,idx_t y,bool charEdit,idx_t panelNr=0) override {return 0;}
           idx_t endCursor(navRoot& root,idx_t x,idx_t y,bool charEdit,idx_t panelNr=0) override {return 0;}
           idx_t editCursor(navRoot& root,idx_t x,idx_t y,bool editing,bool charEdit,idx_t panelNr=0) override {
