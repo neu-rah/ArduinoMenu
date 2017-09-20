@@ -162,7 +162,8 @@ www.r-site.net
         const navCodesDef &nc=defaultNavCodes,
         bool useUpdateEvent=false,
         bool canExit=false,
-        bool numValueInput=true
+        bool numValueInput=true,
+        idx_t inBurst=1
       ):selectedCursor(ecur),
       disabledCursor(dcur),
       invertFieldKeys(inv),
@@ -170,7 +171,8 @@ www.r-site.net
       navCodes(nc),
       useUpdateEvent(useUpdateEvent),
       canExit(canExit),
-      numValueInput(numValueInput) {}
+      numValueInput(numValueInput),
+      inputBurst(inBurst) {}
       //NOTE:this can be output specific
       char selectedCursor;//='>';
       char disabledCursor;//='-';
@@ -182,8 +184,17 @@ www.r-site.net
       bool useUpdateEvent;//=false, if false, when field value is changed use enterEvent instead.
       bool canExit;//=true, if false do not exit from main menu
       bool numValueInput;//=true if true fields parse numeric input values otherwise numbers will terminate the edit and be considered accels on the parent menu probably.
+      idx_t inputBurst;
       inline char getCmdChar(navCmds cmd) const {return navCodes[cmd].ch;}//return character assigned to this command
     };
+
+    // NOTE: make this a parametrized thing instead of a global reference
+    // a parametric thing will envolve a lot of reference passing
+    // however some overrides will need to access them but are not allowed to receive them by parameters
+    // putting them on the class would bind the instance to the options
+    // for its a pointer, user can change the pointer.
+    // TODO: distribute them by inputs and outputs
+    extern config* options;
 
     class StringStream:public Stream {
       public:
@@ -196,14 +207,6 @@ www.r-site.net
         size_t write(uint8_t) override {return 0;}
         operator const String() {return String(src);}
     };
-
-    // NOTE: make this a parametrized thing instead of a global reference
-    // a parametric thing will envolve a lot of reference passing
-    // however some overrides will need to access them but are not allowed to receive them by parameters
-    // putting them on the class would bind the instance to the options
-    // for its a pointer, user can change the pointer.
-    // TODO: distribute them by inputs and outputs
-    extern config* options;
 
     #ifdef DEBUG
       Print& operator<<(Print& o,bool b);

@@ -200,6 +200,7 @@ void setup() {
   while(!Serial);
   nav.idleTask=idle;//point a function to be used when menu is suspended
   mainMenu[1].enabled=disabledStatus;
+  options->inputBurst=10;//change input burst for slow output devices (this is the number of max. processed input before drawing)
 
   pinMode(encBtn, INPUT_PULLUP);
   encButton.begin();

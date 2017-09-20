@@ -493,11 +493,18 @@ result navNode::sysEvent(eventMask e,idx_t i) {
   return p(e,p);
 }
 
+idx_t inputBurst=3;
+idx_t inputBurstCnt=options->inputBurst+1;
+
 void navRoot::doInput(Stream& in) {
   if (sleepTask) {
     if (options->getCmdChar(enterCmd)==in.read()) idleOff();
-  } else if (in.available())//while ((!sleepTask)&&in.available())//if not doing something else and there is input
-    navFocus->parseInput(node(),in);//deliver navigation input task to target...
+  } else {
+    //if (in.available())
+    while ((!sleepTask)&&in.available()&&(--inputBurstCnt))//if not doing something else and there is input
+      navFocus->parseInput(node(),in);//deliver navigation input task to target...
+    inputBurstCnt=options->inputBurst+1;
+  }
 }
 
 void navRoot::doNav(navCmd cmd) {
