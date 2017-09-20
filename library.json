@@ -6,7 +6,7 @@
   {
     "type": "git",
     "url": "https://github.com/neu-rah/ArduinoMenu",
-    "branch": "dev"
+    "branch": "master"
   },
   "frameworks": "arduino",
   "platforms": "*"

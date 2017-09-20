@@ -279,7 +279,10 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
 #define DECL_SUBMENU(id)
 #define DECL_VALUE(target,...) MK_VALUE(target, _##__VA_ARGS__)
 #define _VALUE_(...)  __VA_ARGS__
-#define MK_VALUE(...) _MK_VALUE(__VA_ARGS__)
+#define DEF_VALUEOBJ(x) &x
+#define GET_VALUE(_1,_2,_3,_4,_5,_6,NAME,...) NAME
+#define IGNORE(...)
+#define MK_VALUE(...) GET_VALUE(__VA_ARGS__,_MK_VALUE,_MK_VALUE,_MK_VALUE,_MK_VALUE,IGNORE,_MK_VALUE)(__VA_ARGS__)
 #define _MK_VALUE(target,cnt,text,value,action,mask)\
   const char valueLabel##cnt[] MEMMODE=text;\
   const MEMMODE Menu::menuValueShadowRaw<typeof(target)> choice##cnt##ShadowRaw={\
