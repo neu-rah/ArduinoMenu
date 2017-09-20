@@ -114,12 +114,17 @@ Depending on the type of input or output, other libraries might be needed. Essen
 ## IO devices
 ### Output devices
 
-Serial https://www.arduino.cc/en/Reference/Serial
+Serial
+https://www.arduino.cc/en/Reference/Serial
 
-Standard arduino LCD library  https://www.arduino.cc/en/Reference/LiquidCrystal
+Standard arduino LCD library
+https://www.arduino.cc/en/Reference/LiquidCrystal
 
 F Malpartida's LCDs (ex: i2c LCD)
 https://bitbucket.org/fmalpartida/new-liquidcrystal/wiki/Home
+
+Arduino TFT devices
+https://www.arduino.cc/en/Guide/TFT
 
 Adafruit's GFX devices
 https://github.com/adafruit/Adafruit-GFX-Library
@@ -130,8 +135,11 @@ http://www.rinkydinkelectronics.com/library.php?id=51
 U8glib devices
 https://github.com/olikraus/U8glib_Arduino
 
-U8G2 devices
-https://github.com/olikraus/u8g2
+U8G2 and U8x8 devices
+https://github.com/olikraus/U8g2_Arduino
+
+UCGLib devices
+https://github.com/olikraus/Ucglib_Arduino
 
 Serial ANSI terminal
 https://github.com/neu-rah/AnsiStream
@@ -150,12 +158,17 @@ Generic keyboard (no PCINT) - configurable for digital or analog keyboards (buil
 
 ClickEncoder https://github.com/0xPIT/encoder (not yet tested on v3)
 
+User defined input calling menu nav API
+
 Web browser (experimental) when using ESP devices
 
 ## History
 
 #### 4.0.0
   - Added text edit fields with validation
+  - Support UCGLib displays
+  - Support U8x8 displays
+  - Support Arduino TFT
   - Added input busrst config option
   - More examples
 

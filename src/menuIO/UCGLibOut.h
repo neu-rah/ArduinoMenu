@@ -1,20 +1,16 @@
 /* -*- C++ -*- */
 
 /********************
-Oct. 2016 Stephen Denne https://github.com/datacute
-Based on U8GLibOut.h from Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
-Original from: https://github.com/christophepersoz
+Sep. 2017 Rui Azevedo (ruihfazevedo@rrob@gmail.com)
+Based on: Stephen Denne https://github.com/datacute U8G2 Driver
 creative commons license 3.0: Attribution-ShareAlike CC BY-SA
 This software is furnished "as is", without technical support, and with no
 warranty, express or implied, as to its usefulness for any purpose.
 
-Thread Safe: No
-Extensible: Yes
-
 Use graphics screens as menu output, based on U8G2 graphic display
 www.r-site.net
-
 ***/
+
 #ifndef RSITE_ARDUINOP_MENU_UCGLIB
 #define RSITE_ARDUINOP_MENU_UCGLIB
 #include <Ucglib.h>
