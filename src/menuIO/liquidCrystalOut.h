@@ -23,9 +23,9 @@
           const panel p=panels[panelNr];
           device.setCursor(p.x+x,p.y+y);
         }
-        virtual idx_t startCursor(bool charEdit) {return 0;}
-        virtual idx_t endCursor(bool charEdit) {return 0;}
-        virtual idx_t editCursor(idx_t x,idx_t y,bool editing,bool charEdit) {
+        idx_t startCursor(navRoot& root,idx_t x,idx_t y,bool charEdit,idx_t panelNr=0) override {return 0;}
+        idx_t endCursor(navRoot& root,idx_t x,idx_t y,bool charEdit,idx_t panelNr=0) override {return 0;}
+        idx_t editCursor(navRoot& root,idx_t x,idx_t y,bool editing,bool charEdit,idx_t panelNr=0) override {
           //text editor cursor
           device.noBlink();
           device.noCursor();

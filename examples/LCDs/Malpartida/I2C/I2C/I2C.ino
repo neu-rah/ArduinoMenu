@@ -33,8 +33,8 @@ http://playground.arduino.cc/Code/LCD3wires
   LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);  // Set the LCD I2C address and pinout
 
   // Encoder /////////////////////////////////////
-  #define encA 5
-  #define encB 6
+  #define encA 2
+  #define encB 3
   //this encoder has a button here
   #define encBtn 4
 
@@ -146,6 +146,10 @@ http://playground.arduino.cc/Code/LCD3wires
     return proceed;
   }
 
+  char* const hexDigit PROGMEM="0123456789ABCDEF";
+  char* const hexNr[] PROGMEM={"0","x",hexDigit,hexDigit};
+  char buf1[]="0x11";
+
   MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
     ,OP("Op1",action1,anyEvent)
     ,OP("Op2",action2,enterEvent)
@@ -158,6 +162,7 @@ http://playground.arduino.cc/Code/LCD3wires
     ,SUBMENU(selMenu)
     ,SUBMENU(chooseMenu)
     ,OP("Alert test",doAlert,enterEvent)
+    ,EDIT("Hex",buf1,hexNr,doNothing,noEvent,noStyle)
     ,EXIT("<Back")
   );
 
