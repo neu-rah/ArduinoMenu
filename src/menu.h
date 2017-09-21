@@ -28,6 +28,12 @@ for correcting unsigned values validation
   #include "shadows.h"
   //#include "dyn.h"
 
+  #if defined(DEBUG) && defined(TRACE)
+    #define trace(x) x
+  #else
+    #define trace(x)
+  #endif
+
   namespace Menu {
 
     static const char* numericChars="0123456789.";
