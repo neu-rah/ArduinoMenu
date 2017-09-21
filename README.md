@@ -161,13 +161,13 @@ Generic keyboard (no PCINT) - configurable for digital or analog keyboards (buil
 
 ClickEncoder https://github.com/0xPIT/encoder (not yet tested on v3)
 
-User defined input calling menu nav API
+User defined input calling menu navigation API
 
 Web browser (experimental) when using ESP devices
 
 ## History
 
-### 4.0.0
+### 4.0
   - Text edit fields with validation
   - Pad style menus (horizontal list)
   - Plugins, alternative menu items potentially device specific
@@ -175,7 +175,7 @@ Web browser (experimental) when using ESP devices
   - Support U8x8 displays
   - Support Arduino TFT
   - Support PCF8574 I2C LCD
-  - Added input busrst config option
+  - Added input burst config option
   - VALUEOBJ macro, user allocated values
   - More examples
 

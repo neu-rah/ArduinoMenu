@@ -176,31 +176,19 @@ menuOut& menuOut::operator<<(const prompt& p) {
 void outputsList::printMenu(navNode& nav) const {
   for(int n=0;n<cnt;n++) {
     menuOut& o=*((menuOut*)memPtr(outs[n]));
-    //Serial<<endl;
-    //print_P(Serial,nav.target->getText());
-    //Serial<<" "<<n<<" changed: "<<nav.changed(o);
     if (nav.changed(o)||(o.style&(menuOut::rasterDraw)))
       o.printMenu(nav);
   }
   clearChanged(nav);
-  /*for(int n=0;n<cnt;n++) {
-    menuOut& o=*((menuOut*)memPtr(outs[n]));
-    Serial<<endl<<n<<" after: "<<nav.changed(o)<<endl;
-  }*/
 }
 
 void menuOut::clearChanged(navNode &nav) {
-  //if (nav.target->dirty) Serial<<"clear dirty "<<*(prompt*)nav.target<<" sz:"<<nav.sz()<<endl;
   nav.target->dirty=false;
-  //Serial<<"clearChanged ";
   idx_t t=tops[nav.root->level];
   for(idx_t i=0;i<maxY();i++,t++) {//only signal visible
-    //Serial<<"["<<t<<"]";
     if (t>=nav.sz()) break;//menu ended
     nav[t].dirty=false;
-    //Serial<<".";
   }
-  //Serial<<" "<<nav.target->dirty<<endl;
 }
 
 // draw a menu preview on a panel
@@ -352,7 +340,6 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
   }
   //<-----bodyEnd
   fmtEnd(fmtBody,nav,-1);
-  //if (any) Serial<<"printMenu "<<*(prompt*)nav.target<<endl;
   drawn=nav.target;
   //lastSel=nav.sel;
   //<---- panel end
@@ -372,7 +359,9 @@ navRoot* navNode::root=NULL;
 bool menuNode::changed(const navNode &nav,const menuOut& out,bool sub) {
   if (nav.target!=this) return dirty;
   if (dirty) return true;
-  idx_t t=out.tops[nav.root->level];
+  idx_t level=nav.root->level;
+  if (nav.root->active().parentDraw()) level--;
+  idx_t t=out.tops[level];
   if (sub) for(int i=0;i<out.maxY();i++,t++) {
     if (t>=nav.sz()) break;
     if (operator[](t).changed(nav,out,false)) return true;
@@ -445,10 +434,6 @@ navCmd navNode::doNavigation(navCmd cmd) {
         idx_t at=(idx_t)cmd.param;//-'1';send us numeric index pls!
         if (at>=0&&at<=sz()-1) {
           nsel=at;
-          //if (cmd.cmd==idxCmd) {
-            //Serial<<"indexing... "<<endl;
-            //rCmd=root->enter();//this enter must occour latter wrapped in events, because selection changed
-          //}
         }
       }
       break;
@@ -467,7 +452,6 @@ navCmd navNode::doNavigation(navCmd cmd) {
     event(blurEvent,osel);
     sel=nsel;
     if (cmd.cmd==selCmd||cmd.cmd==idxCmd) {//do accelerator and enter the option
-      //Serial<<"index accel. "<<cmd<<(cmd.cmd&(selCmd|idxCmd))<<endl;
       assert(root);
       rCmd=root->enter();
     }//other commands up/down just receive focus events
