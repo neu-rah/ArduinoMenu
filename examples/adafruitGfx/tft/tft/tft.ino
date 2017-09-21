@@ -209,9 +209,9 @@ config myOptions('*','-',false,false,defaultNavCodes);
 void setup() {
   options=&myOptions;
   pinMode(LEDPIN,OUTPUT);
-  Serial.begin(9600);
+  Serial.begin(115200);
   while(!Serial);
-  Serial.println("menu 3.0 test");
+  Serial.println("menu 4.x test");
   Serial.flush();
   nav.idleTask=idle;//point a function to be used when menu is suspended
   mainMenu[1].enabled=disabledStatus;
@@ -229,7 +229,7 @@ void setup() {
   gfx.setTextWrap(false);
   gfx.fillScreen(ST7735_BLACK);
   gfx.setTextColor(ST7735_RED,ST7735_BLACK);
-  gfx.println("Menu 3.x test on GFX");
+  gfx.println("Menu 4.x test on GFX");
   delay(1000);
 }
 

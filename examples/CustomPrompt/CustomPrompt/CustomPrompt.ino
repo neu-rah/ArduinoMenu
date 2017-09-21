@@ -83,9 +83,9 @@ result idle(menuOut &o, idleEvent e) {
 void setup() {
   pinMode(LEDPIN,OUTPUT);
   digitalWrite(LEDPIN,HIGH);
-  Serial.begin(9600);
+  Serial.begin(115200);
   while(!Serial);
-  Serial.println("menu 3.x test");Serial.flush();
+  Serial.println("menu 4.x test");Serial.flush();
   nav.idleTask=idle;//point a function to be used when menu is suspended
   // nav.idleOn(idle);//enter idle mode, this menu will start on idle state, press select  to enter menu
   // nav.doInput("4");//we can also provide input from string, this will enter idle mode by exiting the menu

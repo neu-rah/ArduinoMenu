@@ -176,15 +176,16 @@ menuOut& menuOut::operator<<(const prompt& p) {
 void outputsList::printMenu(navNode& nav) const {
   for(int n=0;n<cnt;n++) {
     menuOut& o=*((menuOut*)memPtr(outs[n]));
-    if (nav.changed(o)||(o.style&(menuOut::rasterDraw)))
-      o.printMenu(nav);
+    if (nav.changed(o)||(o.style&(menuOut::rasterDraw))) o.printMenu(nav);
   }
   clearChanged(nav);
 }
 
 void menuOut::clearChanged(navNode &nav) {
   nav.target->dirty=false;
-  idx_t t=tops[nav.root->level];
+  idx_t level=nav.root->level;
+  if (nav.root->active().parentDraw()) level--;
+  idx_t t=tops[level];
   for(idx_t i=0;i<maxY();i++,t++) {//only signal visible
     if (t>=nav.sz()) break;//menu ended
     nav[t].dirty=false;
@@ -357,7 +358,7 @@ navRoot* navNode::root=NULL;
 //
 ////////////////////////////////////////////////////////////////////////////////
 bool menuNode::changed(const navNode &nav,const menuOut& out,bool sub) {
-  if (nav.target!=this) return dirty;
+  // if (nav.target!=this) return dirty;
   if (dirty) return true;
   idx_t level=nav.root->level;
   if (nav.root->active().parentDraw()) level--;

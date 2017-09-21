@@ -60,9 +60,9 @@ result systemExit() {
 }
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   while(!Serial);
-  Serial.println("menu 3.x custom sub-menu prompt example");Serial.flush();
+  Serial.println("menu 4.x custom sub-menu prompt example");Serial.flush();
 }
 
 void loop() {

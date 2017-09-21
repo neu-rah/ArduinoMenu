@@ -71,7 +71,7 @@ void op2Func() {Serial.println("Op 2 executed");}
 /////////////////////////////////////////////////////////////////////////////
 // arduiin osketch
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   while(!Serial);
   Serial.println("Menu initialized without macros.");
   Serial<<"active:";

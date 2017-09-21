@@ -50,9 +50,9 @@ MENU_OUTPUTS(out,MAX_DEPTH
 NAVROOT(nav,mainMenu,MAX_DEPTH,Serial,out);
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   while(!Serial);
-  Serial.println("menu 3.x text field test");Serial.flush();
+  Serial.println("menu 4.x text field test");Serial.flush();
   Serial.println(sizeof(validData)/sizeof(void*));
   /*Serial.println((uint16_t)buf1,HEX);
   Serial.println((uint16_t)(*(textField*)&mainMenu[1]).buffer(),HEX);

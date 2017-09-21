@@ -82,12 +82,12 @@ navRoot nav(mainMenu, nav_cursors, MAX_DEPTH-1, Serial, out);*/
 void setup(void)
 {
   pinMode(LEDPIN,OUTPUT);
-  Serial.begin(9600);
+  Serial.begin(115200);
   while(!Serial);
-  Serial.println("Menu 3.x test");
+  Serial.println("Menu 4.x test");
   u8x8.begin();
   u8x8.setFont(u8x8_font_chroma48medium8_r);
-  u8x8.drawString(0,0,"Menu 3.x");
+  u8x8.drawString(0,0,"Menu 4.x");
   delay(1000);
 }
 

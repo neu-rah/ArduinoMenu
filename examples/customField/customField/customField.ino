@@ -57,7 +57,7 @@ NAVROOT(nav,mainMenu,MAX_DEPTH,Serial,out);
 void setup() {
   Serial.begin(115200);
   while(!Serial);
-  Serial<<"menu 3.0 testing custom fields"<<endl;Serial.flush();
+  Serial<<"menu 4.x testing custom fields"<<endl;Serial.flush();
 }
 
 void loop() {

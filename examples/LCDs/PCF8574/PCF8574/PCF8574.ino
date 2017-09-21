@@ -198,7 +198,7 @@ Matthias Hertel driver https://github.com/mathertel/LiquidCrystal_PCF8574
     mainMenu[1].enabled=disabledStatus;
     nav.showTitle=false;
     lcd.setCursor(0, 0);
-    lcd.print("Menu 3.0 LCD");
+    lcd.print("Menu 4.x LCD");
     lcd.setCursor(0, 1);
     lcd.print("r-site.net");
     delay(2000);

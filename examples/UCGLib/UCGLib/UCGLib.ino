@@ -101,7 +101,7 @@ navRoot nav(mainMenu, nav_cursors, MAX_DEPTH-1, Serial, out);*/
 
 void setup(void)
 {
-  Serial.begin(9600);
+  Serial.begin(115200);
   while(!Serial);
   ucg.begin(UCG_FONT_MODE_TRANSPARENT);
   ucg.clearScreen();

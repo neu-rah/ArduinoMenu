@@ -42,9 +42,9 @@ NAVROOT(nav,mainMenu,MAX_DEPTH,in,out);
 
 void setup() {
   pinMode(LEDPIN, OUTPUT);
-  Serial.begin(9600);
+  Serial.begin(115200);
   while(!Serial);
-  Serial.println("Menu 3.x");
+  Serial.println("Menu 4.x");
   Serial.println("Use keys + - * /");
   Serial.println("to control the menu navigation");
 }

@@ -139,7 +139,7 @@ result idle(menuOut &o, idleEvent e) {
 void setup() {
   Serial.begin(115200);
   while(!Serial);
-  Serial.println("menu 3.0 test");Serial.flush();
+  Serial.println("menu 4.x test");Serial.flush();
   Wire.begin();
   oled.begin(&Adafruit128x64, I2C_ADDRESS);
   oled.setFont(System5x7);

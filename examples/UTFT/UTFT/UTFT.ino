@@ -182,7 +182,7 @@ void setup() {
   pinMode(LEDPIN,OUTPUT);
   while(!Serial);
   Serial.begin(115200);
-  Serial.println("menu 3.x");Serial.flush();
+  Serial.println("menu 4.x");Serial.flush();
   nav.idleTask=idle;//point a function to be used when menu is suspended
   //mainMenu[1].enabled=disabledStatus;
 
@@ -199,7 +199,7 @@ void setup() {
 
   //outGfx.resX=tft.getFontXsize()+1;
   //outGfx.resY=tft.getFontYsize()+1;
-  outGfx.println("Menu 3.x on UTFT");
+  outGfx.println("Menu 4.x on UTFT");
   delay(1000);
   tft.clrScr();
 }

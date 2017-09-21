@@ -196,7 +196,7 @@ result idle(menuOut& o,idleEvent e) {
 
 void setup() {
   pinMode(LEDPIN,OUTPUT);
-  Serial.begin(9600);
+  Serial.begin(115200);
   while(!Serial);
   nav.idleTask=idle;//point a function to be used when menu is suspended
   mainMenu[1].enabled=disabledStatus;
@@ -213,7 +213,7 @@ void setup() {
   do {
     u8g.setColorIndex(1);
     nav.out[0].setCursor(0,0);
-    nav.out[0].print(F("Menu 3.x test"));
+    nav.out[0].print(F("Menu 4.x test"));
     nav.out[0].setCursor(0,1);
     nav.out[0].print(F("on U8Glib"));
   } while(u8g.nextPage());

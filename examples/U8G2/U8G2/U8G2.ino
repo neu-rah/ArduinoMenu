@@ -213,9 +213,9 @@ result idle(menuOut& o,idleEvent e) {
 
 void setup() {
   pinMode(LEDPIN,OUTPUT);
-  Serial.begin(9600);
+  Serial.begin(115200);
   while(!Serial);
-  Serial.println("menu 3.0 test");Serial.flush();
+  Serial.println("menu 4.x test");Serial.flush();
   #ifdef USE_HWSPI
     SPI.begin();
   #endif

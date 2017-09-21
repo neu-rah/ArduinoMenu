@@ -123,9 +123,9 @@ result idle(menuOut& o,idleEvent e) {
 
 void setup() {
   pinMode(LEDPIN,OUTPUT);
-  Serial.begin(9600);
+  Serial.begin(115200);
   while(!Serial);
-  Serial.println(F("menu 3.x test"));
+  Serial.println(F("menu 4.x test"));
   Serial.flush();
   nav.idleTask=idle;//point a function to be used when menu is suspended
   //mainMenu[1].enabled=disabledStatus;
@@ -136,7 +136,7 @@ void setup() {
   SPI.begin();
   gfx.begin();
   gfx.clearDisplay();
-  gfx.println(F("Menu 3.x test on GFX"));
+  gfx.println(F("Menu 4.x test on GFX"));
   gfx.setContrast(50);
   gfx.display(); // show splashscreen
   delay(2000);

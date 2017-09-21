@@ -191,7 +191,7 @@ result idle(menuOut& o,idleEvent e) {
 void setup() {
   pinMode(encBtn,INPUT_PULLUP);
   pinMode(LEDPIN,OUTPUT);
-  Serial.begin(9600);
+  Serial.begin(115200);
   while(!Serial);
   Serial.println("Arduino Menu Library");Serial.flush();
   encoder.begin();
@@ -200,7 +200,7 @@ void setup() {
   mainMenu[1].enabled=disabledStatus;
   nav.showTitle=false;
   lcd.setCursor(0, 0);
-  lcd.print("Menu 3.0 LCD");
+  lcd.print("Menu 4.x LCD");
   lcd.setCursor(0, 1);
   lcd.print("r-site.net");
   delay(2000);

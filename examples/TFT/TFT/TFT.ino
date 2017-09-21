@@ -83,9 +83,9 @@ navNode nav_cursors[MAX_DEPTH];//aux objects to control each level of navigation
 navRoot nav(mainMenu, nav_cursors, MAX_DEPTH-1, Serial, out);
 
 void setup(){
-  Serial.begin(9600);
+  Serial.begin(115200);
   while(!Serial);
-  Serial.printgln("Menu 4.x");
+  Serial.println("Menu 4.x");
   tft.begin();
   tft.background(0,0,0);  // clear the screen with black
   tft.setRotation(3);

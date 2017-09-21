@@ -43,9 +43,9 @@ MENU_OUTPUTS(out,MAX_DEPTH
 NAVROOT(nav,mainMenu,MAX_DEPTH,Serial,out);
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   while(!Serial);
-  Serial<<"menu 3.0 testing pad style"<<endl;Serial.flush();
+  Serial<<"menu 4.x testing pad style"<<endl;Serial.flush();
   // lcd.begin(20,4);
 }
 

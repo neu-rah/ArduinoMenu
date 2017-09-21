@@ -150,9 +150,9 @@ void setup() {
   digitalWrite(LEDPIN,HIGH);
   #endif
   delay(500);
-  Serial.begin(9600);
+  Serial.begin(115200);
   while(!Serial);
-  Serial.println("menu 3.0 test");Serial.flush();
+  Serial.println("menu 4.x test");Serial.flush();
   //nav.idleTask=idle;//point a function to be used when menu is suspended
   //nav.idleOn();//this menu will start on idle state, press select to enter menu
   //nav.doInput("323");
