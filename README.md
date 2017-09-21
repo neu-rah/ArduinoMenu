@@ -167,20 +167,17 @@ Web browser (experimental) when using ESP devices
 
 ## History
 
-#### 4.0.0
-  - Added text edit fields with validation
+### 4.0.0
+  - Text edit fields with validation
+  - Pad style menus (horizontal list)
+  - Plugins, alternative menu items potentially device specific
   - Support UCGLib displays
   - Support U8x8 displays
   - Support Arduino TFT
   - Support PCF8574 I2C LCD
   - Added input busrst config option
-  - VALUEOBJ macro
+  - VALUEOBJ macro, user allocated values
   - More examples
-
-#### 3.1.1
-  - Plugins test
-  - Text fields scratch
-  - dynamic menu test
 
 ### 3.0
 	- complete revision of menu control system
