@@ -123,6 +123,9 @@ https://www.arduino.cc/en/Reference/LiquidCrystal
 F Malpartida's LCDs (ex: i2c LCD)
 https://bitbucket.org/fmalpartida/new-liquidcrystal/wiki/Home
 
+Matthias Hertel PCF8574 driver
+https://github.com/mathertel/LiquidCrystal_PCF8574
+
 Arduino TFT devices
 https://www.arduino.cc/en/Guide/TFT
 
@@ -169,7 +172,9 @@ Web browser (experimental) when using ESP devices
   - Support UCGLib displays
   - Support U8x8 displays
   - Support Arduino TFT
+  - Support PCF8574 I2C LCD
   - Added input busrst config option
+  - VALUEOBJ macro
   - More examples
 
 #### 3.1.1

@@ -2,20 +2,14 @@
 
 /********************
 Arduino generic menu system
-Arduino menu on I2C LCD example
-http://www.r-site.net/?at=//op%5B%40id=%273090%27%5D
 
-Sep.2014 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
+Sep.2017 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
 creative commons license 3.0: Attribution-ShareAlike CC BY-SA
 This software is furnished "as is", without technical support, and with no
-
 warranty, express or implied, as to its usefulness for any purpose.
-Thread Safe: No
-Extensible: Yes
 
 LCD library:
-https://bitbucket.org/fmalpartida/new-liquidcrystal/wiki/Home
-http://playground.arduino.cc/Code/LCD3wires
+Matthias Hertel driver https://github.com/mathertel/LiquidCrystal_PCF8574
 */
 #ifndef ARDUINO_SAM_DUE
 
@@ -28,10 +22,6 @@ http://playground.arduino.cc/Code/LCD3wires
   #include <menuIO/chainStream.h>// concatenate multiple input streams (this allows adding a button to the encoder)
 
   using namespace Menu;
-
-  //using malpartidas driver https://bitbucket.org/fmalpartida/new-liquidcrystal/wiki/Home
-  //LiquidCrystal_I2C lcd(0x27); // Set the LCD I2C address
-  //LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);  // Set the LCD I2C address and pinout
 
   //using Matthias Hertel driver https://github.com/mathertel/LiquidCrystal_PCF8574
   LiquidCrystal_PCF8574 lcd(0x27);  // set the LCD address to 0x27 for a 16 chars and 2 line display
