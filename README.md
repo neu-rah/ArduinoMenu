@@ -2,7 +2,7 @@
 
 **Generic menu/interactivity system**
 
-[![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](http://creativecommons.org/licenses/by-nc-sa/4.0/)
+[![License: CC BY-NC-SA 3.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](http://creativecommons.org/licenses/by-nc-sa/4.0/)
 [![Build Status](https://travis-ci.org/neu-rah/ArduinoMenu.svg?branch=master)](https://travis-ci.org/neu-rah/ArduinoMenu)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/ruihfazevedo)
 [![Join Gitter](https://img.shields.io/badge/GITTER-join%20chat-green.svg)](https://gitter.im/ArduinoMenu/Lobby)
@@ -165,6 +165,27 @@ User defined input calling menu navigation API
 
 Web browser (experimental) when using ESP devices
 
+## info
+
+more info at
+
+[wiki](https://github.com/neu-rah/ArduinoMenu/wiki) pages, [issues](https://github.com/neu-rah/ArduinoMenu/issues?utf8=%E2%9C%93&q=) or [r-site.net](http://www.r-site.net/?lang=en&at=//op%5B@id=%273090%27%5D)
+
+## Errors / Sugestions
+
+Please report errors, problems or enhancement ideas, I apreciate the feedback. Thanks.
+
+On issues report please specify the input and output drivers or devices as well as target platform.
+
+## notes
+
+encoder now needs begin() to be called on setup (2.x)
+
+input is read from generic streams, included simple streams for encoders and keyboards
+	- provided encoder driver uses internal pull-ups and reverse logic
+
+multiple stream packing for input to mix encoder stream with encoder keyboard (usually 1 or 2 keys)
+
 ## History
 
 ### 4.0
@@ -222,22 +243,3 @@ Web browser (experimental) when using ESP devices
 
 ### 1.x
   - basic menu functionality
-
-## notes
-
-encoder now needs begin() to be called on setup (2.x)
-
-input is read from generic streams, included simple streams for encoders and keyboards
-	- provided encoder driver uses internal pull-ups and reverse logic
-
-multiple stream packing for input to mix encoder stream with encoder keyboard (usually 1 or 2 keys)
-
-## info
-more info at
-
-[wiki](https://github.com/neu-rah/ArduinoMenu/wiki) pages, [issues](https://github.com/neu-rah/ArduinoMenu/issues?utf8=%E2%9C%93&q=) or [r-site.net](http://www.r-site.net/?lang=en&at=//op%5B@id=%273090%27%5D)
-
-## Reports
-please report errors, problems or enhancement ideas, I apreciate the feedback. Thanks.
-
-On issues report please specify the input and output drivers or devices as well as target platform.

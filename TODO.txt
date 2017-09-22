@@ -2,6 +2,7 @@ Arduino Menu Library
 
 + BUG: u8glib draw cause multiple draw on serial - detach output draws!
 - use multiple menus
+- use single include?
 - check dynamic, if possible mixed
 + color enumeration at base level
 + add list of output devices
