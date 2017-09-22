@@ -184,7 +184,7 @@ www.r-site.net
       bool useUpdateEvent;//=false, if false, when field value is changed use enterEvent instead.
       bool canExit;//=true, if false do not exit from main menu
       bool numValueInput;//=true if true fields parse numeric input values otherwise numbers will terminate the edit and be considered accels on the parent menu probably.
-      idx_t inputBurst;
+      idx_t inputBurst;//=1 limit of inputs that can be processed before output
       inline char getCmdChar(navCmds cmd) const {return navCodes[cmd].ch;}//return character assigned to this command
     };
 

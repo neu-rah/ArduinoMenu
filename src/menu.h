@@ -335,7 +335,7 @@ for correcting unsigned values validation
     class panelsList {
       public:
         const panel* panels;
-        navNode** nodes;//TODO use navNode here!
+        navNode** nodes;
         const idx_t sz;
         idx_t cur=0;
         panelsList(const panel p[],navNode* nodes[],idx_t sz):panels(p),nodes(nodes),sz(sz) {
@@ -546,7 +546,7 @@ for correcting unsigned values validation
       public:
         idx_t sel=0;
         menuNode* target;
-        static navRoot* root;
+        /*static*/ navRoot* root;//v 4.0 removed static to allow multiple menus
         inline void reset() {sel=0;}
         inline idx_t sz() const {return target->sz();}
         inline prompt* const * data() const {return target->data();}
@@ -577,7 +577,9 @@ for correcting unsigned values validation
         navRoot(menuNode& root,navNode* path,idx_t d,Stream& in,outputsList &o)
           :out(o),in(in),path(path),maxDepth(d) {
             useMenu(root);
-            navNode::root=this;
+            for(idx_t n=0;n<=d;n++)//initialize path chain for this root (v4.0)
+              path[n].root=this;
+            //navNode::root=this;
           }
         void useMenu(constMEM menuNode &menu) {
           navFocus=&menu;
@@ -607,6 +609,7 @@ for correcting unsigned values validation
           return o;
         }
         void printMenu() const {
+          trace(Serial<<"navRoot::printMenu"<<endl);
           if ((active().sysStyles()&_parentDraw)&&level)
             out.printMenu(path[level-1]);
           else out.printMenu(node());
