@@ -68,7 +68,8 @@ void loop() {
 - Easy to define menus (macros).
 - Minimalistic user code base.
 - Fields edit values hooked to existing program variables (references).
-- Fields can edit variables of any type (templates).
+- Editing text fields with per character validation.
+- Fields can edit numeric variables of any type (templates).
 - Reflexive fields, showing variable changes done outside the menu system.
 - Numerical field edit and range validation.
 - Enumerated fields for numeric and non-numeric types
@@ -81,7 +82,7 @@ void loop() {
 - lazy drawing, only draws when changed, avoiding time consumption and flicking.
 - sync/async navigation API functions
 - async navigation for stateless clients (as web)
-- web interface
+- web interface (experimental)
 - can be confined to a display area (numeric fields can still overflow the area, user should take account for them)
 - Tested on Arduino: AVR, ARM, Teensy 3.2, ESP8266
 
@@ -192,7 +193,7 @@ multiple stream packing for input to mix encoder stream with encoder keyboard (u
   - Text edit fields with validation
   - Pad style menus (horizontal list)
   - Plugins, alternative menu items potentially device specific
-  - allow multiple concurrent menus
+  - Allow multiple concurrent menus
   - Support UCGLib displays
   - Support U8x8 displays
   - Support Arduino TFT
@@ -202,7 +203,7 @@ multiple stream packing for input to mix encoder stream with encoder keyboard (u
   - More examples
 
 ### 3.0
-	- complete revision of menu control system
+  - complete revision of menu control system
 	- menu structure separated in ram objects and flash objects
 	- using separate navigation control objects **navNode**
 	- central navigation control object **navRoot**
