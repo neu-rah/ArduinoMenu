@@ -66,10 +66,14 @@ TOGGLE(ledCtrl,setLed,"Led: ",doNothing,noEvent,noStyle//,doExit,enterEvent,noSt
 );
 
 result alert(menuOut& o,idleEvent e) {
-  //if (e==idling)
-    o.println(F("alert test"));
-    o.println(F("press [select]"));
-    o.println(F("to continue..."));
+  if (e==idling) {
+    o.setCursor(0,0);
+    o.print("alert test");
+    o.setCursor(0,1);
+    o.print("press [select]");
+    o.setCursor(0,2);
+    o.print("to continue...");
+  }
   return proceed;
 }
 

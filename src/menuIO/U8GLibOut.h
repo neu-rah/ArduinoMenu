@@ -39,15 +39,7 @@ www.r-site.net
 	        	gfx.setFontPosBottom(); // U8Glib font positioning
 	      }
 
-				size_t write(uint8_t ch) override {
-					switch(ch) {//fix u8glib not respecting \n\r... add \t if you wish
-						case '\n': gfx.setPrintPos(gfx.getPrintCol(), gfx.getPrintRow()+resY-fontMarginY);break;
-						case '\r': gfx.setPrintPos(0, gfx.getPrintRow());break;
-						default: return gfx.write(ch);
-					}
-					return 1;
-	      }
-
+				size_t write(uint8_t ch) override {return gfx.write(ch);}
 				inline uint8_t getColor(colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) const {
           return memByte(&(stat==enabledStatus?colors[color].enabled[selected+edit]:colors[color].disabled[selected]));
         }

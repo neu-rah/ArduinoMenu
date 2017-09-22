@@ -44,18 +44,7 @@ namespace Menu {
 					this->offsetY=offsetY;
 			}
 
-			size_t write(uint8_t ch) override {
-				switch(ch) {//fix u8g2 not respecting \n\r... add \t if you wish
-					case '\n': gfx.ty = gfx.ty+resY-fontMarginY;break;
-					case '\r': gfx.tx = offsetX;break;
-					default:
-						{
-							gfx.drawGlyph(gfx.tx, gfx.ty, (uint16_t)ch);
-							gfx.tx += resX;
-						}
-				}
-				return 1;
-			}
+			size_t write(uint8_t ch) override {return gfx.write(ch);}
 
 			inline uint8_t getColor(colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) const {
 				return memByte(&(stat==enabledStatus?colors[color].enabled[selected+edit]:colors[color].disabled[selected]));

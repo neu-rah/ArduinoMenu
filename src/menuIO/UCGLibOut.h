@@ -46,19 +46,7 @@ namespace Menu {
 					this->offsetY=offsetY;
 			}
 
-			size_t write(uint8_t ch) override {
-				switch(ch) {//fix u8g2 not respecting \n\r... add \t if you wish
-					//case '\n': gfx.setPrintPos(gfx.get_tx(),gfx.get_ty()+resY-fontMarginY);break;
-					//case '\r': gfx.setPrintPos(offsetX,gfx.get_ty());break;
-					default:
-						{
-							gfx.write(ch);
-							/*gfx.drawGlyph(gfx.get_tx(), gfx.get_ty(), (uint16_t)ch);
-							gfx.setPrintPos(gfx.get_tx() + resX,gfx.get_ty());*/
-						}
-				}
-				return 1;
-			}
+			size_t write(uint8_t ch) override {gfx.write(ch);}
 
 			inline rgb getColor(colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) const {
 				rgb* cor=(rgb*)&(stat==enabledStatus?colors[color].enabled[selected+edit]:colors[color].disabled[selected]);

@@ -570,8 +570,9 @@ for correcting unsigned values validation
         const idx_t maxDepth=0;
         idx_t level=0;
         bool showTitle=true;
-        idleFunc idleTask=inaction;//to do when menu exits
-        idleFunc sleepTask=NULL;//user task suspending menu
+        bool idleChanged=false;//avoid recursive idle call
+        idleFunc idleTask=inaction;//to do when menu exits, menu system will set idleFunc to this on exit
+        idleFunc sleepTask=NULL;//menu suspended, call this function
         navTarget* navFocus=NULL;
         navRoot(menuNode& root,navNode* path,idx_t d,Stream& in,outputsList &o)
           :out(o),in(in),path(path),maxDepth(d) {
@@ -590,8 +591,10 @@ for correcting unsigned values validation
         inline navNode& node() const {return path[level];}
         inline menuNode& active() const {return *node().target;}
         inline prompt& selected() const {return active()[node().sel];}
-        inline bool changed(const menuOut& out) const {return node().changed(out);}
-        inline bool changed(idx_t n) const {return node().changed(out[n]);}
+        inline bool changed(const menuOut& out) const {
+          return sleepTask?idleChanged:node().changed(out);
+        }
+        inline bool changed(idx_t n) const {return changed(out[n]);}
         inline bool async(const char* at) {
           navFocus=path[level].target;
           return active().async(at, *this, 0);
@@ -625,7 +628,10 @@ for correcting unsigned values validation
         inline void doInput() {doInput(in);}
         inline void doOutput() {
           if (!sleepTask) printMenu();
-          else out.idle(sleepTask,idling);
+          else {
+            idleChanged=false;//turn it off here so that sleepTask can force it on again
+            out.idle(sleepTask,idling);
+          }
         }
         inline void poll() {doInput();doOutput();};//fire and forget mode
         void doNav(navCmd cmd);//fly by wire mode
@@ -636,6 +642,7 @@ for correcting unsigned values validation
         inline void idleOn(idleFunc task=inaction) {
           out.clear();
           sleepTask=task;
+          idleChanged=true;
           active().dirty=true;
           out.idle(sleepTask,idleStart);
         }

@@ -115,9 +115,12 @@ MENU(subMenu,"Sub-Menu",showEvent,anyEvent,noStyle
 
 result alert(menuOut& o,idleEvent e) {
   if (e==idling) {
-    o.println("alert test");
-    o.println("press [select]");
-    o.println("to continue...");
+    o.setCursor(0,0);
+    o.print("alert test");
+    o.setCursor(0,1);
+    o.print("press [select]");
+    o.setCursor(0,2);
+    o.print("to continue...");
   }
   return proceed;
 }
@@ -136,10 +139,10 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,OP("Op2",action2,enterEvent)
   ,FIELD(test,"Test","%",0,100,10,1,doNothing,noEvent,wrapStyle)
   ,SUBMENU(subMenu)
-  //,SUBMENU(setLed)
+  ,SUBMENU(setLed)
   ,OP("LED On",ledOn,enterEvent)
   ,OP("LED Off",ledOff,enterEvent)
-  //,SUBMENU(selMenu)
+  ,SUBMENU(selMenu)
   ,SUBMENU(chooseMenu)
   ,OP("Alert test",doAlert,enterEvent)
   ,EDIT("Hex",buf1,hexNr,doNothing,noEvent,noStyle)
@@ -200,7 +203,9 @@ void setup() {
   while(!Serial);
   nav.idleTask=idle;//point a function to be used when menu is suspended
   mainMenu[1].enabled=disabledStatus;
-  options->inputBurst=10;//change input burst for slow output devices (this is the number of max. processed input before drawing)
+  //change input burst for slow output devices
+  //this is the number of max. processed inputs before drawing
+  options->inputBurst=10;
 
   pinMode(encBtn, INPUT_PULLUP);
   encButton.begin();
