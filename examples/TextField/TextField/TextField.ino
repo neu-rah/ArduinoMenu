@@ -30,8 +30,6 @@ constMEM textFieldShadowRaw op1InfoRaw PROGMEM={
 };//PROGMEM static stuff
 constMEM textFieldShadow& op1Info=*(textFieldShadow*)&op1InfoRaw;//hacking c++ to use progmem (hugly)
 textField option0(op1Info);
-//TODO: text length not enforced to match validators length yet
-//TODO: consider also a single validator for all field, either as a special case of this or as a separate class
 
 char buf1[]="1111";
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle

@@ -192,6 +192,7 @@ multiple stream packing for input to mix encoder stream with encoder keyboard (u
   - Text edit fields with validation
   - Pad style menus (horizontal list)
   - Plugins, alternative menu items potentially device specific
+  - allow multiple concurrent menus
   - Support UCGLib displays
   - Support U8x8 displays
   - Support Arduino TFT
