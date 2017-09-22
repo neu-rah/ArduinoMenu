@@ -577,7 +577,7 @@ for correcting unsigned values validation
         navRoot(menuNode& root,navNode* path,idx_t d,Stream& in,outputsList &o)
           :out(o),in(in),path(path),maxDepth(d) {
             useMenu(root);
-            for(idx_t n=0;n<d;n++)//initialize path chain for this root (v4.0)
+            for(idx_t n=0;n<=d;n++)//initialize path chain for this root (v4.0)
               path[n].root=this;
             //navNode::root=this;
           }
