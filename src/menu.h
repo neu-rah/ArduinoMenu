@@ -88,6 +88,9 @@ for correcting unsigned values validation
         virtual bool changed(const navNode &nav,const menuOut& out,bool sub=true) {return dirty;}
         //this is the system version of enter handler, its used by elements like toggle
         virtual result sysHandler(SYS_FUNC_PARAMS) {return proceed;}
+        virtual result eventHandler(eventMask e,idx_t i) {
+          return operator()(e,*this);
+        }
         inline result operator()(FUNC_PARAMS) const {return (*shadow)(FUNC_VALUES);}
         idx_t printRaw(menuOut& out,idx_t len) const;
         virtual prompt* seek(idx_t* uri,idx_t len) {return len?NULL:this;}
@@ -488,6 +491,9 @@ for correcting unsigned values validation
           return *(menuOut*)memPtr(outs[i]);
         }
         void printMenu(navNode& nav) const;
+        void refresh() {//force redraw of all outputs on next output call
+          for(int n=0;n<cnt;n++) ((menuOut*)memPtr(outs[n]))->drawn=NULL;
+        }
         void clearLine(idx_t ln,idx_t panelNr=0,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus) const {
           for(int n=0;n<cnt;n++) ((menuOut*)memPtr(outs[n]))->clearLine(ln,panelNr,color,selected,stat);
         }
@@ -506,6 +512,10 @@ for correcting unsigned values validation
         }
         void doNav(navCmd cmd,class navNode &nav) {for(int n=0;n<cnt;n++) ((menuOut*)memPtr(outs[n]))->doNav(cmd,nav);}
         result idle(idleFunc f,idleEvent e) {
+          #ifdef DEBUG
+          if (!f) Serial<<"idleFunc is NULL!!!"<<endl;
+          #endif
+          if (!f) return proceed;
           for(int n=0;n<cnt;n++) {
             menuOut& o=*((menuOut*)memPtr(outs[n]));
             switch(e) {
@@ -545,7 +555,7 @@ for correcting unsigned values validation
         inline void useMenu(menuNode &menu) {target=&menu;reset();}
       public:
         idx_t sel=0;
-        menuNode* target;
+        menuNode* target;//TODO: target is const
         /*static*/ navRoot* root;//v 4.0 removed static to allow multiple menus
         inline void reset() {sel=0;}
         inline idx_t sz() const {return target->sz();}
@@ -558,7 +568,7 @@ for correcting unsigned values validation
         inline result sysEvent(eventMask e) {return sysEvent(e,sel);}//send event to current item
         navCmd navKeys(char ch);
         navCmd doNavigation(navCmd cmd);//aux function
-        inline bool changed(const menuOut& out) const {return target->changed(*this,out);}
+        inline bool changed(const menuOut& out) const {return out.drawn==NULL||target->changed(*this,out);}
         inline prompt& operator[](idx_t i) const {return target->operator[](i);}
     };
 
@@ -570,26 +580,30 @@ for correcting unsigned values validation
         const idx_t maxDepth=0;
         idx_t level=0;
         bool showTitle=true;
-        bool idleChanged=false;//avoid recursive idle call
+        bool idleChanged=false;//avoid recursive idle call, changed function will return this value when menu suspended
         idleFunc idleTask=inaction;//to do when menu exits, menu system will set idleFunc to this on exit
         idleFunc sleepTask=NULL;//menu suspended, call this function
         navTarget* navFocus=NULL;
         navRoot(menuNode& root,navNode* path,idx_t d,Stream& in,outputsList &o)
           :out(o),in(in),path(path),maxDepth(d) {
             useMenu(root);
-            for(idx_t n=0;n<=d;n++)//initialize path chain for this root (v4.0)
-              path[n].root=this;
-            //navNode::root=this;
+            initPath(d);
           }
+        void initPath(idx_t d) {
+          for(idx_t n=0;n<=d;n++)//initialize path chain for this root (v4.0)
+            path[n].root=this;
+        }
         void useMenu(constMEM menuNode &menu) {
           navFocus=&menu;
           path[0].target=&menu;
           reset();
+          refresh();
         }
         inline void reset() {
           level=0;
           path[0].sel=0;
         }
+        inline refresh() {out.refresh();}
         inline navNode& node() const {return path[level];}
         inline menuNode& active() const {return *node().target;}
         inline prompt& selected() const {return active()[node().sel];}

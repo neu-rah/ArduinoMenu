@@ -268,7 +268,9 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
     idx_t topi=nav.root->level-((nav.root->active().parentDraw())?1:0);
     idx_t ot=tops[topi];
     bool asPad=((prompt*)nav.target)->sysStyles()&_asPad;
-    idx_t st=(style&showTitle)&&(nav.root->showTitle&&(asPad||(maxY(panelNr)>1)))?1:0;//do not use titles on single line devices!
+    idx_t st
+      =((nav.target->style()&showTitle)||(nav.root->showTitle&&(!(nav.target->style()&noTitle))))
+      &&!(asPad||(maxY(panelNr)<2));//do not use titles on single line devices!
     while(nav.sel+st>=(tops[topi]+maxY(panelNr))) tops[topi]++;
     while(nav.sel<tops[topi]||(tops[topi]&&((nav.sz()-tops[topi])<maxY(panelNr)-st))) tops[topi]--;
     bool all=(style&redraw)
@@ -496,9 +498,7 @@ result navNode::event(eventMask e,idx_t i) {
   prompt& p=operator[](i);
   eventMask m=p.events();
   eventMask me=(eventMask)(e&m);
-  if (me) {
-    return p(e,p);
-  }
+  if (me) return p.eventHandler(e,i);//p(e,p);
   return proceed;
 }
 
