@@ -603,7 +603,7 @@ for correcting unsigned values validation
           level=0;
           path[0].sel=0;
         }
-        inline refresh() {out.refresh();}
+        inline void refresh() {out.refresh();}
         inline navNode& node() const {return path[level];}
         inline menuNode& active() const {return *node().target;}
         inline prompt& selected() const {return active()[node().sel];}
