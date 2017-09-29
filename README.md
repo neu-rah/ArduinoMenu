@@ -202,6 +202,21 @@ multiple stream packing for input to mix encoder stream with encoder keyboard (u
   - VALUEOBJ macro, user allocated values
   - More examples
 
+#### API changes
+printTo member function changed from:
+
+```c++
+idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len);
+```
+
+to
+
+```c++
+idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr=0);
+```
+
+_this should only affect customized components_
+
 ### 3.0
   - complete revision of menu control system
 	- menu structure separated in ram objects and flash objects

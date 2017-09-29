@@ -217,6 +217,7 @@ www.r-site.net
       Print& operator<<(Print& o,colorDefs c);
       Print& operator<<(Print& o,idleEvent e);
       Print& operator<<(Print& o,systemStyles s);
+      // Print& operator<<(Print& o,prompt &p);
     #endif
 
   }

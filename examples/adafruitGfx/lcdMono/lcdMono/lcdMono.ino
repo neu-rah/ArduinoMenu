@@ -24,7 +24,7 @@ note: adafruit's gfx buffer eats too much ram on this device
 #include <Adafruit_PCD8544.h>
 #include <menu.h>
 #include <menuIO/adafruitGfxOut.h>
-//#include <menuIO/serialOut.h>
+#include <menuIO/serialOut.h>
 
 using namespace Menu;
 
@@ -78,7 +78,11 @@ result alert(menuOut& o,idleEvent e) {
 }
 
 result doAlert(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out) {
-  nav.root->idleOn(alert);
+  Serial<<"doAlert nav:";
+  Serial.println((long)&nav);
+  Serial<<"nav.root:";
+  Serial.println((long)nav.root);
+  //nav.root->idleOn(alert);
   return proceed;
 }
 
@@ -103,18 +107,46 @@ const colorDef<uint16_t> colors[] MEMMODE={
   {{BLACK,WHITE},{WHITE,BLACK,BLACK}},//titleColor
 };
 
+#define gfxWidth 84
+#define gfxHeight 48
 #define fontX 5
 #define fontY 9
 #define MAX_DEPTH 2
 
 #define MAX_DEPTH 2
 #define textScale 1
-MENU_OUTPUTS(out,MAX_DEPTH
-  ,ADAGFX_OUT(gfx,colors,fontX,fontY,{0,0,84/fontX,48/fontY})
-  ,NONE//must have at least 2 entryes
+// MENU_OUTPUTS(out,MAX_DEPTH
+//   ,ADAGFX_OUT(gfx,colors,fontX,fontY,{0,0,gfxWidth/fontX,gfxHeight/fontY})
+//   ,SERIAL_OUT(Serial)
+// );
+
+//NAVROOT(nav,mainMenu,MAX_DEPTH,Serial,out);
+
+//initializing output and menu nav without macros
+const panel default_serial_panels[] MEMMODE={{0,0,40,10}};
+navNode* default_serial_nodes[sizeof(default_serial_panels)/sizeof(panel)];
+panelsList default_serial_panel_list(
+  default_serial_panels,
+  default_serial_nodes,
+  sizeof(default_serial_panels)/sizeof(panel)
 );
 
-NAVROOT(nav,mainMenu,MAX_DEPTH,Serial,out);
+//define output device
+idx_t serialTops[MAX_DEPTH]={0};
+serialOut outSerial(*(Print*)&Serial,serialTops);
+
+//define outputs controller
+idx_t gfx_tops[MAX_DEPTH];
+PANELS(gfxPanels,{0,0,gfxWidth/fontX,gfxHeight/fontY});
+adaGfxOut adaOut(gfx,colors,gfx_tops,gfxPanels);
+
+menuOut* const outputs[] MEMMODE={&outSerial,&adaOut};//list of output devices
+outputsList out(outputs,2);//outputs list controller
+
+//define navigation root and aux objects
+navNode nav_cursors[MAX_DEPTH];//aux objects to control each level of navigation
+// navRoot nav(mainMenu, nav_cursors, MAX_DEPTH-1, Serial, out);
+navRoot *nav;
 
 //when menu is suspended
 result idle(menuOut& o,idleEvent e) {
@@ -130,8 +162,14 @@ void setup() {
   Serial.begin(115200);
   while(!Serial);
   Serial.println(F("menu 4.x test"));
+  nav=new navRoot(mainMenu, nav_cursors, MAX_DEPTH-1, Serial, out);
+  Serial<<"root:"<<(long)nav<<endl;
+  Serial<<"path:"<<(long)nav->path<<endl;
+  for(int n=0;n<nav->maxDepth;n++) {
+    Serial<<n<<":"<<(long)&nav->path[n]<<"->"<<(long)nav->path[n].root<<endl;
+  }
   Serial.flush();
-  nav.idleTask=idle;//point a function to be used when menu is suspended
+  nav->idleTask=idle;//point a function to be used when menu is suspended
   //mainMenu[1].enabled=disabledStatus;
 
   //pinMode(encBtn, INPUT_PULLUP);
@@ -153,9 +191,9 @@ void loop() {
   //gfx.display();
 
   //or on a need to draw basis:
-  nav.doInput();
-  if (nav.changed(0)) {//only draw if changed
-    nav.doOutput();
+  nav->doInput();
+  if (nav->changed(0)) {//only draw if changed
+    nav->doOutput();
     gfx.display();
   }
 

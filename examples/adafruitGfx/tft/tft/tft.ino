@@ -103,28 +103,12 @@ public:
   }
 };
 
-MENU(bigMenu,"BigMenu",doNothing,noEvent,noStyle
-  ,OP("Op",doNothing,noEvent)
-  ,OP("Op",doNothing,noEvent)
-  ,OP("Op",doNothing,noEvent)
-  ,OP("Op",doNothing,noEvent)
-  ,OP("Op",doNothing,noEvent)
-  ,OP("Op",doNothing,noEvent)
-  ,OP("Op",doNothing,noEvent)
-  ,OP("Op",doNothing,noEvent)
-  ,OP("Op",doNothing,noEvent)
-  ,OP("Op",doNothing,noEvent)
-  ,OP("Op",doNothing,noEvent)
-  ,OP("Op",doNothing,noEvent)
-  ,OP("Op",doNothing,noEvent)
-  ,OP("Op",doNothing,noEvent)
-  ,OP("Op",doNothing,noEvent)
-  ,EXIT("<Back")
-);
-
 MENU(subMenu,"Sub-Menu",showEvent,anyEvent,noStyle
-  ,SUBMENU(bigMenu)
   ,altOP(altPrompt,"",showEvent,anyEvent)
+  ,OP("Op",doNothing,noEvent)
+  ,OP("Op",doNothing,noEvent)
+  ,OP("Op",doNothing,noEvent)
+  ,OP("Op",doNothing,noEvent)
   ,EXIT("<Back")
 );
 

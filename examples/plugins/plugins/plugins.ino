@@ -62,7 +62,7 @@ LiquidCrystal lcd(RS, RW, EN, 4, 5, 6, 7);
 
 // Encoder /////////////////////////////////////
 #define encA A2
-#define encB 2
+#define encB A1
 //this encoder has a button here
 #define encBtn A3
 

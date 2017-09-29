@@ -157,4 +157,9 @@ config* Menu::options=&defaultOptions;
     }
     return o;
   }
+
+  // Print& Menu::operator<<(Print& o,prompt &p) {
+  //   print_P(o,p.getText(),-1);
+  //   return o;
+  // }
 #endif

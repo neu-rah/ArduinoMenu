@@ -592,8 +592,11 @@ for correcting unsigned values validation
             initPath(d);
           }
         void initPath(idx_t d) {
-          for(idx_t n=0;n<=d;n++)//initialize path chain for this root (v4.0)
+          Serial<<"DEBUG initPath"<<endl<<"root:"<<(long)this<<endl;
+          for(idx_t n=0;n<=d;n++) {//initialize path chain for this root (v4.0)
             path[n].root=this;
+            Serial<<n<<":"<<(long)path[n].root<<endl;
+          }
         }
         void useMenu(constMEM menuNode &menu) {
           navFocus=&menu;
