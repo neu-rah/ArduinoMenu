@@ -186,7 +186,7 @@ menuOut& menuOut::operator<<(const prompt& p) {
 void outputsList::printMenu(navNode& nav) const {
   trace(Serial<<"outputsList::printMenu"<<endl);
   for(int n=0;n<cnt;n++) {
-    trace(Serial<<"proc. output:"<<n<<endl);
+    //trace(Serial<<"proc. output:"<<n<<endl);
     menuOut& o=*((menuOut*)memPtr(outs[n]));
     if (nav.changed(o)||(o.style&(menuOut::rasterDraw))) o.printMenu(nav);
   }
@@ -199,14 +199,14 @@ void menuOut::clearChanged(navNode &nav) {
   nav.target->dirty=false;
   idx_t level=nav.root->level;
   if (nav.root->active().parentDraw()) level--;
-  trace(print_P(Serial, nav.root->active().getText()));
-  trace(Serial<<" level:"<<level);
+  //trace(print_P(Serial, nav.root->active().getText()));
+  //trace(Serial<<" level:"<<level);
   idx_t t=tops[level];
-  trace(Serial<<" top:"<<t<<endl);
+  //trace(Serial<<" top:"<<t<<endl);
   for(idx_t i=0;i<maxY();i++,t++) {//only signal visible
-    trace(Serial<<"checking "<<t<<endl);
+    //trace(Serial<<"checking "<<t<<endl);
     if (t>=nav.sz()) break;//menu ended
-    trace(Serial<<"cleared "<<t<<endl);
+    //trace(Serial<<"cleared "<<t<<endl);
     nav[t].dirty=false;
   }
 }
@@ -284,9 +284,10 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
     panel pan=panels[panelNr];
 
     //-----> panel start
+    bool titleChanged=st||nav.target->changed(nav,*this,false);
     fmtStart(fmtPanel,nav);
-    if (all) {
-      clear(panelNr);
+    if (all||titleChanged) {
+      if (all) clear(panelNr);
       if (st) {
         ///------> titleStart
         fmtStart(fmtTitle,nav,-1);
@@ -294,10 +295,10 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
         clearLine(0,panelNr);
         setColor(titleColor,true);
         setCursor(0,0,panelNr);
-        //print('[');
-        nav.target->prompt::printTo(*nav.root,true,*this,-1,pan.w-1,panelNr);
+        if (!asPad) print('[');
+        nav.target->printTo(*nav.root,true,*this,-1,pan.w-(asPad?1:2),panelNr);
         if (asPad) print(":");
-        //print(']');
+        else print(']');
         ///<----- titleEnd
         fmtEnd(fmtTitle,nav,-1);
       }

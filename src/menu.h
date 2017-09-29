@@ -236,6 +236,8 @@ for correcting unsigned values validation
     class menu:public menuNode {
       public:
         menu(constMEM menuNodeShadow& shadow):menuNode(shadow) {}
+        // idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr=0) override {
+        // }
     };
 
     //--------------------------------------------------------------------------

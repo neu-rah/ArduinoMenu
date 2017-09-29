@@ -12,3 +12,4 @@ platformio.ini
 /classes.odg
 .gitignore
 !/.gitignore
+*.odg

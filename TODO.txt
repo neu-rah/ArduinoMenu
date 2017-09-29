@@ -1,5 +1,6 @@
 Arduino Menu Library
 
++ customizing title print
 + BUG: u8glib draw cause multiple draw on serial - detach output draws!
 - use multiple menus
 - use single include?
