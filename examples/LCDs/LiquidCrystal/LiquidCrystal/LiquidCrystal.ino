@@ -6,9 +6,6 @@ creative commons license 3.0: Attribution-ShareAlike CC BY-SA
 This software is furnished "as is", without technical support, and with no
 warranty, express or implied, as to its usefulness for any purpose.
 
-Thread Safe: No
-Extensible: Yes
-
 menu output to standard arduino LCD (LiquidCrystal)
 output: LCD
 input: encoder and Serial
@@ -65,7 +62,7 @@ result action1(eventMask e,navNode& nav, prompt &item) {
   return proceed;
 }
 
-result action2(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out) {
+result action2(eventMask e, prompt &item) {
   Serial.print("action2 event: ");
   Serial.print(e);
   Serial.print(", quiting menu.");
@@ -138,8 +135,8 @@ result alert(menuOut& o,idleEvent e) {
   return proceed;
 }
 
-result doAlert(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out) {
-  nav.root->idleOn(alert);
+result doAlert(eventMask e, prompt &item) {
+  nav.idleOn(alert);
   return proceed;
 }
 

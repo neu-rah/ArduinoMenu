@@ -62,7 +62,7 @@ Matthias Hertel driver https://github.com/mathertel/LiquidCrystal_PCF8574
     return proceed;
   }
 
-  result action2(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out) {
+  result action2(eventMask e, prompt &item) {
     Serial.print("action2 event: ");
     Serial.print(e);
     Serial.println(", quiting menu.");
@@ -135,7 +135,7 @@ Matthias Hertel driver https://github.com/mathertel/LiquidCrystal_PCF8574
     return proceed;
   }
 
-  result doAlert(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out) {
+  result doAlert(eventMask e, prompt &item) {
     nav.root->idleOn(alert);
     return proceed;
   }

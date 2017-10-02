@@ -5,9 +5,6 @@ creative commons license 3.0: Attribution-ShareAlike CC BY-SA
 This software is furnished "as is", without technical support, and with no
 warranty, express or implied, as to its usefulness for any purpose.
 
-Thread Safe: No
-Extendable: Yes
-
 quadrature encoder driver (PCINT)
 quadrature encoder stream (fake, not using buffers)
 

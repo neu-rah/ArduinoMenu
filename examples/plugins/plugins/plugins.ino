@@ -5,9 +5,6 @@ creative commons license 3.0: Attribution-ShareAlike CC BY-SA
 This software is furnished "as is", without technical support, and with no
 warranty, express or implied, as to its usefulness for any purpose.
 
-Thread Safe: No
-Extensible: Yes
-
 www.r-site.net
 
 unlike native objects, pluggins can be device specific, so some pluggins might
@@ -20,9 +17,6 @@ contrubutions and contrubutors are welcome.
 
 Cancelable fields - restore original value on escape (long encoder press)
 barField - numeric field edit with a graph bar
-
-changes:
-ITEM macro, like OP but do allow custom system styles and extra arguments at end
 
 ***/
 
@@ -126,5 +120,9 @@ void setup() {
 
 void loop() {
   nav.poll();
+  if (nav.sleepTask) {
+    lcd.setCursor(0,0);
+    lcd.print((millis()/1000)%60);
+  }
   delay(100);//simulate other tasks delay
 }

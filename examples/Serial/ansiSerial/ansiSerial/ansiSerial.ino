@@ -6,9 +6,6 @@ creative commons license 3.0: Attribution-ShareAlike CC BY-SA
 This software is furnished "as is", without technical support, and with no
 warranty, express or implied, as to its usefulness for any purpose.
 
-Thread Safe: No
-Extensible: Yes
-
 menu to ANSI serial terminal
 output: ANSI Serial terminal
 input: Serial
@@ -154,7 +151,7 @@ result action1(eventMask e,navNode& nav, prompt &item) {
   return proceed;
 }
 
-result action2(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out) {
+result action2(eventMask e, prompt &item) {
   Serial<<ANSI::xy(24,nav.sel+nav.root->showTitle)
     <<item<<" "<<e<<" event on "<<item<<", quiting menu.";
   Serial.flush();
@@ -257,8 +254,8 @@ result alert(menuOut& o,idleEvent e) {
   return proceed;
 }
 
-result doAlert(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out) {
-  nav.root->idleOn(alert);
+result doAlert(eventMask e, prompt &item) {
+  nav.idleOn(alert);
   return proceed;
 }
 

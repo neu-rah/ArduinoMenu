@@ -10,8 +10,6 @@ creative commons license 3.0: Attribution-ShareAlike CC BY-SA
 This software is furnished "as is", without technical support, and with no
 
 warranty, express or implied, as to its usefulness for any purpose.
-Thread Safe: No
-Extensible: Yes
 
 LCD library:
 https://bitbucket.org/fmalpartida/new-liquidcrystal/wiki/Home
@@ -68,7 +66,7 @@ http://playground.arduino.cc/Code/LCD3wires
     return proceed;
   }
 
-  result action2(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out) {
+  result action2(eventMask e, prompt &item) {
     Serial.print("action2 event: ");
     Serial.print(e);
     Serial.println(", quiting menu.");
@@ -141,7 +139,7 @@ http://playground.arduino.cc/Code/LCD3wires
     return proceed;
   }
 
-  result doAlert(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out) {
+  result doAlert(eventMask e, prompt &item) {
     nav.root->idleOn(alert);
     return proceed;
   }

@@ -25,7 +25,7 @@ result action1(eventMask e) {
   return proceed;
 }
 
-result action2(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out) {
+result action2(eventMask e, prompt &item) {
   Serial.print(e);
   Serial.println(" action2 executed, quiting menu");
   return quit;
@@ -92,8 +92,8 @@ result alert(menuOut& o,idleEvent e) {
   return proceed;
 }
 
-result doAlert(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out) {
-  nav.root->idleOn(alert);
+result doAlert(eventMask e, prompt &item) {
+  nav.idleOn(alert);
   return proceed;
 }
 

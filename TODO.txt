@@ -1,5 +1,8 @@
 Arduino Menu Library
 
+- field reversion should be by input device and not global
+  problem: inputs are only streams and they can be joyned!
+- put (some) options into navRoot
 + customizing title print
 + BUG: u8glib draw cause multiple draw on serial - detach output draws!
 - use multiple menus

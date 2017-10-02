@@ -6,9 +6,6 @@ creative commons license 3.0: Attribution-ShareAlike CC BY-SA
 This software is furnished "as is", without technical support, and with no
 warranty, express or implied, as to its usefulness for any purpose.
 
-Thread Safe: No
-Extensible: Yes
-
 menu with adafruit GFX
 output: 1.8" TFT 128*160 (ST7735 HW SPI)
 input: Serial + encoder
@@ -41,7 +38,9 @@ Adafruit_ST7735 gfx(TFT_CS, TFT_DC, TFT_RST);
 #define encB    3
 #define encBtn  4
 
-result showEvent(eventMask e,navNode& nav,prompt& item) {
+result doAlert(eventMask e, prompt &item);
+
+result showEvent(eventMask e, prompt& item) {
   Serial.print(F("event:"));
   Serial.print(e);
   return proceed;
@@ -56,7 +55,7 @@ result action1(eventMask e) {
   return proceed;
 }
 
-result action2(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out) {
+result action2(eventMask e, prompt &item) {
   Serial.print(e);
   Serial.println(" action2 executed, quiting menu");
   return quit;
@@ -112,23 +111,6 @@ MENU(subMenu,"Sub-Menu",showEvent,anyEvent,noStyle
   ,EXIT("<Back")
 );
 
-result alert(menuOut& o,idleEvent e) {
-  if (e==idling) {
-    o.setCursor(0,0);
-    o.print("alert test");
-    o.setCursor(0,1);
-    o.print("press [select]");
-    o.setCursor(0,2);
-    o.print("to continue...");
-  }
-  return proceed;
-}
-
-result doAlert(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out) {
-  nav.root->idleOn(alert);
-  return proceed;
-}
-
 char* const hexDigit PROGMEM="0123456789ABCDEF";
 char* const hexNr[] PROGMEM={"0","x",hexDigit,hexDigit};
 char buf1[]="0x11";
@@ -181,6 +163,23 @@ MENU_OUTPUTS(out,MAX_DEPTH
 
 NAVROOT(nav,mainMenu,MAX_DEPTH,in,out);
 
+result alert(menuOut& o,idleEvent e) {
+  if (e==idling) {
+    o.setCursor(0,0);
+    o.print("alert test");
+    o.setCursor(0,1);
+    o.print("press [select]");
+    o.setCursor(0,2);
+    o.print("to continue...");
+  }
+  return proceed;
+}
+
+result doAlert(eventMask e, prompt &item) {
+  nav.idleOn(alert);
+  return proceed;
+}
+
 //when menu is suspended
 result idle(menuOut& o,idleEvent e) {
   if (e==idling) {
@@ -191,17 +190,17 @@ result idle(menuOut& o,idleEvent e) {
   return proceed;
 }
 
-config myOptions('*','-',false,false,defaultNavCodes);
+//config myOptions('*','-',false,false,defaultNavCodes);
 
 void setup() {
-  options=&myOptions;
+  //options=&myOptions;//can customize options
   pinMode(LEDPIN,OUTPUT);
   Serial.begin(115200);
   while(!Serial);
   Serial.println("menu 4.x test");
   Serial.flush();
   nav.idleTask=idle;//point a function to be used when menu is suspended
-  mainMenu[1].enabled=disabledStatus;
+  mainMenu[1].disable();
   //outGfx.usePreview=true;//reserve one panel for preview?
   //nav.showTitle=false;//show menu title?
 

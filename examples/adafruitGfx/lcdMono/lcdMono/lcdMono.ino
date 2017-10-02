@@ -1,21 +1,15 @@
 #include <Arduino.h>
 
 /********************
-Sept. 2014 ~ Oct 2016 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
+Sept. 2014 ~ Oct 2017 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
 creative commons license 3.0: Attribution-ShareAlike CC BY-SA
 This software is furnished "as is", without technical support, and with no
 warranty, express or implied, as to its usefulness for any purpose.
 
-Thread Safe: No
-Extensible: Yes
-
 menu with adafruit GFX
-output: Nokia 5110 display (PCD8544 HW SPI)
-input: Serial
+output: Nokia 5110 display (PCD8544 HW SPI) + Serial
+input: Encoder + Serial
 www.r-site.net
-
-note: adafruit's gfx buffer eats too much ram on this device
-=> removed encoder to save ram
 
 ***/
 
@@ -23,8 +17,11 @@ note: adafruit's gfx buffer eats too much ram on this device
 #include <Adafruit_GFX.h>
 #include <Adafruit_PCD8544.h>
 #include <menu.h>
-#include <menuIO/adafruitGfxOut.h>
+#include <menuIO/encoderIn.h>
+#include <menuIO/keyIn.h>
+#include <menuIO/chainStream.h>
 #include <menuIO/serialOut.h>
+#include <menuIO/adafruitGfxOut.h>
 
 using namespace Menu;
 
@@ -38,9 +35,9 @@ Adafruit_PCD8544 gfx(GFX_DC,GFX_CS,GFX_RST);
 #define LEDPIN A3
 
 // rotary encoder pins
-/*#define encA    5
-#define encB    6
-#define encBtn  4*/
+#define encA    2
+#define encB    3
+#define encBtn  4
 
 result showEvent(eventMask e,navNode& nav,prompt& item) {
   Serial.print(F("event:"));
@@ -60,31 +57,13 @@ result ledOff() {
   return proceed;
 }
 
+result alert(menuOut& o,idleEvent e);
+result doAlert(eventMask e, prompt &item);
+
 TOGGLE(ledCtrl,setLed,"Led: ",doNothing,noEvent,noStyle//,doExit,enterEvent,noStyle
   ,VALUE("On",HIGH,doNothing,noEvent)
   ,VALUE("Off",LOW,doNothing,noEvent)
 );
-
-result alert(menuOut& o,idleEvent e) {
-  if (e==idling) {
-    o.setCursor(0,0);
-    o.print("alert test");
-    o.setCursor(0,1);
-    o.print("press [select]");
-    o.setCursor(0,2);
-    o.print("to continue...");
-  }
-  return proceed;
-}
-
-result doAlert(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out) {
-  Serial<<"doAlert nav:";
-  Serial.println((long)&nav);
-  Serial<<"nav.root:";
-  Serial.println((long)nav.root);
-  //nav.root->idleOn(alert);
-  return proceed;
-}
 
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,FIELD(test,"Test","%",0,100,10,1,doNothing,noEvent,wrapStyle)
@@ -113,17 +92,26 @@ const colorDef<uint16_t> colors[] MEMMODE={
 #define fontY 9
 #define MAX_DEPTH 2
 
+encoderIn<encA,encB> encoder;//simple quad encoder driver
+encoderInStream<encA,encB> encStream(encoder,4);// simple quad encoder fake Stream
+
+//a keyboard with only one key as the encoder button
+keyMap encBtn_map[]={{-encBtn,options->getCmdChar(enterCmd)}};//negative pin numbers use internal pull-up, this is on when low
+keyIn<1> encButton(encBtn_map);//1 is the number of keys
+
+MENU_INPUTS(in,&encStream,&encButton,&Serial);
+
 #define MAX_DEPTH 2
 #define textScale 1
-// MENU_OUTPUTS(out,MAX_DEPTH
-//   ,ADAGFX_OUT(gfx,colors,fontX,fontY,{0,0,gfxWidth/fontX,gfxHeight/fontY})
-//   ,SERIAL_OUT(Serial)
-// );
+MENU_OUTPUTS(out,MAX_DEPTH
+  ,ADAGFX_OUT(gfx,colors,fontX,fontY,{0,0,gfxWidth/fontX,gfxHeight/fontY})
+  ,SERIAL_OUT(Serial)
+);
 
-//NAVROOT(nav,mainMenu,MAX_DEPTH,Serial,out);
+NAVROOT(nav,mainMenu,MAX_DEPTH,in,out);
 
 //initializing output and menu nav without macros
-const panel default_serial_panels[] MEMMODE={{0,0,40,10}};
+/*const panel default_serial_panels[] MEMMODE={{0,0,40,10}};
 navNode* default_serial_nodes[sizeof(default_serial_panels)/sizeof(panel)];
 panelsList default_serial_panel_list(
   default_serial_panels,
@@ -145,15 +133,33 @@ outputsList out(outputs,2);//outputs list controller
 
 //define navigation root and aux objects
 navNode nav_cursors[MAX_DEPTH];//aux objects to control each level of navigation
-// navRoot nav(mainMenu, nav_cursors, MAX_DEPTH-1, Serial, out);
-navRoot *nav;
+navRoot nav(mainMenu, nav_cursors, MAX_DEPTH-1, Serial, out);*/
+
+result alert(menuOut& o,idleEvent e) {
+  if (e==idling) {
+    o.setCursor(0,0);
+    o.print(F("alert test"));
+    o.setCursor(0,1);
+    o.print(F("press [select]"));
+    o.setCursor(0,2);
+    o.print(F("to continue..."));
+  }
+  return proceed;
+}
+
+result doAlert(eventMask e, prompt &item) {
+  nav.idleOn(alert);
+  return proceed;
+}
 
 //when menu is suspended
 result idle(menuOut& o,idleEvent e) {
-  //if (e==idling)
-    o.println(F("suspended..."));
-    o.println(F("press [select]"));
-    o.println(F("to continue"));
+  o.setCursor(0,0);
+  o.print(F("suspended..."));
+  o.setCursor(0,1);
+  o.print(F("press [select]"));
+  o.setCursor(0,2);
+  o.print(F("to continue"));
   return proceed;
 }
 
@@ -162,18 +168,11 @@ void setup() {
   Serial.begin(115200);
   while(!Serial);
   Serial.println(F("menu 4.x test"));
-  nav=new navRoot(mainMenu, nav_cursors, MAX_DEPTH-1, Serial, out);
-  Serial<<"root:"<<(long)nav<<endl;
-  Serial<<"path:"<<(long)nav->path<<endl;
-  for(int n=0;n<nav->maxDepth;n++) {
-    Serial<<n<<":"<<(long)&nav->path[n]<<"->"<<(long)nav->path[n].root<<endl;
-  }
   Serial.flush();
-  nav->idleTask=idle;//point a function to be used when menu is suspended
-  //mainMenu[1].enabled=disabledStatus;
+  nav.idleTask=idle;//point a function to be used when menu is suspended
 
-  //pinMode(encBtn, INPUT_PULLUP);
-  //encoder.begin();
+  encButton.begin();
+  encoder.begin();
 
   SPI.begin();
   gfx.begin();
@@ -191,9 +190,9 @@ void loop() {
   //gfx.display();
 
   //or on a need to draw basis:
-  nav->doInput();
-  if (nav->changed(0)) {//only draw if changed
-    nav->doOutput();
+  nav.doInput();
+  if (nav.changed(0)) {//only draw if changed
+    nav.doOutput();
     gfx.display();
   }
 

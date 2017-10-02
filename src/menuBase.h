@@ -161,7 +161,7 @@ www.r-site.net
         bool n2d=false,
         const navCodesDef &nc=defaultNavCodes,
         bool useUpdateEvent=false,
-        bool canExit=false,
+        bool canExit=true,
         bool numValueInput=true,
         idx_t inBurst=1
       ):selectedCursor(ecur),

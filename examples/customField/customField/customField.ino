@@ -2,7 +2,7 @@
 
 #include <menu.h>
 #include <menuIO/serialOut.h>
-#include <Streaming.h>
+// #include <Streaming.h>
 
 using namespace Menu;
 
@@ -57,7 +57,8 @@ NAVROOT(nav,mainMenu,MAX_DEPTH,Serial,out);
 void setup() {
   Serial.begin(115200);
   while(!Serial);
-  Serial<<"menu 4.x testing custom fields"<<endl;Serial.flush();
+  Serial.println("menu 4.x testing custom fields");
+  Serial.flush();
 }
 
 void loop() {

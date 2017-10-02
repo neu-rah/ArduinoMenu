@@ -32,6 +32,8 @@ using namespace Menu;
 #define NAV_BTN 5
 #define SEL_BTN 6
 
+result doAlert(eventMask e, prompt &item);
+
 result showEvent(eventMask e) {
   Serial.print("event: ");
   Serial.println(e);
@@ -103,21 +105,6 @@ MENU(subMenu,"Sub-Menu",doNothing,anyEvent,wrapStyle
   ,EXIT("<Back")
 );
 
-result alert(menuOut& o,idleEvent e) {
-  if (e==idling) {
-    o.setCursor(0,0);
-    o.print("alert test");
-    o.setCursor(0,1);
-    o.print("[select] to continue...");
-  }
-  return proceed;
-}
-
-result doAlert(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out) {
-  nav.root->idleOn(alert);
-  return proceed;
-}
-
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,OP("Op1",action1,anyEvent)
   ,OP("Op2",action2,enterEvent)
@@ -139,6 +126,21 @@ MENU_OUTPUTS(out,MAX_DEPTH
 );
 
 NAVROOT(nav,mainMenu,MAX_DEPTH,Serial,out);
+
+result alert(menuOut& o,idleEvent e) {
+  if (e==idling) {
+    o.setCursor(0,0);
+    o.print("alert test");
+    o.setCursor(0,1);
+    o.print("[select] to continue...");
+  }
+  return proceed;
+}
+
+result doAlert(eventMask e, prompt &item) {
+  nav.idleOn(alert);
+  return proceed;
+}
 
 void setup() {
   Serial.begin(115200);

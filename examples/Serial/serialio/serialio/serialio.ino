@@ -15,11 +15,8 @@ input: Serial
 
 using namespace Menu;
 
-// #ifdef ARDUINO_SAM_DUE
-//   #define LEDPIN 13
-// #else
-  #define LEDPIN LED_BUILTIN
-// #endif
+#define LEDPIN LED_BUILTIN
+
 result zZz() {Serial.println("zZz");return proceed;}
 
 result showEvent(eventMask e,navNode& nav,prompt& item) {
@@ -37,7 +34,7 @@ result action1(eventMask e) {
   return proceed;
 }
 
-result action2(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out) {
+result action2(eventMask e, prompt &item) {
   Serial.print(e);
   Serial.print(" action2 executed, quiting menu");
   return quit;
@@ -92,23 +89,6 @@ MENU(subMenu,"Sub-Menu",showEvent,anyEvent,noStyle
   ,EXIT("<Back")
 );
 
-result alert(menuOut& o,idleEvent e) {
-  if (e==idling) {
-    o.setCursor(0,0);
-    o.print("alert test");
-    o.setCursor(0,1);
-    o.print("press [select]");
-    o.setCursor(0,2);
-    o.print("to continue...");
-  }
-  return proceed;
-}
-
-result doAlert(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out) {
-  nav.root->idleOn(alert);
-  return proceed;
-}
-
 char* const hexDigit PROGMEM="0123456789ABCDEF";
 char* const hexNr[] PROGMEM={"0","x",hexDigit,hexDigit};
 char buf1[]="0x11";
@@ -137,9 +117,26 @@ MENU_OUTPUTS(out,MAX_DEPTH
 
 NAVROOT(nav,mainMenu,MAX_DEPTH,Serial,out);
 
+result alert(menuOut& o,idleEvent e) {
+  if (e==idling) {
+    o.setCursor(0,0);
+    o.print("alert test");
+    o.setCursor(0,1);
+    o.print("press [select]");
+    o.setCursor(0,2);
+    o.print("to continue...");
+  }
+  return proceed;
+}
+
+result doAlert(eventMask e, prompt &item) {
+  nav.idleOn(alert);
+  return proceed;
+}
+
 //when menu is suspended
 result idle(menuOut &o, idleEvent e) {
-  o.clear();
+  // o.clear();
   switch(e) {
     case idleStart:o.println("suspending menu!");break;
     case idling:o.println("suspended...");break;

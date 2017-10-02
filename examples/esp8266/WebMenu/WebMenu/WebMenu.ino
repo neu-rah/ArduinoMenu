@@ -8,9 +8,6 @@ creative commons license 3.0: Attribution-ShareAlike CC BY-SA
 This software is furnished "as is", without technical support, and with no
 warranty, express or implied, as to its usefulness for any purpose.
 
-Thread Safe: No
-Extensible: Yes
-
 menu on web browser served by esp8266 device (experimental)
 output: ESP8266WebServer -> Web browser
 input: ESP8266WebSocket <- Web browser

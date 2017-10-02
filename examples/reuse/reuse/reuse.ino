@@ -117,12 +117,12 @@ class AlarmPrompt:public prompt {
             len-=out.print(s);
             break;
           case countDown:
+            len-=out.printRaw("Countdown ",len);
             long ss=msTime/1000;
             long hh=ss/(60*60);
             ss-=hh*60*60;
             long mm=ss/60;
             ss-=mm*60;
-            len-=out.printRaw("Countdown ",len);
             if (hh<10) len-=out.print("0");
             len-=out.print(hh);
             len-=out.printRaw(":",len);
