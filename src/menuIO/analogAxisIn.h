@@ -23,9 +23,11 @@ analogAxisIn - analog joystick axis
       int bufferSz=1,//how many clicks can accumulate
       navCmds posCmd=upCmd,//what is sent by positive axis click
       navCmds negCmd=downCmd//what is sent by negative axis click
-    > class analogAxis:public Stream {
+    > class analogAxis:public menuIn {
       public:
-        // uint8_t sensivity;
+        bool field_mode=false;
+        virtual void setFieldMode(bool mode) {field_mode=mode;}
+        virtual bool fieldMode() const {return field_mode;}
         int cnt=0;
         long last=0;
         void getStep() {
@@ -42,8 +44,8 @@ analogAxisIn - analog joystick axis
           }
           // Serial<<endl<<"dt:"<<dt<<" >s:"<<s;
         }
-        inline navCmds pos() const {return inv?negCmd:posCmd;}
-        inline navCmds neg() const {return inv?posCmd:negCmd;}
+        inline navCmds pos() const {return inv^field_mode?negCmd:posCmd;}
+        inline navCmds neg() const {return inv^field_mode?posCmd:negCmd;}
         int available(void) {getStep();return cnt!=0;}
         int peek(void) override {
           getStep();

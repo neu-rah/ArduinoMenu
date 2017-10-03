@@ -409,7 +409,7 @@ void navTarget::doNav(navNode& nav,navCmd cmd) {
   nav.doNavigation(cmd);
 }
 
-void navTarget::parseInput(navNode& nav,Stream& in) {
+void navTarget::parseInput(navNode& nav,menuIn& in) {
   trace(Serial<<"navTarget::parseInput"<<endl);
   doNav(nav,nav.navKeys(in.read()));
 }
@@ -509,7 +509,7 @@ result navNode::sysEvent(eventMask e,idx_t i) {
   return p(e,p);
 }
 
-void navRoot::doInput(Stream& in) {
+void navRoot::doInput(menuIn& in) {
   trace(Serial<<"navRoot::doInput"<<endl);
   if (sleepTask) {
     if (options->getCmdChar(enterCmd)==in.read()) idleOff();
@@ -572,6 +572,7 @@ navCmd navRoot::enter() {
     if (canNav) {
       navFocus=(navTarget*)&sel;
       navFocus->dirty=true;
+      if (!isMenu) in.fieldOn();
     }
     return rCmd;
   }
@@ -589,7 +590,10 @@ navCmd navRoot::exit() {
       node().event(exitEvent,node().sel);
       idleOn(idleTask);
     }
-  } else node().event(exitEvent,node().sel);
+  } else {
+    node().event(exitEvent,node().sel);
+    in.fieldOff();
+  }
   active().dirty=true;
   navFocus=&active();
   return escCmd;

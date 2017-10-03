@@ -31,7 +31,7 @@ ex: -A0 means: pin A0 normally high, low when button pushed (reverse logic)
     //emulate a stream keyboard, this is not using interrupts as a good driver should do
     // AND is not using a buffer either!
     template <int N>
-    class keyIn:public Stream {
+    class keyIn:public menuIn {
     public:
       keyMap* keys;
       int lastkey;
