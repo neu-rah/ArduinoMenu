@@ -190,7 +190,7 @@ multiple stream packing for input to mix encoder stream with encoder keyboard (u
 ## History
 
 ### 4.0
-  - Text edit fields with validation
+  - Text edit fields with validation *
   - Pad style menus (horizontal list)
   - Plugins, alternative menu items potentially device specific
   - Allow multiple concurrent menus
@@ -198,11 +198,13 @@ multiple stream packing for input to mix encoder stream with encoder keyboard (u
   - Support U8x8 displays
   - Support Arduino TFT
   - Support PCF8574 I2C LCD
+  - Support Analog Joystick input
   - Added input burst config option
   - VALUEOBJ macro, user allocated values
+  - menuIn class for menu inputs (allows device field invertion) *
   - More examples
 
-#### API changes
+#### * API changes
 printTo member function changed from:
 
 ```c++
@@ -216,6 +218,8 @@ idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t pan
 ```
 
 _this should only affect customized components_
+
+inputs are now from class menuIn, derived from Stream but including flag functions for field axis inversion per input class.
 
 ### 3.0
   - complete revision of menu control system

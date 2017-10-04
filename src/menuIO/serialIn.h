@@ -14,7 +14,7 @@ HardwareSerial input driver
     class serialIn:public menuIn {
       public:
         HardwareSerial& in;
-        serialIn(HardwareSerial serial):in(serial) {}
+        serialIn(HardwareSerial& serial):in(serial) {}
         size_t write(uint8_t o) override {return in.write(o);}
         int available() override {return in.available();}
         int peek() override {return in.peek();}
