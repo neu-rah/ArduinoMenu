@@ -4,9 +4,6 @@ XmlServer menu example
 based on WebServer: https://github.com/esp8266/Arduino/tree/master/libraries/ESP8266WebServer
 
 Dec. 2016 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
-creative commons license 3.0: Attribution-ShareAlike CC BY-SA
-This software is furnished "as is", without technical support, and with no
-warranty, express or implied, as to its usefulness for any purpose.
 
 menu on web browser served by esp8266 device (experimental)
 output: ESP8266WebServer -> Web browser

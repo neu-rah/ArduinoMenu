@@ -6,13 +6,6 @@ Sept. 2014 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
 Oct. 2016 - dontsovcmc (https://github.com/dontsovcmc) added debounce safe
   https://github.com/neu-rah/ArduinoMenu/pull/60
 
-creative commons license 3.0: Attribution-ShareAlike CC BY-SA
-This software is furnished "as is", without technical support, and with no
-warranty, express or implied, as to its usefulness for any purpose.
-
-Thread Safe: No
-Extendable: Yes
-
 quick and dirty keyboard driver
 metaprog keyboard driver where N is the number of keys
 all keys are expected to be a pin (buttons)

@@ -4,9 +4,6 @@ U8x8 menu example
 U8x8: https://github.com/olikraus/Ucglib_Arduino
 
 Sep. 2017 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
-creative commons license 3.0: Attribution-ShareAlike CC BY-SA
-This software is furnished "as is", without technical support, and with no
-warranty, express or implied, as to its usefulness for any purpose.
 
 menu on U8x8 device
 output: PCD8544 (Nokia 5110)

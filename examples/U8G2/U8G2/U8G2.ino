@@ -9,9 +9,6 @@ U8G2: https://github.com/olikraus/u8g2
 Oct. 2016 Stephen Denne https://github.com/datacute
 Based on example from Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
 Original from: https://github.com/christophepersoz
-creative commons license 3.0: Attribution-ShareAlike CC BY-SA
-This software is furnished "as is", without technical support, and with no
-warranty, express or implied, as to its usefulness for any purpose.
 
 menu on U8G2 device
 output: Wemos D1 mini OLED Shield (SSD1306 64x48 I2C) + Serial

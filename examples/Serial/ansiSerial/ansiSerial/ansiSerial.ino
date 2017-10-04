@@ -2,9 +2,6 @@
 
 /********************
 Oct. 2016 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
-creative commons license 3.0: Attribution-ShareAlike CC BY-SA
-This software is furnished "as is", without technical support, and with no
-warranty, express or implied, as to its usefulness for any purpose.
 
 menu to ANSI serial terminal
 output: ANSI Serial terminal

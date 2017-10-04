@@ -3,9 +3,6 @@
 /********************
 Sep. 2017 Rui Azevedo (ruihfazevedo@rrob@gmail.com)
 Based on: Stephen Denne https://github.com/datacute U8G2 Driver
-creative commons license 3.0: Attribution-ShareAlike CC BY-SA
-This software is furnished "as is", without technical support, and with no
-warranty, express or implied, as to its usefulness for any purpose.
 
 Use graphics screens as menu output, based on U8G2 graphic display
 www.r-site.net

@@ -3,12 +3,6 @@
 /********************
 Sept. 2016 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
 Original from: https://github.com/christophepersoz
-creative commons license 3.0: Attribution-ShareAlike CC BY-SA
-This software is furnished "as is", without technical support, and with no
-warranty, express or implied, as to its usefulness for any purpose.
-
-Thread Safe: No
-Extensible: Yes
 
 Use graphics screens as menu output, based on U8GLIB graphic display
 www.r-site.net
