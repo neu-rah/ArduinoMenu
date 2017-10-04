@@ -118,7 +118,7 @@ for correcting unsigned values validation
         // navTarget(constMEM char* t,action a=doNothing,eventMask e=noEvent,styles s=noStyle,systemStyles ss=_noStyle)
         //   :prompt(t,a,e,s,ss) {}
         //bool canNav() const override {return true;}
-        virtual void parseInput(navNode& nav,Stream& in);
+        virtual void parseInput(navNode& nav,menuIn& in);
         virtual void doNav(navNode& nav,navCmd cmd);
     };
 
@@ -162,7 +162,7 @@ for correcting unsigned values validation
         bool canTune() override {return !!tune();}
         void constrainField() override {target() = constrain(target(), low(), high());}
         idx_t printReflex(menuOut& o) const override;
-        void parseInput(navNode& nav,Stream& in) override;
+        void parseInput(navNode& nav,menuIn& in) override;
         idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr=0) override;
         inline T& target() const {return ((menuFieldShadow<T>*)shadow)->target();}
         inline T getTypeValue(const T* from) const {return ((menuFieldShadow<T>*)shadow)->getTypeValue(from);}
@@ -372,6 +372,28 @@ for correcting unsigned values validation
     };
 
     ///////////////////////////////////////////////////////////////////////////
+    // base for all menu input devices
+    class menuIn:public Stream {
+      public:
+        virtual void setFieldMode(bool) {}
+        virtual bool fieldMode() const {return false;}
+        inline void fieldOn() {setFieldMode(true);}
+        inline void fieldOff() {setFieldMode(false);}
+    };
+
+    class StringStream:public menuIn {
+      public:
+        const char *src;
+        StringStream(const char*s):src(s) {}
+        int available() override {return 0!=*src;}
+        int read() override {return *src++;}
+        int peek() override {return *src?*src:-1;}
+        void flush() override {while(*src) src++;}
+        size_t write(uint8_t) override {return 0;}
+        operator const String() {return String(src);}
+    };
+
+    ///////////////////////////////////////////////////////////////////////////
     // base for all menu output devices
     class menuOut:public Print {
       public:
@@ -577,7 +599,7 @@ for correcting unsigned values validation
     class navRoot {
       public:
         outputsList &out;
-        Stream& in;
+        menuIn& in;
         navNode* path;
         const idx_t maxDepth=0;
         idx_t level=0;
@@ -586,11 +608,16 @@ for correcting unsigned values validation
         idleFunc idleTask=inaction;//to do when menu exits, menu system will set idleFunc to this on exit
         idleFunc sleepTask=NULL;//menu suspended, call this function
         navTarget* navFocus=NULL;
-        navRoot(menuNode& root,navNode* path,idx_t d,Stream& in,outputsList &o)
+        navRoot(menuNode& root,navNode* path,idx_t d,menuIn& in,outputsList &o)
           :out(o),in(in),path(path),maxDepth(d) {
             useMenu(root);
             initPath(d);
           }
+        /*navRoot(menuNode& root,navNode* path,idx_t d,Stream& in,outputsList &o)
+          :out(o),in(in),path(path),maxDepth(d) {
+            useMenu(root);
+            initPath(d);
+          }*/
         void initPath(idx_t d) {
           for(idx_t n=0;n<=d;n++)//initialize path chain for this root (v4.0)
             path[n].root=this;
@@ -639,7 +666,7 @@ for correcting unsigned values validation
         }
 
         //menu IO - external iteration functions
-        void doInput(Stream& in);
+        void doInput(menuIn& in);
         inline void doInput(const char*in) {
           StringStream inStr(in);
           while(inStr.available()) doInput(inStr);
@@ -684,7 +711,7 @@ for correcting unsigned values validation
     }
 
     template<typename T>
-    void menuField<T>::parseInput(navNode& nav,Stream& in) {
+    void menuField<T>::parseInput(navNode& nav,menuIn& in) {
       if (strchr(numericChars,in.peek())) {//a numeric value was entered
         if (options->numValueInput) {
           target()=(T)in.parseFloat();

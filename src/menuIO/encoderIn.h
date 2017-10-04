@@ -53,7 +53,7 @@ quadrature encoder stream (fake, not using buffers)
     //emulate a stream based on encoderIn movement returning +/- for every 'sensivity' steps
     //buffer not needer because we have an accumulator
     template<uint8_t pinA,uint8_t pinB>
-    class encoderInStream:public Stream {
+    class encoderInStream:public menuIn {
     public:
       encoderIn<pinA,pinB> &enc;//associated hardware encoderIn
       int sensivity;

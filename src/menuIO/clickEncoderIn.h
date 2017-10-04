@@ -46,7 +46,7 @@ ex: -A0 means: pin A0 normally high, low when button pushed (reverse logic)
 
       //emulate a stream based on clickEncoder movement returning +/- for every 'sensivity' steps
       //buffer not needer because we have an accumulator
-      class ClickEncoderStream:public Stream {
+      class ClickEncoderStream:public menuIn {
         public:
         ClickEncoder &enc; //associated hardware clickEncoder
         int8_t sensivity;

@@ -26,7 +26,7 @@ UTouch library from:
 
   namespace Menu {
 
-    class menuUTouch:public Stream {
+    class menuUTouch:public menuIn {
     public:
       UTouch& touch;
       navRoot& root;

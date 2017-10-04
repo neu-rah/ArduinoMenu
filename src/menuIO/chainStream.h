@@ -20,11 +20,15 @@ scan a chain of several input streams to provide input
   namespace Menu {
 
     template <int N>
-    class chainStream:public Stream {
+    class chainStream:public menuIn {
       public:
         static int on;
-        Stream** streams;
-        chainStream<N>(Stream** chain):streams(chain) {}
+        menuIn** streams;
+        chainStream<N>(menuIn** chain):streams(chain) {}
+        void setFieldMode(bool mode) override {
+          menuIn::setFieldMode(mode);
+          for(int n=0;n<N;n++) streams[n]->setFieldMode(mode);
+        }
         int available(void) {
           int cnt=0;
           for(int n=0;n<N;n++)

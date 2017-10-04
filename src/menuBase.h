@@ -35,6 +35,7 @@ www.r-site.net
 
   namespace Menu {
     //menu structure objects
+    class menuIn;
     class menuOut;
     class navNode;
     class navRoot;
@@ -195,18 +196,6 @@ www.r-site.net
     // for its a pointer, user can change the pointer.
     // TODO: distribute them by inputs and outputs
     extern config* options;
-
-    class StringStream:public Stream {
-      public:
-        const char *src;
-        StringStream(const char*s):src(s) {}
-        int available() override {return 0!=*src;}
-        int read() override {return *src++;}
-        int peek() override {return *src?*src:-1;}
-        void flush() override {while(*src) src++;}
-        size_t write(uint8_t) override {return 0;}
-        operator const String() {return String(src);}
-    };
 
     #ifdef DEBUG
       Print& operator<<(Print& o,bool b);

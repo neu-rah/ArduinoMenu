@@ -52,8 +52,8 @@
   Menu::outputsList id(_outputs_##id,sizeof(_outputs_##id)/sizeof(Menu::menuOut*));
 
 #define MENU_INPUTS(id,...)\
-  Stream* _inputs_##id[]={__VA_ARGS__};\
-  Menu::chainStream<sizeof(_inputs_##id)/sizeof(Stream*)> id(_inputs_##id);
+  menuIn* _inputs_##id[]={__VA_ARGS__};\
+  Menu::chainStream<sizeof(_inputs_##id)/sizeof(menuIn*)> id(_inputs_##id);
 
 //some aux macros to define structures
 #define SWAP(a,b,...) b,a,__VA_ARGS__
