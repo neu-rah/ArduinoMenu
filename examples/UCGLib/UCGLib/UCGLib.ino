@@ -69,7 +69,8 @@ MENU_OUTPUTS(out,MAX_DEPTH
   ,SERIAL_OUT(Serial)
 );
 
-NAVROOT(nav,mainMenu,MAX_DEPTH,Serial,out);
+serialIn serial(Serial);
+NAVROOT(nav,mainMenu,MAX_DEPTH,serial,out);
 
 //initializing output and menu nav without macros
 /*const panel default_serial_panels[] MEMMODE={{0,0,40,10}};

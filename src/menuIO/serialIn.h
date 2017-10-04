@@ -19,6 +19,7 @@ HardwareSerial input driver
         int available() override {return in.available();}
         int peek() override {return in.peek();}
         int read() override {return in.read();}
+        void flush() override {in.flush();}
     };
 
   }

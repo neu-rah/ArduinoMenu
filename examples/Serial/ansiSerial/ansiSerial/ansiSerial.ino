@@ -19,6 +19,7 @@ www.r-site.net
 ***/
 #include <menu.h>
 #include <menuIO/ansiSerialOut.h>
+#include <menuIO/serialIn.h>
 
 using namespace Menu;
 
@@ -61,6 +62,8 @@ MENU_OUTPUTS(out,MAX_DEPTH
   ,ANSISERIAL_OUT(Serial,colors,{1,1,16,10})//,{18,1,16,10},{36,1,16,10})
   ,NONE//must have 2 items at least
 );
+
+result doAlert(eventMask e, prompt &item);
 
 void putColor(
   menuOut& out,
@@ -148,12 +151,7 @@ result action1(eventMask e,navNode& nav, prompt &item) {
   return proceed;
 }
 
-result action2(eventMask e, prompt &item) {
-  Serial<<ANSI::xy(24,nav.sel+nav.root->showTitle)
-    <<item<<" "<<e<<" event on "<<item<<", quiting menu.";
-  Serial.flush();
-  return quit;
-}
+result action2(eventMask e, prompt &item);
 
 int ledCtrl=LOW;
 
@@ -238,24 +236,6 @@ TOGGLE((mainMenu[1].enabled),togOp,"Op 2:",doNothing,noEvent,noStyle
   ,VALUE("disabled",disabledStatus,doNothing,noEvent)
 );
 
-result alert(menuOut& o,idleEvent e) {
-  if (e==idling)
-    o
-      <<ANSI::xy(0,0)
-      <<ANSI::setBackgroundColor(BLACK)
-      <<ANSI::setForegroundColor(WHITE)
-      <<"alert test"
-      <<endl
-      <<"press [select] to continue..."
-      <<endl;
-  return proceed;
-}
-
-result doAlert(eventMask e, prompt &item) {
-  nav.idleOn(alert);
-  return proceed;
-}
-
 char* const hexDigit PROGMEM="0123456789ABCDEF";
 char* const hexNr[] PROGMEM={"0","x",hexDigit,hexDigit};
 char buf1[]="0x11";
@@ -279,7 +259,32 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
 );
 ////////////////////////////////////////////////////////////////////////
 // menu navigation root object
-NAVROOT(nav,mainMenu,MAX_DEPTH,Serial,out);
+serialIn serial(Serial);
+NAVROOT(nav,mainMenu,MAX_DEPTH,serial,out);
+
+result action2(eventMask e, prompt &item) {
+  Serial<<ANSI::xy(24,nav.node().sel+nav.showTitle)
+    <<item<<" "<<e<<" event on "<<item<<", quiting menu.";
+  Serial.flush();
+  return quit;
+}
+
+result alert(menuOut& o,idleEvent e) {
+  if (e==idling)
+    o <<ANSI::xy(0,0)
+      <<ANSI::setBackgroundColor(BLACK)
+      <<ANSI::setForegroundColor(WHITE)
+      <<"alert test"
+      <<endl
+      <<"press [select] to continue..."
+      <<endl;
+  return proceed;
+}
+
+result doAlert(eventMask e, prompt &item) {
+  nav.idleOn(alert);
+  return proceed;
+}
 
 //when menu is suspended -----------------------------------------------
 result idle(menuOut& o,idleEvent e) {

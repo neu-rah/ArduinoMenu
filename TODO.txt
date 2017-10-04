@@ -1,20 +1,21 @@
 Arduino Menu Library
 
+- custom field format (date/time)
 + field reversion should be by input device and not global
   problem:
-    inputs are only streams and they can be joyned!
+    inputs are only streams and they can be joined!
     1) deriving from Stream class will pose problems later to use Serial Object.
     2) using a menuIn special object is a major change and still needs the indirection
     of all methods if its still to use an internal reference to a Stream object
     this indirection kills me!
     3) Use something else.. can't see what, specially because V4 does not use a global
     navigation object and stream reads receive no parameters of active ones.
-    4) handle swap internally.. this does not distinguishes joyned streams
+    4) handle swap internally.. this does not distinguishes joined streams
     or one stream from another and its the current implementation.
 
     2 - seems to be the most viable.. and so was done
 
-- put (some) options into navRoot
++ put (some) options into navRoot
   menu.cpp -------------------------------
   navNode::navKeys
   ->navCodes ok - not ok for inout drivers, keep them global
@@ -58,8 +59,8 @@ Arduino Menu Library
 + add macros to build navRoot
 + suspension in only one function with suspension events
 + implement other fields
-+ use menu acceletators + auto numbering
-+ output numbering + acceletation should be optional for any menu class and not just specialized
++ use menu accelerators + auto numbering
++ output numbering + acceleration should be optional for any menu class and not just specialized
 - split options into:
   * config (static MEMMODE)
   * options (dynamic => RAM)
@@ -72,19 +73,18 @@ Arduino Menu Library
 - implement scroll commands on output devices
   => panels.nodes must use navNode* instead of menuNode*
   => however previews have no assigned navNode!
-    1. just dont print previews => do we need them?
+    1. just don't print previews => do we need them?
     2. use union
 - dialogs and modal dialogs (static alloc)
 - alerts (dynamic)
 - errors (dynamic modal)
 - modal just blocks the cycle.
-- custom field format (date/time)
 - sleepTask should be abandoned also with escape or by returning quit
 - sleepTask (with params) and returning void is interpreted as quit -> change it!
 + textField?
     X if so make it a submenu where text is a title and we navigate a pad/menu to choose letters and commands.
     + endup being a specific class with per character reusable validators
-    + need text cursor for monocrome gfx display! (u8glib)
+    + need text cursor for monochrome gfx display! (u8glib)
 
 
 IDEA: generic input:
@@ -93,6 +93,7 @@ IDEA: generic input:
 - then some chain or system wide functions can be called as aux. functions.
 - input classes should provide a parser to be called as aux function of any of the above and deliver cmds.
   => that we can not accept Serial as input but use a specialized derivation instead
+  ... V4.0 uses specialized menuIn
 
 implemented:
 
@@ -121,7 +122,7 @@ iteration levels
   0 - member functions <-- this is the best option for web
   1 - event messages <- require navNode
   2 - nav commands <- apply to root!
-  3 - input <- relly on nav path status
+  3 - input <- rely on nav path status
 
 
 formating

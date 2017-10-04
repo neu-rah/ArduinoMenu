@@ -13,6 +13,7 @@ mcu: nano328p
 #include <menu.h>
 #include <menuIO/serialOut.h>
 #include <menuIO/chainStream.h>
+#include <menuIO/serialIn.h>
 
 using namespace Menu;
 
@@ -28,7 +29,8 @@ MENU(mainMenu, "Blink menu", Menu::doNothing, Menu::noEvent, Menu::wrapStyle
   ,EXIT("<Back")
 );
 
-MENU_INPUTS(in,&Serial);
+serialIn serial(Serial);
+MENU_INPUTS(in,&serial);
 
 MENU_OUTPUTS(out,MAX_DEPTH
   ,SERIAL_OUT(Serial)

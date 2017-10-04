@@ -7,9 +7,12 @@
 
 #include <menu.h>
 #include <menuIO/SSD1306AsciiOut.h>
+#include <menuIO/serialIn.h>
 using namespace Menu;
 
 SSD1306AsciiWire oled;
+
+result doAlert(eventMask e, prompt &item);
 
 result showEvent(eventMask e,navNode& nav,prompt& item) {
   Serial.print("event: ");
@@ -80,23 +83,6 @@ MENU(subMenu,"Sub-Menu",showEvent,anyEvent,noStyle
   ,EXIT("<Back")
 );
 
-result alert(menuOut& o,idleEvent e) {
-  if (e==idling) {
-    o.setCursor(0,0);
-    o.print("alert test");
-    o.setCursor(0,1);
-    o.print("press [select]");
-    o.setCursor(0,2);
-    o.print("to continue...");
-  }
-  return proceed;
-}
-
-result doAlert(eventMask e, prompt &item) {
-  nav.idleOn(alert);
-  return proceed;
-}
-
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,OP("Op1",action1,anyEvent)
   ,OP("Op2",action2,enterEvent)
@@ -127,7 +113,25 @@ menuOut* outputs[]={&outOLED};//list of output devices
 outputsList out(outputs,1);//outputs list
 
 //macro to create navigation control root object (nav) using mainMenu
-NAVROOT(nav,mainMenu,MAX_DEPTH,Serial,out);
+serialIn serial(Serial);
+NAVROOT(nav,mainMenu,MAX_DEPTH,serial,out);
+
+result alert(menuOut& o,idleEvent e) {
+  if (e==idling) {
+    o.setCursor(0,0);
+    o.print("alert test");
+    o.setCursor(0,1);
+    o.print("press [select]");
+    o.setCursor(0,2);
+    o.print("to continue...");
+  }
+  return proceed;
+}
+
+result doAlert(eventMask e, prompt &item) {
+  nav.idleOn(alert);
+  return proceed;
+}
 
 //when menu is suspended
 result idle(menuOut &o, idleEvent e) {

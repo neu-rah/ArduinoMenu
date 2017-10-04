@@ -20,6 +20,7 @@ www.r-site.net
 #include <menuIO/keyIn.h>//keyboard driver and fake stream (for the encoder button)
 #include <menuIO/chainStream.h>// concatenate multiple input streams (this allows adding a button to the encoder)
 #include <menuIO/serialOut.h>
+#include <menuIO/serialIn.h>
 
 using namespace Menu;
 
@@ -72,7 +73,8 @@ MENU_OUTPUTS(auxOut,AUX_MAX_DEPTH
   ,NONE
 );
 
-NAVROOT(auxNav,auxMenu,AUX_MAX_DEPTH,Serial,auxOut);//the navigation root object
+serialIn serial(Serial);
+NAVROOT(auxNav,auxMenu,AUX_MAX_DEPTH,serial,auxOut);//the navigation root object
 //---------------------------
 
 void setup() {

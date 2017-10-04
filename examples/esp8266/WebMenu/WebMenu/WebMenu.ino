@@ -25,6 +25,7 @@ added textField (also experimental).
 #include <menu.h>
 #include <menuIO/esp8266Out.h>
 #include <menuIO/xmlFmt.h>//to write a menu has html page
+#include <menuIO/serialIn.h>
 #include <Streaming.h>
 //#include <menuIO/jsFmt.h>//to send javascript thru web socket (live update)
 #include <FS.h>
@@ -115,10 +116,10 @@ result idle(menuOut& o,idleEvent e) {
 }
 
 MENU_OUTLIST(out,&serverOut);
-NAVROOT(nav,mainMenu,MAX_DEPTH,Serial,out);
+serialIn serial(Serial);
+NAVROOT(nav,mainMenu,MAX_DEPTH,serial,out);
 
-config myOptions('*','-',false,false,defaultNavCodes,false,true);
-
+//config myOptions('*','-',false,false,defaultNavCodes,false,true);
 
 void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length) {
   switch(type) {
@@ -241,7 +242,7 @@ bool handleMenu(){
 }
 
 void setup(){
-  options=&myOptions;//menu options
+  //options=&myOptions;//menu options
   Serial.begin(115200);
   while(!Serial)
   //USE_SERIAL.setDebugOutput(true);

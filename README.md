@@ -221,7 +221,11 @@ bool useUpdateEvent=false;//if false, use enterEvent when field value is changed
 idx_t inputBurst=1;//limit of inputs that can be processed before output
 ```
 
-###### prompt base API
+##### Serial input
+
+Serial is no longer accepted as an input directly, use serialIn instead
+
+##### prompt base API
 
 printTo member function changed from:
 

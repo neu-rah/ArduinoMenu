@@ -20,6 +20,7 @@ input: Serial + encoder
 #include <menuIO/keyIn.h>
 #include <menuIO/chainStream.h>
 #include <menuIO/serialOut.h>
+#include <menuIO/serialIn.h>
 #include <menuIO/U8GLibOut.h>
 
 using namespace Menu;
@@ -36,6 +37,8 @@ using namespace Menu;
 #define U8_RST 7
 
 U8GLIB_PCD8544 u8g(U8_CS, U8_DC, U8_RST) ;
+
+result doAlert(eventMask e, prompt &item);
 
 result showEvent(eventMask e,navNode& nav,prompt& item) {
   Serial.print("event: ");
@@ -107,23 +110,6 @@ MENU(subMenu,"Sub-Menu",showEvent,anyEvent,noStyle
   ,EXIT("<Back")
 );
 
-result alert(menuOut& o,idleEvent e) {
-  if (e==idling) {
-    o.setCursor(0,0);
-    o.print("alert test");
-    o.setCursor(0,1);
-    o.print("press [select]");
-    o.setCursor(0,2);
-    o.print("to continue...");
-  }
-  return proceed;
-}
-
-result doAlert(eventMask e, prompt &item) {
-  nav.idleOn(alert);
-  return proceed;
-}
-
 char* const hexDigit PROGMEM="0123456789ABCDEF";
 char* const hexNr[] PROGMEM={"0","x",hexDigit,hexDigit};
 char buf1[]="0x11";
@@ -180,6 +166,23 @@ MENU_OUTPUTS(out,MAX_DEPTH
 
 NAVROOT(nav,mainMenu,MAX_DEPTH,in,out);
 
+result alert(menuOut& o,idleEvent e) {
+  if (e==idling) {
+    o.setCursor(0,0);
+    o.print("alert test");
+    o.setCursor(0,1);
+    o.print("press [select]");
+    o.setCursor(0,2);
+    o.print("to continue...");
+  }
+  return proceed;
+}
+
+result doAlert(eventMask e, prompt &item) {
+  nav.idleOn(alert);
+  return proceed;
+}
+
 //when menu is suspended
 result idle(menuOut& o,idleEvent e) {
   o.clear();
@@ -199,7 +202,7 @@ void setup() {
   mainMenu[1].enabled=disabledStatus;
   //change input burst for slow output devices
   //this is the number of max. processed inputs before drawing
-  options->inputBurst=10;
+  nav.inputBurst=10;
 
   pinMode(encBtn, INPUT_PULLUP);
   encButton.begin();

@@ -43,6 +43,8 @@ Matthias Hertel driver https://github.com/mathertel/LiquidCrystal_PCF8574
 
   #define LEDPIN A3
 
+  result doAlert(eventMask e, prompt &item);
+  
   result showEvent(eventMask e,navNode& nav,prompt& item) {
     Serial.print("event: ");
     Serial.println(e);
@@ -122,21 +124,6 @@ Matthias Hertel driver https://github.com/mathertel/LiquidCrystal_PCF8574
     ,VALUE("disabled",disabledStatus,doNothing,noEvent)
   );*/
 
-  result alert(menuOut& o,idleEvent e) {
-    if (e==idling) {
-      o.setCursor(0,0);
-      o.print("alert test");
-      o.setCursor(0,1);
-      o.print("[select] to continue...");
-    }
-    return proceed;
-  }
-
-  result doAlert(eventMask e, prompt &item) {
-    nav.root->idleOn(alert);
-    return proceed;
-  }
-
   char* const hexDigit PROGMEM="0123456789ABCDEF";
   char* const hexNr[] PROGMEM={"0","x",hexDigit,hexDigit};
   char buf1[]="0x11";
@@ -173,6 +160,21 @@ Matthias Hertel driver https://github.com/mathertel/LiquidCrystal_PCF8574
     ,NONE
   );
   NAVROOT(nav,mainMenu,MAX_DEPTH,in,out);//the navigation root object
+
+  result alert(menuOut& o,idleEvent e) {
+    if (e==idling) {
+      o.setCursor(0,0);
+      o.print("alert test");
+      o.setCursor(0,1);
+      o.print("[select] to continue...");
+    }
+    return proceed;
+  }
+
+  result doAlert(eventMask e, prompt &item) {
+    nav.idleOn(alert);
+    return proceed;
+  }
 
   result idle(menuOut& o,idleEvent e) {
     switch(e) {

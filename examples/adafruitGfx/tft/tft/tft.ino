@@ -18,6 +18,7 @@ www.r-site.net
 #include <menuIO/keyIn.h>
 #include <menuIO/chainStream.h>
 #include <menuIO/serialOut.h>
+#include <menuIO/serialIn.h>
 
 using namespace Menu;
 
@@ -149,7 +150,8 @@ encoderInStream<encA,encB> encStream(encoder,4);// simple quad encoder fake Stre
 keyMap encBtn_map[]={{-encBtn,options->getCmdChar(enterCmd)}};//negative pin numbers use internal pull-up, this is on when low
 keyIn<1> encButton(encBtn_map);//1 is the number of keys
 
-MENU_INPUTS(in,&encStream,&encButton,&Serial);
+serialIn serial(Serial);
+MENU_INPUTS(in,&encStream,&encButton,&serial);
 
 #define MAX_DEPTH 4
 #define textScale 1

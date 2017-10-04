@@ -18,6 +18,7 @@ UTFT library from:
 #include <menuIO/utftOut.h>
 #include <menuIO/utouchIn.h>
 #include <menuIO/serialOut.h>
+#include <menuIO/serialIn.h>
 #include <menuIO/chainStream.h>
 
 using namespace Menu;
@@ -28,6 +29,8 @@ extern uint8_t BigFont[];
 //extern uint8_t SevenSegNumFont[];
 
 #define LEDPIN 13
+
+result doAlert(eventMask e, prompt &item);
 
 result showEvent(eventMask e,navNode& nav,prompt& item) {
   Serial.print("event: ");
@@ -98,24 +101,6 @@ MENU(subMenu,"Sub-Menu",showEvent,anyEvent,noStyle
   ,EXIT("<Back")
 );
 
-result alert(menuOut& o,idleEvent e) {
-  if (e==idling) {
-    o.setColor(fgColor);
-    o.setCursor(0,0);
-    o.print("alert test");
-    o.setCursor(0,1);
-    o.print("press [select]");
-    o.setCursor(0,2);
-    o.print("to continue...");
-  }
-  return proceed;
-}
-
-result doAlert(eventMask e, prompt &item) {
-  nav.idleOn(alert);
-  return proceed;
-}
-
 MENU(mainMenu,"Main menu",doNothing,noEvent,noStyle
   ,OP("Op1",action1,anyEvent)
   ,OP("Op2",action2,enterEvent)
@@ -160,6 +145,24 @@ menuUTouch touchPanel(uTouch,nav,outGfx);
 
 NAVROOT(nav,mainMenu,MAX_DEPTH,touchPanel,out);
 
+result alert(menuOut& o,idleEvent e) {
+  if (e==idling) {
+    o.setColor(fgColor);
+    o.setCursor(0,0);
+    o.print("alert test");
+    o.setCursor(0,1);
+    o.print("press [select]");
+    o.setCursor(0,2);
+    o.print("to continue...");
+  }
+  return proceed;
+}
+
+result doAlert(eventMask e, prompt &item) {
+  nav.idleOn(alert);
+  return proceed;
+}
+
 //when menu is suspended
 result idle(menuOut& o,idleEvent e) {
   if (e==idling) {
@@ -172,10 +175,7 @@ result idle(menuOut& o,idleEvent e) {
   return proceed;
 }
 
-config myOptions('>','-',false,false,defaultNavCodes);
-
 void setup() {
-  options=&myOptions;
   pinMode(LEDPIN,OUTPUT);
   while(!Serial);
   Serial.begin(115200);

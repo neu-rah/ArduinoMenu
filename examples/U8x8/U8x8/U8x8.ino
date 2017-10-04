@@ -17,6 +17,7 @@ mcu: nano328p
 #include <Wire.h>
 #include <menu.h>
 #include <menuIO/serialOut.h>
+#include <menuIO/serialIn.h>
 #include <menuIO/U8x8Out.h>
 #include <U8x8lib.h>
 
@@ -49,7 +50,8 @@ MENU_OUTPUTS(out,MAX_DEPTH
   ,U8X8_OUT(u8x8,{0,0,10,6})
 );
 
-NAVROOT(nav,mainMenu,MAX_DEPTH,Serial,out);
+serialIn serial(Serial);
+NAVROOT(nav,mainMenu,MAX_DEPTH,serial,out);
 
 //initializing output and menu nav without macros
 /*const panel default_serial_panels[] MEMMODE={{0,0,40,10}};

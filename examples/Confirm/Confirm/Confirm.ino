@@ -10,6 +10,7 @@ while "Cancel" will just return to previous menu.
 
 #include <menu.h>
 #include <menuIO/serialOut.h>
+#include <menuIO/serialIn.h>
 
 using namespace Menu;
 
@@ -45,7 +46,8 @@ MENU_OUTPUTS(out,MAX_DEPTH
   ,NONE//must have 2 items at least
 );
 
-NAVROOT(nav,mainMenu,MAX_DEPTH,Serial,out);
+serialIn serial(Serial);
+NAVROOT(nav,mainMenu,MAX_DEPTH,serial,out);
 
 bool running=true;//lock menu if false
 

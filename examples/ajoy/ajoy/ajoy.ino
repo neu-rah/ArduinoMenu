@@ -9,8 +9,8 @@ input: Analog Joystick + Serial
 
 #include <menu.h>
 #include <menuIO/serialOut.h>
-#include <menuIO/analogAxisIn.h>
 #include <menuIO/serialIn.h>
+#include <menuIO/analogAxisIn.h>
 #include <menuIO/keyIn.h>
 #include <menuIO/chainStream.h>
 

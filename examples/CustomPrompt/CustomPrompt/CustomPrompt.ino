@@ -9,6 +9,7 @@ www.r-site.net
 ***/
 #include <menu.h>
 #include <menuIO/serialOut.h>
+#include <menuIO/serialIn.h>
 
 using namespace Menu;
 
@@ -56,7 +57,8 @@ MENU_OUTPUTS(out,MAX_DEPTH
   ,NONE//must have 2 items at least
 );
 
-NAVROOT(nav,mainMenu,MAX_DEPTH,Serial,out);
+serialIn serial(Serial);
+NAVROOT(nav,mainMenu,MAX_DEPTH,serial,out);
 
 //when menu is suspended
 //this function is called when entering or leaving suspended state

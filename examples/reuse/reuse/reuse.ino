@@ -22,7 +22,8 @@ show reutilization of a menu and customization of both menus and prompts
 
 #include <menu.h>
 #include <menuIO/serialOut.h>
-#include <menuIO/ansiSerialOut.h>
+#include <menuIO/serialIn.h>
+//#include <menuIO/ansiSerialOut.h>
 
 using namespace Menu;
 
@@ -220,7 +221,8 @@ MENU_OUTPUTS(out,MAX_DEPTH
   ,NONE//must have 2 items at least
 );
 
-NAVROOT(nav,mainMenu,MAX_DEPTH,Serial,out);
+serialIn serial(Serial);
+NAVROOT(nav,mainMenu,MAX_DEPTH,serial,out);
 
 idleFunc backupIdleTask=nav.idleTask;
 

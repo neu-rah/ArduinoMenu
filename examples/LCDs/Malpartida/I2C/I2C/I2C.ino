@@ -17,6 +17,7 @@ http://playground.arduino.cc/Code/LCD3wires
   #include <LiquidCrystal_I2C.h>//F. Malpartida LCD's driver
   #include <menu.h>//menu macros and objects
   #include <menuIO/lcdOut.h>//malpartidas lcd menu output
+  #include <menuIO/serialIn.h>//Serial input
   #include <menuIO/encoderIn.h>//quadrature encoder driver and fake stream
   #include <menuIO/keyIn.h>//keyboard driver and fake stream (for the encoder button)
   #include <menuIO/chainStream.h>// concatenate multiple input streams (this allows adding a button to the encoder)
@@ -45,6 +46,8 @@ http://playground.arduino.cc/Code/LCD3wires
   chainStream<3> in(inputsList);//3 is the number of inputs
 
   #define LEDPIN A3
+
+  result doAlert(eventMask e, prompt &item);
 
   result showEvent(eventMask e,navNode& nav,prompt& item) {
     Serial.print("event: ");
@@ -125,21 +128,6 @@ http://playground.arduino.cc/Code/LCD3wires
     ,VALUE("disabled",disabledStatus,doNothing,noEvent)
   );*/
 
-  result alert(menuOut& o,idleEvent e) {
-    if (e==idling) {
-      o.setCursor(0,0);
-      o.print("alert test");
-      o.setCursor(0,1);
-      o.print("[select] to continue...");
-    }
-    return proceed;
-  }
-
-  result doAlert(eventMask e, prompt &item) {
-    nav.root->idleOn(alert);
-    return proceed;
-  }
-
   char* const hexDigit PROGMEM="0123456789ABCDEF";
   char* const hexNr[] PROGMEM={"0","x",hexDigit,hexDigit};
   char buf1[]="0x11";
@@ -176,6 +164,21 @@ http://playground.arduino.cc/Code/LCD3wires
     ,NONE
   );
   NAVROOT(nav,mainMenu,MAX_DEPTH,in,out);//the navigation root object
+
+  result alert(menuOut& o,idleEvent e) {
+    if (e==idling) {
+      o.setCursor(0,0);
+      o.print("alert test");
+      o.setCursor(0,1);
+      o.print("[select] to continue...");
+    }
+    return proceed;
+  }
+
+  result doAlert(eventMask e, prompt &item) {
+    nav.idleOn(alert);
+    return proceed;
+  }
 
   result idle(menuOut& o,idleEvent e) {
     switch(e) {

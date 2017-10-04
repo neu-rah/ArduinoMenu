@@ -29,6 +29,7 @@ mcu: nano328p
 #include <menuIO/keyIn.h>
 #include <menuIO/chainStream.h>
 #include <menuIO/serialOut.h>
+#include <menuIO/serialIn.h>
 
 using namespace Menu;
 
@@ -189,7 +190,8 @@ keyIn<1> encButton(encBtn_map);//1 is the number of keys
 // Stream* inputsList[]={&encBuitton,&Serial};
 // chainStream<2> in(inputsList);//1 is the number of inputs
 
-MENU_INPUTS(in,&encStream,&encButton,&Serial);
+serialIn serial(Serial);
+MENU_INPUTS(in,&encStream,&encButton,&serial);
 
 MENU_OUTPUTS(out,MAX_DEPTH
   ,U8G2_OUT(u8g2,colors,fontX,fontY,offsetX,offsetY,{0,0,U8_Width/fontX,U8_Height/fontY})

@@ -27,6 +27,7 @@ barField - numeric field edit with a graph bar
 #include <menuIO/encoderIn.h>
 #include <menuIO/softKeyIn.h>
 #include <menuIO/chainStream.h>
+#include <menuIO/serialIn.h>
 
 //outputs
 #include <menuIO/serialOut.h>
@@ -63,8 +64,10 @@ encoderInStream<encA,encB> encStream(encoder,4);// simple quad encoder fake Stre
 keyMap encBtn_map[]={{-encBtn,options->getCmdChar(enterCmd)}};//negative pin numbers use internal pull-up, this is on when low
 softKeyIn<1> encButton(encBtn_map);//1 is the number of keys
 
+serialIn serial(Serial);
+
 //input from the encoder + encoder button + serial
-Stream* inputsList[]={&encStream,&encButton,&Serial};
+Stream* inputsList[]={&encStream,&encButton,&serial};
 chainStream<3> in(inputsList);//3 is the number of inputs
 
 char* const hexDigit PROGMEM="0123456789ABCDEF";
@@ -102,7 +105,7 @@ void setup() {
   lcd.print("Menu 4.x LCD");
   lcd.setCursor(0, 1);
   lcd.print("r-site.net");
-  options->numValueInput=false;//numeric keys in fields used as accelerators instead
+  serial.numValueInput=false;//numeric keys in fields used as accelerators instead
   //Serial<<"menu 4.x plugins"<<endl;Serial.flush();
   //setting some plugins otions
   barFieldOptions::fill="\xFF";

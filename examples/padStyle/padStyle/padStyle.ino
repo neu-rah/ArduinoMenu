@@ -4,6 +4,7 @@
 // #include <LiquidCrystal_I2C.h>//F. Malpartida LCD's driver
 #include <menu.h>
 #include <menuIO/serialOut.h>
+#include <menuIO/serialIn.h>
 // #include <menuIO/lcdOut.h>//malpartidas lcd menu output
 
 #include <Streaming.h>
@@ -40,7 +41,8 @@ MENU_OUTPUTS(out,MAX_DEPTH
   ,NONE
 );
 
-NAVROOT(nav,mainMenu,MAX_DEPTH,Serial,out);
+serialIn serial(Serial);
+NAVROOT(nav,mainMenu,MAX_DEPTH,serial,out);
 
 void setup() {
   Serial.begin(115200);

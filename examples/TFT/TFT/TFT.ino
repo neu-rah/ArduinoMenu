@@ -13,6 +13,7 @@ input: Serial
 #include <TFT.h> // Hardware-specific library
 #include <SPI.h>
 #include <menuIO/serialOut.h>
+#include <menuIO/serialIn.h>
 #include <menuIO/tftOut.h>
 
 using namespace Menu;
@@ -75,9 +76,11 @@ TFTOut tftOut(tft,colors,ucg_tops,ucgPanels,fontX,fontY);
 menuOut* const outputs[] MEMMODE={&outSerial,&tftOut};//list of output devices
 outputsList out(outputs,2);//outputs list controller
 
+serialIn serial(Serial);
+
 //define navigation root and aux objects
 navNode nav_cursors[MAX_DEPTH];//aux objects to control each level of navigation
-navRoot nav(mainMenu, nav_cursors, MAX_DEPTH-1, Serial, out);
+navRoot nav(mainMenu, nav_cursors, MAX_DEPTH-1, serial, out);
 
 void setup(){
   Serial.begin(115200);

@@ -2,6 +2,7 @@
 
 #include <menu.h>
 #include <menuIO/serialOut.h>
+#include <menuIO/serialIn.h>
 
 using namespace Menu;
 
@@ -50,6 +51,9 @@ menuNode mainMenu(menuInfo);
 
 #define MAX_DEPTH 1
 
+//define input device
+serialIn serial(Serial);
+
 //define output device
 idx_t serialTops[MAX_DEPTH]={0};
 serialOut outSerial(Serial,serialTops);
@@ -60,7 +64,7 @@ outputsList out(outputs,1);//outputs list controller
 
 //define navigation root and aux objects
 navNode nav_cursors[MAX_DEPTH];//aux objects to control each level of navigation
-navRoot nav(mainMenu, nav_cursors, MAX_DEPTH-1, Serial, out);
+navRoot nav(mainMenu, nav_cursors, MAX_DEPTH-1, serial, out);
 
 //implement the menu actions
 void op1Func() {Serial.println("Op 1 executed");}

@@ -12,6 +12,7 @@ www.r-site.net
 #include <menu.h>
 #include <menuIO/liquidCrystalOut.h>
 #include <menuIO/serialOut.h>
+#include <menuIO/serialIn.h>
 #include <menuIO/encoderIn.h>
 #include <menuIO/keyIn.h>
 #include <menuIO/chainStream.h>
@@ -42,6 +43,8 @@ Stream* inputsList[]={&encStream,&encButton,&Serial};
 chainStream<3> in(inputsList);//3 is the number of inputs
 
 #define LEDPIN 13
+
+result doAlert(eventMask e, prompt &item);
 
 result showEvent(eventMask e,navNode& nav,prompt& item) {
   Serial.print("event: ");
@@ -122,21 +125,6 @@ TOGGLE((mainMenu[1].enabled),togOp,"Op 2:",doNothing,noEvent,noStyle
   ,VALUE("disabled",disabledStatus,doNothing,noEvent)
 );*/
 
-result alert(menuOut& o,idleEvent e) {
-  if (e==idling) {
-    o.setCursor(0,0);
-    o.print("alert test");
-    o.setCursor(0,1);
-    o.print("[select] to continue...");
-  }
-  return proceed;
-}
-
-result doAlert(eventMask e, prompt &item) {
-  nav.idleOn(alert);
-  return proceed;
-}
-
 char* const hexDigit PROGMEM="0123456789ABCDEF";
 char* const hexNr[] PROGMEM={"0","x",hexDigit,hexDigit};
 char buf1[]="0x11";
@@ -172,6 +160,21 @@ MENU_OUTPUTS(out, MAX_DEPTH
   ,NONE
 );
 NAVROOT(nav,mainMenu,MAX_DEPTH,in,out);//the navigation root object
+
+result alert(menuOut& o,idleEvent e) {
+  if (e==idling) {
+    o.setCursor(0,0);
+    o.print("alert test");
+    o.setCursor(0,1);
+    o.print("[select] to continue...");
+  }
+  return proceed;
+}
+
+result doAlert(eventMask e, prompt &item) {
+  nav.idleOn(alert);
+  return proceed;
+}
 
 result idle(menuOut& o,idleEvent e) {
   switch(e) {

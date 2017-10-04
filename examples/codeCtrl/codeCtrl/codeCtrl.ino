@@ -22,6 +22,7 @@ on this example only using
 
 #include <Arduino.h>
 #include <menu.h>
+#include <menuIO/serialIn.h>
 #include <menuIO/serialOut.h>
 #include <menuIO/chainStream.h>
 
@@ -125,7 +126,8 @@ MENU_OUTPUTS(out,MAX_DEPTH
   ,NONE//must have 2 items at least
 );
 
-NAVROOT(nav,mainMenu,MAX_DEPTH,Serial,out);
+serialIn serial(Serial);
+NAVROOT(nav,mainMenu,MAX_DEPTH,serial,out);
 
 result alert(menuOut& o,idleEvent e) {
   if (e==idling) {
