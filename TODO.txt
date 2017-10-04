@@ -1,7 +1,19 @@
 Arduino Menu Library
 
 - field reversion should be by input device and not global
-  problem: inputs are only streams and they can be joyned!
+  problem:
+    inputs are only streams and they can be joyned!
+    1) deriving from Stream class will pose problems later to use Serial Object.
+    2) using a menuIn special object is a major change and still needs the indirection
+    of all methods if its still to use an internal reference to a Stream object
+    this indirection kills me!
+    3) Use something else.. can't see what, specially because V4 does not use a global
+    navigation object and stream reads receive no parameters of active ones.
+    4) handle swap internally.. this does not distinguishes joyned streams
+    or one stream from another and its the current implementation
+
+    2 - seems to be the most viable
+
 - put (some) options into navRoot
 + customizing title print
 + BUG: u8glib draw cause multiple draw on serial - detach output draws!
