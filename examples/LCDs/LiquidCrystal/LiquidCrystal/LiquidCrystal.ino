@@ -39,7 +39,7 @@ keyMap encBtn_map[]={{-encBtn,options->getCmdChar(enterCmd)}};//negative pin num
 keyIn<1> encButton(encBtn_map);//1 is the number of keys
 
 //input from the encoder + encoder button + serial
-Stream* inputsList[]={&encStream,&encButton,&Serial};
+menuIn* inputsList[]={&encStream,&encButton,&Serial};
 chainStream<3> in(inputsList);//3 is the number of inputs
 
 #define LEDPIN 13

@@ -38,13 +38,13 @@ Matthias Hertel driver https://github.com/mathertel/LiquidCrystal_PCF8574
   keyIn<1> encButton(encBtn_map);//1 is the number of keys
 
   //input from the encoder + encoder button + serial
-  Stream* inputsList[]={&encStream,&encButton,&Serial};
+  menuIn* inputsList[]={&encStream,&encButton,&Serial};
   chainStream<3> in(inputsList);//3 is the number of inputs
 
   #define LEDPIN A3
 
   result doAlert(eventMask e, prompt &item);
-  
+
   result showEvent(eventMask e,navNode& nav,prompt& item) {
     Serial.print("event: ");
     Serial.println(e);

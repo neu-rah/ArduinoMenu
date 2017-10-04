@@ -187,7 +187,7 @@ encoderInStream<encA,encB> encStream(encoder,4);// simple quad encoder fake Stre
 keyMap encBtn_map[]={{-encBtn,options->getCmdChar(enterCmd)}};//negative pin numbers use internal pull-up, this is on when low
 keyIn<1> encButton(encBtn_map);//1 is the number of keys
 
-// Stream* inputsList[]={&encBuitton,&Serial};
+// menuIn* inputsList[]={&encBuitton,&Serial};
 // chainStream<2> in(inputsList);//1 is the number of inputs
 
 serialIn serial(Serial);
