@@ -149,8 +149,10 @@ encoderInStream<encA,encB> encStream(encoder,4);// simple quad encoder fake Stre
 keyMap encBtn_map[]={{-encBtn,options->getCmdChar(enterCmd)}};//negative pin numbers use internal pull-up, on = low
 keyIn<1> encButton(encBtn_map);//1 is the number of keys
 
+serialIn serial(Serial);
+
 //input from the encoder + encoder button + serial
-Stream* inputsList[]={&encStream,&encButton,&Serial};
+Stream* inputsList[]={&encStream,&encButton,&serial};
 chainStream<3> in(inputsList);//3 is the number of inputs
 
 //fontY should now account for fontMarginY
