@@ -514,7 +514,7 @@ void navRoot::doInput(menuIn& in) {
   if (sleepTask) {
     if (options->getCmdChar(enterCmd)==in.read()) idleOff();
   } else {
-    idx_t inputBurstCnt=options->inputBurst+1;
+    idx_t inputBurstCnt=inputBurst+1;
     //if (in.available())
     while ((!sleepTask)&&in.available()&&(--inputBurstCnt)) {//if not doing something else and there is input
       //Serial.print(".");
@@ -586,7 +586,7 @@ navCmd navRoot::exit() {
     if (level) {
       level--;
       node().event(exitEvent,node().sel);
-    } else if (options->canExit) {
+    } else if (canExit) {
       node().event(exitEvent,node().sel);
       idleOn(idleTask);
     }
@@ -619,11 +619,11 @@ void fieldBase::doNav(navNode& nav,navCmd cmd) {
     case escCmd:
       tunning=true;//prepare for exit
     case enterCmd:
-      if (tunning||options->nav2D||!canTune()) {//then exit edition
+      if (tunning||nav.root->nav2D||!canTune()) {//then exit edition
         tunning=false;
         dirty=true;
         constrainField();
-        nav.event(options->useUpdateEvent?updateEvent:enterEvent);
+        nav.event(nav.root->useUpdateEvent?updateEvent:enterEvent);
         nav.root->exit();
         return;
       } else tunning=true;
@@ -641,7 +641,7 @@ void fieldBase::doNav(navNode& nav,navCmd cmd) {
     nav.event(enterEvent);
   }*/
   if (dirty)//sending enter or update event
-    nav.event(options->useUpdateEvent?updateEvent:enterEvent);
+    nav.event(nav.root->useUpdateEvent?updateEvent:enterEvent);
 }
 
 idx_t fieldBase::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr) {

@@ -190,6 +190,7 @@ multiple stream packing for input to mix encoder stream with encoder keyboard (u
 ## History
 
 ### 4.0
+  - More examples
   - Text edit fields with validation *
   - Pad style menus (horizontal list)
   - Plugins, alternative menu items potentially device specific
@@ -202,19 +203,36 @@ multiple stream packing for input to mix encoder stream with encoder keyboard (u
   - Added input burst config option
   - VALUEOBJ macro, user allocated values
   - menuIn class for menu inputs (allows device field invertion) *
-  - More examples
+  - some options have been distributed to some other classes
 
 #### * API changes
+
+##### Options
+
+**invertFieldKeys** option removed, invertion is now supported by specific menuIn objects.
+
+**numValueInput** moved to menuIn object
+
+**navRoot** extra options, previously on global options object
+```c++
+bool nav2D=false;//not used
+bool canExit=true;//v4.0 moved from global options
+bool useUpdateEvent=false;//if false, use enterEvent when field value is changed.
+idx_t inputBurst=1;//limit of inputs that can be processed before output
+```
+
+###### prompt base API
+
 printTo member function changed from:
 
 ```c++
-idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len);
+idx_t printTo(navRoot&,bool,menuOut&,idx_t,idx_t);
 ```
 
 to
 
 ```c++
-idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr=0);
+idx_t printTo(navRoot&,bool,menuOut&,idx_t,idx_t,idx_t=0);
 ```
 
 _this should only affect customized components_

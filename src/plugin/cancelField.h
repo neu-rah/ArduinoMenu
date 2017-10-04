@@ -60,7 +60,7 @@ public:
         break;
       case enterCmd:
         //Serial<<"ENTER"<<endl;
-        if (menuField<T>::tunning||options->nav2D||!menuField<T>::tune())
+        if (menuField<T>::tunning||nav.root->nav2D||!menuField<T>::tune())
           editing=false;
         break;
       default: break;

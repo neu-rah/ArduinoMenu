@@ -158,43 +158,17 @@ www.r-site.net
       config(
         char ecur='>',
         char dcur='-',
-        bool inv=false,
-        bool n2d=false,
-        const navCodesDef &nc=defaultNavCodes,
-        bool useUpdateEvent=false,
-        bool canExit=true,
-        bool numValueInput=true,
-        idx_t inBurst=1
+        const navCodesDef &nc=defaultNavCodes
       ):selectedCursor(ecur),
       disabledCursor(dcur),
-      invertFieldKeys(inv),
-      nav2D(n2d),
-      navCodes(nc),
-      useUpdateEvent(useUpdateEvent),
-      canExit(canExit),
-      numValueInput(numValueInput),
-      inputBurst(inBurst) {}
+      navCodes(nc) {}
       //NOTE:this can be output specific
       char selectedCursor;//='>';
       char disabledCursor;//='-';
-      //const char* exitText=exitTextMem;
-      //NOTE: this can be input specific
-      bool invertFieldKeys;//=false;//TODO: invert for encoder -> test this
-      bool nav2D;//=false;//TODO: use left|right keys? -> test this.. this should be device dependent and therefor need generic menu inputs
       const navCodesDef &navCodes;//=defaultNavCodes;
-      bool useUpdateEvent;//=false, if false, when field value is changed use enterEvent instead.
-      bool canExit;//=true, if false do not exit from main menu
-      bool numValueInput;//=true if true fields parse numeric input values otherwise numbers will terminate the edit and be considered accels on the parent menu probably.
-      idx_t inputBurst;//=1 limit of inputs that can be processed before output
       inline char getCmdChar(navCmds cmd) const {return navCodes[cmd].ch;}//return character assigned to this command
     };
 
-    // NOTE: make this a parametrized thing instead of a global reference
-    // a parametric thing will envolve a lot of reference passing
-    // however some overrides will need to access them but are not allowed to receive them by parameters
-    // putting them on the class would bind the instance to the options
-    // for its a pointer, user can change the pointer.
-    // TODO: distribute them by inputs and outputs
     extern config* options;
 
     #ifdef DEBUG

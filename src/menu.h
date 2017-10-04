@@ -179,10 +179,11 @@ for correcting unsigned values validation
           void printLow(menuOut& o) const override;
         #endif
         void stepit(int increment) override {
-          int sign = increment*(options->invertFieldKeys?-1:1);
+          //int sign = increment*(options->invertFieldKeys?-1:1);
           T thisstep = tunning?tune():step();
           dirty=true;
-          if (sign > 0) {
+          //by default they are inverted.. now buttons and joystick have to flip them
+          //if (sign > 0) {
             if ((high()-target()) < thisstep) {
               if (style()&wrapStyle) {
                 target() = low();
@@ -192,7 +193,7 @@ for correcting unsigned values validation
             } else {
               target() += thisstep;
             }
-          } else {
+          /*} else {
             if ((target()-low()) < thisstep) {
               if (style()&wrapStyle) {
                 target() = high();
@@ -201,8 +202,8 @@ for correcting unsigned values validation
               }
             } else {
               target() -= thisstep;
-            }
-          }
+            }*/
+          //}
         }
       };
 
@@ -375,6 +376,7 @@ for correcting unsigned values validation
     // base for all menu input devices
     class menuIn:public Stream {
       public:
+        bool numValueInput=true;
         virtual void setFieldMode(bool) {}
         virtual bool fieldMode() const {return false;}
         inline void fieldOn() {setFieldMode(true);}
@@ -433,7 +435,7 @@ for correcting unsigned values validation
         virtual void setColor(colorDefs c,bool selected=false,status s=enabledStatus,bool edit=false) {}
         virtual void drawCursor(idx_t ln,bool selected,status stat,bool edit=false,idx_t panelNr=0) {
           setColor(cursorColor, selected, stat,edit);
-          write(selected?(stat==disabledStatus?options->disabledCursor:options->selectedCursor):' ');
+          write(selected?(stat==disabledStatus? options->disabledCursor : options->selectedCursor):' ');
         }
         void doNav(navCmd cmd,navNode &nav);
         virtual result fmtStart(fmtParts part,navNode &nav,idx_t idx=-1) {return proceed;}
@@ -608,6 +610,10 @@ for correcting unsigned values validation
         idleFunc idleTask=inaction;//to do when menu exits, menu system will set idleFunc to this on exit
         idleFunc sleepTask=NULL;//menu suspended, call this function
         navTarget* navFocus=NULL;
+        bool nav2D=false;
+        bool canExit=true;//v4.0 moved from global options
+        bool useUpdateEvent=false;//if false, when field value is changed use enterEvent instead.
+        idx_t inputBurst=1;//limit of inputs that can be processed before output
         navRoot(menuNode& root,navNode* path,idx_t d,menuIn& in,outputsList &o)
           :out(o),in(in),path(path),maxDepth(d) {
             useMenu(root);
@@ -713,7 +719,7 @@ for correcting unsigned values validation
     template<typename T>
     void menuField<T>::parseInput(navNode& nav,menuIn& in) {
       if (strchr(numericChars,in.peek())) {//a numeric value was entered
-        if (options->numValueInput) {
+        if (in.numValueInput) {
           target()=(T)in.parseFloat();
           tunning=true;
           doNav(nav,enterCmd);

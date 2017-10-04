@@ -1,6 +1,6 @@
 Arduino Menu Library
 
-- field reversion should be by input device and not global
++ field reversion should be by input device and not global
   problem:
     inputs are only streams and they can be joyned!
     1) deriving from Stream class will pose problems later to use Serial Object.
@@ -10,14 +10,47 @@ Arduino Menu Library
     3) Use something else.. can't see what, specially because V4 does not use a global
     navigation object and stream reads receive no parameters of active ones.
     4) handle swap internally.. this does not distinguishes joyned streams
-    or one stream from another and its the current implementation
+    or one stream from another and its the current implementation.
 
-    2 - seems to be the most viable
+    2 - seems to be the most viable.. and so was done
 
 - put (some) options into navRoot
+  menu.cpp -------------------------------
+  navNode::navKeys
+  ->navCodes ok - not ok for inout drivers, keep them global
+
+  navRoot::doInput
+  ->getCmdChar ok
+  ->inputBurst ok
+
+  fieldBase::doNav(navNode& nav,navCmd cmd)
+  ->nav2D ok
+  ->useUpdateEvent ok
+
+
+  menu.h --------------------------------
+  menuField::stepit
+  ->invertFieldKeys X should remove this! its now set on an input stream basis
+
+  menuOut::drawCursor(idx_t ln,bool selected,status stat,bool edit=false,idx_t panelNr=0)
+  ->disabledCursor X keep it global or stream based? global for now because we dont know about output object availability
+  ->selectedCursor X keep it global or stream based? global for now because we dont know about output object availability
+
+  menuField<T>::parseInput(navNode& nav,menuIn& in)
+  -> numValueInput Ok => input device specific
+
+  analogAxis.h ------------------------
+  encoderIn.h -----------------------
+  ...
+  ->navCodes X keep them global for now!
+
+  cancelField.h -----------------------
+  doNav(navNode& nav,navCmd cmd)
+  ->nav2D Ok
+
 + customizing title print
 + BUG: u8glib draw cause multiple draw on serial - detach output draws!
-- use multiple menus
++ use multiple menus
 - use single include?
 - check dynamic, if possible mixed
 + color enumeration at base level
@@ -30,6 +63,7 @@ Arduino Menu Library
 - split options into:
   * config (static MEMMODE)
   * options (dynamic => RAM)
+  => most options are now distributed to several objects
 + use/draw title option for any menu, and ignore it on single line devices!
 + wrap menuField's https://github.com/neu-rah/ArduinoMenu/issues/58
 + BUG: alert is only showing on the first device
