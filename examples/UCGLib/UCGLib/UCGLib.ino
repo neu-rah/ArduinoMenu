@@ -15,6 +15,7 @@ mcu: nano328p
 #include <Ucglib.h>
 #include <menu.h>
 #include <menuIO/serialOut.h>
+#include <menuIO/serialIn.h>
 #include <menuIO/UCGLibOut.h>
 
 using namespace Menu;
