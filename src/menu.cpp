@@ -231,7 +231,7 @@ void menuOut::previewMenu(navRoot& root,menuNode& menu,idx_t panelNr) {
 
 //determin panel number here and distribute menu and previews among the panels
 void menuOut::printMenu(navNode &nav) {
-  trace(Serial<<"menuOut::printMenu"<<endl);
+  trace(Serial<<"menuOut::printMenu(navNode &nav)"<<endl);
   menuNode& focus=nav.root->active();
   int lvl=nav.root->level;
   if (focus.parentDraw()) lvl--;
@@ -258,7 +258,7 @@ void menuOut::printMenu(navNode &nav) {
 // this function emits format messages
 // to be handler by format wrappers
 void menuOut::printMenu(navNode &nav,idx_t panelNr) {
-  trace(Serial<<"menuOut::printMenu"<<endl);
+  trace(Serial<<"menuOut::printMenu(navNode &nav,idx_t panelNr)"<<endl);
   //menuNode& focus=nav.root->active();
   if (!(nav.root->navFocus->parentDraw()||nav.root->navFocus->isMenu())) {
     //on this case we have a navTarget object that draws himself
@@ -284,12 +284,19 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
     panel pan=panels[panelNr];
 
     //-----> panel start
+    trace(Serial<<"panel start"<<endl);
     bool titleChanged=st||nav.target->changed(nav,*this,false);
-    fmtStart(fmtPanel,nav);
+    trace(Serial<<"x"<<endl);
+    //fmtStart(fmtPanel,nav);
+    trace(Serial<<"x"<<endl);
     if (all||titleChanged) {
+      trace(Serial<<"all:"<<all<<" panelNr:"<<panelNr<<endl);
+      trace(Serial<<"{x:"<<pan.x<<" y:"<<pan.y<<" w:"<<pan.w<<" h:"<<pan.h<<"}"<<endl);
       if (all) clear(panelNr);
+      trace(Serial<<"x"<<endl);
       if (st) {
         ///------> titleStart
+        trace(Serial<<"title start"<<endl);
         fmtStart(fmtTitle,nav,-1);
         setColor(titleColor,false);
         clearLine(0,panelNr);
@@ -304,6 +311,7 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
       }
     }
     //------> bodyStart
+    trace(Serial<<"body start"<<endl);
     fmtStart(fmtBody,nav);
     for(idx_t i=0;i<maxY(panelNr)-st;i++) {
       int ist=i+st;
@@ -611,7 +619,7 @@ bool fieldBase::async(const char *uri,navRoot& root,idx_t lvl) {
 }
 
 void fieldBase::doNav(navNode& nav,navCmd cmd) {
-  trace(Serial<<"fieldBase::doNav"<<endl);
+  trace(Serial<<"fieldBase::doNav "<<cmd<<endl);
   switch(cmd.cmd) {
     //by default esc and enter cmds do the same by changing the value
     //it might be set by numeric parsing when allowed

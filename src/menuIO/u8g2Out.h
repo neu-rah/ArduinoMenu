@@ -32,7 +32,7 @@ namespace Menu {
 				idx_t resY=9,
 				idx_t offsetX=0,
 				idx_t offsetY=0
-			) :gfxOut(resX,resY,t,p,menuOut::redraw|menuOut::rasterDraw),gfx(gfx),colors(c) {
+			) :gfxOut(resX,resY,t,p,(styles)(menuOut::redraw|menuOut::rasterDraw)),gfx(gfx),colors(c) {
 					gfx.setFontPosBottom(); // U8Glib font positioning
 					this->offsetX=offsetX;
 					this->offsetY=offsetY;

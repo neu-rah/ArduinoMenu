@@ -204,6 +204,7 @@ multiple stream packing for input to mix encoder stream with encoder keyboard (u
   - VALUEOBJ macro, user allocated values
   - menuIn class for menu inputs (allows device field invertion) *
   - some options have been distributed to some other classes
+  - allow dynamic menu construction (ram) even for AVR's
 
 #### * API changes
 

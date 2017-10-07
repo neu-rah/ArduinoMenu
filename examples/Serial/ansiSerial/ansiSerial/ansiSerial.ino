@@ -59,7 +59,7 @@ menuOut* outputs[]={&ansi};
 outputsList out(outputs,1);*/
 
 MENU_OUTPUTS(out,MAX_DEPTH
-  ,ANSISERIAL_OUT(Serial,colors,{1,1,16,10})//,{18,1,16,10},{36,1,16,10})
+  ,ANSISERIAL_OUT(Serial,colors,{1,1,16,10},{18,1,16,10},{36,1,16,10})
   ,NONE//must have 2 items at least
 );
 
@@ -236,8 +236,8 @@ TOGGLE((mainMenu[1].enabled),togOp,"Op 2:",doNothing,noEvent,noStyle
   ,VALUE("disabled",disabledStatus,doNothing,noEvent)
 );
 
-char* const hexDigit PROGMEM="0123456789ABCDEF";
-char* const hexNr[] PROGMEM={"0","x",hexDigit,hexDigit};
+char* constMEM hexDigit MEMMODE="0123456789ABCDEF";
+char* constMEM hexNr[] MEMMODE={"0","x",hexDigit,hexDigit};
 char buf1[]="0x11";
 
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle

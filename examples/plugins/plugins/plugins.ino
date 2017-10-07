@@ -67,11 +67,11 @@ softKeyIn<1> encButton(encBtn_map);//1 is the number of keys
 serialIn serial(Serial);
 
 //input from the encoder + encoder button + serial
-Stream* inputsList[]={&encStream,&encButton,&serial};
+menuIn* inputsList[]={&encStream,&encButton,&serial};
 chainStream<3> in(inputsList);//3 is the number of inputs
 
-char* const hexDigit PROGMEM="0123456789ABCDEF";
-char* const hexNr[] PROGMEM={"0","x",hexDigit,hexDigit};
+char* constMEM hexDigit MEMMODE="0123456789ABCDEF";
+char* constMEM hexNr[] MEMMODE={"0","x",hexDigit,hexDigit};
 char buf1[]="0x11";
 
 //a menu using a plugin field

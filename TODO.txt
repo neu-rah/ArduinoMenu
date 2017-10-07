@@ -1,5 +1,9 @@
 Arduino Menu Library
 
+- support frames
++ check uint8_t types -> wrap and non-wrap ok
+- explore arrow keys for ansiSerial
+- alternative keys example
 - custom field format (date/time)
 + field reversion should be by input device and not global
   problem:

@@ -28,8 +28,8 @@ mcu: nano328p
 #include <menuIO/encoderIn.h>
 #include <menuIO/keyIn.h>
 #include <menuIO/chainStream.h>
-#include <menuIO/serialOut.h>
-#include <menuIO/serialIn.h>
+// #include <menuIO/serialOut.h>
+// #include <menuIO/serialIn.h>
 
 using namespace Menu;
 
@@ -159,8 +159,8 @@ MENU(subMenu,"Sub-Menu",showEvent,anyEvent,noStyle
   ,EXIT("<Back")
 );
 
-char* const hexDigit PROGMEM="0123456789ABCDEF";
-char* const hexNr[] PROGMEM={"0","x",hexDigit,hexDigit};
+char* constMEM hexDigit MEMMODE="0123456789ABCDEF";
+char* constMEM hexNr[] MEMMODE={"0","x",hexDigit,hexDigit};
 char buf1[]="0x11";
 
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
@@ -187,15 +187,15 @@ encoderInStream<encA,encB> encStream(encoder,4);// simple quad encoder fake Stre
 keyMap encBtn_map[]={{-encBtn,options->getCmdChar(enterCmd)}};//negative pin numbers use internal pull-up, this is on when low
 keyIn<1> encButton(encBtn_map);//1 is the number of keys
 
-// Stream* inputsList[]={&encBuitton,&Serial};
+// menuIn* inputsList[]={&encBuitton,&Serial};
 // chainStream<2> in(inputsList);//1 is the number of inputs
 
-serialIn serial(Serial);
-MENU_INPUTS(in,&encStream,&encButton,&serial);
+//serialIn serial(Serial);
+MENU_INPUTS(in,&encStream,&encButton);//,&serial);
 
 MENU_OUTPUTS(out,MAX_DEPTH
   ,U8G2_OUT(u8g2,colors,fontX,fontY,offsetX,offsetY,{0,0,U8_Width/fontX,U8_Height/fontY})
-  ,SERIAL_OUT(Serial)
+  ,NONE//SERIAL_OUT(Serial)
 );
 
 NAVROOT(nav,mainMenu,MAX_DEPTH,in,out);

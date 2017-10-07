@@ -41,7 +41,7 @@ keyMap encBtn_map[]={{-encBtn,options->getCmdChar(enterCmd)}};//negative pin num
 keyIn<1> encButton(encBtn_map);//1 is the number of keys
 
 //input from the encoder + encoder button + serial
-Stream* inputsList[]={&encStream,&encButton};
+menuIn* inputsList[]={&encStream,&encButton};
 chainStream<2> in(inputsList);//2 is the number of inputs
 
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle

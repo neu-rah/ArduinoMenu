@@ -11,7 +11,8 @@ int test=55;
 
 //custom field edit
 //implementing a customized menu component
-//this components can be latter shared as plugins
+// --this components can be latter shared as plugins
+// is already stored as a plugin
 template<typename T>
 class cancelField:public menuField<T> {
 protected:

@@ -132,7 +132,7 @@ outputsList out(outputs,2);//outputs list controller
 
 //define navigation root and aux objects
 navNode nav_cursors[MAX_DEPTH];//aux objects to control each level of navigation
-navRoot nav(mainMenu, nav_cursors, MAX_DEPTH-1, Serial, out);*/
+navRoot nav(mainMenu, nav_cursors, MAX_DEPTH, Serial, out);*/
 
 result alert(menuOut& o,idleEvent e) {
   if (e==idling) {

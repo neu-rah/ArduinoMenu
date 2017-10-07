@@ -39,7 +39,7 @@ keyMap encBtn_map[]={{-encBtn,options->getCmdChar(enterCmd)}};//negative pin num
 keyIn<1> encButton(encBtn_map);//1 is the number of keys
 
 //input from the encoder + encoder button + serial
-Stream* inputsList[]={&encStream,&encButton,&Serial};
+menuIn* inputsList[]={&encStream,&encButton,&Serial};
 chainStream<3> in(inputsList);//3 is the number of inputs
 
 #define LEDPIN 13
@@ -125,8 +125,8 @@ TOGGLE((mainMenu[1].enabled),togOp,"Op 2:",doNothing,noEvent,noStyle
   ,VALUE("disabled",disabledStatus,doNothing,noEvent)
 );*/
 
-char* const hexDigit PROGMEM="0123456789ABCDEF";
-char* const hexNr[] PROGMEM={"0","x",hexDigit,hexDigit};
+char* constMEM hexDigit MEMMODE="0123456789ABCDEF";
+char* constMEM hexNr[] MEMMODE={"0","x",hexDigit,hexDigit};
 char buf1[]="0x11";
 
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle

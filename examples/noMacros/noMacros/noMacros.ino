@@ -64,7 +64,7 @@ outputsList out(outputs,1);//outputs list controller
 
 //define navigation root and aux objects
 navNode nav_cursors[MAX_DEPTH];//aux objects to control each level of navigation
-navRoot nav(mainMenu, nav_cursors, MAX_DEPTH-1, serial, out);
+navRoot nav(mainMenu, nav_cursors, MAX_DEPTH, serial, out);
 
 //implement the menu actions
 void op1Func() {Serial.println("Op 1 executed");}
@@ -78,15 +78,6 @@ void setup() {
   Serial.begin(115200);
   while(!Serial);
   Serial.println("Menu initialized without macros.");
-  Serial<<"active:";
-  Serial<<*(prompt*)&nav.active();
-  Serial<<endl;
-  Serial<<"maxDepth:"<<nav.maxDepth<<endl;
-  Serial<<"Selected:";
-  Serial<<(*(prompt*)&nav.selected());
-  Serial<<endl;
-  Serial<<"active dirty:"<<nav.active().dirty<<endl;
-  // Serial<<":"<<nav.()<<endl;
 }
 
 void loop() {

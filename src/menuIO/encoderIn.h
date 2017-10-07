@@ -22,10 +22,8 @@ quadrature encoder stream (fake, not using buffers)
       //int pinA,pinB;
       //encoderIn<pinA,pinB>(int a,int b):pinA(a),pinB(b) {}
       void begin() {
-        pinMode(pinA, INPUT);
-        digitalWrite(pinA,1);
-        pinMode(pinB, INPUT);
-        digitalWrite(pinB,1);
+        pinMode(pinA, INPUT_PULLUP);
+        pinMode(pinB, INPUT_PULLUP);
         //attach pin change handlers
         PCattachInterrupt<pinA>(mixHandler((void(*)(void*))encoderInUpdateA,this), CHANGE);
         PCattachInterrupt<pinB>(mixHandler((void(*)(void*))encoderInUpdateB,this), CHANGE);

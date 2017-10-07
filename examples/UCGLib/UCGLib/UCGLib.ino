@@ -32,8 +32,8 @@ using namespace Menu;
 
 Ucglib_ST7735_18x128x160_HWSPI ucg(UC_DC , UC_CS, UC_RST);
 
-char* const hexDigit PROGMEM="0123456789ABCDEF";
-char* const hexNr[] PROGMEM={"0","x",hexDigit,hexDigit};
+char* constMEM hexDigit MEMMODE="0123456789ABCDEF";
+char* constMEM hexNr[] MEMMODE={"0","x",hexDigit,hexDigit};
 char buf1[]="0x11";//<-- menu will edit this text
 
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
@@ -95,7 +95,7 @@ outputsList out(outputs,2);//outputs list controller
 
 //define navigation root and aux objects
 navNode nav_cursors[MAX_DEPTH];//aux objects to control each level of navigation
-navRoot nav(mainMenu, nav_cursors, MAX_DEPTH-1, Serial, out);*/
+navRoot nav(mainMenu, nav_cursors, MAX_DEPTH, Serial, out);*/
 
 void setup(void)
 {

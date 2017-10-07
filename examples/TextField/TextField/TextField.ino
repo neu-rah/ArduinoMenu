@@ -14,8 +14,8 @@ char* const alphaNum[] PROGMEM = {" 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"};
 //individual character validators
 char* constMEM validData[] PROGMEM={hexChars,hexChars,hexChars,hexChars};
 
-char* constMEM validIP[] PROGMEM = {" 012",digit,digit,"."};
-char buf0[]="   .   .   .   ";
+char* constMEM validIP[] PROGMEM = {"012",digit,digit,"."};
+char buf0[]="000.000.000.000";
 
 //define "Op 0" without macro
 constMEM char op1Text[] PROGMEM="IP";//field name
@@ -32,7 +32,7 @@ constMEM textFieldShadowRaw op1InfoRaw PROGMEM={
 constMEM textFieldShadow& op1Info=*(textFieldShadow*)&op1InfoRaw;//hacking c++ to use progmem (hugly)
 textField option0(op1Info);
 
-char buf1[]="1111";
+char buf1[]="0000";
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,OBJ(option0)
   ,EDIT("Hex",buf1,validData,doNothing,noEvent,noStyle)

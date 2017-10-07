@@ -33,7 +33,7 @@ for correcting unsigned values validation
 
   namespace Menu {
 
-    static const char* numericChars="0123456789.";
+    static constMEM char* numericChars="0123456789.";
 
     #define _MAX(a,b) (((a)>(b))?(a):(b))
     //#if defined(ESP8266)
@@ -71,12 +71,15 @@ for correcting unsigned values validation
         }
         virtual classes type() const {return promptClass;}
         inline prompt(constMEM promptShadow& shadow):shadow(&shadow) {}
+        inline prompt(constMEM char* t,action a=doNothing,eventMask e=noEvent,styles s=noStyle,systemStyles ss=_noStyle)
+          :shadow(new promptShadow(t,a,e,s,ss)) {}
         inline void enable() {enabled=enabledStatus;}
         inline void disable() {enabled=disabledStatus;}
-        inline const char* getText() const {return shadow->getText();}
-        inline const systemStyles sysStyles() const {return shadow->_sysStyles();}
-        inline const eventMask events() const {return shadow->_events();}
+        inline constMEM char* getText() const {return shadow->getText();}
+        inline constMEM systemStyles sysStyles() const {return shadow->_sysStyles();}
+        inline constMEM eventMask events() const {return shadow->_events();}
         inline styles style() const {return shadow->_style();}
+        inline bool canWrap() const {return style()&wrapStyle;}
         inline bool canNav() const {return sysStyles()&_canNav;}//can receive navigation focus and process keys
         inline bool isMenu() const {return sysStyles()&_menuData;}//has menu data list and can be a navNode target
         inline bool isVariant() const {return sysStyles()&_isVariant;}//a menu as an enumerated field, connected to a variable value
@@ -103,7 +106,11 @@ for correcting unsigned values validation
           virtual void printHigh(menuOut&) const {}
           virtual void printLow(menuOut&) const {}
         #endif
+    };
 
+    class Exit:public prompt {
+      public:
+        Exit(constMEM char* t):prompt(t,(callback)doExit,enterEvent) {}
     };
 
     //--------------------------------------------------------------------------
@@ -112,9 +119,8 @@ for correcting unsigned values validation
     class navTarget:public prompt {
       public:
         navTarget(constMEM promptShadow& shadow):prompt(shadow) {}
-        // navTarget(constMEM char* t,action a=doNothing,eventMask e=noEvent,styles s=noStyle,systemStyles ss=_noStyle)
-        //   :prompt(t,a,e,s,ss) {}
-        //bool canNav() const override {return true;}
+        navTarget(constMEM char* t,action a=doNothing,eventMask e=noEvent,styles s=noStyle,systemStyles ss=_noStyle)
+          :prompt(t,a,e,s,ss) {}
         virtual void parseInput(navNode& nav,menuIn& in);
         virtual void doNav(navNode& nav,navCmd cmd);
     };
@@ -127,9 +133,19 @@ for correcting unsigned values validation
       bool edited=false;
       idx_t cursor=0;
       textField(constMEM textFieldShadow& shadow):navTarget(shadow) {}
+      textField(
+        constMEM char*label,
+        char* b,
+        idx_t sz,
+        char* constMEM* v,
+        action a=doNothing,
+        eventMask e=noEvent,
+        styles style=noStyle,
+        systemStyles ss=(Menu::systemStyles)(_noStyle|_canNav|_parentDraw)
+      ):navTarget(*new textFieldShadow(label,b,sz,v,a,e,style,ss)) {}
       inline char* buffer() const {return ((textFieldShadow*)shadow)->_buffer();}
       inline idx_t sz() const {return ((textFieldShadow*)shadow)->_sz();}
-      const char* validator(int i) {return ((textFieldShadow*)shadow)->operator[](i%sz());}
+      constMEM char* validator(int i) {return ((textFieldShadow*)shadow)->operator[](i%sz());}
       void doNav(navNode& nav,navCmd cmd) override;
       idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr=0) override;
     };
@@ -142,7 +158,7 @@ for correcting unsigned values validation
         fieldBase(constMEM promptShadow& shadow):navTarget(shadow) {}
         virtual classes type() const {return fieldClass;}
         bool async(const char *uri,navRoot& root,idx_t lvl) override;
-        inline const char* units() {return ((fieldBaseShadow*)shadow)->_units();}
+        inline constMEM char* units() {return ((fieldBaseShadow*)shadow)->_units();}
         void doNav(navNode& nav,navCmd cmd) override;
         virtual bool canTune()=0;
         virtual void constrainField()=0;
@@ -156,13 +172,25 @@ for correcting unsigned values validation
       public:
         T reflex;
         menuField(constMEM menuFieldShadow<T> & shadow):fieldBase(shadow) {}
+        menuField(
+          T &value,
+          constMEM char * text,
+          constMEM char *units,
+          T low,
+          T high,
+          T step,
+          T tune,
+          action a=doNothing,
+          eventMask e=noEvent,
+          styles s=noStyle
+        ):menuField(*new menuFieldShadow<T>(value,text,units,low,high,step,tune,a,e,s)) {}
         bool canTune() override {return !!tune();}
         void constrainField() override {target() = constrain(target(), low(), high());}
         idx_t printReflex(menuOut& o) const override;
         void parseInput(navNode& nav,menuIn& in) override;
         idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr=0) override;
         inline T& target() const {return ((menuFieldShadow<T>*)shadow)->target();}
-        inline T getTypeValue(const T* from) const {return ((menuFieldShadow<T>*)shadow)->getTypeValue(from);}
+        inline T getTypeValue(constMEM T* from) const {return ((menuFieldShadow<T>*)shadow)->getTypeValue(from);}
         inline T low() const {return  ((menuFieldShadow<T>*)shadow)->_low();}
         inline T high() const {return ((menuFieldShadow<T>*)shadow)->_high();}
         inline T step() const {return ((menuFieldShadow<T>*)shadow)->_step();}
@@ -175,32 +203,21 @@ for correcting unsigned values validation
           void printHigh(menuOut& o) const override;
           void printLow(menuOut& o) const override;
         #endif
-        void stepit(int increment) override {
-          //int sign = increment*(options->invertFieldKeys?-1:1);
+        void stepit(int dir) override {
           T thisstep = tunning?tune():step();
           dirty=true;
           //by default they are inverted.. now buttons and joystick have to flip them
-          //if (sign > 0) {
-            if ((high()-target()) < thisstep) {
-              if (style()&wrapStyle) {
-                target() = low();
-              } else {
-                target() = high();
-              }
-            } else {
+          if (dir > 0) {
+            if ((high()-target()) < thisstep)
+              target() = canWrap()?low():high();
+            else
               target() += thisstep;
-            }
-          /*} else {
-            if ((target()-low()) < thisstep) {
-              if (style()&wrapStyle) {
-                target() = high();
-              } else {
-                target() = low();
-              }
-            } else {
+          } else {
+            if ((target()-low()) < thisstep)
+              target() = canWrap()?high():low();
+            else
               target() -= thisstep;
-            }*/
-          //}
+          }
         }
       };
 
@@ -209,6 +226,8 @@ for correcting unsigned values validation
     class menuValue:public prompt {
       public:
         menuValue(constMEM menuValueShadow<T>& shadow):prompt(shadow) {}
+        menuValue(constMEM char * text,T value,action a=doNothing,eventMask e=noEvent)
+          :menuValue(*new menuValueShadow<T>(text,value,a,e)) {}
         #ifdef DEBUG
         bool changed(const navNode &nav,const menuOut& out,bool sub=true) override {return false;}
         #endif
@@ -221,11 +240,13 @@ for correcting unsigned values validation
     class menuNode:public navTarget {
       public:
         menuNode(constMEM menuNodeShadow& s):navTarget(s) {}
+        menuNode(constMEM char* text,idx_t sz,prompt* constMEM data[],action a=noAction,eventMask e=noEvent,styles style=wrapStyle,systemStyles ss=(systemStyles)(_menuData|_canNav))
+          :navTarget(*new menuNodeShadow(text,sz,data,a,e,style,ss)) {}
         virtual classes type() const {return menuClass;}
         inline prompt& operator[](idx_t i) const {return ((menuNodeShadow*)shadow)->operator[](i);}
         bool changed(const navNode &nav,const menuOut& out,bool sub=true) override;
         inline idx_t sz() const {return ((menuNodeShadow*)shadow)->_sz();}
-        inline prompt* const* data() const {return ((menuNodeShadow*)shadow)->_data();}
+        inline prompt* constMEM* data() const {return ((menuNodeShadow*)shadow)->_data();}
         prompt* seek(idx_t* uri,idx_t len) override;
         bool async(const char *uri,navRoot& root,idx_t lvl=0) override;
     };
@@ -253,6 +274,8 @@ for correcting unsigned values validation
       public:
         idx_t reflex;
         menuVariant(constMEM menuNodeShadow& s):menuVariantBase(s) {}
+        menuVariant(constMEM char* text,T &target,idx_t sz,prompt* constMEM* data,action a,eventMask e,styles style)
+          :menuVariantBase(*new menuVariantShadow<T>(text,target,sz,data,a,e,style)) {}
         idx_t sync() override {
           for(idx_t i=0;i<sz();i++)
             if (((menuValue<T>*)&operator[](i))->target()==target()) return i;
@@ -286,6 +309,16 @@ for correcting unsigned values validation
     class select:public menuVariant<T> {
       public:
         select(constMEM menuNodeShadow& s):menuVariant<T>(s) {}
+        select(
+          constMEM char* text,
+          T &target,
+          idx_t sz,
+          prompt* constMEM* data,
+          action a=doNothing,
+          eventMask e=noEvent,
+          styles style=noStyle,
+          systemStyles ss=((systemStyles)(Menu::_menuData|Menu::_canNav|Menu::_isVariant|Menu::_parentDraw))
+        ):menuVariant<T>(*new menuVariantShadow<T>(text,target,sz,data,a,e,style,ss)) {}
         virtual classes type() const {return selectClass;}
     };
 
@@ -293,6 +326,16 @@ for correcting unsigned values validation
     class toggle:public menuVariant<T> {
       public:
         toggle(constMEM menuNodeShadow& s):menuVariant<T>(s) {}
+        toggle(
+          constMEM char* text,
+          T &target,
+          idx_t sz,
+          prompt* constMEM* data,
+          action a=doNothing,
+          eventMask e=noEvent,
+          styles style=noStyle,
+          systemStyles ss=((systemStyles)(Menu::_menuData|Menu::_isVariant))
+        ):menuVariant<T>(*new menuVariantShadow<T>(text,target,sz,data,a,e,style,ss)) {}
         virtual classes type() const {return toggleClass;}
         idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr=0) override;
         result sysHandler(SYS_FUNC_PARAMS) override {
@@ -316,6 +359,16 @@ for correcting unsigned values validation
     class choose:public menuVariant<T> {
       public:
         choose(constMEM menuNodeShadow& s):menuVariant<T>(s) {}
+        choose(
+          constMEM char* text,
+          T &target,
+          idx_t sz,
+          prompt* constMEM* data,
+          action a=doNothing,
+          eventMask e=noEvent,
+          styles style=noStyle,
+          systemStyles ss=((systemStyles)(Menu::_menuData|Menu::_canNav|Menu::_isVariant))
+        ):menuVariant<T>(*new menuVariantShadow<T>(text,target,sz,data,a,e,style,ss)) {}
         virtual classes type() const {return chooseClass;}
         result sysHandler(SYS_FUNC_PARAMS) override;
         bool changed(const navNode &nav,const menuOut& out,bool sub=true) override {
@@ -337,17 +390,17 @@ for correcting unsigned values validation
 
     class panelsList {
       public:
-        const panel* panels;
+        constMEM panel* panels;
         navNode** nodes;
-        const idx_t sz;
+        constMEM idx_t sz;
         idx_t cur=0;
-        panelsList(const panel p[],navNode* nodes[],idx_t sz):panels(p),nodes(nodes),sz(sz) {
+        panelsList(constMEM panel p[],navNode* nodes[],idx_t sz):panels(p),nodes(nodes),sz(sz) {
           reset();
         }
         void reset(idx_t from=0) {
           for(int n=from;n<sz;n++) nodes[n]=NULL;
         }
-        inline const panel operator[](idx_t i) const {
+        inline constMEM panel operator[](idx_t i) const {
           assert(i<sz);
           #ifdef USING_PGM
             panel tmp;
@@ -507,8 +560,8 @@ for correcting unsigned values validation
     class outputsList {
       public:
         int cnt=1;
-        menuOut* const* outs;
-        outputsList(menuOut* const o[],int n):cnt(n),outs(o) {}
+        menuOut* constMEM* outs;
+        outputsList(menuOut* constMEM o[],int n):cnt(n),outs(o) {}
         menuOut& operator[](idx_t i) {
           assert(i<cnt);
           return *(menuOut*)memPtr(outs[i]);
@@ -582,7 +635,7 @@ for correcting unsigned values validation
         /*static*/ navRoot* root;//v 4.0 removed static to allow multiple menus
         inline void reset() {sel=0;}
         inline idx_t sz() const {return target->sz();}
-        inline prompt* const * data() const {return target->data();}
+        inline prompt* constMEM * data() const {return target->data();}
         inline prompt& selected() const {return *(prompt*)memPtr(data()[sel]);}
         inline bool wrap() const {return target->style()&wrapStyle;}
         result event(eventMask e,idx_t i);//send event to item index i
@@ -600,7 +653,7 @@ for correcting unsigned values validation
         outputsList &out;
         menuIn& in;
         navNode* path;
-        const idx_t maxDepth=0;
+        constMEM idx_t maxDepth=0;
         idx_t level=0;
         bool showTitle=true;
         bool idleChanged=false;//avoid recursive idle call, changed function will return this value when menu suspended
@@ -612,15 +665,10 @@ for correcting unsigned values validation
         bool useUpdateEvent=false;//if false, when field value is changed use enterEvent instead.
         idx_t inputBurst=1;//limit of inputs that can be processed before output
         navRoot(menuNode& root,navNode* path,idx_t d,menuIn& in,outputsList &o)
-          :out(o),in(in),path(path),maxDepth(d) {
+          :out(o),in(in),path(path),maxDepth(d-1) {
             useMenu(root);
-            initPath(d);
+            initPath(d-1);
           }
-        /*navRoot(menuNode& root,navNode* path,idx_t d,Stream& in,outputsList &o)
-          :out(o),in(in),path(path),maxDepth(d) {
-            useMenu(root);
-            initPath(d);
-          }*/
         void initPath(idx_t d) {
           for(idx_t n=0;n<=d;n++)//initialize path chain for this root (v4.0)
             path[n].root=this;

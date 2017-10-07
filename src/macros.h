@@ -43,12 +43,12 @@
 #define DEF(x) DEF_##x,
 
 #define PANELS(id,...)\
-  const panel _panels_##id[] MEMMODE={__VA_ARGS__};\
+  constMEM panel _panels_##id[] MEMMODE={__VA_ARGS__};\
   Menu::navNode* _nodes_##id[sizeof(_panels_##id)/sizeof(panel)];\
   Menu::panelsList id(_panels_##id,_nodes_##id,sizeof(_panels_##id)/sizeof(panel));
 
 #define MENU_OUTLIST(id,...)\
-  Menu::menuOut* const _outputs_##id[] MEMMODE ={__VA_ARGS__};\
+  Menu::menuOut* constMEM _outputs_##id[] MEMMODE ={__VA_ARGS__};\
   Menu::outputsList id(_outputs_##id,sizeof(_outputs_##id)/sizeof(Menu::menuOut*));
 
 #define MENU_INPUTS(id,...)\
@@ -150,7 +150,7 @@ Menu::utftOut id##n(gfx,color,id##Tops##n,id##Panels##n,fontW,fontH);
 
 #define MENU_OUTPUTS(id,maxDepth,...)\
 	XFOR_EACH(CALL,WITH(VAR,id,maxDepth),__VA_ARGS__)\
-	Menu::menuOut* const id##_outPtrs[] MEMMODE={\
+	Menu::menuOut* constMEM id##_outPtrs[] MEMMODE={\
 	   XFOR_EACH(CALL,WITH(REF,id,maxDepth),__VA_ARGS__)\
 	};\
 Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
@@ -158,8 +158,8 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
 #define MENU(id,text,aFn,mask,style,...) altMENU(Menu::menu,id,text,aFn,mask,style,(Menu::_menuData|Menu::_canNav),__VA_ARGS__)
 #define altMENU(objType,id,text,aFn,mask,style,ss,...)\
   FOR_EACH(DECL,__VA_ARGS__)\
-  const char id##_text[] MEMMODE=text;\
-  Menu::prompt* const id##_data[] MEMMODE={\
+  constMEM char id##_text[] MEMMODE=text;\
+  Menu::prompt* constMEM id##_data[] MEMMODE={\
     FOR_EACH(DEF,__VA_ARGS__)\
   };\
   const MEMMODE Menu::menuNodeShadowRaw id##ShadowRaw={\
@@ -178,12 +178,12 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
 #define CHOOSE(...) altVARIANT(Menu::choose,((systemStyles)(Menu::_menuData|Menu::_canNav|Menu::_isVariant)),__VA_ARGS__)
 #define TOGGLE(...) altVARIANT(Menu::toggle,((systemStyles)(Menu::_menuData|Menu::_isVariant)),__VA_ARGS__)
 #define altVARIANT(objType,ss,target,id,text,action,mask,style,...)\
-  const char id##_text[] MEMMODE=text;\
+  constMEM char id##_text[] MEMMODE=text;\
   XFOR_EACH(DECL_VALUE,target,__VA_ARGS__)\
-  Menu::prompt* const id##_data[] MEMMODE={\
+  Menu::prompt* constMEM id##_data[] MEMMODE={\
     FOR_EACH(DEF,__VA_ARGS__)\
   };\
-  const MEMMODE Menu::menuVariantShadowRaw<typeof(target)> id##ShadowRaw={\
+  constMEM MEMMODE Menu::menuVariantShadowRaw<typeof(target)> id##ShadowRaw={\
     (Menu::callback)action,\
     ss,\
     id##_text,\
@@ -213,8 +213,8 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
 
 //allocating space for elements and shadows -------------------------------------
 #define DECL_EXIT_(cnt,exitText)\
-  const char title_##cnt[] MEMMODE=exitText;\
-  const MEMMODE Menu::promptShadowRaw opShadowRaw##cnt = {\
+  constMEM char title_##cnt[] MEMMODE=exitText;\
+  constMEM MEMMODE Menu::promptShadowRaw opShadowRaw##cnt = {\
     (Menu::callback)Menu::doExit,\
     Menu::_noStyle,\
     title_##cnt,\
@@ -223,8 +223,8 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
   constMEM Menu::promptShadow& opShadow##cnt=*(Menu::promptShadow*)&opShadowRaw##cnt;\
   Menu::prompt op##cnt(opShadow##cnt);
 #define DECL_ITEM_(cnt,objType,text,aFn,mask,ss,...) \
-  const char title_##cnt[] MEMMODE=text;\
-  const MEMMODE Menu::promptShadowRaw opShadowRaw##cnt={\
+  constMEM char title_##cnt[] MEMMODE=text;\
+  constMEM MEMMODE Menu::promptShadowRaw opShadowRaw##cnt={\
     (Menu::callback)aFn,\
     ss,\
     title_##cnt,\
@@ -234,8 +234,8 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
   constMEM Menu::promptShadow& opShadow##cnt=*(promptShadow*)&opShadowRaw##cnt;\
   objType op##cnt(opShadow##cnt,__VA_ARGS__);
 #define DECL_OP_(cnt,objType,text,aFn,mask) \
-  const char title_##cnt[] MEMMODE=text;\
-  const MEMMODE Menu::promptShadowRaw opShadowRaw##cnt={\
+  constMEM char title_##cnt[] MEMMODE=text;\
+  constMEM MEMMODE Menu::promptShadowRaw opShadowRaw##cnt={\
     (Menu::callback)aFn,\
     _noStyle,\
     title_##cnt,\
@@ -245,9 +245,9 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
   constMEM Menu::promptShadow& opShadow##cnt=*(promptShadow*)&opShadowRaw##cnt;\
   objType op##cnt(opShadow##cnt);
 #define DECL_FIELD_(cnt,objType,ss,target,text,units,low,high,step,tune,action,mask,style)\
-  const char fieldLabel##cnt[] MEMMODE=text;\
-  const char fieldUnit##cnt[] MEMMODE=units;\
-  const MEMMODE Menu::menuFieldShadowRaw<typeof(target)> fieldShadowRaw##cnt={\
+  constMEM char fieldLabel##cnt[] MEMMODE=text;\
+  constMEM char fieldUnit##cnt[] MEMMODE=units;\
+  constMEM MEMMODE Menu::menuFieldShadowRaw<typeof(target)> fieldShadowRaw##cnt={\
     (Menu::callback)action,\
     ss,\
     fieldLabel##cnt,\
@@ -263,8 +263,8 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
   constMEM Menu::menuFieldShadow<typeof(target)>& _fieldShadow##cnt=*(Menu::menuFieldShadow<typeof(target)>*)&fieldShadowRaw##cnt;\
   objType<typeof(target)> _menuField##cnt(_fieldShadow##cnt);
 #define DECL_EDIT_(cnt,objType,ss,label,buf,valid,action,mask,style)\
-  const char textFieldLabel##cnt[] MEMMODE=label;\
-  const MEMMODE Menu::textFieldShadowRaw textFieldShadowRaw##cnt={\
+  constMEM char textFieldLabel##cnt[] MEMMODE=label;\
+  constMEM MEMMODE Menu::textFieldShadowRaw textFieldShadowRaw##cnt={\
     (Menu::callback)action,\
     ss,\
     textFieldLabel##cnt,\
@@ -284,8 +284,8 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
 #define IGNORE(...)
 #define MK_VALUE(...) GET_VALUE(__VA_ARGS__,_MK_VALUE,_MK_VALUE,_MK_VALUE,_MK_VALUE,IGNORE,_MK_VALUE)(__VA_ARGS__)
 #define _MK_VALUE(target,cnt,text,value,action,mask)\
-  const char valueLabel##cnt[] MEMMODE=text;\
-  const MEMMODE Menu::menuValueShadowRaw<typeof(target)> choice##cnt##ShadowRaw={\
+  constMEM char valueLabel##cnt[] MEMMODE=text;\
+  constMEM MEMMODE Menu::menuValueShadowRaw<typeof(target)> choice##cnt##ShadowRaw={\
     (Menu::callback)action,\
     Menu::_noStyle,\
     valueLabel##cnt,\
@@ -310,7 +310,7 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
 //The navigation root ------------------------------------------------------------------
 #define NAVROOT(id,menu,maxDepth,in,out)\
   Menu::navNode id##_path[maxDepth];\
-  Menu::navRoot id(menu,id##_path,maxDepth-1,in,out);
+  Menu::navRoot id(menu,id##_path,maxDepth,in,out);
 
 //use zero length outputs list instead
 //#define NO_INPUTS_NAV (*(Stream*)NULL)

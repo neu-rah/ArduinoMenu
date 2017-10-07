@@ -41,8 +41,10 @@ http://playground.arduino.cc/Code/LCD3wires
   keyMap encBtn_map[]={{-encBtn,options->getCmdChar(enterCmd)}};//negative pin numbers use internal pull-up, this is on when low
   keyIn<1> encButton(encBtn_map);//1 is the number of keys
 
+  serialIn serial(Serial);
+
   //input from the encoder + encoder button + serial
-  Stream* inputsList[]={&encStream,&encButton,&Serial};
+  menuIn* inputsList[]={&encStream,&encButton,&serial};
   chainStream<3> in(inputsList);//3 is the number of inputs
 
   #define LEDPIN A3
@@ -128,8 +130,8 @@ http://playground.arduino.cc/Code/LCD3wires
     ,VALUE("disabled",disabledStatus,doNothing,noEvent)
   );*/
 
-  char* const hexDigit PROGMEM="0123456789ABCDEF";
-  char* const hexNr[] PROGMEM={"0","x",hexDigit,hexDigit};
+  char* constMEM hexDigit MEMMODE="0123456789ABCDEF";
+  char* constMEM hexNr[] MEMMODE={"0","x",hexDigit,hexDigit};
   char buf1[]="0x11";
 
   MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
