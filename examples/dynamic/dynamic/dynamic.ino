@@ -74,6 +74,26 @@ prompt* subData[]={
 };
 menuNode& subMenu=*new menuNode("sub-menu",sizeof(subData)/sizeof(prompt*),subData);
 
+uint16_t year=2017;
+uint16_t month=10;
+uint16_t day=7;
+
+//pad menu --------------------
+prompt* padData[]={
+  new menuField<typeof(year)>(year,"","",1900,3000,20,1,doNothing,noEvent),
+  new menuField<typeof(month)>(month,"/","",1,12,1,0,doNothing,noEvent),
+  new menuField<typeof(day)>(day,"/","",1,31,1,0,doNothing,noEvent)
+};
+menuNode& padMenu=*new menuNode(
+  "Date",
+  sizeof(padData)/sizeof(prompt*),
+  padData,
+  doNothing,
+  noEvent,
+  noStyle,
+  (systemStyles)(_asPad|Menu::_menuData|Menu::_canNav|_parentDraw)
+);
+
 //the main menu -------------------------------------
 void op1Func() {Serial.println("Op 1 executed");}
 uint8_t test=55;//target var for numerical range field
@@ -92,6 +112,7 @@ prompt* mainData[]={
   &durMenu,
   &fxMenu,
   &ledMenu,
+  &padMenu,
   new Exit("<Exit.")
 };
 menuNode& mainMenu=*new menuNode("Main menu",sizeof(mainData)/sizeof(prompt*),mainData/*,doNothing,noEvent,wrapStyle*/);

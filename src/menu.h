@@ -30,6 +30,9 @@ for correcting unsigned values validation
   #else
     #define trace(x)
   #endif
+  #ifdef DEBUG
+    #define _trace(x) x
+  #endif
 
   namespace Menu {
 
@@ -84,6 +87,7 @@ for correcting unsigned values validation
         inline bool isMenu() const {return sysStyles()&_menuData;}//has menu data list and can be a navNode target
         inline bool isVariant() const {return sysStyles()&_isVariant;}//a menu as an enumerated field, connected to a variable value
         inline bool parentDraw() const {return sysStyles()&_parentDraw;}//a menu as an enumerated field, connected to a variable value
+        inline bool asPad() const {return sysStyles()&_asPad;}//a menu as an enumerated field, connected to a variable value
         virtual idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr=0);//raw print to output device
         virtual bool changed(const navNode &nav,const menuOut& out,bool sub=true) {return dirty;}
         //this is the system version of enter handler, its used by elements like toggle
@@ -448,6 +452,7 @@ for correcting unsigned values validation
     ///////////////////////////////////////////////////////////////////////////
     // base for all menu output devices
     class menuOut:public Print {
+      friend class prompt;
       public:
         idx_t* tops;
         panelsList& panels;

@@ -21,6 +21,17 @@ idx_t prompt::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,i
   trace(Serial<<"prompt::printTo"<<endl);
   out.fmtStart(menuOut::fmtPrompt,root.node(),idx);
   idx_t r=printRaw(out,len);
+  if (
+    isMenu()
+    &&parentDraw()
+    &&asPad()
+    //&&((&((menuNode*)root.node().target)->operator[](idx))==this)
+  ) {
+      if (root.node().target==this)
+        out.printMenu(root.node(), panelNr);
+      else
+        out.previewMenu(root,*(menuNode*)this,panelNr);
+  }
   out.fmtEnd(menuOut::fmtPrompt,root.node(),idx);
   return r;
 }
@@ -214,18 +225,28 @@ void menuOut::clearChanged(navNode &nav) {
 // draw a menu preview on a panel
 void menuOut::previewMenu(navRoot& root,menuNode& menu,idx_t panelNr) {
   trace(Serial<<"menuOut::previewMenu"<<endl);
-  clear(panelNr);
   setColor(fgColor,false);
-  setCursor(0,0,panelNr);
-  for(idx_t i=0;i<maxY(panelNr);i++) {
-    if (i>=menu.sz()) break;
-    prompt& p=menu[i];
-    clearLine(i,panelNr,bgColor,false,p.enabled);
-    setCursor(0,i,panelNr);
-    setColor(fgColor,false,p.enabled);
-    drawCursor(i,false,p.enabled,false,panelNr);
-    setColor(fgColor,false,p.enabled,false);
-    p.printTo(root,false,*this,i,panels[panelNr].w,panelNr);
+  if (menu.asPad()) {
+    for(int i=0;i<menu.sz();i++) {
+      prompt& p=menu[i];
+      setColor(fgColor,false,p.enabled);
+      drawCursor(i,false,p.enabled,false,panelNr);
+      setColor(fgColor,false,p.enabled,false);
+      p.printTo(root,false,*this,i,panels[panelNr].w,panelNr);
+    }
+  } else {
+    clear(panelNr);
+    setCursor(0,0,panelNr);
+    for(idx_t i=0;i<maxY(panelNr);i++) {
+      if (i>=menu.sz()) break;
+      prompt& p=menu[i];
+      clearLine(i,panelNr,bgColor,false,p.enabled);
+      setCursor(0,i,panelNr);
+      setColor(fgColor,false,p.enabled);
+      drawCursor(i,false,p.enabled,false,panelNr);
+      setColor(fgColor,false,p.enabled,false);
+      p.printTo(root,false,*this,i,panels[panelNr].w,panelNr);
+    }
   }
 }
 
@@ -259,7 +280,6 @@ void menuOut::printMenu(navNode &nav) {
 // to be handler by format wrappers
 void menuOut::printMenu(navNode &nav,idx_t panelNr) {
   trace(Serial<<"menuOut::printMenu(navNode &nav,idx_t panelNr)"<<endl);
-  //menuNode& focus=nav.root->active();
   if (!(nav.root->navFocus->parentDraw()||nav.root->navFocus->isMenu())) {
     //on this case we have a navTarget object that draws himself
     if (nav.root->navFocus->changed(nav,*this,false))
@@ -286,24 +306,23 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
     //-----> panel start
     trace(Serial<<"panel start"<<endl);
     bool titleChanged=st||nav.target->changed(nav,*this,false);
-    trace(Serial<<"x"<<endl);
-    //fmtStart(fmtPanel,nav);
-    trace(Serial<<"x"<<endl);
+    fmtStart(fmtPanel,nav);
     if (all||titleChanged) {
       trace(Serial<<"all:"<<all<<" panelNr:"<<panelNr<<endl);
       trace(Serial<<"{x:"<<pan.x<<" y:"<<pan.y<<" w:"<<pan.w<<" h:"<<pan.h<<"}"<<endl);
-      if (all) clear(panelNr);
-      trace(Serial<<"x"<<endl);
-      if (st) {
+      if (all&&!asPad) clear(panelNr);
+      if (st||asPad) {
         ///------> titleStart
         trace(Serial<<"title start"<<endl);
         fmtStart(fmtTitle,nav,-1);
-        setColor(titleColor,false);
-        clearLine(0,panelNr);
-        setColor(titleColor,true);
-        setCursor(0,0,panelNr);
-        if (!asPad) print('[');
-        nav.target->printTo(*nav.root,true,*this,-1,pan.w-(asPad?1:2),panelNr);
+        if (!asPad) {
+          setColor(titleColor,false);
+          clearLine(0,panelNr);
+          setColor(titleColor,true);
+          setCursor(0,0,panelNr);
+          print('[');
+          nav.target->printTo(*nav.root,true,*this,-1,pan.w-(asPad?1:2),panelNr);
+        }
         if (asPad) print(":");
         else print(']');
         ///<----- titleEnd

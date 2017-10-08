@@ -1,5 +1,10 @@
 Arduino Menu Library
 
+- separate functions as parentDraw, isMenu, asPad, etc... are ineficient
+  use and unique function to check for the combination
+- padMenu: printMenu needs to return idx_t instead of void
+- freelancer fields
+- password fields
 - support frames
 + check uint8_t types -> wrap and non-wrap ok
 - explore arrow keys for ansiSerial
