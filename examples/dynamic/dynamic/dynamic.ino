@@ -23,8 +23,7 @@ or a list of files+folders from a folder/file system
 */
 
 #include <menu.h>
-#include <AnsiStream.h>
-#include <menuIO/ansiSerialOut.h>
+#include <menuIO/serialOut.h>
 #include <menuIO/serialIn.h>
 #include <Streaming.h>
 
@@ -37,18 +36,6 @@ using namespace Menu;
 #error "Library must be compiled with MENU_USERAM defined (default for non AVR's)"
 #error "ex: passing -DMENU_USERAM to the compiler"
 #endif
-
-// define menu colors --------------------------------------------------------
-//each color is in the format:
-//  {{disabled normal,disabled selected},{enabled normal,enabled selected, enabled editing}}
-const colorDef<uint8_t> colors[] MEMMODE={
-  {{BLUE,WHITE}  ,{BLUE,WHITE,WHITE}},//bgColor
-  {{BLACK,BLACK} ,{WHITE,BLUE,BLUE}},//fgColor
-  {{BLACK,BLACK} ,{YELLOW,YELLOW,RED}},//valColor
-  {{BLACK,BLACK} ,{WHITE,BLUE,YELLOW}},//unitColor
-  {{BLACK,BLACK} ,{BLACK,BLUE,RED}},//cursorColor
-  {{BLACK,BLACK}  ,{BLUE,RED,BLUE}},//titleColor
-};
 
 //choose field and options -------------------------------------
 int duration=0;//target var
@@ -87,26 +74,6 @@ prompt* subData[]={
 };
 menuNode& subMenu=*new menuNode("sub-menu",sizeof(subData)/sizeof(prompt*),subData);
 
-uint16_t year=2017;
-uint16_t month=10;
-uint16_t day=7;
-
-//pad menu --------------------
-prompt* padData[]={
-  new menuField<typeof(year)>(year,"","",1900,3000,20,1,doNothing,noEvent),
-  new menuField<typeof(month)>(month,"/","",1,12,1,0,doNothing,noEvent),
-  new menuField<typeof(day)>(day,"/","",1,31,1,0,doNothing,noEvent)
-};
-menuNode& padMenu=*new menuNode(
-  "Date",
-  sizeof(padData)/sizeof(prompt*),
-  padData,
-  doNothing,
-  noEvent,
-  noStyle,
-  (systemStyles)(_asPad|Menu::_menuData|Menu::_canNav|_parentDraw)
-);
-
 //the main menu -------------------------------------
 void op1Func() {Serial.println("Op 1 executed");}
 uint8_t test=55;//target var for numerical range field
@@ -125,26 +92,18 @@ prompt* mainData[]={
   &durMenu,
   &fxMenu,
   &ledMenu,
-  &padMenu,
   new Exit("<Exit.")
 };
 menuNode& mainMenu=*new menuNode("Main menu",sizeof(mainData)/sizeof(prompt*),mainData/*,doNothing,noEvent,wrapStyle*/);
 
-#define MAX_DEPTH 3
+#define MAX_DEPTH 2
 
 //input -------------------------------------
 serialIn in(Serial);
 
 //serial output -------------------------------------
 idx_t tops[MAX_DEPTH];
-constMEM panel panelsDef[] MEMMODE={{41,0,39,10}};
-navNode* pnodes[sizeof(panelsDef)/sizeof(panel)];
-panelsList panels(
-  panelsDef,
-  pnodes,
-  sizeof(panelsDef)/sizeof(panel)
-);
-ansiSerialOut out(Serial,colors,tops,panels);
+serialOut out(Serial,tops);
 
 //outputs -------------------------------------
 menuOut* outList[]={&out};
@@ -168,55 +127,12 @@ void setup() {
   Serial<<"Sz:"<<mainMenu.sz()<<" "<<(sizeof(mainData)/sizeof(prompt*))<<endl;
 }
 
-void promptStatus(prompt& p,int x,int y) {
-  out //<<ANSI::fill(x,y,40-x,y,' ')
-      <<ANSI::xy(x,y)
-      <<"prompt:";
-  print_P(out, p.getText());
-  out<<" "<<(long)&p<<endl;
-}
-
-void nodeStatus(navNode&nav,int i,int x,int y) {
-  out //<<ANSI::fill(x,y,40-x,y,' ')
-      <<ANSI::xy(x,y)
-      <<"navNode:"<<i
-      //<<" "<<(long)&nav
-      <<" sel:"<<nav.sel
-      <<" top:"<<out.tops[nav.root->level+(nav.target->has(_parentDraw)?-1:0)];
-      //<<" changed:"<<(nav.target?nav.target->changed(nav, out, true):'?');
-  if (nav.target) promptStatus(*nav.target,x,y+1);
-  //else out<<ANSI::fill(x,y+1,40-x,y+1,' ');
-}
-
-void rootStatus(navRoot& nav,int x,int y) {
-  out //<<ANSI::fill(x,y,40-x,y+1,' ')
-      <<ANSI::xy(x,y)
-      <<"navRoot: "<<(long)&nav
-      <<" level:"<<nav.level
-      <<ANSI::xy(x,y+1)
-      <<"navFocus: "
-      <<(long)&nav.navFocus;
-  for(int n=0;n<MAX_DEPTH;n++)
-    if(n<=nav.level) nodeStatus(path[n],n,x,y+3*(n+1));
-    //else out<<ANSI::fill(x,y,40-x,y+3*(n+1),' ');
-}
-
-void debugStatus(navRoot& nav) {
-  out <<ANSI::setForegroundColor(WHITE)
-      <<ANSI::setBackgroundColor(BLACK)
-      <<ANSI::fill(0,0,40,10);
-  rootStatus(nav,1,1);
-}
-
 void loop() {
-  nav.doInput();
-  //debugStatus(nav);
-  nav.doOutput();
-  //nav.poll();//this device only draws when needed
+  nav.poll();//this device only draws when needed
   if(nav.sleepTask) {
     Serial.println();
     Serial.println("menu is suspended");
     Serial.println("presse [select] to resume.");
   }
-  delay(200);//simulate a delay when other tasks are done
+  delay(100);//simulate a delay when other tasks are done
 }
