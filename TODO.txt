@@ -1,7 +1,9 @@
 Arduino Menu Library
 
-- separate functions as parentDraw, isMenu, asPad, etc... are ineficient
-  use and unique function to check for the combination
++ separate functions as parentDraw, isMenu, asPad, etc... are inefficient
+  => added is and has functions to deal with systemStyles, styles and events
+  - use and unique function to check for the combination
+- changed and clearChanged need to run with same logic!
 - padMenu: printMenu needs to return idx_t instead of void
 - freelancer fields
 - password fields
@@ -122,6 +124,13 @@ navRoot::pool
         menuVariant::doNav
           navNode::doNavigation(navCmd)
           exit on enter key
+  navRoot::doOutput
+    navRoot::printMenu() parentDraw? -> path[level-1]
+      outputsList::printMenu(navNode&)
+        changed||raster? menuOut::printMenu(navNode&)
+          menuOut::printMenu(navNode &, panelNr)
+
+
 
 navRoot::doNav
 

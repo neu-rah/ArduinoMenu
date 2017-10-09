@@ -21,10 +21,7 @@ idx_t prompt::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,i
   trace(Serial<<"prompt::printTo"<<endl);
   out.fmtStart(menuOut::fmtPrompt,root.node(),idx);
   idx_t r=printRaw(out,len);
-  if (
-    isMenu()
-    &&parentDraw()
-    &&asPad()
+  if (is((systemStyles)(_menuData|_parentDraw|_asPad))
     //&&((&((menuNode*)root.node().target)->operator[](idx))==this)
   ) {
       if (root.node().target==this)
@@ -196,6 +193,8 @@ menuOut& menuOut::operator<<(const prompt& p) {
 
 void outputsList::printMenu(navNode& nav) const {
   trace(Serial<<"outputsList::printMenu"<<endl);
+  Serial<<"printMenu ";
+  print_P(Serial,nav.target->getText());
   for(int n=0;n<cnt;n++) {
     //trace(Serial<<"proc. output:"<<n<<endl);
     menuOut& o=*((menuOut*)memPtr(outs[n]));
@@ -210,14 +209,9 @@ void menuOut::clearChanged(navNode &nav) {
   nav.target->dirty=false;
   idx_t level=nav.root->level;
   if (nav.root->active().parentDraw()) level--;
-  //trace(print_P(Serial, nav.root->active().getText()));
-  //trace(Serial<<" level:"<<level);
   idx_t t=tops[level];
-  //trace(Serial<<" top:"<<t<<endl);
   for(idx_t i=0;i<maxY();i++,t++) {//only signal visible
-    //trace(Serial<<"checking "<<t<<endl);
     if (t>=nav.sz()) break;//menu ended
-    //trace(Serial<<"cleared "<<t<<endl);
     nav[t].dirty=false;
   }
 }
@@ -280,19 +274,23 @@ void menuOut::printMenu(navNode &nav) {
 // to be handler by format wrappers
 void menuOut::printMenu(navNode &nav,idx_t panelNr) {
   trace(Serial<<"menuOut::printMenu(navNode &nav,idx_t panelNr)"<<endl);
-  if (!(nav.root->navFocus->parentDraw()||nav.root->navFocus->isMenu())) {
+  if (!(nav.root->navFocus->has((systemStyles)(_parentDraw|_menuData)))) {
     //on this case we have a navTarget object that draws himself
     if (nav.root->navFocus->changed(nav,*this,false))
       nav.root->navFocus->printTo(*nav.root,true,*this,nav.sel,maxX(panelNr),panelNr);
   } else {
-    idx_t topi=nav.root->level-((nav.root->active().parentDraw())?1:0);
+    idx_t topi=nav.root->level;
+    if(topi&&nav.root->active().parentDraw()) topi--;
     idx_t ot=tops[topi];
-    bool asPad=((prompt*)nav.target)->sysStyles()&_asPad;
+    bool asPad=nav.target->asPad();
     idx_t st
       =((nav.target->style()&showTitle)||(nav.root->showTitle&&(!(nav.target->style()&noTitle))))
       &&!(asPad||(maxY(panelNr)<2));//do not use titles on single line devices!
-    while(nav.sel+st>=(tops[topi]+maxY(panelNr))) tops[topi]++;
-    while(nav.sel<tops[topi]||(tops[topi]&&((nav.sz()-tops[topi])<maxY(panelNr)-st))) tops[topi]--;
+    if (!nav.target->parentDraw()) {
+      while(nav.sel+st>=(tops[topi]+maxY(panelNr))) tops[topi]++;
+      while(nav.sel<tops[topi]||(tops[topi]&&((nav.sz()-tops[topi])<maxY(panelNr)-st)))
+        tops[topi]--;
+    }
     bool all=(style&redraw)
       ||(tops[topi]!=ot)
       ||(drawn!=nav.target)
@@ -411,15 +409,33 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
 //
 ////////////////////////////////////////////////////////////////////////////////
 bool menuNode::changed(const navNode &nav,const menuOut& out,bool sub) {
+  // Serial<<"X";
+  return _changed(nav,out,sub);
+}
+bool menuNode::_changed(const navNode &nav,const menuOut& out,bool sub) {
   trace(Serial<<"menuNode::changed"<<endl);
-  if (nav.target!=this) return dirty;// second hand check, just report self
+  bool appd=is((systemStyles)(_asPad|_parentDraw));
+  if (nav.target!=this&&!appd) return dirty;// second hand check, just report self
   if (dirty) return true;
-  idx_t level=nav.root->level;
-  if (nav.root->active().parentDraw()) level--;
-  idx_t t=out.tops[level];
-  if (sub) for(int i=0;i<out.maxY();i++,t++) {
-    if (t>=nav.sz()) break;
-    if (operator[](t).changed(nav,out,false)) return true;
+  // Serial<<"(";
+  // print_P(Serial, getText());
+  if (appd) {
+    // Serial<<"x)";
+    for(int i=0;i<sz();i++)
+      if (operator[](i).changed(nav,out,false)) return true;
+  } else {
+    // Serial<<(sub?"o+":"o");
+    idx_t level=nav.root->level;
+    // Serial<<level;
+    if (nav.root->active().parentDraw()) level--;
+    idx_t t=out.tops[level];
+    // Serial<<"="<<level<<")";
+    if (sub) for(int i=0;i<out.maxY();i++,t++) {
+      if (t>=nav.sz()) break;
+      bool c=operator[](t).changed(nav,out,false);
+      // Serial<<(c?'1':'0');
+      if (c) return true;
+    }
   }
   return false;
 }
@@ -576,13 +592,16 @@ navCmd navRoot::enter() {
     selected().enabled
     &&selected().sysHandler(activateEvent,node(),selected())==proceed
   ) {
+    trace(Serial<<"enabled by syshandler"<<endl);
     prompt& sel=selected();
     bool canNav=sel.canNav();
     bool isMenu=sel.isMenu();
     result go=node().event(enterEvent);//item event sent here
     navCmd rCmd=enterCmd;
     if (go==proceed&&isMenu&&canNav) {
+      trace(Serial<<"go for canNav && isMenu"<<endl);
       if (level<maxDepth) {
+        trace(Serial<<"level<maxDepth"<<endl);
         active().dirty=true;
         menuNode* dest=(menuNode*)&selected();
         level++;
@@ -597,6 +616,7 @@ navCmd navRoot::enter() {
       }
     } else if (go==quit&&!selected().isMenu()) exit();
     if (canNav) {
+      trace(Serial<<"canNav"<<endl);
       navFocus=(navTarget*)&sel;
       navFocus->dirty=true;
       if (!isMenu) in.fieldOn();

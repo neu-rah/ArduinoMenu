@@ -79,9 +79,18 @@ for correcting unsigned values validation
         inline void enable() {enabled=enabledStatus;}
         inline void disable() {enabled=disabledStatus;}
         inline constMEM char* getText() const {return shadow->getText();}
-        inline constMEM systemStyles sysStyles() const {return shadow->_sysStyles();}
-        inline constMEM eventMask events() const {return shadow->_events();}
+
+        inline systemStyles sysStyles() const {return shadow->_sysStyles();}
         inline styles style() const {return shadow->_style();}
+        inline eventMask events() const {return shadow->_events();}
+
+        inline bool is(systemStyles chk) const {return (sysStyles()&chk)==chk;}
+        inline bool has(systemStyles chk) const {return sysStyles()&chk;}
+        inline bool is(styles chk) const {return (style()&chk)==chk;}
+        inline bool has(styles chk) const {return style()&chk;}
+        inline bool is(eventMask chk) const {return (events()&chk)==chk;}
+        inline bool has(eventMask chk) const {return events()&chk;}
+
         inline bool canWrap() const {return style()&wrapStyle;}
         inline bool canNav() const {return sysStyles()&_canNav;}//can receive navigation focus and process keys
         inline bool isMenu() const {return sysStyles()&_menuData;}//has menu data list and can be a navNode target
@@ -249,6 +258,7 @@ for correcting unsigned values validation
         virtual classes type() const {return menuClass;}
         inline prompt& operator[](idx_t i) const {return ((menuNodeShadow*)shadow)->operator[](i);}
         bool changed(const navNode &nav,const menuOut& out,bool sub=true) override;
+        bool _changed(const navNode &nav,const menuOut& out,bool sub=true);
         inline idx_t sz() const {return ((menuNodeShadow*)shadow)->_sz();}
         inline prompt* constMEM* data() const {return ((menuNodeShadow*)shadow)->_data();}
         prompt* seek(idx_t* uri,idx_t len) override;
@@ -636,7 +646,7 @@ for correcting unsigned values validation
         inline void useMenu(menuNode &menu) {target=&menu;reset();}
       public:
         idx_t sel=0;
-        menuNode* target;//TODO: target is const
+        menuNode* target;
         /*static*/ navRoot* root;//v 4.0 removed static to allow multiple menus
         inline void reset() {sel=0;}
         inline idx_t sz() const {return target->sz();}
@@ -661,7 +671,7 @@ for correcting unsigned values validation
         constMEM idx_t maxDepth=0;
         idx_t level=0;
         bool showTitle=true;
-        bool idleChanged=false;//avoid recursive idle call, changed function will return this value when menu suspended
+        bool idleChanged=false;//does idle screen need refresh?
         idleFunc idleTask=inaction;//to do when menu exits, menu system will set idleFunc to this on exit
         idleFunc sleepTask=NULL;//menu suspended, call this function
         navTarget* navFocus=NULL;
