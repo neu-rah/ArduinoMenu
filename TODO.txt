@@ -1,26 +1,32 @@
 Arduino Menu Library
 
+-1 padMenu: printMenu needs to return idx_t instead of void
+  => why not an area?
+-2 mark exit options
+  -> then we can zero index them
+  -> can omit them on in-line pad preview
+- freelancer fields (can be polled without a menu structure)
+  =>navNode needed to point o navTarget instead of menuNode <- NOT!
+  =>use an one option menu
+    - support 1 option menu on macros
+- use formatters for color application
+- remove title brackets
 - detach panels from output, instead panels should be a gateway for output!
   => primary source continues to be the output definition
 - scroll long prompts (not for serial)
 - allow disabled items to receive events! for help print purposes
 - help texts
   => multi-line fields to combine with menu preview
-- mark exit options
-  -> then we can zero index them
-  -> can omit them on in-line pad preview
-+ separate functions as parentDraw, isMenu, asPad, etc... are inefficient
-  => added is and has functions to deal with systemStyles, styles and events
-+ changed and clearChanged need to run with same logic!
-  => still they are separate functions due to subtle changes in return
-- padMenu: printMenu needs to return idx_t instead of void
-- freelancer fields (can be polled without a menu structure)
 - password fields
 - support frames
-+ check uint8_t types -> wrap and non-wrap ok
 - explore arrow keys for ansiSerial
 - alternative keys example
-- custom field format (date/time)
++ separate functions as parentDraw, isMenu, asPad, etc... are inefficient
+  => added `is` and `has` functions to deal with systemStyles, styles and events
++ check uint8_t types -> wrap and non-wrap ok
++ changed and clearChanged need to run with same logic!
+  => still they are separate functions due to subtle changes in return
++ custom field format (date/time)
 + field reversion should be by input device and not global
   problem:
     inputs are only streams and they can be joined!
@@ -74,6 +80,7 @@ Arduino Menu Library
 + use multiple menus
 - use single include?
 - check dynamic, if possible mixed
+  + not mixed yet
 + color enumeration at base level
 + add list of output devices
 + add macros to build navRoot
@@ -95,6 +102,7 @@ Arduino Menu Library
   => however previews have no assigned navNode!
     1. just don't print previews => do we need them?
     2. use union
+    => flag navNodes for preview (we have them!)
 - dialogs and modal dialogs (static alloc)
 - alerts (dynamic)
 - errors (dynamic modal)
