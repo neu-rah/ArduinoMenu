@@ -1,11 +1,20 @@
 Arduino Menu Library
 
+- detach panels from output, instead panels should be a gateway for output!
+  => primary source continues to be the output definition
+- scroll long prompts (not for serial)
+- allow disabled items to receive events! for help print purposes
+- help texts
+  => multi-line fields to combine with menu preview
+- mark exit options
+  -> then we can zero index them
+  -> can omit them on in-line pad preview
 + separate functions as parentDraw, isMenu, asPad, etc... are inefficient
   => added is and has functions to deal with systemStyles, styles and events
-  - use and unique function to check for the combination
-- changed and clearChanged need to run with same logic!
++ changed and clearChanged need to run with same logic!
+  => still they are separate functions due to subtle changes in return
 - padMenu: printMenu needs to return idx_t instead of void
-- freelancer fields
+- freelancer fields (can be polled without a menu structure)
 - password fields
 - support frames
 + check uint8_t types -> wrap and non-wrap ok

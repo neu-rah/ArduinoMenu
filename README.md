@@ -117,36 +117,56 @@ Depending on the type of input or output, other libraries might be needed. Essen
 
 Serial
 https://www.arduino.cc/en/Reference/Serial
+Serial monitor.
 
 Standard arduino LCD library
 https://www.arduino.cc/en/Reference/LiquidCrystal
+hd44780
 
 F Malpartida's LCDs (ex: i2c LCD)
 https://bitbucket.org/fmalpartida/new-liquidcrystal/wiki/Home
+hd44780 direct
+hd44780 I2C
+hd44780 SPI
 
 Matthias Hertel PCF8574 driver
-https://github.com/mathertel/LiquidCrystal_PCF8574
+https://github.com/mathertel/LiquidCrystal_PCF8574hd44780
+hd44780
 
 Arduino TFT devices
 https://www.arduino.cc/en/Guide/TFT
 
 Adafruit's GFX devices
 https://github.com/adafruit/Adafruit-GFX-Library
+RGBmatrixPanel, 16x32 and 32x32 RGB LED matrix panels.
+Adafruit_TFTLCD, 2.8" TFT LCD touchscreen breakout and TFT Touch Shield for Arduino.
+Adafruit_HX8340B, 2.2" TFT Display with microSD.
+Adafruit_ST7735, 1.8" TFT Display with microSD.
+Adafruit_PCD8544, for the Nokia 5110/3310 monochrome LCD.
+Adafruit-Graphic-VFD-Display-Library, for 128x64 Graphic VFD.
+Adafruit-SSD1331-OLED-Driver-Library-for-Arduino for the 0.96" 16-bit Color OLED w/microSD Holder.
+Adafruit_SSD1306 for the Monochrome 128x64 and 128x32 OLEDs.
 
 UTFT devices
 http://www.rinkydinkelectronics.com/library.php?id=51
+ITDB02 series - ITead Studio
+TFT01 series - ElecFreaks
+RGB LCD - NKC Electronics.
 
 U8glib devices
 https://github.com/olikraus/U8glib_Arduino
+SSD1306, 128x64, SSD1306, 128x32, SSD1306, 64x48, SSD1309, 128x64, SSD1322, 256x64, SSD1325, 128x64, SSD1327, 96x96, SH1106, 128x64, UC1601, 128x32, UC1608, 240x64, UC1610, 160x104, UC1611, 240x64, UC1611, 240x128, UC1701, 128x64, UC1701, 102x64, ST7565, 128x64, ST7565, 128x32, ST7920, 128x64, ST7920, 192x32, ST7920, 202x32, LD7032, 60x32, PCD8544, 84x48, TLS8204 , 84x48, PCF8812 , 96x65, KS0108 , 128x64, T6963, 128x64, T6963, 128x128, T6963, 240x64, T6963, 240x128, SBN1661, 122x32, LC7981, 160x80, LC7981, 240x64, LC7981, 240x128, LC7981, 320x64, SSD1351, HT1632, 24x16, Flipdisk, 28x14, Virtual Screen Device
 
 U8G2 and U8x8 devices
-https://github.com/olikraus/U8g2_Arduino
+https://github.com/olikraus/U8g2_ArduinoSSD1305 128X32_NONAME, SSD1305 128X32_NONAME, SSD1306 128X64_NONAME, SSD1306 128X64_VCOMH0, SSD1306 128X64_NONAME, SSD1306 128X64_VCOMH0, SH1106 128X64_NONAME, SH1106 128X64_VCOMH0, SH1106 128X64_NONAME, SH1106 128X64_VCOMH0, SSD1306 128X32_UNIVISION, SSD1306 128X32_UNIVISION, SSD1306 64X48_ER, SSD1306 64X48_ER, SSD1306 64X32_NONAME, SSD1306 64X32_NONAME, SSD1306 96X16_ER, SSD1306 96X16_ER, SSD1309 128X64_NONAME2, SSD1309 128X64_NONAME2, SSD1309 128X64_NONAME0, SSD1309 128X64_NONAME0, SSD1325 NHD_128X64, SSD1325 NHD_128X64, SSD1327 SEEED_96X96, SSD1327 SEEED_96X96, SSD1329 128X96_NONAME, LD7032 60X32, LD7032 60X32, ST7920 192X32, ST7920 192X32, ST7920 192X32, ST7920 128X64, ST7920 128X64, ST7920 128X64, LS013B7DH03 128X128, UC1701 EA_DOGS102, UC1701 MINI12864, PCD8544 84X48, PCF8812 96X65, UC1604 JLX19264, UC1604 JLX19264, UC1608 ERC24064, UC1608 ERC24064, UC1608 ERC240120, UC1608 ERC240120, UC1608 240X128, UC1608 240X128, UC1610 EA_DOGXL160, UC1610 EA_DOGXL160, UC1611 EA_DOGM240, UC1611 EA_DOGM240, UC1611 EA_DOGXL240, UC1611 EA_DOGXL240, ST7565 EA_DOGM128, ST7565 64128N, ST7565 ZOLEN_128X64, ST7565 LM6059, ST7565 ERC12864, ST7565 NHD_C12864, ST7565 NHD_C12832, ST7565 EA_DOGM132, ST7567 PI_132X64, ST7588 JLX12864, ST7588 JLX12864, NT7534 TG12864R, IST3020 ERC19264, SBN1661 122X32, SED1520 122X32, KS0108 128X64, KS0108 ERM19264, LC7981 160X80, LC7981 160X160, LC7981 240X128, T6963 240X128, T6963 240X64, T6963 256X64, T6963 128X64, SSD1322 NHD_256X64, SSD1606 172X72, SSD1607 200X200, IL3820 296X128, IL3820 V2_296X128, SED1330 240X128, RA8835 NHD_240X128, RA8835 320X240, MAX7219 32X8, A2PRINTER 384X240,
 
 UCGLib devices
 https://github.com/olikraus/Ucglib_Arduino
+ST7735, ILI9341, PCF8833, SSD1351, LD50T6160 (v1.2), ILI9163 (v1.2), SSD1331 (v1.3), SEPS225 (v1.3)
 
 Serial ANSI terminal
 https://github.com/neu-rah/AnsiStream
+Unix terminal
 
 Web browser (experimental) when using ESP devices
 
@@ -160,7 +180,7 @@ Buttons - simple digital keyboard (builtin)
 
 Generic keyboard (no PCINT) - configurable for digital or analog keyboards (builtin)
 
-ClickEncoder https://github.com/0xPIT/encoder (not yet tested on v3)
+ClickEncoder https://github.com/0xPIT/encoder
 
 User defined input calling menu navigation API
 
@@ -193,6 +213,7 @@ multiple stream packing for input to mix encoder stream with encoder keyboard (u
   - More examples
   - Text edit fields with validation *
   - Pad style menus (horizontal list)
+  - inline pad menus can input custom formats like IP/Date/Time
   - Plugins, alternative menu items potentially device specific
   - Allow multiple concurrent menus
   - Support UCGLib displays
