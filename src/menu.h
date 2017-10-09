@@ -72,6 +72,8 @@ for correcting unsigned values validation
           int tmp=(int)this;
           return ((uint16_t*)&tmp)[sizeof(this)/sizeof(uint16_t)-1];
         }
+        virtual void clearChanged(const navNode &nav,const menuOut& out,bool sub)
+          {dirty=false;}
         virtual classes type() const {return promptClass;}
         inline prompt(constMEM promptShadow& shadow):shadow(&shadow) {}
         inline prompt(constMEM char* t,action a=doNothing,eventMask e=noEvent,styles s=noStyle,systemStyles ss=_noStyle)
@@ -258,7 +260,7 @@ for correcting unsigned values validation
         virtual classes type() const {return menuClass;}
         inline prompt& operator[](idx_t i) const {return ((menuNodeShadow*)shadow)->operator[](i);}
         bool changed(const navNode &nav,const menuOut& out,bool sub=true) override;
-        bool _changed(const navNode &nav,const menuOut& out,bool sub=true);
+        void clearChanged(const navNode &nav,const menuOut& out,bool sub) override;
         inline idx_t sz() const {return ((menuNodeShadow*)shadow)->_sz();}
         inline prompt* constMEM* data() const {return ((menuNodeShadow*)shadow)->_data();}
         prompt* seek(idx_t* uri,idx_t len) override;

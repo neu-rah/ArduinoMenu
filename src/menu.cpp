@@ -201,18 +201,6 @@ void outputsList::printMenu(navNode& nav) const {
   trace(Serial<<"outputsList::printMenu ended!"<<endl);
 }
 
-void menuOut::clearChanged(navNode &nav) {
-  trace(Serial<<"menuOut::clearChanged"<<endl);
-  nav.target->dirty=false;
-  idx_t level=nav.root->level;
-  if (nav.root->active().parentDraw()) level--;
-  idx_t t=tops[level];
-  for(idx_t i=0;i<maxY();i++,t++) {//only signal visible
-    if (t>=nav.sz()) break;//menu ended
-    nav[t].dirty=false;
-  }
-}
-
 // draw a menu preview on a panel
 void menuOut::previewMenu(navRoot& root,menuNode& menu,idx_t panelNr) {
   trace(Serial<<"menuOut::previewMenu"<<endl);
@@ -407,10 +395,6 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
 //
 ////////////////////////////////////////////////////////////////////////////////
 bool menuNode::changed(const navNode &nav,const menuOut& out,bool sub) {
-  // Serial<<"X";
-  return _changed(nav,out,sub);
-}
-bool menuNode::_changed(const navNode &nav,const menuOut& out,bool sub) {
   trace(Serial<<"menuNode::changed"<<endl);
   bool appd=is((systemStyles)(_asPad|_parentDraw));
   if (nav.target!=this&&!appd) return dirty;// second hand check, just report self
@@ -429,6 +413,28 @@ bool menuNode::_changed(const navNode &nav,const menuOut& out,bool sub) {
     }
   }
   return false;
+}
+
+void menuOut::clearChanged(navNode &nav) {
+  nav.target->clearChanged(nav,*this,true);
+}
+
+void menuNode::clearChanged(const navNode &nav,const menuOut& out,bool sub) {
+  trace(Serial<<"menuOut::clearChanged"<<endl);
+  dirty=false;
+  if (is((systemStyles)(_asPad|_parentDraw))) {
+    for(int i=0;i<sz();i++)
+      operator[](i).clearChanged(nav,out,false);
+  } else {
+    if (nav.target!=this) return;
+    idx_t level=nav.root->level;
+    if (parentDraw()) level--;
+    idx_t t=out.tops[level];
+    for(idx_t i=0;i<out.maxY();i++,t++) {//only signal visible
+      if (t>=sz()) break;//menu ended
+      operator[](t).clearChanged(nav,out,false);
+    }
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
