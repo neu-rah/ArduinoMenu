@@ -119,27 +119,27 @@ Depending on the type of input or output, other libraries might be needed. Essen
 
 https://www.arduino.cc/en/Reference/Serial
 
-Serial monitor.
+- Serial monitor.
 
 **Standard arduino LCD library**
 
 https://www.arduino.cc/en/Reference/LiquidCrystal
 
-hd44780
+- hd44780
 
 **F Malpartida's LCDs**
 
 https://bitbucket.org/fmalpartida/new-liquidcrystal/wiki/Home
 
--hd44780 direct
--hd44780 I2C
--hd44780 SPI
+- HD44780 direct
+- HD44780 I2C
+- HD44780 SPI
 
 **Matthias Hertel PCF8574 driver**
 
 https://github.com/mathertel/LiquidCrystal_PCF8574hd44780
 
--hd44780
+- HD44780
 
 **Arduino TFT devices**
 
@@ -149,22 +149,22 @@ https://www.arduino.cc/en/Guide/TFT
 
 https://github.com/adafruit/Adafruit-GFX-Library
 
--RGBmatrixPanel, 16x32 and 32x32 RGB LED matrix panels.
--Adafruit_TFTLCD, 2.8" TFT LCD touchscreen breakout and TFT Touch Shield for Arduino.
--Adafruit_HX8340B, 2.2" TFT Display with microSD.
--Adafruit_ST7735, 1.8" TFT Display with microSD.
--Adafruit_PCD8544, for the Nokia 5110/3310 monochrome LCD.
--Adafruit-Graphic-VFD-Display-Library, for 128x64 Graphic VFD.
--Adafruit-SSD1331-OLED-Driver-Library-for-Arduino for the 0.96" 16-bit Color OLED w/microSD Holder.
--Adafruit_SSD1306 for the Monochrome 128x64 and 128x32 OLEDs.
+- RGBmatrixPanel, 16x32 and 32x32 RGB LED matrix panels.
+- Adafruit_TFTLCD, 2.8" TFT LCD touchscreen breakout and TFT Touch Shield for Arduino.
+- Adafruit_HX8340B, 2.2" TFT Display with microSD.
+- Adafruit_ST7735, 1.8" TFT Display with microSD.
+- Adafruit_PCD8544, for the Nokia 5110/3310 monochrome LCD.
+- Adafruit-Graphic-VFD-Display-Library, for 128x64 Graphic VFD.
+- Adafruit-SSD1331-OLED-Driver-Library-for-Arduino for the 0.96" 16-bit Color OLED w/microSD Holder.
+- Adafruit_SSD1306 for the Monochrome 128x64 and 128x32 OLEDs.
 
 **UTFT devices**
 
 http://www.rinkydinkelectronics.com/library.php?id=51
 
--ITDB02 series - ITead Studio
--TFT01 series - ElecFreaks
--RGB LCD - NKC Electronics.
+- ITDB02 series - ITead Studio
+- TFT01 series - ElecFreaks
+- RGB LCD - NKC Electronics.
 
 **U8glib devices**
 
@@ -188,11 +188,11 @@ ST7735, ILI9341, PCF8833, SSD1351, LD50T6160 (v1.2), ILI9163 (v1.2), SSD1331 (v1
 
 https://github.com/neu-rah/AnsiStream
 
--Unix terminal
+- Unix terminal
 
 **Web browser** _(experimental)_
 
--ESP8266 Web Server
+- ESP8266 Web Server
 
 ### Input devices
 
