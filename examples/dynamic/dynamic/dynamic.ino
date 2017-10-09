@@ -210,7 +210,7 @@ void debugStatus(navRoot& nav) {
 
 void loop() {
   nav.doInput();
-  debugStatus(nav);
+  //debugStatus(nav);
   nav.doOutput();
   //nav.poll();//this device only draws when needed
   if(nav.sleepTask) {

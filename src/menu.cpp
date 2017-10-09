@@ -193,10 +193,7 @@ menuOut& menuOut::operator<<(const prompt& p) {
 
 void outputsList::printMenu(navNode& nav) const {
   trace(Serial<<"outputsList::printMenu"<<endl);
-  Serial<<"printMenu ";
-  print_P(Serial,nav.target->getText());
   for(int n=0;n<cnt;n++) {
-    //trace(Serial<<"proc. output:"<<n<<endl);
     menuOut& o=*((menuOut*)memPtr(outs[n]));
     if (nav.changed(o)||(o.style&(menuOut::rasterDraw))) o.printMenu(nav);
   }
@@ -330,15 +327,16 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
     //------> bodyStart
     trace(Serial<<"body start"<<endl);
     fmtStart(fmtBody,nav);
-    for(idx_t i=0;i<maxY(panelNr)-st;i++) {
+    idx_t top=asPad?0:tops[topi];
+    for(idx_t i=0;asPad||(i<maxY(panelNr)-st);i++) {
       int ist=i+st;
-      if (i+tops[topi]>=nav.sz()) break;
-      prompt& p=nav[i+tops[topi]];
+      if (i+top>=nav.sz()) break;
+      prompt& p=nav[i+top];
       idx_t len=pan.w;
       if (all||p.changed(nav,*this,false)) {
         //-------> opStart
         fmtStart(fmtOp,nav,i);
-        bool selected=nav.sel==i+tops[topi];
+        bool selected=nav.sel==i+top;
         bool ed=nav.target==&p;
         //-----> idxStart
         fmtStart(fmtIdx,nav,i);
@@ -349,7 +347,7 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
         setColor(fgColor,selected,p.enabled,ed);
         //should we use accels on pads?
         if ((!asPad)&&(drawNumIndex&style)) {//<-- NO INDEX FOR PADS
-          char a=tops[topi]+i+'1';
+          char a=top+i+'1';
           print('[');
           print(a<='9'?a:'-');
           print(']');
@@ -370,7 +368,7 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
         if (len>0) len=p.printTo(*nav.root,selected,*this,i,len,panelNr);
         if (len>0) {
           if (asPad) {
-            print(selected?"]":" ");
+            print(selected?"]":"");
             len--;
           }
         }
@@ -417,23 +415,16 @@ bool menuNode::_changed(const navNode &nav,const menuOut& out,bool sub) {
   bool appd=is((systemStyles)(_asPad|_parentDraw));
   if (nav.target!=this&&!appd) return dirty;// second hand check, just report self
   if (dirty) return true;
-  // Serial<<"(";
-  // print_P(Serial, getText());
   if (appd) {
-    // Serial<<"x)";
     for(int i=0;i<sz();i++)
       if (operator[](i).changed(nav,out,false)) return true;
   } else {
-    // Serial<<(sub?"o+":"o");
     idx_t level=nav.root->level;
-    // Serial<<level;
     if (nav.root->active().parentDraw()) level--;
     idx_t t=out.tops[level];
-    // Serial<<"="<<level<<")";
     if (sub) for(int i=0;i<out.maxY();i++,t++) {
       if (t>=nav.sz()) break;
       bool c=operator[](t).changed(nav,out,false);
-      // Serial<<(c?'1':'0');
       if (c) return true;
     }
   }
