@@ -166,6 +166,12 @@ www.r-site.net
     //this would send the menu to a 2d thing
     //and we barelly can fit it on AVRs as is
     class Area {
+    protected:
+      typedef Area& (*unOp)(Area&);
+      inline Area& Op(unOp o,Area&p) {
+        Area tmp(p);
+        return this->*o(p);
+      }
     public:
       int w;
       int h;
@@ -175,12 +181,7 @@ www.r-site.net
       inline Area& operator+=(Area& o) {w+=o.w;h+=o.h;return *this;}
       inline Area& operator-=(Area& o) {w-=o.w;h-=o.h;return *this;}
       inline Area& operator&=(Area& o) {w-=o.w;h-=o.h;return *this;}
-      inline Area& operator+=
-    protected:
-      inline Area& unOp(operator&(*o)(Area&),Area&p) {
-        Area tmp;
-        return tmp.(*o)(p);
-      }
+      // inline Area& operator=(Area& o) {return unOp(&Area::operator+=,o);}
     };
 
     extern config* options;
