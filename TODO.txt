@@ -10,7 +10,7 @@ Arduino Menu Library
   =>use an one option menu
     - support 1 option menu on macros
 - use formatters for color application
-- remove title brackets
++ remove title brackets
 - detach panels from output, instead panels should be a gateway for output!
   => primary source continues to be the output definition
 - scroll long prompts (not for serial)
