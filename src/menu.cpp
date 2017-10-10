@@ -17,7 +17,7 @@ idx_t prompt::printRaw(menuOut& out,idx_t len) const {
   return print_P(out,getText(),len);
 }
 
-idx_t prompt::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr) {
+Used prompt::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr) {
   trace(Serial<<"prompt::printTo"<<endl);
   out.fmtStart(menuOut::fmtPrompt,root.node(),idx);
   idx_t r=printRaw(out,len);
@@ -121,7 +121,7 @@ void textField::doNav(navNode& nav,navCmd cmd) {
   }
 }
 
-idx_t textField::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr) {
+Used textField::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr) {
   trace(Serial<<"textField::printTo"<<endl);
   // out.fmtStart(menuOut::fmtPrompt,root.node(),idx);
   idx_t at=0;
@@ -691,7 +691,7 @@ void fieldBase::doNav(navNode& nav,navCmd cmd) {
     nav.event(nav.root->useUpdateEvent?updateEvent:enterEvent);
 }
 
-idx_t fieldBase::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr) {
+Used fieldBase::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr) {
   trace(Serial<<"fieldBase::printTo"<<endl);
   idx_t l=prompt::printTo(root,sel,out,idx,len,panelNr);
   bool ed=this==root.navFocus;
@@ -717,7 +717,7 @@ idx_t fieldBase::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t le
 }
 
 /////////////////////////////////////////////////////////////////
-idx_t menuVariantBase::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr) {
+Used menuVariantBase::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr) {
   trace(Serial<<"menuVariantBase::printTo"<<endl);
   idx_t l=len;
   l-=prompt::printTo(root,sel,out,idx,len,panelNr);
