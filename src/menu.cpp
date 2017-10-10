@@ -303,11 +303,11 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
           clearLine(0,panelNr);
           setColor(titleColor,true);
           setCursor(0,0,panelNr);
-          print('[');
+          //print('[');
           nav.target->printTo(*nav.root,true,*this,-1,pan.w-(asPad?1:2),panelNr);
         }
         if (asPad) print(":");
-        else print(']');
+        //else print(']');
         ///<----- titleEnd
         fmtEnd(fmtTitle,nav,-1);
       }
