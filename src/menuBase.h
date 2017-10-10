@@ -47,11 +47,36 @@ www.r-site.net
     idx_t print_P(Print& s,const char* at,idx_t sz=0);
 
     enum result {proceed=0,quit};
-    enum systemStyles {_noStyle=0,_menuData=1,_canNav=1<<1,_parentDraw=1<<2,_isVariant=1<<3,_asPad=1<<4};
+    enum systemStyles {
+      _noStyle=0,
+      _menuData=1,
+      _canNav=1<<1,
+      _parentDraw=1<<2,
+      _isVariant=1<<3,
+      _asPad=1<<4,
+      _isExit=1<<5
+    };
     //showTitle and noTitle override the default
-    enum styles {noStyle=0,wrapStyle=1,showTitle=2,noTitle=4};//,dontEnter=2};
+    enum styles {
+      noStyle=0,
+      wrapStyle=1,
+      showTitle=2,
+      noTitle=4
+    };//,dontEnter=2};
     //representing parsed input codes (can be used with switch/case)
-    enum navCmds {noCmd=0,escCmd,enterCmd,upCmd,downCmd,leftCmd,rightCmd,idxCmd,selCmd,scrlUpCmd,scrlDownCmd};
+    enum navCmds {
+      noCmd=0,
+      escCmd,
+      enterCmd,
+      upCmd,
+      downCmd,
+      leftCmd,
+      rightCmd,
+      idxCmd,
+      selCmd,
+      scrlUpCmd,
+      scrlDownCmd
+    };
     struct navCmd {
       navCmds cmd;
       idx_t param;

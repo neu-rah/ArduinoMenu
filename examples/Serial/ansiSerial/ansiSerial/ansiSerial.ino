@@ -55,7 +55,7 @@ menuOut* outputs[]={&ansi};
 outputsList out(outputs,1);*/
 
 MENU_OUTPUTS(out,MAX_DEPTH
-  ,ANSISERIAL_OUT(Serial,colors,{1,1,16,10},{18,1,16,10},{36,1,16,10})
+  ,ANSISERIAL_OUT(Serial,colors,{1,1,16,10})//,{18,1,16,10},{36,1,16,10})
   ,NONE//must have 2 items at least
 );
 
@@ -184,7 +184,7 @@ CHOOSE(chooseTest,chooseMenu,"Choose",doNothing,noEvent,noStyle
 
 //customizing a prompt look!
 //by extending the prompt class
-class altPrompt:public prompt {
+/*class altPrompt:public prompt {
 public:
   altPrompt(constMEM promptShadow& p):prompt(p) {}
   Area printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t) override {
@@ -216,13 +216,14 @@ MENU(subSubMenu,"Sub-Sub-Menu",doNothing,noEvent,noStyle
   ,SUBMENU(bigMenu)
   ,EXIT("<Back")
 );//just to test depth limit
+*/
 
 MENU(subMenu,"Sub-Menu",showEvent,anyEvent,noStyle
   ,OP("Sub1",showEvent,anyEvent)
   ,OP("Sub2",showEvent,anyEvent)
   ,OP("Sub3",showEvent,anyEvent)
-  ,altOP(altPrompt,"custom",showEvent,anyEvent)
-  ,SUBMENU(subSubMenu)
+  //,altOP(altPrompt,"custom",showEvent,anyEvent)
+  //,SUBMENU(subSubMenu)
   ,EXIT("<Back")
 );
 
@@ -304,9 +305,9 @@ void setup() {
   Serial.begin(115200);
   while(!Serial);
   Serial<<"menu 4.x test"<<endl;Serial.flush();
-  nav.idleTask=idle;//point a function to be used when menu is suspended
-  mainMenu[1].enabled=disabledStatus;
-  nav.showTitle=true;
+  //nav.idleTask=idle;//point a function to be used when menu is suspended
+  //mainMenu[1].enabled=disabledStatus;
+  //nav.showTitle=true;
   //nav.printMenu(1);
   //ansi.fill(1, 1, 2, 2, 'X');
   //Serial<<"pList[0]:{"<<pList[0].x<<","<<pList[0].y<<","<<pList[0].w<<","<<pList[0].h<<"}"<<endl;
@@ -316,6 +317,5 @@ void setup() {
 void loop() {
   nav.poll();
   digitalWrite(LEDPIN, ledCtrl);
-  //digitalWrite(LEDPIN,!digitalRead(LEDPIN));
   delay(100);//simulate a delay when other tasks are done
 }

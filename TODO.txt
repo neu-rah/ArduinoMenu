@@ -2,9 +2,11 @@ Arduino Menu Library
 
 - central menu init
   => check's ex: if numeric input available then output numeric indexes
--1 padMenu: printMenu needs to return idx_t instead of void
++1 padMenu: printMenu needs to return idx_t instead of void
   => why not an area? because it would send menu to a 2d thing.. .and its already huge for AVR's
     and using and area => that all printTo had to return an area
+  - done so on a dumb mode where int means width and using original width return
+    change it later to width,height
 -2 mark exit options
   -> then we can zero index them
   -> can omit them on in-line pad preview
