@@ -180,10 +180,15 @@ www.r-site.net
       inline Area(int w,int h):w(w),h(h) {}
       inline Area(const Area& o):w(o.w),h(o.h) {}
       inline Area(int x):w(x),h(0) {}
+      inline operator int() {return w;}
       inline Area  operator-() {return Area(-h,-w);}
-      inline Area& operator+=(const Area& o)       {w+=o.w;h+=o.h;return *this;}
-      inline Area& operator-=(const Area& o)       {w-=o.w;h-=o.h;return *this;}
-      inline Area& operator&=(const Area& o)       {w-=o.w;h-=o.h;return *this;}
+      inline Area& operator+=(const Area& o) {w+=o.w;h+=o.h;return *this;}
+      inline Area& operator-=(const Area& o) {w-=o.w;h-=o.h;return *this;}
+      inline Area& operator&=(const Area& o) {
+        if (w<o.w) w=o.w;
+        if (h<o.h) h=o.h;
+        return *this;
+      }
       inline Area  operator+ (const Area& o) const {return op(&Area::operator+=,o);}
       inline Area  operator- (const Area& o) const {return op(&Area::operator-=,o);}
     };
