@@ -35,11 +35,7 @@ Print& operator<<(Print&o, Menu::prompt&p) {
 }
 #endif
 
-#ifdef ARDUINO_SAM_DUE
-  #define LEDPIN 13
-#else
-  #define LEDPIN A3
-#endif
+#define LEDPIN LED_BUILTIN
 
 // define menu colors --------------------------------------------------------
 //each color is in the format:
@@ -55,13 +51,13 @@ const colorDef<uint8_t> colors[] MEMMODE={
 
 //define menu outputs ------------------------------------------------
 #define MAX_DEPTH 4
-/*const panel panels[] MEMMODE={{1,1,16,10},{18,1,16,10},{36,1,16,10}};
-navNode* nodes[sizeof(panels)/sizeof(panel)];
-panelsList pList(panels,nodes,sizeof(panels)/sizeof(panel));
-idx_t ansi_tops[MAX_DEPTH];
-ansiSerialOut ansi(Serial,colors,ansi_tops,pList);//the output device, ansi-terminal Cols x Rows
-menuOut* outputs[]={&ansi};
-outputsList out(outputs,1);*/
+// const panel panels[] MEMMODE={{1,1,16,10},{18,1,16,10},{36,1,16,10}};
+// navNode* nodes[sizeof(panels)/sizeof(panel)];
+// panelsList pList(panels,nodes,sizeof(panels)/sizeof(panel));
+// idx_t ansi_tops[MAX_DEPTH];
+// ansiSerialOut ansi(Serial,colors,ansi_tops,pList);//the output device, ansi-terminal Cols x Rows
+// menuOut* outputs[]={&ansi};
+// outputsList out(outputs,1);
 
 MENU_OUTPUTS(out,MAX_DEPTH
   ,ANSISERIAL_OUT(Serial,colors,{1,1,16,10})//,{18,1,16,10},{36,1,16,10})
@@ -238,11 +234,11 @@ MENU(subMenu,"Sub-Menu",showEvent,anyEvent,noStyle
   ,EXIT("<Back")
 );
 
-extern menu mainMenu;
-TOGGLE((mainMenu[1].enabled),togOp,"Op 2:",doNothing,noEvent,noStyle
-  ,VALUE("Enabled",enabledStatus,doNothing,noEvent)
-  ,VALUE("disabled",disabledStatus,doNothing,noEvent)
-);
+// extern menu mainMenu;
+// TOGGLE((mainMenu[1].enabled),togOp,"Op 2:",doNothing,noEvent,noStyle
+//   ,VALUE("Enabled",enabledStatus,doNothing,noEvent)
+//   ,VALUE("disabled",disabledStatus,doNothing,noEvent)
+// );
 
 result alert(menuOut& o,idleEvent e) {
   if (e==idling)
@@ -303,19 +299,16 @@ void setup() {
   pinMode(LEDPIN,OUTPUT);
   Serial.begin(9600);
   while(!Serial);
+  Serial.println("ok");
   Serial<<"menu 3.0 test"<<endl;Serial.flush();
   nav.idleTask=idle;//point a function to be used when menu is suspended
   mainMenu[1].enabled=disabledStatus;
   nav.showTitle=true;
-  //nav.printMenu(1);
-  //ansi.fill(1, 1, 2, 2, 'X');
-  //Serial<<"pList[0]:{"<<pList[0].x<<","<<pList[0].y<<","<<pList[0].w<<","<<pList[0].h<<"}"<<endl;
   delay(1000);
 }
 
 void loop() {
   nav.poll();
   digitalWrite(LEDPIN, ledCtrl);
-  //digitalWrite(LEDPIN,!digitalRead(LEDPIN));
-  delay(100);//simulate a delay when other tasks are done
+  delay(100);
 }
