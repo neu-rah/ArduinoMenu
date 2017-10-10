@@ -163,6 +163,26 @@ www.r-site.net
       inline char getCmdChar(navCmds cmd) const {return navCodes[cmd].ch;}//return character assigned to this command
     };
 
+    //this would send the menu to a 2d thing
+    //and we barelly can fit it on AVRs as is
+    class Area {
+    public:
+      int w;
+      int h;
+      inline Area() {}
+      inline Area(int w,int h):w(w),h(h) {}
+      inline Area(Area& o):w(o.w),h(o.h) {}
+      inline Area& operator+=(Area& o) {w+=o.w;h+=o.h;return *this;}
+      inline Area& operator-=(Area& o) {w-=o.w;h-=o.h;return *this;}
+      inline Area& operator&=(Area& o) {w-=o.w;h-=o.h;return *this;}
+      inline Area& operator+=
+    protected:
+      inline Area& unOp(operator&(*o)(Area&),Area&p) {
+        Area tmp;
+        return tmp.(*o)(p);
+      }
+    };
+
     extern config* options;
 
     #ifdef DEBUG

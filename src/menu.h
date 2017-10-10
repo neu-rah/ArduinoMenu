@@ -494,7 +494,7 @@ for correcting unsigned values validation
         ) {return *this;}
         void clearChanged(navNode &nav);//clean up changed flags after everyone printed!
         void previewMenu(navRoot& root,menuNode& menu,idx_t panelNr);//draw a preview on a panel
-        void printMenu(navNode &nav);//print menus and previews on panels
+        idx_t printMenu(navNode &nav);//print menus and previews on panels
         virtual void clearLine(idx_t ln,idx_t panelNr=0,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false)=0;
         virtual void clear()=0;
         virtual void clear(idx_t panelNr)=0;
@@ -514,7 +514,7 @@ for correcting unsigned values validation
         virtual void rect(idx_t panelNr,idx_t x,idx_t y,idx_t w=1,idx_t h=1,colorDefs c=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) {}
         virtual void box(idx_t panelNr,idx_t x,idx_t y,idx_t w=1,idx_t h=1,colorDefs c=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) {}
       protected:
-        void printMenu(navNode &nav,idx_t panelNr);
+        idx_t printMenu(navNode &nav,idx_t panelNr);
     };
 
     //inline menuOut::styles operator | (menuOut::styles a, menuOut::styles b) {return (menuOut::styles)(a|b);}
@@ -583,7 +583,7 @@ for correcting unsigned values validation
           assert(i<cnt);
           return *(menuOut*)memPtr(outs[i]);
         }
-        void printMenu(navNode& nav) const;
+        idx_t printMenu(navNode& nav) const;
         void refresh() {//force redraw of all outputs on next output call
           for(int n=0;n<cnt;n++) ((menuOut*)memPtr(outs[n]))->drawn=NULL;
         }
@@ -719,18 +719,18 @@ for correcting unsigned values validation
           }
           return o;
         }
-        void printMenu() const {
+        idx_t printMenu() const {
           trace(Serial<<"navRoot::printMenu"<<endl);
           if ((active().sysStyles()&_parentDraw)&&level)
-            out.printMenu(path[level-1]);
-          else out.printMenu(node());
+            return out.printMenu(path[level-1]);
+          else return out.printMenu(node());
         }
 
         //async printMenu on arbitrary menuOut device
-        void printMenu(menuOut& o) const {
+        idx_t printMenu(menuOut& o) const {
           if ((active().sysStyles()&_parentDraw)&&level)
-            o.printMenu(path[level-1]);
-          else o.printMenu(node());
+            return o.printMenu(path[level-1]);
+          else return o.printMenu(node());
         }
 
         //menu IO - external iteration functions

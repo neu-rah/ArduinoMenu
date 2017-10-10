@@ -191,7 +191,7 @@ menuOut& menuOut::operator<<(const prompt& p) {
 }
 #endif
 
-void outputsList::printMenu(navNode& nav) const {
+idx_t outputsList::printMenu(navNode& nav) const {
   trace(Serial<<"outputsList::printMenu"<<endl);
   for(int n=0;n<cnt;n++) {
     menuOut& o=*((menuOut*)memPtr(outs[n]));
@@ -199,6 +199,7 @@ void outputsList::printMenu(navNode& nav) const {
   }
   clearChanged(nav);
   trace(Serial<<"outputsList::printMenu ended!"<<endl);
+  return 0;
 }
 
 // draw a menu preview on a panel
@@ -230,7 +231,7 @@ void menuOut::previewMenu(navRoot& root,menuNode& menu,idx_t panelNr) {
 }
 
 //determin panel number here and distribute menu and previews among the panels
-void menuOut::printMenu(navNode &nav) {
+idx_t menuOut::printMenu(navNode &nav) {
   trace(Serial<<"menuOut::printMenu(navNode &nav)"<<endl);
   menuNode& focus=nav.root->active();
   int lvl=nav.root->level;
@@ -252,12 +253,13 @@ void menuOut::printMenu(navNode &nav) {
     clear(i);
     panels.nodes[i]=NULL;
   }
+  return 0;
 }
 
 // generic (menuOut) print menu on a panel
 // this function emits format messages
 // to be handler by format wrappers
-void menuOut::printMenu(navNode &nav,idx_t panelNr) {
+idx_t menuOut::printMenu(navNode &nav,idx_t panelNr) {
   trace(Serial<<"menuOut::printMenu(navNode &nav,idx_t panelNr)"<<endl);
   if (!(nav.root->navFocus->has((systemStyles)(_parentDraw|_menuData)))) {
     //on this case we have a navTarget object that draws himself
@@ -283,7 +285,7 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
     if (!(all||(style&minimalRedraw))) //non minimal draw will redraw all if any change
       all|=nav.target->changed(nav,*this);
     all|=nav.target->dirty;
-    if (!(all||(style&minimalRedraw))) return;
+    if (!(all||(style&minimalRedraw))) return 0;
     panel pan=panels[panelNr];
 
     //-----> panel start
@@ -381,6 +383,7 @@ void menuOut::printMenu(navNode &nav,idx_t panelNr) {
   //lastSel=nav.sel;
   //<---- panel end
   fmtEnd(fmtPanel,nav,-1);
+  return 0;
 }
 
 //here we use navRoot pointer for all navNodes
