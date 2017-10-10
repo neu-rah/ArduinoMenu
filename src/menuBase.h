@@ -174,13 +174,13 @@ www.r-site.net
         return (tmp.*o)(p);
       }
     public:
-      int w;
-      int h;
+      idx_t w;
+      idx_t h;
       inline Area() {}
-      inline Area(int w,int h):w(w),h(h) {}
+      inline Area(idx_t w,idx_t h):w(w),h(h) {}
       inline Area(const Area& o):w(o.w),h(o.h) {}
-      inline Area(int x):w(x),h(0) {}
-      inline operator int() {return w;}
+      inline Area(idx_t x):w(x),h(0) {}
+      inline operator idx_t() {return w;}
       inline Area  operator-() {return Area(-h,-w);}
       inline Area& operator+=(const Area& o) {w+=o.w;h+=o.h;return *this;}
       inline Area& operator-=(const Area& o) {w-=o.w;h-=o.h;return *this;}
