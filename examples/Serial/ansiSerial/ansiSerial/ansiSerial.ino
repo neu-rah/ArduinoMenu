@@ -184,7 +184,7 @@ CHOOSE(chooseTest,chooseMenu,"Choose",doNothing,noEvent,noStyle
 
 //customizing a prompt look!
 //by extending the prompt class
-/*class altPrompt:public prompt {
+class altPrompt:public prompt {
 public:
   altPrompt(constMEM promptShadow& p):prompt(p) {}
   Area printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t) override {
@@ -216,14 +216,14 @@ MENU(subSubMenu,"Sub-Sub-Menu",doNothing,noEvent,noStyle
   ,SUBMENU(bigMenu)
   ,EXIT("<Back")
 );//just to test depth limit
-*/
 
-MENU(subMenu,"Sub-Menu",showEvent,anyEvent,noStyle
+
+MENU(subMenu,"Sub-Menu",doNothing,noEvent,noStyle
   ,OP("Sub1",showEvent,anyEvent)
   ,OP("Sub2",showEvent,anyEvent)
   ,OP("Sub3",showEvent,anyEvent)
-  //,altOP(altPrompt,"custom",showEvent,anyEvent)
-  //,SUBMENU(subSubMenu)
+  ,altOP(altPrompt,"custom",showEvent,anyEvent)
+  ,SUBMENU(subSubMenu)
   ,EXIT("<Back")
 );
 
