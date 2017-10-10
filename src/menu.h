@@ -494,7 +494,7 @@ for correcting unsigned values validation
         ) {return *this;}
         void clearChanged(navNode &nav);//clean up changed flags after everyone printed!
         void previewMenu(navRoot& root,menuNode& menu,idx_t panelNr);//draw a preview on a panel
-        idx_t printMenu(navNode &nav);//print menus and previews on panels
+        Used printMenu(navNode &nav);//print menus and previews on panels
         virtual void clearLine(idx_t ln,idx_t panelNr=0,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false)=0;
         virtual void clear()=0;
         virtual void clear(idx_t panelNr)=0;
@@ -514,7 +514,7 @@ for correcting unsigned values validation
         virtual void rect(idx_t panelNr,idx_t x,idx_t y,idx_t w=1,idx_t h=1,colorDefs c=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) {}
         virtual void box(idx_t panelNr,idx_t x,idx_t y,idx_t w=1,idx_t h=1,colorDefs c=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) {}
       protected:
-        idx_t printMenu(navNode &nav,idx_t panelNr);
+        Used printMenu(navNode &nav,idx_t panelNr);
     };
 
     //inline menuOut::styles operator | (menuOut::styles a, menuOut::styles b) {return (menuOut::styles)(a|b);}
@@ -583,7 +583,7 @@ for correcting unsigned values validation
           assert(i<cnt);
           return *(menuOut*)memPtr(outs[i]);
         }
-        idx_t printMenu(navNode& nav) const;
+        Used printMenu(navNode& nav) const;
         void refresh() {//force redraw of all outputs on next output call
           for(int n=0;n<cnt;n++) ((menuOut*)memPtr(outs[n]))->drawn=NULL;
         }
@@ -719,7 +719,7 @@ for correcting unsigned values validation
           }
           return o;
         }
-        idx_t printMenu() const {
+        Used printMenu() const {
           trace(Serial<<"navRoot::printMenu"<<endl);
           if ((active().sysStyles()&_parentDraw)&&level)
             return out.printMenu(path[level-1]);
@@ -727,7 +727,7 @@ for correcting unsigned values validation
         }
 
         //async printMenu on arbitrary menuOut device
-        idx_t printMenu(menuOut& o) const {
+        Used printMenu(menuOut& o) const {
           if ((active().sysStyles()&_parentDraw)&&level)
             return o.printMenu(path[level-1]);
           else return o.printMenu(node());

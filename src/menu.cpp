@@ -191,7 +191,7 @@ menuOut& menuOut::operator<<(const prompt& p) {
 }
 #endif
 
-idx_t outputsList::printMenu(navNode& nav) const {
+Used outputsList::printMenu(navNode& nav) const {
   trace(Serial<<"outputsList::printMenu"<<endl);
   for(int n=0;n<cnt;n++) {
     menuOut& o=*((menuOut*)memPtr(outs[n]));
@@ -231,7 +231,7 @@ void menuOut::previewMenu(navRoot& root,menuNode& menu,idx_t panelNr) {
 }
 
 //determin panel number here and distribute menu and previews among the panels
-idx_t menuOut::printMenu(navNode &nav) {
+Used menuOut::printMenu(navNode &nav) {
   trace(Serial<<"menuOut::printMenu(navNode &nav)"<<endl);
   menuNode& focus=nav.root->active();
   int lvl=nav.root->level;
@@ -259,7 +259,7 @@ idx_t menuOut::printMenu(navNode &nav) {
 // generic (menuOut) print menu on a panel
 // this function emits format messages
 // to be handler by format wrappers
-idx_t menuOut::printMenu(navNode &nav,idx_t panelNr) {
+Used menuOut::printMenu(navNode &nav,idx_t panelNr) {
   trace(Serial<<"menuOut::printMenu(navNode &nav,idx_t panelNr)"<<endl);
   if (!(nav.root->navFocus->has((systemStyles)(_parentDraw|_menuData)))) {
     //on this case we have a navTarget object that draws himself
