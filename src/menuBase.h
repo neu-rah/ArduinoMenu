@@ -165,23 +165,27 @@ www.r-site.net
 
     //this would send the menu to a 2d thing
     //and we barelly can fit it on AVRs as is
+    //Menu::Area& (Menu::Area::*)(const Menu::Area&)
+    //Menu::Area& (Menu::Area::*)(const Menu::Area&) const'
     class Area {
     protected:
-      typedef Area& (*unOp)(Area&);
-      inline Area& Op(unOp o,Area&p) {
-        Area tmp(p);
-        return this->*o(p);
+      inline Area op(Area& (Area::*o)(const Area&),const Area&p) const {
+        Area tmp(*this);
+        return (tmp.*o)(p);
       }
     public:
       int w;
       int h;
       inline Area() {}
       inline Area(int w,int h):w(w),h(h) {}
-      inline Area(Area& o):w(o.w),h(o.h) {}
-      inline Area& operator+=(Area& o) {w+=o.w;h+=o.h;return *this;}
-      inline Area& operator-=(Area& o) {w-=o.w;h-=o.h;return *this;}
-      inline Area& operator&=(Area& o) {w-=o.w;h-=o.h;return *this;}
-      // inline Area& operator=(Area& o) {return unOp(&Area::operator+=,o);}
+      inline Area(const Area& o):w(o.w),h(o.h) {}
+      inline Area(int x):w(x),h(0) {}
+      inline Area  operator-() {return Area(-h,-w);}
+      inline Area& operator+=(const Area& o)       {w+=o.w;h+=o.h;return *this;}
+      inline Area& operator-=(const Area& o)       {w-=o.w;h-=o.h;return *this;}
+      inline Area& operator&=(const Area& o)       {w-=o.w;h-=o.h;return *this;}
+      inline Area  operator+ (const Area& o) const {return op(&Area::operator+=,o);}
+      inline Area  operator- (const Area& o) const {return op(&Area::operator-=,o);}
     };
 
     extern config* options;

@@ -30,11 +30,7 @@ Print& operator<<(Print&o, Menu::prompt&p) {
 }
 #endif
 
-#ifdef ARDUINO_SAM_DUE
-  #define LEDPIN 13
-#else
-  #define LEDPIN A3
-#endif
+#define LEDPIN LED_BUILTIN
 
 // define menu colors --------------------------------------------------------
 //each color is in the format:
@@ -230,11 +226,11 @@ MENU(subMenu,"Sub-Menu",showEvent,anyEvent,noStyle
   ,EXIT("<Back")
 );
 
-extern menu mainMenu;
-TOGGLE((mainMenu[1].enabled),togOp,"Op 2:",doNothing,noEvent,noStyle
-  ,VALUE("Enabled",enabledStatus,doNothing,noEvent)
-  ,VALUE("disabled",disabledStatus,doNothing,noEvent)
-);
+// extern menu mainMenu;
+// TOGGLE((mainMenu[1].enabled),togOp,"Op 2:",doNothing,noEvent,noStyle
+//   ,VALUE("Enabled",enabledStatus,doNothing,noEvent)
+//   ,VALUE("disabled",disabledStatus,doNothing,noEvent)
+// );
 
 char* constMEM hexDigit MEMMODE="0123456789ABCDEF";
 char* constMEM hexNr[] MEMMODE={"0","x",hexDigit,hexDigit};
