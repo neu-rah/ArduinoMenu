@@ -243,9 +243,9 @@ for correcting unsigned values validation
         menuValue(constMEM menuValueShadow<T>& shadow):prompt(shadow) {}
         menuValue(constMEM char * text,T value,action a=doNothing,eventMask e=noEvent)
           :menuValue(*new menuValueShadow<T>(text,value,a,e)) {}
-        #ifdef DEBUG
-        bool changed(const navNode &nav,const menuOut& out,bool sub=true) override {return false;}
-        #endif
+        // #ifdef DEBUG
+        // bool changed(const navNode &nav,const menuOut& out,bool sub=true) override {return false;}
+        // #endif
         //inline T getTypeValue(const T* from) const {return &((menuValueShadow<T>*)shadow)->getTypeValue(from);}
         inline T target() const {return ((menuValueShadow<T>*)shadow)->target();}
         virtual classes type() const {return valueClass;}

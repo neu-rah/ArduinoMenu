@@ -12,7 +12,7 @@ Arduino Menu Library
   -> then we can zero index them
   -> can omit them on in-line pad preview
   => abandoned! options are marked with _Exit system style but no more
-    becausekb accels would go very complicated
+    because kb accels would go very complicated
 - freelancer fields (can be polled without a menu structure)
   =>navNode needed to point o navTarget instead of menuNode <- NOT!
   =>use an one option menu

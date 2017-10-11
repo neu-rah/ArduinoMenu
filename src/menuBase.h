@@ -10,6 +10,8 @@ www.r-site.net
 ***/
 
 // #define DEBUG
+//DRAW_2D adds 260 bytes to flash
+//#define DRAW_2D
 
 #ifndef RSITE_ARDUINO_MENU_SYSTEM_BASE
   #define RSITE_ARDUINO_MENU_SYSTEM_BASE
@@ -188,33 +190,35 @@ www.r-site.net
       inline char getCmdChar(navCmds cmd) const {return navCodes[cmd].ch;}//return character assigned to this command
     };
 
-    class Area {
-    protected:
-      inline Area op(Area& (Area::*o)(const Area&),const Area&p) const {
-        Area tmp(*this);
-        return (tmp.*o)(p);
-      }
-    public:
-      idx_t w;
-      idx_t h;
-      inline Area() {}
-      inline Area(idx_t w,idx_t h):w(w),h(h) {}
-      inline Area(const Area& o):w(o.w),h(o.h) {}
-      inline Area(idx_t x):w(x),h(0) {}
-      inline operator idx_t() {return w;}
-      inline Area  operator-() {return Area(-h,-w);}
-      inline Area& operator+=(const Area& o) {w+=o.w;h+=o.h;return *this;}
-      inline Area& operator-=(const Area& o) {w-=o.w;h-=o.h;return *this;}
-      inline Area& operator&=(const Area& o) {
-        if (w<o.w) w=o.w;
-        if (h<o.h) h=o.h;
-        return *this;
-      }
-      inline Area  operator+ (const Area& o) const {return op(&Area::operator+=,o);}
-      inline Area  operator- (const Area& o) const {return op(&Area::operator-=,o);}
-    };
-
-    typedef Area Used;
+    #ifdef DRAW_2D
+      typedef class Area {
+      protected:
+        inline Area op(Area& (Area::*o)(const Area&),const Area&p) const {
+          Area tmp(*this);
+          return (tmp.*o)(p);
+        }
+      public:
+        idx_t w;
+        idx_t h;
+        inline Area() {}
+        inline Area(idx_t w,idx_t h):w(w),h(h) {}
+        inline Area(const Area& o):w(o.w),h(o.h) {}
+        inline Area(idx_t x):w(x),h(0) {}
+        inline operator idx_t() {return w;}
+        inline Area  operator-() {return Area(-h,-w);}
+        inline Area& operator+=(const Area& o) {w+=o.w;h+=o.h;return *this;}
+        inline Area& operator-=(const Area& o) {w-=o.w;h-=o.h;return *this;}
+        inline Area& operator&=(const Area& o) {
+          if (w<o.w) w=o.w;
+          if (h<o.h) h=o.h;
+          return *this;
+        }
+        inline Area  operator+ (const Area& o) const {return op(&Area::operator+=,o);}
+        inline Area  operator- (const Area& o) const {return op(&Area::operator-=,o);}
+      } Used;
+    #else
+      typedef idx_t Used;
+    #endif
 
     extern config* options;
 
