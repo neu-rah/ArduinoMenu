@@ -46,13 +46,13 @@ const colorDef<uint8_t> colors[] MEMMODE={
 
 //define menu outputs ------------------------------------------------
 #define MAX_DEPTH 4
-/*const panel panels[] MEMMODE={{1,1,16,10},{18,1,16,10},{36,1,16,10}};
-navNode* nodes[sizeof(panels)/sizeof(panel)];
-panelsList pList(panels,nodes,sizeof(panels)/sizeof(panel));
-idx_t ansi_tops[MAX_DEPTH];
-ansiSerialOut ansi(Serial,colors,ansi_tops,pList);//the output device, ansi-terminal Cols x Rows
-menuOut* outputs[]={&ansi};
-outputsList out(outputs,1);*/
+// const panel panels[] MEMMODE={{1,1,16,10},{18,1,16,10},{36,1,16,10}};
+// navNode* nodes[sizeof(panels)/sizeof(panel)];
+// panelsList pList(panels,nodes,sizeof(panels)/sizeof(panel));
+// idx_t ansi_tops[MAX_DEPTH];
+// ansiSerialOut ansi(Serial,colors,ansi_tops,pList);//the output device, ansi-terminal Cols x Rows
+// menuOut* outputs[]={&ansi};
+// outputsList out(outputs,1);
 
 MENU_OUTPUTS(out,MAX_DEPTH
   ,ANSISERIAL_OUT(Serial,colors,{1,1,16,10},{18,1,16,10},{36,1,16,10})
