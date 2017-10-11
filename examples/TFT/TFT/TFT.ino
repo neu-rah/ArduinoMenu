@@ -8,6 +8,7 @@ Sep. 2017 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
 menu on TFT device
 output: ST7735
 input: Serial
+MCU: see TFT library compatibility
 */
 
 #include <TFT.h> // Hardware-specific library

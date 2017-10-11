@@ -145,10 +145,8 @@ result idle(menuOut &o, idleEvent e) {
 }
 
 void setup() {
-  #ifndef ESP8266
   pinMode(LEDPIN,OUTPUT);
-  digitalWrite(LEDPIN,HIGH);
-  #endif
+  digitalWrite(LEDPIN,ledCtrl);
   delay(500);
   Serial.begin(115200);
   while(!Serial);
@@ -160,8 +158,6 @@ void setup() {
 
 void loop() {
   nav.poll();
-  #ifndef ESP8266
   digitalWrite(LEDPIN, ledCtrl);
-  #endif
   delay(100);//simulate a delay when other tasks are done
 }

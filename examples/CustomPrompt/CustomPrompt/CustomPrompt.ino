@@ -33,7 +33,7 @@ public:
   unsigned int t=0;
   unsigned int last=0;
   altPrompt(constMEM promptShadow& p):prompt(p) {}
-  idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t) override {
+  Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t) override {
     last=t;
     return out.printRaw(String(t).c_str(),len);
   }

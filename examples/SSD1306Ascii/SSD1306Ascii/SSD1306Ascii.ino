@@ -28,7 +28,7 @@ result action1(eventMask e) {
   return proceed;
 }
 
-result action2(eventMask e, prompt &item) {
+result action2(eventMask e,navNode& nav, prompt &item) {
   Serial.print(e);
   Serial.println(" action2 executed, quiting menu");
   return quit;
@@ -70,7 +70,7 @@ CHOOSE(chooseTest,chooseMenu,"Choose",doNothing,noEvent,noStyle
 class altPrompt:public prompt {
 public:
   altPrompt(constMEM promptShadow& p):prompt(p) {}
-  idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t) override {
+  Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t) override {
     return out.printRaw("special prompt!",len);
   }
 };
@@ -104,7 +104,7 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
 
 //describing a menu output device without macros
 //define at least one panel for menu output
-const panel panels[] MEMMODE={{0,0,128/fontW,64/fontH}};
+constMEM panel panels[] MEMMODE={{0,0,128/fontW,64/fontH}};
 navNode* nodes[sizeof(panels)/sizeof(panel)];//navNodes to store navigation status
 panelsList pList(panels,nodes,1);//a list of panels and nodes
 idx_t tops[MAX_DEPTH];//store cursor positions for each level

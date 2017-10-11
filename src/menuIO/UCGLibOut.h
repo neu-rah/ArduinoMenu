@@ -47,7 +47,7 @@ namespace Menu {
 
 			inline rgb getColor(colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) const {
 				rgb* cor=(rgb*)&(stat==enabledStatus?colors[color].enabled[selected+edit]:colors[color].disabled[selected]);
-				return rgb(memByte(cor->r),memByte(cor->g),memByte(cor->b));
+				return rgb(memByte(&cor->r),memByte(&cor->g),memByte(&cor->b));
 			}
 
 			void setColor(colorDefs c,bool selected=false,status s=enabledStatus,bool edit=false) override {

@@ -523,7 +523,7 @@ navCmd navNode::doNavigation(navCmd cmd) {
       operator[](nsel).dirty=true;
     }
     //send focus In/Out events
-    if (selBlurEvent&target->events()) target->operator()(selBlurEvent,*target);
+    if (selBlurEvent&target->events()) target->operator()(selBlurEvent,*this,*target);
     event(blurEvent,osel);
     sel=nsel;
     if (cmd.cmd==selCmd||cmd.cmd==idxCmd) {//do accelerator and enter the option
@@ -531,7 +531,7 @@ navCmd navNode::doNavigation(navCmd cmd) {
       rCmd=root->enter();
     }//other commands up/down just receive focus events
     event(focusEvent,nsel);
-    if (selFocusEvent&target->events()) target->operator()(selFocusEvent,*target);
+    if (selFocusEvent&target->events()) target->operator()(selFocusEvent,*this,*target);
   } //else its an enter/esc or a non-changing index!
   //Serial<<"doNavigation returning "<<rCmd<<endl;
   return rCmd;
@@ -542,14 +542,14 @@ result navNode::event(eventMask e,idx_t i) {
   prompt& p=operator[](i);
   eventMask m=p.events();
   eventMask me=(eventMask)(e&m);
-  if (me) return p.eventHandler(e,i);//p(e,p);
+  if (me) return p.eventHandler(e,*this,i);//p(e,p);
   return proceed;
 }
 
 result navNode::sysEvent(eventMask e,idx_t i) {
   trace(Serial<<"navNode::sysEvent"<<endl);
   prompt& p=operator[](i);
-  return p(e,p);
+  return p(e,*this,p);
 }
 
 void navRoot::doInput(menuIn& in) {

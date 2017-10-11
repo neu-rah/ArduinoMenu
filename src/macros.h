@@ -30,11 +30,12 @@
   #define MEMMODE
   #define constMEM
   #define memPtr(src) (src)
-  #define memByte(addr) (*(addr))
-  #define memWord(addr) (*(addr))
+  #define memByte(addr) (*addr)
+  #define memWord(addr) (*addr)
   #define memIdx(src) (src)
   #define memStrLen strlen
-  #define memEnum(addr) (*(addr))
+  #define memEnum(addr) (*addr)
+  #define F(x) (x)
 #endif
 
 /////////////////////////////////////////////////////////////////////////////

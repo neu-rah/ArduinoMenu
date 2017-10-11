@@ -10,7 +10,7 @@ UTFT library from:
   http://www.rinkydinkelectronics.com/library.php?id=51
   http://henningkarlsen.com/electronics/library.php?id=50 (old address)
 
-
+Note: I was unable to build for esp8266 - neu-rah
 ***/
 
 #include <Arduino.h>
@@ -46,7 +46,7 @@ result action1(eventMask e) {
   return proceed;
 }
 
-result action2(eventMask e, prompt &item) {
+result action2(eventMask e,navNode& nav, prompt &item) {
   Serial.print(e);
   Serial.println(" action2 executed, quiting menu");
   return quit;
@@ -88,7 +88,7 @@ CHOOSE(chooseTest,chooseMenu,"Choose",doNothing,noEvent,noStyle
 class altPrompt:public prompt {
 public:
   altPrompt(constMEM promptShadow& p):prompt(p) {}
-  idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t) override {
+  Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t) override {
     return out.printRaw("special prompt!",len);;
   }
 };

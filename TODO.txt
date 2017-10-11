@@ -1,5 +1,6 @@
 Arduino Menu Library
 
+- implement attribute hidden
 - central menu init
   => check's ex: if numeric input available then output numeric indexes
 +1 padMenu: printMenu needs to return idx_t instead of void

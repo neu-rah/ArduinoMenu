@@ -147,7 +147,7 @@ result action1(eventMask e,navNode& nav, prompt &item) {
   return proceed;
 }
 
-result action2(eventMask e, prompt &item);
+result action2(eventMask e,navNode& nav, prompt &item);
 
 int ledCtrl=LOW;
 
@@ -210,7 +210,7 @@ MENU(bigMenu,"BigMenu",doNothing,noEvent,noStyle
   ,OP("Op",doNothing,noEvent)
 );
 
-MENU(subSubMenu,"Sub-Sub-Menu",doNothing,noEvent,noStyle
+MENU(subSubMenu,"Sub-Sub-Menu",showEvent,anyEvent,noStyle
   ,OP("SSub1",doNothing,noEvent)
   ,OP("SSub2",doNothing,noEvent)
   ,SUBMENU(bigMenu)
@@ -259,8 +259,8 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
 serialIn serial(Serial);
 NAVROOT(nav,mainMenu,MAX_DEPTH,serial,out);
 
-result action2(eventMask e, prompt &item) {
-  Serial<<ANSI::xy(24,nav.node().sel+nav.showTitle)
+result action2(eventMask e,navNode& nav, prompt &item) {
+  Serial<<ANSI::xy(24,nav.sel+nav.root->showTitle)
     <<item<<" "<<e<<" event on "<<item<<", quiting menu.";
   Serial.flush();
   return quit;

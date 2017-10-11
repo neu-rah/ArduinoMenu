@@ -16,9 +16,15 @@ input: Analog Joystick + Serial
 
 using namespace Menu;
 
-#define JOY_X A6
-#define JOY_Y A7
-#define JOY_BTN 4
+#ifdef ESP8266
+  #define JOY_X 2
+  #define JOY_Y 3
+  #define JOY_BTN 4
+#else
+  #define JOY_X A6
+  #define JOY_Y A7
+  #define JOY_BTN 4
+#endif
 
 //analog joystick parameters
 // uint8_t pin,

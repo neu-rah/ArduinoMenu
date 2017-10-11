@@ -78,32 +78,8 @@ class AlarmPrompt:public prompt {
       lastTime=millis();
     }
     //alarm tick update
-    void update() {
-      if (use) {
-        switch(type) {
-          case countDown: {
-              long ms=millis();
-              long delta=ms-lastTime;
-              lastTime=ms;
-              msTime-=delta;
-              if (msTime<=0) {
-                use=false;
-                operator()(enterEvent,*this);
-              }
-            }
-            dirty=true;
-            break;
-          case alarm:
-            if (millis()>=msTime) {
-              use=false;
-              operator()(enterEvent,*this);
-              dirty=true;
-            }
-            break;
-        }
-      }
-    }
-    idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t) override {
+    void update();
+    Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t) override {
       if (use) {
         switch(type) {
           case alarm:
@@ -138,7 +114,7 @@ class AlarmPrompt:public prompt {
       }
       return len;
     }
-    result eventHandler(eventMask e,idx_t i) override;
+    result eventHandler(eventMask e,navNode& nav,idx_t i) override;
     static result quitAlarmSetup();
     static void setupAlarm();
 } tmp(*(promptShadow*)&alarmPromptShadowRaw);//define a tmp object to be edited
@@ -147,7 +123,7 @@ class AlarmPrompt:public prompt {
 class AlarmMenu:public menu {
   public:
     AlarmMenu(constMEM menuNodeShadow& shadow):menu(shadow) {}
-    idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr=0) override {
+    Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr=0) override {
       long ss=millis()/1000;
       long hh=ss/(60*60);
       ss-=hh*60*60;
@@ -226,13 +202,13 @@ NAVROOT(nav,mainMenu,MAX_DEPTH,serial,out);
 
 idleFunc backupIdleTask=nav.idleTask;
 
-result AlarmPrompt::eventHandler(eventMask e,idx_t i) {
+result AlarmPrompt::eventHandler(eventMask e,navNode& nav,idx_t i) {
   selectedAlarm=this;
   selectedAlarmIdx=i;
   tmp=*this;
-  nav.useMenu(alarmDef);
-  backupIdleTask=nav.idleTask;
-  nav.idleTask=quitAlarmSetup;
+  nav.root->useMenu(alarmDef);
+  backupIdleTask=nav.root->idleTask;
+  nav.root->idleTask=(idleFunc)quitAlarmSetup;
   //return prompt::eventHandler(e,i);//this is reserved for alarm reach
   return proceed;
 }
@@ -252,6 +228,31 @@ result AlarmPrompt::quitAlarmSetup() {
   return proceed;
 }
 
+void AlarmPrompt::update() {
+  if (use) {
+    switch(type) {
+      case countDown: {
+          long ms=millis();
+          long delta=ms-lastTime;
+          lastTime=ms;
+          msTime-=delta;
+          if (msTime<=0) {
+            use=false;
+            operator()(enterEvent,nav.node(),*this);
+          }
+        }
+        dirty=true;
+        break;
+      case alarm:
+        if (millis()>=msTime) {
+          use=false;
+          operator()(enterEvent,nav.node(),*this);
+          dirty=true;
+        }
+        break;
+    }
+  }
+}
 void setup() {
   Serial.begin(115200);
   while(!Serial);

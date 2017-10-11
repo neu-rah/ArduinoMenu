@@ -62,7 +62,7 @@ result action1(eventMask e,navNode& nav, prompt &item) {
   return proceed;
 }
 
-result action2(eventMask e, prompt &item) {
+result action2(eventMask e,navNode& nav, prompt &item) {
   Serial.print("action2 event: ");
   Serial.print(e);
   Serial.print(", quiting menu.");
@@ -106,7 +106,7 @@ CHOOSE(chooseTest,chooseMenu,"Choose",doNothing,noEvent,noStyle
 class altPrompt:public prompt {
 public:
   altPrompt(constMEM promptShadow& p):prompt(p) {}
-  idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t) override {
+  Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t) override {
     return out.printRaw("special prompt!",len);;
   }
 };

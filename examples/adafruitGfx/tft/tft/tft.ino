@@ -38,13 +38,13 @@ Adafruit_ST7735 gfx(TFT_CS, TFT_DC, TFT_RST);
 
 result doAlert(eventMask e, prompt &item);
 
-result showEvent(eventMask e, prompt& item) {
+int test=55;
+
+/*result showEvent(eventMask e,navNode& nav, prompt& item) {
   Serial.print(F("event:"));
   Serial.print(e);
   return proceed;
 }
-
-int test=55;
 
 result action1(eventMask e) {
   Serial.print(e);
@@ -53,11 +53,11 @@ result action1(eventMask e) {
   return proceed;
 }
 
-result action2(eventMask e, prompt &item) {
+result action2(eventMask e,navNode& nav, prompt &item) {
   Serial.print(e);
   Serial.println(" action2 executed, quiting menu");
   return quit;
-}
+}*/
 
 int ledCtrl=LOW;
 
@@ -95,16 +95,13 @@ CHOOSE(chooseTest,chooseMenu,"Choose",doNothing,noEvent,noStyle
 class altPrompt:public prompt {
 public:
   altPrompt(constMEM promptShadow& p):prompt(p) {}
-  idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t) override {
+  Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t) override {
     return out.printRaw("special prompt!",len);;
   }
 };
 
-MENU(subMenu,"Sub-Menu",showEvent,anyEvent,noStyle
-  ,altOP(altPrompt,"",showEvent,anyEvent)
-  ,OP("Op",doNothing,noEvent)
-  ,OP("Op",doNothing,noEvent)
-  ,OP("Op",doNothing,noEvent)
+MENU(subMenu,"Sub-Menu",doNothing,noEvent,noStyle
+  ,altOP(altPrompt,"",doNothing,noEvent)
   ,OP("Op",doNothing,noEvent)
   ,EXIT("<Back")
 );
@@ -114,8 +111,8 @@ char* constMEM hexNr[] MEMMODE={"0","x",hexDigit,hexDigit};
 char buf1[]="0x11";
 
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
-  ,OP("Op1",action1,anyEvent)
-  ,OP("Op2",action2,enterEvent)
+  ,OP("Op1",doNothing,noEvent)
+  ,OP("Op2",doNothing,noEvent)
   ,FIELD(test,"Test","%",0,100,10,1,doNothing,noEvent,wrapStyle)
   ,SUBMENU(subMenu)
   ,SUBMENU(setLed)
@@ -123,7 +120,7 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,OP("LED Off",ledOff,enterEvent)
   ,SUBMENU(selMenu)
   ,SUBMENU(chooseMenu)
-  ,OP("Alert test",doAlert,enterEvent)
+  //,OP("Alert test",doAlert,enterEvent)
   ,EDIT("Hex",buf1,hexNr,doNothing,noEvent,noStyle)
   ,EXIT("<Back")
 );
@@ -162,7 +159,7 @@ MENU_OUTPUTS(out,MAX_DEPTH
 
 NAVROOT(nav,mainMenu,MAX_DEPTH,in,out);
 
-result alert(menuOut& o,idleEvent e) {
+/*result alert(menuOut& o,idleEvent e) {
   if (e==idling) {
     o.setCursor(0,0);
     o.print("alert test");
@@ -177,7 +174,7 @@ result alert(menuOut& o,idleEvent e) {
 result doAlert(eventMask e, prompt &item) {
   nav.idleOn(alert);
   return proceed;
-}
+}*/
 
 //when menu is suspended
 result idle(menuOut& o,idleEvent e) {

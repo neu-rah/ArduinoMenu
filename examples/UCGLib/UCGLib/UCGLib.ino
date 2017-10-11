@@ -23,9 +23,15 @@ using namespace Menu;
 #define UC_Width 160
 #define UC_Height 128
 
-#define UC_CS   A1
-#define UC_DC   A0
-#define UC_RST  A2
+#ifdef ESP8266
+  #define UC_CS   2
+  #define UC_DC   3
+  #define UC_RST  4
+#else
+  #define UC_CS   A1
+  #define UC_DC   A0
+  #define UC_RST  A2
+#endif
 
 //font size plus margins
 #define fontX 6

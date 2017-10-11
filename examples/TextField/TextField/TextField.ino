@@ -9,17 +9,17 @@ using namespace Menu;
 
 //list of allowed characters
 char* const  digit="0123456789";
-char* const hexChars PROGMEM="0123456789ABCDEF";
-char* const alphaNum[] PROGMEM = {" 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"};
+char* const hexChars MEMMODE="0123456789ABCDEF";
+char* const alphaNum[] MEMMODE = {" 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"};
 //individual character validators
-char* constMEM validData[] PROGMEM={hexChars,hexChars,hexChars,hexChars};
+char* constMEM validData[] MEMMODE={hexChars,hexChars,hexChars,hexChars};
 
-char* constMEM validIP[] PROGMEM = {"012",digit,digit,"."};
+char* constMEM validIP[] MEMMODE = {"012",digit,digit,"."};
 char buf0[]="000.000.000.000";
 
 //define "Op 0" without macro
-constMEM char op1Text[] PROGMEM="IP";//field name
-constMEM textFieldShadowRaw op1InfoRaw PROGMEM={
+constMEM char op1Text[] MEMMODE="IP";//field name
+constMEM textFieldShadowRaw op1InfoRaw MEMMODE={
   (callback)doNothing,
   (Menu::systemStyles)(_noStyle|_canNav|_parentDraw),
   op1Text,
@@ -28,7 +28,7 @@ constMEM textFieldShadowRaw op1InfoRaw PROGMEM={
   buf0,//edit buffer
   validIP,
   4
-};//PROGMEM static stuff
+};//MEMMODE static stuff
 constMEM textFieldShadow& op1Info=*(textFieldShadow*)&op1InfoRaw;//hacking c++ to use progmem (hugly)
 textField option0(op1Info);
 

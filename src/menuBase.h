@@ -128,8 +128,8 @@ www.r-site.net
 
     #define SYS_FUNC_PARAMS eventMask event, navNode& nav, prompt &item
     #define SYS_FUNC_VALUES event,nav,item
-    #define FUNC_PARAMS eventMask event, prompt &item
-    #define FUNC_VALUES event,item
+    #define FUNC_PARAMS eventMask event, navNode& nav, prompt &item
+    #define FUNC_VALUES event,nav,item
 
     //callback function type
     typedef result (*callback)(FUNC_PARAMS);
@@ -159,7 +159,7 @@ www.r-site.net
         inline action(result (*f)()):hFn((callback)f) {}
         inline action(result (*f)(eventMask)):hFn((callback)f) {}
         inline action(result (*f)(eventMask,navNode&)):hFn((callback)f) {}
-        //inline action(result (*f)(eventMask,navNode&,prompt&)):hFn((callback)f) {}
+        // inline action(result (*f)(eventMask,navNode&,prompt&)):hFn((callback)f) {}
         //inline action(result (*f)(eventMask,navNode&,prompt&,Stream&)):hFn((callback)f) {}
         inline action(callback f):hFn(f) {}
         inline result operator()(FUNC_PARAMS) const {return ((callback)memPtr(hFn))(FUNC_VALUES);}

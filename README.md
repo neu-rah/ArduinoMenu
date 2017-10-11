@@ -276,13 +276,13 @@ Serial is no longer accepted as an input directly, use serialIn instead
 printTo member function changed from:
 
 ```c++
-idx_t printTo(navRoot&,bool,menuOut&,idx_t,idx_t);
+Used printTo(navRoot&,bool,menuOut&,idx_t,idx_t);
 ```
 
 to
 
 ```c++
-idx_t printTo(navRoot&,bool,menuOut&,idx_t,idx_t,idx_t=0);
+Used printTo(navRoot&,bool,menuOut&,idx_t,idx_t,idx_t=0);
 ```
 
 _this should only affect customized components_

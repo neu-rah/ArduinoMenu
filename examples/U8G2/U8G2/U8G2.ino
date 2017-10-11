@@ -34,7 +34,7 @@ mcu: nano328p
 using namespace Menu;
 
 // #define LEDPIN LED_BUILTIN
-#define LEDPIN A3
+#define LEDPIN LED_BUILTIN
 
 // rotary encoder pins
 #define encA    2
@@ -104,7 +104,7 @@ result action1(eventMask e) {
   return proceed;
 }
 
-result action2(eventMask e, prompt &item) {
+result action2(eventMask e,navNode& nav, prompt &item) {
   Serial.print(e);
   Serial.print(" action2 executed, quiting menu");
   return quit;
@@ -146,7 +146,7 @@ CHOOSE(chooseTest,chooseMenu,"Choose",doNothing,noEvent,noStyle
 class altPrompt:public prompt {
 public:
   altPrompt(constMEM promptShadow& p):prompt(p) {}
-  idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr) override {
+  Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr) override {
     return out.printRaw("special prompt!",len);;
   }
 };

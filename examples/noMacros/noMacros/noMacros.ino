@@ -15,37 +15,37 @@ Print& operator<<(Print&o, Menu::prompt&p) {
 
 //define "Op 1"
 void op1Func();
-constMEM char op1Text[] PROGMEM="Op 1";
-constMEM promptShadowRaw op1InfoRaw PROGMEM={(callback)op1Func,_noStyle,op1Text,enterEvent,noStyle};
+constMEM char op1Text[] MEMMODE="Op 1";
+constMEM promptShadowRaw op1InfoRaw MEMMODE={(callback)op1Func,_noStyle,op1Text,enterEvent,noStyle};
 constMEM promptShadow& op1Info=*(promptShadow*)&op1InfoRaw;
-//or just this line on non PROGMEM devices like teensy or esp8266 instead of the above three
+//or just this line on non MEMMODE devices like teensy or esp8266 instead of the above three
 //promptShadow op1Info("Op 1",(callback)op1Func,enterEvent);
 prompt op1(op1Info);
 
 //define "Op 2"
 void op2Func();
-constMEM char op2Text[] PROGMEM="Op 2";
-constMEM promptShadowRaw op2InfoRaw PROGMEM={(callback)op2Func,_noStyle,op2Text,enterEvent,noStyle};
+constMEM char op2Text[] MEMMODE="Op 2";
+constMEM promptShadowRaw op2InfoRaw MEMMODE={(callback)op2Func,_noStyle,op2Text,enterEvent,noStyle};
 constMEM promptShadow& op2Info=*(promptShadow*)&op2InfoRaw;
-//or just this line on non PROGMEM devices like teensy or esp8266 instead of the above three
+//or just this line on non MEMMODE devices like teensy or esp8266 instead of the above three
 //promptShadow op2Info("Op 2",(callback)op2Func,enterEvent);
 prompt op2(op2Info);
 
 //define the menu
-prompt* constMEM menuData[] PROGMEM={&op1,&op2};
+prompt* constMEM menuData[] MEMMODE={&op1,&op2};
 //or just prompt* menuData[]={&op1,&op2}; on non avr devices
-constMEM char menuTitle[] PROGMEM="Main menu";
-constMEM menuNodeShadowRaw menuInfoRaw PROGMEM={
+constMEM char menuTitle[] MEMMODE="Main menu";
+constMEM menuNodeShadowRaw menuInfoRaw MEMMODE={
   (callback)doNothing,
   (systemStyles)(_menuData|_canNav),
   menuTitle,
   noEvent,
   wrapStyle,
-  2,
+  sizeof(menuData)/sizeof(prompt*),
   menuData
 };
 constMEM menuNodeShadow& menuInfo=*(menuNodeShadow*)&menuInfoRaw;
-//or just this line on non PROGMEM devices like teensy or esp8266 instead of the above three
+//or just this line on non MEMMODE devices like teensy or esp8266 instead of the above three
 //menuNodeShadow menuInfo("Main menu",2,menuData,(callback)doNothing,noEvent,wrapStyle);
 menuNode mainMenu(menuInfo);
 
@@ -59,7 +59,7 @@ idx_t serialTops[MAX_DEPTH]={0};
 serialOut outSerial(Serial,serialTops);
 
 //define outputs controller
-menuOut* const outputs[] MEMMODE={&outSerial};//list of output devices
+menuOut* constMEM outputs[] MEMMODE={&outSerial};//list of output devices
 outputsList out(outputs,1);//outputs list controller
 
 //define navigation root and aux objects
@@ -73,7 +73,7 @@ void op2Func() {Serial.println("Op 2 executed");}
 #include <Streaming.h>
 
 /////////////////////////////////////////////////////////////////////////////
-// arduiin osketch
+// arduino sketch
 void setup() {
   Serial.begin(115200);
   while(!Serial);
@@ -82,4 +82,5 @@ void setup() {
 
 void loop() {
   nav.poll();
+  delay(100);
 }
