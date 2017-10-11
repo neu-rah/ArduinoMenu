@@ -10,14 +10,15 @@ while "Cancel" will just return to previous menu.
 
 #include <menu.h>
 #include <menuIO/serialOut.h>
+#include <menuIO/serialIn.h>
 
 using namespace Menu;
 
 //customizing a menu prompt look
 class confirmExit:public menu {
 public:
-  confirmExit(const menuNodeShadow& shadow):menu(shadow) {}
-  idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) override {
+  confirmExit(constMEM menuNodeShadow& shadow):menu(shadow) {}
+  Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t) override {
     return out.printRaw("Exit",len);
   }
 };
@@ -28,7 +29,7 @@ result systemExit();
 
 //using the customized menu class
 //note that first parameter is the class name
-altMENU(confirmExit,subMenu,"Exit?",doNothing,noEvent,wrapStyle
+altMENU(confirmExit,subMenu,"Exit?",doNothing,noEvent,wrapStyle,(Menu::_menuData|Menu::_canNav)
   ,OP("Yes",systemExit,enterEvent)
   ,EXIT("Cancel")
 );
@@ -45,7 +46,8 @@ MENU_OUTPUTS(out,MAX_DEPTH
   ,NONE//must have 2 items at least
 );
 
-NAVROOT(nav,mainMenu,MAX_DEPTH,Serial,out);
+serialIn serial(Serial);
+NAVROOT(nav,mainMenu,MAX_DEPTH,serial,out);
 
 bool running=true;//lock menu if false
 
@@ -60,9 +62,9 @@ result systemExit() {
 }
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   while(!Serial);
-  Serial.println("menu 3.x custom sub-menu prompt example");Serial.flush();
+  Serial.println("menu 4.x custom sub-menu prompt example");Serial.flush();
 }
 
 void loop() {

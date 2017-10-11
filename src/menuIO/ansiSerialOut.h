@@ -1,15 +1,10 @@
 /* -*- C++ -*- */
 /********************
 Oct. 2016 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
-creative commons license 4.0: Attribution-ShareAlike CC BY-SA
-This software is furnished "as is", without technical support, and with no
-warranty, express or implied, as to its usefulness for any purpose.
-
-Thread Safe: No
-Extensible: Yes
 
 Use ANSI codes over serial output
 www.r-site.net
+
 ***/
 #ifndef RSITE_ARDUINO_MENU_ANSISERIALOUT
   #define RSITE_ARDUINO_MENU_ANSISERIALOUT
@@ -68,6 +63,17 @@ www.r-site.net
         void setColor(colorDefs c,bool selected=false,status s=enabledStatus,bool e=false) override {
           *this<<ANSI::setForegroundColor(getColor(c,selected,s,e));
         }
+        virtual idx_t startCursor(bool charEdit) {
+          if (charEdit) *this<<ANSI::inverseOn();
+          else *this<<ANSI::boldOn();
+          return 0;
+        }
+        virtual idx_t endCursor(bool charEdit) {
+          if (charEdit) *this<<ANSI::inverseOff();
+          else *this<<ANSI::boldOff();
+          return 0;
+        }
+        virtual idx_t editCursor(idx_t x,idx_t y,bool editing,bool charEdit) {return 0;}
     };
 
   }//namespace Menu

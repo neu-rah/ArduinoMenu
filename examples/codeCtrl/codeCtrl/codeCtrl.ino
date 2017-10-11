@@ -10,9 +10,9 @@ escCmd - exit
 enterCmd - enter current option or validate field and exit
 upCmd - move up or increment field value
 downCmd - move down or decrement field value
-leftCmd - move left or escape
-rightCmd - move right or enter
-idxCmd - enetr option by index
+leftCmd - move left or escape (not tested yet)
+rightCmd - move right or enter (not tested yet)
+idxCmd - enter option by index
 
 this mode allows you to implement ANY input device
 
@@ -22,6 +22,7 @@ on this example only using
 
 #include <Arduino.h>
 #include <menu.h>
+#include <menuIO/serialIn.h>
 #include <menuIO/serialOut.h>
 #include <menuIO/chainStream.h>
 
@@ -32,7 +33,10 @@ using namespace Menu;
 #define NAV_BTN 5
 #define SEL_BTN 6
 
-result showEvent(eventMask e,navNode& nav,prompt& item) {
+result doAlert(eventMask e, prompt &item);
+
+result showEvent(eventMask e) {
+  Serial.print("event: ");
   Serial.println(e);
   return proceed;
 }
@@ -46,7 +50,7 @@ result action1(eventMask e,navNode& nav, prompt &item) {
   return proceed;
 }
 
-result action2(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out) {
+result action2(eventMask e) {
   Serial.print("actikon2 event:");
   Serial.println(e);
   Serial.flush();
@@ -88,8 +92,8 @@ CHOOSE(chooseTest,chooseMenu,"Choose",doNothing,noEvent,wrapStyle
 //by extending the prompt class
 class altPrompt:public prompt {
 public:
-  altPrompt(const promptShadow& p):prompt(p) {}
-  idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) override {
+  altPrompt(constMEM promptShadow& p):prompt(p) {}
+  Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t) override {
     return out.printRaw("special prompt!",len);;
   }
 };
@@ -101,21 +105,6 @@ MENU(subMenu,"Sub-Menu",doNothing,anyEvent,wrapStyle
   ,altOP(altPrompt,"",showEvent,enterEvent)
   ,EXIT("<Back")
 );
-
-result alert(menuOut& o,idleEvent e) {
-  if (e==idling) {
-    o.setCursor(0,0);
-    o.print("alert test");
-    o.setCursor(0,1);
-    o.print("[select] to continue...");
-  }
-  return proceed;
-}
-
-result doAlert(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out) {
-  nav.root->idleOn(alert);
-  return proceed;
-}
 
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,OP("Op1",action1,anyEvent)
@@ -137,7 +126,23 @@ MENU_OUTPUTS(out,MAX_DEPTH
   ,NONE//must have 2 items at least
 );
 
-NAVROOT(nav,mainMenu,MAX_DEPTH,Serial,out);
+serialIn serial(Serial);
+NAVROOT(nav,mainMenu,MAX_DEPTH,serial,out);
+
+result alert(menuOut& o,idleEvent e) {
+  if (e==idling) {
+    o.setCursor(0,0);
+    o.print("alert test");
+    o.setCursor(0,1);
+    o.print("[select] to continue...");
+  }
+  return proceed;
+}
+
+result doAlert(eventMask e, prompt &item) {
+  nav.idleOn(alert);
+  return proceed;
+}
 
 void setup() {
   Serial.begin(115200);

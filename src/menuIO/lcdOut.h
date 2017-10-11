@@ -1,4 +1,5 @@
 /* -*- C++ -*- */
+
 //for using F. Malpartida LCD's driver
 //https://bitbucket.org/fmalpartida/new-liquidcrystal/wiki/Home
 
@@ -26,6 +27,20 @@
             const panel p=panels[panelNr];
             device->setCursor(p.x+x,p.y+y);
           }
+          idx_t startCursor(navRoot& root,idx_t x,idx_t y,bool charEdit,idx_t panelNr=0) override {return 0;}
+          idx_t endCursor(navRoot& root,idx_t x,idx_t y,bool charEdit,idx_t panelNr=0) override {return 0;}
+          idx_t editCursor(navRoot& root,idx_t x,idx_t y,bool editing,bool charEdit,idx_t panelNr=0) override {
+            //text editor cursor
+            device->noBlink();
+            device->noCursor();
+            if (editing) {
+              device->setCursor(x, y);
+              if (charEdit) device->cursor();
+              else device->blink();
+            }
+            return 0;
+          }
+
       };
 
     }//namespace Menu

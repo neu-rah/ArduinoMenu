@@ -2,12 +2,6 @@
 
 /********************
 Oct. 2016 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
-creative commons license 3.0: Attribution-ShareAlike CC BY-SA
-This software is furnished "as is", without technical support, and with no
-warranty, express or implied, as to its usefulness for any purpose.
-
-Thread Safe: No
-Extensible: Yes
 
 menu to ANSI serial terminal
 output: ANSI Serial terminal
@@ -25,6 +19,7 @@ www.r-site.net
 ***/
 #include <menu.h>
 #include <menuIO/ansiSerialOut.h>
+#include <menuIO/serialIn.h>
 
 using namespace Menu;
 
@@ -60,9 +55,11 @@ const colorDef<uint8_t> colors[] MEMMODE={
 // outputsList out(outputs,1);
 
 MENU_OUTPUTS(out,MAX_DEPTH
-  ,ANSISERIAL_OUT(Serial,colors,{1,1,16,10})//,{18,1,16,10},{36,1,16,10})
+  ,ANSISERIAL_OUT(Serial,colors,{1,1,16,10},{18,1,16,10},{36,1,16,10})
   ,NONE//must have 2 items at least
 );
+
+result doAlert(eventMask e, prompt &item);
 
 void putColor(
   menuOut& out,
@@ -150,12 +147,7 @@ result action1(eventMask e,navNode& nav, prompt &item) {
   return proceed;
 }
 
-result action2(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out) {
-  Serial<<ANSI::xy(24,nav.sel+nav.root->showTitle)
-    <<item<<" "<<e<<" event on "<<item<<", quiting menu.";
-  Serial.flush();
-  return quit;
-}
+result action2(eventMask e,navNode& nav, prompt &item);
 
 int ledCtrl=LOW;
 
@@ -194,8 +186,8 @@ CHOOSE(chooseTest,chooseMenu,"Choose",doNothing,noEvent,noStyle
 //by extending the prompt class
 class altPrompt:public prompt {
 public:
-  altPrompt(const promptShadow& p):prompt(p) {}
-  idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) override {
+  altPrompt(constMEM promptShadow& p):prompt(p) {}
+  Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t) override {
     return out.printRaw("special prompt!",len);
   }
 };
@@ -218,14 +210,15 @@ MENU(bigMenu,"BigMenu",doNothing,noEvent,noStyle
   ,OP("Op",doNothing,noEvent)
 );
 
-MENU(subSubMenu,"Sub-Sub-Menu",doNothing,noEvent,noStyle
+MENU(subSubMenu,"Sub-Sub-Menu",showEvent,anyEvent,noStyle
   ,OP("SSub1",doNothing,noEvent)
   ,OP("SSub2",doNothing,noEvent)
   ,SUBMENU(bigMenu)
   ,EXIT("<Back")
 );//just to test depth limit
 
-MENU(subMenu,"Sub-Menu",showEvent,anyEvent,noStyle
+
+MENU(subMenu,"Sub-Menu",doNothing,noEvent,noStyle
   ,OP("Sub1",showEvent,anyEvent)
   ,OP("Sub2",showEvent,anyEvent)
   ,OP("Sub3",showEvent,anyEvent)
@@ -240,23 +233,9 @@ MENU(subMenu,"Sub-Menu",showEvent,anyEvent,noStyle
 //   ,VALUE("disabled",disabledStatus,doNothing,noEvent)
 // );
 
-result alert(menuOut& o,idleEvent e) {
-  if (e==idling)
-    o
-      <<ANSI::xy(0,0)
-      <<ANSI::setBackgroundColor(BLACK)
-      <<ANSI::setForegroundColor(WHITE)
-      <<"alert test"
-      <<endl
-      <<"press [select] to continue..."
-      <<endl;
-  return proceed;
-}
-
-result doAlert(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out) {
-  nav.root->idleOn(alert);
-  return proceed;
-}
+char* constMEM hexDigit MEMMODE="0123456789ABCDEF";
+char* constMEM hexNr[] MEMMODE={"0","x",hexDigit,hexDigit};
+char buf1[]="0x11";
 
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,OP("Op1",action1,anyEvent)
@@ -272,11 +251,37 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,OP("Show colors",showOutColors,enterEvent)
   ,OP("Show characters",showCharsMap,enterEvent)
   ,OP("Alert test",doAlert,enterEvent)
+  ,EDIT("Hex",buf1,hexNr,doNothing,noEvent,noStyle)
   ,EXIT("<Back")
 );
 ////////////////////////////////////////////////////////////////////////
 // menu navigation root object
-NAVROOT(nav,mainMenu,MAX_DEPTH,Serial,out);
+serialIn serial(Serial);
+NAVROOT(nav,mainMenu,MAX_DEPTH,serial,out);
+
+result action2(eventMask e,navNode& nav, prompt &item) {
+  Serial<<ANSI::xy(24,nav.sel+nav.root->showTitle)
+    <<item<<" "<<e<<" event on "<<item<<", quiting menu.";
+  Serial.flush();
+  return quit;
+}
+
+result alert(menuOut& o,idleEvent e) {
+  if (e==idling)
+    o <<ANSI::xy(0,0)
+      <<ANSI::setBackgroundColor(BLACK)
+      <<ANSI::setForegroundColor(WHITE)
+      <<"alert test"
+      <<endl
+      <<"press [select] to continue..."
+      <<endl;
+  return proceed;
+}
+
+result doAlert(eventMask e, prompt &item) {
+  nav.idleOn(alert);
+  return proceed;
+}
 
 //when menu is suspended -----------------------------------------------
 result idle(menuOut& o,idleEvent e) {
@@ -297,18 +302,20 @@ result idle(menuOut& o,idleEvent e) {
 
 void setup() {
   pinMode(LEDPIN,OUTPUT);
-  Serial.begin(9600);
+  Serial.begin(115200);
   while(!Serial);
-  Serial.println("ok");
-  Serial<<"menu 3.0 test"<<endl;Serial.flush();
-  nav.idleTask=idle;//point a function to be used when menu is suspended
-  mainMenu[1].enabled=disabledStatus;
-  nav.showTitle=true;
+  Serial<<"menu 4.x test"<<endl;Serial.flush();
+  //nav.idleTask=idle;//point a function to be used when menu is suspended
+  //mainMenu[1].enabled=disabledStatus;
+  //nav.showTitle=true;
+  //nav.printMenu(1);
+  //ansi.fill(1, 1, 2, 2, 'X');
+  //Serial<<"pList[0]:{"<<pList[0].x<<","<<pList[0].y<<","<<pList[0].w<<","<<pList[0].h<<"}"<<endl;
   delay(1000);
 }
 
 void loop() {
   nav.poll();
   digitalWrite(LEDPIN, ledCtrl);
-  delay(100);
+  delay(100);//simulate a delay when other tasks are done
 }

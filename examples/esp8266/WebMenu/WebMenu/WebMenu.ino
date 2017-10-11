@@ -4,22 +4,29 @@ XmlServer menu example
 based on WebServer: https://github.com/esp8266/Arduino/tree/master/libraries/ESP8266WebServer
 
 Dec. 2016 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
-creative commons license 4.0: Attribution-ShareAlike CC BY-SA
-This software is furnished "as is", without technical support, and with no
-warranty, express or implied, as to its usefulness for any purpose.
 
-Thread Safe: No
-Extensible: Yes
-
-menu on web browser served by esp8266 device
+menu on web browser served by esp8266 device (experimental)
 output: ESP8266WebServer -> Web browser
 input: ESP8266WebSocket <- Web browser
 format: xml
+
+this requires the data folder to be stored on esp8266 spiff
+for development purposes some files are left external,
+therefor requiring an external webserver to provide them (just for dev purposes)
+i'm using nodejs http-server (https://www.npmjs.com/package/http-server)
+to static serve content from the data folder. This allows me to quick change
+the files without having to upload them to SPIFFS
+also gateway ssid and password are stored on this code (bellow),
+so don't forget to change it.
+'dynamic' list of detected wi-fi and password request would require the new
+added textField (also experimental).
 
 */
 #include <menu.h>
 #include <menuIO/esp8266Out.h>
 #include <menuIO/xmlFmt.h>//to write a menu has html page
+#include <menuIO/serialIn.h>
+#include <Streaming.h>
 //#include <menuIO/jsFmt.h>//to send javascript thru web socket (live update)
 #include <FS.h>
 #include <Hash.h>
@@ -37,6 +44,11 @@ const char* password = "rsite.2011";
   #define xslt "http://neurux:8080/menu.xslt"
 #else
   #define xslt "/menu.xslt"
+  #define endl "\r\n"
+  menuOut& operator<<(menuOut&o, long unsigned int i) {
+    o.print(i);
+    return o;
+  }
 #endif
 
 #define HTTP_PORT 80
@@ -104,10 +116,10 @@ result idle(menuOut& o,idleEvent e) {
 }
 
 MENU_OUTLIST(out,&serverOut);
-NAVROOT(nav,mainMenu,MAX_DEPTH,Serial,out);
+serialIn serial(Serial);
+NAVROOT(nav,mainMenu,MAX_DEPTH,serial,out);
 
-config myOptions('*','-',false,false,defaultNavCodes,false,true);
-
+//config myOptions('*','-',false,false,defaultNavCodes,false,true);
 
 void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length) {
   switch(type) {
@@ -230,7 +242,7 @@ bool handleMenu(){
 }
 
 void setup(){
-  options=&myOptions;//menu options
+  //options=&myOptions;//menu options
   Serial.begin(115200);
   while(!Serial)
   //USE_SERIAL.setDebugOutput(true);

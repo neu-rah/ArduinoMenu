@@ -1,15 +1,10 @@
 /* -*- C++ -*- */
 /********************
 Sept. 2014 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
-creative commons license 3.0: Attribution-ShareAlike CC BY-SA
-This software is furnished "as is", without technical support, and with no
-warranty, express or implied, as to its usefulness for any purpose.
-
-Thread Safe: No
-Extendable: Yes
 
 quadrature encoder driver (PCINT)
 quadrature encoder stream (fake, not using buffers)
+
 */
 
 #ifndef RSITE_ARDUINO_MENU_ENCODER
@@ -27,10 +22,8 @@ quadrature encoder stream (fake, not using buffers)
       //int pinA,pinB;
       //encoderIn<pinA,pinB>(int a,int b):pinA(a),pinB(b) {}
       void begin() {
-        pinMode(pinA, INPUT);
-        digitalWrite(pinA,1);
-        pinMode(pinB, INPUT);
-        digitalWrite(pinB,1);
+        pinMode(pinA, INPUT_PULLUP);
+        pinMode(pinB, INPUT_PULLUP);
         //attach pin change handlers
         PCattachInterrupt<pinA>(mixHandler((void(*)(void*))encoderInUpdateA,this), CHANGE);
         PCattachInterrupt<pinB>(mixHandler((void(*)(void*))encoderInUpdateB,this), CHANGE);
@@ -55,7 +48,7 @@ quadrature encoder stream (fake, not using buffers)
     //emulate a stream based on encoderIn movement returning +/- for every 'sensivity' steps
     //buffer not needer because we have an accumulator
     template<uint8_t pinA,uint8_t pinB>
-    class encoderInStream:public Stream {
+    class encoderInStream:public menuIn {
     public:
       encoderIn<pinA,pinB> &enc;//associated hardware encoderIn
       int sensivity;

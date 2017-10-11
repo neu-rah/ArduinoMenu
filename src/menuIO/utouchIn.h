@@ -1,4 +1,5 @@
 /* -*- C++ -*- */
+
 /**************
 UTouch driver for arduino menu
 turning utouch data into a menu input stream
@@ -7,12 +8,6 @@ checks menu option clicked or do menu scroll on drag
 www.r-site.net
 
 Dec. 2014 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
-creative commons license 3.0: Attribution-ShareAlike CC BY-SA
-This software is furnished "as is", without technical support, and with no
-warranty, express or implied, as to its usefulness for any purpose.
-
-Thread Safe: No
-Extendable: Yes
 
 UTouch library from:
   http://henningkarlsen.com/electronics/library.php?id=56
@@ -25,7 +20,7 @@ UTouch library from:
 
   namespace Menu {
 
-    class menuUTouch:public Stream {
+    class menuUTouch:public menuIn {
     public:
       UTouch& touch;
       navRoot& root;

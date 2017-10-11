@@ -1,11 +1,5 @@
 /********************
 Aug. 2017 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
-creative commons license 3.0: Attribution-ShareAlike CC BY-SA
-This software is furnished "as is", without technical support, and with no
-warranty, express or implied, as to its usefulness for any purpose.
-
-Thread Safe: No
-Extensible: Yes
 
 Self update custom field
 output: Serial
@@ -15,6 +9,7 @@ www.r-site.net
 ***/
 #include <menu.h>
 #include <menuIO/serialOut.h>
+#include <menuIO/serialIn.h>
 
 using namespace Menu;
 
@@ -37,8 +32,8 @@ class altPrompt:public prompt {
 public:
   unsigned int t=0;
   unsigned int last=0;
-  altPrompt(const promptShadow& p):prompt(p) {}
-  idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) override {
+  altPrompt(constMEM promptShadow& p):prompt(p) {}
+  Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t) override {
     last=t;
     return out.printRaw(String(t).c_str(),len);
   }
@@ -62,7 +57,8 @@ MENU_OUTPUTS(out,MAX_DEPTH
   ,NONE//must have 2 items at least
 );
 
-NAVROOT(nav,mainMenu,MAX_DEPTH,Serial,out);
+serialIn serial(Serial);
+NAVROOT(nav,mainMenu,MAX_DEPTH,serial,out);
 
 //when menu is suspended
 //this function is called when entering or leaving suspended state
@@ -83,9 +79,9 @@ result idle(menuOut &o, idleEvent e) {
 void setup() {
   pinMode(LEDPIN,OUTPUT);
   digitalWrite(LEDPIN,HIGH);
-  Serial.begin(9600);
+  Serial.begin(115200);
   while(!Serial);
-  Serial.println("menu 3.x test");Serial.flush();
+  Serial.println("menu 4.x test");Serial.flush();
   nav.idleTask=idle;//point a function to be used when menu is suspended
   // nav.idleOn(idle);//enter idle mode, this menu will start on idle state, press select  to enter menu
   // nav.doInput("4");//we can also provide input from string, this will enter idle mode by exiting the menu

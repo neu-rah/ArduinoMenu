@@ -1,11 +1,5 @@
 /********************
 Sept. 2014 ~ Oct 2016 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
-creative commons license 4.0: Attribution-ShareAlike CC BY-SA
-This software is furnished "as is", without technical support, and with no
-warranty, express or implied, as to its usefulness for any purpose.
-
-Thread Safe: No
-Extensible: Yes
 
 menu with UTFT (tested on arduino due)
 output: 3.2″ TFT LCD Module Display 240X320
@@ -16,7 +10,7 @@ UTFT library from:
   http://www.rinkydinkelectronics.com/library.php?id=51
   http://henningkarlsen.com/electronics/library.php?id=50 (old address)
 
-
+Note: I was unable to build for esp8266 - neu-rah
 ***/
 
 #include <Arduino.h>
@@ -24,6 +18,7 @@ UTFT library from:
 #include <menuIO/utftOut.h>
 #include <menuIO/utouchIn.h>
 #include <menuIO/serialOut.h>
+#include <menuIO/serialIn.h>
 #include <menuIO/chainStream.h>
 
 using namespace Menu;
@@ -34,6 +29,8 @@ extern uint8_t BigFont[];
 //extern uint8_t SevenSegNumFont[];
 
 #define LEDPIN 13
+
+result doAlert(eventMask e, prompt &item);
 
 result showEvent(eventMask e,navNode& nav,prompt& item) {
   Serial.print("event: ");
@@ -49,7 +46,7 @@ result action1(eventMask e) {
   return proceed;
 }
 
-result action2(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out) {
+result action2(eventMask e,navNode& nav, prompt &item) {
   Serial.print(e);
   Serial.println(" action2 executed, quiting menu");
   return quit;
@@ -90,8 +87,8 @@ CHOOSE(chooseTest,chooseMenu,"Choose",doNothing,noEvent,noStyle
 //by extending the prompt class
 class altPrompt:public prompt {
 public:
-  altPrompt(const promptShadow& p):prompt(p) {}
-  idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) override {
+  altPrompt(constMEM promptShadow& p):prompt(p) {}
+  Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t) override {
     return out.printRaw("special prompt!",len);;
   }
 };
@@ -103,21 +100,6 @@ MENU(subMenu,"Sub-Menu",showEvent,anyEvent,noStyle
   ,altOP(altPrompt,"",showEvent,anyEvent)
   ,EXIT("<Back")
 );
-
-result alert(menuOut& o,idleEvent e) {
-  if (e==idling) {
-    o.setColor(fgColor);
-    o.println("alert test");
-    o.println("press [select]");
-    o.println("to continue...");
-  }
-  return proceed;
-}
-
-result doAlert(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out) {
-  nav.root->idleOn(alert);
-  return proceed;
-}
 
 MENU(mainMenu,"Main menu",doNothing,noEvent,noStyle
   ,OP("Op1",action1,anyEvent)
@@ -163,6 +145,24 @@ menuUTouch touchPanel(uTouch,nav,outGfx);
 
 NAVROOT(nav,mainMenu,MAX_DEPTH,touchPanel,out);
 
+result alert(menuOut& o,idleEvent e) {
+  if (e==idling) {
+    o.setColor(fgColor);
+    o.setCursor(0,0);
+    o.print("alert test");
+    o.setCursor(0,1);
+    o.print("press [select]");
+    o.setCursor(0,2);
+    o.print("to continue...");
+  }
+  return proceed;
+}
+
+result doAlert(eventMask e, prompt &item) {
+  nav.idleOn(alert);
+  return proceed;
+}
+
 //when menu is suspended
 result idle(menuOut& o,idleEvent e) {
   if (e==idling) {
@@ -175,14 +175,11 @@ result idle(menuOut& o,idleEvent e) {
   return proceed;
 }
 
-config myOptions('>','-',false,false,defaultNavCodes);
-
 void setup() {
-  options=&myOptions;
   pinMode(LEDPIN,OUTPUT);
   while(!Serial);
   Serial.begin(115200);
-  Serial.println("menu 3.x");Serial.flush();
+  Serial.println("menu 4.x");Serial.flush();
   nav.idleTask=idle;//point a function to be used when menu is suspended
   //mainMenu[1].enabled=disabledStatus;
 
@@ -199,7 +196,7 @@ void setup() {
 
   //outGfx.resX=tft.getFontXsize()+1;
   //outGfx.resY=tft.getFontYsize()+1;
-  outGfx.println("Menu 3.x on UTFT");
+  outGfx.println("Menu 4.x on UTFT");
   delay(1000);
   tft.clrScr();
 }

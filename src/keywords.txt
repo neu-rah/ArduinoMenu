@@ -1,0 +1,40 @@
+#####################################
+# Syntax Coloring Map For ArduinoMenu
+#####################################
+
+#####################################
+# Datatypes (KEYWORD1)
+#####################################
+
+
+MENU 		  KEYWORD1
+OP 		    KEYWORD1
+SELECT		KEYWORD1
+TOGGLE		KEYWORD1
+FIELD		  KEYWORD1
+CHOOSE		KEYWORD1
+VALUE		  KEYWORD1
+TEXTFIELD	KEYWORD1
+
+#####################################
+# Methods and Functions (KEYWORD2)
+#####################################
+
+activate  	KEYWORD2
+poll		    KEYWORD2
+redraw		  KEYWORD2
+printPrompt	KEYWORD2
+setCursor	  KEYWORD2
+enabledCursor	  KEYWORD2
+disabledCursor	KEYWORD2
+exitOption	KEYWORD2
+wrapMenus	  KEYWORD2
+setPosition	KEYWORD2
+printMenu	  KEYWORD2
+activate	  KEYWORD2
+isMenu		  KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+

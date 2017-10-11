@@ -1,15 +1,18 @@
 #include <Arduino.h>
 
 #define I2C_ADDRESS 0x3C
-#include <Wire.h>
+// #include <Wire.h>
 #include "SSD1306Ascii.h"
 #include "SSD1306AsciiWire.h"
 
 #include <menu.h>
 #include <menuIO/SSD1306AsciiOut.h>
+#include <menuIO/serialIn.h>
 using namespace Menu;
 
 SSD1306AsciiWire oled;
+
+result doAlert(eventMask e, prompt &item);
 
 result showEvent(eventMask e,navNode& nav,prompt& item) {
   Serial.print("event: ");
@@ -25,7 +28,7 @@ result action1(eventMask e) {
   return proceed;
 }
 
-result action2(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out) {
+result action2(eventMask e,navNode& nav, prompt &item) {
   Serial.print(e);
   Serial.println(" action2 executed, quiting menu");
   return quit;
@@ -66,8 +69,8 @@ CHOOSE(chooseTest,chooseMenu,"Choose",doNothing,noEvent,noStyle
 //by extending the prompt class
 class altPrompt:public prompt {
 public:
-  altPrompt(const promptShadow& p):prompt(p) {}
-  idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) override {
+  altPrompt(constMEM promptShadow& p):prompt(p) {}
+  Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t) override {
     return out.printRaw("special prompt!",len);
   }
 };
@@ -79,19 +82,6 @@ MENU(subMenu,"Sub-Menu",showEvent,anyEvent,noStyle
   ,altOP(altPrompt,"",showEvent,anyEvent)
   ,EXIT("<Back")
 );
-
-result alert(menuOut& o,idleEvent e) {
-  //if (e==idling)
-    o.println("alert test");
-    o.println("press [select]");
-    o.println("to continue...");
-  return proceed;
-}
-
-result doAlert(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out) {
-  nav.root->idleOn(alert);
-  return proceed;
-}
 
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,OP("Op1",action1,anyEvent)
@@ -114,7 +104,7 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
 
 //describing a menu output device without macros
 //define at least one panel for menu output
-const panel panels[] MEMMODE={{0,0,128/fontW,64/fontH}};
+constMEM panel panels[] MEMMODE={{0,0,128/fontW,64/fontH}};
 navNode* nodes[sizeof(panels)/sizeof(panel)];//navNodes to store navigation status
 panelsList pList(panels,nodes,1);//a list of panels and nodes
 idx_t tops[MAX_DEPTH];//store cursor positions for each level
@@ -123,7 +113,25 @@ menuOut* outputs[]={&outOLED};//list of output devices
 outputsList out(outputs,1);//outputs list
 
 //macro to create navigation control root object (nav) using mainMenu
-NAVROOT(nav,mainMenu,MAX_DEPTH,Serial,out);
+serialIn serial(Serial);
+NAVROOT(nav,mainMenu,MAX_DEPTH,serial,out);
+
+result alert(menuOut& o,idleEvent e) {
+  if (e==idling) {
+    o.setCursor(0,0);
+    o.print("alert test");
+    o.setCursor(0,1);
+    o.print("press [select]");
+    o.setCursor(0,2);
+    o.print("to continue...");
+  }
+  return proceed;
+}
+
+result doAlert(eventMask e, prompt &item) {
+  nav.idleOn(alert);
+  return proceed;
+}
 
 //when menu is suspended
 result idle(menuOut &o, idleEvent e) {
@@ -139,7 +147,7 @@ result idle(menuOut &o, idleEvent e) {
 void setup() {
   Serial.begin(115200);
   while(!Serial);
-  Serial.println("menu 3.0 test");Serial.flush();
+  Serial.println("menu 4.x test");Serial.flush();
   Wire.begin();
   oled.begin(&Adafruit128x64, I2C_ADDRESS);
   oled.setFont(System5x7);

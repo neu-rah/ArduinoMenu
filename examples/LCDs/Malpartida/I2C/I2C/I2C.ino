@@ -1,15 +1,11 @@
+#include <Arduino.h>
+
 /********************
 Arduino generic menu system
 Arduino menu on I2C LCD example
 http://www.r-site.net/?at=//op%5B%40id=%273090%27%5D
 
 Sep.2014 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
-creative commons license 3.0: Attribution-ShareAlike CC BY-SA
-This software is furnished "as is", without technical support, and with no
-
-warranty, express or implied, as to its usefulness for any purpose.
-Thread Safe: No
-Extensible: Yes
 
 LCD library:
 https://bitbucket.org/fmalpartida/new-liquidcrystal/wiki/Home
@@ -21,6 +17,7 @@ http://playground.arduino.cc/Code/LCD3wires
   #include <LiquidCrystal_I2C.h>//F. Malpartida LCD's driver
   #include <menu.h>//menu macros and objects
   #include <menuIO/lcdOut.h>//malpartidas lcd menu output
+  #include <menuIO/serialIn.h>//Serial input
   #include <menuIO/encoderIn.h>//quadrature encoder driver and fake stream
   #include <menuIO/keyIn.h>//keyboard driver and fake stream (for the encoder button)
   #include <menuIO/chainStream.h>// concatenate multiple input streams (this allows adding a button to the encoder)
@@ -31,8 +28,8 @@ http://playground.arduino.cc/Code/LCD3wires
   LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);  // Set the LCD I2C address and pinout
 
   // Encoder /////////////////////////////////////
-  #define encA 5
-  #define encB 6
+  #define encA 2
+  #define encB 3
   //this encoder has a button here
   #define encBtn 4
 
@@ -44,11 +41,15 @@ http://playground.arduino.cc/Code/LCD3wires
   keyMap encBtn_map[]={{-encBtn,options->getCmdChar(enterCmd)}};//negative pin numbers use internal pull-up, this is on when low
   keyIn<1> encButton(encBtn_map);//1 is the number of keys
 
+  serialIn serial(Serial);
+
   //input from the encoder + encoder button + serial
-  Stream* inputsList[]={&encStream,&encButton,&Serial};
+  menuIn* inputsList[]={&encStream,&encButton,&serial};
   chainStream<3> in(inputsList);//3 is the number of inputs
 
   #define LEDPIN A3
+
+  result doAlert(eventMask e, prompt &item);
 
   result showEvent(eventMask e,navNode& nav,prompt& item) {
     Serial.print("event: ");
@@ -66,7 +67,7 @@ http://playground.arduino.cc/Code/LCD3wires
     return proceed;
   }
 
-  result action2(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out) {
+  result action2(eventMask e,navNode& nav, prompt &item) {
     Serial.print("action2 event: ");
     Serial.print(e);
     Serial.println(", quiting menu.");
@@ -109,8 +110,8 @@ http://playground.arduino.cc/Code/LCD3wires
   //by extending the prompt class
   class altPrompt:public prompt {
   public:
-    altPrompt(const promptShadow& p):prompt(p) {}
-    idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) override {
+    altPrompt(constMEM promptShadow& p):prompt(p) {}
+    Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t) override {
       return out.printRaw("special prompt!",len);;
     }
   };
@@ -129,20 +130,9 @@ http://playground.arduino.cc/Code/LCD3wires
     ,VALUE("disabled",disabledStatus,doNothing,noEvent)
   );*/
 
-  result alert(menuOut& o,idleEvent e) {
-    if (e==idling) {
-      o.setCursor(0,0);
-      o.print("alert test");
-      o.setCursor(0,1);
-      o.print("[select] to continue...");
-    }
-    return proceed;
-  }
-
-  result doAlert(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out) {
-    nav.root->idleOn(alert);
-    return proceed;
-  }
+  char* constMEM hexDigit MEMMODE="0123456789ABCDEF";
+  char* constMEM hexNr[] MEMMODE={"0","x",hexDigit,hexDigit};
+  char buf1[]="0x11";
 
   MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
     ,OP("Op1",action1,anyEvent)
@@ -156,6 +146,7 @@ http://playground.arduino.cc/Code/LCD3wires
     ,SUBMENU(selMenu)
     ,SUBMENU(chooseMenu)
     ,OP("Alert test",doAlert,enterEvent)
+    ,EDIT("Hex",buf1,hexNr,doNothing,noEvent,noStyle)
     ,EXIT("<Back")
   );
 
@@ -175,6 +166,21 @@ http://playground.arduino.cc/Code/LCD3wires
     ,NONE
   );
   NAVROOT(nav,mainMenu,MAX_DEPTH,in,out);//the navigation root object
+
+  result alert(menuOut& o,idleEvent e) {
+    if (e==idling) {
+      o.setCursor(0,0);
+      o.print("alert test");
+      o.setCursor(0,1);
+      o.print("[select] to continue...");
+    }
+    return proceed;
+  }
+
+  result doAlert(eventMask e, prompt &item) {
+    nav.idleOn(alert);
+    return proceed;
+  }
 
   result idle(menuOut& o,idleEvent e) {
     switch(e) {
@@ -197,7 +203,7 @@ http://playground.arduino.cc/Code/LCD3wires
     mainMenu[1].enabled=disabledStatus;
     nav.showTitle=false;
     lcd.setCursor(0, 0);
-    lcd.print("Menu 3.0 LCD");
+    lcd.print("Menu 4.x LCD");
     lcd.setCursor(0, 1);
     lcd.print("r-site.net");
     delay(2000);

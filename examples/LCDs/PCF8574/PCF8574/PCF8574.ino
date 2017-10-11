@@ -1,51 +1,52 @@
+#include <Arduino.h>
+
 /********************
-Sept. 2014 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
-creative commons license 3.0: Attribution-ShareAlike CC BY-SA
-This software is furnished "as is", without technical support, and with no
-warranty, express or implied, as to its usefulness for any purpose.
+Arduino generic menu system
 
-Thread Safe: No
-Extensible: Yes
+Sep.2017 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
 
-menu output to standard arduino LCD (LiquidCrystal)
-output: LCD
-input: encoder and Serial
-www.r-site.net
-***/
+LCD library:
+Matthias Hertel driver https://github.com/mathertel/LiquidCrystal_PCF8574
 
-#include <menu.h>
-#include <menuIO/liquidCrystalOut.h>
-#include <menuIO/serialOut.h>
-#include <menuIO/encoderIn.h>
-#include <menuIO/keyIn.h>
-#include <menuIO/chainStream.h>
+Output: I2C LCD
+Inpout: encoder + serial
+*/
+#include <Wire.h>
+#include <LiquidCrystal_PCF8574.h>
+#include <menu.h>//menu macros and objects
+#include <menuIO/PCF8574Out.h>//arduino I2C LCD
+#include <menuIO/encoderIn.h>//quadrature encoder driver and fake stream
+#include <menuIO/keyIn.h>//keyboard driver and fake stream (for the encoder button)
+#include <menuIO/chainStream.h>// concatenate multiple input streams (this allows adding a button to the encoder)
+#include <menuIO/serialIn.h>
 
 using namespace Menu;
 
-// LCD /////////////////////////////////////////
-#define RS 8
-#define RW 3
-#define EN 9
-LiquidCrystal lcd(RS, RW, EN, 4, 5, 6, 7);
+//using Matthias Hertel driver https://github.com/mathertel/LiquidCrystal_PCF8574
+LiquidCrystal_PCF8574 lcd(0x27);  // set the LCD address to 0x27 for a 16 chars and 2 line display
 
 // Encoder /////////////////////////////////////
-#define encA A2
-#define encB A4
+#define encA 2
+#define encB 3
 //this encoder has a button here
-#define encBtn A3
+#define encBtn 4
 
 encoderIn<encA,encB> encoder;//simple quad encoder driver
-encoderInStream<encA,encB> encStream(encoder,4);// simple quad encoder fake Stream
+#define ENC_SENSIVITY 4
+encoderInStream<encA,encB> encStream(encoder,ENC_SENSIVITY);// simple quad encoder fake Stream
 
 //a keyboard with only one key as the encoder button
 keyMap encBtn_map[]={{-encBtn,options->getCmdChar(enterCmd)}};//negative pin numbers use internal pull-up, this is on when low
 keyIn<1> encButton(encBtn_map);//1 is the number of keys
 
 //input from the encoder + encoder button + serial
-Stream* inputsList[]={&encStream,&encButton,&Serial};
+serialIn serial(Serial);
+menuIn* inputsList[]={&encStream,&encButton,&serial};
 chainStream<3> in(inputsList);//3 is the number of inputs
 
-#define LEDPIN 13
+#define LEDPIN A3
+
+result doAlert(eventMask e, prompt &item);
 
 result showEvent(eventMask e,navNode& nav,prompt& item) {
   Serial.print("event: ");
@@ -63,10 +64,10 @@ result action1(eventMask e,navNode& nav, prompt &item) {
   return proceed;
 }
 
-result action2(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out) {
+result action2(eventMask e,navNode& nav, prompt &item) {
   Serial.print("action2 event: ");
   Serial.print(e);
-  Serial.print(", quiting menu.");
+  Serial.println(", quiting menu.");
   Serial.flush();
   return quit;
 }
@@ -106,8 +107,8 @@ CHOOSE(chooseTest,chooseMenu,"Choose",doNothing,noEvent,noStyle
 //by extending the prompt class
 class altPrompt:public prompt {
 public:
-  altPrompt(const promptShadow& p):prompt(p) {}
-  idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) override {
+  altPrompt(constMEM promptShadow& p):prompt(p) {}
+  Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t) override {
     return out.printRaw("special prompt!",len);;
   }
 };
@@ -126,20 +127,9 @@ TOGGLE((mainMenu[1].enabled),togOp,"Op 2:",doNothing,noEvent,noStyle
   ,VALUE("disabled",disabledStatus,doNothing,noEvent)
 );*/
 
-result alert(menuOut& o,idleEvent e) {
-  if (e==idling) {
-    o.setCursor(0,0);
-    o.print("alert test");
-    o.setCursor(0,1);
-    o.print("[select] to continue...");
-  }
-  return proceed;
-}
-
-result doAlert(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out) {
-  nav.root->idleOn(alert);
-  return proceed;
-}
+char* constMEM hexDigit MEMMODE="0123456789ABCDEF";
+char* constMEM hexNr[] MEMMODE={"0","x",hexDigit,hexDigit};
+char buf1[]="0x11";
 
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,OP("Op1",action1,anyEvent)
@@ -153,24 +143,41 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,SUBMENU(selMenu)
   ,SUBMENU(chooseMenu)
   ,OP("Alert test",doAlert,enterEvent)
+  ,EDIT("Hex",buf1,hexNr,doNothing,noEvent,noStyle)
   ,EXIT("<Back")
 );
 
-//const panel panels[] MEMMODE={{0,0,16,2}};
-//navNode* nodes[sizeof(panels)/sizeof(panel)];
-//panelsList pList(panels,nodes,1);
-
 #define MAX_DEPTH 2
-/*idx_t tops[MAX_DEPTH];
-liquidCrystalOut outLCD(lcd,tops,pList);//output device for LCD
-menuOut* outputs[]={&outLCD};//list of output devices
-outputsList out(outputs,1);//outputs list with 2 outputs*/
 
-MENU_OUTPUTS(out, MAX_DEPTH
-  ,LIQUIDCRYSTAL_OUT(lcd,{0,0,16,2})
+/*const panel panels[] MEMMODE={{0,0,16,2}};
+navNode* nodes[sizeof(panels)/sizeof(panel)];
+panelsList pList(panels,nodes,1);
+idx_t tops[MAX_DEPTH];
+lcdOut outLCD(&lcd,tops,pList);//output device for LCD
+menuOut* outputs[]={&outLCD};//list of output devices
+outputsList out(outputs,1);//outputs list with 2 outputs
+*/
+
+MENU_OUTPUTS(out,MAX_DEPTH
+  ,LCD_OUT(lcd,{0,0,16,2})
   ,NONE
 );
 NAVROOT(nav,mainMenu,MAX_DEPTH,in,out);//the navigation root object
+
+result alert(menuOut& o,idleEvent e) {
+  if (e==idling) {
+    o.setCursor(0,0);
+    o.print("alert test");
+    o.setCursor(0,1);
+    o.print("[select] to continue...");
+  }
+  return proceed;
+}
+
+result doAlert(eventMask e, prompt &item) {
+  nav.idleOn(alert);
+  return proceed;
+}
 
 result idle(menuOut& o,idleEvent e) {
   switch(e) {
@@ -193,7 +200,7 @@ void setup() {
   mainMenu[1].enabled=disabledStatus;
   nav.showTitle=false;
   lcd.setCursor(0, 0);
-  lcd.print("Menu 3.0 LCD");
+  lcd.print("Menu 4.x LCD");
   lcd.setCursor(0, 1);
   lcd.print("r-site.net");
   delay(2000);

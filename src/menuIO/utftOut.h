@@ -1,17 +1,11 @@
 /* -*- C++ -*- */
+
 /********************
 Use UTFT graphics display as menu output
 
 www.r-site.net
 
 Dec. 2014 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
-
-creative commons license 3.0: Attribution-ShareAlike CC BY-SA
-This software is furnished "as is", without technical support, and with no
-warranty, express or implied, as to its usefulness for any purpose.
-
-Thread Safe: No
-Extensible: Yes
 
 UTFT library from:
   http://www.rinkydinkelectronics.com/library.php?id=51

@@ -1,8 +1,9 @@
 /* -*- C++ -*- */
+
 //for using standard arduino LiquidCrystal driver
 
 #ifndef RSITE_ARDUINO_MENU_LIQUIDCRYSTALOUT
-  #define RSITE_ARDUINO_MENU__LIQUIDCRYSTALOUT
+  #define RSITE_ARDUINO_MENU_LIQUIDCRYSTALOUT
   #include "../menu.h"
   #include <LiquidCrystal.h>
 
@@ -21,6 +22,19 @@
         void setCursor(idx_t x,idx_t y,idx_t panelNr=0) override {
           const panel p=panels[panelNr];
           device.setCursor(p.x+x,p.y+y);
+        }
+        idx_t startCursor(navRoot& root,idx_t x,idx_t y,bool charEdit,idx_t panelNr=0) override {return 0;}
+        idx_t endCursor(navRoot& root,idx_t x,idx_t y,bool charEdit,idx_t panelNr=0) override {return 0;}
+        idx_t editCursor(navRoot& root,idx_t x,idx_t y,bool editing,bool charEdit,idx_t panelNr=0) override {
+          //text editor cursor
+          device.noBlink();
+          device.noCursor();
+          if (editing) {
+            device.setCursor(x, y);
+            if (charEdit) device.cursor();
+            else device.blink();
+          }
+          return 0;
         }
     };
 

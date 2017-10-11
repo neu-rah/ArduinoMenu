@@ -1,15 +1,10 @@
 /* -*- C++ -*- */
 /********************
 Sept. 2014 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
-creative commons license 3.0: Attribution-ShareAlike CC BY-SA
-This software is furnished "as is", without technical support, and with no
-warranty, express or implied, as to its usefulness for any purpose.
-
-Thread Safe: No
-Extensible: Yes
 
 Use graphics screens (adafruit library based) as menu output
 www.r-site.net
+
 ***/
 #ifndef RSITE_ARDUINOP_MENU_GFX
 	#define RSITE_ARDUINOP_MENU_GFX
@@ -50,6 +45,16 @@ namespace Menu {
 					setColor(fgColor);
 				}
 
+				void box(idx_t panelNr,idx_t x,idx_t y,idx_t w=1,idx_t h=1,colorDefs c=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) override {
+					const panel p=panels[panelNr];
+					gfx.drawRect((p.x+x)*resX,(p.y+y)*resY,w*resX,h*resY,getColor(c,selected,stat,edit));
+				}
+
+				void rect(idx_t panelNr,idx_t x,idx_t y,idx_t w=1,idx_t h=1,colorDefs c=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) override {
+					const panel p=panels[panelNr];
+					gfx.fillRect((p.x+x)*resX,(p.y+y)*resY,w*resX,h*resY,getColor(c,selected,stat,edit));
+				}
+
 				void clear(idx_t panelNr) override {
 					const panel p=panels[panelNr];
 					gfx.fillRect(p.x*resX,p.y*resY,p.w*resX,p.h*resY,getColor(bgColor,false,enabledStatus,false));
@@ -66,7 +71,6 @@ namespace Menu {
 					gfxOut::drawCursor(ln,selected,stat);
 					gfx.drawRect(p.x*resX,(p.y+ln)*resY,maxX()*resX,resY,getColor(cursorColor,selected,enabledStatus,false));
 				}
-
 	  };
 
 }; //namespace adaGfxOut

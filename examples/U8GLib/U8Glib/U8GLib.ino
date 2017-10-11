@@ -7,16 +7,16 @@ U8Glib: https://github.com/olikraus/U8glib_Arduino
 
 Jul.2016 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
 Original from: https://github.com/christophepersoz
-creative commons license 3.0: Attribution-ShareAlike CC BY-SA
-This software is furnished "as is", without technical support, and with no
-warranty, express or implied, as to its usefulness for any purpose.
-
-Thread Safe: No
-Extensible: Yes
 
 menu on U8GLib device
 output: Nokia 5110 display (PCD8544 HW SPI) + Serial
 input: Serial + encoder
+
+ESP8266 Compile Error:
+  `.irom0.text' will not fit in region `irom0_0_seg'
+  see: http://bbs.espressif.com/viewtopic.php?t=166
+
+please use U8G2 instead.
 
 */
 
@@ -26,15 +26,16 @@ input: Serial + encoder
 #include <menuIO/keyIn.h>
 #include <menuIO/chainStream.h>
 #include <menuIO/serialOut.h>
+#include <menuIO/serialIn.h>
 #include <menuIO/U8GLibOut.h>
 
 using namespace Menu;
 
-#define LEDPIN A3
+#define LEDPIN LED_BUILTIN
 
 // rotary encoder pins
-#define encA    5
-#define encB    6
+#define encA    2
+#define encB    3
 #define encBtn  4
 
 #define U8_DC 9
@@ -43,7 +44,7 @@ using namespace Menu;
 
 U8GLIB_PCD8544 u8g(U8_CS, U8_DC, U8_RST) ;
 
-result zZz() {Serial.println("zZz");return proceed;}
+result doAlert(eventMask e, prompt &item);
 
 result showEvent(eventMask e,navNode& nav,prompt& item) {
   Serial.print("event: ");
@@ -60,7 +61,7 @@ result action1(eventMask e) {
   return proceed;
 }
 
-result action2(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out) {
+result action2(eventMask e,navNode& nav, prompt &item) {
   Serial.print(e);
   Serial.print(" action2 executed, quiting menu");
   return quit;
@@ -77,7 +78,7 @@ result ledOff() {
   return proceed;
 }
 
-TOGGLE(ledCtrl,setLed,"Led: ",doNothing,noEvent,noStyle//,doExit,enterEvent,noStyle
+TOGGLE(ledCtrl,setLed,"Led: ",doNothing,noEvent,noStyle
   ,VALUE("On",HIGH,doNothing,noEvent)
   ,VALUE("Off",LOW,doNothing,noEvent)
 );
@@ -101,8 +102,8 @@ CHOOSE(chooseTest,chooseMenu,"Choose",doNothing,noEvent,noStyle
 //by extending the prompt class
 class altPrompt:public prompt {
 public:
-  altPrompt(const promptShadow& p):prompt(p) {}
-  idx_t printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) override {
+  altPrompt(constMEM promptShadow& p):prompt(p) {}
+  Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr) override {
     return out.printRaw("special prompt!",len);;
   }
 };
@@ -115,24 +116,15 @@ MENU(subMenu,"Sub-Menu",showEvent,anyEvent,noStyle
   ,EXIT("<Back")
 );
 
-result alert(menuOut& o,idleEvent e) {
-  if (e==idling) {
-    o.println("alert test");
-    o.println("press [select]");
-    o.println("to continue...");
-  }
-  return proceed;
-}
+char* constMEM hexDigit MEMMODE="0123456789ABCDEF";
+char* constMEM hexNr[] MEMMODE={"0","x",hexDigit,hexDigit};
+char buf1[]="0x11";
 
-result doAlert(eventMask e, navNode& nav, prompt &item, Stream &in, menuOut &out) {
-  nav.root->idleOn(alert);
-  return proceed;
-}
-
-MENU(mainMenu,"Main menu",zZz,noEvent,wrapStyle
+MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,OP("Op1",action1,anyEvent)
   ,OP("Op2",action2,enterEvent)
   ,FIELD(test,"Test","%",0,100,10,1,doNothing,noEvent,wrapStyle)
+  ,EDIT("Hex",buf1,hexNr,doNothing,noEvent,noStyle)
   ,SUBMENU(subMenu)
   ,SUBMENU(setLed)
   ,OP("LED On",ledOn,enterEvent)
@@ -150,7 +142,7 @@ MENU(mainMenu,"Main menu",zZz,noEvent,wrapStyle
 const colorDef<uint8_t> colors[] MEMMODE={
   {{0,0},{0,1,1}},//bgColor
   {{1,1},{1,0,0}},//fgColor
-  {{1,0},{1,0,0}},//valColor
+  {{1,1},{1,0,0}},//valColor
   {{1,1},{1,0,0}},//unitColor
   {{0,1},{0,0,1}},//cursorColor
   {{0,0},{1,1,1}},//titleColor
@@ -160,31 +152,19 @@ encoderIn<encA,encB> encoder;//simple quad encoder driver
 encoderInStream<encA,encB> encStream(encoder,4);// simple quad encoder fake Stream
 
 //a keyboard with only one key as the encoder button
-keyMap encBtn_map[]={{-encBtn,options->getCmdChar(enterCmd)}};//negative pin numbers use internal pull-up, this is on when low
+keyMap encBtn_map[]={{-encBtn,options->getCmdChar(enterCmd)}};//negative pin numbers use internal pull-up, on = low
 keyIn<1> encButton(encBtn_map);//1 is the number of keys
 
+serialIn serial(Serial);
+
 //input from the encoder + encoder button + serial
-Stream* inputsList[]={&encStream,&encButton,&Serial};
+menuIn* inputsList[]={&encStream,&encButton,&serial};
 chainStream<3> in(inputsList);//3 is the number of inputs
 
+//fontY should now account for fontMarginY
 #define fontX 6
-#define fontY 8
+#define fontY 9
 #define MAX_DEPTH 2
-
-/*const panel serial_panels[] MEMMODE={{0,0,40,10}};
-navNode* serial_nodes[sizeof(serial_panels)/sizeof(panel)];
-panelsList serial_pList(serial_panels,serial_nodes,sizeof(serial_panels)/sizeof(panel));
-idx_t serial_tops[MAX_DEPTH];
-serialOut outSerial(Serial,serial_tops,serial_pList);//the output device (just the serial port)
-
-const panel panels[] MEMMODE={{0,0,84/fontX,48/fontY}};
-navNode* nodes[sizeof(panels)/sizeof(panel)];
-panelsList pList(panels,nodes,sizeof(panels)/sizeof(panel));
-idx_t gfx_tops[MAX_DEPTH];
-u8gLibOut gfx(u8g,colors,gfx_tops,pList,fontX,fontY);
-
-menuOut* const outputs[] MEMMODE={&gfx,&outSerial};
-outputsList out(outputs,2);*/
 
 //this macro replaces all the above commented lines
 MENU_OUTPUTS(out,MAX_DEPTH
@@ -193,6 +173,23 @@ MENU_OUTPUTS(out,MAX_DEPTH
 );
 
 NAVROOT(nav,mainMenu,MAX_DEPTH,in,out);
+
+result alert(menuOut& o,idleEvent e) {
+  if (e==idling) {
+    o.setCursor(0,0);
+    o.print("alert test");
+    o.setCursor(0,1);
+    o.print("press [select]");
+    o.setCursor(0,2);
+    o.print("to continue...");
+  }
+  return proceed;
+}
+
+result doAlert(eventMask e, prompt &item) {
+  nav.idleOn(alert);
+  return proceed;
+}
 
 //when menu is suspended
 result idle(menuOut& o,idleEvent e) {
@@ -211,33 +208,35 @@ void setup() {
   while(!Serial);
   nav.idleTask=idle;//point a function to be used when menu is suspended
   mainMenu[1].enabled=disabledStatus;
+  //change input burst for slow output devices
+  //this is the number of max. processed inputs before drawing
+  nav.inputBurst=10;
 
   pinMode(encBtn, INPUT_PULLUP);
+  encButton.begin();
   encoder.begin();
 
   //u8g.setFont(u8g_font_helvR08);
-  //u8g.setFont(u8g_font_6x10);
-  u8g.setFont(u8g_font_04b_03r);
+  u8g.setFont(u8g_font_6x10);
+  //u8g.setFont(u8g_font_04b_03r);
   u8g.firstPage();
   do {
+    u8g.setColorIndex(1);
     nav.out[0].setCursor(0,0);
-    nav.out[0].print(F("Menu 3.x test"));
+    nav.out[0].print(F("Menu 4.x test"));
     nav.out[0].setCursor(0,1);
     nav.out[0].print(F("on U8Glib"));
   } while(u8g.nextPage());
   delay(1000);
-  //nav.sleepTask=alert;
 }
 
 void loop() {
   nav.doInput();
+  digitalWrite(LEDPIN, ledCtrl);
   if (nav.changed(0)) {//only draw if menu changed for gfx device
-    //change checking leaves more time for other tasks
+    //because this code clears the screen, if always called then screen will blink
     u8g.firstPage();
-    do {
-      nav.doOutput();
-      digitalWrite(LEDPIN, ledCtrl);
-    } while( u8g.nextPage() );
+    do nav.doOutput(); while(u8g.nextPage());
   }
-  delay(100);//simulate a delay when other tasks are running
+  delay(100);//simulate other tasks delay
 }

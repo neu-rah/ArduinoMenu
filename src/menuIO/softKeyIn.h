@@ -1,16 +1,10 @@
 /* -*- C++ -*- */
+
 /**************
 Sept. 2014 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
 
 Oct. 2016 - dontsovcmc (https://github.com/dontsovcmc) added debounce safe
   https://github.com/neu-rah/ArduinoMenu/pull/60
-
-creative commons license 3.0: Attribution-ShareAlike CC BY-SA
-This software is furnished "as is", without technical support, and with no
-warranty, express or implied, as to its usefulness for any purpose.
-
-Thread Safe: No
-Extendable: Yes
 
 quick and dirty keyboard driver
 metaprog keyboard driver where N is the number of keys
@@ -23,9 +17,10 @@ ex: -A0 means: pin A0 normally high, low when button pushed (reverse logic)
   #define __softKeyIn_h__
 
   #include "../menu.h"
-  #include "keyMapDef.h"
 
   namespace Menu {
+
+    #include "keyMapDef.h"
 
     #ifndef BOUNCE_TICK
     #define BOUNCE_TICK 30
@@ -38,7 +33,7 @@ ex: -A0 means: pin A0 normally high, low when button pushed (reverse logic)
     //emulate a stream keyboard, this is not using interrupts as a good driver should do
     // AND is not using a buffer either!
     template <int N>
-    class softKeyIn:public Stream {
+    class softKeyIn:public menuIn {
     public:
       keyMap* keys;
       int lastkey;

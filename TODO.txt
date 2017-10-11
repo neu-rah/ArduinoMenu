@@ -1,0 +1,182 @@
+Arduino Menu Library
+
+- implement attribute hidden
+- central menu init
+  => check's ex: if numeric input available then output numeric indexes
++1 padMenu: printMenu needs to return idx_t instead of void
+  => why not an area? because it would send menu to a 2d thing.. .and its already huge for AVR's
+    and using and area => that all printTo had to return an area
+  - done so on a dumb mode where int means width and using original width return
+    change it later to width,height
+-2 mark exit options
+  -> then we can zero index them
+  -> can omit them on in-line pad preview
+  => abandoned! options are marked with _Exit system style but no more
+    because kb accels would go very complicated
+- freelancer fields (can be polled without a menu structure, or a singular menu struct)
+  =>navNode needed to point o navTarget instead of menuNode <- NOT!
+  =>use an one option menu
+    - support 1 option menu on macros
+- use formatters for color application
++ remove title brackets
+- detach panels from output, instead panels should be a gateway for output!
+  => primary source continues to be the output definition
+- scroll long prompts (not for serial)
+- allow disabled items to receive events! for help print purposes
+- help texts
+  => multi-line fields to combine with menu preview
+- password fields
+- support frames
+- explore arrow keys for ansiSerial
+- alternative keys example
++ separate functions as parentDraw, isMenu, asPad, etc... are inefficient
+  => added `is` and `has` functions to deal with systemStyles, styles and events
++ check uint8_t types -> wrap and non-wrap ok
++ changed and clearChanged need to run with same logic!
+  => still they are separate functions due to subtle changes in return
++ custom field format (date/time)
++ field reversion should be by input device and not global
+  problem:
+    inputs are only streams and they can be joined!
+    1) deriving from Stream class will pose problems later to use Serial Object.
+    2) using a menuIn special object is a major change and still needs the indirection
+    of all methods if its still to use an internal reference to a Stream object
+    this indirection kills me!
+    3) Use something else.. can't see what, specially because V4 does not use a global
+    navigation object and stream reads receive no parameters of active ones.
+    4) handle swap internally.. this does not distinguishes joined streams
+    or one stream from another and its the current implementation.
+
+    2 - seems to be the most viable.. and so was done
+
++ put (some) options into navRoot
+  menu.cpp -------------------------------
+  navNode::navKeys
+  ->navCodes ok - not ok for inout drivers, keep them global
+
+  navRoot::doInput
+  ->getCmdChar ok
+  ->inputBurst ok
+
+  fieldBase::doNav(navNode& nav,navCmd cmd)
+  ->nav2D ok
+  ->useUpdateEvent ok
+
+
+  menu.h --------------------------------
+  menuField::stepit
+  ->invertFieldKeys X should remove this! its now set on an input stream basis
+
+  menuOut::drawCursor(idx_t ln,bool selected,status stat,bool edit=false,idx_t panelNr=0)
+  ->disabledCursor X keep it global or stream based? global for now because we dont know about output object availability
+  ->selectedCursor X keep it global or stream based? global for now because we dont know about output object availability
+
+  menuField<T>::parseInput(navNode& nav,menuIn& in)
+  -> numValueInput Ok => input device specific
+
+  analogAxis.h ------------------------
+  encoderIn.h -----------------------
+  ...
+  ->navCodes X keep them global for now!
+
+  cancelField.h -----------------------
+  doNav(navNode& nav,navCmd cmd)
+  ->nav2D Ok
+
++ customizing title print
++ BUG: u8glib draw cause multiple draw on serial - detach output draws!
++ use multiple menus
+- use single include?
+- check dynamic, if possible mixed
+  + not mixed yet
++ color enumeration at base level
++ add list of output devices
++ add macros to build navRoot
++ suspension in only one function with suspension events
++ implement other fields
++ use menu accelerators + auto numbering
++ output numbering + acceleration should be optional for any menu class and not just specialized
+- split options into:
+  * config (static MEMMODE)
+  * options (dynamic => RAM)
+  => most options are now distributed to several objects
++ use/draw title option for any menu, and ignore it on single line devices!
++ wrap menuField's https://github.com/neu-rah/ArduinoMenu/issues/58
++ BUG: alert is only showing on the first device
++ use array of tops with path depth on each output device
+  => do not use lastTop!
+- implement scroll commands on output devices
+  => panels.nodes must use navNode* instead of menuNode*
+  => however previews have no assigned navNode!
+    1. just don't print previews => do we need them?
+    2. use union
+    => flag navNodes for preview (we have them!)
+- dialogs and modal dialogs (static alloc)
+- alerts (dynamic)
+- errors (dynamic modal)
+- modal just blocks the cycle.
+- sleepTask should be abandoned also with escape or by returning quit
+- sleepTask (with params) and returning void is interpreted as quit -> change it!
++ textField?
+    X if so make it a submenu where text is a title and we navigate a pad/menu to choose letters and commands.
+    + endup being a specific class with per character reusable validators
+    + need text cursor for monochrome gfx display! (u8glib)
+
+
+IDEA: generic input:
+
+- input parsing should be delivered to focused menu object to allow customization
+- then some chain or system wide functions can be called as aux. functions.
+- input classes should provide a parser to be called as aux function of any of the above and deliver cmds.
+  => that we can not accept Serial as input but use a specialized derivation instead
+  ... V4.0 uses specialized menuIn
+
+implemented:
+
+navigation path
+
+navRoot::pool
+  navRoot::doInput
+    navFocus->parseInput
+      - navTarget::parseInput
+        navTarget::doNav
+          navNode::doNavigation(navCmd)
+      - menuField::parseInput
+        check numeric
+        menuField::doNav
+          navigate value (navCmd)
+      - menuVariant::parseInput
+        menuVariant::doNav
+          navNode::doNavigation(navCmd)
+          exit on enter key
+  navRoot::doOutput
+    navRoot::printMenu() parentDraw? -> path[level-1]
+      outputsList::printMenu(navNode&)
+        changed||raster? menuOut::printMenu(navNode&)
+          menuOut::printMenu(navNode &, panelNr)
+
+
+
+navRoot::doNav
+
+still need navigation and iteration protocol
+
+iteration levels
+  0 - member functions <-- this is the best option for web
+  1 - event messages <- require navNode
+  2 - nav commands <- apply to root!
+  3 - input <- rely on nav path status
+
+
+formating
+
+  1 - use fmt template class wrapping menuOut
+    + this is nice independent and interchangeable
+    - cannot print specialized field/values templates
+  2 - use derivation classes
+    - cant use multiple outputs on same structure
+  3 - use specialized function to print html
+    + outputs call specialized thing
+  4 - use generic format
+    + fmt should be used by elements and not by the output
+    - still field elements needs to print min/max for html

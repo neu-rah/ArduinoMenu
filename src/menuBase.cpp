@@ -1,12 +1,20 @@
+
 #include "menu.h"
 
 using namespace Menu;
 
 #ifdef DEBUG
   bool debugFlag=false;
+  #if defined(USING_PGM)
+    const char* libMemMode="PGM";
+  #elif defined(USING_RAM)
+    const char* libMemMode="RAM";
+  #else
+    const char* libMemMode="ERROR!";
+  #endif
 #endif
 
-template<void (*A)(eventMask event, navNode& nav, prompt &item, Stream &in)> result Menu::callCaster(eventMask event, navNode& nav, prompt &item, Stream &in) {A(event,nav,item,in);return proceed;}
+template<void (*A)(eventMask event, navNode& nav, prompt &item, menuIn &in)> result Menu::callCaster(eventMask event, navNode& nav, prompt &item, menuIn &in) {A(event,nav,item,in);return proceed;}
 template<void (*A)(eventMask event, navNode& nav, prompt &item)> result Menu::callCaster(eventMask event, navNode& nav, prompt &item) {A(event,nav,item);return proceed;}
 template<void (*A)(eventMask event, navNode& nav)> result Menu::callCaster(eventMask event, navNode& nav) {A(event,nav);return proceed;}
 template<void (*A)(eventMask event)> result Menu::callCaster(eventMask event) {A(event);return proceed;}
@@ -49,7 +57,7 @@ const navCodesDef Menu::defaultNavCodes={
   {scrlUpCmd,0x36}
 };
 
-config defaultOptions={'>','-',false,false,Menu::defaultNavCodes,false,true};
+config defaultOptions={'>','-',Menu::defaultNavCodes};
 config* Menu::options=&defaultOptions;
 
 #ifdef DEBUG
@@ -149,4 +157,9 @@ config* Menu::options=&defaultOptions;
     }
     return o;
   }
+
+  // Print& Menu::operator<<(Print& o,prompt &p) {
+  //   print_P(o,p.getText(),-1);
+  //   return o;
+  // }
 #endif

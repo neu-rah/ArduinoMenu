@@ -1,18 +1,13 @@
 /* -*- C++ -*- */
 /**************
 Sept. 2014 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
-creative commons license 3.0: Attribution-ShareAlike CC BY-SA
-This software is furnished "as is", without technical support, and with no
-warranty, express or implied, as to its usefulness for any purpose.
-
-Thread Safe: No
-Extendable: Yes
 
 quick and dirty keyboard driver
 metaprog keyboard driver where N is the number of keys
 all keys are expected to be a pin (buttons)
 we can have reverse logic (pull-ups) by entering negative pin numbers
 ex: -A0 means: pin A0 normally high, low when button pushed (reverse logic)
+
 ***/
 
 #ifndef RSITE_KEYIN_DEF_H
@@ -30,7 +25,7 @@ ex: -A0 means: pin A0 normally high, low when button pushed (reverse logic)
     //emulate a stream keyboard, this is not using interrupts as a good driver should do
     // AND is not using a buffer either!
     template <int N>
-    class keyIn:public Stream {
+    class keyIn:public menuIn {
     public:
       keyMap* keys;
       int lastkey;
