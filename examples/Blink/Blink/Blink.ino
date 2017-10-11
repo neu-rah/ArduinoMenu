@@ -9,7 +9,6 @@ input: Serial
 mcu: nano328p
 */
 
-#include <Arduino.h>
 #include <menu.h>
 #include <menuIO/serialOut.h>
 #include <menuIO/chainStream.h>
@@ -24,8 +23,8 @@ int timeOn=10;
 int timeOff=90;
 
 MENU(mainMenu, "Blink menu", Menu::doNothing, Menu::noEvent, Menu::wrapStyle
-  ,FIELD(timeOn,"On","ms",0,500,100,10, Menu::doNothing, Menu::noEvent, Menu::noStyle)
-  ,FIELD(timeOff,"Off","ms",0,500,100,10,Menu::doNothing, Menu::noEvent, Menu::noStyle)
+  ,FIELD(timeOn,"On","ms",0,100,10,1, Menu::doNothing, Menu::noEvent, Menu::noStyle)
+  ,FIELD(timeOff,"Off","ms",0,100,10,1,Menu::doNothing, Menu::noEvent, Menu::noStyle)
   ,EXIT("<Back")
 );
 

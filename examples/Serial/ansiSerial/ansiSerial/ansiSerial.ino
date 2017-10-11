@@ -187,7 +187,7 @@ CHOOSE(chooseTest,chooseMenu,"Choose",doNothing,noEvent,noStyle
 class altPrompt:public prompt {
 public:
   altPrompt(constMEM promptShadow& p):prompt(p) {}
-  Area printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t) override {
+  Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t) override {
     return out.printRaw("special prompt!",len);
   }
 };

@@ -1,6 +1,6 @@
 # ArduinoMenu 4
 
-**Generic menu/interactivity system**
+**Generic menu/interactivity system for the arduino framework**
 
 [![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](https://spdx.org/licenses/CC-BY-NC-SA-4.0.html)
 [![Build Status](https://travis-ci.org/neu-rah/ArduinoMenu.svg?branch=master)](https://travis-ci.org/neu-rah/ArduinoMenu)
@@ -11,31 +11,34 @@
 Full automated or user code driven navigation system.
 With this system you can define menus, submenus, input fields and other iteration objects that deal with all input/output and can call user defined handler as a result of user iteration.
 The user function can be operated as a single action called on click/enter or as a event driven function responding to focus In/Out or Enter/Esc events.
-The system is designed as a non blocking polling system, allowing parallel task to run.
+The system is designed as a non blocking polling system, allowing concurrent task to run.
 Optionally the system can be operated in semi-automated mode, issuing navigation command from user code.
 
 See the [wiki](https://github.com/neu-rah/ArduinoMenu/wiki)
 
 ## Simple Example
 ```c++
-#include <Arduino.h>
 #include <menu.h>
 #include <menuIO/serialOut.h>
 #include <menuIO/chainStream.h>
+#include <menuIO/serialIn.h>
 
-#define LEDPIN 13
+using namespace Menu;
+
+#define LEDPIN LED_BUILTIN
 #define MAX_DEPTH 1
 
 int timeOn=10;
 int timeOff=90;
 
 MENU(mainMenu, "Blink menu", Menu::doNothing, Menu::noEvent, Menu::wrapStyle
-  ,FIELD(timeOn,"On","ms",0,500,100,10, Menu::doNothing, Menu::noEvent, Menu::noStyle)
-  ,FIELD(timeOff,"Off","ms",0,500,100,10,Menu::doNothing, Menu::noEvent, Menu::noStyle)
+  ,FIELD(timeOn,"On","ms",0,100,10,1, Menu::doNothing, Menu::noEvent, Menu::noStyle)
+  ,FIELD(timeOff,"Off","ms",0,100,10,1,Menu::doNothing, Menu::noEvent, Menu::noStyle)
   ,EXIT("<Back")
 );
 
-MENU_INPUTS(in,&Serial);
+serialIn serial(Serial);
+MENU_INPUTS(in,&serial);
 
 MENU_OUTPUTS(out,MAX_DEPTH
   ,SERIAL_OUT(Serial)
@@ -45,12 +48,12 @@ MENU_OUTPUTS(out,MAX_DEPTH
 NAVROOT(nav,mainMenu,MAX_DEPTH,in,out);
 
 void setup() {
+  pinMode(LEDPIN, OUTPUT);
   Serial.begin(115200);
   while(!Serial);
   Serial.println("Menu 4.x");
   Serial.println("Use keys + - * /");
   Serial.println("to control the menu navigation");
-  pinMode(LEDPIN, OUTPUT);
 }
 
 void loop() {
@@ -86,31 +89,23 @@ void loop() {
 - can be confined to a display area (numeric fields can still overflow the area, user should take account for them)
 - Tested on Arduino: AVR, ARM, Teensy 3.2, ESP8266
 
-## Dependencies
-This library depends on the following libraries:
-
-- Streaming https://github.com/scottdky/Streaming (on debug mode)
-- Assert4a https://github.com/nettigo/Assert4a (on debug mode)
-
-Depending on the type of input or output, other libraries might be needed. Essentially any library needed for your devices.
-
-## Limits
-
-- when using macros the menu is limited to 16 options (current macro limnit).
-- menus **must** have at least 2 options.
-- maximum 127 options.
-- fast access (numeric keys) only supports 9 options (1 to 9)
-- prompts can overflow on panels with less than 4 characters width
-- menu system is character based, so choose monometric font to achieve best results, it will work with any font but the text can overflow.
-
-## Base
-
-- Character based information display.
-- Line based menu organization.
-- Stream IO + specializations.
-
 ## Version 2.x videos
 [![IMAGE ALT TEXT](https://img.youtube.com/vi/wHv5sU-HXVI/2.jpg)](https://youtu.be/wHv5sU-HXVI "Arduino menu 2.0 fields video") [![IMAGE ALT TEXT](https://img.youtube.com/vi/W-TRCziF67g/2.jpg)](https://youtu.be/W-TRCziF67g "Arduino menu basic features video")
+
+## Applications
+
+**Fielduino** hardware PWM generator using menu to select frequency and dutty.
+
+https://github.com/neu-rah/Fielduino
+
+## Platforms
+Atmel AVR, Atmel SAM, Espressif 8266, Intel ARC32, Microchip PIC32, Nordic nRF51, Teensy, TI MSP430
+
+## Install
+
+**Arduino IDE** - Install using the library manager (ArduinoMenu library - Rui Azevedo)
+
+**Platformio** - http://platformio.org/lib/show/1468/ArduinoMenu%20library
 
 ## IO devices
 ### Output devices
@@ -209,6 +204,29 @@ ClickEncoder https://github.com/0xPIT/encoder
 User defined input calling menu navigation API
 
 Web browser (experimental) when using ESP devices
+
+## Dependencies
+This library depends on the following libraries:
+
+- Streaming https://github.com/scottdky/Streaming (on debug mode)
+- Assert4a https://github.com/nettigo/Assert4a (on debug mode)
+
+Depending on the type of input or output, other libraries might be needed. Essentially any library needed for your devices.
+
+## Limits
+
+- when using macros the menu is limited to 16 options (current macro limnit).
+- menus **must** have at least 2 options.
+- maximum 127 options.
+- fast access (numeric keys) only supports 9 options (1 to 9)
+- prompts can overflow on panels with less than 4 characters width
+- menu system is character based, so choose monometric font to achieve best results, it will work with any font but the text can overflow.
+
+## Base
+
+- Character based information display.
+- Line based menu organization.
+- Stream IO + specializations.
 
 ## info
 
