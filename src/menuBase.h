@@ -54,7 +54,7 @@ www.r-site.net
       _parentDraw=1<<2,
       _isVariant=1<<3,
       _asPad=1<<4,
-      _isExit=1<<5
+      _Exit=1<<5
     };
     //showTitle and noTitle override the default
     enum styles {

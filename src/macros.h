@@ -217,7 +217,7 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
   constMEM char title_##cnt[] MEMMODE=exitText;\
   constMEM MEMMODE Menu::promptShadowRaw opShadowRaw##cnt = {\
     (Menu::callback)Menu::doExit,\
-    Menu::_noStyle,\
+    Menu::_Exit,\
     title_##cnt,\
     Menu::enterEvent\
   };\

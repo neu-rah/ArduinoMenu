@@ -318,6 +318,8 @@ Used menuOut::printMenu(navNode &nav,idx_t panelNr) {
     trace(Serial<<"body start"<<endl);
     fmtStart(fmtBody,nav);
     idx_t top=asPad?0:tops[topi];
+    // idx_t idxCnt=top;
+    // idx_t exitCnt=0;
     for(idx_t i=0;asPad||(i<maxY(panelNr)-st);i++) {
       int ist=i+st;
       if (i+top>=nav.sz()) break;
@@ -339,7 +341,13 @@ Used menuOut::printMenu(navNode &nav,idx_t panelNr) {
         if ((!asPad)&&(drawNumIndex&style)) {//<-- NO INDEX FOR PADS
           char a=top+i+'1';
           print('[');
-          print(a<='9'?a:'-');
+          // if (p.is(_Exit)) {//this would require an enourmous confusiuon on keyboard accels
+          //   print(exitCnt?'-':'0');
+          //   exitCnt++;
+          // } else {
+            print(a<='9'?a:'-');
+          //   idxCnt++;
+          // }
           print(']');
           len-=3;
         }
