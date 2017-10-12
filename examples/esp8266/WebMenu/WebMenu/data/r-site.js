@@ -13,9 +13,9 @@ function init() {
   s.change(updateSelect)
 }*/
 
-wsSrc="192.168.1.64"
+wsSrc=sourceURL;//"192.168.1.79";
 
-var connection = {}
+var connection = {};
 function menuIn(o) {connection.send(o.id.split('~').join('/')+"/"+o.value);}
 
 function sendBinValue(nr,path,value) {

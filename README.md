@@ -255,7 +255,7 @@ multiple stream packing for input to mix encoder stream with encoder keyboard (u
   - More examples
   - Text edit fields with validation *
   - Pad style menus (horizontal list)
-  - inline pad menus can input custom formats like IP/Date/Time
+  - inline pad menus can input custom formats like IP/Date/Time, experimental and just for devices that can position a cursor 
   - Plugins, alternative menu items potentially device specific
   - Allow multiple concurrent menus
   - Support UCGLib displays

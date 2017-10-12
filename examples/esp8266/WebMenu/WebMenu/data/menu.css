@@ -29,6 +29,11 @@ a:hover {
   border: 1px solid #fff;
 }
 
+input[type=range] {
+  display:inline-block !important;
+  width:62% !important;
+  background-color:#000800;
+}
 
 /*
  * Base structure

@@ -36,8 +36,20 @@ extern "C" {
 
 using namespace Menu;
 
-const char* ssid = "r-site.net";
-const char* password = "rsite.2011";
+#define ANALOG_PIN 4
+
+#ifndef MENU_SSID
+  #error "need to define WiFi SSID here"
+  #define MENU_SSID "r-site.net"
+#endif
+#ifndef MENU_PASS
+#error "need to define WiFi password here"
+  #define MENU_PASS ""
+#endif
+
+const char* ssid = MENU_SSID;
+const char* password = MENU_PASS;
+const char* serverName="192.168.1.79";
 #ifdef DEBUG
   // on debug mode I put aux files on external server to allow changes without SPIFF update
   // on this mode the browser MUST be instructed to accept cross domain files
@@ -76,8 +88,12 @@ result action2(eventMask event, navNode& nav, prompt &item) {
 }
 
 int ledCtrl=LOW;
+#define LEDPIN LED_BUILTIN
+void updLed() {
+  digitalWrite(LEDPIN,!ledCtrl);
+}
 
-TOGGLE(ledCtrl,setLed,"Led: ",doNothing,noEvent,noStyle//,doExit,enterEvent,noStyle
+TOGGLE(ledCtrl,setLed,"Led: ",updLed,enterEvent,noStyle//,doExit,enterEvent,noStyle
   ,VALUE("On",HIGH,doNothing,noEvent)
   ,VALUE("Off",LOW,doNothing,noEvent)
 );
@@ -97,13 +113,17 @@ CHOOSE(chooseTest,chooseMenu,"Choose",doNothing,noEvent,noStyle
   ,VALUE("Last",-1,doNothing,noEvent)
 );
 
+int timeOn=50;
+void updAnalog() {
+  analogWrite(ANALOG_PIN,map(timeOn,0,100,0,PWMRANGE));
+}
+
 //the menu
-int timeOn;
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,SUBMENU(setLed)
   ,OP("Action A",action1,enterEvent)
   ,OP("Action B",action2,enterEvent)
-  ,FIELD(timeOn,"On","ms",0,500,100,10, doNothing, noEvent, noStyle)
+  ,FIELD(timeOn,"On","ms",0,100,10,1, updAnalog, anyEvent, noStyle)
   ,SUBMENU(selMenu)
   ,SUBMENU(chooseMenu)
 );
@@ -124,37 +144,39 @@ NAVROOT(nav,mainMenu,MAX_DEPTH,serial,out);
 void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length) {
   switch(type) {
     case WStype_DISCONNECTED:
-      USE_SERIAL.printf("[%u] Disconnected!\n", num);
+      //USE_SERIAL.printf("[%u] Disconnected!\n", num);
       break;
     case WStype_CONNECTED: {
         IPAddress ip = webSocket.remoteIP(num);
-        USE_SERIAL.printf("[%u] Connected from %d.%d.%d.%d url: %s\n", num, ip[0], ip[1], ip[2], ip[3], payload);
+        //USE_SERIAL.printf("[%u] Connected from %d.%d.%d.%d url: %s\n", num, ip[0], ip[1], ip[2], ip[3], payload);
         webSocket.sendTXT(num, "console.log('ArduinoMenu Connected')");
       }
       break;
     case WStype_TEXT:
-      USE_SERIAL.printf("[%u] get Text: %s\n", num, payload);
+      //USE_SERIAL.printf("[%u] get Text: %s\n", num, payload);
       nav.async((const char*)payload);//this is slow!!!!!!!!
       break;
     case WStype_BIN: {
-        USE_SERIAL.printf("[WSc] get binary length: %u", length);
-        Serial<<endl;
-        /*for(int c=0;c<length;c++)
-          USE_SERIAL<<*(char*)(payload+c);*/
+        USE_SERIAL<<"[WSc] get binary length:"<<length<<"[";
+        for(int c=0;c<length;c++) {
+          USE_SERIAL.print(*(char*)(payload+c),HEX);
+          USE_SERIAL.write(',');
+        }
+        Serial<<"]"<<endl;
         uint16_t id=*(uint16_t*) payload++;
         idx_t len=*((idx_t*)++payload);
         idx_t* pathBin=(idx_t*)++payload;
         const char* inp=(const char*)(payload+len);
-        Serial<<"id:"<<id<<endl;
+        //Serial<<"id:"<<id<<endl;
         if (id==nav.active().hash()) {
-          Serial<<"id ok."<<endl;Serial.flush();
-          Serial<<"input:"<<inp<<endl;
+          //Serial<<"id ok."<<endl;Serial.flush();
+          //Serial<<"input:"<<inp<<endl;
           //StringStream inStr(inp);
           //while(inStr.available())
           nav.doInput(inp);
           webSocket.sendTXT(num, "binBusy=false;");//send javascript to unlock the state
-        } else Serial<<"id not ok!"<<endl;
-        Serial<<endl;
+        } //else Serial<<"id not ok!"<<endl;
+        //Serial<<endl;
       }
       break;
   }
@@ -164,12 +186,14 @@ void pageStart() {
   server.sendHeader("Cache-Control","no-cache, no-store, must-revalidate");
   server.sendHeader("Pragma","no-cache");
   server.sendHeader("Expires","0");
-  serverOut<<
-    "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\r\n"
-    "<?xml-stylesheet type=\"text/xsl\" href=\""
-    xslt
-    "\"?>\r\n<menuLib>\r\n";
-    "<menuLib>\r\n";
+  serverOut
+    <<"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\r\n"
+      "<?xml-stylesheet type=\"text/xsl\" href=\""
+      xslt
+      "\"?>\r\n<menuLib>\r\n"
+      "<sourceURL>"
+    <<serverName
+    <<"</sourceURL>";
 }
 
 void pageEnd() {
@@ -242,6 +266,10 @@ bool handleMenu(){
 }
 
 void setup(){
+  pinMode(LEDPIN,OUTPUT);
+  updLed();
+  pinMode(ANALOG_PIN,OUTPUT);
+  analogWriteRange(255);
   //options=&myOptions;//menu options
   Serial.begin(115200);
   while(!Serial)
@@ -260,16 +288,18 @@ void setup(){
   // Serial.setDebugOutput(0);
   // while(!Serial);
   // delay(10);
-  wifi_station_set_hostname((char*)"ArduinoMenu");
+  // wifi_station_set_hostname((char*)serverName);
   Serial.println("");
   Serial.println("Arduino menu webserver example");
 
   SPIFFS.begin();
 
+  //WiFi.hostname(serverName);//not good
+
   Serial.print("Connecting to ");
   Serial.println(ssid);
 
-  WiFiMulti.addAP("r-site.net", "rsite.2011");
+  WiFiMulti.addAP(ssid, password);
   while(WiFiMulti.run() != WL_CONNECTED) delay(100);
   // WiFi.begin(ssid, password);
   // Wait for connection

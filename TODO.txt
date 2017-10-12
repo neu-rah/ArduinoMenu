@@ -1,6 +1,8 @@
 Arduino Menu Library
 
-- implement attribute hidden
+- pad menu should exit at left (the least)
+  => can have edit blocks (non-preview)
+- implement dynamic attribute hidden and edit (only appears on edit)
 - central menu init
   => check's ex: if numeric input available then output numeric indexes
 +1 padMenu: printMenu needs to return idx_t instead of void
