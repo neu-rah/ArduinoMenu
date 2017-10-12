@@ -10,7 +10,7 @@
     this is usefull for develop/debug
     to use external server the browser must be intructed to accept cross domain files
   -->
-  <xsl:variable name="auxFilesSrc"></xsl:variable>
+  <xsl:variable name="auxFilesSrc">http://neurux:8080</xsl:variable>
 
   <xsl:template match="/">
     <html>
@@ -22,6 +22,10 @@
         <meta name="description" content="ArduinoMenu Example IOT/OTA for ESP8266"/>
         <meta name="author" content="Rui Azevedo ruihfazevedo@gmail.com (www.r-site.net)"/>
         <title>ArduinoMenu library OTA</title>
+        <script>
+          <xsl:text>var sourceURL="</xsl:text><xsl:value-of select="/menuLib/sourceURL"/><xsl:text>";</xsl:text>
+          <xsl:text>console.log("sourceURL:",sourceURL);</xsl:text>
+        </script>
         <link rel="icon" type="image/png" href="/logo.png"/>
         <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha256-/SIrNqv8h6QGKDuNoLGA4iret+kyesCkHGzVUUV0shc=" crossorigin="anonymous"></script>
         <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"/>
@@ -118,7 +122,6 @@
   </xsl:template>
 
   <xsl:template match="field">
-    <li>
       <xsl:element name="input">
         <xsl:copy-of select="node/@*"/>
         <xsl:copy-of select="../../@data-idx"/>
@@ -126,7 +129,6 @@
         <xsl:attribute name="type">range</xsl:attribute>
         <xsl:attribute name="value"><xsl:apply-templates/></xsl:attribute>
       </xsl:element>
-    </li>
   </xsl:template>
 
   <xsl:template match="*">

@@ -87,6 +87,18 @@ MENU(subMenu,"Sub-Menu",showEvent,anyEvent,noStyle
   ,EXIT("<Back")
 );
 
+uint16_t year=2017;
+uint16_t month=10;
+uint16_t day=7;
+
+//define a pad style menu (single line menu)
+//here with a set of fields to enter a date in YYYY/MM/DD format
+altMENU(menu,birthDate,"Birth",doNothing,noEvent,noStyle,_asPad
+  ,FIELD(year,"","/",1900,3000,20,1,doNothing,noEvent,noStyle)
+  ,FIELD(month,"","/",1,12,1,0,doNothing,noEvent,wrapStyle)
+  ,FIELD(day,"","",1,31,1,0,doNothing,noEvent,wrapStyle)
+);
+
 char* constMEM hexDigit MEMMODE="0123456789ABCDEF";
 char* constMEM hexNr[] MEMMODE={"0","x",hexDigit,hexDigit};
 char buf1[]="0x11";
@@ -103,6 +115,7 @@ MENU(mainMenu,"Main menu",zZz,noEvent,wrapStyle
   ,SUBMENU(chooseMenu)
   ,OP("Alert test",doAlert,enterEvent)
   ,EDIT("Hex",buf1,hexNr,doNothing,noEvent,noStyle)
+  //,SUBMENU(birthDate)
   ,EXIT("<Back")
 );
 
