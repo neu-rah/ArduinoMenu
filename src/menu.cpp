@@ -495,20 +495,22 @@ navCmd navNode::doNavigation(navCmd cmd) {
   idx_t nsel=sel;
   navCmd rCmd=cmd;
   switch(cmd.cmd) {
-    /*case scrlUpCmd:
-      if (!target->isVariant())
-        root->out.doNav(cmd,*this);*/
-    case downCmd:
-      nsel--;
-      if (nsel<0) {if(wrap()) nsel=sz()-1; else nsel=0;}
-      break;
     /*case scrlDownCmd:
       if (!target->isVariant())
         root->out.doNav(cmd,*this);*/
     case upCmd:
-      nsel++;
-      if (nsel>=sz()) {if(wrap()) nsel=0; else nsel=sz()-1;}
-      break;
+        nsel++;
+        if (nsel>=sz()) {if(wrap()) nsel=0; else nsel=sz()-1;}
+        break;
+      /*case scrlUpCmd:
+        if (!target->isVariant())
+          root->out.doNav(cmd,*this);*/
+    case downCmd:
+      if (nsel||!target->is(_asPad)) {
+        nsel--;
+        if (nsel<0) {if(wrap()) nsel=sz()-1; else nsel=0;}
+        break;
+      }
     case escCmd:
       assert(root);
       rCmd=root->exit();
