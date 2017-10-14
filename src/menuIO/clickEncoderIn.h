@@ -87,6 +87,8 @@ ex: -A0 means: pin A0 normally high, low when button pushed (reverse logic)
         if (btn == ClickEncoder::DoubleClicked)
           return options->navCodes[escCmd].ch;//menu::escCode;
 
+        btn=ClickEncoder::Open;//2017, must consume not used input to proceed
+
         int d = pos - oldPos;
         if (d <= -sensivity)
             return options->navCodes[downCmd].ch;//menu::downCode;
