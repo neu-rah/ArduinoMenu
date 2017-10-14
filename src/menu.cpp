@@ -195,7 +195,8 @@ Used outputsList::printMenu(navNode& nav) const {
   trace(Serial<<"outputsList::printMenu"<<endl);
   for(int n=0;n<cnt;n++) {
     menuOut& o=*((menuOut*)memPtr(outs[n]));
-    if (nav.changed(o)||(o.style&(menuOut::rasterDraw))) o.printMenu(nav);
+    if (nav.changed(o)||(o.style&(menuOut::rasterDraw)))
+      o.printMenu(nav);
   }
   clearChanged(nav);
   trace(Serial<<"outputsList::printMenu ended!"<<endl);
@@ -406,21 +407,23 @@ Used menuOut::printMenu(navNode &nav,idx_t panelNr) {
 //
 ////////////////////////////////////////////////////////////////////////////////
 bool menuNode::changed(const navNode &nav,const menuOut& out,bool sub) {
-  trace(Serial<<"menuNode::changed"<<endl);
+  trace(Serial<<*this<<" menuNode::changed"<<endl);
   bool appd=is((systemStyles)(_asPad|_parentDraw));
-  if (nav.target!=this&&!appd) return dirty;// second hand check, just report self
   if (dirty) return true;
   if (appd) {
     for(int i=0;i<sz();i++)
-      if (operator[](i).changed(nav,out,false)) return true;
+      if (operator[](i).changed(nav,out,false))
+        return true;
   } else {
+    if (!(nav.target==this&&sub)) return dirty;// second hand check, just report self
     idx_t level=nav.root->level;
-    if (nav.root->active().parentDraw()) level--;
+    if (parentDraw())
+      return nav.root->path[level-1].target->changed(nav.root->path[level-1],out,sub);
+    idx_t my=out.maxY()-((has(showTitle)||(nav.root->showTitle&&!has(noTitle)))?1:0);
     idx_t t=out.tops[level];
-    if (sub) for(int i=0;i<out.maxY();i++,t++) {
-      if (t>=nav.sz()) break;
-      bool c=operator[](t).changed(nav,out,false);
-      if (c) return true;
+    if (sub) for(int i=0;i<my;i++,t++) {
+      if (t>=sz()) break;
+      if (operator[](t).changed(nav,out,false)) return true;
     }
   }
   return false;
@@ -431,17 +434,19 @@ void menuOut::clearChanged(navNode &nav) {
 }
 
 void menuNode::clearChanged(const navNode &nav,const menuOut& out,bool sub) {
-  trace(Serial<<"menuOut::clearChanged"<<endl);
+  trace(Serial<<endl<<*this<<" menuOut::clearChanged "<<nav);
   dirty=false;
   if (is((systemStyles)(_asPad|_parentDraw))) {
     for(int i=0;i<sz();i++)
       operator[](i).clearChanged(nav,out,false);
   } else {
-    if (nav.target!=this) return;
+    if (!(nav.target==this&&sub)) return;
     idx_t level=nav.root->level;
-    if (parentDraw()) level--;
+    if (parentDraw())
+      return nav.root->path[level-1].target->clearChanged(nav.root->path[level-1],out,sub);
+    idx_t my=out.maxY()-((has(showTitle)||(nav.root->showTitle&&!has(noTitle)))?1:0);
     idx_t t=out.tops[level];
-    for(idx_t i=0;i<out.maxY();i++,t++) {//only signal visible
+    for(idx_t i=0;i<my;i++,t++) {//only signal visible
       if (t>=sz()) break;//menu ended
       operator[](t).clearChanged(nav,out,false);
     }

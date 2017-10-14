@@ -33,6 +33,8 @@ for correcting unsigned values validation
   #endif
   #ifdef DEBUG
     #define _trace(x) x
+  #else
+    #define _trace(x)
   #endif
 
   namespace Menu {
@@ -729,6 +731,7 @@ for correcting unsigned values validation
 
         //async printMenu on arbitrary menuOut device
         Used printMenu(menuOut& o) const {
+          _trace(Serial<<"navRoot::printMenu(menuOut& o)"<<endl);
           if ((active().sysStyles()&_parentDraw)&&level)
             return o.printMenu(path[level-1]);
           else return o.printMenu(node());
@@ -823,7 +826,10 @@ for correcting unsigned values validation
     idx_t& menuOut::top(navNode& nav) const {return tops[nav.root->level];}
 
     #ifdef DEBUG
-    inline String& operator<<(String &s,prompt &p) {return s+=p.getText();}
+      inline String& operator<<(String&s,prompt &p) {return s+=p.getText();}
+      inline Stream& operator<<(Stream&o,prompt& p) {print_P(o,p.getText());return o;}
+      inline Stream& operator<<(Stream&o,const navNode& p) {return o<<*p.target;}
+      inline Stream& operator<<(Stream&o,const navRoot& p) {return o<<p.node();}
     #endif
   }//namespace Menu
 
