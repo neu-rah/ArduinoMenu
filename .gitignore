@@ -3,7 +3,7 @@
 .gcc-flags.json
 .piolibdeps
 src/main.cpp
-examples/debug
+/debug
 lib
 .travis.yml
 !/.travis.yml

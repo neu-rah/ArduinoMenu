@@ -115,7 +115,7 @@ CHOOSE(chooseTest,chooseMenu,"Choose",doNothing,noEvent,noStyle
 
 int timeOn=50;
 void updAnalog() {
-  analogWrite(ANALOG_PIN,map(timeOn,0,100,0,PWMRANGE));
+  analogWrite(ANALOG_PIN,map(timeOn,0,100,0,255/*PWMRANGE*/));
 }
 
 //the menu
@@ -268,8 +268,9 @@ bool handleMenu(){
 void setup(){
   pinMode(LEDPIN,OUTPUT);
   updLed();
+  analogWriteRange(1023);
   pinMode(ANALOG_PIN,OUTPUT);
-  analogWriteRange(255);
+  updAnalog();
   //options=&myOptions;//menu options
   Serial.begin(115200);
   while(!Serial)

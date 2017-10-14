@@ -19,7 +19,8 @@ for correcting unsigned values validation
   #define RSITE_ARDUINO_MENU_SYSTEM
   #include <Arduino.h>
   #if defined(DEBUG) //!defined(ArduinoStream_h)
-    #include <Streaming.h>
+    //#include <Streaming.h>
+    #include <streamFlow.h>
   #endif
   #include "menuBase.h"
   #include "shadows.h"

@@ -1,5 +1,14 @@
 Arduino Menu Library
 
+- Web menu: index all handlers and let web call them by ID (forget the parser)
+  => how to index to a field value? handlers should have received the values => templates :S
+  feedback, use the same schema ids should update the state on a permanent web page
+  updates should be requested by the client along with the current page url/path (navNode)
+  then javascript should update the values received by id.
+  - constructing the callback table...
+    a)   navRoot.begin() but then webmenu had to register
+    b) * use esp8266Out.begin()
+
 - pad menu should exit at left (the least)
   => can have edit blocks (non-preview)
 - implement dynamic attribute hidden and edit (only appears on edit)

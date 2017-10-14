@@ -40,8 +40,8 @@ ex: -A0 means: pin A0 normally high, low when button pushed (reverse logic)
 
       //emulate a stream based on clickEncoder movement returning +/- for every 'sensivity' steps
       //buffer not needer because we have an accumulator
-      class ClickEncoderStream:public menuIn {
-        public:
+    class ClickEncoderStream:public menuIn {
+      public:
         ClickEncoder &enc; //associated hardware clickEncoder
         int8_t sensivity;
         int oldPos;
@@ -49,20 +49,20 @@ ex: -A0 means: pin A0 normally high, low when button pushed (reverse logic)
         ClickEncoder::Button btn;
 
         inline void update() {
-            pos += enc.getValue();
+          pos += enc.getValue();
 
-            if (btn == ClickEncoder::Open)
-                btn = enc.getButton();
+          if (btn == ClickEncoder::Open)//do not override previous input
+            btn = enc.getButton();
         }
 
         ClickEncoderStream(ClickEncoder &enc,int sensivity)
-        :enc(enc),
-        sensivity(sensivity),
-        oldPos(0),
-        pos(0),
-        btn(ClickEncoder::Open) {
+          :enc(enc),
+          sensivity(sensivity),
+          oldPos(0),
+          pos(0),
+          btn(ClickEncoder::Open) {
             pos = enc.getValue();
-        }
+          }
 
 
         inline void setSensivity(int s) {
@@ -74,20 +74,21 @@ ex: -A0 means: pin A0 normally high, low when button pushed (reverse logic)
         }
 
         int peek(void) {
-        update();
+          update();
+          if (btn == ClickEncoder::Clicked)
+            return options->navCodes[enterCmd].ch;//menu::enterCode;
 
-        if (btn == ClickEncoder::Clicked)
-          return options->navCodes[enterCmd].ch;//menu::enterCode;
+          if (btn == ClickEncoder::DoubleClicked)
+            return options->navCodes[escCmd].ch;//menu::escCode;
 
-        if (btn == ClickEncoder::DoubleClicked)
-          return options->navCodes[escCmd].ch;//menu::escCode;
+          btn=ClickEncoder::Open;//2017, must consume not used input to proceed
 
-        int d = pos - oldPos;
-        if (d <= -sensivity)
-            return options->navCodes[downCmd].ch;//menu::downCode;
-        if (d >= sensivity)
-            return options->navCodes[upCmd].ch;//menu::upCode;
-        return -1;
+          int d = pos - oldPos;
+          if (d <= -sensivity)
+              return options->navCodes[downCmd].ch;//menu::downCode;
+          if (d >= sensivity)
+              return options->navCodes[upCmd].ch;//menu::upCode;
+          return -1;
         }
 
         int read()
@@ -102,6 +103,7 @@ ex: -A0 means: pin A0 normally high, low when button pushed (reverse logic)
         }
 
         void flush() {
+            btn=ClickEncoder::Open;//2017 clear current key
             update();
             oldPos = pos;
         }

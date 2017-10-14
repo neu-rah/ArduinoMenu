@@ -157,6 +157,7 @@ Menu::utftOut id##n(gfx,color,id##Tops##n,id##Panels##n,fontW,fontH);
 Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
 
 #define MENU(id,text,aFn,mask,style,...) altMENU(Menu::menu,id,text,aFn,mask,style,(Menu::_menuData|Menu::_canNav),__VA_ARGS__)
+#define PADMENU(id,text,aFn,mask,style,...) altMENU(Menu::menu,id,text,aFn,mask,style,(Menu::_asPad|Menu::_menuData|Menu::_canNav|Menu::_parentDraw),__VA_ARGS__)
 #define altMENU(objType,id,text,aFn,mask,style,ss,...)\
   FOR_EACH(DECL,__VA_ARGS__)\
   constMEM char id##_text[] MEMMODE=text;\
