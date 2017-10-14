@@ -30,20 +30,6 @@ idx_t Menu::print_P(Print& s,const char* at,idx_t len) {
   return at-p-1;
 }
 
-/*static const char* cmdNames[] MEMMODE={"noCmd","escCmd","enterCmd","upCmd","downCmd","leftCmd","rightCmd","idxCmd","selCmd","scrlUpCmd","scrlDownCmd"};
-navCmds Menu::getCmd(String &name) {
-  for(int n=0;n<sizeof(cmdNames)/sizeof(char*);n++)
-    if (name==cmdNames[n]) return (navCmds)n;
-  return noCmd;
-}*/
-
-#ifdef DEBUG
-Print& Menu::operator<<(Print& o,prompt const &p) {
-  print_P(o,p.getText());
-  return o;
-}
-#endif
-
 const navCodesDef Menu::defaultNavCodes={
   {noCmd,(char)0xff},
   {escCmd,'/'},

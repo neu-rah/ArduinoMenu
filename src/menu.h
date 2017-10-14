@@ -18,13 +18,11 @@ for correcting unsigned values validation
 #ifndef RSITE_ARDUINO_MENU_SYSTEM
   #define RSITE_ARDUINO_MENU_SYSTEM
   #include <Arduino.h>
-  #if defined(DEBUG) //!defined(ArduinoStream_h)
-    //#include <Streaming.h>
+  #if defined(DEBUG)
     #include <streamFlow.h>
   #endif
   #include "menuBase.h"
   #include "shadows.h"
-  //#include "dyn.h"
 
   #if defined(DEBUG) && defined(TRACE)
     #define trace(x) x
@@ -42,20 +40,6 @@ for correcting unsigned values validation
     static constMEM char* numericChars="0123456789.";
 
     #define _MAX(a,b) (((a)>(b))?(a):(b))
-    //#if defined(ESP8266)
-    //#if !defined(endl)
-    // #if !defined(ARDUINO_STREAMING) || !defined(ArduinoStream_h)
-    //   #define endl "\r\n"
-    // #endif
-    // Streams
-    //////////////////////////////////////////////////////////////////////////
-    #ifdef DEBUG
-    //template<typename T> inline Print& operator<<(Print& o, T t) {o.print(t);return o;}
-    Print& operator<<(Print& o,prompt const &p);
-    inline String& operator<<(String &s,prompt &p);
-    //template<typename T> HardwareSerial& operator<<(HardwareSerial& o,T t) {o.print(t);return o;}
-    //template<typename T> inline menuOut& operator<<(menuOut& o,const T x) {return o.operator<<(x);}
-    #endif
 
     // Menu objects and data
     //////////////////////////////////////////////////////////////////////////

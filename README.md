@@ -208,15 +208,14 @@ Web browser (experimental) when using ESP devices
 ## Dependencies
 This library depends on the following libraries:
 
-- Streaming https://github.com/scottdky/Streaming (on debug mode)
-- Assert4a https://github.com/nettigo/Assert4a (on debug mode)
+- streamFlow https://github.com/neu-rah/streamFlow (on debug mode)
 
 Depending on the type of input or output, other libraries might be needed. Essentially any library needed for your devices.
 
 ## Limits
 
 - when using macros the menu is limited to 16 options (current macro limnit).
-- menus **must** have at least 2 options.
+- menus **must** have at least 2 options when built using macros.
 - maximum 127 options.
 - fast access (numeric keys) only supports 9 options (1 to 9)
 - prompts can overflow on panels with less than 4 characters width
@@ -255,7 +254,7 @@ multiple stream packing for input to mix encoder stream with encoder keyboard (u
   - More examples
   - Text edit fields with validation *
   - Pad style menus (horizontal list)
-  - inline pad menus can input custom formats like IP/Date/Time, experimental and just for devices that can position a cursor 
+  - inline pad menus can input custom formats like IP/Date/Time, experimental and just for devices that can position a cursor
   - Plugins, alternative menu items potentially device specific
   - Allow multiple concurrent menus
   - Support UCGLib displays
