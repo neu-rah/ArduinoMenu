@@ -227,17 +227,24 @@ MENU(subMenu,"Sub-Menu",doNothing,noEvent,noStyle
   ,EXIT("<Back")
 );
 
-// extern menu mainMenu;
-// TOGGLE((mainMenu[1].enabled),togOp,"Op 2:",doNothing,noEvent,noStyle
-//   ,VALUE("Enabled",enabledStatus,doNothing,noEvent)
-//   ,VALUE("disabled",disabledStatus,doNothing,noEvent)
-// );
+uint16_t year=2017;
+uint16_t month=10;
+uint16_t day=7;
+
+//define a pad style menu (single line menu)
+//here with a set of fields to enter a date in YYYY/MM/DD format
+altMENU(menu,birthDate,"Birth",doNothing,noEvent,noStyle,(systemStyles)(_asPad|Menu::_menuData|Menu::_canNav|_parentDraw)
+  ,FIELD(year,"","/",1900,3000,20,1,doNothing,noEvent,noStyle)
+  ,FIELD(month,"","/",1,12,1,0,doNothing,noEvent,wrapStyle)
+  ,FIELD(day,"","",1,31,1,0,doNothing,noEvent,wrapStyle)
+);
 
 char* constMEM hexDigit MEMMODE="0123456789ABCDEF";
 char* constMEM hexNr[] MEMMODE={"0","x",hexDigit,hexDigit};
 char buf1[]="0x11";
 
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
+  ,SUBMENU(birthDate)
   ,OP("Op1",action1,anyEvent)
   ,OP("Op2",action2,enterEvent)
   //,SUBMENU(togOp)

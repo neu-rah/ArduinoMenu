@@ -10,7 +10,7 @@
     this is usefull for develop/debug
     to use external server the browser must be intructed to accept cross domain files
   -->
-  <xsl:variable name="auxFilesSrc">http://neurux:8080</xsl:variable>
+  <xsl:variable name="auxFilesSrc"></xsl:variable>
 
   <xsl:template match="/">
     <html>
@@ -45,7 +45,7 @@
             <div class="cover-container">
               <div class="masthead clearfix">
                 <div class="inner">
-                  <h3 class="masthead-brand">ArduinoMenu library</h3>
+                  <a href="/"><h3 class="masthead-brand">ArduinoMenu library</h3></a>
                   <nav>
                     <ul class="nav masthead-nav">
                       <li class="active"><a href="https://github.com/neu-rah/ArduinoMenu">Home</a></li>
@@ -57,7 +57,8 @@
               </div>
 
               <div class="inner cover">
-                <h2><img src="logo.png" height="48px"/>on ESP8266 (dev mode!)</h2>
+                <h2><img src="logo.png" height="48px"/>on ESP8266</h2>
+                (dev mode!)
                 <xsl:apply-templates/>
               </div>
 

@@ -22,10 +22,6 @@ www.r-site.net
   #endif
 
   #include <Arduino.h>
-  //#include <Streaming.h>//https://github.com/scottdky/Streaming
-  #ifndef ARDUINO_SAM_DUE
-    //#include <Assert4a.h> //https://github.com/nettigo/Assert4a
-  #endif
   #define assert(x)
   #include "macros.h"
 

@@ -18,12 +18,11 @@ for correcting unsigned values validation
 #ifndef RSITE_ARDUINO_MENU_SYSTEM
   #define RSITE_ARDUINO_MENU_SYSTEM
   #include <Arduino.h>
-  #if defined(DEBUG) //!defined(ArduinoStream_h)
-    #include <Streaming.h>
+  #if defined(DEBUG)
+    #include <streamFlow.h>
   #endif
   #include "menuBase.h"
   #include "shadows.h"
-  //#include "dyn.h"
 
   #if defined(DEBUG) && defined(TRACE)
     #define trace(x) x
@@ -32,6 +31,8 @@ for correcting unsigned values validation
   #endif
   #ifdef DEBUG
     #define _trace(x) x
+  #else
+    #define _trace(x)
   #endif
 
   namespace Menu {
@@ -39,20 +40,6 @@ for correcting unsigned values validation
     static constMEM char* numericChars="0123456789.";
 
     #define _MAX(a,b) (((a)>(b))?(a):(b))
-    //#if defined(ESP8266)
-    //#if !defined(endl)
-    // #if !defined(ARDUINO_STREAMING) || !defined(ArduinoStream_h)
-    //   #define endl "\r\n"
-    // #endif
-    // Streams
-    //////////////////////////////////////////////////////////////////////////
-    #ifdef DEBUG
-    //template<typename T> inline Print& operator<<(Print& o, T t) {o.print(t);return o;}
-    Print& operator<<(Print& o,prompt const &p);
-    inline String& operator<<(String &s,prompt &p);
-    //template<typename T> HardwareSerial& operator<<(HardwareSerial& o,T t) {o.print(t);return o;}
-    //template<typename T> inline menuOut& operator<<(menuOut& o,const T x) {return o.operator<<(x);}
-    #endif
 
     // Menu objects and data
     //////////////////////////////////////////////////////////////////////////
@@ -728,6 +715,7 @@ for correcting unsigned values validation
 
         //async printMenu on arbitrary menuOut device
         Used printMenu(menuOut& o) const {
+          _trace(Serial<<"navRoot::printMenu(menuOut& o)"<<endl);
           if ((active().sysStyles()&_parentDraw)&&level)
             return o.printMenu(path[level-1]);
           else return o.printMenu(node());
@@ -822,7 +810,10 @@ for correcting unsigned values validation
     idx_t& menuOut::top(navNode& nav) const {return tops[nav.root->level];}
 
     #ifdef DEBUG
-    inline String& operator<<(String &s,prompt &p) {return s+=p.getText();}
+      inline String& operator<<(String&s,prompt &p) {return s+=p.getText();}
+      inline Stream& operator<<(Stream&o,prompt& p) {print_P(o,p.getText());return o;}
+      inline Stream& operator<<(Stream&o,const navNode& p) {return o<<*p.target;}
+      inline Stream& operator<<(Stream&o,const navRoot& p) {return o<<p.node();}
     #endif
   }//namespace Menu
 

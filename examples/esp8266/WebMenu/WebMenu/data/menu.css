@@ -1,12 +1,24 @@
-/*
- * Globals
- */
+html,
+body {
+  height: 100%;
+  background-color: #132;
+}
+body {
+  color: #fff;
+  text-align: center;
+  text-shadow: 0 1px 3px rgba(0,0,0,.5);
+  font-size: 18px;
+}
 
 /* Links */
 a,
 a:focus,
 a:hover {
   color: #fff;
+}
+
+.aml_op {
+  font-size:1.3em;
 }
 
 .actionBtn {
@@ -38,17 +50,6 @@ input[type=range] {
 /*
  * Base structure
  */
-
-html,
-body {
-  height: 100%;
-  background-color: #132;
-}
-body {
-  color: #fff;
-  text-align: center;
-  text-shadow: 0 1px 3px rgba(0,0,0,.5);
-}
 
 select {color: black;}
 
@@ -84,11 +85,15 @@ select {color: black;}
   margin-bottom: 10px;
 }
 
+ul {
+  list-style-type: none;
+}
+
 .masthead-nav > li {
   display: inline-block;
 }
 .masthead-nav > li + li {
-  margin-left: 20px;
+  margin-left: 0.5em;
 }
 .masthead-nav > li > a {
   padding-right: 0;

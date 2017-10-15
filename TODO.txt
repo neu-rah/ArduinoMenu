@@ -1,36 +1,48 @@
 Arduino Menu Library
 
-- pad menu should exit at left (the least)
-  => can have edit blocks (non-preview)
-- implement dynamic attribute hidden and edit (only appears on edit)
-- central menu init
-  => check's ex: if numeric input available then output numeric indexes
-+1 padMenu: printMenu needs to return idx_t instead of void
-  => why not an area? because it would send menu to a 2d thing.. .and its already huge for AVR's
-    and using and area => that all printTo had to return an area
-  - done so on a dumb mode where int means width and using original width return
-    change it later to width,height
--2 mark exit options
-  -> then we can zero index them
-  -> can omit them on in-line pad preview
-  => abandoned! options are marked with _Exit system style but no more
-    because kb accels would go very complicated
+- password fields
+- scroll long prompts (not for serial)
+- allow disabled items to receive events! for help print purposes
+- support frames
+- explore arrow keys for ansiSerial
+- alternative keys example
 - freelancer fields (can be polled without a menu structure, or a singular menu struct)
   =>navNode needed to point o navTarget instead of menuNode <- NOT!
   =>use an one option menu
     - support 1 option menu on macros
 - use formatters for color application
-+ remove title brackets
 - detach panels from output, instead panels should be a gateway for output!
-  => primary source continues to be the output definition
-- scroll long prompts (not for serial)
-- allow disabled items to receive events! for help print purposes
+- Web menu: index all handlers and let web call them by ID (forget the parser)
+  => how to index to a field value? handlers should have received the values => templates :S
+  feedback, use the same schema ids should update the state on a permanent web page
+  updates should be requested by the client along with the current page url/path (navNode)
+  then javascript should update the values received by id.
+  - constructing the callback table...
+    a)   navRoot.begin() but then webmenu had to register
+    b) * use esp8266Out.begin()
+
+- central menu init by calling menu begin
+  => check's ex: if numeric input available then output numeric indexes
 - help texts
   => multi-line fields to combine with menu preview
-- password fields
-- support frames
-- explore arrow keys for ansiSerial
-- alternative keys example
+- implement dynamic attribute hidden and edit (only appears on edit)
+
+
+DONE:
++ pad menu should exit at left (the least)
+  ? can have edit blocks (non-preview) => require new attribute
++ padMenu: printMenu needs to return idx_t instead of void
+  => why not an area? because it would send menu to a 2d thing.. .and its already huge for AVR's
+    and using and area => that all printTo had to return an area
+  - done so on a dumb mode where int means width and using original width return
+    change it later to width,height
+x mark exit options
+  -> then we can zero index them
+  -> can omit them on in-line pad preview
+  => abandoned! options are marked with _Exit system style but no more
+    because kb accels would go very complicated
+  => primary source of panels continues to be the output definition
++ remove title brackets
 + separate functions as parentDraw, isMenu, asPad, etc... are inefficient
   => added `is` and `has` functions to deal with systemStyles, styles and events
 + check uint8_t types -> wrap and non-wrap ok
