@@ -113,7 +113,7 @@ char buf1[]="0x11";
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,OP("Op1",doNothing,noEvent)
   ,OP("Op2",doNothing,noEvent)
-  ,FIELD(test,"Test","%",0,100,10,1,doNothing,noEvent,wrapStyle)
+  // ,FIELD(test,"Test","%",0,100,10,1,doNothing,noEvent,wrapStyle)
   ,SUBMENU(subMenu)
   ,SUBMENU(setLed)
   ,OP("LED On",ledOn,enterEvent)

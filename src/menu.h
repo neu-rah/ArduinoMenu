@@ -19,7 +19,12 @@ for correcting unsigned values validation
   #define RSITE_ARDUINO_MENU_SYSTEM
   #include <Arduino.h>
   #if defined(DEBUG)
-    #include <streamFlow.h>
+    // #ifdef _U8G2LIB_HH
+      //because U8G2 already uses Streaming
+      #include <Streaming.h>
+    // #else
+      // #include <streamFlow.h>
+    // #endif
   #endif
   #include "menuBase.h"
   #include "shadows.h"
@@ -80,12 +85,15 @@ for correcting unsigned values validation
         inline bool is(eventMask chk) const {return (events()&chk)==chk;}
         inline bool has(eventMask chk) const {return events()&chk;}
 
+
         inline bool canWrap() const {return style()&wrapStyle;}
         inline bool canNav() const {return sysStyles()&_canNav;}//can receive navigation focus and process keys
         inline bool isMenu() const {return sysStyles()&_menuData;}//has menu data list and can be a navNode target
         inline bool isVariant() const {return sysStyles()&_isVariant;}//a menu as an enumerated field, connected to a variable value
         inline bool parentDraw() const {return sysStyles()&_parentDraw;}//a menu as an enumerated field, connected to a variable value
         inline bool asPad() const {return sysStyles()&_asPad;}//a menu as an enumerated field, connected to a variable value
+        inline bool hasTitle(navNode& nav) const;
+
         virtual Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr=0);//raw print to output device
         virtual bool changed(const navNode &nav,const menuOut& out,bool sub=true) {return dirty;}
         //this is the system version of enter handler, its used by elements like toggle
@@ -574,22 +582,22 @@ for correcting unsigned values validation
         void refresh() {//force redraw of all outputs on next output call
           for(int n=0;n<cnt;n++) ((menuOut*)memPtr(outs[n]))->drawn=NULL;
         }
-        void clearLine(idx_t ln,idx_t panelNr=0,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus) const {
-          for(int n=0;n<cnt;n++) ((menuOut*)memPtr(outs[n]))->clearLine(ln,panelNr,color,selected,stat);
-        }
+        // void clearLine(idx_t ln,idx_t panelNr=0,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus) const {
+        //   for(int n=0;n<cnt;n++) ((menuOut*)memPtr(outs[n]))->clearLine(ln,panelNr,color,selected,stat);
+        // }
         void clearChanged(navNode& nav) const {
           for(int n=0;n<cnt;n++) ((menuOut*)memPtr(outs[n]))->clearChanged(nav);
         }
         void clear() {for(int n=0;n<cnt;n++) ((menuOut*)memPtr(outs[n]))->clear();}
-        void setCursor(idx_t x,idx_t y) {
-          for(int n=0;n<cnt;n++) ((menuOut*)memPtr(outs[n]))->setCursor(x,y);
-        }
-        void setColor(colorDefs c,bool selected=false,status s=enabledStatus) {
-          for(int n=0;n<cnt;n++) ((menuOut*)memPtr(outs[n]))->setColor(c,selected,s);
-        }
-        void drawCursor(idx_t ln,bool selected,status stat,idx_t panelNr=0) {
-          for(int n=0;n<cnt;n++) ((menuOut*)memPtr(outs[n]))->drawCursor(ln,selected,stat,panelNr);
-        }
+        // void setCursor(idx_t x,idx_t y) {
+        //   for(int n=0;n<cnt;n++) ((menuOut*)memPtr(outs[n]))->setCursor(x,y);
+        // }
+        // void setColor(colorDefs c,bool selected=false,status s=enabledStatus) {
+        //   for(int n=0;n<cnt;n++) ((menuOut*)memPtr(outs[n]))->setColor(c,selected,s);
+        // }
+        // void drawCursor(idx_t ln,bool selected,status stat,idx_t panelNr=0) {
+        //   for(int n=0;n<cnt;n++) ((menuOut*)memPtr(outs[n]))->drawCursor(ln,selected,stat,panelNr);
+        // }
         void doNav(navCmd cmd,class navNode &nav) {for(int n=0;n<cnt;n++) ((menuOut*)memPtr(outs[n]))->doNav(cmd,nav);}
         result idle(idleFunc f,idleEvent e) {
           #ifdef DEBUG
@@ -677,7 +685,7 @@ for correcting unsigned values validation
           for(idx_t n=0;n<=d;n++)//initialize path chain for this root (v4.0)
             path[n].root=this;
         }
-        void useMenu(constMEM menuNode &menu) {
+        void useMenu(menuNode &menu) {
           navFocus=&menu;
           path[0].target=&menu;
           reset();
@@ -812,7 +820,7 @@ for correcting unsigned values validation
     #ifdef DEBUG
       inline String& operator<<(String&s,prompt &p) {return s+=p.getText();}
       inline Stream& operator<<(Stream&o,prompt& p) {print_P(o,p.getText());return o;}
-      inline Stream& operator<<(Stream&o,const navNode& p) {return o<<*p.target;}
+      inline Stream& operator<<(Stream&o,const navNode& p) {return o<<*(prompt*)p.target;}
       inline Stream& operator<<(Stream&o,const navRoot& p) {return o<<p.node();}
     #endif
   }//namespace Menu

@@ -1,5 +1,10 @@
 Arduino Menu Library
 
+- put navRoot.sleepTask as protected and add `bool suspended()` function
+- make clipping out of menu logic! check with hardware on gfx
+  => do so with panels independence!
+- simplify showTitle! current requires checking root and local overrides (and to be correct output size)
+- use setFont (API extension)
 - password fields
 - scroll long prompts (not for serial)
 - allow disabled items to receive events! for help print purposes
@@ -20,7 +25,10 @@ Arduino Menu Library
   - constructing the callback table...
     a)   navRoot.begin() but then webmenu had to register
     b) * use esp8266Out.begin()
-
+  -problems:
+    index what? actions, prompts? fields are templates!
+    the esp8266Out is not related to a menu
+    => put the table into navRoot... but only if we have a web output
 - central menu init by calling menu begin
   => check's ex: if numeric input available then output numeric indexes
 - help texts
