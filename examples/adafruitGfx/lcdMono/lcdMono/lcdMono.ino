@@ -63,12 +63,17 @@ TOGGLE(ledCtrl,setLed,"Led: ",doNothing,noEvent,noStyle//,doExit,enterEvent,noSt
   ,VALUE("Off",LOW,doNothing,noEvent)
 );
 
+char* constMEM hexDigit MEMMODE="0123456789ABCDEF";
+char* constMEM hexNr[] MEMMODE={"0","x",hexDigit,hexDigit};
+char buf1[]="0x11";
+
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,FIELD(test,"Test","%",0,100,10,1,doNothing,noEvent,wrapStyle)
   ,SUBMENU(setLed)
   ,OP("LED On",ledOn,enterEvent)
   ,OP("LED Off",ledOff,enterEvent)
   ,OP("Alert test",doAlert,enterEvent)
+  ,EDIT("Hex",buf1,hexNr,doNothing,noEvent,noStyle)
   ,EXIT("<Back")
 );
 
@@ -86,7 +91,8 @@ const colorDef<uint16_t> colors[] MEMMODE={
 
 #define gfxWidth 84
 #define gfxHeight 48
-#define fontX 5
+#define fontX 6
+//5
 #define fontY 9
 #define MAX_DEPTH 2
 
@@ -182,6 +188,7 @@ void setup() {
   delay(2000);
   gfx.clearDisplay();
   gfx.display(); // show splashscreen
+  // gfx.drawRect(0, 0, 84, 48, 1);
 }
 
 void loop() {

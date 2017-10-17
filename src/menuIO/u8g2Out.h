@@ -68,12 +68,12 @@ namespace Menu {
 			}
 			void box(idx_t panelNr,idx_t x,idx_t y,idx_t w=1,idx_t h=1,colorDefs c=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) override {
 				const panel p=panels[panelNr];
-				gfx.drawFrame((p.x+x)*resX,(p.y+y-1)*resY,w*resX,h*resY/*+(fontMarginY<<1)*/);
+				gfx.drawFrame((p.x+x)*resX,(p.y+y)*resY,w*resX,h*resY/*+(fontMarginY<<1)*/);
 			}
 
 			void rect(idx_t panelNr,idx_t x,idx_t y,idx_t w=1,idx_t h=1,colorDefs c=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) override {
 				const panel p=panels[panelNr];
-				gfx.drawBox((p.x+x)*resX,(p.y+y-1)*resY,w*resX,h*resY/*+(fontMarginY<<1)*/);
+				gfx.drawBox((p.x+x)*resX,(p.y+y)*resY,w*resX,h*resY/*+(fontMarginY<<1)*/);
 			}
 
 			void setCursor(idx_t x,idx_t y,idx_t panelNr=0) override {
@@ -83,6 +83,7 @@ namespace Menu {
 			}
 
 			void drawCursor(idx_t ln,bool selected,status stat,bool edit=false,idx_t panelNr=0) override {
+				Serial<<"drawCursor ln:"<<ln<<endl;
 				const panel p=panels[panelNr];
 				gfxOut::drawCursor(ln,selected,stat);
 				setColor(cursorColor,selected,stat);

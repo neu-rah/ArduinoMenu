@@ -11,23 +11,20 @@
   #include <ESP8266mDNS.h>
   //#include <Hash.h>
   //#include <FS.h>
+  #include <vector>
+
+  using namespace std;
 
   namespace Menu {
 
     class esp8266Out:public menuOut {
       public:
-        //typedef const char* webColor;
-        //const colorDef<webColor> (&colors)[nColors];
         esp8266Out(
           //const colorDef<webColor> (&c)[nColors],
           idx_t* t,
           panelsList& p,
           menuOut::styles styles=(menuOut::styles)(redraw|expandEnums)
         ):menuOut(t,p,styles) {}
-        //size_t write(uint8_t ch) override {return client->write(ch);}
-        /*inline webColor getColor(colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) const {
-          return (webColor)memPtr(&(stat==enabledStatus?colors[color].enabled[selected+edit]:colors[color].disabled[selected]));
-        }*/
         menuOut& fill(
           int x1, int y1, int x2, int y2,char ch=' ',
           colorDefs color=bgColor,

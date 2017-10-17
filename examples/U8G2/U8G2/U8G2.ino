@@ -63,7 +63,7 @@ using namespace Menu;
 #elif (U8G2OUT==SSD1306)
   #include <Wire.h>
   #define fontName u8g2_font_5x7_tf
-  #define fontX 5
+  #define fontX 6
   #define fontY 8
   #define offsetX 0
   #define offsetY 0
@@ -89,26 +89,7 @@ const colorDef<uint8_t> colors[] MEMMODE={
 
 result doAlert(eventMask e, prompt &item);
 
-result showEvent(eventMask e,navNode& nav,prompt& item) {
-  Serial.print("event: ");
-  Serial.println(e);
-  return proceed;
-}
-
 int test=55;
-
-result action1(eventMask e) {
-  Serial.print(e);
-  Serial.println(" action1 executed, proceed menu");
-  Serial.flush();
-  return proceed;
-}
-
-result action2(eventMask e,navNode& nav, prompt &item) {
-  Serial.print(e);
-  Serial.print(" action2 executed, quiting menu");
-  return quit;
-}
 
 int ledCtrl=HIGH;
 
@@ -141,21 +122,19 @@ CHOOSE(chooseTest,chooseMenu,"Choose",doNothing,noEvent,noStyle
   ,VALUE("Last",-1,doNothing,noEvent)
 );
 
-//customizing a prompt look!
-//by extending the prompt class
-class altPrompt:public prompt {
-public:
-  altPrompt(constMEM promptShadow& p):prompt(p) {}
-  Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr) override {
-    return out.printRaw("special prompt!",len);;
-  }
-};
+// //customizing a prompt look!
+// //by extending the prompt class
+// class altPrompt:public prompt {
+// public:
+//   altPrompt(constMEM promptShadow& p):prompt(p) {}
+//   Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr) override {
+//     return out.printRaw("special prompt!",len);;
+//   }
+// };
 
-MENU(subMenu,"Sub-Menu",showEvent,anyEvent,noStyle
-  ,OP("Sub1",showEvent,anyEvent)
-  ,OP("Sub2",showEvent,anyEvent)
-  ,OP("Sub3",showEvent,anyEvent)
-  ,altOP(altPrompt,"",showEvent,anyEvent)
+MENU(subMenu,"Sub-Menu",doNothing,noEvent,noStyle
+  ,OP("Sub1",doNothing,noEvent)
+  // ,altOP(altPrompt,"",doNothing,noEvent)
   ,EXIT("<Back")
 );
 
@@ -164,9 +143,9 @@ char* constMEM hexNr[] MEMMODE={"0","x",hexDigit,hexDigit};
 char buf1[]="0x11";
 
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
-  ,OP("Op1",action1,anyEvent)
-  ,OP("Op2",action2,enterEvent)
-  ,FIELD(test,"Test","%",0,100,10,1,doNothing,noEvent,wrapStyle)
+  ,OP("Op1",doNothing,noEvent)
+  ,OP("Op2",doNothing,noEvent)
+  //,FIELD(test,"Test","%",0,100,10,1,doNothing,noEvent,wrapStyle)
   ,SUBMENU(subMenu)
   ,SUBMENU(setLed)
   ,OP("LED On",ledOn,enterEvent)
@@ -175,7 +154,7 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,SUBMENU(chooseMenu)
   ,OP("Alert test",doAlert,enterEvent)
   ,EDIT("Hex",buf1,hexNr,doNothing,noEvent,noStyle)
-  ,EXIT("<Back")
+  ,EXIT("<Exit")
 );
 
 #define MAX_DEPTH 2
@@ -243,6 +222,7 @@ void setup() {
   #endif
   u8g2.begin();
   u8g2.setFont(fontName);
+  u8g2.setBitmapMode(0);
 
   //disable second option
   mainMenu[1].enabled=disabledStatus;

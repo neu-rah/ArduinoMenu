@@ -12,6 +12,8 @@ result Menu::inaction(menuOut& o,idleEvent) {
   return proceed;
 }
 
+bool prompt::hasTitle(navNode& nav) const {return (nav.target->has(showTitle)||(nav.root->showTitle&&!nav.target->has(noTitle)));}
+
 idx_t prompt::printRaw(menuOut& out,idx_t len) const {
   trace(Serial<<"prompt::printRaw"<<endl);
   return print_P(out,getText(),len);
@@ -131,18 +133,19 @@ Used textField::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len
     out.write(editing?":":" ");
     l++;
   }
-  idx_t c=l;
+  // idx_t c=l;
   //idx_t top=out.tops[root.level];
-  idx_t tit=root.showTitle?1:0;
-  idx_t line=idx+tit;
+  idx_t tit=hasTitle(root.node())?1:0;
+  idx_t line=idx+tit;//-out.tops[root.level];
   while(buffer()[at]&&l++<len)
     if (at==cursor&&editing) {
-      c=l;
-      l+=out.startCursor(root,c,line,charEdit);//draw textual cursor or color code start
+      // Serial<<"idx:"<<idx<<" line:"<<line<<" at:"<<at<<" l:"<<l<<endl;
+      // c=l+1;
+      l+=out.startCursor(root,l,line,charEdit);//draw textual cursor or color code start
       out.write(buffer()[at++]);//draw focused character
-      l+=out.endCursor(root,c,line,charEdit);//draw textual cursor or color code end
+      l+=out.endCursor(root,l,line,charEdit);//draw textual cursor or color code end
     } else out.write(buffer()[at++]);
-  l+=out.editCursor(root,c,line,editing,charEdit);//reposition a non text cursor
+  l+=out.editCursor(root,l,line,editing,charEdit);//reposition a non text cursor
   return l;
 }
 
