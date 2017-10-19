@@ -44,7 +44,9 @@ for correcting unsigned values validation
     // Menu objects and data
     //////////////////////////////////////////////////////////////////////////
 
-    enum classes {noClass=0,promptClass,textFieldClass,fieldClass,toggleClass,selectClass,chooseClass,valueClass,menuClass};
+    #ifdef MENU_FMT_WRAPS
+      enum classes {noClass=0,promptClass,textFieldClass,fieldClass,toggleClass,selectClass,chooseClass,valueClass,menuClass};
+    #endif
 
     class prompt {
       friend class navNode;
@@ -61,7 +63,9 @@ for correcting unsigned values validation
         }
         virtual void clearChanged(const navNode &nav,const menuOut& out,bool sub)
           {dirty=false;}
-        virtual classes type() const {return promptClass;}
+        #ifdef MENU_FMT_WRAPS
+          virtual classes type() const {return promptClass;}
+        #endif
         inline prompt(constMEM promptShadow& shadow):shadow(&shadow) {}
         inline prompt(constMEM char* t,action a=doNothing,eventMask e=noEvent,styles s=noStyle,systemStyles ss=_noStyle)
           :shadow(new promptShadow(t,a,e,s,ss)) {}
@@ -80,25 +84,27 @@ for correcting unsigned values validation
         inline bool is(eventMask chk) const {return (events()&chk)==chk;}
         inline bool has(eventMask chk) const {return events()&chk;}
 
-
         inline bool canWrap() const {return style()&wrapStyle;}
         inline bool canNav() const {return sysStyles()&_canNav;}//can receive navigation focus and process keys
         inline bool isMenu() const {return sysStyles()&_menuData;}//has menu data list and can be a navNode target
         inline bool isVariant() const {return sysStyles()&_isVariant;}//a menu as an enumerated field, connected to a variable value
         inline bool parentDraw() const {return sysStyles()&_parentDraw;}//a menu as an enumerated field, connected to a variable value
         inline bool asPad() const {return sysStyles()&_asPad;}//a menu as an enumerated field, connected to a variable value
+
         inline bool hasTitle(navNode& nav) const;
 
         virtual Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr=0);//raw print to output device
         virtual bool changed(const navNode &nav,const menuOut& out,bool sub=true) {return dirty;}
         //this is the system version of enter handler, its used by elements like toggle
         virtual result sysHandler(SYS_FUNC_PARAMS) {return proceed;}
-        virtual result eventHandler(eventMask e,navNode& nav,idx_t i) {
+        /*virtual*/ result eventHandler(eventMask e,navNode& nav,idx_t i) {
           return operator()(e,nav,*this);
         }
         inline result operator()(FUNC_PARAMS) const {return (*shadow)(FUNC_VALUES);}
         idx_t printRaw(menuOut& out,idx_t len) const;
-        virtual prompt* seek(idx_t* uri,idx_t len) {return len?NULL:this;}
+        #ifdef MENU_ASYNC
+          virtual prompt* seek(idx_t* uri,idx_t len) {return len?NULL:this;}
+        #endif
         #ifdef MENU_ASYNC
         virtual bool async(const char *uri,navRoot& root,idx_t lvl) {
           return ((!*uri)||(uri[0]=='/'&&!uri[1]));
@@ -107,7 +113,7 @@ for correcting unsigned values validation
 
         //some functions to use on htmlFmt
         // for enumerations:
-        virtual idx_t selected() const {return 0;}
+        //virtual idx_t selected() const {return 0;}
         #ifdef DEBUG
           virtual void printValue(menuOut&) const {}
           virtual void printHigh(menuOut&) const {}
@@ -163,7 +169,9 @@ for correcting unsigned values validation
       public:
         bool tunning=false;
         fieldBase(constMEM promptShadow& shadow):navTarget(shadow) {}
-        virtual classes type() const {return fieldClass;}
+        #ifdef MENU_FMT_WRAPS
+          virtual classes type() const {return fieldClass;}
+        #endif
         #ifdef MENU_ASYNC
           bool async(const char *uri,navRoot& root,idx_t lvl) override;
         #endif
@@ -242,7 +250,9 @@ for correcting unsigned values validation
         // #endif
         //inline T getTypeValue(const T* from) const {return &((menuValueShadow<T>*)shadow)->getTypeValue(from);}
         inline T target() const {return ((menuValueShadow<T>*)shadow)->target();}
-        virtual classes type() const {return valueClass;}
+        #ifdef MENU_FMT_WRAPS
+          virtual classes type() const {return valueClass;}
+        #endif
     };
 
     //--------------------------------------------------------------------------
@@ -251,13 +261,17 @@ for correcting unsigned values validation
         menuNode(constMEM menuNodeShadow& s):navTarget(s) {}
         menuNode(constMEM char* text,idx_t sz,prompt* constMEM data[],action a=noAction,eventMask e=noEvent,styles style=wrapStyle,systemStyles ss=(systemStyles)(_menuData|_canNav))
           :navTarget(*new menuNodeShadow(text,sz,data,a,e,style,ss)) {}
-        virtual classes type() const {return menuClass;}
+        #ifdef MENU_FMT_WRAPS
+          virtual classes type() const {return menuClass;}
+        #endif
         inline prompt& operator[](idx_t i) const {return ((menuNodeShadow*)shadow)->operator[](i);}
         bool changed(const navNode &nav,const menuOut& out,bool sub=true) override;
         void clearChanged(const navNode &nav,const menuOut& out,bool sub) override;
         inline idx_t sz() const {return ((menuNodeShadow*)shadow)->_sz();}
         inline prompt* constMEM* data() const {return ((menuNodeShadow*)shadow)->_data();}
-        prompt* seek(idx_t* uri,idx_t len) override;
+        #ifdef MENU_ASYNC
+          prompt* seek(idx_t* uri,idx_t len) override;
+        #endif
         #ifdef MENU_ASYNC
           bool async(const char *uri,navRoot& root,idx_t lvl=0) override;
         #endif
@@ -314,7 +328,7 @@ for correcting unsigned values validation
         }
         inline T& target() const {return ((menuVariantShadow<T>*)shadow)->target();}
         bool changed(const navNode &nav,const menuOut& out,bool sub=true) override;
-        virtual idx_t selected() const {return reflex;}
+        //virtual idx_t selected() const {return reflex;}
     };
 
     template<typename T>//-------------------------------------------
@@ -331,7 +345,9 @@ for correcting unsigned values validation
           styles style=noStyle,
           systemStyles ss=((systemStyles)(Menu::_menuData|Menu::_canNav|Menu::_isVariant|Menu::_parentDraw))
         ):menuVariant<T>(*new menuVariantShadow<T>(text,target,sz,data,a,e,style,ss)) {}
-        virtual classes type() const {return selectClass;}
+        #ifdef MENU_FMT_WRAPS
+          virtual classes type() const {return selectClass;}
+        #endif
     };
 
     template<typename T>//-------------------------------------------
@@ -348,7 +364,9 @@ for correcting unsigned values validation
           styles style=noStyle,
           systemStyles ss=((systemStyles)(Menu::_menuData|Menu::_isVariant))
         ):menuVariant<T>(*new menuVariantShadow<T>(text,target,sz,data,a,e,style,ss)) {}
-        virtual classes type() const {return toggleClass;}
+        #ifdef MENU_FMT_WRAPS
+          virtual classes type() const {return toggleClass;}
+        #endif
         Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr=0) override;
         result sysHandler(SYS_FUNC_PARAMS) override {
           switch(event) {
@@ -381,7 +399,9 @@ for correcting unsigned values validation
           styles style=noStyle,
           systemStyles ss=((systemStyles)(Menu::_menuData|Menu::_canNav|Menu::_isVariant))
         ):menuVariant<T>(*new menuVariantShadow<T>(text,target,sz,data,a,e,style,ss)) {}
-        virtual classes type() const {return chooseClass;}
+        #ifdef MENU_FMT_WRAPS
+          virtual classes type() const {return chooseClass;}
+        #endif
         result sysHandler(SYS_FUNC_PARAMS) override;
         bool changed(const navNode &nav,const menuOut& out,bool sub=true) override {
           return menuVariant<T>::changed(nav,out)||menuNode::changed(nav,out);
@@ -445,17 +465,19 @@ for correcting unsigned values validation
         inline void fieldOff() {setFieldMode(false);}
     };
 
-    class StringStream:public menuIn {
-      public:
-        const char *src;
-        StringStream(const char*s):src(s) {}
-        int available() override {return 0!=*src;}
-        int read() override {return *src++;}
-        int peek() override {return *src?*src:-1;}
-        void flush() override {while(*src) src++;}
-        size_t write(uint8_t) override {return 0;}
-        operator const String() {return String(src);}
-    };
+    #ifdef MENU_ASYNC
+      class StringStream:public menuIn {
+        public:
+          const char *src;
+          StringStream(const char*s):src(s) {}
+          int available() override {return 0!=*src;}
+          int read() override {return *src++;}
+          int peek() override {return *src?*src:-1;}
+          void flush() override {while(*src) src++;}
+          size_t write(uint8_t) override {return 0;}
+          operator const String() {return String(src);}
+      };
+    #endif
 
     ///////////////////////////////////////////////////////////////////////////
     // base for all menu output devices
@@ -501,8 +523,10 @@ for correcting unsigned values validation
           write(selected?(stat==disabledStatus? options->disabledCursor : options->selectedCursor):' ');
         }
         void doNav(navCmd cmd,navNode &nav);
-        virtual result fmtStart(fmtParts part,navNode &nav,idx_t idx=-1) {return proceed;}
-        virtual result fmtEnd(fmtParts part,navNode &nav,idx_t idx=-1) {return proceed;}
+        #ifdef MENU_FMT_WRAPS
+          virtual result fmtStart(fmtParts part,navNode &nav,idx_t idx=-1) {return proceed;}
+          virtual result fmtEnd(fmtParts part,navNode &nav,idx_t idx=-1) {return proceed;}
+        #endif
         //text editor cursors
         virtual idx_t startCursor(navRoot& root,idx_t x,idx_t y,bool charEdit,idx_t panelNr=0) {write(charEdit?">":"[");return 1;}
         virtual idx_t endCursor(navRoot& root,idx_t x,idx_t y,bool charEdit,idx_t panelNr=0) {write(charEdit?"<":"]");return 1;}
@@ -733,10 +757,12 @@ for correcting unsigned values validation
 
         //menu IO - external iteration functions
         void doInput(menuIn& in);
-        inline void doInput(const char*in) {
-          StringStream inStr(in);
-          while(inStr.available()) doInput(inStr);
-        }
+        #ifdef MENU_ASYNC
+          inline void doInput(const char*in) {
+            StringStream inStr(in);
+            while(inStr.available()) doInput(inStr);
+          }
+        #endif
         inline void doInput() {doInput(in);}
         inline void doOutput() {
           if (!sleepTask) printMenu();

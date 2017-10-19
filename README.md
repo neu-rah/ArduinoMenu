@@ -140,6 +140,12 @@ https://github.com/mathertel/LiquidCrystal_PCF8574hd44780
 
 https://www.arduino.cc/en/Guide/TFT
 
+**SSD1306Ascii**
+
+https://github.com/greiman/SSD1306Ascii
+
+OLED Screens based on SSD1306 controller
+
 **Adafruit's GFX devices**
 
 https://github.com/adafruit/Adafruit-GFX-Library
