@@ -84,25 +84,27 @@ for correcting unsigned values validation
         inline bool is(eventMask chk) const {return (events()&chk)==chk;}
         inline bool has(eventMask chk) const {return events()&chk;}
 
-
         inline bool canWrap() const {return style()&wrapStyle;}
         inline bool canNav() const {return sysStyles()&_canNav;}//can receive navigation focus and process keys
         inline bool isMenu() const {return sysStyles()&_menuData;}//has menu data list and can be a navNode target
         inline bool isVariant() const {return sysStyles()&_isVariant;}//a menu as an enumerated field, connected to a variable value
         inline bool parentDraw() const {return sysStyles()&_parentDraw;}//a menu as an enumerated field, connected to a variable value
         inline bool asPad() const {return sysStyles()&_asPad;}//a menu as an enumerated field, connected to a variable value
+
         inline bool hasTitle(navNode& nav) const;
 
         virtual Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr=0);//raw print to output device
         virtual bool changed(const navNode &nav,const menuOut& out,bool sub=true) {return dirty;}
         //this is the system version of enter handler, its used by elements like toggle
         virtual result sysHandler(SYS_FUNC_PARAMS) {return proceed;}
-        virtual result eventHandler(eventMask e,navNode& nav,idx_t i) {
+        /*virtual*/ result eventHandler(eventMask e,navNode& nav,idx_t i) {
           return operator()(e,nav,*this);
         }
         inline result operator()(FUNC_PARAMS) const {return (*shadow)(FUNC_VALUES);}
         idx_t printRaw(menuOut& out,idx_t len) const;
-        virtual prompt* seek(idx_t* uri,idx_t len) {return len?NULL:this;}
+        #ifdef ASYNC_NAV
+          virtual prompt* seek(idx_t* uri,idx_t len) {return len?NULL:this;}
+        #endif
         #ifdef MENU_ASYNC
         virtual bool async(const char *uri,navRoot& root,idx_t lvl) {
           return ((!*uri)||(uri[0]=='/'&&!uri[1]));
@@ -267,7 +269,9 @@ for correcting unsigned values validation
         void clearChanged(const navNode &nav,const menuOut& out,bool sub) override;
         inline idx_t sz() const {return ((menuNodeShadow*)shadow)->_sz();}
         inline prompt* constMEM* data() const {return ((menuNodeShadow*)shadow)->_data();}
-        prompt* seek(idx_t* uri,idx_t len) override;
+        #ifdef ASYNC_NAV
+          prompt* seek(idx_t* uri,idx_t len) override;
+        #endif
         #ifdef MENU_ASYNC
           bool async(const char *uri,navRoot& root,idx_t lvl=0) override;
         #endif

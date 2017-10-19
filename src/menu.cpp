@@ -39,6 +39,7 @@ Used prompt::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,id
   return r;
 }
 
+#ifdef MENU_ASYNC
 prompt* menuNode::seek(idx_t* uri,idx_t len) {
   trace(Serial<<"menuNode::seek"<<endl);
   if (len&&uri[0]>=0&&uri[0]<sz()) {
@@ -47,7 +48,6 @@ prompt* menuNode::seek(idx_t* uri,idx_t len) {
     return e.seek(++uri,--len);
   } else return NULL;
 }
-#ifdef MENU_ASYNC
 bool menuNode::async(const char *uri,navRoot& root,idx_t lvl) {
   trace(Serial<<"menuNode::async"<<endl);
   if ((!*uri)||(uri[0]=='/'&&!uri[1])) return this;
@@ -216,7 +216,7 @@ Used outputsList::printMenu(navNode& nav) const {
 void menuOut::previewMenu(navRoot& root,menuNode& menu,idx_t panelNr) {
   trace(Serial<<"menuOut::previewMenu"<<endl);
   setColor(fgColor,false);
-  if (menu.asPad()) {
+  if (menu.has(_asPad)) {
     for(int i=0;i<menu.sz();i++) {
       prompt& p=menu[i];
       setColor(fgColor,false,p.enabled);
@@ -279,7 +279,7 @@ Used menuOut::printMenu(navNode &nav,idx_t panelNr) {
     idx_t topi=nav.root->level;
     if(topi&&nav.root->active().parentDraw()) topi--;
     idx_t ot=tops[topi];
-    bool asPad=nav.target->asPad();
+    bool asPad=nav.target->has(_asPad);
     idx_t st
       =((nav.target->style()&showTitle)||(nav.root->showTitle&&(!(nav.target->style()&noTitle))))
       &&!(asPad||(maxY(panelNr)<2));//do not use titles on single line devices!
