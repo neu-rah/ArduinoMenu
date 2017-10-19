@@ -19,12 +19,7 @@ for correcting unsigned values validation
   #define RSITE_ARDUINO_MENU_SYSTEM
   #include <Arduino.h>
   #if defined(DEBUG)
-    // #ifdef _U8G2LIB_HH
-      //because U8G2 already uses Streaming
       #include <Streaming.h>
-    // #else
-      // #include <streamFlow.h>
-    // #endif
   #endif
   #include "menuBase.h"
   #include "shadows.h"

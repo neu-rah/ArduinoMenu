@@ -96,6 +96,7 @@ void setup() {
   //   delay(1000);
   // }
 
+  //NOTE: async is disabled now define MENU_ASYNC to activate it
   //following code is an async navigation example
   //its async because it does not require a known menu state
   //because you can indicate the zero indexed option positions separated by /
