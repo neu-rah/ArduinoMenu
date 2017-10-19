@@ -465,17 +465,19 @@ for correcting unsigned values validation
         inline void fieldOff() {setFieldMode(false);}
     };
 
-    class StringStream:public menuIn {
-      public:
-        const char *src;
-        StringStream(const char*s):src(s) {}
-        int available() override {return 0!=*src;}
-        int read() override {return *src++;}
-        int peek() override {return *src?*src:-1;}
-        void flush() override {while(*src) src++;}
-        size_t write(uint8_t) override {return 0;}
-        operator const String() {return String(src);}
-    };
+    #ifdef MENU_ASYNC
+      class StringStream:public menuIn {
+        public:
+          const char *src;
+          StringStream(const char*s):src(s) {}
+          int available() override {return 0!=*src;}
+          int read() override {return *src++;}
+          int peek() override {return *src?*src:-1;}
+          void flush() override {while(*src) src++;}
+          size_t write(uint8_t) override {return 0;}
+          operator const String() {return String(src);}
+      };
+    #endif
 
     ///////////////////////////////////////////////////////////////////////////
     // base for all menu output devices
@@ -755,10 +757,12 @@ for correcting unsigned values validation
 
         //menu IO - external iteration functions
         void doInput(menuIn& in);
-        inline void doInput(const char*in) {
-          StringStream inStr(in);
-          while(inStr.available()) doInput(inStr);
-        }
+        #ifdef MENU_ASYNC
+          inline void doInput(const char*in) {
+            StringStream inStr(in);
+            while(inStr.available()) doInput(inStr);
+          }
+        #endif
         inline void doInput() {doInput(in);}
         inline void doOutput() {
           if (!sleepTask) printMenu();
