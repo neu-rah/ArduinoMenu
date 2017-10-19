@@ -43,6 +43,7 @@ prompt* menuNode::seek(idx_t* uri,idx_t len) {
     return e.seek(++uri,--len);
   } else return NULL;
 }
+#ifdef MENU_ASYNC
 bool menuNode::async(const char *uri,navRoot& root,idx_t lvl) {
   trace(Serial<<"menuNode::async"<<endl);
   if ((!*uri)||(uri[0]=='/'&&!uri[1])) return this;
@@ -66,6 +67,7 @@ bool menuNode::async(const char *uri,navRoot& root,idx_t lvl) {
   //Serial<<"recurse on ["<<n<<"]-"<<operator[](n)<<" uri:"<<uri<<" lvl:"<<lvl<<endl;Serial.flush();
   return operator[](n).async(uri,root,++lvl);
 }
+#endif
 
 void textField::doNav(navNode& nav,navCmd cmd) {
   trace(Serial<<"textField::doNav"<<endl);
@@ -664,6 +666,7 @@ navCmd navRoot::exit() {
   return escCmd;
 }
 
+#ifdef MENU_ASYNC
 bool fieldBase::async(const char *uri,navRoot& root,idx_t lvl) {
   trace(Serial<<"fieldBase::async"<<endl);
   if ((!*uri)||(uri[0]=='/'&&!uri[1])) return true;
@@ -674,6 +677,7 @@ bool fieldBase::async(const char *uri,navRoot& root,idx_t lvl) {
   }
   return true;
 }
+#endif
 
 void fieldBase::doNav(navNode& nav,navCmd cmd) {
   trace(Serial<<"fieldBase::doNav "<<cmd<<endl);
