@@ -104,9 +104,11 @@ for correcting unsigned values validation
         inline result operator()(FUNC_PARAMS) const {return (*shadow)(FUNC_VALUES);}
         idx_t printRaw(menuOut& out,idx_t len) const;
         virtual prompt* seek(idx_t* uri,idx_t len) {return len?NULL:this;}
+        #ifdef MENU_ASYNC
         virtual bool async(const char *uri,navRoot& root,idx_t lvl) {
           return ((!*uri)||(uri[0]=='/'&&!uri[1]));
         }
+        #endif
 
         //some functions to use on htmlFmt
         // for enumerations:
@@ -167,7 +169,9 @@ for correcting unsigned values validation
         bool tunning=false;
         fieldBase(constMEM promptShadow& shadow):navTarget(shadow) {}
         virtual classes type() const {return fieldClass;}
-        bool async(const char *uri,navRoot& root,idx_t lvl) override;
+        #ifdef MENU_ASYNC
+          bool async(const char *uri,navRoot& root,idx_t lvl) override;
+        #endif
         inline constMEM char* units() {return ((fieldBaseShadow*)shadow)->_units();}
         void doNav(navNode& nav,navCmd cmd) override;
         virtual bool canTune()=0;
@@ -259,7 +263,9 @@ for correcting unsigned values validation
         inline idx_t sz() const {return ((menuNodeShadow*)shadow)->_sz();}
         inline prompt* constMEM* data() const {return ((menuNodeShadow*)shadow)->_data();}
         prompt* seek(idx_t* uri,idx_t len) override;
-        bool async(const char *uri,navRoot& root,idx_t lvl=0) override;
+        #ifdef MENU_ASYNC
+          bool async(const char *uri,navRoot& root,idx_t lvl=0) override;
+        #endif
     };
 
     //--------------------------------------------------------------------------
@@ -703,30 +709,31 @@ for correcting unsigned values validation
           return sleepTask?idleChanged:node().changed(out);
         }
         inline bool changed(idx_t n) const {return changed(out[n]);}
-        inline bool async(const char* at) {
-          navFocus=path[level].target;
-          return active().async(at, *this, 0);
-        }
-        menuOut& printPath(menuOut& o) const {
-          for(idx_t n=0;n<level;n++) {
-            o.print('/');
-            o.print(path[n].sel);
+        #ifdef MENU_ASYNC
+          inline bool async(const char* at) {
+            navFocus=path[level].target;
+            return active().async(at, *this, 0);
           }
-          return o;
-        }
+          menuOut& printPath(menuOut& o) const {
+            for(idx_t n=0;n<level;n++) {
+              o.print('/');
+              o.print(path[n].sel);
+            }
+            return o;
+          }
+          //async printMenu on arbitrary menuOut device
+          Used printMenu(menuOut& o) const {
+            _trace(Serial<<"navRoot::printMenu(menuOut& o)"<<endl);
+            if ((active().sysStyles()&_parentDraw)&&level)
+              return o.printMenu(path[level-1]);
+            else return o.printMenu(node());
+          }
+        #endif
         Used printMenu() const {
           trace(Serial<<"navRoot::printMenu"<<endl);
           if ((active().sysStyles()&_parentDraw)&&level)
             return out.printMenu(path[level-1]);
           else return out.printMenu(node());
-        }
-
-        //async printMenu on arbitrary menuOut device
-        Used printMenu(menuOut& o) const {
-          _trace(Serial<<"navRoot::printMenu(menuOut& o)"<<endl);
-          if ((active().sysStyles()&_parentDraw)&&level)
-            return o.printMenu(path[level-1]);
-          else return o.printMenu(node());
         }
 
         //menu IO - external iteration functions
