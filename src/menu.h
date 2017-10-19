@@ -44,7 +44,9 @@ for correcting unsigned values validation
     // Menu objects and data
     //////////////////////////////////////////////////////////////////////////
 
-    enum classes {noClass=0,promptClass,textFieldClass,fieldClass,toggleClass,selectClass,chooseClass,valueClass,menuClass};
+    #ifdef MENU_FMT_WRAPS
+      enum classes {noClass=0,promptClass,textFieldClass,fieldClass,toggleClass,selectClass,chooseClass,valueClass,menuClass};
+    #endif
 
     class prompt {
       friend class navNode;
@@ -61,7 +63,9 @@ for correcting unsigned values validation
         }
         virtual void clearChanged(const navNode &nav,const menuOut& out,bool sub)
           {dirty=false;}
-        virtual classes type() const {return promptClass;}
+        #ifdef MENU_FMT_WRAPS
+          virtual classes type() const {return promptClass;}
+        #endif
         inline prompt(constMEM promptShadow& shadow):shadow(&shadow) {}
         inline prompt(constMEM char* t,action a=doNothing,eventMask e=noEvent,styles s=noStyle,systemStyles ss=_noStyle)
           :shadow(new promptShadow(t,a,e,s,ss)) {}
@@ -163,7 +167,9 @@ for correcting unsigned values validation
       public:
         bool tunning=false;
         fieldBase(constMEM promptShadow& shadow):navTarget(shadow) {}
-        virtual classes type() const {return fieldClass;}
+        #ifdef MENU_FMT_WRAPS
+          virtual classes type() const {return fieldClass;}
+        #endif
         #ifdef MENU_ASYNC
           bool async(const char *uri,navRoot& root,idx_t lvl) override;
         #endif
@@ -242,7 +248,9 @@ for correcting unsigned values validation
         // #endif
         //inline T getTypeValue(const T* from) const {return &((menuValueShadow<T>*)shadow)->getTypeValue(from);}
         inline T target() const {return ((menuValueShadow<T>*)shadow)->target();}
-        virtual classes type() const {return valueClass;}
+        #ifdef MENU_FMT_WRAPS
+          virtual classes type() const {return valueClass;}
+        #endif
     };
 
     //--------------------------------------------------------------------------
@@ -251,7 +259,9 @@ for correcting unsigned values validation
         menuNode(constMEM menuNodeShadow& s):navTarget(s) {}
         menuNode(constMEM char* text,idx_t sz,prompt* constMEM data[],action a=noAction,eventMask e=noEvent,styles style=wrapStyle,systemStyles ss=(systemStyles)(_menuData|_canNav))
           :navTarget(*new menuNodeShadow(text,sz,data,a,e,style,ss)) {}
-        virtual classes type() const {return menuClass;}
+        #ifdef MENU_FMT_WRAPS
+          virtual classes type() const {return menuClass;}
+        #endif
         inline prompt& operator[](idx_t i) const {return ((menuNodeShadow*)shadow)->operator[](i);}
         bool changed(const navNode &nav,const menuOut& out,bool sub=true) override;
         void clearChanged(const navNode &nav,const menuOut& out,bool sub) override;
@@ -331,7 +341,9 @@ for correcting unsigned values validation
           styles style=noStyle,
           systemStyles ss=((systemStyles)(Menu::_menuData|Menu::_canNav|Menu::_isVariant|Menu::_parentDraw))
         ):menuVariant<T>(*new menuVariantShadow<T>(text,target,sz,data,a,e,style,ss)) {}
-        virtual classes type() const {return selectClass;}
+        #ifdef MENU_FMT_WRAPS
+          virtual classes type() const {return selectClass;}
+        #endif
     };
 
     template<typename T>//-------------------------------------------
@@ -348,7 +360,9 @@ for correcting unsigned values validation
           styles style=noStyle,
           systemStyles ss=((systemStyles)(Menu::_menuData|Menu::_isVariant))
         ):menuVariant<T>(*new menuVariantShadow<T>(text,target,sz,data,a,e,style,ss)) {}
-        virtual classes type() const {return toggleClass;}
+        #ifdef MENU_FMT_WRAPS
+          virtual classes type() const {return toggleClass;}
+        #endif
         Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr=0) override;
         result sysHandler(SYS_FUNC_PARAMS) override {
           switch(event) {
@@ -381,7 +395,9 @@ for correcting unsigned values validation
           styles style=noStyle,
           systemStyles ss=((systemStyles)(Menu::_menuData|Menu::_canNav|Menu::_isVariant))
         ):menuVariant<T>(*new menuVariantShadow<T>(text,target,sz,data,a,e,style,ss)) {}
-        virtual classes type() const {return chooseClass;}
+        #ifdef MENU_FMT_WRAPS
+          virtual classes type() const {return chooseClass;}
+        #endif
         result sysHandler(SYS_FUNC_PARAMS) override;
         bool changed(const navNode &nav,const menuOut& out,bool sub=true) override {
           return menuVariant<T>::changed(nav,out)||menuNode::changed(nav,out);
