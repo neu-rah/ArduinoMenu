@@ -21,7 +21,9 @@ idx_t prompt::printRaw(menuOut& out,idx_t len) const {
 
 Used prompt::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr) {
   trace(Serial<<"prompt::printTo"<<endl);
+  #ifdef MENU_FMT_WRAPS
   out.fmtStart(menuOut::fmtPrompt,root.node(),idx);
+  #endif
   idx_t r=printRaw(out,len);
   if (is((systemStyles)(_menuData|_parentDraw|_asPad))
     //&&((&((menuNode*)root.node().target)->operator[](idx))==this)
@@ -31,7 +33,9 @@ Used prompt::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,id
       else
         out.previewMenu(root,*(menuNode*)this,panelNr);
   }
+  #ifdef MENU_FMT_WRAPS
   out.fmtEnd(menuOut::fmtPrompt,root.node(),idx);
+  #endif
   return r;
 }
 
@@ -297,7 +301,9 @@ Used menuOut::printMenu(navNode &nav,idx_t panelNr) {
     //-----> panel start
     trace(Serial<<"panel start"<<endl);
     bool titleChanged=st||nav.target->changed(nav,*this,false);
-    fmtStart(fmtPanel,nav);
+    #ifdef MENU_FMT_WRAPS
+      fmtStart(fmtPanel,nav);
+    #endif
     if (all||titleChanged) {
       trace(Serial<<"all:"<<all<<" panelNr:"<<panelNr<<endl);
       trace(Serial<<"{x:"<<pan.x<<" y:"<<pan.y<<" w:"<<pan.w<<" h:"<<pan.h<<"}"<<endl);
@@ -305,7 +311,9 @@ Used menuOut::printMenu(navNode &nav,idx_t panelNr) {
       if (st||asPad) {
         ///------> titleStart
         trace(Serial<<"title start"<<endl);
-        fmtStart(fmtTitle,nav,-1);
+        #ifdef MENU_FMT_WRAPS
+          fmtStart(fmtTitle,nav,-1);
+        #endif
         if (!asPad) {
           setColor(titleColor,false);
           clearLine(0,panelNr);
@@ -317,12 +325,16 @@ Used menuOut::printMenu(navNode &nav,idx_t panelNr) {
         if (asPad) print(":");
         //else print(']');
         ///<----- titleEnd
-        fmtEnd(fmtTitle,nav,-1);
+        #ifdef MENU_FMT_WRAPS
+          fmtEnd(fmtTitle,nav,-1);
+        #endif
       }
     }
     //------> bodyStart
     trace(Serial<<"body start"<<endl);
-    fmtStart(fmtBody,nav);
+    #ifdef MENU_FMT_WRAPS
+      fmtStart(fmtBody,nav);
+    #endif
     idx_t top=asPad?0:tops[topi];
     // idx_t idxCnt=top;
     // idx_t exitCnt=0;
@@ -333,11 +345,15 @@ Used menuOut::printMenu(navNode &nav,idx_t panelNr) {
       idx_t len=pan.w;
       if (all||p.changed(nav,*this,false)) {
         //-------> opStart
-        fmtStart(fmtOp,nav,i);
+        #ifdef MENU_FMT_WRAPS
+          fmtStart(fmtOp,nav,i);
+        #endif
         bool selected=nav.sel==i+top;
         bool ed=nav.target==&p;
         //-----> idxStart
-        fmtStart(fmtIdx,nav,i);
+        #ifdef MENU_FMT_WRAPS
+          fmtStart(fmtIdx,nav,i);
+        #endif
         if (!asPad) {//pad MUST be able of clearing part of a line!!!!!
           clearLine(ist,panelNr,bgColor,selected,p.enabled);//<-- THIS IS DEPENDENT OF A DROP MENU!!!!
           setCursor(0,ist,panelNr);//<-- THIS IS MAKING A DROP MENU!!!!
@@ -358,16 +374,24 @@ Used menuOut::printMenu(navNode &nav,idx_t panelNr) {
           len-=3;
         }
         //<------idxEnd
-        fmtEnd(fmtIdx,nav,i);
+        #ifdef MENU_FMT_WRAPS
+          fmtEnd(fmtIdx,nav,i);
+        #endif
         //------> cursorStart
-        fmtStart(fmtCursor,nav,i);
+        #ifdef MENU_FMT_WRAPS
+          fmtStart(fmtCursor,nav,i);
+        #endif
         if (asPad&&selected) print("[");
         else drawCursor(ist,selected,p.enabled,ed,panelNr);//assuming only one character
         //<------ cursorEnd
-        fmtEnd(fmtCursor,nav,i);
+        #ifdef MENU_FMT_WRAPS
+          fmtEnd(fmtCursor,nav,i);
+        #endif
         len--;
         //---->opBodyStart
-        fmtStart(fmtOpBody,nav,i);
+        #ifdef MENU_FMT_WRAPS
+          fmtStart(fmtOpBody,nav,i);
+        #endif
         setColor(fgColor,selected,p.enabled,ed);
         if (len>0) len=p.printTo(*nav.root,selected,*this,i,len,panelNr);
         if (len>0) {
@@ -377,7 +401,9 @@ Used menuOut::printMenu(navNode &nav,idx_t panelNr) {
           }
         }
         //<---opBodyEnd
-        fmtEnd(fmtOpBody,nav,i);
+        #ifdef MENU_FMT_WRAPS
+          fmtEnd(fmtOpBody,nav,i);
+        #endif
         if (selected&&panels.sz>panelNr+1) {
           if(p.isMenu()) {
             //----->  previewStart
@@ -387,16 +413,22 @@ Used menuOut::printMenu(navNode &nav,idx_t panelNr) {
           } else if (panels.nodes[panelNr+1]) clear(panelNr+1);
         }
         //opEnd
-        fmtEnd(fmtOp,nav,i);
+        #ifdef MENU_FMT_WRAPS
+          fmtEnd(fmtOp,nav,i);
+        #endif
       }
     }
   }
   //<-----bodyEnd
-  fmtEnd(fmtBody,nav,-1);
+  #ifdef MENU_FMT_WRAPS
+    fmtEnd(fmtBody,nav,-1);
+  #endif
   drawn=nav.target;
   //lastSel=nav.sel;
   //<---- panel end
-  fmtEnd(fmtPanel,nav,-1);
+  #ifdef MENU_FMT_WRAPS
+    fmtEnd(fmtPanel,nav,-1);
+  #endif
   return 0;
 }
 
@@ -722,16 +754,24 @@ Used fieldBase::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len
     out.print((root.navFocus==this&&sel)?(tunning?'>':':'):' ');
     l++;
     if (l<len) {
-      out.fmtStart(menuOut::fmtField,root.node(),idx);
+      #ifdef MENU_FMT_WRAPS
+  out.fmtStart(menuOut::fmtField,root.node(),idx);
+      #endif
       out.setColor(valColor,sel,enabled,ed);
       //out<<reflex;
       l+=printReflex(out);//NOTE: this can exceed the limits!
-      out.fmtEnd(menuOut::fmtField,root.node(),idx);
+      #ifdef MENU_FMT_WRAPS
+  out.fmtEnd(menuOut::fmtField,root.node(),idx);
+      #endif
       if (l<len) {
-        out.fmtStart(menuOut::fmtUnit,root.node(),idx);
+        #ifdef MENU_FMT_WRAPS
+  out.fmtStart(menuOut::fmtUnit,root.node(),idx);
+        #endif
         out.setColor(unitColor,sel,enabled,ed);
         l+=print_P(out,units(),len);
-        out.fmtEnd(menuOut::fmtUnit,root.node(),idx);
+        #ifdef MENU_FMT_WRAPS
+  out.fmtEnd(menuOut::fmtUnit,root.node(),idx);
+        #endif
       }
     }
   }
@@ -749,11 +789,17 @@ Used menuVariantBase::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx
   if (len-l<0) return 0;
   out.print(this==&root.active()?':':' ');
   l--;
+  #ifdef MENU_FMT_WRAPS
   if (out.fmtStart(type()==selectClass?menuOut::fmtSelect:menuOut::fmtChoose,root.node(),idx)==proceed) {
+  #endif
     out.setColor(valColor,sel,prompt::enabled,ed);
     if (l>0) l-=operator[](at).printRaw(out,l);
+  #ifdef MENU_FMT_WRAPS
   }
+  #endif
+  #ifdef MENU_FMT_WRAPS
   out.fmtEnd(type()==selectClass?menuOut::fmtSelect:menuOut::fmtChoose,root.node(),idx);
+  #endif
   trace(Serial<<"menuVariantBase::printTo ended!"<<endl);
   return len-l;
 }
@@ -767,9 +813,13 @@ idx_t menuVariantBase::togglePrintTo(navRoot &root,bool sel,menuOut& out, idx_t 
   out.setColor(valColor,sel,prompt::enabled,ed);
   //out<<menuNode::operator[](at);
   if (len-l>0) {
-    out.fmtStart(menuOut::fmtToggle,root.node(),idx);
+    #ifdef MENU_FMT_WRAPS
+  out.fmtStart(menuOut::fmtToggle,root.node(),idx);
+    #endif
     l+=operator[](at).printRaw(out,len-l);
-    out.fmtEnd(menuOut::fmtToggle,root.node(),idx);
+    #ifdef MENU_FMT_WRAPS
+  out.fmtEnd(menuOut::fmtToggle,root.node(),idx);
+    #endif
   }
   return l;
 }

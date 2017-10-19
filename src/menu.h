@@ -501,8 +501,10 @@ for correcting unsigned values validation
           write(selected?(stat==disabledStatus? options->disabledCursor : options->selectedCursor):' ');
         }
         void doNav(navCmd cmd,navNode &nav);
-        virtual result fmtStart(fmtParts part,navNode &nav,idx_t idx=-1) {return proceed;}
-        virtual result fmtEnd(fmtParts part,navNode &nav,idx_t idx=-1) {return proceed;}
+        #ifdef MENU_FMT_WRAPS
+          virtual result fmtStart(fmtParts part,navNode &nav,idx_t idx=-1) {return proceed;}
+          virtual result fmtEnd(fmtParts part,navNode &nav,idx_t idx=-1) {return proceed;}
+        #endif
         //text editor cursors
         virtual idx_t startCursor(navRoot& root,idx_t x,idx_t y,bool charEdit,idx_t panelNr=0) {write(charEdit?">":"[");return 1;}
         virtual idx_t endCursor(navRoot& root,idx_t x,idx_t y,bool charEdit,idx_t panelNr=0) {write(charEdit?"<":"]");return 1;}
