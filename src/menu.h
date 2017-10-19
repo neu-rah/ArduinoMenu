@@ -102,7 +102,7 @@ for correcting unsigned values validation
         }
         inline result operator()(FUNC_PARAMS) const {return (*shadow)(FUNC_VALUES);}
         idx_t printRaw(menuOut& out,idx_t len) const;
-        #ifdef ASYNC_NAV
+        #ifdef MENU_ASYNC
           virtual prompt* seek(idx_t* uri,idx_t len) {return len?NULL:this;}
         #endif
         #ifdef MENU_ASYNC
@@ -113,7 +113,7 @@ for correcting unsigned values validation
 
         //some functions to use on htmlFmt
         // for enumerations:
-        virtual idx_t selected() const {return 0;}
+        //virtual idx_t selected() const {return 0;}
         #ifdef DEBUG
           virtual void printValue(menuOut&) const {}
           virtual void printHigh(menuOut&) const {}
@@ -269,7 +269,7 @@ for correcting unsigned values validation
         void clearChanged(const navNode &nav,const menuOut& out,bool sub) override;
         inline idx_t sz() const {return ((menuNodeShadow*)shadow)->_sz();}
         inline prompt* constMEM* data() const {return ((menuNodeShadow*)shadow)->_data();}
-        #ifdef ASYNC_NAV
+        #ifdef MENU_ASYNC
           prompt* seek(idx_t* uri,idx_t len) override;
         #endif
         #ifdef MENU_ASYNC
@@ -328,7 +328,7 @@ for correcting unsigned values validation
         }
         inline T& target() const {return ((menuVariantShadow<T>*)shadow)->target();}
         bool changed(const navNode &nav,const menuOut& out,bool sub=true) override;
-        virtual idx_t selected() const {return reflex;}
+        //virtual idx_t selected() const {return reflex;}
     };
 
     template<typename T>//-------------------------------------------
