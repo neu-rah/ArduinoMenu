@@ -1,7 +1,9 @@
 /********************
 Arduino generic menu system
 XmlServer menu example
-based on WebServer: https://github.com/esp8266/Arduino/tree/master/libraries/ESP8266WebServer
+based on WebServer:
+  https://github.com/esp8266/Arduino/tree/master/libraries/ESP8266WebServer
+  https://github.com/Links2004/arduinoWebSockets
 
 Dec. 2016 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
 

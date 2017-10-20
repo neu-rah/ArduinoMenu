@@ -109,11 +109,10 @@ for correcting unsigned values validation
         virtual bool async(const char *uri,navRoot& root,idx_t lvl) {
           return ((!*uri)||(uri[0]=='/'&&!uri[1]));
         }
-        #endif
-
         //some functions to use on htmlFmt
         // for enumerations:
-        //virtual idx_t selected() const {return 0;}
+        virtual idx_t selected() const {return 0;}
+        #endif
         #ifdef DEBUG
           virtual void printValue(menuOut&) const {}
           virtual void printHigh(menuOut&) const {}
@@ -328,7 +327,9 @@ for correcting unsigned values validation
         }
         inline T& target() const {return ((menuVariantShadow<T>*)shadow)->target();}
         bool changed(const navNode &nav,const menuOut& out,bool sub=true) override;
-        //virtual idx_t selected() const {return reflex;}
+        #ifdef MENU_ASYNC
+        virtual idx_t selected() const {return reflex;}
+        #endif
     };
 
     template<typename T>//-------------------------------------------
