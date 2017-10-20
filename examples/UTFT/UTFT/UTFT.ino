@@ -16,7 +16,7 @@ Note: I was unable to build for esp8266 - neu-rah
 #include <Arduino.h>
 #include <menu.h>
 #include <menuIO/utftOut.h>
-#include <menuIO/utouchIn.h>
+#include <menuIO/urtouchIn.h>
 #include <menuIO/serialOut.h>
 #include <menuIO/serialIn.h>
 #include <menuIO/chainStream.h>
@@ -179,7 +179,7 @@ void setup() {
   pinMode(LEDPIN,OUTPUT);
   while(!Serial);
   Serial.begin(115200);
-  Serial.println("menu 4.x");Serial.flush();
+  Serial.println("menu 4.x UTFT + URTouch");Serial.flush();
   nav.idleTask=idle;//point a function to be used when menu is suspended
   //mainMenu[1].enabled=disabledStatus;
 
