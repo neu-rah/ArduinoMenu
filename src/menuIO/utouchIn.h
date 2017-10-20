@@ -15,14 +15,14 @@ UTouch library from:
 #ifndef RSITE_ARDUINO_MENU_UTOUCH
   #define RSITE_ARDUINO_MENU_UTOUCH
 
-  #include <UTouch.h>
+  #include <URTouch.h>
   #include "../menu.h"
 
   namespace Menu {
 
     class menuUTouch:public menuIn {
     public:
-      UTouch& touch;
+      URTouch& touch;
       navRoot& root;
       gfxOut& out;
       int startX,startY;
@@ -30,7 +30,7 @@ UTouch library from:
       bool touching;
       bool dragging;
       unsigned long evTime;
-      menuUTouch(UTouch& t,navRoot& root,gfxOut& out):touch(t),root(root),out(out),touching(false),dragging(false) {}
+      menuUTouch(URTouch& t,navRoot& root,gfxOut& out):touch(t),root(root),out(out),touching(false),dragging(false) {}
       int available(void) {return touch.dataAvailable()?1:touching;}
       int peek(void) {return -1;}
       int read() {

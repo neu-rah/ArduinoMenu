@@ -8,7 +8,7 @@ www.r-site.net
 
 UTFT library from:
   http://www.rinkydinkelectronics.com/library.php?id=51
-  http://henningkarlsen.com/electronics/library.php?id=50 (old address)
+  http://www.rinkydinkelectronics.com/library.php?id=92
 
 Note: I was unable to build for esp8266 - neu-rah
 ***/
@@ -140,7 +140,7 @@ utftOut outGfx(tft,colors,gfx_tops,gfx_panels,16,16);//output device, latter set
 MENU_OUTLIST(out,&outGfx);
 
 extern navRoot nav;
-UTouch  uTouch( 6, 5, 4, 3, 2);
+URTouch  uTouch( 6, 5, 4, 3, 2);
 menuUTouch touchPanel(uTouch,nav,outGfx);
 
 NAVROOT(nav,mainMenu,MAX_DEPTH,touchPanel,out);
