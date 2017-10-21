@@ -166,7 +166,7 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
 #define PADMENU(id,text,aFn,mask,style,...) altMENU(Menu::menu,id,text,aFn,mask,style,(Menu::_asPad|Menu::_menuData|Menu::_canNav|Menu::_parentDraw),__VA_ARGS__)
 #define altMENU(objType,id,text,aFn,mask,style,ss,...)\
   FOR_EACH(DECL,__VA_ARGS__)\
-  constMEM char id##_text[] MEMMODE=text;\
+  const char id##_text[] MEMMODE=text;\
   Menu::prompt* constMEM id##_data[] MEMMODE={\
     FOR_EACH(DEF,__VA_ARGS__)\
   };\
@@ -186,7 +186,7 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
 #define CHOOSE(...) altVARIANT(Menu::choose,((systemStyles)(Menu::_menuData|Menu::_canNav|Menu::_isVariant)),__VA_ARGS__)
 #define TOGGLE(...) altVARIANT(Menu::toggle,((systemStyles)(Menu::_menuData|Menu::_isVariant)),__VA_ARGS__)
 #define altVARIANT(objType,ss,target,id,text,action,mask,style,...)\
-  constMEM char id##_text[] MEMMODE=text;\
+  const char id##_text[] MEMMODE=text;\
   XFOR_EACH(DECL_VALUE,target,__VA_ARGS__)\
   Menu::prompt* constMEM id##_data[] MEMMODE={\
     FOR_EACH(DEF,__VA_ARGS__)\
@@ -221,7 +221,7 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
 
 //allocating space for elements and shadows -------------------------------------
 #define DECL_EXIT_(cnt,exitText)\
-  constMEM char title_##cnt[] MEMMODE=exitText;\
+  const char title_##cnt[] MEMMODE=exitText;\
   constMEM MEMMODE Menu::promptShadowRaw opShadowRaw##cnt = {\
     (Menu::callback)Menu::doExit,\
     Menu::_Exit,\
@@ -231,7 +231,7 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
   constMEM Menu::promptShadow& opShadow##cnt=*(Menu::promptShadow*)&opShadowRaw##cnt;\
   Menu::prompt op##cnt(opShadow##cnt);
 #define DECL_ITEM_(cnt,objType,text,aFn,mask,ss,...) \
-  constMEM char title_##cnt[] MEMMODE=text;\
+  const char title_##cnt[] MEMMODE=text;\
   constMEM MEMMODE Menu::promptShadowRaw opShadowRaw##cnt={\
     (Menu::callback)aFn,\
     ss,\
@@ -242,7 +242,7 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
   constMEM Menu::promptShadow& opShadow##cnt=*(promptShadow*)&opShadowRaw##cnt;\
   objType op##cnt(opShadow##cnt,__VA_ARGS__);
 #define DECL_OP_(cnt,objType,text,aFn,mask) \
-  constMEM char title_##cnt[] MEMMODE=text;\
+  const char title_##cnt[] MEMMODE=text;\
   constMEM MEMMODE Menu::promptShadowRaw opShadowRaw##cnt={\
     (Menu::callback)aFn,\
     _noStyle,\
@@ -253,8 +253,8 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
   constMEM Menu::promptShadow& opShadow##cnt=*(promptShadow*)&opShadowRaw##cnt;\
   objType op##cnt(opShadow##cnt);
 #define DECL_FIELD_(cnt,objType,ss,target,text,units,low,high,step,tune,action,mask,style)\
-  constMEM char fieldLabel##cnt[] MEMMODE=text;\
-  constMEM char fieldUnit##cnt[] MEMMODE=units;\
+  const char fieldLabel##cnt[] MEMMODE=text;\
+  const char fieldUnit##cnt[] MEMMODE=units;\
   constMEM MEMMODE Menu::menuFieldShadowRaw<typeof(target)> fieldShadowRaw##cnt={\
     (Menu::callback)action,\
     ss,\
@@ -271,7 +271,7 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
   constMEM Menu::menuFieldShadow<typeof(target)>& _fieldShadow##cnt=*(Menu::menuFieldShadow<typeof(target)>*)&fieldShadowRaw##cnt;\
   objType<typeof(target)> _menuField##cnt(_fieldShadow##cnt);
 #define DECL_EDIT_(cnt,objType,ss,label,buf,valid,action,mask,style)\
-  constMEM char textFieldLabel##cnt[] MEMMODE=label;\
+  const char textFieldLabel##cnt[] MEMMODE=label;\
   constMEM MEMMODE Menu::textFieldShadowRaw textFieldShadowRaw##cnt={\
     (Menu::callback)action,\
     ss,\
@@ -292,7 +292,7 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
 #define IGNORE(...)
 #define MK_VALUE(...) GET_VALUE(__VA_ARGS__,_MK_VALUE,_MK_VALUE,_MK_VALUE,_MK_VALUE,IGNORE,_MK_VALUE)(__VA_ARGS__)
 #define _MK_VALUE(target,cnt,text,value,action,mask)\
-  constMEM char valueLabel##cnt[] MEMMODE=text;\
+  const char valueLabel##cnt[] MEMMODE=text;\
   constMEM MEMMODE Menu::menuValueShadowRaw<typeof(target)> choice##cnt##ShadowRaw={\
     (Menu::callback)action,\
     Menu::_noStyle,\
