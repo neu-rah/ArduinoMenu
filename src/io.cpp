@@ -97,7 +97,7 @@ Used menuOut::printMenu(navNode &nav) {
   if ((style&usePreview)&&k) k--;
   for(int i=0;i<k;i++) {
     navNode &n=nav.root->path[lvl-k+i];
-    if (!((style&minimalRedraw)&&panels.nodes[i]==&n)) {
+    if (!(/*n.has(_asPad)&&*/(style&minimalRedraw)&&panels.nodes[i]==&n)) {
       previewMenu(*nav.root,*n.target,i);
       panels.nodes[i]=&n;
     }
@@ -251,7 +251,7 @@ Used menuOut::printMenu(navNode &nav,idx_t panelNr) {
           fmtEnd(fmtOpBody,nav,i);
         #endif
         if (selected&&panels.sz>panelNr+1) {
-          if(p.isMenu()) {
+          if(p.isMenu()&&!p.asPad()) {
             //----->  previewStart
             previewMenu(*nav.root,*(menuNode*)&p,panelNr+1);
             panels.nodes[panelNr+1]=&nav;

@@ -38,19 +38,19 @@
         inline styles style() const {return shadow->_style();}
         inline eventMask events() const {return shadow->_events();}
 
-        inline bool is(systemStyles chk) const {return (sysStyles()&chk)==chk;}
+        inline bool is(systemStyles chk)  const {return (sysStyles()&chk)==chk;}
         inline bool has(systemStyles chk) const {return sysStyles()&chk;}
-        inline bool is(styles chk) const {return (style()&chk)==chk;}
-        inline bool has(styles chk) const {return style()&chk;}
-        inline bool is(eventMask chk) const {return (events()&chk)==chk;}
-        inline bool has(eventMask chk) const {return events()&chk;}
+        inline bool is(styles chk)        const {return (style()&chk)==chk;}
+        inline bool has(styles chk)       const {return style()&chk;}
+        inline bool is(eventMask chk)     const {return (events()&chk)==chk;}
+        inline bool has(eventMask chk)    const {return events()&chk;}
 
-        inline bool canWrap() const {return style()&wrapStyle;}
-        inline bool canNav() const {return sysStyles()&_canNav;}//can receive navigation focus and process keys
-        inline bool isMenu() const {return sysStyles()&_menuData;}//has menu data list and can be a navNode target
-        inline bool isVariant() const {return sysStyles()&_isVariant;}//a menu as an enumerated field, connected to a variable value
+        inline bool canWrap()    const {return style()&wrapStyle;}
+        inline bool canNav()     const {return sysStyles()&_canNav;}//can receive navigation focus and process keys
+        inline bool isMenu()     const {return sysStyles()&_menuData;}//has menu data list and can be a navNode target
+        inline bool isVariant()  const {return sysStyles()&_isVariant;}//a menu as an enumerated field, connected to a variable value
         inline bool parentDraw() const {return sysStyles()&_parentDraw;}//a menu as an enumerated field, connected to a variable value
-        inline bool asPad() const {return sysStyles()&_asPad;}//a menu as an enumerated field, connected to a variable value
+        inline bool asPad()      const {return sysStyles()&_asPad;}//a menu as an enumerated field, connected to a variable value
 
         inline bool hasTitle(navNode& nav) const;
 

@@ -71,6 +71,13 @@
         navCmd doNavigation(navCmd cmd);//aux function
         inline bool changed(const menuOut& out) const {return out.drawn==NULL||target->changed(*this,out);}
         inline prompt& operator[](idx_t i) const {return target->operator[](i);}
+
+        inline bool is(systemStyles chk)  const {return target->is(chk);}
+        inline bool has(systemStyles chk) const {return target->has(chk);}
+        inline bool is(styles chk)        const {return target->is(chk);}
+        inline bool has(styles chk)       const {return target->has(chk);}
+        inline bool is(eventMask chk)     const {return target->is(chk);}
+        inline bool has(eventMask chk)    const {return target->has(chk);}
     };
 
     class navRoot {
