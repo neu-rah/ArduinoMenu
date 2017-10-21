@@ -13,8 +13,10 @@
 #endif
 #if defined(USE_PGM) || (defined(pgm_read_ptr_near) && !defined(MENU_USERAM))
   //storing some values into avr flash memory (saving ram space)
+  #ifdef DEBUG
+    #warning "Using PGM"
+  #endif
   #define USING_PGM
-  #warning "Using PGM"
   #define MEMMODE PROGMEM
   #define constMEM const
   #define memPtr(src) pgm_read_ptr(&(src))
@@ -24,8 +26,10 @@
   #define memStrLen strlen_P
   #define memEnum(addr) (sizeof(int)==1?memByte(addr):memWord(addr))
 #else
-  //use ram on non-avr devices
-  #warning "Using RAM"
+  //use ram on non-avr devices or when explicit
+  #ifdef DEBUG
+    #warning "Using RAM"
+  #endif
   #define USING_RAM
   #define MEMMODE
   #define constMEM

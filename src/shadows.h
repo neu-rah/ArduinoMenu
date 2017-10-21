@@ -99,7 +99,7 @@
       public:
         const char* units;
         fieldBaseShadow(const char * text,const char *units,action a=doNothing,eventMask e=noEvent,styles s=noStyle,systemStyles ss=((Menu::systemStyles)(Menu::_canNav|Menu::_parentDraw)))
-          :units(units),promptShadow(text,a,e,s,ss) {}
+          :promptShadow(text,a,e,s,ss),units(units) {}
         inline const char* _units() {return (const char*)memPtr(units);}
     };
     template<typename T>
@@ -121,7 +121,7 @@
         constMEM T low,high,step,tune;
       public:
         menuFieldShadow(T &value,const char * text,const char *units,T low,T high,T step,T tune,action a=doNothing,eventMask e=noEvent,styles s=noStyle,systemStyles ss=((Menu::systemStyles)(Menu::_canNav|Menu::_parentDraw)))
-          :value(&value),low(low),high(high),step(step),tune(tune),fieldBaseShadow(text,units,a,e,s,ss) {}
+          :fieldBaseShadow(text,units,a,e,s,ss),value(&value),low(low),high(high),step(step),tune(tune) {}
         inline T& target() const {return *(T*)memPtr(value);}
         inline T getTypeValue(const T* from) const {
           //TODO: dynamic versions require change of preprocessor to virtual
