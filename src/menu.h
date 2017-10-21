@@ -35,7 +35,7 @@ for correcting unsigned values validation
     #define _trace(x)
   #endif
 
-  extern constMEM char* numericChars;
+  extern const char* numericChars;
 
   #include "items.h"
   #include "io.h"

@@ -35,7 +35,9 @@
   #define memIdx(src) (src)
   #define memStrLen strlen
   #define memEnum(addr) (*addr)
-  #define F(x) (x)
+  #ifndef F
+    #define F(x) (x)
+  #endif
 #endif
 
 /////////////////////////////////////////////////////////////////////////////

@@ -2,7 +2,7 @@
 #include "menu.h"
 using namespace Menu;
 
-constMEM char* numericChars="0123456789.";
+const char* numericChars="0123456789.";
 
 result Menu::doNothing() {return proceed;}
 result Menu::doExit() {return quit;}
@@ -104,11 +104,11 @@ void textField::doNav(navNode& nav,navCmd cmd) {
         const char* v=validator(cursor);
         char *at=strchr(v,buffer()[cursor]);
         idx_t pos=at?at-v+1:1;
-        if (pos>=strlen(v)) pos=0;
+        if (pos>=(idx_t)strlen(v)) pos=0;
         buffer()[cursor]=v[pos];
         dirty=true;
       } else {
-        if(cursor<strlen(buffer())-1) cursor++;
+        if(cursor<(idx_t)strlen(buffer())-1) cursor++;
         edited=false;
       }
       dirty=true;

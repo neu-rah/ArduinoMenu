@@ -99,8 +99,8 @@ void op1Func() {Serial.println("Op 1 executed");}
 uint8_t test=55;//target var for numerical range field
 
 //edit text field info
-char* constMEM hexDigit MEMMODE="0123456789ABCDEF";//a text table
-char* constMEM hexNr[] MEMMODE={"0","x",hexDigit,hexDigit};//text validators
+const char* hexDigit MEMMODE="0123456789ABCDEF";//a text table
+const char* hexNr[] MEMMODE={"0","x",hexDigit,hexDigit};//text validators
 char buf1[]="0x11";//text edit target
 
 prompt* mainData[]={
