@@ -8,7 +8,6 @@ using namespace Menu;
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-//aux function, turn input character into navigation command
 navCmd navNode::navKeys(char ch) {
   trace(Serial<<"navNode::navKeys"<<endl);
   if (strchr(numericChars,ch)) {
@@ -18,6 +17,8 @@ navCmd navNode::navKeys(char ch) {
     if (options->navCodes[i].ch==ch) return options->navCodes[i].cmd;
   return noCmd;
 }
+
+inline bool navNode::changed(const menuOut& out) const {return out.drawn==NULL||target->changed(*this,out);}
 
 // generic navigation (aux function)
 navCmd navNode::doNavigation(navCmd cmd) {

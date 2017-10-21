@@ -18,6 +18,8 @@ idx_t menuOut::printRaw(const char* at,idx_t len) {
   return at-p;
 }
 
+inline idx_t menuOut::maxX(idx_t i=0) const {return panels[i].w;}
+
 void menuOut::doNav(navCmd cmd,navNode &nav) {
   trace(Serial<<"menuOut::doNav"<<endl);
   panel p=panels[nav.root->level];

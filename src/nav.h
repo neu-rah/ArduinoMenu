@@ -1,7 +1,50 @@
 /* -*- C++ -*- */
 #ifndef RSITE_ARDUINO_MENU_SYSTEM_NAV
   #define RSITE_ARDUINO_MENU_SYSTEM_NAV
+  #include "menuBase.h"
   namespace Menu {
+
+    //navigation panels (min 1) describe output dimensions (in characters)
+    struct panel {
+      idx_t x,y,w,h;
+      inline idx_t maxX() const {return x+w;}
+      inline idx_t maxY() const {return y+h;}
+    };
+
+    class panelsList {
+      public:
+        constMEM panel* panels;
+        navNode** nodes;
+        constMEM idx_t sz;
+        idx_t cur=0;
+        panelsList(constMEM panel p[],navNode* nodes[],idx_t sz):panels(p),nodes(nodes),sz(sz) {
+          reset();
+        }
+        void reset(idx_t from=0) {
+          for(int n=from;n<sz;n++) nodes[n]=NULL;
+        }
+        inline constMEM panel operator[](idx_t i) const {
+          assert(i<sz);
+          #ifdef USING_PGM
+            panel tmp;
+            memcpy_P(&tmp, &panels[i], sizeof(panel));
+            return tmp;
+          #else
+            return panels[i];
+          #endif
+        }
+        idx_t maxX() const {
+          idx_t r=0;
+          for(int n=0;n<sz;n++) r=_MAX(operator[](n).maxX(),r);
+          return r;
+        }
+        idx_t maxY() const {
+          idx_t r=0;
+          for(int n=0;n<sz;n++) r=_MAX(operator[](n).maxY(),r);
+          return r;
+        }
+    };
+
     // Navigation
     //////////////////////////////////////////////////////////////////////////
     class navNode {
@@ -24,7 +67,7 @@
         inline result sysEvent(eventMask e) {return sysEvent(e,sel);}//send event to current item
         navCmd navKeys(char ch);
         navCmd doNavigation(navCmd cmd);//aux function
-        inline bool changed(const menuOut& out) const {return out.drawn==NULL||target->changed(*this,out);}
+        inline bool changed(const menuOut& out) const;
         inline prompt& operator[](idx_t i) const {return target->operator[](i);}
     };
 
