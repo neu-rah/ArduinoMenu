@@ -29,6 +29,10 @@ or a list of files+folders from a folder/file system
 
 using namespace Menu;
 
+#ifndef LED_BUILTIN
+  #define LED_BUILTIN 13
+#endif
+
 #define LED LED_BUILTIN
 
 #ifndef USING_RAM
@@ -64,7 +68,7 @@ prompt* togData[]={
   new menuValue<bool>("Off",false)
 };
 toggle<bool>& ledMenu
-  =*new toggle<bool>("LED:",led,sizeof(togData)/sizeof(prompt*),togData,(callback)setLed,enterEvent);
+  =*new toggle<bool>("LED:",led,sizeof(togData)/sizeof(prompt*),togData,(Menu::callback)setLed,enterEvent);
 
 //the submenu -------------------------------------
 prompt* subData[]={
@@ -104,7 +108,7 @@ const char* hexNr[] MEMMODE={"0","x",hexDigit,hexDigit};//text validators
 char buf1[]="0x11";//text edit target
 
 prompt* mainData[]={
-  new prompt("Op 1",(callback)op1Func,enterEvent),
+  new prompt("Op 1",(Menu::callback)op1Func,enterEvent),
   new prompt("Op 2"),//we can set/change text, function and event mask latter
   new menuField<typeof(test)>(test,"Bright","",0,255,10,1,doNothing,noEvent),
   new textField("Addr",buf1,4,hexNr),
