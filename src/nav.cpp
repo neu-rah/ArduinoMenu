@@ -18,8 +18,6 @@ navCmd navNode::navKeys(char ch) {
   return noCmd;
 }
 
-inline bool navNode::changed(const menuOut& out) const {return out.drawn==NULL||target->changed(*this,out);}
-
 // generic navigation (aux function)
 navCmd navNode::doNavigation(navCmd cmd) {
   trace(Serial<<"navNode::doNavigation"<<endl);
