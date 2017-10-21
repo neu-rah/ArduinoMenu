@@ -25,6 +25,8 @@ www.r-site.net
   #define assert(x)
   #include "macros.h"
 
+  #define _MAX(a,b) (((a)>(b))?(a):(b))
+
   namespace Menu {
     //menu structure objects
     class menuIn;

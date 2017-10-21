@@ -2,6 +2,8 @@
 #include "menu.h"
 using namespace Menu;
 
+constMEM char* numericChars="0123456789.";
+
 result Menu::doNothing() {return proceed;}
 result Menu::doExit() {return quit;}
 action Menu::noAction(doNothing);
@@ -833,3 +835,5 @@ void menuVariantBase::doNav(navNode& nav,navCmd cmd) {
     nav.root->exit();
   }
 }
+
+idx_t& menuOut::top(navNode& nav) const {return tops[nav.root->level];}

@@ -55,7 +55,7 @@ const colorDef<uint8_t> colors[] MEMMODE={
 // outputsList out(outputs,1);
 
 MENU_OUTPUTS(out,MAX_DEPTH
-  ,ANSISERIAL_OUT(Serial,colors,{1,1,16,10},{18,1,16,10},{36,1,16,10})
+  ,ANSISERIAL_OUT(Serial,colors,{1,1,16,10})/*,{18,1,16,10},{36,1,16,10})*/
   ,NONE//must have 2 items at least
 );
 
@@ -244,11 +244,10 @@ char* constMEM hexNr[] MEMMODE={"0","x",hexDigit,hexDigit};
 char buf1[]="0x11";
 
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
-  ,SUBMENU(birthDate)
   ,OP("Op1",action1,anyEvent)
   ,OP("Op2",action2,enterEvent)
-  //,SUBMENU(togOp)
   ,FIELD(test,"Test","%",0,100,10,1,doNothing,noEvent,wrapStyle)
+  ,SUBMENU(birthDate)
   ,SUBMENU(subMenu)
   ,SUBMENU(setLed)
   ,OP("LED On",ledOn,enterEvent)

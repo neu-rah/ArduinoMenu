@@ -44,8 +44,8 @@ public:
   //these are made string to allow unicode,
   //BUT you should only provide ONE character
   //otherwise stuff will overflow!
-  static char* fill;
-  static char* empty;
+  static const char* fill;
+  static const char* empty;
 };
 
 template<typename T>
