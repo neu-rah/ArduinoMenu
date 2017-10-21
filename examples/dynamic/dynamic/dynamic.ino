@@ -32,7 +32,7 @@ using namespace Menu;
 #define LED LED_BUILTIN
 
 #ifndef USING_RAM
-#error "This menu demo does not work on flash memory versions (MENU_USEPGM)"
+#error "This menu example does not work on flash memory versions (MENU_USEPGM)"
 #error "Library must be compiled with MENU_USERAM defined (default for non AVR's)"
 #error "ex: passing -DMENU_USERAM to the compiler"
 #endif
@@ -54,7 +54,7 @@ prompt* fxData[]={
   new menuValue<Fxs>("Pop",Fx1),
   new menuValue<Fxs>("Rock",Fx2)
 };
-select<Fxs>& fxMenu =*new select<Fxs>("Fx",selFx,sizeof(fxData)/sizeof(prompt*),fxData);
+Menu::select<Fxs>& fxMenu =*new Menu::select<Fxs>("Fx",selFx,sizeof(fxData)/sizeof(prompt*),fxData);
 
 //toggle field and options -------------------------------------
 bool led=false;//target var
