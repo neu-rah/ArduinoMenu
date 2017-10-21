@@ -278,7 +278,9 @@ multiple stream packing for input to mix encoder stream with encoder keyboard (u
 
 ##### Options
 
-**invertFieldKeys** option removed, invertion is now supported by specific menuIn objects.
+<del>**invertFieldKeys** option removed, invertion is now supported by specific menuIn objects.</del>
+
+_regression: still needed to ease simple input cases._
 
 **numValueInput** moved to menuIn object
 
