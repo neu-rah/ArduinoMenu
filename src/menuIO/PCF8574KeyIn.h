@@ -2,6 +2,30 @@
 
 /**************
 todo: write description
+available keys from 0 to 7 correspond with pcf8574 input pins from p0 to p7
+
+example:
+
+#include <menuIO/PCF8574KeyIn.h>
+
+#define K_UP     0
+#define K_RIGHT  1
+#define K_LEFT   2
+#define K_DOWN   3
+
+#define K_ESC    4
+#define K_ENTER  5
+
+keyMap myBtn_map[]={
+                      {K_UP,options->getCmdChar(downCmd)},
+                      {K_RIGHT,options->getCmdChar(leftCmd)},
+                      {K_LEFT,options->getCmdChar(rightCmd)},
+                      {K_DOWN,options->getCmdChar(upCmd)},
+                      {K_ESC,options->getCmdChar(escCmd)},
+                      {K_ENTER,options->getCmdChar(enterCmd)}
+                    };
+PCF8574KeyIn<6> myButton(myBtn_map);
+
 ***/
 
 #ifndef __PCF8574KeyIn_h__
@@ -29,11 +53,10 @@ todo: write description
     public:
       keyMap* keys;
       int lastkey;
-      TwoWire iicWire;
       unsigned long pressMills=0;
       PCF8574KeyIn<N, _dev, _sda, _scl>(keyMap k[]):keys(k),lastkey(-1) {}
       void begin() {
-        iicWire.begin(_sda, _scl);
+        Wire.begin(_sda, _scl);
       }
       int available(void) {
         int ch=peek();
@@ -55,10 +78,8 @@ todo: write description
       }
       int peek(void) {
         //Serial<<"peek"<<endl;
-
-        iicWire.requestFrom(_dev, 1);
-        uint8_t val = iicWire.read();
-
+        Wire.requestFrom(_dev, 1);
+        uint8_t val = Wire.read();
         for(int n=0;n<N;n++) {
           int8_t pin=keys[n].pin;
           if (((val)&1<<pin)==0) {
