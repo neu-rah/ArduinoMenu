@@ -8,7 +8,6 @@ using namespace Menu;
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-//aux function, turn input character into navigation command
 navCmd navNode::navKeys(char ch) {
   trace(Serial<<"navNode::navKeys"<<endl);
   if (strchr(numericChars,ch)) {

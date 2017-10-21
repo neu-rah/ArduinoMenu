@@ -4,53 +4,9 @@
 
   #include "menuBase.h"
   #include "shadows.h"
-  
+
   namespace Menu {
-    ////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////
-    // Output
-    ////////////////////////////////////////////////////////////////////////////
-
-    //navigation panels (min 1) describe output dimensions (in characters)
-    struct panel {
-      idx_t x,y,w,h;
-      inline idx_t maxX() const {return x+w;}
-      inline idx_t maxY() const {return y+h;}
-    };
-
-    class panelsList {
-      public:
-        constMEM panel* panels;
-        navNode** nodes;
-        constMEM idx_t sz;
-        idx_t cur=0;
-        panelsList(constMEM panel p[],navNode* nodes[],idx_t sz):panels(p),nodes(nodes),sz(sz) {
-          reset();
-        }
-        void reset(idx_t from=0) {
-          for(int n=from;n<sz;n++) nodes[n]=NULL;
-        }
-        inline constMEM panel operator[](idx_t i) const {
-          assert(i<sz);
-          #ifdef USING_PGM
-            panel tmp;
-            memcpy_P(&tmp, &panels[i], sizeof(panel));
-            return tmp;
-          #else
-            return panels[i];
-          #endif
-        }
-        idx_t maxX() const {
-          idx_t r=0;
-          for(int n=0;n<sz;n++) r=_MAX(operator[](n).maxX(),r);
-          return r;
-        }
-        idx_t maxY() const {
-          idx_t r=0;
-          for(int n=0;n<sz;n++) r=_MAX(operator[](n).maxY(),r);
-          return r;
-        }
-    };
+    //inline menuOut::styles operator | (menuOut::styles a, menuOut::styles b) {return (menuOut::styles)(a|b);}
 
     ///////////////////////////////////////////////////////////////////////////
     // base for all menu input devices
@@ -91,8 +47,8 @@
         menuNode* drawn=NULL;
         menuOut(idx_t *topsList,panelsList &p,styles os=minimalRedraw)
           :tops(topsList),panels(p),style(os) {}
-        inline idx_t maxX(idx_t i=0) const {return panels[i].w;}
-        inline idx_t maxY(idx_t i=0) const {return panels[i].h;}
+        inline idx_t maxX(idx_t i=0) const;
+        inline idx_t maxY(idx_t i=0) const;
         inline idx_t& top(navNode& nav) const;
         idx_t printRaw(const char* at,idx_t len);
         #ifdef DEBUG
@@ -135,8 +91,6 @@
         Used printMenu(navNode &nav,idx_t panelNr);
     };
 
-    //inline menuOut::styles operator | (menuOut::styles a, menuOut::styles b) {return (menuOut::styles)(a|b);}
-
     //for devices that can position a print cursor (like LCD's)
     class cursorOut:public menuOut {
     public:
@@ -147,12 +101,7 @@
         for(int n=0;n<maxX();n++) print(' ');
         setCursor(0,ln,panelNr);
       }
-      void clear(idx_t panelNr) override {
-        const panel p=panels[panelNr];
-        fill(p.x,p.y,p.x+p.w-1,p.y+p.h-1);
-        setCursor(0,0,panelNr);
-        panels.nodes[panelNr]=NULL;
-      }
+      void clear(idx_t panelNr) override;
       menuOut& fill(
         int x1, int y1, int x2, int y2,char ch=' ',
         colorDefs color=bgColor,
@@ -169,6 +118,7 @@
       }
     };
 
+    //base for graphics displays
     class gfxOut:public menuOut {
       public:
         idx_t resX=1;
@@ -205,22 +155,10 @@
         void refresh() {//force redraw of all outputs on next output call
           for(int n=0;n<cnt;n++) ((menuOut*)memPtr(outs[n]))->drawn=NULL;
         }
-        // void clearLine(idx_t ln,idx_t panelNr=0,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus) const {
-        //   for(int n=0;n<cnt;n++) ((menuOut*)memPtr(outs[n]))->clearLine(ln,panelNr,color,selected,stat);
-        // }
         void clearChanged(navNode& nav) const {
           for(int n=0;n<cnt;n++) ((menuOut*)memPtr(outs[n]))->clearChanged(nav);
         }
         void clear() {for(int n=0;n<cnt;n++) ((menuOut*)memPtr(outs[n]))->clear();}
-        // void setCursor(idx_t x,idx_t y) {
-        //   for(int n=0;n<cnt;n++) ((menuOut*)memPtr(outs[n]))->setCursor(x,y);
-        // }
-        // void setColor(colorDefs c,bool selected=false,status s=enabledStatus) {
-        //   for(int n=0;n<cnt;n++) ((menuOut*)memPtr(outs[n]))->setColor(c,selected,s);
-        // }
-        // void drawCursor(idx_t ln,bool selected,status stat,idx_t panelNr=0) {
-        //   for(int n=0;n<cnt;n++) ((menuOut*)memPtr(outs[n]))->drawCursor(ln,selected,stat,panelNr);
-        // }
         void doNav(navCmd cmd,class navNode &nav) {for(int n=0;n<cnt;n++) ((menuOut*)memPtr(outs[n]))->doNav(cmd,nav);}
         result idle(idleFunc f,idleEvent e) {
           #ifdef DEBUG
@@ -253,9 +191,11 @@
           return proceed;
         }
     };
+  }//namespace Menu
 
-    // input
-    ////////////////////////////////////////////////////////////////////////////
+  #include "nav.h"
+  using namespace Menu;
+  inline idx_t menuOut::maxX(idx_t i=0) const {return panels[i].w;}
+  inline idx_t menuOut::maxY(idx_t i=0) const {return panels[i].h;}
 
-  }
 #endif

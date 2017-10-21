@@ -33,6 +33,8 @@ www.r-site.net
     //menu structure objects
     class menuIn;
     class menuOut;
+    class panel;
+    class panelsList;
     class navNode;
     class navRoot;
     class prompt;

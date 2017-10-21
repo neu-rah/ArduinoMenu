@@ -1,7 +1,6 @@
 #include "menu.h"
 using namespace Menu;
 
-
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -284,3 +283,10 @@ void menuOut::clearChanged(navNode &nav) {
 }
 
 idx_t& menuOut::top(navNode& nav) const {return tops[nav.root->level];}
+
+void cursorOut::clear(idx_t panelNr) {
+  const panel p=panels[panelNr];
+  fill(p.x,p.y,p.x+p.w-1,p.y+p.h-1);
+  setCursor(0,0,panelNr);
+  panels.nodes[panelNr]=NULL;
+}
