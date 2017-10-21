@@ -67,6 +67,7 @@
         void clearChanged(navNode &nav);//clean up changed flags after everyone printed!
         void previewMenu(navRoot& root,menuNode& menu,idx_t panelNr);//draw a preview on a panel
         Used printMenu(navNode &nav);//print menus and previews on panels
+        void doNav(navCmd cmd,navNode &nav);
         virtual void clearLine(idx_t ln,idx_t panelNr=0,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false)=0;
         virtual void clear()=0;
         virtual void clear(idx_t panelNr)=0;
@@ -76,17 +77,16 @@
           setColor(cursorColor, selected, stat,edit);
           write(selected?(stat==disabledStatus? options->disabledCursor : options->selectedCursor):' ');
         }
-        void doNav(navCmd cmd,navNode &nav);
-        #ifdef MENU_FMT_WRAPS
-          virtual result fmtStart(fmtParts part,navNode &nav,idx_t idx=-1) {return proceed;}
-          virtual result fmtEnd(fmtParts part,navNode &nav,idx_t idx=-1) {return proceed;}
-        #endif
         //text editor cursors
         virtual idx_t startCursor(navRoot& root,idx_t x,idx_t y,bool charEdit,idx_t panelNr=0) {write(charEdit?">":"[");return 1;}
         virtual idx_t endCursor(navRoot& root,idx_t x,idx_t y,bool charEdit,idx_t panelNr=0) {write(charEdit?"<":"]");return 1;}
         virtual idx_t editCursor(navRoot& root,idx_t x,idx_t y,bool editing,bool charEdit,idx_t panelNr=0) {return 0;}
         virtual void rect(idx_t panelNr,idx_t x,idx_t y,idx_t w=1,idx_t h=1,colorDefs c=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) {}
         virtual void box(idx_t panelNr,idx_t x,idx_t y,idx_t w=1,idx_t h=1,colorDefs c=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) {}
+        #ifdef MENU_FMT_WRAPS
+          virtual result fmtStart(fmtParts part,navNode &nav,idx_t idx=-1) {return proceed;}
+          virtual result fmtEnd(fmtParts part,navNode &nav,idx_t idx=-1) {return proceed;}
+        #endif
       protected:
         Used printMenu(navNode &nav,idx_t panelNr);
     };
