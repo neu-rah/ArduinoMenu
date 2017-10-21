@@ -43,7 +43,7 @@ const navCodesDef Menu::defaultNavCodes={
   {scrlUpCmd,0x36}
 };
 
-config defaultOptions={'>','-',Menu::defaultNavCodes};
+config defaultOptions={'>','-',Menu::defaultNavCodes,false};
 config* Menu::options=&defaultOptions;
 
 #ifdef DEBUG
