@@ -25,7 +25,7 @@ or a list of files+folders from a folder/file system
 #include <menu.h>
 #include <menuIO/serialOut.h>
 #include <menuIO/serialIn.h>
-#include <Streaming.h>
+// #include <Streaming.h>
 
 using namespace Menu;
 
@@ -144,8 +144,6 @@ void setup() {
   Serial.println("menu 4.x test");
   Serial.flush();
   mainMenu[0].shadow->text="Changed";
-  Serial.println(mainMenu[0].getText());
-  Serial<<"Sz:"<<mainMenu.sz()<<" "<<(sizeof(mainData)/sizeof(prompt*))<<endl;
 }
 
 void loop() {

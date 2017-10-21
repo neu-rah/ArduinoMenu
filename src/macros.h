@@ -5,7 +5,7 @@
 
 //////////////////////////////////////////////////////////////////////////////
 // memory macros ------------------------------------------------------------
-#if defined(__arm__) | defined(ESP8266)
+#ifndef __AVR_ARCH__
   #define MENU_USERAM
 #endif
 #if defined(ESP8266) | defined(CORE_TEENSY)
