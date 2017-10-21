@@ -186,7 +186,7 @@ result idle(menuOut& o,idleEvent e) {
   return proceed;
 }
 
-//config myOptions('*','-',false,false,defaultNavCodes);
+//config myOptions('*','-',defaultNavCodes,false);
 
 void setup() {
   //options=&myOptions;//can customize options

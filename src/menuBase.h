@@ -175,14 +175,17 @@ www.r-site.net
       config(
         char ecur='>',
         char dcur='-',
-        const navCodesDef &nc=defaultNavCodes
+        const navCodesDef &nc=defaultNavCodes,
+        bool invKeys=true
       ):selectedCursor(ecur),
       disabledCursor(dcur),
-      navCodes(nc) {}
+      navCodes(nc),
+      invertFieldKeys(invKeys) {}
       //NOTE:this can be output specific
       char selectedCursor;//='>';
       char disabledCursor;//='-';
       const navCodesDef &navCodes;//=defaultNavCodes;
+      bool invertFieldKeys;
       inline char getCmdChar(navCmds cmd) const {return navCodes[cmd].ch;}//return character assigned to this command
     };
 
