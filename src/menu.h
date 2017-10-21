@@ -24,6 +24,8 @@ for correcting unsigned values validation
   #include "menuBase.h"
   #include "shadows.h"
 
+  using namespace Menu;
+
   #if defined(DEBUG) && defined(TRACE)
     #define trace(x) x
   #else
@@ -35,7 +37,10 @@ for correcting unsigned values validation
     #define _trace(x)
   #endif
 
-  extern const char* numericChars;
+  namespace Menu {
+    extern const char* numericChars;
+    result maxDepthError(menuOut& o,idleEvent e);
+  }
 
   #include "items.h"
   #include "io.h"

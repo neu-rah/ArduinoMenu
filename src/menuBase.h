@@ -22,7 +22,9 @@ www.r-site.net
   #endif
 
   #include <Arduino.h>
-  #define assert(x)
+  #ifndef assert
+    #define assert(x)
+  #endif
   #include "macros.h"
 
   #define _MAX(a,b) (((a)>(b))?(a):(b))
