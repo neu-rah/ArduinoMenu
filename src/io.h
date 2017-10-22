@@ -13,6 +13,7 @@
     class menuIn:public Stream {
       public:
         bool numValueInput=true;
+        //when inside a field some devices might invert the movement axis
         virtual void setFieldMode(bool) {}
         virtual bool fieldMode() const {return false;}
         inline void fieldOn() {setFieldMode(true);}
@@ -195,7 +196,7 @@
 
   #include "nav.h"
   using namespace Menu;
-  inline idx_t menuOut::maxX(idx_t i=0) const {return panels[i].w;}
-  inline idx_t menuOut::maxY(idx_t i=0) const {return panels[i].h;}
+  inline idx_t menuOut::maxX(idx_t i) const {return panels[i].w;}
+  inline idx_t menuOut::maxY(idx_t i) const {return panels[i].h;}
 
 #endif

@@ -263,8 +263,9 @@ Used fieldBase::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len
   bool ed=this==root.navFocus;
   //bool sel=nav.sel==i;
   if (l<len) {
-    if(!root.node().has(_asPad))//do notdraw edit cursors for pad menu items?
-      out.print((root.navFocus==this&&sel)?(tunning?'>':':'):' ');
+    // if(!root.node().has(_asPad))//do notdraw edit cursors for pad menu items?
+    //this is not really working!
+    out.print((root.navFocus==this&&sel)?(tunning?'>':':'):'X');
     l++;
     if (l<len) {
       #ifdef MENU_FMT_WRAPS
