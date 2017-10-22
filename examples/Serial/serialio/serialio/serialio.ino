@@ -23,7 +23,7 @@ result showEvent(eventMask e,navNode& nav,prompt& item) {
   return proceed;
 }
 
-int test=55;
+float test=55;
 
 result action1(eventMask e) {
   Serial.print(e);
