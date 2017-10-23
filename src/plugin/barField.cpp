@@ -2,5 +2,5 @@
 
 using namespace Menu;
 
-char* barFieldOptions::fill="|";
-char* barFieldOptions::empty="-";
+const char* barFieldOptions::fill="|";
+const char* barFieldOptions::empty="-";

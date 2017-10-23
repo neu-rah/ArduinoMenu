@@ -10,7 +10,7 @@
     struct promptShadowRaw {
       actionRaw a;//the hooked callback function
       systemStyles sysStyles;
-      constMEM char*text;
+      const char*text;
       constMEM eventMask events;//registered events
       styles style;
     };
@@ -18,13 +18,13 @@
       protected:
       public:
         systemStyles sysStyles;
-        constMEM char*text;
+        const char*text;
         eventMask events;//registered events (mask)
         styles style;
       public:
-        promptShadow(constMEM char* t,action a=doNothing,eventMask e=noEvent,styles s=noStyle,systemStyles ss=_noStyle)
+        promptShadow(const char* t,action a=doNothing,eventMask e=noEvent,styles s=noStyle,systemStyles ss=_noStyle)
           :action(a),sysStyles(ss),text(t),events(e),style(s) {}
-        inline constMEM char* getText() const {return (constMEM char*)memPtr(text);}
+        inline const char* getText() const {return (const char*)memPtr(text);}
         inline systemStyles _sysStyles() const {return (systemStyles)memEnum(&sysStyles);}
         inline eventMask _events() const {return (eventMask)memEnum(&events);}
         inline styles _style() const {return (styles)memEnum(&style);}
@@ -32,24 +32,24 @@
     struct textFieldShadowRaw {
       actionRaw a;
       systemStyles sysStyles;
-      constMEM char*text;
+      const char*text;
       eventMask events;//registered events
       styles style;
       char* buffer;
-      char* constMEM* validators;
+      const char* constMEM* validators;
       idx_t sz;
     };
     class textFieldShadow:public promptShadow {
       protected:
       public:
         char* buffer;
-        char* constMEM* validators;
+        const char* constMEM* validators;
         idx_t sz;
         textFieldShadow(
-          constMEM char*label,
+          const char*label,
           char* b,
           idx_t sz,
-          char* constMEM* v,
+          const char* constMEM* v,
           action a=doNothing,
           eventMask e=noEvent,
           styles style=noStyle,
@@ -57,16 +57,15 @@
         ):promptShadow(label,a,e,style,ss),buffer(b),validators(v),sz(sz) {}
         idx_t _sz() const {return (idx_t)memIdx(sz);}
         char* _buffer() const {return (char*)memPtr(buffer);}
-        char* constMEM* _validators() const {return (char* constMEM*)memPtr(validators);}
-        inline char* operator[](idx_t i) const {
+        char* const* _validators() const {return (char* const*)memPtr(validators);}
+        inline const char* operator[](idx_t i) const {
           return (char*)memPtr(((char**)_validators())[i]);
-          //return *(prompt*)memPtr(((prompt**)memPtr(((menuNodeShadow*)shadow)->data))[i]);
         }
     };
     struct menuNodeShadowRaw {
       actionRaw a;
       systemStyles sysStyles;
-      constMEM char*text;
+      const char*text;
       eventMask events;//registered events
       styles style;
       idx_t sz;
@@ -78,7 +77,7 @@
         idx_t sz;
         prompt* constMEM* data;
       public:
-        menuNodeShadow(constMEM char* text,idx_t sz,prompt* constMEM* data,action a,eventMask e,styles style,systemStyles ss=(systemStyles)(_menuData|_canNav))
+        menuNodeShadow(const char* text,idx_t sz,prompt* constMEM* data,action a,eventMask e,styles style,systemStyles ss=(systemStyles)(_menuData|_canNav))
         :promptShadow(text,a,e,style,ss),sz(sz),data(data) {}
         idx_t _sz() const {return (idx_t)memIdx(sz);}
         prompt* constMEM* _data() const {return (prompt* constMEM*)memPtr(data);}
@@ -91,26 +90,26 @@
     struct fieldBaseShadowRaw {
       actionRaw a;
       systemStyles sysStyles;
-      constMEM char*text;
+      const char*text;
       eventMask events;//registered events
       styles style;
-      constMEM char* units;
+      const char* units;
     };
     class fieldBaseShadow:public promptShadow {
       public:
-        constMEM char* units;
-        fieldBaseShadow(constMEM char * text,constMEM char *units,action a=doNothing,eventMask e=noEvent,styles s=noStyle,systemStyles ss=((Menu::systemStyles)(Menu::_canNav|Menu::_parentDraw)))
-          :units(units),promptShadow(text,a,e,s,ss) {}
-        inline constMEM char* _units() {return (constMEM char*)memPtr(units);}
+        const char* units;
+        fieldBaseShadow(const char * text,const char *units,action a=doNothing,eventMask e=noEvent,styles s=noStyle,systemStyles ss=((Menu::systemStyles)(Menu::_canNav|Menu::_parentDraw)))
+          :promptShadow(text,a,e,s,ss),units(units) {}
+        inline const char* _units() {return (const char*)memPtr(units);}
     };
     template<typename T>
     struct menuFieldShadowRaw {
       actionRaw a;
       systemStyles sysStyles;
-      constMEM char*text;
+      const char*text;
       eventMask events;//registered events
       styles style;
-      constMEM char* units;
+      const char* units;
       T* value;
       constMEM T low,high,step,tune;
     };
@@ -121,8 +120,8 @@
         T* value;
         constMEM T low,high,step,tune;
       public:
-        menuFieldShadow(T &value,constMEM char * text,constMEM char *units,T low,T high,T step,T tune,action a=doNothing,eventMask e=noEvent,styles s=noStyle,systemStyles ss=((Menu::systemStyles)(Menu::_canNav|Menu::_parentDraw)))
-          :value(&value),low(low),high(high),step(step),tune(tune),fieldBaseShadow(text,units,a,e,s,ss) {}
+        menuFieldShadow(T &value,const char * text,const char *units,T low,T high,T step,T tune,action a=doNothing,eventMask e=noEvent,styles s=noStyle,systemStyles ss=((Menu::systemStyles)(Menu::_canNav|Menu::_parentDraw)))
+          :fieldBaseShadow(text,units,a,e,s,ss),value(&value),low(low),high(high),step(step),tune(tune) {}
         inline T& target() const {return *(T*)memPtr(value);}
         inline T getTypeValue(const T* from) const {
           //TODO: dynamic versions require change of preprocessor to virtual
@@ -144,7 +143,7 @@
     struct menuValueShadowRaw {
       actionRaw a;
       systemStyles sysStyles;
-      constMEM char*text;
+      const char*text;
       eventMask events;//registered events
       styles style;
       T value;
@@ -155,7 +154,7 @@
       public:
         T value;
       public:
-        inline menuValueShadow(constMEM char * text,T value,action a=doNothing,eventMask e=noEvent)
+        inline menuValueShadow(const char * text,T value,action a=doNothing,eventMask e=noEvent)
           :promptShadow(text,a,e),value(value) {}
         inline T getTypeValue(const T* from) const {
           //TODO: dynamic versions require change of preprocessor to virtual
@@ -174,7 +173,7 @@
     struct menuVariantShadowRaw {
       actionRaw a;
       systemStyles sysStyles;
-      constMEM char*text;
+      const char*text;
       constMEM eventMask events;//registered events
       styles style;
       idx_t sz;
@@ -188,7 +187,7 @@
       public:
         T* value;
         menuVariantShadow(
-          constMEM char* text,
+          const char* text,
           T &target,
           idx_t sz,
           prompt* constMEM* data,

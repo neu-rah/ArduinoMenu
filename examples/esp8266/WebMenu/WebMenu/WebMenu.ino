@@ -141,7 +141,7 @@ MENU_OUTLIST(out,&serverOut);
 serialIn serial(Serial);
 NAVROOT(nav,mainMenu,MAX_DEPTH,serial,out);
 
-//config myOptions('*','-',false,false,defaultNavCodes,false,true);
+//config myOptions('*','-',defaultNavCodes,false);
 
 void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length) {
   switch(type) {

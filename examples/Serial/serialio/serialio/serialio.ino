@@ -23,7 +23,7 @@ result showEvent(eventMask e,navNode& nav,prompt& item) {
   return proceed;
 }
 
-int test=55;
+float test=55;
 
 result action1(eventMask e) {
   Serial.print(e);
@@ -100,12 +100,11 @@ PADMENU(birthDate,"Birth",doNothing,noEvent,noStyle
   ,FIELD(day,"","",1,31,1,0,doNothing,noEvent,wrapStyle)
 );
 
-char* constMEM hexDigit MEMMODE="0123456789ABCDEF";
-char* constMEM hexNr[] MEMMODE={"0","x",hexDigit,hexDigit};
+const char* constMEM hexDigit MEMMODE="0123456789ABCDEF";
+const char* constMEM hexNr[] MEMMODE={"0","x",hexDigit,hexDigit};
 char buf1[]="0x11";
 
 MENU(mainMenu,"Main menu",zZz,noEvent,wrapStyle
-  ,SUBMENU(birthDate)
   ,OP("Op1",action1,anyEvent)
   ,OP("Op2",action2,enterEvent)
   ,FIELD(test,"Test","%",0,100,10,1,doNothing,noEvent,wrapStyle)
@@ -117,6 +116,7 @@ MENU(mainMenu,"Main menu",zZz,noEvent,wrapStyle
   ,SUBMENU(chooseMenu)
   ,OP("Alert test",doAlert,enterEvent)
   ,EDIT("Hex",buf1,hexNr,doNothing,noEvent,noStyle)
+  ,SUBMENU(birthDate)
   ,EXIT("<Back")
 );
 

@@ -22,13 +22,19 @@ www.r-site.net
   #endif
 
   #include <Arduino.h>
-  #define assert(x)
+  #ifndef assert
+    #define assert(x)
+  #endif
   #include "macros.h"
+
+  #define _MAX(a,b) (((a)>(b))?(a):(b))
 
   namespace Menu {
     //menu structure objects
     class menuIn;
     class menuOut;
+    class panel;
+    class panelsList;
     class navNode;
     class navRoot;
     class prompt;

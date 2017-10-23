@@ -25,14 +25,18 @@ or a list of files+folders from a folder/file system
 #include <menu.h>
 #include <menuIO/serialOut.h>
 #include <menuIO/serialIn.h>
-#include <Streaming.h>
+// #include <Streaming.h>
 
 using namespace Menu;
+
+#ifndef LED_BUILTIN
+  #define LED_BUILTIN 13
+#endif
 
 #define LED LED_BUILTIN
 
 #ifndef USING_RAM
-#error "This menu demo does not work on flash memory versions (MENU_USEPGM)"
+#error "This menu example does not work on flash memory versions (MENU_USEPGM)"
 #error "Library must be compiled with MENU_USERAM defined (default for non AVR's)"
 #error "ex: passing -DMENU_USERAM to the compiler"
 #endif
@@ -54,7 +58,7 @@ prompt* fxData[]={
   new menuValue<Fxs>("Pop",Fx1),
   new menuValue<Fxs>("Rock",Fx2)
 };
-select<Fxs>& fxMenu =*new select<Fxs>("Fx",selFx,sizeof(fxData)/sizeof(prompt*),fxData);
+Menu::select<Fxs>& fxMenu =*new Menu::select<Fxs>("Fx",selFx,sizeof(fxData)/sizeof(prompt*),fxData);
 
 //toggle field and options -------------------------------------
 bool led=false;//target var
@@ -64,7 +68,7 @@ prompt* togData[]={
   new menuValue<bool>("Off",false)
 };
 toggle<bool>& ledMenu
-  =*new toggle<bool>("LED:",led,sizeof(togData)/sizeof(prompt*),togData,(callback)setLed,enterEvent);
+  =*new toggle<bool>("LED:",led,sizeof(togData)/sizeof(prompt*),togData,(Menu::callback)setLed,enterEvent);
 
 //the submenu -------------------------------------
 prompt* subData[]={
@@ -99,12 +103,12 @@ void op1Func() {Serial.println("Op 1 executed");}
 uint8_t test=55;//target var for numerical range field
 
 //edit text field info
-char* constMEM hexDigit MEMMODE="0123456789ABCDEF";//a text table
-char* constMEM hexNr[] MEMMODE={"0","x",hexDigit,hexDigit};//text validators
+const char* hexDigit MEMMODE="0123456789ABCDEF";//a text table
+const char* hexNr[] MEMMODE={"0","x",hexDigit,hexDigit};//text validators
 char buf1[]="0x11";//text edit target
 
 prompt* mainData[]={
-  new prompt("Op 1",(callback)op1Func,enterEvent),
+  new prompt("Op 1",(Menu::callback)op1Func,enterEvent),
   new prompt("Op 2"),//we can set/change text, function and event mask latter
   new menuField<typeof(test)>(test,"Bright","",0,255,10,1,doNothing,noEvent),
   new textField("Addr",buf1,4,hexNr),
@@ -144,8 +148,6 @@ void setup() {
   Serial.println("menu 4.x test");
   Serial.flush();
   mainMenu[0].shadow->text="Changed";
-  Serial.println(mainMenu[0].getText());
-  Serial<<"Sz:"<<mainMenu.sz()<<" "<<(sizeof(mainData)/sizeof(prompt*))<<endl;
 }
 
 void loop() {
