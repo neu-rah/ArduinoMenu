@@ -184,6 +184,7 @@
           void printLow(menuOut& o) const override;
         #endif
         void stepit(int dir) override {
+          dir*=options->invertFieldKeys?-1:1;
           T thisstep = tunning?tune():step();
           dirty=true;
           //by default they are inverted.. now buttons and joystick have to flip them
