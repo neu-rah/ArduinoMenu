@@ -188,8 +188,8 @@
     };
 
     #ifdef DEBUG
-      inline Stream& operator<<(Stream&o,const navNode& p) {return o<<*(prompt*)p.target;}
-      inline Stream& operator<<(Stream&o,const navRoot& p) {return o<<p.node();}
+      // inline Stream& operator<<(Stream&o,const navNode& p) {return o<<*(prompt*)p.target;}
+      // inline Stream& operator<<(Stream&o,const navRoot& p) {return o<<p.node();}
     #endif
 
   }//namespace Menu

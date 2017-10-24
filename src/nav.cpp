@@ -98,7 +98,7 @@ result navNode::sysEvent(eventMask e,idx_t i) {
 }
 
 void navRoot::doInput(menuIn& in) {
-  trace(Serial<<"navRoot::doInput"<<endl);
+  // trace(Serial<<"navRoot::doInput"<<endl);
   if (sleepTask) {
     if (options->getCmdChar(enterCmd)==in.read()) idleOff();
   } else {
@@ -109,7 +109,7 @@ void navRoot::doInput(menuIn& in) {
       navFocus->parseInput(node(),in);//deliver navigation input task to target...
     }
   }
-  trace(Serial<<"navRoot::doInput ended!"<<endl);
+  // trace(Serial<<"navRoot::doInput ended!"<<endl);
 }
 
 void navRoot::doNav(navCmd cmd) {

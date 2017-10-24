@@ -151,7 +151,7 @@ Used textField::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len
 //
 ////////////////////////////////////////////////////////////////////////////////
 bool menuNode::changed(const navNode &nav,const menuOut& out,bool sub) {
-  trace(Serial<<*this<<" menuNode::changed"<<endl);
+  // trace(Serial<<" menuNode::changed"<<endl);
   bool appd=is((systemStyles)(_asPad|_parentDraw));
   if (dirty) return true;
   if (appd) {
@@ -174,7 +174,7 @@ bool menuNode::changed(const navNode &nav,const menuOut& out,bool sub) {
 }
 
 void menuNode::clearChanged(const navNode &nav,const menuOut& out,bool sub) {
-  trace(Serial<<endl<<*this<<" menuOut::clearChanged "<<nav);
+  trace(Serial<<" menuOut::clearChanged "<<endl);
   dirty=false;
   if (is((systemStyles)(_asPad|_parentDraw))) {
     for(int i=0;i<sz();i++)

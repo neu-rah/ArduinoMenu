@@ -22,6 +22,9 @@ template<void (*A)()> result Menu::callCaster() {A();return proceed;}
 
 //MEMMODE AUX PRINT
 idx_t Menu::print_P(Print& s,const char* at,idx_t len) {
+//   return s.printRaw(at,len);
+// }
+// idx_t Menu::aux_print_P(Print& s,const char* at,idx_t len) {
   const char* p=at;
   uint8_t ch;
   for(int n=0;(ch=memByte(at++))&&(len==0||n<len);n++) {
