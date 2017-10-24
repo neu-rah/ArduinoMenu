@@ -11,10 +11,10 @@ idx_t menuOut::printRaw(const char* at,idx_t len) {
   trace(Serial<<"menuOut::printRaw"<<endl);
   const char* p=at;
   uint8_t ch;
-  for(int n=0;(ch=*(at++))&&(len==0||n<len);n++) {
+  for(int n=0;(ch=memByte(at++))&&(len==0||n<len);n++) {
     write(ch);
   }
-  return at-p;
+  return at-p-1;
 }
 
 void menuOut::doNav(navCmd cmd,navNode &nav) {
