@@ -1,5 +1,4 @@
 #include <Arduino.h>
-#include <Streaming.h>
 
 /********************
 Arduino generic menu system
