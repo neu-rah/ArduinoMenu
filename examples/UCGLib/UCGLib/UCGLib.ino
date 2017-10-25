@@ -43,13 +43,22 @@ const char* constMEM hexDigit MEMMODE="0123456789ABCDEF";
 const char* constMEM hexNr[] MEMMODE={"0","x",hexDigit,hexDigit};
 char buf1[]="0x11";//<-- menu will edit this text
 
+int chooseTest=-1;
+CHOOSE(chooseTest,chooseMenu,"Choose",doNothing,noEvent,noStyle
+  ,VALUE("First",1,doNothing,noEvent)
+  ,VALUE("Second",2,doNothing,noEvent)
+  ,VALUE("Third",3,doNothing,noEvent)
+  ,VALUE("Last",-1,doNothing,noEvent)
+);
+
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,OP("Op1",doNothing,noEvent)
   ,EDIT("Hex",buf1,hexNr,doNothing,noEvent,noStyle)
+  ,SUBMENU(chooseMenu)
   ,EXIT("<Back")
 );
 
-#define MAX_DEPTH 1
+#define MAX_DEPTH 2
 
 //define colors
 #define BLACK {0,0,0}

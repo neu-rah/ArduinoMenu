@@ -17,10 +17,10 @@ example:
 #define K_ENTER  5
 
 keyMap myBtn_map[]={
-                      {K_UP,options->getCmdChar(downCmd)},
-                      {K_RIGHT,options->getCmdChar(leftCmd)},
-                      {K_LEFT,options->getCmdChar(rightCmd)},
-                      {K_DOWN,options->getCmdChar(upCmd)},
+                      {K_UP,options->getCmdChar(upCmd)},
+                      {K_RIGHT,options->getCmdChar(rightCmd)},
+                      {K_LEFT,options->getCmdChar(leftCmd)},
+                      {K_DOWN,options->getCmdChar(downCmd)},
                       {K_ESC,options->getCmdChar(escCmd)},
                       {K_ENTER,options->getCmdChar(enterCmd)}
                     };
@@ -50,11 +50,16 @@ PCF8574KeyIn<6> myButton(myBtn_map);
     // AND is not using a buffer either!
     template <int N, int _dev=0x20, int _sda=SDA, int _scl=SCL>                 //default pcf8574 address=0x20
     class PCF8574KeyIn:public menuIn {
+    private:
+      bool modeEdit;  
     public:
       keyMap* keys;
       int lastkey;
       unsigned long pressMills=0;
       PCF8574KeyIn<N, _dev, _sda, _scl>(keyMap k[]):keys(k),lastkey(-1) {}
+      void setFieldMode(bool mode) override {
+        modeEdit = mode;
+      }
       void begin() {
         Wire.begin(_sda, _scl);
       }
@@ -81,10 +86,19 @@ PCF8574KeyIn<6> myButton(myBtn_map);
         Wire.requestFrom(_dev, 1);
         uint8_t val = Wire.read();
         for(int n=0;n<N;n++) {
-          int8_t pin=keys[n].pin;
+          int8_t pin = keys[n].pin;
+          int8_t code = keys[n].code;
           if (((val)&1<<pin)==0) {
             //Serial<<"key "<<pin<<" pressed"<<endl;
-            return keys[n].code;
+            if (modeEdit == false && (code == options->getCmdChar(upCmd) || navCmds(code) == options->getCmdChar(downCmd))) {
+              //if we navigate on menu then return code up/down (left/right) reversed as down/up (right/left)
+              return (code==options->getCmdChar(upCmd)?options->getCmdChar(downCmd):options->getCmdChar(upCmd));
+            }
+            else
+            {
+              //else if we inside edit field then return all key codes as is
+              return code;
+            }
           }
         }
         return -1;
