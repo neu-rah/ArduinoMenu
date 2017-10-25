@@ -1,5 +1,4 @@
 #include <Arduino.h>
-#include <Streaming.h>
 
 /********************
 Arduino generic menu system
@@ -222,7 +221,7 @@ void setup() {
   #endif
   u8g2.begin();
   u8g2.setFont(fontName);
-  u8g2.setBitmapMode(0);
+  // u8g2.setBitmapMode(0);
 
   //disable second option
   mainMenu[1].enabled=disabledStatus;
