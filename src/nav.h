@@ -137,7 +137,7 @@
           }
           //async printMenu on arbitrary menuOut device
           Used printMenu(menuOut& o) const {
-            _trace(Serial<<"navRoot::printMenu(menuOut& o)"<<endl);
+            trace(Serial<<"navRoot::printMenu(menuOut& o)"<<endl);
             if ((active().sysStyles()&_parentDraw)&&level)
               return o.printMenu(path[level-1]);
             else return o.printMenu(node());
@@ -188,7 +188,10 @@
     };
 
     #ifdef DEBUG
-      inline Stream& operator<<(Stream&o,const navNode& p) {return o<<*(prompt*)p.target;}
+      inline Stream& operator<<(Stream&o,const navNode& p) {
+        o.print((__FlashStringHelper*)p.target->getText());
+        return o;
+      }
       inline Stream& operator<<(Stream&o,const navRoot& p) {return o<<p.node();}
     #endif
 

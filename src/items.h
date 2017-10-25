@@ -368,6 +368,7 @@
         #ifdef MENU_FMT_WRAPS
           virtual classes type() const {return chooseClass;}
         #endif
+        Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr=0) override;
         result sysHandler(SYS_FUNC_PARAMS) override;
         bool changed(const navNode &nav,const menuOut& out,bool sub=true) override {
           return menuVariant<T>::changed(nav,out)||menuNode::changed(nav,out);
@@ -410,6 +411,14 @@
       template<typename T>
       void menuField<T>::printLow(menuOut& o) const {o.print(low());}
     #endif
+
+    template<typename T>
+    Used choose<T>::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr) {
+      bool ed=this==root.navFocus;
+      return ed?
+        prompt::printTo(root,sel,out,idx,len,panelNr)
+        :menuVariantBase::printTo(root,sel,out,idx,len,panelNr);
+    }
 
     template<typename T>
     Used toggle<T>::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr) {

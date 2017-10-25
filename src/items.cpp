@@ -305,12 +305,15 @@ Used menuVariantBase::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx
   out.print(this==&root.active()?':':' ');
   l--;
   #ifdef MENU_FMT_WRAPS
-  if (out.fmtStart(type()==selectClass?menuOut::fmtSelect:menuOut::fmtChoose,root.node(),idx)==proceed) {
+    if (out.fmtStart(type()==selectClass?menuOut::fmtSelect:menuOut::fmtChoose,root.node(),idx)==proceed) {
   #endif
+    // Serial<<"variant ";
+    // print_P(Serial,operator[](at).getText());
+    // Serial<<endl;
     out.setColor(valColor,sel,prompt::enabled,ed);
     if (l>0) l-=operator[](at).printRaw(out,l);
   #ifdef MENU_FMT_WRAPS
-  }
+    }
   #endif
   #ifdef MENU_FMT_WRAPS
   out.fmtEnd(type()==selectClass?menuOut::fmtSelect:menuOut::fmtChoose,root.node(),idx);
