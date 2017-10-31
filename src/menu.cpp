@@ -373,6 +373,7 @@ navCmd navNode::doNavigation(navCmd cmd) {
   idx_t osel=sel;
   idx_t nsel=sel;
   navCmd rCmd=cmd;
+  bool changed=false;
   switch(cmd.cmd) {
     /*case scrlUpCmd:
       if (!target->isVariant())
@@ -399,19 +400,16 @@ navCmd navNode::doNavigation(navCmd cmd) {
     case selCmd:
     case idxCmd: {
         idx_t at=(idx_t)cmd.param;//-'1';send us numeric index pls!
-        if (at>=0&&at<=sz()) {
+        if (at>=0&&at<sz()) {
           nsel=at;
-          //if (cmd.cmd==idxCmd) {
-            //Serial<<"indexing... "<<endl;
-            //rCmd=root->enter();//this enter must occour latter wrapped in events, because selection changed
-          //}
+          changed=true;
         }
       }
       break;
     case noCmd:
     default: break;
   }
-  if(osel!=nsel||cmd.cmd==selCmd||cmd.cmd==idxCmd) {//selection changed, must have been and idx/sel or an up/down movement
+  if(osel!=nsel||changed) {//selection changed, must have been and idx/sel or an up/down movement
     if (target->sysStyles()&(_parentDraw|_isVariant)) {
       target->dirty=true;
     } else {
