@@ -1,5 +1,4 @@
 /* -*- C++ -*- */
-
 #ifndef RSITE_ARDUINO_MENU_SYSTEM_ITEMS
   #define RSITE_ARDUINO_MENU_SYSTEM_ITEMS
 
