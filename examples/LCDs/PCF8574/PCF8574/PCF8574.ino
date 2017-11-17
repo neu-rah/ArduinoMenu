@@ -199,6 +199,7 @@ void setup() {
   nav.idleTask=idle;//point a function to be used when menu is suspended
   mainMenu[1].enabled=disabledStatus;
   nav.showTitle=false;
+  lcd.setBacklight(255);                  
   lcd.setCursor(0, 0);
   lcd.print("Menu 4.x LCD");
   lcd.setCursor(0, 1);
