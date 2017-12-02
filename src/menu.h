@@ -14,13 +14,26 @@ warranty, express or implied, as to its usefulness for any purpose.
 #ifndef RSITE_ARDUINO_MENU_SYSTEM
   #define RSITE_ARDUINO_MENU_SYSTEM
   #include <Arduino.h>
-  #if defined(DEBUG)
-      #include <Streaming.h>
-  #endif
+
   #include "menuBase.h"
   #include "shadows.h"
 
   using namespace Menu;
+
+  #ifdef DEBUG
+    String& operator<<(String&s,prompt &p);
+    Stream& operator<<(Stream&o,prompt& p);
+    Print& operator<<(Print&o,prompt& p);
+  #endif
+
+  #if defined(DEBUG)
+    #ifndef ARDUINO_STREAMING
+      #include <streamFlow.h>
+    #else
+      #include <Streaming.h>
+    #endif
+  #endif
+
 
   #if defined(DEBUG) && defined(TRACE)
     #define trace(x) x

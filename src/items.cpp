@@ -4,7 +4,7 @@ using namespace Menu;
 bool prompt::hasTitle(navNode& nav) const {return (nav.target->has(showTitle)||(nav.root->showTitle&&!nav.target->has(noTitle)));}
 
 idx_t prompt::printRaw(menuOut& out,idx_t len) const {
-  trace(Serial<<"prompt::printRaw"<<endl);
+  trace(Serial<<"prompt::printRaw"<<endl;print_P(Serial,getText(),len));
   return print_P(out,getText(),len);
 }
 
@@ -155,18 +155,23 @@ bool menuNode::changed(const navNode &nav,const menuOut& out,bool sub) {
   bool appd=is((systemStyles)(_asPad|_parentDraw));
   if (dirty) return true;
   if (appd) {
+    trace(Serial<<"appd!"<<endl;);
     for(int i=0;i<sz();i++)
       if (operator[](i).changed(nav,out,false))
         return true;
   } else {
+    trace(Serial<<*this<<"!appd"<<endl;);
     if (!(nav.target==this&&sub)) return dirty;// second hand check, just report self
     idx_t level=nav.root->level;
     if (parentDraw())
       return nav.root->path[level-1].target->changed(nav.root->path[level-1],out,sub);
     idx_t my=out.maxY()-((has(showTitle)||(nav.root->showTitle&&!has(noTitle)))?1:0);
-    idx_t t=out.tops[level];
+    trace(Serial<<"target:"<<*nav.root->navFocus<<" "<<nav.root->navFocus->has(_parentDraw)<<endl);
+    idx_t t=out.tops[level-nav.root->navFocus->has(_parentDraw)];
+    trace(Serial<<"t:"<<t<<endl;);
     if (sub) for(int i=0;i<my;i++,t++) {
       if (t>=sz()) break;
+      trace(Serial<<"checking:"<<operator[](t)<<endl);
       if (operator[](t).changed(nav,out,false)) return true;
     }
   }
@@ -174,7 +179,7 @@ bool menuNode::changed(const navNode &nav,const menuOut& out,bool sub) {
 }
 
 void menuNode::clearChanged(const navNode &nav,const menuOut& out,bool sub) {
-  trace(Serial<<endl<<*this<<" menuOut::clearChanged "<<nav);
+  trace(Serial<<" menuOut::clearChanged "<<nav);
   dirty=false;
   if (is((systemStyles)(_asPad|_parentDraw))) {
     for(int i=0;i<sz();i++)
@@ -185,7 +190,7 @@ void menuNode::clearChanged(const navNode &nav,const menuOut& out,bool sub) {
     if (parentDraw())
       return nav.root->path[level-1].target->clearChanged(nav.root->path[level-1],out,sub);
     idx_t my=out.maxY()-((has(showTitle)||(nav.root->showTitle&&!has(noTitle)))?1:0);
-    idx_t t=out.tops[level];
+    idx_t t=out.tops[level-nav.root->navFocus->has(_parentDraw)];
     for(idx_t i=0;i<my;i++,t++) {//only signal visible
       if (t>=sz()) break;//menu ended
       operator[](t).clearChanged(nav,out,false);
