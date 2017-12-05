@@ -149,14 +149,13 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
 
 #define MAX_DEPTH 2
 
-/*const panel panels[] MEMMODE={{0,0,16,2}};
-navNode* nodes[sizeof(panels)/sizeof(panel)];
+/*idx_t tops[MAX_DEPTH]={0,0};
+const panel panels[] MEMMODE={{0,0,16,2}};
+navNode* nodes[MAX_DEPTH];
 panelsList pList(panels,nodes,1);
-idx_t tops[MAX_DEPTH];
 lcdOut outLCD(&lcd,tops,pList);//output device for LCD
-menuOut* outputs[]={&outLCD};//list of output devices
-outputsList out(outputs,1);//outputs list with 2 outputs
-*/
+menuOut* constMEM outputs[] MEMMODE={&outLCD};//list of output devices
+outputsList out(outputs,1);//outputs list with 1 outputs*/
 
 MENU_OUTPUTS(out,MAX_DEPTH
   ,LCD_OUT(lcd,{0,0,16,2})
@@ -199,6 +198,7 @@ void setup() {
   nav.idleTask=idle;//point a function to be used when menu is suspended
   mainMenu[1].enabled=disabledStatus;
   nav.showTitle=false;
+  lcd.setBacklight(255);
   lcd.setCursor(0, 0);
   lcd.print("Menu 4.x LCD");
   lcd.setCursor(0, 1);

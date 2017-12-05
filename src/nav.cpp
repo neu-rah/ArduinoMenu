@@ -25,18 +25,22 @@ navCmd navNode::doNavigation(navCmd cmd) {
   idx_t nsel=sel;
   navCmd rCmd=cmd;
   bool changed=false;
+  // trace(if(cmd.cmd!=noCmd) Serial<<"navigate "<<*target<<" with command:"<<cmd.cmd<<" index:"<<nsel<<endl);
   switch(cmd.cmd) {
     /*case scrlDownCmd:
       if (!target->isVariant())
         root->out.doNav(cmd,*this);*/
     case upCmd:
-        nsel++;
-        if (nsel>=sz()) {if(wrap()) nsel=0; else nsel=sz()-1;}
-        break;
+      // trace(Serial<<"up"<<endl;);
+      nsel++;
+      if (nsel>=sz()) {if(wrap()) nsel=0; else nsel=sz()-1;}
+      // trace(Serial<<"new sel:"<<nsel<<endl);
+      break;
       /*case scrlUpCmd:
         if (!target->isVariant())
           root->out.doNav(cmd,*this);*/
     case downCmd:
+      // trace(Serial<<"down"<<endl);
       if (nsel||!target->is(_asPad)) {
         nsel--;
         if (nsel<0) {if(wrap()) nsel=sz()-1; else nsel=0;}
@@ -62,9 +66,14 @@ navCmd navNode::doNavigation(navCmd cmd) {
     case noCmd:
     default: break;
   }
-  if(osel!=nsel||changed) {//selection changed, must have been and idx/sel or an up/down movement
+  // trace(Serial<<"changed:"<<changed<<" sels?"<<(osel!=nsel)<<endl);
+  if((osel!=nsel)||changed) {//selection changed, must have been and idx/sel or an up/down movement
+    // trace(Serial<<"changed"<<endl);
     if (target->sysStyles()&(_parentDraw|_isVariant)) {
+      trace(Serial<<"setting dirty"<<endl);
       target->dirty=true;
+      //this works but might be too much, we dont want to invaludate all the menu!
+      // if (_parentDraw/*&&root->level*/) root->path[root->level-1].target->dirty=true;
     } else {
       operator[](osel).dirty=true;
       operator[](nsel).dirty=true;

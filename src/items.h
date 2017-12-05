@@ -439,11 +439,5 @@
           return proceed;
       }
     }
-
-    #ifdef DEBUG
-      // inline String& operator<<(String&s,prompt &p) {return s+=p.getText();}
-      // inline Stream& operator<<(Stream&o,prompt& p) {print_P(o,p.getText());return o;}
-    #endif
-
   }//namespace Menu
 #endif

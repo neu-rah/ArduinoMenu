@@ -4,7 +4,7 @@ using namespace Menu;
 bool prompt::hasTitle(navNode& nav) const {return (nav.target->has(showTitle)||(nav.root->showTitle&&!nav.target->has(noTitle)));}
 
 idx_t prompt::printRaw(menuOut& out,idx_t len) const {
-  trace(Serial<<"prompt::printRaw"<<endl);
+  trace(Serial<<"prompt::printRaw"<<endl;print_P(Serial,getText(),len));
   return print_P(out,getText(),len);
 }
 
@@ -63,7 +63,7 @@ bool menuNode::async(const char *uri,navRoot& root,idx_t lvl) {
 #endif
 
 void textField::doNav(navNode& nav,navCmd cmd) {
-  trace(Serial<<"textField::doNav"<<endl);
+  trace(Serial<<"textField::doNav:"<<cmd.cmd<<endl);
   //Serial.println("textField doNav!");
   switch(cmd.cmd) {
     case enterCmd:
@@ -116,13 +116,15 @@ void textField::doNav(navNode& nav,navCmd cmd) {
       break;
     default:break;
   }
+  trace(Serial<<"cursor:"<<cursor<<endl);
 }
 
 Used textField::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr) {
-  trace(Serial<<"textField::printTo"<<endl);
+  trace(Serial<<*this<<" textField::printTo"<<endl);
   // out.fmtStart(menuOut::fmtPrompt,root.node(),idx);
   idx_t at=0;
   bool editing=this==root.navFocus;
+  trace(Serial<<"editing:"<<editing<<" len:"<<len;)
   idx_t l=navTarget::printTo(root,sel,out,idx,len,panelNr);
   if (l<len) {
     out.write(editing?":":" ");
@@ -132,6 +134,8 @@ Used textField::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len
   //idx_t top=out.tops[root.level];
   idx_t tit=hasTitle(root.node())?1:0;
   idx_t line=idx+tit;//-out.tops[root.level];
+  trace(Serial<<" tit:"<<tit<<" line:"<<line<<" cursor:"<<cursor<<" l:"<<l<<" len:"<<len<<endl;)
+  idx_t c=l+1;
   while(buffer()[at]&&l++<len)
     if (at==cursor&&editing) {
       // Serial<<"idx:"<<idx<<" line:"<<line<<" at:"<<at<<" l:"<<l<<endl;
@@ -140,7 +144,7 @@ Used textField::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len
       out.write(buffer()[at++]);//draw focused character
       l+=out.endCursor(root,l,line,charEdit);//draw textual cursor or color code end
     } else out.write(buffer()[at++]);
-  l+=out.editCursor(root,l,line,editing,charEdit);//reposition a non text cursor
+  out.editCursor(root,c+cursor,line,editing,charEdit);//reposition a non text cursor
   return l;
 }
 
@@ -151,22 +155,32 @@ Used textField::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len
 //
 ////////////////////////////////////////////////////////////////////////////////
 bool menuNode::changed(const navNode &nav,const menuOut& out,bool sub) {
-  // trace(Serial<<" menuNode::changed"<<endl);
-  bool appd=is((systemStyles)(_asPad|_parentDraw));
+  trace(Serial<<*this<<" menuNode::changed"<<endl);
   if (dirty) return true;
+  bool appd=has((systemStyles)(_asPad|_parentDraw));
   if (appd) {
+    trace(Serial<<"appd!"<<endl;);
     for(int i=0;i<sz();i++)
       if (operator[](i).changed(nav,out,false))
         return true;
   } else {
+    trace(Serial<<*this<<"!appd"<<endl;);
     if (!(nav.target==this&&sub)) return dirty;// second hand check, just report self
     idx_t level=nav.root->level;
-    if (parentDraw())
+    if (parentDraw()) {
+      trace(Serial<<"return changed of parent-draw element"<<endl);
       return nav.root->path[level-1].target->changed(nav.root->path[level-1],out,sub);
+    }
+    // idx_t tit=hasTitle(nav.root->path[lev])?1:0;//TODO: this might not be correct.. checking
     idx_t my=out.maxY()-((has(showTitle)||(nav.root->showTitle&&!has(noTitle)))?1:0);
-    idx_t t=out.tops[level];
+    trace(Serial<<"level:"<<level<<" target:"<<*nav.root->navFocus<<" "<<nav.root->navFocus->has(_parentDraw)<<" "<<nav.root->navFocus->has(_asPad)<<endl);
+    idx_t lev=level-(nav.root->navFocus->has(_parentDraw)&&nav.root->navFocus->isMenu());
+    // trace(Serial<<"tit:"<<tit<<endl;);
+    idx_t t=out.tops[lev];
+    trace(Serial<<"t:"<<t<<endl;);
     if (sub) for(int i=0;i<my;i++,t++) {
       if (t>=sz()) break;
+      trace(Serial<<"checking:"<<operator[](t)<<endl);
       if (operator[](t).changed(nav,out,false)) return true;
     }
   }
@@ -174,9 +188,9 @@ bool menuNode::changed(const navNode &nav,const menuOut& out,bool sub) {
 }
 
 void menuNode::clearChanged(const navNode &nav,const menuOut& out,bool sub) {
-  trace(Serial<<" menuOut::clearChanged "<<endl);
+  trace(Serial<<" menuOut::clearChanged "<<nav);
   dirty=false;
-  if (is((systemStyles)(_asPad|_parentDraw))) {
+  if (has((systemStyles)(_asPad|_parentDraw))) {
     for(int i=0;i<sz();i++)
       operator[](i).clearChanged(nav,out,false);
   } else {
@@ -185,7 +199,8 @@ void menuNode::clearChanged(const navNode &nav,const menuOut& out,bool sub) {
     if (parentDraw())
       return nav.root->path[level-1].target->clearChanged(nav.root->path[level-1],out,sub);
     idx_t my=out.maxY()-((has(showTitle)||(nav.root->showTitle&&!has(noTitle)))?1:0);
-    idx_t t=out.tops[level];
+    idx_t lev=level-(nav.root->navFocus->has(_parentDraw)&&nav.root->navFocus->isMenu());
+    idx_t t=out.tops[lev];
     for(idx_t i=0;i<my;i++,t++) {//only signal visible
       if (t>=sz()) break;//menu ended
       operator[](t).clearChanged(nav,out,false);
