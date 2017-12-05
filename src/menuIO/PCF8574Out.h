@@ -29,6 +29,7 @@
           idx_t startCursor(navRoot& root,idx_t x,idx_t y,bool charEdit,idx_t panelNr=0) override {return 0;}
           idx_t endCursor(navRoot& root,idx_t x,idx_t y,bool charEdit,idx_t panelNr=0) override {return 0;}
           idx_t editCursor(navRoot& root,idx_t x,idx_t y,bool editing,bool charEdit,idx_t panelNr=0) override {
+            trace(Serial<<"lcdOut::editCursor "<<x<<","<<y<<endl);
             //text editor cursor
             device->noBlink();
             device->noCursor();
