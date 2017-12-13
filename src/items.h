@@ -61,7 +61,7 @@
         virtual bool changed(const navNode &nav,const menuOut& out,bool sub=true) {return dirty;}
         //this is the system version of enter handler, its used by elements like toggle
         virtual result sysHandler(SYS_FUNC_PARAMS) {return proceed;}
-        /*virtual*/ result eventHandler(eventMask e,navNode& nav,idx_t i) {
+        virtual result eventHandler(eventMask e,navNode& nav,idx_t i) {
           return operator()(e,nav,*this);
         }
         #ifdef MENU_FMT_WRAPS
