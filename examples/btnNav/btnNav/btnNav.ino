@@ -161,17 +161,7 @@ void setup() {
   Serial.begin(115200);
   while(!Serial);
   pinMode(LEDPIN, OUTPUT);
-  // pinMode(BTN_SEL,INPUT_PULLUP);
-  // pinMode(BTN_UP,INPUT_PULLUP);
-  // pinMode(BTN_DOWN,INPUT_PULLUP);
   joystickBtns.begin();
-  Serial<<"options->navCodes: 0x"<<hex((int)options->navCodes)<<endl;
-  Serial<<"options->navCodes["<<noCmd<<"]: 0x"<<hex(options->navCodes[0].ch)<<" 0x"<<hex(options->getCmdChar(noCmd))<<endl;
-  Serial<<"options->navCodes["<<escCmd<<"]: 0x"<<hex(options->navCodes[1].ch)<<" 0x"<<hex(options->getCmdChar(escCmd))<<endl;
-  Serial<<"options->navCodes["<<enterCmd<<"]: 0x"<<hex(options->navCodes[2].ch)<<" 0x"<<hex(options->getCmdChar(enterCmd))<<endl;
-  for(int n=0;n<3;n++) {
-    Serial<<joystickBtn_map[n].pin<<": 0x"<<hex(joystickBtn_map[n].code)<<"("<<(char)joystickBtn_map[n].code<<")"<<endl;
-  }
 }
 
 #define SOFT_DEBOUNCE_MS 100
