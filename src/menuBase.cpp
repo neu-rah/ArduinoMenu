@@ -43,7 +43,7 @@ const navCodesDef Menu::defaultNavCodes={
   {scrlUpCmd,0x36}
 };
 
-config defaultOptions={'>','-',Menu::defaultNavCodes,false};
+config Menu::defaultOptions={'>','-',Menu::defaultNavCodes,false};
 config* Menu::options=&defaultOptions;
 
 #ifdef DEBUG
@@ -60,7 +60,7 @@ config* Menu::options=&defaultOptions;
     return o;
   }
 
-  const char* showEvent(eventMask e) {
+  const char* eventName(eventMask e) {
     switch(e) {
       case noEvent:return "noEvent";
       case activateEvent:return "activateEvent";
@@ -77,12 +77,12 @@ config* Menu::options=&defaultOptions;
   }
 
   Print& Menu::operator<<(Print& o,eventMask e) {
-    if (e==noEvent||e==anyEvent) {o<<showEvent(e); return o;}
+    if (e==noEvent||e==anyEvent) {o<<eventName(e); return o;}
     bool first=true;
     for(int n=0;n<=6;n++) {
       eventMask t=(eventMask)(1<<n);
       if (t&e) {
-        o<<(first?"":"|")<<showEvent(t);
+        o<<(first?"":"|")<<eventName(t);
         first=false;
       }
     }

@@ -195,6 +195,10 @@ www.r-site.net
       inline char getCmdChar(navCmds cmd) const {return navCodes[cmd].ch;}//return character assigned to this command
     };
 
+    extern config defaultOptions;
+    extern config* options;
+
+
     #ifdef DRAW_2D
       typedef class Area {
         protected:
@@ -224,8 +228,6 @@ www.r-site.net
     #else
       typedef idx_t Used;
     #endif
-
-    extern config* options;
 
     #ifdef DEBUG
       Print& operator<<(Print& o,bool b);

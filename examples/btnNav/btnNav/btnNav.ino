@@ -1,0 +1,182 @@
+/* Arduino menu library example
+Oct. 2016 Rui Azevedo (ruihfazevedo@gmail.com) www.r-site.net
+
+Use the menu library with user code ctrl command
+
+calling doNav with user command mode:
+
+noCmd - clamp field values or do nothing
+escCmd - exit
+enterCmd - enter current option or validate field and exit
+upCmd - move up or increment field value
+downCmd - move down or decrement field value
+leftCmd - move left or escape (not tested yet)
+rightCmd - move right or enter (not tested yet)
+idxCmd - enter option by index
+
+this mode allows you to implement ANY input device
+
+on this example only using
+
+*/
+
+#include <Arduino.h>
+#include <menu.h>
+#include <menuIO/serialIn.h>
+#include <menuIO/serialOut.h>
+#include <menuIO/keyIn.h>
+#include <menuIO/chainStream.h>
+
+using namespace Menu;
+
+#define LEDPIN 13
+#define MAX_DEPTH 2
+
+#define BTN_SEL 6	// Select button
+#define BTN_UP 7 // Up
+#define BTN_DOWN 8 // Down
+
+result doAlert(eventMask e, prompt &item);
+
+result showEvent(eventMask e) {
+  Serial.print("event: ");
+  Serial.println(e);
+  return proceed;
+}
+
+int test=55;
+
+result action1(eventMask e,navNode& nav, prompt &item) {
+  Serial.print("action1 event:");
+  Serial.println(e);
+  Serial.flush();
+  return proceed;
+}
+
+result action2(eventMask e) {
+  Serial.print("actikon2 event:");
+  Serial.println(e);
+  Serial.flush();
+  return quit;
+}
+
+int ledCtrl=LOW;
+
+result ledOn() {
+  ledCtrl=HIGH;
+  return proceed;
+}
+result ledOff() {
+  ledCtrl=LOW;
+  return proceed;
+}
+
+TOGGLE(ledCtrl,setLed,"Led: ",doNothing,noEvent,wrapStyle//,doExit,enterEvent,noStyle
+  ,VALUE("On",HIGH,doNothing,noEvent)
+  ,VALUE("Off",LOW,doNothing,noEvent)
+);
+
+int selTest=0;
+SELECT(selTest,selMenu,"Select",doNothing,noEvent,wrapStyle
+  ,VALUE("Zero",0,doNothing,noEvent)
+  ,VALUE("One",1,doNothing,noEvent)
+  ,VALUE("Two",2,doNothing,noEvent)
+);
+
+int chooseTest=-1;
+CHOOSE(chooseTest,chooseMenu,"Choose",doNothing,noEvent,wrapStyle
+  ,VALUE("First",1,doNothing,noEvent)
+  ,VALUE("Second",2,doNothing,noEvent)
+  ,VALUE("Third",3,doNothing,noEvent)
+  ,VALUE("Last",-1,doNothing,noEvent)
+);
+
+//customizing a prompt look!
+//by extending the prompt class
+class altPrompt:public prompt {
+public:
+  altPrompt(constMEM promptShadow& p):prompt(p) {}
+  Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t) override {
+    return out.printRaw("special prompt!",len);;
+  }
+};
+
+MENU(subMenu,"Sub-Menu",doNothing,anyEvent,wrapStyle
+  ,OP("Sub1",showEvent,enterEvent)
+  ,OP("Sub2",showEvent,enterEvent)
+  ,OP("Sub3",showEvent,enterEvent)
+  ,altOP(altPrompt,"",showEvent,enterEvent)
+  ,EXIT("<Back")
+);
+
+MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
+  ,OP("Op1",action1,anyEvent)
+  ,OP("Op2",action2,enterEvent)
+  //,SUBMENU(togOp)
+  ,FIELD(test,"Test","%",0,100,10,1,doNothing,noEvent,wrapStyle)
+  ,SUBMENU(subMenu)
+  ,SUBMENU(setLed)
+  ,OP("LED On",ledOn,enterEvent)
+  ,OP("LED Off",ledOff,enterEvent)
+  ,SUBMENU(selMenu)
+  ,SUBMENU(chooseMenu)
+  ,OP("Alert test",doAlert,enterEvent)
+  ,EXIT("<Back")
+);
+
+keyMap joystickBtn_map[]={
+ {-BTN_SEL, defaultNavCodes[enterCmd].ch} ,
+ {-BTN_UP, defaultNavCodes[upCmd].ch} ,
+ {-BTN_DOWN, defaultNavCodes[downCmd].ch}  ,
+};
+keyIn<3> joystickBtns(joystickBtn_map);
+
+serialIn serial(Serial);
+menuIn* inputsList[]={&joystickBtns,&serial};
+chainStream<2> in(inputsList);//3 is the number of inputs
+
+MENU_OUTPUTS(out,MAX_DEPTH
+  ,SERIAL_OUT(Serial)
+  ,NONE
+);
+
+NAVROOT(nav,mainMenu,MAX_DEPTH,in,out);
+
+result alert(menuOut& o,idleEvent e) {
+  if (e==idling) {
+    o.setCursor(0,0);
+    o.print("alert test");
+    o.setCursor(0,1);
+    o.print("[select] to continue...");
+  }
+  return proceed;
+}
+
+result doAlert(eventMask e, prompt &item) {
+  nav.idleOn(alert);
+  return proceed;
+}
+
+void setup() {
+  Serial.begin(115200);
+  while(!Serial);
+  pinMode(LEDPIN, OUTPUT);
+  // pinMode(BTN_SEL,INPUT_PULLUP);
+  // pinMode(BTN_UP,INPUT_PULLUP);
+  // pinMode(BTN_DOWN,INPUT_PULLUP);
+  joystickBtns.begin();
+  Serial<<"options->navCodes: 0x"<<hex((int)options->navCodes)<<endl;
+  Serial<<"options->navCodes["<<noCmd<<"]: 0x"<<hex(options->navCodes[0].ch)<<" 0x"<<hex(options->getCmdChar(noCmd))<<endl;
+  Serial<<"options->navCodes["<<escCmd<<"]: 0x"<<hex(options->navCodes[1].ch)<<" 0x"<<hex(options->getCmdChar(escCmd))<<endl;
+  Serial<<"options->navCodes["<<enterCmd<<"]: 0x"<<hex(options->navCodes[2].ch)<<" 0x"<<hex(options->getCmdChar(enterCmd))<<endl;
+  for(int n=0;n<3;n++) {
+    Serial<<joystickBtn_map[n].pin<<": 0x"<<hex(joystickBtn_map[n].code)<<"("<<(char)joystickBtn_map[n].code<<")"<<endl;
+  }
+}
+
+#define SOFT_DEBOUNCE_MS 100
+
+void loop() {
+  nav.poll();//also do serial input
+  digitalWrite(LEDPIN, ledCtrl);
+}
