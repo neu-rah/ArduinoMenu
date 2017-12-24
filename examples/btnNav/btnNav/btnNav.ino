@@ -1,23 +1,7 @@
 /* Arduino menu library example
 Oct. 2016 Rui Azevedo (ruihfazevedo@gmail.com) www.r-site.net
 
-Use the menu library with user code ctrl command
-
-calling doNav with user command mode:
-
-noCmd - clamp field values or do nothing
-escCmd - exit
-enterCmd - enter current option or validate field and exit
-upCmd - move up or increment field value
-downCmd - move down or decrement field value
-leftCmd - move left or escape (not tested yet)
-rightCmd - move right or enter (not tested yet)
-idxCmd - enter option by index
-
-this mode allows you to implement ANY input device
-
-on this example only using
-
+Digital keypad (3 buttons) using the menu keyIn driver
 */
 
 #include <Arduino.h>
