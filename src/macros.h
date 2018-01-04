@@ -223,7 +223,7 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
 
 //allocating space for elements and shadows -------------------------------------
 #define DECL_EXIT_(cnt,exitText)\
-  constText constText title_##cnt[] MEMMODE=exitText;\
+  constText title_##cnt[] MEMMODE=exitText;\
   constMEM MEMMODE Menu::promptShadowRaw opShadowRaw##cnt = {\
     (Menu::callback)Menu::doExit,\
     Menu::_Exit,\
