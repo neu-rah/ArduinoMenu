@@ -27,11 +27,11 @@
           return ((uint16_t*)&tmp)[sizeof(this)/sizeof(uint16_t)-1];
         }
         inline prompt(constMEM promptShadow& shadow):shadow(&shadow) {}
-        inline prompt(const char* t,action a=doNothing,eventMask e=noEvent,styles s=noStyle,systemStyles ss=_noStyle)
+        inline prompt(constText* t,action a=doNothing,eventMask e=noEvent,styles s=noStyle,systemStyles ss=_noStyle)
           :shadow(new promptShadow(t,a,e,s,ss)) {}
         inline void enable() {enabled=enabledStatus;}
         inline void disable() {enabled=disabledStatus;}
-        inline const char* getText() const {return shadow->getText();}
+        inline constText* getText() const {return shadow->getText();}
 
         inline systemStyles sysStyles() const {return shadow->_sysStyles();}
         inline styles style() const {return shadow->_style();}
@@ -69,7 +69,7 @@
         #endif
         #ifdef MENU_ASYNC
           virtual prompt* seek(idx_t* uri,idx_t len) {return len?NULL:this;}
-          virtual bool async(const char *uri,navRoot& root,idx_t lvl) {
+          virtual bool async(constText*uri,navRoot& root,idx_t lvl) {
             return ((!*uri)||(uri[0]=='/'&&!uri[1]));
           }
           //some functions to use on htmlFmt
@@ -85,7 +85,7 @@
 
     class Exit:public prompt {
       public:
-        Exit(const char* t):prompt(t,(callback)doExit,enterEvent) {}
+        Exit(constText* t):prompt(t,(callback)doExit,enterEvent) {}
     };
 
     //--------------------------------------------------------------------------
@@ -94,7 +94,7 @@
     class navTarget:public prompt {
       public:
         navTarget(constMEM promptShadow& shadow):prompt(shadow) {}
-        navTarget(const char* t,action a=doNothing,eventMask e=noEvent,styles s=noStyle,systemStyles ss=_noStyle)
+        navTarget(constText* t,action a=doNothing,eventMask e=noEvent,styles s=noStyle,systemStyles ss=_noStyle)
           :prompt(t,a,e,s,ss) {}
         virtual void parseInput(navNode& nav,menuIn& in);
         virtual void doNav(navNode& nav,navCmd cmd);
@@ -109,10 +109,10 @@
       idx_t cursor=0;
       textField(constMEM textFieldShadow& shadow):navTarget(shadow) {}
       textField(
-        const char*label,
+        constText*label,
         char* b,
         idx_t sz,
-        const char* constMEM* v,
+        constText* constMEM* v,
         action a=doNothing,
         eventMask e=noEvent,
         styles style=noStyle,
@@ -120,7 +120,7 @@
       ):navTarget(*new textFieldShadow(label,b,sz,v,a,e,style,ss)) {}
       inline char* buffer() const {return ((textFieldShadow*)shadow)->_buffer();}
       inline idx_t sz() const {return ((textFieldShadow*)shadow)->_sz();}
-      const char* validator(int i) {return ((textFieldShadow*)shadow)->operator[](i%sz());}
+      constText* validator(int i) {return ((textFieldShadow*)shadow)->operator[](i%sz());}
       void doNav(navNode& nav,navCmd cmd) override;
       Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr=0) override;
     };
@@ -135,9 +135,9 @@
           virtual classes type() const {return fieldClass;}
         #endif
         #ifdef MENU_ASYNC
-          bool async(const char *uri,navRoot& root,idx_t lvl) override;
+          bool async(constText*uri,navRoot& root,idx_t lvl) override;
         #endif
-        inline const char* units() {return ((fieldBaseShadow*)shadow)->_units();}
+        inline constText* units() {return ((fieldBaseShadow*)shadow)->_units();}
         void doNav(navNode& nav,navCmd cmd) override;
         virtual bool canTune()=0;
         virtual void constrainField()=0;
@@ -153,8 +153,8 @@
         menuField(constMEM menuFieldShadow<T> & shadow):fieldBase(shadow) {}
         menuField(
           T &value,
-          const char * text,
-          const char *units,
+          constText* text,
+          constText*units,
           T low,
           T high,
           T step,
@@ -206,7 +206,7 @@
     class menuValue:public prompt {
       public:
         menuValue(constMEM menuValueShadow<T>& shadow):prompt(shadow) {}
-        menuValue(const char * text,T value,action a=doNothing,eventMask e=noEvent)
+        menuValue(constText* text,T value,action a=doNothing,eventMask e=noEvent)
           :menuValue(*new menuValueShadow<T>(text,value,a,e)) {}
         // #ifdef DEBUG
         // bool changed(const navNode &nav,const menuOut& out,bool sub=true) override {return false;}
@@ -222,7 +222,7 @@
     class menuNode:public navTarget {
       public:
         menuNode(constMEM menuNodeShadow& s):navTarget(s) {}
-        menuNode(const char* text,idx_t sz,prompt* constMEM data[],action a=noAction,eventMask e=noEvent,styles style=wrapStyle,systemStyles ss=(systemStyles)(_menuData|_canNav))
+        menuNode(constText* text,idx_t sz,prompt* constMEM data[],action a=noAction,eventMask e=noEvent,styles style=wrapStyle,systemStyles ss=(systemStyles)(_menuData|_canNav))
           :navTarget(*new menuNodeShadow(text,sz,data,a,e,style,ss)) {}
         #ifdef MENU_FMT_WRAPS
           virtual classes type() const {return menuClass;}
@@ -236,7 +236,7 @@
           prompt* seek(idx_t* uri,idx_t len) override;
         #endif
         #ifdef MENU_ASYNC
-          bool async(const char *uri,navRoot& root,idx_t lvl=0) override;
+          bool async(constText*uri,navRoot& root,idx_t lvl=0) override;
         #endif
     };
 
@@ -263,7 +263,7 @@
       public:
         idx_t reflex;
         menuVariant(constMEM menuNodeShadow& s):menuVariantBase(s) {}
-        menuVariant(const char* text,T &target,idx_t sz,prompt* constMEM* data,action a,eventMask e,styles style)
+        menuVariant(constText* text,T &target,idx_t sz,prompt* constMEM* data,action a,eventMask e,styles style)
           :menuVariantBase(*new menuVariantShadow<T>(text,target,sz,data,a,e,style)) {}
         idx_t sync() override {
           for(idx_t i=0;i<sz();i++)
@@ -301,7 +301,7 @@
       public:
         select(constMEM menuNodeShadow& s):menuVariant<T>(s) {}
         select(
-          const char* text,
+          constText* text,
           T &target,
           idx_t sz,
           prompt* constMEM* data,
@@ -320,7 +320,7 @@
       public:
         toggle(constMEM menuNodeShadow& s):menuVariant<T>(s) {}
         toggle(
-          const char* text,
+          constText* text,
           T &target,
           idx_t sz,
           prompt* constMEM* data,
@@ -355,7 +355,7 @@
       public:
         choose(constMEM menuNodeShadow& s):menuVariant<T>(s) {}
         choose(
-          const char* text,
+          constText* text,
           T &target,
           idx_t sz,
           prompt* constMEM* data,

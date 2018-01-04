@@ -19,6 +19,7 @@
   #define USING_PGM
   #define MEMMODE PROGMEM
   #define constMEM const
+  #define constText const char
   #define memPtr(src) pgm_read_ptr(&(src))
   #define memByte(addr) (pgm_read_byte(addr))
   #define memWord(addr) (pgm_read_word(addr))
@@ -33,6 +34,7 @@
   #define USING_RAM
   #define MEMMODE
   #define constMEM
+  #define constText char
   #define memPtr(src) (src)
   #define memByte(addr) (*addr)
   #define memWord(addr) (*addr)
