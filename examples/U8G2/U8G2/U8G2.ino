@@ -147,8 +147,8 @@ altMENU(menu,time,"Time",doNothing,noEvent,noStyle,(systemStyles)(_asPad|Menu::_
   ,FIELD(mins,"","",0,59,10,1,doNothing,noEvent,wrapStyle)
 );
 
-const char* constMEM hexDigit MEMMODE="0123456789ABCDEF";
-const char* constMEM hexNr[] MEMMODE={"0","x",hexDigit,hexDigit};
+char* constMEM hexDigit MEMMODE="0123456789ABCDEF";
+char* constMEM hexNr[] MEMMODE={"0","x",hexDigit,hexDigit};
 char buf1[]="0x11";
 
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle

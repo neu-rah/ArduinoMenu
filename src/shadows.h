@@ -46,7 +46,7 @@
         constText* constMEM* validators;
         idx_t sz;
         textFieldShadow(
-          constText*label,
+          constText* label,
           char* b,
           idx_t sz,
           constText* constMEM* v,
