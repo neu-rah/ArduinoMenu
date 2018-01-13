@@ -58,7 +58,7 @@
 
         virtual void clearChanged(const navNode &nav,const menuOut& out,bool sub) {dirty=false;}
         virtual Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr=0);//raw print to output device
-        virtual bool changed(const navNode &nav,const menuOut& out,bool sub=true) {return dirty;}
+        virtual bool changed(const navNode &nav,const menuOut& out,bool sub=true,bool test=false) {return dirty;}
         //this is the system version of enter handler, its used by elements like toggle
         virtual result sysHandler(SYS_FUNC_PARAMS) {return proceed;}
         virtual result eventHandler(eventMask e,navNode& nav,idx_t i) {
@@ -174,7 +174,13 @@
         inline T high() const {return ((menuFieldShadow<T>*)shadow)->_high();}
         inline T step() const {return ((menuFieldShadow<T>*)shadow)->_step();}
         inline T tune() const {return ((menuFieldShadow<T>*)shadow)->_tune();}
-        bool changed(const navNode &nav,const menuOut& out,bool sub=true) override {
+        virtual void clearChanged(const navNode &nav,const menuOut& out,bool sub) {
+          fieldBase::clearChanged(nav,out,sub);
+          reflex=target();
+        }
+        bool changed(const navNode &nav,const menuOut& out,bool sub=true,bool test=false) override {
+          trace(if (test&&dirty) Serial<<"field dirty"<<endl);
+          trace(if (test&&(reflex!=target())) Serial<<"reflex!=target reflex:"<<reflex<<" target:"<<target()<<endl);
           return dirty||(reflex!=target());
         }
         #ifdef DEBUG
@@ -228,7 +234,7 @@
           virtual classes type() const {return menuClass;}
         #endif
         inline prompt& operator[](idx_t i) const {return ((menuNodeShadow*)shadow)->operator[](i);}
-        bool changed(const navNode &nav,const menuOut& out,bool sub=true) override;
+        bool changed(const navNode &nav,const menuOut& out,bool sub=true,bool test=false) override;
         void clearChanged(const navNode &nav,const menuOut& out,bool sub) override;
         inline idx_t sz() const {return ((menuNodeShadow*)shadow)->_sz();}
         inline prompt* constMEM* data() const {return ((menuNodeShadow*)shadow)->_data();}
@@ -290,7 +296,7 @@
           return i;
         }
         inline T& target() const {return ((menuVariantShadow<T>*)shadow)->target();}
-        bool changed(const navNode &nav,const menuOut& out,bool sub=true) override;
+        bool changed(const navNode &nav,const menuOut& out,bool sub=true,bool test=false) override;
         #ifdef MENU_ASYNC
         virtual idx_t selected() const {return reflex;}
         #endif
@@ -425,7 +431,7 @@
     }
 
     template<typename T>
-    bool menuVariant<T>::changed(const navNode &nav,const menuOut& out,bool sub) {
+    bool menuVariant<T>::changed(const navNode &nav,const menuOut& out,bool sub,bool test) {
       return dirty||((menuValue<T>*)&operator[](reflex))->target()!=target();
     }
 
