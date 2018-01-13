@@ -375,7 +375,7 @@
         #endif
         Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr=0) override;
         result sysHandler(SYS_FUNC_PARAMS) override;
-        bool changed(const navNode &nav,const menuOut& out,bool sub=true) override {
+        bool changed(const navNode &nav,const menuOut& out,bool sub=true,bool test=false) override {
           return menuVariant<T>::changed(nav,out)||menuNode::changed(nav,out);
         }
     };
