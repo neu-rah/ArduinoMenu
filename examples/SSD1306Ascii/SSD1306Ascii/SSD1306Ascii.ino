@@ -38,11 +38,11 @@ result action2(eventMask e,navNode& nav, prompt &item) {
 
 int ledCtrl=LOW;
 
-result ledOn() {
+result myLedOn() {
   ledCtrl=HIGH;
   return proceed;
 }
-result ledOff() {
+result myLedOff() {
   ledCtrl=LOW;
   return proceed;
 }
@@ -91,8 +91,8 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,FIELD(test,"Test","%",0,100,10,1,doNothing,noEvent,wrapStyle)
   ,SUBMENU(subMenu)
   ,SUBMENU(setLed)
-  ,OP("LED On",ledOn,enterEvent)
-  ,OP("LED Off",ledOff,enterEvent)
+  ,OP("LED On",myLedOn,enterEvent)
+  ,OP("LED Off",myLedOff,enterEvent)
   ,SUBMENU(selMenu)
   ,SUBMENU(chooseMenu)
   ,OP("Alert test",doAlert,enterEvent)
@@ -109,7 +109,7 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
 constMEM panel panels[] MEMMODE={{0,0,128/fontW,64/fontH}};
 navNode* nodes[sizeof(panels)/sizeof(panel)];//navNodes to store navigation status
 panelsList pList(panels,nodes,1);//a list of panels and nodes
-idx_t tops[MAX_DEPTH];//store cursor positions for each level
+idx_t tops[MAX_DEPTH]={0,0};//store cursor positions for each level
 SSD1306AsciiOut outOLED(&oled,tops,pList);//oled output device menu driver
 menuOut* outputs[]={&outOLED};//list of output devices
 outputsList out(outputs,1);//outputs list

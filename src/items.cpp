@@ -223,7 +223,7 @@ void menuNode::clearChanged(const navNode &nav,const menuOut& out,bool sub) {
     Serial<<"ERROR clear changed fail!"<<endl;
     Serial<<*this<<endl;
     Serial<<"level:"<<nav.root->level<<endl;
-    Serial<<"type:"<<type()<<endl;
+    // Serial<<"type:"<<type()<<endl;
     Serial.flush();
     while(1);
   }

@@ -393,6 +393,7 @@
 
     template<typename T>
     Used menuField<T>::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr) {
+      trace(print_P(out,getText());Serial<<" menuField<T>::printTo "<<reflex<<endl);
       reflex=target();
       return fieldBase::printTo(root,sel,out,idx,len,panelNr);
     }

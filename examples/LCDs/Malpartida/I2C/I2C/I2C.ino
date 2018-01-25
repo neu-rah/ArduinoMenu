@@ -77,11 +77,11 @@ http://playground.arduino.cc/Code/LCD3wires
 
   int ledCtrl=LOW;
 
-  result ledOn() {
+  result myLedOn() {
     ledCtrl=HIGH;
     return proceed;
   }
-  result ledOff() {
+  result myLedOff() {
     ledCtrl=LOW;
     return proceed;
   }
@@ -141,8 +141,8 @@ http://playground.arduino.cc/Code/LCD3wires
     ,FIELD(test,"Test","%",0,100,10,1,doNothing,noEvent,wrapStyle)
     ,SUBMENU(subMenu)
     ,SUBMENU(setLed)
-    ,OP("LED On",ledOn,enterEvent)
-    ,OP("LED Off",ledOff,enterEvent)
+    ,OP("LED On",myLedOn,enterEvent)
+    ,OP("LED Off",myLedOff,enterEvent)
     ,SUBMENU(selMenu)
     ,SUBMENU(chooseMenu)
     ,OP("Alert test",doAlert,enterEvent)
