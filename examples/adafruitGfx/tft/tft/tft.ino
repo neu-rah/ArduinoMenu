@@ -13,7 +13,8 @@ https://github.com/0xPIT/encoder
 https://github.com/PaulStoffregen/TimerOne
 ***/
 
-#define USE_CLICK_ENCODER
+//removed as extra libs are not included into travis
+// #define USE_CLICK_ENCODER
 
 #include <SPI.h>
 #include <Adafruit_GFX.h>
