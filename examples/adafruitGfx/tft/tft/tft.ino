@@ -7,14 +7,26 @@ menu with adafruit GFX
 output: 1.8" TFT 128*160 (ST7735 HW SPI)
 input: Serial + encoder
 www.r-site.net
+
+alternative encoder (clickEncoder) uses:
+https://github.com/0xPIT/encoder
+https://github.com/PaulStoffregen/TimerOne
 ***/
+
+#define USE_CLICK_ENCODER
 
 #include <SPI.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_ST7735.h>
 #include <menu.h>
 #include <menuIO/adafruitGfxOut.h>
-#include <menuIO/encoderIn.h>
+#ifdef USE_CLICK_ENCODER
+  #include <TimerOne.h>
+  #include <ClickEncoder.h>
+  #include <menuIO/clickEncoderIn.h>
+#else
+  #include <menuIO/encoderIn.h>
+#endif
 #include <menuIO/keyIn.h>
 #include <menuIO/chainStream.h>
 #include <menuIO/serialOut.h>
@@ -39,25 +51,6 @@ Adafruit_ST7735 gfx(TFT_CS, TFT_DC, TFT_RST);
 result doAlert(eventMask e, prompt &item);
 
 int test=55;
-
-/*result showEvent(eventMask e,navNode& nav, prompt& item) {
-  Serial.print(F("event:"));
-  Serial.print(e);
-  return proceed;
-}
-
-result action1(eventMask e) {
-  Serial.print(e);
-  Serial.println(" action1 executed, proceed menu");
-  Serial.flush();
-  return proceed;
-}
-
-result action2(eventMask e,navNode& nav, prompt &item) {
-  Serial.print(e);
-  Serial.println(" action2 executed, quiting menu");
-  return quit;
-}*/
 
 int ledCtrl=LOW;
 
@@ -140,15 +133,21 @@ const colorDef<uint16_t> colors[] MEMMODE={
   {{ST7735_WHITE,ST7735_YELLOW},{ST7735_BLUE,ST7735_RED,ST7735_RED}},//titleColor
 };
 
-encoderIn<encA,encB> encoder;//simple quad encoder driver
-encoderInStream<encA,encB> encStream(encoder,4);// simple quad encoder fake Stream
-
-//a keyboard with only one key as the encoder button
-keyMap encBtn_map[]={{-encBtn,defaultNavCodes[enterCmd].ch}};//negative pin numbers use internal pull-up, this is on when low
-keyIn<1> encButton(encBtn_map);//1 is the number of keys
-
 serialIn serial(Serial);
-MENU_INPUTS(in,&encStream,&encButton,&serial);
+
+#ifdef USE_CLICK_ENCODER
+  ClickEncoder clickEncoder(encA,encB,encBtn);
+  ClickEncoderStream encStream(clickEncoder,1);
+  MENU_INPUTS(in,&encStream,&serial);
+  void timerIsr() {clickEncoder.service();}
+#else
+  encoderIn<encA,encB> encoder;//simple quad encoder driver
+  encoderInStream<encA,encB> encStream(encoder,4);// simple quad encoder fake Stream
+  //a keyboard with only one key as the encoder button
+  keyMap encBtn_map[]={{-encBtn,defaultNavCodes[enterCmd].ch}};//negative pin numbers use internal pull-up, this is on when low
+  keyIn<1> encButton(encBtn_map);//1 is the number of keys
+  MENU_INPUTS(in,&encStream,&encButton,&serial);
+#endif
 
 #define MAX_DEPTH 4
 #define textScale 1
@@ -158,23 +157,6 @@ MENU_OUTPUTS(out,MAX_DEPTH
 );
 
 NAVROOT(nav,mainMenu,MAX_DEPTH,in,out);
-
-/*result alert(menuOut& o,idleEvent e) {
-  if (e==idling) {
-    o.setCursor(0,0);
-    o.print("alert test");
-    o.setCursor(0,1);
-    o.print("press [select]");
-    o.setCursor(0,2);
-    o.print("to continue...");
-  }
-  return proceed;
-}
-
-result doAlert(eventMask e, prompt &item) {
-  nav.idleOn(alert);
-  return proceed;
-}*/
 
 //when menu is suspended
 result idle(menuOut& o,idleEvent e) {
@@ -201,8 +183,13 @@ void setup() {
   //nav.showTitle=false;//show menu title?
 
   //pinMode(encBtn, INPUT_PULLUP);
-  encButton.begin();
-  encoder.begin();
+  #ifdef USE_CLICK_ENCODER
+    Timer1.initialize(1000);
+    Timer1.attachInterrupt(timerIsr);
+  #else
+    encButton.begin();
+    encoder.begin();
+  #endif
 
   SPI.begin();
   gfx.initR(INITR_BLACKTAB);
