@@ -12,8 +12,8 @@ using
 #ifndef RSITE_KEYPAD_DEF_H
   #define RSITE_KEYPAD_DEF_H
   #include "../menu.h"
-  #include <Keypad.h>
 
+  #include <Keypad.h>
   namespace Menu {
 
     class keypadIn:public menuIn {
@@ -26,7 +26,7 @@ using
       int read() {
         if (key) {
           char k=key;
-          key==0;
+          key=0;
           return k;
         }
         return peek();
