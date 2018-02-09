@@ -43,7 +43,7 @@ namespace Menu {
 					this->offsetY=offsetY;
 			}
 
-			size_t write(uint8_t ch) override {gfx.write(ch);}
+			size_t write(uint8_t ch) override {return gfx.write(ch);}
 
 			inline rgb getColor(colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) const {
 				rgb* cor=(rgb*)&(stat==enabledStatus?colors[color].enabled[selected+edit]:colors[color].disabled[selected]);

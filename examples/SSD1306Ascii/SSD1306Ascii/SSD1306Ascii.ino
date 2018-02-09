@@ -102,7 +102,7 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
 #define MAX_DEPTH 2
 
 #define fontW 5
-#define fontH 7
+#define fontH 8
 
 //describing a menu output device without macros
 //define at least one panel for menu output
