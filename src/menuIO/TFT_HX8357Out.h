@@ -3,6 +3,7 @@
 Feb.2018 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
 
 menu with TFT_HX8357 driver https://github.com/Bodmer/TFT_HX8357
+(experimental driver)
 www.r-site.net
 
 ***/
