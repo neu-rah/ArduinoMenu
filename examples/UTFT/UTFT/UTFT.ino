@@ -13,6 +13,7 @@ UTFT library from:
 Note: I was unable to build for esp8266 - neu-rah
 ***/
 
+//#include <avr/pgmspace.h> <-- include this to compile for arduino mega (and eventually some other avr)
 #include <Arduino.h>
 #include <menu.h>
 #include <menuIO/utftOut.h>
