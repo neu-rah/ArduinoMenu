@@ -1,14 +1,14 @@
 /* -*- C++ -*- */
 /********************
-Sept. 2014 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
+Feb.2018 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
 
-Use graphics screens (adafruit library based) as menu output
+menu with TFT_HX8357 driver https://github.com/Bodmer/TFT_HX8357
 www.r-site.net
 
 ***/
-#ifndef RSITE_ARDUINOP_MENU_GFX
-	#define RSITE_ARDUINOP_MENU_GFX
-	#include <Adafruit_GFX.h>
+#ifndef RSITE_TFT_HX8357_DEF_H
+	#define RSITE_TFT_HX8357_DEF_H
+  #include <TFT_HX8357.h>
 	#include "../menu.h"
 
 namespace Menu {

@@ -17,7 +17,7 @@ https://github.com/PaulStoffregen/TimerOne
 // #define USE_CLICK_ENCODER
 
 #include <SPI.h>
-#include <TFT_HX8357.h>
+// #include <TFT_HX8357.h> // included by menu driver <menuIO/TFT_HX8357Out.h>
 #include <menu.h>
 #include <menuIO/TFT_HX8357Out.h>
 #ifdef USE_CLICK_ENCODER
