@@ -163,7 +163,7 @@ outputsList out(outputs,1);//outputs list controller
 
 //define navigation root and aux objects
 navNode nav_cursors[MAX_DEPTH];//aux objects to control each level of navigation
-navRoot nav(mainMenu, nav_cursors, MAX_DEPTH, serial, out);
+navRoot nav(mainMenu, nav_cursors, MAX_DEPTH, in, out);
 
 // MENU_OUTPUTS(out,MAX_DEPTH
 //   ,ADAGFX_OUT(tft,colors,6*textScale,9*textScale,{0,0,14,8},{14,0,14,8})
