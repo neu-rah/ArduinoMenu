@@ -48,9 +48,9 @@
         menuNode* drawn=NULL;
         menuOut(idx_t *topsList,panelsList &p,styles os=minimalRedraw)
           :tops(topsList),panels(p),style(os) {}
-        inline idx_t maxX(idx_t i=0) const;
-        inline idx_t maxY(idx_t i=0) const;
-        inline idx_t& top(navNode& nav) const;
+        idx_t maxX(idx_t i=0) const;
+        idx_t maxY(idx_t i=0) const;
+        idx_t& top(navNode& nav) const;
         idx_t printRaw(const char* at,idx_t len);
         #ifdef DEBUG
           virtual menuOut& operator<<(prompt const &p);
