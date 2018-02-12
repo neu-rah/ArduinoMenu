@@ -132,7 +132,7 @@ https://bitbucket.org/fmalpartida/new-liquidcrystal/wiki/Home
 
 **Matthias Hertel PCF8574 driver**
 
-https://github.com/mathertel/LiquidCrystal_PCF8574hd44780
+https://github.com/mathertel/LiquidCrystal_PCF8574
 
 - HD44780
 
