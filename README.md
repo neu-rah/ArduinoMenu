@@ -144,7 +144,13 @@ https://www.arduino.cc/en/Guide/TFT
 
 https://github.com/greiman/SSD1306Ascii
 
-OLED Screens based on SSD1306 controller
+- OLED Screens based on SSD1306 controller
+
+**TFT_HX8357 driver**
+
+https://github.com/Bodmer/TFT_HX8357
+
+- HX8357B, HX8357C, ILI9481 and ILI9486
 
 **Adafruit's GFX devices**
 

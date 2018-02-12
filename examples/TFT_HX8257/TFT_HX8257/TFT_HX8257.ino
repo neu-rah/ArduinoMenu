@@ -1,5 +1,3 @@
-//THIS IS EXPERIMENTAL
-
 #include <Arduino.h>
 
 /********************
@@ -35,6 +33,9 @@ https://github.com/PaulStoffregen/TimerOne
 #include <menuIO/serialIO.h>
 
 using namespace Menu;
+
+#define fontW 16
+#define fontH 16
 
 TFT_HX8357 tft = TFT_HX8357();       // Invoke custom library
 
@@ -147,8 +148,6 @@ serialIn serial(Serial);
 #endif
 
 #define MAX_DEPTH 4
-#define fontW 5
-#define fontH 8
 
 //define output device
 idx_t serialTops[MAX_DEPTH]={0};
