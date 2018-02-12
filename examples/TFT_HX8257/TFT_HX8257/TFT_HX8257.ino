@@ -18,10 +18,11 @@ https://github.com/PaulStoffregen/TimerOne
 //removed as extra libs are not included into travis
 // #define USE_CLICK_ENCODER
 
-#include <SPI.h>
+// #include <SPI.h>
 // #include <TFT_HX8357.h> // included by menu driver <menuIO/TFT_HX8357Out.h>
 #include <menu.h>
 #include <menuIO/TFT_HX8357Out.h>
+#define USE_CLICK_ENCODER
 #ifdef USE_CLICK_ENCODER
   #include <TimerOne.h>
   #include <ClickEncoder.h>
@@ -160,8 +161,8 @@ idx_t gfxTops[MAX_DEPTH]={0};
 tftHX8257Out tftOut(tft,colors,gfxTops,pList,fontW,fontH);
 
 //define outputs controller
-menuOut* constMEM outputs[] MEMMODE={&outSerial};//list of output devices
-outputsList out(outputs,1);//outputs list controller
+menuOut* constMEM outputs[] MEMMODE={&outSerial,&tftOut};//list of output devices
+outputsList out(outputs,2);//outputs list controller
 
 //define navigation root and aux objects
 navNode nav_cursors[MAX_DEPTH];//aux objects to control each level of navigation
@@ -207,7 +208,7 @@ void setup() {
     encoder.begin();
   #endif
 
-  SPI.begin();
+  //SPI.begin();
   tft.init();
   tft.setRotation(1);
   // tft.setTextSize(textScale);//test scalling
