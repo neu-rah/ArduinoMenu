@@ -257,7 +257,7 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
 #define DECL_FIELD_(cnt,objType,ss,target,text,units,low,high,step,tune,action,mask,style)\
   constText fieldLabel##cnt[] MEMMODE=text;\
   constText fieldUnit##cnt[] MEMMODE=units;\
-  constMEM MEMMODE Menu::menuFieldShadowRaw<decltype(target)> fieldShadowRaw##cnt={\
+  constMEM MEMMODE Menu::menuFieldShadowRaw<typeof(target)> fieldShadowRaw##cnt={\
     (Menu::callback)action,\
     ss,\
     fieldLabel##cnt,\
