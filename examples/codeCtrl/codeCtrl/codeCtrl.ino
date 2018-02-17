@@ -22,8 +22,8 @@ on this example only using
 
 #include <Arduino.h>
 #include <menu.h>
-#include <menuIO/serialIn.h>
-#include <menuIO/serialOut.h>
+#include <menuIO/serialIO.h>
+#include <menuIO/stringIn.h>
 #include <menuIO/chainStream.h>
 
 using namespace Menu;
@@ -131,7 +131,12 @@ MENU_OUTPUTS(out,MAX_DEPTH
   ,NONE//must have 2 items at least
 );
 
+stringIn<0> strIn;//buffer size: 2^5 = 32 bytes, eventually use 0 for a single byte
 serialIn serial(Serial);
+// use this commented lines if you want your stringIn object to be used as part or normal menu input
+// menuIn* inputsList[]={&serial,&strIn};
+// chainStream<sizeof(inputsList)> in(inputsList);
+// NAVROOT(nav,mainMenu,MAX_DEPTH,in,out);
 NAVROOT(nav,mainMenu,MAX_DEPTH,serial,out);
 
 result alert(menuOut& o,idleEvent e) {
@@ -155,6 +160,7 @@ void setup() {
   pinMode(LEDPIN, OUTPUT);
   pinMode(NAV_BTN,INPUT_PULLUP);
   pinMode(SEL_BTN,INPUT_PULLUP);
+  Serial.println("menu 4.x");
 }
 
 #define SOFT_DEBOUNCE_MS 100
@@ -172,9 +178,17 @@ void loop() {
     nav.doNav(upCmd);
     delay(SOFT_DEBOUNCE_MS);
   }
-  nav.poll();//also do serial input
-  //or deal with charater input directly
-  // if (Serial.available()) nav.active().parseInput(nav.node(),Serial.read());
-  //nav.doOutput();
+  //if stringIn is a regular input then we should write to it here, before poll
+  // strIn.write(...);//just put the character you want to send
+  // nav.poll();//also do serial or stringIn input
+  // or deal with charater input directly... (if you have your own input driver)
+  if (Serial.available()) {
+    //of course menu can read from Serial or even stringIn (se above how to use stringIn as a regular menu input)
+    //but here we demonstrate the use of stringIn in direct call, by writing the data to stream and then call parseInput
+    if (strIn.write(Serial.read()))//so we just transfer data from serial to strIn
+      // nav.active().parseInput(nav.node(),strIn);//and then let target parse input
+      nav.doInput(strIn);
+  }
+  nav.doOutput();//if not doing poll the we need to do output "manualy"
   digitalWrite(LEDPIN, ledCtrl);
 }
