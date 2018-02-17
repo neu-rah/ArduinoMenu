@@ -106,9 +106,14 @@ MENU(subMenu,"Sub-Menu",doNothing,anyEvent,wrapStyle
   ,EXIT("<Back")
 );
 
+constText* constMEM textFilter MEMMODE=" .0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTWXYZ";
+constText* constMEM textMask[] MEMMODE={textFilter};//this mask will repear till the end of the field
+char name[]="          ";//<-- menu will edit this text
+
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,OP("Op1",action1,anyEvent)
   ,OP("Op2",action2,enterEvent)
+  ,EDIT("Name",name,textMask,doNothing,noEvent,noStyle)
   //,SUBMENU(togOp)
   ,FIELD(test,"Test","%",0,100,10,1,doNothing,noEvent,wrapStyle)
   ,SUBMENU(subMenu)
@@ -168,6 +173,8 @@ void loop() {
     delay(SOFT_DEBOUNCE_MS);
   }
   nav.poll();//also do serial input
+  //or deal with charater input directly
+  // if (Serial.available()) nav.active().parseInput(nav.node(),Serial.read());
   //nav.doOutput();
   digitalWrite(LEDPIN, ledCtrl);
 }

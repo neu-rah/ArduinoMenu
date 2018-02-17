@@ -121,6 +121,7 @@
       inline char* buffer() const {return ((textFieldShadow*)shadow)->_buffer();}
       inline idx_t sz() const {return ((textFieldShadow*)shadow)->_sz();}
       constText* validator(int i) {return ((textFieldShadow*)shadow)->operator[](i%sz());}
+      void parseInput(navNode& nav,menuIn& in) override;
       void doNav(navNode& nav,navCmd cmd) override;
       Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr=0) override;
     };
@@ -402,7 +403,7 @@
     void menuField<T>::parseInput(navNode& nav,menuIn& in) {
       if (strchr(numericChars,in.peek())) {//a numeric value was entered
         if (in.numValueInput) {
-          target()=(T)in.parseFloat();
+          target()=(T)in.parseFloat();//TODO: use template specialization and proper convertion
           tunning=true;
           doNav(nav,enterCmd);
         } else doNav(nav,idxCmd);

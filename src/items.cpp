@@ -247,6 +247,25 @@ void navTarget::parseInput(navNode& nav,menuIn& in) {
   doNav(nav,nav.navKeys(in.read()));
 }
 
+void textField::parseInput(navNode& nav,menuIn& in) {
+  _trace(Serial<<"navTarget::parseInput"<<endl);
+  if (/*charEdit&&*/in.available()) {
+    char c=in.peek();
+    const char* v=validator(cursor);
+    char *at=strchr(v,c);
+    if (at) {
+      in.read();
+      buffer()[cursor]=c;
+      if (cursor<(idx_t)strlen(buffer())-1) cursor++;
+      //else charEdit=false;
+      dirty=true;
+      return;
+    }
+  }
+  navTarget::parseInput(nav,in);
+}
+
+
 #ifdef MENU_ASYNC
 bool fieldBase::async(const char *uri,navRoot& root,idx_t lvl) {
   trace(Serial<<"fieldBase::async"<<endl);
