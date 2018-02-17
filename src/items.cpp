@@ -248,21 +248,39 @@ void navTarget::parseInput(navNode& nav,menuIn& in) {
 }
 
 void textField::parseInput(navNode& nav,menuIn& in) {
-  _trace(Serial<<"navTarget::parseInput"<<endl);
+  trace(Serial<<"navTarget::parseInput"<<endl);
   if (/*charEdit&&*/in.available()) {
     char c=in.peek();
-    const char* v=validator(cursor);
-    char *at=strchr(v,c);
-    if (at) {
-      in.read();
-      buffer()[cursor]=c;
-      if (cursor<(idx_t)strlen(buffer())-1) cursor++;
-      //else charEdit=false;
-      dirty=true;
-      return;
+    switch(c) {//special cases
+      case 0x0D://enter
+        in.read();
+        charEdit=false;
+        dirty=true;
+        // edited=false;
+        cursor=0;
+        nav.root->exit();
+        return;
+      case 0x08://backspace
+        in.read();
+        buffer()[cursor]=validator(cursor)[0];
+        if (cursor) cursor--;
+        dirty=true;
+        return;
+      default: {
+        const char* v=validator(cursor);
+        char *at=strchr(v,c);
+        if (at) {
+          in.read();
+          buffer()[cursor]=c;
+          if (cursor<(idx_t)strlen(buffer())-1) cursor++;
+          dirty=true;
+          return;
+        }
+        // Serial<<hex(c)<<endl;
+        navTarget::parseInput(nav,in);
+      }
     }
   }
-  navTarget::parseInput(nav,in);
 }
 
 
@@ -326,22 +344,22 @@ Used fieldBase::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len
     l++;
     if (l<len) {
       #ifdef MENU_FMT_WRAPS
-  out.fmtStart(menuOut::fmtField,root.node(),idx);
+        out.fmtStart(menuOut::fmtField,root.node(),idx);
       #endif
       out.setColor(valColor,sel,enabled,ed);
       //out<<reflex;
       l+=printReflex(out);//NOTE: this can exceed the limits!
       #ifdef MENU_FMT_WRAPS
-  out.fmtEnd(menuOut::fmtField,root.node(),idx);
+        out.fmtEnd(menuOut::fmtField,root.node(),idx);
       #endif
       if (l<len) {
         #ifdef MENU_FMT_WRAPS
-  out.fmtStart(menuOut::fmtUnit,root.node(),idx);
+          out.fmtStart(menuOut::fmtUnit,root.node(),idx);
         #endif
         out.setColor(unitColor,sel,enabled,ed);
         l+=print_P(out,units(),len);
         #ifdef MENU_FMT_WRAPS
-  out.fmtEnd(menuOut::fmtUnit,root.node(),idx);
+          out.fmtEnd(menuOut::fmtUnit,root.node(),idx);
         #endif
       }
     }

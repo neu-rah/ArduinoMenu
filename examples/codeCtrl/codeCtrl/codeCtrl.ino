@@ -184,10 +184,9 @@ void loop() {
   // or deal with charater input directly... (if you have your own input driver)
   if (Serial.available()) {
     //of course menu can read from Serial or even stringIn (se above how to use stringIn as a regular menu input)
-    //but here we demonstrate the use of stringIn in direct call, by writing the data to stream and then call parseInput
+    //but here we demonstrate the use of stringIn in direct call, by writing the data to stream and then call doInput with that stream
     if (strIn.write(Serial.read()))//so we just transfer data from serial to strIn
-      // nav.active().parseInput(nav.node(),strIn);//and then let target parse input
-      nav.doInput(strIn);
+      nav.doInput(strIn);//and then let target parse input
   }
   nav.doOutput();//if not doing poll the we need to do output "manualy"
   digitalWrite(LEDPIN, ledCtrl);
