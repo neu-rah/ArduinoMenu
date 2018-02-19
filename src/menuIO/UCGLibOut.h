@@ -91,7 +91,7 @@ namespace Menu {
 
 			void drawCursor(idx_t ln,bool selected,status stat,bool edit=false,idx_t panelNr=0) override {
 				const panel p=panels[panelNr];
-				gfxOut::drawCursor(ln,selected,stat);
+				// gfxOut::drawCursor(ln,selected,stat);
 				setColor(cursorColor,selected,stat);
 				gfx.drawFrame(p.x*resX + offsetX ,(p.y+ln)*resY + offsetY ,maxX()*resX ,resY);
 			}

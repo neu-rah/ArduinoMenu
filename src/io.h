@@ -129,16 +129,24 @@
           :menuOut(t,p,st),resX(rx),resY(ry) {}
         idx_t startCursor(navRoot& root,idx_t x,idx_t y,bool charEdit,idx_t panelNr) override {
           if (charEdit) {
-            rect(panelNr,  x,  y, 1, 1, bgColor, false, enabledStatus, false);
+            rect(panelNr,  x-1,  y, 1, 1, bgColor, false, enabledStatus, false);
             setColor(fgColor,false,enabledStatus,false);
-          } else
-            box(panelNr,  x,  y, 1, 1, bgColor, false, enabledStatus, false);
+          }/* else
+            box(panelNr,  x,  y, 1, 1, bgColor, false, enabledStatus, false);*/
           return 0;
         }
         idx_t endCursor(navRoot& root,idx_t x,idx_t y,bool charEdit,idx_t panelNr) override {
           setColor(fgColor,true,enabledStatus,true);return 0;
         }
-        idx_t editCursor(navRoot& root,idx_t x,idx_t y,bool editing,bool charEdit,idx_t panelNr) override {return 0;}
+        idx_t editCursor(navRoot& root,idx_t x,idx_t y,bool editing,bool charEdit,idx_t panelNr) override {
+          //TODO: next version, this furntiosn should return an USED value (and avoid nasty x-1)
+          if (editing) box(panelNr,x-1,y);
+          return 0;
+        }
+        // void drawCursor(idx_t ln,bool selected,status stat,bool edit=false,idx_t panelNr=0) override {
+        //   setColor(cursorColor, selected, stat,edit);
+        //   //write(selected?(stat==disabledStatus? options->disabledCursor : options->selectedCursor):' ');
+        // }
     };
 
     //list of output devices
