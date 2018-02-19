@@ -82,7 +82,7 @@ www.r-site.net
 					setColor(cursorColor,selected,stat);
 					// 	gfx.drawFrame(p.x*resX,(p.y+ln)*resY,maxX()*resX,resY/*+(fontMarginY<<1)*/);
 					// }
-          gfx.drawFrame(p.x*resX + offsetX /*- fontMarginY*/,(p.y+ln)*resY + offsetY /*- fontMarginY*/,maxX()*resX /*+ fontMarginY*/ /*+ fontMarginY*/,resY /*+ fontMarginY*/ /*+ fontMarginY*/);
+          gfx.drawFrame(p.x*resX /*- fontMarginY*/,(p.y+ln)*resY /*- fontMarginY*/,maxX()*resX /*+ fontMarginY*/ /*+ fontMarginY*/,resY /*+ fontMarginY*/ /*+ fontMarginY*/);
 				}
   	};
 }
