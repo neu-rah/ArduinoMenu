@@ -251,6 +251,13 @@ void textField::parseInput(navNode& nav,menuIn& in) {
   trace(Serial<<"navTarget::parseInput"<<endl);
   if (/*charEdit&&*/in.available()) {
     char c=in.peek();
+    if (options->useNavChars&&(c==options->getCmdChar(upCmd)
+      ||c==options->getCmdChar(downCmd)
+      ||c==options->getCmdChar(enterCmd)
+      ||c==options->getCmdChar(escCmd))) {
+        navTarget::parseInput(nav,in);
+        return;
+      }
     switch(c) {//special cases
       case 0x0D://enter
         in.read();

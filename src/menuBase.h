@@ -192,6 +192,7 @@ www.r-site.net
       char disabledCursor;//='-';
       const navCodesDef &navCodes;//=defaultNavCodes;
       bool invertFieldKeys;
+      bool useNavChars=true;//textFields should watch out for nav char in the stream (can write then on keybeord if true)
       inline char getCmdChar(navCmds cmd) const {return navCodes[cmd].ch;}//return character assigned to this command
     };
 
