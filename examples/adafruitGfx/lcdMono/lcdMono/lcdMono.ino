@@ -136,9 +136,12 @@ adaGfxOut adaOut(gfx,colors,gfx_tops,gfxPanels);
 menuOut* const outputs[] MEMMODE={&outSerial,&adaOut};//list of output devices
 outputsList out(outputs,2);//outputs list controller
 
+//define input device
+serialIn serial(Serial);
+
 //define navigation root and aux objects
 navNode nav_cursors[MAX_DEPTH];//aux objects to control each level of navigation
-navRoot nav(mainMenu, nav_cursors, MAX_DEPTH, Serial, out);*/
+navRoot nav(mainMenu, nav_cursors, MAX_DEPTH, serial, out);*/
 
 result alert(menuOut& o,idleEvent e) {
   if (e==idling) {
