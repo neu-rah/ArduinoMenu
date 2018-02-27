@@ -36,20 +36,20 @@
       eventMask events;//registered events
       styles style;
       char* buffer;
-      constText* constMEM* validators;
+      char* const* validators;
       idx_t sz;
     };
     class textFieldShadow:public promptShadow {
       protected:
       public:
         char* buffer;
-        constText* constMEM* validators;
+        char* const* validators;
         idx_t sz;
         textFieldShadow(
           constText* label,
           char* b,
           idx_t sz,
-          constText* constMEM* v,
+          char* const* v,
           action a=doNothing,
           eventMask e=noEvent,
           styles style=noStyle,

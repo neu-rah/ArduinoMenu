@@ -26,7 +26,7 @@
           for(int n=from;n<sz;n++) nodes[n]=NULL;
         }
         inline constMEM panel operator[](idx_t i) const {
-          assert(i<sz);
+          // assert(i<sz);
           #ifdef USING_PGM
             panel tmp;
             memcpy_P(&tmp, &panels[i], sizeof(panel));

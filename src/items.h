@@ -69,7 +69,7 @@
         #endif
         #ifdef MENU_ASYNC
           virtual prompt* seek(idx_t* uri,idx_t len) {return len?NULL:this;}
-          virtual bool async(constText*uri,navRoot& root,idx_t lvl) {
+          virtual bool async(const char*uri,navRoot& root,idx_t lvl) {
             return ((!*uri)||(uri[0]=='/'&&!uri[1]));
           }
           //some functions to use on htmlFmt
@@ -112,7 +112,7 @@
         constText*label,
         char* b,
         idx_t sz,
-        constText* constMEM* v,
+        char* const* v,
         action a=doNothing,
         eventMask e=noEvent,
         styles style=noStyle,
@@ -136,7 +136,7 @@
           virtual classes type() const {return fieldClass;}
         #endif
         #ifdef MENU_ASYNC
-          bool async(constText*uri,navRoot& root,idx_t lvl) override;
+          bool async(const char*uri,navRoot& root,idx_t lvl) override;
         #endif
         inline constText* units() {return ((fieldBaseShadow*)shadow)->_units();}
         void doNav(navNode& nav,navCmd cmd) override;
@@ -243,7 +243,7 @@
           prompt* seek(idx_t* uri,idx_t len) override;
         #endif
         #ifdef MENU_ASYNC
-          bool async(constText*uri,navRoot& root,idx_t lvl=0) override;
+          bool async(const char*uri,navRoot& root,idx_t lvl=0) override;
         #endif
     };
 

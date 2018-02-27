@@ -93,7 +93,7 @@ Used menuOut::printMenu(navNode &nav) {
   int lvl=nav.root->level;
   if (focus.parentDraw()) lvl--;
   navNode& nn=nav.root->path[lvl];
-  int k=min(lvl,panels.sz-1);
+  int k=(lvl<panels.sz-1)?lvl:panels.sz-1;
   if ((style&usePreview)&&k) k--;
   for(int i=0;i<k;i++) {
     navNode &n=nav.root->path[lvl-k+i];

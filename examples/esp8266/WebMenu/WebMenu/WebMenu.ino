@@ -33,7 +33,7 @@ added textField (also experimental).
 #include <FS.h>
 #include <Hash.h>
 extern "C" {
-#include "user_interface.h"
+  #include "user_interface.h"
 }
 
 using namespace Menu;
@@ -45,7 +45,7 @@ using namespace Menu;
   #define MENU_SSID "r-site.net"
 #endif
 #ifndef MENU_PASS
-#error "need to define WiFi password here"
+  #error "need to define WiFi password here"
   #define MENU_PASS ""
 #endif
 

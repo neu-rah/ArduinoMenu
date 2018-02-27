@@ -37,7 +37,7 @@ prompt* menuNode::seek(idx_t* uri,idx_t len) {
     return e.seek(++uri,--len);
   } else return NULL;
 }
-bool menuNode::async(const char *uri,navRoot& root,idx_t lvl) {
+bool menuNode::async(const char*uri,navRoot& root,idx_t lvl) {
   trace(Serial<<"menuNode::async"<<endl);
   if ((!*uri)||(uri[0]=='/'&&!uri[1])) return this;
   uri++;

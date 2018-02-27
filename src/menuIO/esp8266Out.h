@@ -4,11 +4,11 @@
   #define RSITE_ARDUINO_MENU_ESP8266OUT
   #include "../menu.h"
   #include <ESP8266WiFi.h>
-  #include <ESP8266WiFiMulti.h>
+  // #include <ESP8266WiFiMulti.h>
   //#include <WiFiClient.h>
   #include <WebSocketsServer.h>
   #include <ESP8266WebServer.h>
-  #include <ESP8266mDNS.h>
+  // #include <ESP8266mDNS.h>
   //#include <Hash.h>
   //#include <FS.h>
   #include <vector>
