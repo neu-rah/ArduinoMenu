@@ -20,6 +20,14 @@
         inline void fieldOff() {setFieldMode(false);}
     };
 
+    class noInput:public menuIn {
+    public:
+      size_t write(uint8_t) override {}
+      int available() override {return 0;}
+      int read() override {return -1;}
+      int peek() override {return -1;}
+    };
+
     #ifdef MENU_ASYNC
       class StringStream:public menuIn {
         public:

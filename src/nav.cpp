@@ -111,7 +111,8 @@ result navNode::sysEvent(eventMask e,idx_t i) {
 void navRoot::doInput(menuIn& in) {
   trace(Serial<<"navRoot::doInput"<<endl);
   if (sleepTask) {
-    if (options->getCmdChar(enterCmd)==in.read() || options->getCmdChar(escCmd)==in.read()) idleOff();
+    char c=in.read();
+    if (options->getCmdChar(enterCmd)==c || options->getCmdChar(escCmd)==c) idleOff();
   } else {
     idx_t inputBurstCnt=inputBurst+1;
     //if (in.available())
