@@ -70,6 +70,7 @@
         #ifdef MENU_ASYNC
           virtual prompt* seek(idx_t* uri,idx_t len) {return len?NULL:this;}
           virtual bool async(const char*uri,navRoot& root,idx_t lvl) {
+            trace(Serial<<"prompt::async ["<<uri<<"] result:"<<((!*uri)||(uri[0]=='/'&&!uri[1]))<<endl;);
             return ((!*uri)||(uri[0]=='/'&&!uri[1]));
           }
           //some functions to use on htmlFmt
@@ -222,6 +223,12 @@
         inline T target() const {return ((menuValueShadow<T>*)shadow)->target();}
         #ifdef MENU_FMT_WRAPS
           virtual classes type() const {return valueClass;}
+        #endif
+        #ifdef MENU_ASYNC
+          bool async(const char*uri,navRoot& root,idx_t lvl=0) override {
+            trace(Serial<<"menuValue::async!"<<endl);
+            return prompt::async(uri,root,lvl);
+          }
         #endif
     };
 
