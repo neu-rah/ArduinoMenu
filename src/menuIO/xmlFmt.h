@@ -37,7 +37,7 @@
         public:
           using T::T;
           result fmt(bool start,menuOut::fmtParts part,navNode &nav,idx_t idx=-1) {
-            trace(Serial<<"xml fmt idx:"<<idx<<endl);
+            _trace(Serial<<"xml fmt "<<part<<" idx:"<<idx<<(start?" start":" end")<<endl);
             //prompt* n=&nav[idx];
             switch(part) {
               case menuOut::fmtPanel:
@@ -87,7 +87,7 @@
                 if (start) {
                   assert(idx>=0&&idx<nav.sz());
                   *this<<"<field>";
-                  outputOptions(*this,nav,*(menuNode*)&nav[idx],idx);
+                  // outputOptions(*this,nav,*(menuNode*)&nav[idx],idx);
                   *this<<"<![CDATA[";
                 }
                 else *this<<"]]></field>\r\n";
