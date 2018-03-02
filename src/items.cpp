@@ -38,8 +38,11 @@ prompt* menuNode::seek(idx_t* uri,idx_t len) {
   } else return NULL;
 }
 bool menuNode::async(const char*uri,navRoot& root,idx_t lvl) {
-  trace(Serial<<"menuNode::async"<<endl);
-  if ((!*uri)||(uri[0]=='/'&&!uri[1])) return this;
+  trace(Serial<<"menuNode::async"<<uri<<endl);
+  if ((!*uri)||(uri[0]=='/'&&!uri[1])) {
+    trace(Serial<<"async true!"<<uri<<endl);
+    return true;
+  }
   uri++;
   idx_t n=0;
   while (*uri) {
@@ -48,10 +51,11 @@ bool menuNode::async(const char*uri,navRoot& root,idx_t lvl) {
     else break;
     uri++;
   }
-  if (root.path[lvl].target!=this) {
-    //Serial<<"escaping"<<endl;
-    while(root.level>lvl) root.doNav(escCmd);
-  }
+  //this is important to cover the exitEvent cases!
+  // if (root.path[lvl].target!=this) {
+  //   //Serial<<"escaping"<<endl;
+  //   while(root.level>lvl) root.doNav(escCmd);
+  // }
   //Serial<<*(prompt*)this<<" doNav idxCmd:"<<n<<endl;Serial.flush();
   //if (this->operator[](n).type()!=fieldClass) {//do not enter edit mode on fields over async
     //Serial<<"doNav idxCmd"<<endl;
@@ -293,7 +297,7 @@ void textField::parseInput(navNode& nav,menuIn& in) {
 
 #ifdef MENU_ASYNC
 bool fieldBase::async(const char *uri,navRoot& root,idx_t lvl) {
-  trace(Serial<<"fieldBase::async"<<endl);
+  trace(Serial<<"fieldBase::async "<<uri<<endl);
   if ((!*uri)||(uri[0]=='/'&&!uri[1])) return true;
   else if (uri[0]=='/') {
     StringStream i(++uri);
@@ -305,7 +309,7 @@ bool fieldBase::async(const char *uri,navRoot& root,idx_t lvl) {
 #endif
 
 void fieldBase::doNav(navNode& nav,navCmd cmd) {
-  trace(Serial<<"fieldBase::doNav "<<cmd<<endl);
+  trace(Serial<<"fieldBase::doNav "<<cmd;Serial<<endl);
   switch(cmd.cmd) {
     //by default esc and enter cmds do the same by changing the value
     //it might be set by numeric parsing when allowed

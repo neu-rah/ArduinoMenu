@@ -37,7 +37,7 @@
         public:
           using T::T;
           result fmt(bool start,menuOut::fmtParts part,navNode &nav,idx_t idx=-1) {
-            assert(idx>=0&&idx<nav.sz());
+            trace(Serial<<"xml fmt idx:"<<idx<<endl);
             //prompt* n=&nav[idx];
             switch(part) {
               case menuOut::fmtPanel:
@@ -57,6 +57,7 @@
                 break;
               case menuOut::fmtOp:
                 if (start) {
+                  assert(idx>=0&&idx<nav.sz());
                   *this<<"<op class=\"aml_op op"<<nav[idx].type()<<"\" data-idx=\""<<idx<<"\" href=\"/menu?at=";
                   nav.root->printPath(*this);
                   *this<<"/"<<idx<<"\">";
@@ -72,6 +73,7 @@
                 break;
               case menuOut::fmtSelect:
                 if (start) {
+                  assert(idx>=0&&idx<nav.sz());
                   *this<<"<select>";
                   outputOptions(*this,nav,*(menuNode*)&nav[idx],idx);
                   *this<<"<![CDATA[";
@@ -83,6 +85,7 @@
                 break;
               case menuOut::fmtField:
                 if (start) {
+                  assert(idx>=0&&idx<nav.sz());
                   *this<<"<field>";
                   outputOptions(*this,nav,*(menuNode*)&nav[idx],idx);
                   *this<<"<![CDATA[";

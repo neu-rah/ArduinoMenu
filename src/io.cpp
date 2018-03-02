@@ -50,7 +50,7 @@ Used outputsList::printMenu(navNode& nav) const {
   trace(Serial<<"outputsList::printMenu"<<endl);
   for(int n=0;n<cnt;n++) {
     menuOut& o=*((menuOut*)memPtr(outs[n]));
-    if (nav.changed(o)||(o.style&(menuOut::rasterDraw)))
+    if (nav.changed(o)||(o.style&(menuOut::rasterDraw))||(o.style&(menuOut::redraw)))
       o.printMenu(nav);
   }
   clearChanged(nav);

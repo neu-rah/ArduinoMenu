@@ -15,3 +15,4 @@ platformio.ini
 *.odg
 examples/clickEncoder
 examples/lolin32
+examples/screenNav

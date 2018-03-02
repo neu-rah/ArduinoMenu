@@ -126,7 +126,7 @@
         #ifdef MENU_ASYNC
           inline bool async(const char* at) {
             trace(Serial<<"navRoot::async "<<at<<endl);
-            if (at[0]=='/') level=0;
+            if (!(at&&*at)||at[0]=='/') level=0;
             navFocus=path[level].target;
             return active().async(at, *this, 0);
           }
