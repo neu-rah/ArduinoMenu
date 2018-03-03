@@ -37,7 +37,7 @@
         public:
           using T::T;
           result fmt(bool start,menuOut::fmtParts part,navNode &nav,idx_t idx=-1) {
-            _trace(Serial<<"xml fmt "<<part<<" idx:"<<idx<<(start?" start":" end")<<endl);
+            trace(Serial<<"xml fmt "<<part<<" idx:"<<idx<<(start?" start":" end")<<endl);
             //prompt* n=&nav[idx];
             switch(part) {
               case menuOut::fmtPanel:
@@ -58,7 +58,7 @@
               case menuOut::fmtOp:
                 if (start) {
                   assert(idx>=0&&idx<nav.sz());
-                  *this<<"<op class=\"aml_op op"<<nav[idx].type()<<"\" data-idx=\""<<idx<<"\" href=\"/menu?at=";
+                  *this<<"<op data-type=\""<<nav[idx].typeName()<<"\" class=\"aml_op op"<<nav[idx].type()<<"\" data-idx=\""<<idx<<"\" href=\"/menu?at=";
                   nav.root->printPath(*this);
                   *this<<"/"<<idx<<"\">";
                 } else T::operator<<("</op>\r\n");
