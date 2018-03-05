@@ -26,7 +26,7 @@ warranty, express or implied, as to its usefulness for any purpose.
     Print& operator<<(Print&o,prompt& p);
   #endif
 
-  #if defined(DEBUG)
+  #if defined(DEBUG) || defined(MENU_ASYNC)
     #ifndef ARDUINO_STREAMING
       #include <streamFlow.h>
     #else

@@ -65,7 +65,7 @@
         idx_t maxY(idx_t i=0) const;
         idx_t& top(navNode& nav) const;
         idx_t printRaw(const char* at,idx_t len);
-        #ifdef DEBUG
+        #if defined(DEBUG) || defined(MENU_ASYNC)
           virtual menuOut& operator<<(prompt const &p);
           #ifdef ESP8266
             template<typename T> menuOut& operator<<(T o) {(*(Print*)this)<<(o);return *this;}

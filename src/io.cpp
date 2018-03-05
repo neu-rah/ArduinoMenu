@@ -39,7 +39,7 @@ void menuOut::doNav(navCmd cmd,navNode &nav) {
   }
 }
 
-#ifdef MENU_ASYNC
+#if defined(DEBUG) || defined(MENU_ASYNC)
 menuOut& menuOut::operator<<(const prompt& p) {
   print_P(*this,p.getText());
   return *this;

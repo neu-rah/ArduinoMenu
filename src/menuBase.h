@@ -230,7 +230,7 @@ www.r-site.net
       typedef idx_t Used;
     #endif
 
-    #ifdef DEBUG
+    #if defined(DEBUG) || defined(MENU_ASYNC)
       Print& operator<<(Print& o,bool b);
       Print& operator<<(Print& o,navCmds cmd);
       Print& operator<<(Print& o,navCmd cmd);

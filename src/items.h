@@ -19,12 +19,12 @@
       template<> inline const char* typeStr<int8_t>() {return "int8_t";}
       template<> inline const char* typeStr<int16_t>() {return "int16_t";}
       template<> inline const char* typeStr<int32_t>() {return "int32_t";}
-      template<> inline const char* typeStr<long>() {return "long";}
-      template<> inline const char* typeStr<unsigned long>() {return "unsigned long";}
-      template<> inline const char* typeStr<long long>() {return "long long";}
-      template<> inline const char* typeStr<unsigned long long>() {return "unsigned long long";}
-      template<> inline const char* typeStr<float>() {return "float";}
-      template<> inline const char* typeStr<double>() {return "double";}
+      // template<> inline const char* typeStr<long>() {return "long";}
+      // template<> inline const char* typeStr<unsigned long>() {return "unsigned long";}
+      // template<> inline const char* typeStr<long long>() {return "long long";}
+      // template<> inline const char* typeStr<unsigned long long>() {return "unsigned long long";}
+      // template<> inline const char* typeStr<float>() {return "float";}
+      // template<> inline const char* typeStr<double>() {return "double";}
     #endif
     // Menu objects and data
     //////////////////////////////////////////////////////////////////////////
