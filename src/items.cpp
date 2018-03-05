@@ -38,7 +38,7 @@ prompt* menuNode::seek(idx_t* uri,idx_t len) {
   } else return NULL;
 }
 bool menuNode::async(const char*uri,navRoot& root,idx_t lvl) {
-  _trace(Serial<<"menuNode::async"<<uri<<endl);
+  trace(Serial<<"menuNode::async"<<uri<<endl);
   if ((!*uri)||(uri[0]=='/'&&!uri[1])) {
     trace(Serial<<"async true!"<<uri<<endl);
     return true;
@@ -303,12 +303,12 @@ void textField::parseInput(navNode& nav,menuIn& in) {
 
 #ifdef MENU_ASYNC
 bool textField::async(const char*uri,navRoot& root,idx_t lvl=0) {
-  _trace(Serial<<"textField::async "<<uri<<endl);
+  trace(Serial<<"textField::async "<<uri<<endl);
   if ((!*uri)||(uri[0]=='/'&&!uri[1])) return true;
   if (uri[0]=='/') {
     StringStream i(++uri);
     while(i.available()) parseInput(root.node(), i);
-    _trace(Serial<<"textField::enterCmd"<<endl);
+    trace(Serial<<"textField::enterCmd"<<endl);
     doNav(root.node(),escCmd);
     return true;
   }
@@ -362,7 +362,7 @@ void fieldBase::doNav(navNode& nav,navCmd cmd) {
 }
 
 Used fieldBase::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr) {
-  _trace(Serial<<"fieldBase::printTo"<<endl);
+  trace(Serial<<"fieldBase::printTo"<<endl);
   idx_t l=prompt::printTo(root,sel,out,idx,len,panelNr);
   bool ed=this==root.navFocus;
   //bool sel=nav.sel==i;
