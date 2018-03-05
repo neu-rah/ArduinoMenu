@@ -14,6 +14,9 @@ Used prompt::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,id
   out.fmtStart(menuOut::fmtPrompt,root.node(),idx);
   #endif
   idx_t r=printRaw(out,len);
+  #ifdef MENU_FMT_WRAPS
+  out.fmtEnd(menuOut::fmtPrompt,root.node(),idx);
+  #endif
   if (is((systemStyles)(_menuData|_parentDraw|_asPad))
     //&&((&((menuNode*)root.node().target)->operator[](idx))==this)
   ) {
@@ -22,9 +25,6 @@ Used prompt::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,id
       else
         out.previewMenu(root,*(menuNode*)this,panelNr);
   }
-  #ifdef MENU_FMT_WRAPS
-  out.fmtEnd(menuOut::fmtPrompt,root.node(),idx);
-  #endif
   return r;
 }
 
