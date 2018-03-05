@@ -4,7 +4,8 @@
   #define RSITE_ARDUINO_MENU_XMLFMT
 
   #ifdef MENU_FMT_WRAPS
-    #include "../menu.h"
+  #include "../menu.h"
+  #include "../items.h"
 
     namespace Menu {
 
@@ -27,8 +28,6 @@
         print_P(o,p);
         return o;
       }
-
-      menuOut& operator<<(menuOut&o,classes c);
 
       void outputOptions(menuOut& o,navNode &nav,menuNode& node,idx_t idx);
 
@@ -64,8 +63,11 @@
                 } else T::operator<<("</op>\r\n");
                 break;
               case menuOut::fmtToggle:
-                if (start) *this<<"<toggle><![CDATA[";
-                else *this<<"]]></toggle>\r\n";
+                if (start) {
+                  *this<<"<toggle>";
+                  outputOptions(*this,nav,*(menuNode*)&nav[idx],idx);
+                  *this<<"</toggle>\r\n<field-value><![CDATA[";
+                } else *this<<"]]></field-value>\r\n";
                 break;
               case menuOut::fmtPrompt:
                 if (start) *this<<"<prompt><![CDATA[";
@@ -76,21 +78,29 @@
                   assert(idx>=0&&idx<nav.sz());
                   *this<<"<select>";
                   outputOptions(*this,nav,*(menuNode*)&nav[idx],idx);
-                  *this<<"<![CDATA[";
-                } else *this<<"]]></select>\r\n";
+                  *this<<"</select>\r\n<field-value><![CDATA[";
+                } else *this<<"]]></field-value>";
                 break;
               case menuOut::fmtChoose:
-                if (start) *this<<"<choose><![CDATA[";
-                else *this<<"]]></choose>\r\n";
+                if (start) {
+                  *this<<"<choose>";
+                  outputOptions(*this,nav,*(menuNode*)&nav[idx],idx);
+                  *this<<"</choose>\r\n<field-value><![CDATA[";
+                } else *this<<"]]></field-value>";
                 break;
               case menuOut::fmtField:
                 if (start) {
                   assert(idx>=0&&idx<nav.sz());
-                  *this<<"<field>";
-                  // outputOptions(*this,nav,*(menuNode*)&nav[idx],idx);
-                  *this<<"<![CDATA[";
-                }
-                else *this<<"]]></field>\r\n";
+                  *this<<"<field high=\"";
+                  nav[idx].printHigh(*this);
+                  *this<<"\" low=\"";
+                  nav[idx].printLow(*this);
+                  *this<<"\"><![CDATA[";
+                } else *this<<"]]></field>\r\n";
+                break;
+              case menuOut::fmtTextField:
+                if (start) *this<<"<field-value><![CDATA[";
+                else *this<<"]]></field-value>\r\n";
                 break;
               case menuOut::fmtIdx:
                 if (start) *this<<"<idx><![CDATA[";

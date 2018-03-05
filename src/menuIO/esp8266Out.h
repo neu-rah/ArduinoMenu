@@ -62,6 +62,7 @@
         size_t write(uint8_t ch) override {return client->write(ch);}
     };
 
+    menuOut& operator<<(menuOut&o,classes c);
     template<typename T> inline String& operator<<(String& o,T t) {return o.operator+=(t);}
 
     class esp8266_WebServerOut:public esp8266Out {

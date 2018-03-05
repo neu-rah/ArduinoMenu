@@ -19,7 +19,7 @@ result Menu::maxDepthError(menuOut& o,idleEvent e) {
   return proceed;
 }
 
-#ifdef DEBUG
+#ifdef MENU_ASYNC
   String& operator<<(String&s,prompt &p) {return s+=p.getText();}
   Stream& operator<<(Stream&o,prompt& p) {print_P(o,p.getText());return o;}
   Print& operator<<(Print&o,prompt& p) {print_P(o,p.getText());return o;}

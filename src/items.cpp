@@ -38,7 +38,7 @@ prompt* menuNode::seek(idx_t* uri,idx_t len) {
   } else return NULL;
 }
 bool menuNode::async(const char*uri,navRoot& root,idx_t lvl) {
-  trace(Serial<<"menuNode::async"<<uri<<endl);
+  _trace(Serial<<"menuNode::async"<<uri<<endl);
   if ((!*uri)||(uri[0]=='/'&&!uri[1])) {
     trace(Serial<<"async true!"<<uri<<endl);
     return true;
@@ -52,6 +52,7 @@ bool menuNode::async(const char*uri,navRoot& root,idx_t lvl) {
     uri++;
   }
   //this is important to cover the exitEvent cases!
+  //however should be done in navRoot?
   // if (root.path[lvl].target!=this) {
   //   //Serial<<"escaping"<<endl;
   //   while(root.level>lvl) root.doNav(escCmd);
@@ -136,6 +137,9 @@ Used textField::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len
   }
   // idx_t c=l;
   //idx_t top=out.tops[root.level];
+  #ifdef MENU_FMT_WRAPS
+    out.fmtStart(menuOut::fmtTextField,root.node(),idx);
+  #endif
   idx_t tit=hasTitle(root.node())?1:0;
   idx_t line=idx+tit;//-out.tops[root.level];
   trace(Serial<<" tit:"<<tit<<" line:"<<line<<" cursor:"<<cursor<<" l:"<<l<<" len:"<<len<<endl;)
@@ -149,6 +153,9 @@ Used textField::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len
       l+=out.endCursor(root,l,line,charEdit);//draw textual cursor or color code end
     } else out.write(buffer()[at++]);
   out.editCursor(root,c+cursor,line,editing,charEdit);//reposition a non text cursor
+  #ifdef MENU_FMT_WRAPS
+    out.fmtEnd(menuOut::fmtTextField,root.node(),idx);
+  #endif
   return l;
 }
 
@@ -294,8 +301,20 @@ void textField::parseInput(navNode& nav,menuIn& in) {
   }
 }
 
-
 #ifdef MENU_ASYNC
+bool textField::async(const char*uri,navRoot& root,idx_t lvl=0) {
+  _trace(Serial<<"textField::async "<<uri<<endl);
+  if ((!*uri)||(uri[0]=='/'&&!uri[1])) return true;
+  if (uri[0]=='/') {
+    StringStream i(++uri);
+    while(i.available()) parseInput(root.node(), i);
+    _trace(Serial<<"textField::enterCmd"<<endl);
+    doNav(root.node(),escCmd);
+    return true;
+  }
+  return true;
+}
+
 bool fieldBase::async(const char *uri,navRoot& root,idx_t lvl) {
   trace(Serial<<"fieldBase::async "<<uri<<endl);
   if ((!*uri)||(uri[0]=='/'&&!uri[1])) return true;
@@ -343,7 +362,7 @@ void fieldBase::doNav(navNode& nav,navCmd cmd) {
 }
 
 Used fieldBase::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr) {
-  trace(Serial<<"fieldBase::printTo"<<endl);
+  _trace(Serial<<"fieldBase::printTo"<<endl);
   idx_t l=prompt::printTo(root,sel,out,idx,len,panelNr);
   bool ed=this==root.navFocus;
   //bool sel=nav.sel==i;

@@ -93,7 +93,7 @@
           virtual idx_t selected() const {return 0;}
           virtual const char* typeName() const {return "prompt";}
         #endif
-        #ifdef DEBUG
+        #ifdef MENU_ASYNC
           virtual void printValue(menuOut&) const {}
           virtual void printHigh(menuOut&) const {}
           virtual void printLow(menuOut&) const {}
@@ -144,7 +144,11 @@
       void parseInput(navNode& nav,menuIn& in) override;
       void doNav(navNode& nav,navCmd cmd) override;
       Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr=0) override;
+      #ifdef MENU_FMT_WRAPS
+        virtual classes type() const {return textFieldClass;}
+      #endif
       #ifdef MENU_ASYNC
+      bool async(const char*uri,navRoot& root,idx_t lvl) override;
         const char* typeName() const override {return "textField";}
       #endif
     };
@@ -210,7 +214,7 @@
           trace(if (test&&(reflex!=target())) Serial<<"reflex!=target reflex:"<<reflex<<" target:"<<target()<<endl);
           return dirty||(reflex!=target());
         }
-        #ifdef DEBUG
+        #ifdef MENU_ASYNC
           void printValue(menuOut& o) const override;
           void printHigh(menuOut& o) const override;
           void printLow(menuOut& o) const override;
@@ -464,7 +468,7 @@
       } else doNav(nav,nav.navKeys(in.read()));
     }
 
-    #ifdef DEBUG
+    #ifdef MENU_ASYNC
       template<typename T>
       void menuField<T>::printValue(menuOut& o) const {o.print(reflex);}
       template<typename T>
