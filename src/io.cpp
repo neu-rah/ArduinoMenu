@@ -61,14 +61,29 @@ Used outputsList::printMenu(navNode& nav) const {
 // draw a menu preview on a panel
 void menuOut::previewMenu(navRoot& root,menuNode& menu,idx_t panelNr) {
   trace(Serial<<"menuOut::previewMenu"<<endl);
+  // #ifdef MENU_FMT_WRAPS
+  //   fmtStart(fmtBody,root.node());
+  // #endif
   setColor(fgColor,false);
   if (menu.has(_asPad)) {
     for(int i=0;i<menu.sz();i++) {
+      // #ifdef MENU_FMT_WRAPS
+      //   fmtStart(fmtOp,root.node());
+      // #endif
       prompt& p=menu[i];
+      // #ifdef MENU_FMT_WRAPS
+      //   fmtStart(fmtCursor,root.node());
+      // #endif
       setColor(fgColor,false,p.enabled);
       drawCursor(i,false,p.enabled,false,panelNr);
+      // #ifdef MENU_FMT_WRAPS
+      //   fmtEnd(fmtCursor,root.node());
+      // #endif
       setColor(fgColor,false,p.enabled,false);
       p.printTo(root,false,*this,i,panels[panelNr].w,panelNr);
+      // #ifdef MENU_FMT_WRAPS
+      //   fmtEnd(fmtOp,root.node());
+      // #endif
     }
   } else {
     clear(panelNr);
@@ -84,6 +99,9 @@ void menuOut::previewMenu(navRoot& root,menuNode& menu,idx_t panelNr) {
       p.printTo(root,false,*this,i,panels[panelNr].w,panelNr);
     }
   }
+  // #ifdef MENU_FMT_WRAPS
+  //   fmtEnd(fmtBody,root.node());
+  // #endif
 }
 
 //determin panel number here and distribute menu and previews among the panels

@@ -20,16 +20,20 @@ Used prompt::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,id
   if (is((systemStyles)(_menuData|_parentDraw|_asPad))
     //&&((&((menuNode*)root.node().target)->operator[](idx))==this)
   ) {
-      #ifdef MENU_FMT_WRAPS
-        out.fmtStart(menuOut::fmtBody,root.node(),idx);
-      #endif
-      if (root.node().target==this)
-        out.printMenu(root.node(), panelNr);
-      else
-        out.previewMenu(root,*(menuNode*)this,panelNr);
-      #ifdef MENU_FMT_WRAPS
-        out.fmtEnd(menuOut::fmtBody,root.node(),idx);
-      #endif
+    trace(Serial<<"some parentDraw of asPad menu..."<<endl);
+    #ifdef MENU_FMT_WRAPS
+    out.fmtStart(menuOut::fmtBody,root.node(),idx);
+    #endif
+    if (root.node().target==this) {
+      trace(Serial<<"printMenu"<<endl);
+      out.printMenu(root.node(), panelNr);
+    } else {
+      trace(Serial<<"previewMenu"<<endl);
+      out.previewMenu(root,*(menuNode*)this,panelNr);
+    }
+    #ifdef MENU_FMT_WRAPS
+    out.fmtEnd(menuOut::fmtBody,root.node(),idx);
+    #endif
   }
   return r;
 }
