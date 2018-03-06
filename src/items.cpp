@@ -11,18 +11,18 @@ idx_t prompt::printRaw(menuOut& out,idx_t len) const {
 Used prompt::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr) {
   trace(Serial<<"prompt::printTo"<<endl);
   #ifdef MENU_FMT_WRAPS
-  out.fmtStart(menuOut::fmtPrompt,root.node(),idx);
+  out.fmtStart(*this,menuOut::fmtPrompt,root.node(),idx);
   #endif
   idx_t r=printRaw(out,len);
   #ifdef MENU_FMT_WRAPS
-  out.fmtEnd(menuOut::fmtPrompt,root.node(),idx);
+  out.fmtEnd(*this,menuOut::fmtPrompt,root.node(),idx);
   #endif
   if (is((systemStyles)(_menuData|_parentDraw|_asPad))
     //&&((&((menuNode*)root.node().target)->operator[](idx))==this)
   ) {
     trace(Serial<<"some parentDraw of asPad menu..."<<endl);
     #ifdef MENU_FMT_WRAPS
-    out.fmtStart(menuOut::fmtBody,root.node(),idx);
+    out.fmtStart(*this,menuOut::fmtBody,root.node(),idx);
     #endif
     if (root.node().target==this) {
       trace(Serial<<"printMenu"<<endl);
@@ -32,7 +32,7 @@ Used prompt::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,id
       out.previewMenu(root,*(menuNode*)this,panelNr);
     }
     #ifdef MENU_FMT_WRAPS
-    out.fmtEnd(menuOut::fmtBody,root.node(),idx);
+    out.fmtEnd(*this,menuOut::fmtBody,root.node(),idx);
     #endif
   }
   return r;
@@ -148,7 +148,7 @@ Used textField::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len
   // idx_t c=l;
   //idx_t top=out.tops[root.level];
   #ifdef MENU_FMT_WRAPS
-    out.fmtStart(menuOut::fmtTextField,root.node(),idx);
+    out.fmtStart(*this,menuOut::fmtTextField,root.node(),idx);
   #endif
   idx_t tit=hasTitle(root.node())?1:0;
   idx_t line=idx+tit;//-out.tops[root.level];
@@ -164,7 +164,7 @@ Used textField::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len
     } else out.write(buffer()[at++]);
   out.editCursor(root,c+cursor,line,editing,charEdit);//reposition a non text cursor
   #ifdef MENU_FMT_WRAPS
-    out.fmtEnd(menuOut::fmtTextField,root.node(),idx);
+    out.fmtEnd(*this,menuOut::fmtTextField,root.node(),idx);
   #endif
   return l;
 }
@@ -384,22 +384,22 @@ Used fieldBase::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len
     l++;
     if (l<len) {
       #ifdef MENU_FMT_WRAPS
-        out.fmtStart(menuOut::fmtField,root.node(),idx);
+        out.fmtStart(*this,menuOut::fmtField,root.node(),idx);
       #endif
       out.setColor(valColor,sel,enabled,ed);
       //out<<reflex;
       l+=printReflex(out);//NOTE: this can exceed the limits!
       #ifdef MENU_FMT_WRAPS
-        out.fmtEnd(menuOut::fmtField,root.node(),idx);
+        out.fmtEnd(*this,menuOut::fmtField,root.node(),idx);
       #endif
       if (l<len) {
         #ifdef MENU_FMT_WRAPS
-          out.fmtStart(menuOut::fmtUnit,root.node(),idx);
+          out.fmtStart(*this,menuOut::fmtUnit,root.node(),idx);
         #endif
         out.setColor(unitColor,sel,enabled,ed);
         l+=print_P(out,units(),len);
         #ifdef MENU_FMT_WRAPS
-          out.fmtEnd(menuOut::fmtUnit,root.node(),idx);
+          out.fmtEnd(*this,menuOut::fmtUnit,root.node(),idx);
         #endif
       }
     }
@@ -419,7 +419,7 @@ Used menuVariantBase::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx
   out.print(this==&root.active()?':':' ');
   l--;
   #ifdef MENU_FMT_WRAPS
-    if (out.fmtStart(type()==selectClass?menuOut::fmtSelect:menuOut::fmtChoose,root.node(),idx)==proceed) {
+    if (out.fmtStart(*this,type()==selectClass?menuOut::fmtSelect:menuOut::fmtChoose,root.node(),idx)==proceed) {
   #endif
     // Serial<<"variant ";
     // print_P(Serial,operator[](at).getText());
@@ -430,7 +430,7 @@ Used menuVariantBase::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx
     }
   #endif
   #ifdef MENU_FMT_WRAPS
-  out.fmtEnd(type()==selectClass?menuOut::fmtSelect:menuOut::fmtChoose,root.node(),idx);
+  out.fmtEnd(*this,type()==selectClass?menuOut::fmtSelect:menuOut::fmtChoose,root.node(),idx);
   #endif
   trace(Serial<<"menuVariantBase::printTo ended!"<<endl);
   return len-l;
@@ -446,11 +446,11 @@ idx_t menuVariantBase::togglePrintTo(navRoot &root,bool sel,menuOut& out, idx_t 
   //out<<menuNode::operator[](at);
   if (len-l>0) {
     #ifdef MENU_FMT_WRAPS
-  out.fmtStart(menuOut::fmtToggle,root.node(),idx);
+  out.fmtStart(*this,menuOut::fmtToggle,root.node(),idx);
     #endif
     l+=operator[](at).printRaw(out,len-l);
     #ifdef MENU_FMT_WRAPS
-  out.fmtEnd(menuOut::fmtToggle,root.node(),idx);
+  out.fmtEnd(*this,menuOut::fmtToggle,root.node(),idx);
     #endif
   }
   return l;

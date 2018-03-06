@@ -98,8 +98,8 @@
         virtual void rect(idx_t panelNr,idx_t x,idx_t y,idx_t w=1,idx_t h=1,colorDefs c=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) {}
         virtual void box(idx_t panelNr,idx_t x,idx_t y,idx_t w=1,idx_t h=1,colorDefs c=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) {}
         #ifdef MENU_FMT_WRAPS
-          virtual result fmtStart(fmtParts part,navNode &nav,idx_t idx=-1) {return proceed;}
-          virtual result fmtEnd(fmtParts part,navNode &nav,idx_t idx=-1) {return proceed;}
+          virtual result fmtStart(prompt& target,fmtParts part,navNode &nav,idx_t idx=-1) {return proceed;}
+          virtual result fmtEnd(prompt& target,fmtParts part,navNode &nav,idx_t idx=-1) {return proceed;}
         #endif
       protected:
         Used printMenu(navNode &nav,idx_t panelNr);

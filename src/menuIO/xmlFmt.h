@@ -35,7 +35,7 @@
       class xmlFmt:public T {
         public:
           using T::T;
-          result fmt(bool start,menuOut::fmtParts part,navNode &nav,idx_t idx=-1) {
+          result fmt(bool start,prompt& target,menuOut::fmtParts part,navNode &nav,idx_t idx=-1) {
             trace(Serial<<"xml fmt "<<part<<" idx:"<<idx<<(start?" start":" end")<<endl);
             //prompt* n=&nav[idx];
             switch(part) {
@@ -122,8 +122,8 @@
             }
             return proceed;
           }
-          result fmtStart(menuOut::fmtParts part,navNode &nav,idx_t idx=-1) override {return fmt(true,part,nav,idx);}
-          result fmtEnd(menuOut::fmtParts part,navNode &nav,idx_t idx=-1) override {return fmt(false,part,nav,idx);}
+          result fmtStart(prompt& target,menuOut::fmtParts part,navNode &nav,idx_t idx=-1) override {return fmt(true,target,part,nav,idx);}
+          result fmtEnd(prompt& target,menuOut::fmtParts part,navNode &nav,idx_t idx=-1) override {return fmt(false,target,part,nav,idx);}
       };
     }//namespace
   #endif
