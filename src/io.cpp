@@ -67,22 +67,22 @@ void menuOut::previewMenu(navRoot& root,menuNode& menu,idx_t panelNr) {
   setColor(fgColor,false);
   if (menu.has(_asPad)) {
     for(int i=0;i<menu.sz();i++) {
-      // #ifdef MENU_FMT_WRAPS
-      //   fmtStart(fmtOp,root.node());
-      // #endif
       prompt& p=menu[i];
       // #ifdef MENU_FMT_WRAPS
-      //   fmtStart(fmtCursor,root.node());
+      //   fmtStart(p,fmtOp,root.node());
+      // #endif
+      // #ifdef MENU_FMT_WRAPS
+      //   fmtStart(p,fmtCursor,root.node());
       // #endif
       setColor(fgColor,false,p.enabled);
       drawCursor(i,false,p.enabled,false,panelNr);
       // #ifdef MENU_FMT_WRAPS
-      //   fmtEnd(fmtCursor,root.node());
+      //   fmtEnd(p,fmtCursor,root.node());
       // #endif
       setColor(fgColor,false,p.enabled,false);
       p.printTo(root,false,*this,i,panels[panelNr].w,panelNr);
       // #ifdef MENU_FMT_WRAPS
-      //   fmtEnd(fmtOp,root.node());
+      //   fmtEnd(p,fmtOp,root.node());
       // #endif
     }
   } else {

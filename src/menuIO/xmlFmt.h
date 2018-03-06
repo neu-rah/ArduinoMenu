@@ -37,7 +37,7 @@
           using T::T;
           result fmt(bool start,prompt& target,menuOut::fmtParts part,navNode &nav,idx_t idx=-1) {
             trace(Serial<<"xml fmt "<<part<<" idx:"<<idx<<(start?" start":" end")<<endl);
-            //prompt* n=&nav[idx];
+            //prompt* n=&target;
             switch(part) {
               case menuOut::fmtPanel:
                 if (start)
@@ -57,7 +57,7 @@
               case menuOut::fmtOp:
                 if (start) {
                   assert(idx>=0&&idx<nav.sz());
-                  *this<<"<op data-type=\""<<nav[idx].typeName()<<"\" class=\"aml_op op"<<nav[idx].type()<<"\" data-idx=\""<<idx<<"\" href=\"/menu?at=";
+                  *this<<"<op data-type=\""<<target.typeName()<<"\" class=\"aml_op op"<<target.type()<<"\" data-idx=\""<<idx<<"\" href=\"/menu?at=";
                   nav.root->printPath(*this);
                   *this<<"/"<<idx<<"\">";
                 } else T::operator<<("</op>\r\n");
@@ -65,7 +65,7 @@
               case menuOut::fmtToggle:
                 if (start) {
                   *this<<"<toggle>";
-                  outputOptions(*this,nav,*(menuNode*)&nav[idx],idx);
+                  outputOptions(*this,nav,*(menuNode*)&target,idx);
                   *this<<"</toggle>\r\n<field-value><![CDATA[";
                 } else *this<<"]]></field-value>\r\n";
                 break;
@@ -77,14 +77,14 @@
                 if (start) {
                   assert(idx>=0&&idx<nav.sz());
                   *this<<"<select>";
-                  outputOptions(*this,nav,*(menuNode*)&nav[idx],idx);
+                  outputOptions(*this,nav,*(menuNode*)&target,idx);
                   *this<<"</select>\r\n<field-value><![CDATA[";
                 } else *this<<"]]></field-value>";
                 break;
               case menuOut::fmtChoose:
                 if (start) {
                   *this<<"<choose>";
-                  outputOptions(*this,nav,*(menuNode*)&nav[idx],idx);
+                  outputOptions(*this,nav,*(menuNode*)&target,idx);
                   *this<<"</choose>\r\n<field-value><![CDATA[";
                 } else *this<<"]]></field-value>";
                 break;
@@ -92,9 +92,9 @@
                 if (start) {
                   assert(idx>=0&&idx<nav.sz());
                   *this<<"<field high=\"";
-                  nav[idx].printHigh(*this);
+                  target.printHigh(*this);
                   *this<<"\" low=\"";
-                  nav[idx].printLow(*this);
+                  target.printLow(*this);
                   *this<<"\"><![CDATA[";
                 } else *this<<"]]></field>\r\n";
                 break;
