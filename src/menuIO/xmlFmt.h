@@ -42,11 +42,10 @@
               if (start) {
                 *this<<"<!--xml fmt "<<part<<" idx:"<<idx<<(start?" start":" end\r\n");
                 // if (target.has(_asPad)) *this<<" DEBUG=\"target_asPad\"";
-                if (nav.target->has(_asPad)) *this<<" DEBUG=\"nav_target_asPad\"";
-                if (&target==nav.target) *this<<" DEBUG=\"target_is_nav_target\"";
+                // if (nav.target->has(_asPad)) *this<<" DEBUG=\"nav_target_asPad\"";
+                // if (&target==nav.target) *this<<" DEBUG=\"target_is_nav_target\"";
                 *this<<"-->\r\n";
               });
-            //prompt* n=&target;
             switch(part) {
               case menuOut::fmtPanel:
                 if (start)
@@ -68,24 +67,12 @@
                 break;
               case menuOut::fmtOp:
                 if (start) {
-                  // assert(idx>=0&&idx<nav.sz());
                   *this
-                    <<"<op"//data-type=\""<<target.typeName()
+                    <<"<op"
                     <<" class=\"aml_op op"<<target.type();
-                    // <<"\" data-idx=\""<<idx
-                    // <<"\" href=\"/menu?at=";
                   *this<<"\"";
                   if (nav.target->has(_asPad)) *this<<" DEBUG1=\"nav_target_asPad\"";
                   if (&target==nav.target) *this<<" DEBUG2=\"target_is_nav_target\"";
-                  //   nav.root->printPath(*this,-1);
-                  //   _trace(
-                  //     Serial<<"DEBUG: xmlFmt skip asPad or parentDraw element! "<<idx<<endl;
-                  //     *this<<"\" SKIP=\""<<idx;
-                  //   );
-                  // } else {
-                    // nav.root->printPath(*this);
-                    // *this<<"/"<<idx;
-                  // }
                   *this<<">";
                 } else T::operator<<("</op>\r\n");
                 break;
@@ -111,7 +98,6 @@
                 break;
               case menuOut::fmtSelect:
                 if (start) {
-                  // assert(idx>=0&&idx<nav.sz());
                   *this<<"<select>";
                   outputOptions(*this,nav,*(menuNode*)&target,idx);
                   *this<<"</select>\r\n<field-value><![CDATA[";
@@ -126,7 +112,6 @@
                 break;
               case menuOut::fmtField:
                 if (start) {
-                  // assert(idx>=0&&idx<nav.sz());
                   *this<<"<field high=\"";
                   target.printHigh(*this);
                   *this<<"\" low=\"";
