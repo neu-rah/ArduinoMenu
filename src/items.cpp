@@ -11,11 +11,11 @@ idx_t prompt::printRaw(menuOut& out,idx_t len) const {
 Used prompt::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr) {
   trace(Serial<<"prompt::printTo"<<endl);
   #ifdef MENU_FMT_WRAPS
-  out.fmtStart(*this,menuOut::fmtPrompt,root.node(),idx);
+    out.fmtStart(*this,menuOut::fmtPrompt,root.node(),idx);
   #endif
   idx_t r=printRaw(out,len);
   #ifdef MENU_FMT_WRAPS
-  out.fmtEnd(*this,menuOut::fmtPrompt,root.node(),idx);
+    out.fmtEnd(*this,menuOut::fmtPrompt,root.node(),idx);
   #endif
   if (is((systemStyles)(_menuData|_parentDraw|_asPad))
     //&&((&((menuNode*)root.node().target)->operator[](idx))==this)

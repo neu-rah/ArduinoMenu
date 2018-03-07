@@ -130,11 +130,19 @@
             navFocus=path[level].target;
             return active().async(at, *this, 0);
           }
-          menuOut& printPath(menuOut& o) const {
-            for(idx_t n=0;n<level;n++) {
+          menuOut& printPath(menuOut& o,int delta=0) const {
+            _trace(Serial<<"printPath:");
+            for(idx_t n=0;n<level+delta;n++) {
+              // if (path[n].target!=navFocus&&path[n].target->operator[](n).has((systemStyles)(_asPad))) {
+              if(delta)
+                _trace(Serial<<"DEBUG: printPath skip asPad or parentDraw element!"<<endl;);
+              //   break;
+              // }
+              _trace(Serial<<"/"<<path[n].sel);
               o.print('/');
               o.print(path[n].sel);
             }
+            _trace(Serial<<endl);
             return o;
           }
           //async printMenu on arbitrary menuOut device

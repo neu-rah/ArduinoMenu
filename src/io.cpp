@@ -68,22 +68,28 @@ void menuOut::previewMenu(navRoot& root,menuNode& menu,idx_t panelNr) {
   if (menu.has(_asPad)) {
     for(int i=0;i<menu.sz();i++) {
       prompt& p=menu[i];
-      // #ifdef MENU_FMT_WRAPS
-      //   fmtStart(p,fmtOp,root.node());
-      // #endif
-      // #ifdef MENU_FMT_WRAPS
-      //   fmtStart(p,fmtCursor,root.node());
-      // #endif
+      #ifdef MENU_FMT_WRAPS
+        fmtStart(p,fmtOp,root.node(),i);
+      #endif
+      #ifdef MENU_FMT_WRAPS
+        fmtStart(p,fmtCursor,root.node(),i);
+      #endif
       setColor(fgColor,false,p.enabled);
       drawCursor(i,false,p.enabled,false,panelNr);
-      // #ifdef MENU_FMT_WRAPS
-      //   fmtEnd(p,fmtCursor,root.node());
-      // #endif
+      #ifdef MENU_FMT_WRAPS
+        fmtEnd(p,fmtCursor,root.node(),i);
+      #endif
       setColor(fgColor,false,p.enabled,false);
+      // #ifdef MENU_FMT_WRAPS
+      //   fmtStart(p,fmtOpBody,root.node(),i);
+      // #endif
       p.printTo(root,false,*this,i,panels[panelNr].w,panelNr);
       // #ifdef MENU_FMT_WRAPS
-      //   fmtEnd(p,fmtOp,root.node());
+      //   fmtEnd(p,fmtOpBody,root.node(),i);
       // #endif
+      #ifdef MENU_FMT_WRAPS
+        fmtEnd(p,fmtOp,root.node(),i);
+      #endif
     }
   } else {
     clear(panelNr);
@@ -260,7 +266,13 @@ Used menuOut::printMenu(navNode &nav,idx_t panelNr) {
         if (len>0) len=p.printTo(*nav.root,selected,*this,i,len,panelNr);
         if (len>0) {
           if (asPad) {
+            #ifdef MENU_FMT_WRAPS
+              fmtStart(p,fmtCursor,nav,i);
+            #endif
             print(selected?"]":"");
+            #ifdef MENU_FMT_WRAPS
+              fmtEnd(p,fmtCursor,nav,i);
+            #endif
             len--;
           }
         }
