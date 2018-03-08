@@ -71,6 +71,7 @@
                     <<"<op"
                     <<" class=\"aml_op op"<<target.type();
                   *this<<"\"";
+                  if (target.has(_asPad)) *this<<" padOp=\"yes\"";
                   if (nav.target->has(_asPad)) *this<<" DEBUG1=\"nav_target_asPad\"";
                   if (&target==nav.target) *this<<" DEBUG2=\"target_is_nav_target\"";
                   *this<<">";
@@ -89,8 +90,9 @@
                     <<" data-type=\""<<target.typeName()
                     <<"\" data-idx=\""<<idx
                     <<"\" href=\"/menu?at=";
-                  nav.root->printPath(*this);//,nav.target->has(_asPad)&&(&target!=nav.target)?-1:0);
-                  *this<<"/"<<idx<<"\"";
+                  nav.root->printPath(*this,nav.target->has(_asPad)&&(&target!=nav.target)?-1:0);
+                  // *this<<"/"<<idx;
+                  *this<<"\"";
                   if (&target==nav.target) *this<<" active=\"yes\"";
                   if (nav.target->has(_asPad)) *this<<" DEBUG1=\"nav_target_asPad\"";
                   if (&target==nav.target) *this<<" DEBUG2=\"target_is_nav_target\"";

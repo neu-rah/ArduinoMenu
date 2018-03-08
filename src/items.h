@@ -148,7 +148,7 @@
         virtual classes type() const {return textFieldClass;}
       #endif
       #ifdef MENU_ASYNC
-      bool async(const char*uri,navRoot& root,idx_t lvl) override;
+        bool async(const char*uri,navRoot& root,idx_t lvl) override;
         const char* typeName() const override {return "textField";}
       #endif
     };
