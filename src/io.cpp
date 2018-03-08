@@ -192,12 +192,19 @@ Used menuOut::printMenu(navNode &nav,idx_t panelNr) {
           //print('[');
           nav.target->printTo(*nav.root,true,*this,-1,pan.w-(asPad?1:2),panelNr);
         }
-        if (asPad) print(":");
-        //else print(']');
         ///<----- titleEnd
         #ifdef MENU_FMT_WRAPS
           fmtEnd(*nav.target,fmtTitle,nav,-1);
         #endif
+        if (asPad) {
+          #ifdef MENU_FMT_WRAPS
+            fmtStart(*nav.target,fmtCursor,nav,-1);
+          #endif
+          print(":");
+          #ifdef MENU_FMT_WRAPS
+            fmtEnd(*nav.target,fmtCursor,nav,-1);
+          #endif
+        }
       }
     }
     //------> bodyStart

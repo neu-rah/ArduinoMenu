@@ -89,8 +89,9 @@
                     <<" data-type=\""<<target.typeName()
                     <<"\" data-idx=\""<<idx
                     <<"\" href=\"/menu?at=";
-                  nav.root->printPath(*this,nav.target->has(_asPad)&&(&target!=nav.target)?-1:0);
+                  nav.root->printPath(*this);//,nav.target->has(_asPad)&&(&target!=nav.target)?-1:0);
                   *this<<"/"<<idx<<"\"";
+                  if (&target==nav.target) *this<<" active=\"yes\"";
                   if (nav.target->has(_asPad)) *this<<" DEBUG1=\"nav_target_asPad\"";
                   if (&target==nav.target) *this<<" DEBUG2=\"target_is_nav_target\"";
                   *this<<"><![CDATA[";

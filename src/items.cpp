@@ -269,7 +269,7 @@ void navTarget::parseInput(navNode& nav,menuIn& in) {
 }
 
 void textField::parseInput(navNode& nav,menuIn& in) {
-  trace(Serial<<"navTarget::parseInput"<<endl);
+  _trace(Serial<<"navTarget::parseInput"<<endl);
   if (/*charEdit&&*/in.available()) {
     char c=in.peek();
     if (options->useNavChars&&(c==options->getCmdChar(upCmd)
