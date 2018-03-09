@@ -196,3 +196,50 @@ navCmd navRoot::exit() {
   navFocus=&active();
   return escCmd;
 }
+
+#ifdef MENU_ASYNC
+// prompt* navRoot::seek(char* uri) {
+//   StringStream s(uri);
+//   size_t len = std::count(s.begin(), s.end(), '/');
+//   if (uri[0]=='/') s>>'/';  else len++;
+//   assert(len<(1<<(sizeof(idx_t)<<3)));
+//   idx_t sel[len];
+//   for(int n=0;n<len;n++) {
+//     s>>sel[n];
+//     s>>'/';
+//   }
+//   return seek(sel,len);
+// }
+// prompt* navRoot::seek(idx_t* uri,idx_t len) {
+//   trace(Serial<<"menuNode::seek"<<endl);
+//   if (len&&uri[0]>=0&&uri[0]<sz()) {
+//     prompt& e=operator[](uri[0]);
+//     assert(e.isMenu());
+//     return e.seek(++uri,--len);
+//   } else return NULL;
+// }
+bool navRoot::async(const char* at) {
+  _trace(Serial<<"navRoot::async "<<at<<endl);
+  if (!(at&&*at)||at[0]=='/')
+    return path[0].target->async(at, *this, 0);
+  else
+    return active().async(at, *this, level);
+}
+menuOut& navRoot::printPath(menuOut& o,int delta) const {
+  trace(Serial<<"printPath:");
+  for(idx_t n=0;n<level+delta;n++) {
+    o.print('/');
+    o.print(path[n].sel);
+  }
+  trace(Serial<<endl);
+  return o;
+}
+//async printMenu on arbitrary menuOut device
+Used navRoot::printMenu(menuOut& o) const {
+  trace(Serial<<"navRoot::printMenu(menuOut& o)"<<endl);
+  if ((active().sysStyles()&_parentDraw)&&level)
+    return o.printMenu(path[level-1]);
+  else return o.printMenu(node());
+}
+
+#endif

@@ -124,34 +124,10 @@
         }
         inline bool changed(idx_t n) const {return changed(out[n]);}
         #ifdef MENU_ASYNC
-          inline bool async(const char* at) {
-            trace(Serial<<"navRoot::async "<<at<<endl);
-            if (!(at&&*at)||at[0]=='/') level=0;
-            navFocus=path[level].target;
-            return active().async(at, *this, 0);
-          }
-          menuOut& printPath(menuOut& o,int delta=0) const {
-            _trace(Serial<<"printPath:");
-            for(idx_t n=0;n<level+delta;n++) {
-              // if (path[n].target!=navFocus&&path[n].target->operator[](n).has((systemStyles)(_asPad))) {
-              if(delta)
-                _trace(Serial<<"DEBUG: printPath skip asPad or parentDraw element!"<<endl;);
-              //   break;
-              // }
-              _trace(Serial<<"/"<<path[n].sel);
-              o.print('/');
-              o.print(path[n].sel);
-            }
-            _trace(Serial<<endl);
-            return o;
-          }
-          //async printMenu on arbitrary menuOut device
-          Used printMenu(menuOut& o) const {
-            trace(Serial<<"navRoot::printMenu(menuOut& o)"<<endl);
-            if ((active().sysStyles()&_parentDraw)&&level)
-              return o.printMenu(path[level-1]);
-            else return o.printMenu(node());
-          }
+          // prompt* seek(idx_t* uri,idx_t len);
+          bool async(const char* at);
+          menuOut& printPath(menuOut& o,int delta=0) const;
+          Used printMenu(menuOut& o) const;
         #endif
         Used printMenu() const {
           trace(Serial<<"navRoot::printMenu"<<endl);

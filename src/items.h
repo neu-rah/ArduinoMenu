@@ -83,11 +83,8 @@
           virtual classes type() const {return promptClass;}
         #endif
         #ifdef MENU_ASYNC
-          virtual prompt* seek(idx_t* uri,idx_t len) {return len?NULL:this;}
-          virtual bool async(const char*uri,navRoot& root,idx_t lvl) {
-            trace(Serial<<"prompt::async ["<<uri<<"] result:"<<((!*uri)||(uri[0]=='/'&&!uri[1]))<<endl;);
-            return ((!*uri)||(uri[0]=='/'&&!uri[1]));
-          }
+          // virtual prompt* seek(idx_t* uri,idx_t len) {return len?NULL:this;}
+          virtual bool async(const char*uri,navRoot& root,idx_t lvl);
           //some functions to use on htmlFmt
           // for enumerations:
           virtual idx_t selected() const {return 0;}
@@ -280,9 +277,9 @@
         void clearChanged(const navNode &nav,const menuOut& out,bool sub) override;
         inline idx_t sz() const {return ((menuNodeShadow*)shadow)->_sz();}
         inline prompt* constMEM* data() const {return ((menuNodeShadow*)shadow)->_data();}
-        #ifdef MENU_ASYNC
-          prompt* seek(idx_t* uri,idx_t len) override;
-        #endif
+        // #ifdef MENU_ASYNC
+        //   prompt* seek(idx_t* uri,idx_t len) override;
+        // #endif
         #ifdef MENU_ASYNC
           bool async(const char*uri,navRoot& root,idx_t lvl=0) override;
           const char* typeName() const override {return "menuNode";}
