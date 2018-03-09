@@ -40,57 +40,38 @@ Used prompt::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,id
 
 #ifdef MENU_ASYNC
 bool prompt::async(const char*uri,navRoot& root,idx_t lvl) {
-  _trace(Serial<<"prompt::async ["<<uri<<"] result:"<<((!*uri)||(uri[0]=='/'&&!uri[1]))<<endl;);
-  // if ((!*uri)||(uri[0]=='/'&&!uri[1])) {}
-  //just activate and ignore rest of path
-  root.doNav(enterCmd);
+  trace(Serial<<"prompt::async ["<<uri<<"]"<<endl;);
   return true;
 }
 bool menuNode::async(const char*uri,navRoot& root,idx_t lvl) {
-  _trace(Serial<<"menuNode::async "<<uri<<" lvl:"<<lvl<<" root.level:"<<root.level<<endl);
+  trace(Serial<<*(prompt*)this<<" menuNode::async "<<uri<<" lvl:"<<lvl<<" root.level:"<<root.level<<endl);
+  assert(root.path[lvl].target==this);
   if ((!uri[0])||(uri[0]=='/'&&!uri[1])) {
-    while(root.level>lvl) {
-      Serial<<"escaping "<<root.level<<endl;
-      root.doNav(escCmd);
-    }
-    _trace(Serial<<*(prompt*)this<<" async true! "<<uri<<endl);
+    root.escTo(lvl);
+    trace(Serial<<*(prompt*)this<<" async true! "<<uri<<endl);
     return true;
   }
-  // assert(uri[0]=='/');
   if (uri[0]=='/') uri++;//TODO check who does this part!
-  _trace(Serial<<"uri[0]='"<<uri[0]<<"'"<<endl);
+  trace(Serial<<"uri[0]='"<<uri[0]<<"'"<<endl);
   assert(strchr(numericChars,uri[0]));
   int n=0;
   while (*uri) {
     char* d=strchr(numericChars,uri[0]);
     if (d) n=n*10+((*d)-'0');
     else break;
-    _trace(Serial<<".");
     uri++;
   }
-  //this is important to cover the exitEvent cases!
-  //however should be done in navRoot?
-  if (root.path[lvl].target!=this||root.level<=lvl) {
-    _trace(Serial<<"DEBUG!!!!"<<endl);
-    while(root.level>lvl) {
-      Serial<<"escaping "<<root.level<<endl;
-      root.doNav(escCmd);
-    }
-    Serial<<*(prompt*)this<<" doNav idxCmd:"<<n<<endl;Serial.flush();
-    //if (this->operator[](n).type()!=fieldClass) {//do not enter edit mode on fields over async
-    //Serial<<"doNav idxCmd"<<endl;
-    if (operator[](n).isMenu())
-      root.doNav(navCmd(idxCmd,n));
-    //}
-    //Serial<<"recurse on ["<<n<<"]-"<<operator[](n)<<" uri:"<<uri<<" lvl:"<<lvl<<endl;Serial.flush();
-  } else _trace(Serial<<"JUST SKIPPING PATH!"<<endl);
-  return operator[](n).async(uri,root,++lvl);
+  //state transformation (for events preservation)
+  if (!(root.path[lvl+1].target==&operator[](n)&&root.level>lvl)) {
+    root.escTo(lvl);
+    root.doNav(navCmd(idxCmd,n));
+  }
+  return operator[](n).async(uri,root,lvl+1);
 }
 #endif
 
 void textField::doNav(navNode& nav,navCmd cmd) {
   trace(Serial<<"textField::doNav:"<<cmd.cmd<<endl);
-  //Serial.println("textField doNav!");
   switch(cmd.cmd) {
     case enterCmd:
       if (edited&&!charEdit) {
@@ -280,7 +261,7 @@ void navTarget::parseInput(navNode& nav,menuIn& in) {
 }
 
 void textField::parseInput(navNode& nav,menuIn& in) {
-  _trace(Serial<<"navTarget::parseInput"<<endl);
+  trace(Serial<<"navTarget::parseInput"<<endl);
   if (/*charEdit&&*/in.available()) {
     char c=in.peek();
     if (options->useNavChars&&(c==options->getCmdChar(upCmd)
@@ -337,7 +318,7 @@ bool textField::async(const char*uri,navRoot& root,idx_t lvl=0) {
 }
 
 bool fieldBase::async(const char *uri,navRoot& root,idx_t lvl) {
-  _trace(Serial<<"fieldBase::async "<<uri<<endl);
+  trace(Serial<<"fieldBase::async "<<uri<<endl);
   if ((!*uri)||(uri[0]=='/'&&!uri[1])) return true;
   else if (uri[0]=='/') {
     StringStream i(++uri);

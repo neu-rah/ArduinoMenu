@@ -218,12 +218,19 @@ navCmd navRoot::exit() {
 //     return e.seek(++uri,--len);
 //   } else return NULL;
 // }
+void navRoot::escTo(idx_t lvl) {
+  assert(lvl>=0);
+  while(level>lvl) {
+    Serial<<"escaping "<<level<<endl;
+    doNav(escCmd);
+  }
+}
 bool navRoot::async(const char* at) {
-  _trace(Serial<<"navRoot::async "<<at<<endl);
+  trace(Serial<<"navRoot::async "<<at<<endl);
   if (!(at&&*at)||at[0]=='/')
     return path[0].target->async(at, *this, 0);
   else
-    return active().async(at, *this, level);
+    return active().async(at, *this, level+1);//TODO: check max_depth here!
 }
 menuOut& navRoot::printPath(menuOut& o,int delta) const {
   trace(Serial<<"printPath:");
