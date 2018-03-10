@@ -12,13 +12,13 @@
     #endif
 
     #ifdef MENU_ASYNC
-      template<typename T> inline const char* typeStr() {return "other";}
-      template<> inline const char* typeStr<uint8_t>() {return "uint8_t";}
-      template<> inline const char* typeStr<uint16_t>() {return "uint16_t";}
-      template<> inline const char* typeStr<uint32_t>() {return "uint32_t";}
-      template<> inline const char* typeStr<int8_t>() {return "int8_t";}
-      template<> inline const char* typeStr<int16_t>() {return "int16_t";}
-      template<> inline const char* typeStr<int32_t>() {return "int32_t";}
+      template<typename T> inline const char* typeStr() {return "o";}
+      template<> inline const char* typeStr<uint8_t>() {return "u8";}
+      template<> inline const char* typeStr<uint16_t>() {return "u16";}
+      template<> inline const char* typeStr<uint32_t>() {return "u32";}
+      template<> inline const char* typeStr<int8_t>() {return "i8";}
+      template<> inline const char* typeStr<int16_t>() {return "i16";}
+      template<> inline const char* typeStr<int32_t>() {return "i32";}
       // template<> inline const char* typeStr<long>() {return "long";}
       // template<> inline const char* typeStr<unsigned long>() {return "unsigned long";}
       // template<> inline const char* typeStr<long long>() {return "long long";}

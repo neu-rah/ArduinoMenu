@@ -80,9 +80,9 @@
               case menuOut::fmtPrompt:
                 if (start) {
                   *this<<"<p"
-                    <<" data-type=\""<<target.typeName()
-                    <<"\" data-idx=\""<<idx
-                    <<"\" href=\"";
+                    <<" t=\""<<target.typeName()
+                    <<"\" i=\""<<idx
+                    <<"\" r=\"";
                   nav.root->printPath(*this,nav.target->has(_asPad)&&(&target!=nav.target)?-1:0);
                   // *this<<"/"<<idx;
                   *this<<"\"";
