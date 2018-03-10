@@ -50,17 +50,17 @@
     };
 
     //deprecated, dev. of esp8266_WiFiClientOut is stoped, use WebServer
-    class esp8266_WiFiClientOut:public esp8266Out {
-      public:
-        WiFiClient* client;
-        esp8266_WiFiClientOut(
-          /*const colorDef<webColor> (&c)[nColors],*/
-          idx_t* t,
-          panelsList& p
-        ):esp8266Out(t,p) {}
-        template<typename T> inline esp8266_WiFiClientOut& operator<<(T t) {client->print(t);return *this;}
-        size_t write(uint8_t ch) override {return client->write(ch);}
-    };
+    // class esp8266_WiFiClientOut:public esp8266Out {
+    //   public:
+    //     WiFiClient* client;
+    //     esp8266_WiFiClientOut(
+    //       /*const colorDef<webColor> (&c)[nColors],*/
+    //       idx_t* t,
+    //       panelsList& p
+    //     ):esp8266Out(t,p) {}
+    //     template<typename T> inline esp8266_WiFiClientOut& operator<<(T t) {client->print(t);return *this;}
+    //     size_t write(uint8_t ch) override {return client->write(ch);}
+    // };
 
     menuOut& operator<<(menuOut&o,classes c);
     template<typename T> inline String& operator<<(String& o,T t) {return o.operator+=(t);}

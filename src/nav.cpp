@@ -221,12 +221,12 @@ navCmd navRoot::exit() {
 void navRoot::escTo(idx_t lvl) {
   assert(lvl>=0);
   while(level>lvl) {
-    Serial<<"escaping "<<level<<endl;
+    _trace(Serial<<"escaping "<<level<<endl);
     doNav(escCmd);
   }
 }
 bool navRoot::async(const char* at) {
-  trace(Serial<<"navRoot::async "<<at<<endl);
+  _trace(Serial<<"navRoot::async "<<at<<endl);
   if (!(at&&*at)||at[0]=='/')
     return path[0].target->async(at, *this, 0);
   else

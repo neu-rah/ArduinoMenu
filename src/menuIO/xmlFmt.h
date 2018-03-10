@@ -40,107 +40,100 @@
           result fmt(bool start,prompt& target,menuOut::fmtParts part,navNode &nav,idx_t idx=-1) {
             trace(
               if (start) {
-                *this<<"<!--xml fmt "<<part<<" idx:"<<idx<<(start?" start":" end\r\n");
+                *this<<"<!--xml fmt "<<part<<" idx:"<<idx<<(start?" start":" end");
                 // if (target.has(_asPad)) *this<<" DEBUG=\"target_asPad\"";
                 // if (nav.target->has(_asPad)) *this<<" DEBUG=\"nav_target_asPad\"";
                 // if (&target==nav.target) *this<<" DEBUG=\"target_is_nav_target\"";
-                *this<<"-->\r\n";
+                *this<<"-->";
               });
             switch(part) {
               case menuOut::fmtPanel:
                 if (start)
-                  *this
-                    <<"<panel id=\""<<target.hash()
-                    <<"\" class=\"aml_panel\">";
-                else T::operator<<("</panel>\r\n");
+                  *this<<"<panel id=\""<<target.hash()<<"\">";
+                else T::operator<<("</panel>");
                 break;
               case menuOut::fmtTitle:
-                if (start) T::operator<<("<title class=\"aml_title\">");
-                else T::operator<<("</title>\r\n");
+                if (start) T::operator<<("<tit>");
+                else T::operator<<("</tit>");
                 break;
               case menuOut::fmtBody:
-                if (start) T::operator<<("<menu class=\"aml_ops\">");
-                else T::operator<<("</menu>\r\n");
+                if (start) T::operator<<("<menu>");
+                else T::operator<<("</menu>");
                 break;
               case menuOut::fmtUnit:
-                *this<<(start?"<":"</")<<"unit>";
+                *this<<(start?"<":"</")<<"u>";
                 break;
               case menuOut::fmtOp:
                 if (start) {
-                  *this
-                    <<"<op"
-                    <<" class=\"aml_op op"<<target.type();
-                  *this<<"\"";
+                  *this<<"<op";
                   if (target.has(_asPad)) *this<<" padOp=\"yes\"";
-                  if (nav.target->has(_asPad)) *this<<" DEBUG1=\"nav_target_asPad\"";
-                  if (&target==nav.target) *this<<" DEBUG2=\"target_is_nav_target\"";
                   *this<<">";
-                } else T::operator<<("</op>\r\n");
+                } else T::operator<<("</op>");
                 break;
               case menuOut::fmtToggle:
                 if (start) {
-                  *this<<"<toggle>";
+                  *this<<"<tog>";
                   outputOptions(*this,nav,*(menuNode*)&target,idx);
-                  *this<<"</toggle>\r\n<field-value><![CDATA[";
-                } else *this<<"]]></field-value>\r\n";
+                  *this<<"</tog><fv><![CDATA[";
+                } else *this<<"]]></fv>";
                 break;
               case menuOut::fmtPrompt:
                 if (start) {
-                  *this<<"<prompt"
+                  *this<<"<p"
                     <<" data-type=\""<<target.typeName()
                     <<"\" data-idx=\""<<idx
-                    <<"\" href=\"/menu?at=";
+                    <<"\" href=\"";
                   nav.root->printPath(*this,nav.target->has(_asPad)&&(&target!=nav.target)?-1:0);
                   // *this<<"/"<<idx;
                   *this<<"\"";
                   if (&target==nav.target) *this<<" active=\"yes\"";
-                  if (nav.target->has(_asPad)) *this<<" DEBUG1=\"nav_target_asPad\"";
-                  if (&target==nav.target) *this<<" DEBUG2=\"target_is_nav_target\"";
+                  // if (nav.target->has(_asPad)) *this<<" DEBUG1=\"nav_target_asPad\"";
+                  // if (&target==nav.target) *this<<" DEBUG2=\"target_is_nav_target\"";
                   *this<<"><![CDATA[";
-                } else *this<<"]]></prompt>\r\n";
+                } else *this<<"]]></p>";
                 break;
               case menuOut::fmtSelect:
                 if (start) {
                   *this<<"<select>";
                   outputOptions(*this,nav,*(menuNode*)&target,idx);
-                  *this<<"</select>\r\n<field-value><![CDATA[";
-                } else *this<<"]]></field-value>\n\r";
+                  *this<<"</select><fv><![CDATA[";
+                } else *this<<"]]></fv>";
                 break;
               case menuOut::fmtChoose:
                 if (start) {
                   *this<<"<choose>";
                   outputOptions(*this,nav,*(menuNode*)&target,idx);
-                  *this<<"</choose>\r\n<field-value><![CDATA[";
-                } else *this<<"]]></field-value>\n\r";
+                  *this<<"</choose><fv><![CDATA[";
+                } else *this<<"]]></fv>";
                 break;
               case menuOut::fmtField:
                 if (start) {
-                  *this<<"<field high=\"";
+                  *this<<"<fld high=\"";
                   target.printHigh(*this);
                   *this<<"\" low=\"";
                   target.printLow(*this);
                   *this<<"\"><![CDATA[";
-                } else *this<<"]]></field>\r\n";
+                } else *this<<"]]></fld>";
                 break;
               case menuOut::fmtTextField:
-                if (start) *this<<"<field-value><![CDATA[";
-                else *this<<"]]></field-value>\r\n";
+                if (start) *this<<"<fv><![CDATA[";
+                else *this<<"]]></fv>";
                 break;
               case menuOut::fmtIdx:
                 if (start) *this<<"<idx><![CDATA[";
-                else *this<<"]]></idx>\n\r";
+                else *this<<"]]></idx>";
                 break;
               case menuOut::fmtCursor:
-                if (start) *this<<"<cursor><![CDATA[";
-                else *this<<"]]></cursor>";
+                if (start) *this<<"<cur><![CDATA[";
+                else *this<<"]]></cur>";
                 break;
               case menuOut::fmtOpBody:
-                if (start) *this<<"<opBody>\n\r";
-                else *this<<"</opBody>\r\n";
+                if (start) *this<<"<ob>";
+                else *this<<"</ob>";
                 break;
               case menuOut::fmtPreview:
                 if (start) *this<<"<preview>";
-                else *this<<"</preview>\r\n";
+                else *this<<"</preview>";
                 break;
               default:break;
             }

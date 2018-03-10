@@ -20,7 +20,7 @@ Used prompt::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,id
   if (is((systemStyles)(_menuData|_parentDraw|_asPad))
     //&&((&((menuNode*)root.node().target)->operator[](idx))==this)
   ) {
-    trace(Serial<<"some parentDraw of asPad menu..."<<endl);
+    trace(Serial<<"some parentDraw or asPad menu..."<<endl);
     #ifdef MENU_FMT_WRAPS
     out.fmtStart(*this,menuOut::fmtBody,root.node(),idx);
     #endif
@@ -44,15 +44,14 @@ bool prompt::async(const char*uri,navRoot& root,idx_t lvl) {
   return true;
 }
 bool menuNode::async(const char*uri,navRoot& root,idx_t lvl) {
-  trace(Serial<<*(prompt*)this<<" menuNode::async "<<uri<<" lvl:"<<lvl<<" root.level:"<<root.level<<endl);
-  assert(root.path[lvl].target==this);
+  _trace(Serial<<*(prompt*)this<<" menuNode::async "<<uri<<" lvl:"<<lvl<<" root.level:"<<root.level<<endl);
+  // assert(root.path[lvl].target==this);
   if ((!uri[0])||(uri[0]=='/'&&!uri[1])) {
     root.escTo(lvl);
-    trace(Serial<<*(prompt*)this<<" async true! "<<uri<<endl);
+    _trace(Serial<<*(prompt*)this<<" async true! "<<uri<<endl);
     return true;
   }
   if (uri[0]=='/') uri++;//TODO check who does this part!
-  trace(Serial<<"uri[0]='"<<uri[0]<<"'"<<endl);
   assert(strchr(numericChars,uri[0]));
   int n=0;
   while (*uri) {
