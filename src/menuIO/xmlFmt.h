@@ -49,7 +49,7 @@
             switch(part) {
               case menuOut::fmtPanel:
                 if (start)
-                  *this<<"<panel id=\""<<target.hash()<<"\">";
+                  *this<<"\n<panel id=\""<<nav.target->hash()<<"\">";
                 else T::operator<<("</panel>");
                 break;
               case menuOut::fmtTitle:
@@ -57,7 +57,7 @@
                 else T::operator<<("</tit>");
                 break;
               case menuOut::fmtBody:
-                if (start) T::operator<<("<menu>");
+                if (start) T::operator<<("\n<menu>");
                 else T::operator<<("</menu>");
                 break;
               case menuOut::fmtUnit:
@@ -65,8 +65,8 @@
                 break;
               case menuOut::fmtOp:
                 if (start) {
-                  *this<<"<op";
-                  if (target.has(_asPad)) *this<<" padOp=\"yes\"";
+                  *this<<"\n<op";// id=\""<<target.hash()<<"\"";
+                  if (target.has(_asPad)) *this<<" pad=\"y\"";
                   *this<<">";
                 } else T::operator<<("</op>");
                 break;
@@ -86,7 +86,7 @@
                   nav.root->printPath(*this,nav.target->has(_asPad)&&(&target!=nav.target)?-1:0);
                   // *this<<"/"<<idx;
                   *this<<"\"";
-                  if (&target==nav.target) *this<<" active=\"yes\"";
+                  if (&target==nav.target) *this<<" act=\"y\"";
                   // if (nav.target->has(_asPad)) *this<<" DEBUG1=\"nav_target_asPad\"";
                   // if (&target==nav.target) *this<<" DEBUG2=\"target_is_nav_target\"";
                   *this<<"><![CDATA[";
