@@ -66,7 +66,7 @@ bool menuNode::async(const char*uri,navRoot& root,idx_t lvl) {
   // assert(n<sz());
   _trace(Serial<<"n:"<<n<<" sel:"<<root.path[lvl].sel<<endl);
   if (!(root.path[lvl].sel==n&&root.path[lvl+1].target==&operator[](n)&&root.level>lvl)) {
-    root.escTo(lvl);
+    root.escTo(lvl/*+(lvl&&root.path[lvl].sel==n?-1:0)*/);
     root.doNav(navCmd(idxCmd,n));
   }
   return operator[](n).async(uri,root,lvl+1);
