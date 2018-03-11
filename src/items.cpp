@@ -9,7 +9,7 @@ idx_t prompt::printRaw(menuOut& out,idx_t len) const {
 }
 
 Used prompt::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr) {
-  trace(Serial<<"prompt::printTo"<<endl);
+  trace(Serial<<*(prompt*)this<<" prompt::printTo"<<endl);
   #ifdef MENU_FMT_WRAPS
     out.fmtStart(*this,menuOut::fmtPrompt,root.node(),idx);
   #endif
@@ -20,10 +20,10 @@ Used prompt::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,id
   if (is((systemStyles)(_menuData|_parentDraw|_asPad))
     //&&((&((menuNode*)root.node().target)->operator[](idx))==this)
   ) {
-    trace(Serial<<"some parentDraw or asPad menu..."<<endl);
-    #ifdef MENU_FMT_WRAPS
-      out.fmtStart(*this,menuOut::fmtBody,root.node(),idx);
-    #endif
+    trace(Serial<<*(prompt*)this<<" some parentDraw or asPad menu... idx:"<<idx<<endl);
+    // #ifdef MENU_FMT_WRAPS
+    //   out.fmtStart(*this,menuOut::fmtBody,root.node(),idx);
+    // #endif
     if (root.node().target==this) {
       trace(Serial<<"printMenu"<<endl);
       out.printMenu(root.node(), panelNr);
@@ -31,9 +31,9 @@ Used prompt::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,id
       trace(Serial<<"previewMenu"<<endl);
       out.previewMenu(root,*(menuNode*)this,panelNr);
     }
-    #ifdef MENU_FMT_WRAPS
-      out.fmtEnd(*this,menuOut::fmtBody,root.node(),idx);
-    #endif
+    // #ifdef MENU_FMT_WRAPS
+    //   out.fmtEnd(*this,menuOut::fmtBody,root.node(),idx);
+    // #endif
   }
   return r;
 }
@@ -44,11 +44,11 @@ bool prompt::async(const char*uri,navRoot& root,idx_t lvl) {
   return true;
 }
 bool menuNode::async(const char*uri,navRoot& root,idx_t lvl) {
-  _trace(Serial<<*(prompt*)this<<" menuNode::async "<<uri<<" lvl:"<<lvl<<" root.level:"<<root.level<<endl);
+  trace(Serial<<*(prompt*)this<<" menuNode::async "<<uri<<" lvl:"<<lvl<<" root.level:"<<root.level<<endl);
   // assert(root.path[lvl].target==this);
   if ((!uri[0])||(uri[0]=='/'&&!uri[1])) {
     root.escTo(lvl);
-    _trace(Serial<<*(prompt*)this<<" async true! "<<uri<<endl);
+    trace(Serial<<*(prompt*)this<<" async true! "<<uri<<endl);
     return true;
   }
   if (uri[0]=='/') uri++;//TODO check who does this part!
@@ -64,7 +64,7 @@ bool menuNode::async(const char*uri,navRoot& root,idx_t lvl) {
   if (n>=sz()) n=sz()-1;//never trusting web!
   else if (n<0) n=0;
   // assert(n<sz());
-  _trace(Serial<<"n:"<<n<<" sel:"<<root.path[lvl].sel<<endl);
+  trace(Serial<<"n:"<<n<<" sel:"<<root.path[lvl].sel<<endl);
   if (!(root.path[lvl].sel==n&&root.path[lvl+1].target==&operator[](n)&&root.level>lvl)) {
     root.escTo(lvl/*+(lvl&&root.path[lvl].sel==n?-1:0)*/);
     root.doNav(navCmd(idxCmd,n));
@@ -308,7 +308,7 @@ void textField::parseInput(navNode& nav,menuIn& in) {
 
 #ifdef MENU_ASYNC
 bool textField::async(const char*uri,navRoot& root,idx_t lvl=0) {
-  _trace(Serial<<"textField::async "<<uri<<endl);
+  trace(Serial<<"textField::async "<<uri<<endl);
   if ((!*uri)||(uri[0]=='/'&&!uri[1])) return true;
   if (uri[0]=='/') {
     StringStream i(++uri);
