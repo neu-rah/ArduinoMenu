@@ -282,7 +282,7 @@
         // #endif
         #ifdef MENU_ASYNC
           bool async(const char*uri,navRoot& root,idx_t lvl=0) override;
-          const char* typeName() const override {return "menuNode";}
+          const char* typeName() const override {return "mn";}
         #endif
     };
 

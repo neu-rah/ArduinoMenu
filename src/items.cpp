@@ -22,7 +22,7 @@ Used prompt::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,id
   ) {
     trace(Serial<<"some parentDraw or asPad menu..."<<endl);
     #ifdef MENU_FMT_WRAPS
-    out.fmtStart(*this,menuOut::fmtBody,root.node(),idx);
+      out.fmtStart(*this,menuOut::fmtBody,root.node(),idx);
     #endif
     if (root.node().target==this) {
       trace(Serial<<"printMenu"<<endl);
@@ -32,7 +32,7 @@ Used prompt::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,id
       out.previewMenu(root,*(menuNode*)this,panelNr);
     }
     #ifdef MENU_FMT_WRAPS
-    out.fmtEnd(*this,menuOut::fmtBody,root.node(),idx);
+      out.fmtEnd(*this,menuOut::fmtBody,root.node(),idx);
     #endif
   }
   return r;
@@ -61,7 +61,11 @@ bool menuNode::async(const char*uri,navRoot& root,idx_t lvl) {
     uri++;
   }
   //state transformation (for events preservation)
-  if (!(root.path[lvl+1].target==&operator[](n)&&root.level>lvl)) {
+  if (n>=sz()) n=sz()-1;//never trusting web!
+  else if (n<0) n=0;
+  // assert(n<sz());
+  _trace(Serial<<"n:"<<n<<" sel:"<<root.path[lvl].sel<<endl);
+  if (!(root.path[lvl].sel==n&&root.path[lvl+1].target==&operator[](n)&&root.level>lvl)) {
     root.escTo(lvl);
     root.doNav(navCmd(idxCmd,n));
   }

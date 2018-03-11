@@ -220,6 +220,7 @@ navCmd navRoot::exit() {
 // }
 void navRoot::escTo(idx_t lvl) {
   assert(lvl>=0);
+  // if (lvl<0) return;
   while(level>lvl) {
     _trace(Serial<<"escaping "<<level<<endl);
     doNav(escCmd);
@@ -232,9 +233,9 @@ bool navRoot::async(const char* at) {
   else
     return active().async(at, *this, level+1);//TODO: check max_depth here!
 }
-menuOut& navRoot::printPath(menuOut& o,int delta) const {
+menuOut& navRoot::printPath(menuOut& o,menuNode* to) const {
   trace(Serial<<"printPath:");
-  for(idx_t n=0;n<level+delta;n++) {
+  for(idx_t n=0;n<level&&path[n].target!=to;n++) {
     o.print('/');
     o.print(path[n].sel);
   }

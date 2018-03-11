@@ -127,7 +127,7 @@
           void escTo(idx_t lvl);
           // prompt* seek(idx_t* uri,idx_t len);
           bool async(const char* at);
-          menuOut& printPath(menuOut& o,int delta=0) const;
+          menuOut& printPath(menuOut& o,menuNode*) const;
           Used printMenu(menuOut& o) const;
         #endif
         Used printMenu() const {

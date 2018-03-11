@@ -57,7 +57,10 @@
                 else T::operator<<("</tit>");
                 break;
               case menuOut::fmtBody:
-                if (start) T::operator<<("\n<menu>");
+                if (start) {
+                  *this<<"\n<menu r=\"";
+                  nav.root->printPath(*this,(menuNode*)&target);
+                  *this<<"\">";}
                 else T::operator<<("</menu>");
                 break;
               case menuOut::fmtUnit:
@@ -67,6 +70,8 @@
                 if (start) {
                   *this<<"\n<op";// id=\""<<target.hash()<<"\"";
                   if (target.has(_asPad)) *this<<" pad=\"y\"";
+                  if (nav.sel==idx) *this<<" sel=\"y\"";
+                  *this<<" i=\""<<idx<<"\"";
                   *this<<">";
                 } else T::operator<<("</op>");
                 break;
@@ -80,10 +85,11 @@
               case menuOut::fmtPrompt:
                 if (start) {
                   *this<<"<p"
-                    <<" t=\""<<target.typeName()
-                    <<"\" i=\""<<idx
-                    <<"\" r=\"";
-                  nav.root->printPath(*this,nav.target->has(_asPad)&&(&target!=nav.target)?-1:0);
+                    <<" t=\""<<target.typeName();
+                    // <<"\" i=\""<<idx
+                    // <<"\" ns=\""<<nav.sel
+                    // <<"\" r=\"";
+                    // nav.root->printPath(*this,nav.sel!=idx&&nav.target->has(_asPad)&&(&target!=nav.target)?-1:0);
                   // *this<<"/"<<idx;
                   *this<<"\"";
                   if (&target==nav.target) *this<<" act=\"y\"";
