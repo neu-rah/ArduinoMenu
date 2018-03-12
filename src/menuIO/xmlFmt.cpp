@@ -4,9 +4,7 @@
 
   namespace Menu {
     void outputOptions(menuOut& o,navNode &nav,menuNode& node,idx_t idx) {
-      o<<"<node data-path=\"/menu?at=";
-      nav.root->printPath(o,&node);
-      o<<"/"<<idx<<"\">";
+      o<<"<node>";
       for(idx_t n=0;n<node.sz();n++)
         o<<"<value"<<(n==node.selected()?" selected=\"selected\"":"")<<">"<<node[n]<<"</value>";
       o<<"</node>";
