@@ -40,11 +40,15 @@ Used prompt::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,id
 
 #ifdef MENU_ASYNC
 bool prompt::async(const char*uri,navRoot& root,idx_t lvl) {
-  trace(Serial<<"prompt::async ["<<uri<<"]"<<endl;);
+  _trace(Serial<<"prompt::async ["<<uri<<"]"<<endl;);
   return true;
 }
+bool menuValue::async(const char*uri,navRoot& root,idx_t lvl=0) override {
+  _trace(Serial<<"menuValue::async!"<<endl);
+  return prompt::async(uri,root,lvl);
+}
 bool menuNode::async(const char*uri,navRoot& root,idx_t lvl) {
-  trace(Serial<<*(prompt*)this<<" menuNode::async "<<uri<<" lvl:"<<lvl<<" root.level:"<<root.level<<endl);
+  _trace(Serial<<*(prompt*)this<<" menuNode::async "<<uri<<" lvl:"<<lvl<<" root.level:"<<root.level<<endl);
   // assert(root.path[lvl].target==this);
   if ((!uri[0])||(uri[0]=='/'&&!uri[1])) {
     root.escTo(lvl);
@@ -234,7 +238,7 @@ void menuNode::clearChanged(const navNode &nav,const menuOut& out,bool sub) {
       operator[](t).clearChanged(nav,out,false);
     }
   }
-  #ifdef DEBUG
+  #ifdef MENU_DEBUG
   if(changed(nav,out,sub,true)) {
     Serial<<"ERROR clear changed fail!"<<endl;
     Serial<<*this<<endl;
@@ -308,7 +312,7 @@ void textField::parseInput(navNode& nav,menuIn& in) {
 
 #ifdef MENU_ASYNC
 bool textField::async(const char*uri,navRoot& root,idx_t lvl=0) {
-  trace(Serial<<"textField::async "<<uri<<endl);
+  _trace(Serial<<"textField::async "<<uri<<endl);
   if ((!*uri)||(uri[0]=='/'&&!uri[1])) return true;
   if (uri[0]=='/') {
     StringStream i(++uri);
@@ -321,7 +325,7 @@ bool textField::async(const char*uri,navRoot& root,idx_t lvl=0) {
 }
 
 bool fieldBase::async(const char *uri,navRoot& root,idx_t lvl) {
-  trace(Serial<<"fieldBase::async "<<uri<<endl);
+  _trace(Serial<<"fieldBase::async "<<uri<<endl);
   if ((!*uri)||(uri[0]=='/'&&!uri[1])) return true;
   else if (uri[0]=='/') {
     StringStream i(++uri);

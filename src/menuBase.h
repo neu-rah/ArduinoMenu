@@ -9,14 +9,14 @@ www.r-site.net
 
 ***/
 
-// #define DEBUG
+// #define MENU_DEBUG
 //DRAW_2D adds 260 bytes to flash
 //#define DRAW_2D
 
 #ifndef RSITE_ARDUINO_MENU_SYSTEM_BASE
   #define RSITE_ARDUINO_MENU_SYSTEM_BASE
 
-  #ifdef DEBUG
+  #ifdef MENU_DEBUG
     extern bool debugFlag;
     extern const char* libMemMode;
   #endif
@@ -230,7 +230,7 @@ www.r-site.net
       typedef idx_t Used;
     #endif
 
-    #if defined(DEBUG) || defined(MENU_ASYNC)
+    #if defined(MENU_DEBUG) || defined(MENU_ASYNC)
       Print& operator<<(Print& o,bool b);
       Print& operator<<(Print& o,navCmds cmd);
       Print& operator<<(Print& o,navCmd cmd);

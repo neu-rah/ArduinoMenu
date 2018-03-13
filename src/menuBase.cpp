@@ -3,7 +3,7 @@
 
 using namespace Menu;
 
-#ifdef DEBUG
+#ifdef MENU_DEBUG
   bool debugFlag=false;
   #if defined(USING_PGM)
     const char* libMemMode="PGM";
@@ -46,7 +46,7 @@ const navCodesDef Menu::defaultNavCodes={
 config Menu::defaultOptions={'>','-',Menu::defaultNavCodes,false};
 config* Menu::options=&defaultOptions;
 
-#ifdef DEBUG
+#ifdef MENU_DEBUG
 
   Print& Menu::operator<<(Print& o,bool b) {
     return o<<(b?"true":"false");

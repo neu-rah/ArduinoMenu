@@ -41,9 +41,9 @@
             trace(
               if (start) {
                 *this<<"<!--xml fmt "<<part<<" idx:"<<idx<<(start?" start":" end");
-                // if (target.has(_asPad)) *this<<" DEBUG=\"target_asPad\"";
-                // if (nav.target->has(_asPad)) *this<<" DEBUG=\"nav_target_asPad\"";
-                // if (&target==nav.target) *this<<" DEBUG=\"target_is_nav_target\"";
+                // if (target.has(_asPad)) *this<<" MENU_DEBUG=\"target_asPad\"";
+                // if (nav.target->has(_asPad)) *this<<" MENU_DEBUG=\"nav_target_asPad\"";
+                // if (&target==nav.target) *this<<" MENU_DEBUG=\"target_is_nav_target\"";
                 *this<<"-->";
               });
             switch(part) {

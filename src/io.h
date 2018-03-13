@@ -65,7 +65,7 @@
         idx_t maxY(idx_t i=0) const;
         idx_t& top(navNode& nav) const;
         idx_t printRaw(const char* at,idx_t len);
-        #if defined(DEBUG) || defined(MENU_ASYNC)
+        #if defined(MENU_DEBUG) || defined(MENU_ASYNC)
           virtual menuOut& operator<<(prompt const &p);
           #ifdef ESP8266
             template<typename T> menuOut& operator<<(T o) {(*(Stream*)this)<<(o);return *this;}
@@ -183,7 +183,7 @@
         void clear() {for(int n=0;n<cnt;n++) ((menuOut*)memPtr(outs[n]))->clear();}
         void doNav(navCmd cmd,class navNode &nav) {for(int n=0;n<cnt;n++) ((menuOut*)memPtr(outs[n]))->doNav(cmd,nav);}
         result idle(idleFunc f,idleEvent e) {
-          #ifdef DEBUG
+          #ifdef MENU_DEBUG
           if (!f) Serial<<"idleFunc is NULL!!!"<<endl;
           #endif
           if (!f) return proceed;

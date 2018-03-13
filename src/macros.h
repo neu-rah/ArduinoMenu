@@ -13,7 +13,7 @@
 #endif
 #if defined(USE_PGM) || (defined(pgm_read_ptr_near) && !defined(MENU_USERAM))
   //storing some values into avr flash memory (saving ram space)
-  #ifdef DEBUG
+  #ifdef MENU_DEBUG
     #warning "Using PGM"
   #endif
   #define USING_PGM
@@ -28,7 +28,7 @@
   #define memEnum(addr) (sizeof(int)==1?memByte(addr):memWord(addr))
 #else
   //use ram on non-avr devices or when explicit
-  #ifdef DEBUG
+  #ifdef MENU_DEBUG
     #warning "Using RAM"
   #endif
   #define USING_RAM

@@ -174,7 +174,7 @@
         }
     };
 
-    #ifdef DEBUG
+    #ifdef MENU_DEBUG
       inline Stream& operator<<(Stream&o,const navNode& p) {
         o.print((__FlashStringHelper*)p.target->getText());
         return o;

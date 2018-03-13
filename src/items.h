@@ -246,7 +246,7 @@
         menuValue(constMEM menuValueShadow<T>& shadow):prompt(shadow) {}
         menuValue(constText* text,T value,action a=doNothing,eventMask e=noEvent)
           :menuValue(*new menuValueShadow<T>(text,value,a,e)) {}
-        // #ifdef DEBUG
+        // #ifdef MENU_DEBUG
         // bool changed(const navNode &nav,const menuOut& out,bool sub=true) override {return false;}
         // #endif
         //inline T getTypeValue(const T* from) const {return &((menuValueShadow<T>*)shadow)->getTypeValue(from);}
@@ -255,10 +255,7 @@
           virtual classes type() const {return valueClass;}
         #endif
         #ifdef MENU_ASYNC
-          bool async(const char*uri,navRoot& root,idx_t lvl=0) override {
-            trace(Serial<<"menuValue::async!"<<endl);
-            return prompt::async(uri,root,lvl);
-          }
+          bool async(const char*uri,navRoot& root,idx_t lvl=0) override;
           const char* typeName() const override {return "menuValue";}
         #endif
     };
@@ -320,7 +317,7 @@
         idx_t sync() override {
           for(idx_t i=0;i<sz();i++)
             if (((menuValue<T>*)&operator[](i))->target()==target()) return i;
-          #ifdef DEBUG
+          #ifdef MENU_DEBUG
             Serial.print(F("value out of range "));
             Serial.println(target());Serial.flush();
             assert(false);
@@ -328,7 +325,7 @@
           return -1;
         }
         idx_t sync(idx_t i) override {
-          #ifdef DEBUG
+          #ifdef MENU_DEBUG
             if (!(i>=0&&i<sz())){
               print_P(Serial,getText());
               Serial.print(F(" : value out of range "));
