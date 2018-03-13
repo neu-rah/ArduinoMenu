@@ -199,7 +199,6 @@ www.r-site.net
     extern config defaultOptions;
     extern config* options;
 
-
     #ifdef DRAW_2D
       typedef class Area {
         protected:

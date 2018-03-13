@@ -280,6 +280,8 @@
         #ifdef MENU_ASYNC
           bool async(const char*uri,navRoot& root,idx_t lvl=0) override;
           const char* typeName() const override {return "mn";}
+          //aux function, parse uri node (text to idx_t)
+          idx_t parseUriNode(const char*&uri);
         #endif
     };
 
@@ -403,6 +405,7 @@
         }
         #ifdef MENU_ASYNC
           const char* typeName() const override {return "toggle";}
+          bool async(const char*uri,navRoot& root,idx_t lvl);
         #endif
     };
 
@@ -440,6 +443,12 @@
   #include "io.h"
   #include "nav.h"
   namespace Menu {
+
+    template<typename T>
+    bool menuValue<T>::async(const char*uri,navRoot& root,idx_t lvl) {
+      trace(Serial<<(*(prompt*)this)<<" menuValue::async! lvl:"<<lvl<<" navRoot.level:"<<root.level<<" navFocus:"<<(*(prompt*)root.navFocus)<<endl);
+      return prompt::async(uri,root,lvl);
+    }
 
     template<typename T>
     idx_t menuField<T>::printReflex(menuOut& o) const {return o.print(reflex);}
@@ -483,6 +492,21 @@
     Used toggle<T>::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr) {
       return menuVariantBase::togglePrintTo(root,sel,out,idx,len,panelNr);
     }
+
+    #ifdef MENU_ASYNC
+      template<typename T>
+      bool toggle<T>::async(const char*uri,navRoot& root,idx_t lvl) {
+        trace(Serial<<(*(prompt*)this)<<" toggle::async! uri:"<<uri<<endl);
+        if(uri[0]) {
+          trace("selecting value by index!");
+          idx_t n=menuNode::parseUriNode(uri);
+          trace(Serial<<"n:"<<n<<" sel:"<<root.path[lvl].sel<<endl);
+          menuVariant<T>::sync(n);
+          return true;
+        }
+        return prompt::async(uri,root,lvl);
+      }
+    #endif
 
     template<typename T>
     bool menuVariant<T>::changed(const navNode &nav,const menuOut& out,bool sub,bool test) {

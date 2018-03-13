@@ -40,21 +40,10 @@ Used prompt::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,id
 
 #ifdef MENU_ASYNC
 bool prompt::async(const char*uri,navRoot& root,idx_t lvl) {
-  _trace(Serial<<"prompt::async ["<<uri<<"]"<<endl;);
+  trace(Serial<<"prompt::async ["<<uri<<"]"<<endl;);
   return true;
 }
-bool menuValue::async(const char*uri,navRoot& root,idx_t lvl=0) override {
-  _trace(Serial<<"menuValue::async!"<<endl);
-  return prompt::async(uri,root,lvl);
-}
-bool menuNode::async(const char*uri,navRoot& root,idx_t lvl) {
-  _trace(Serial<<*(prompt*)this<<" menuNode::async "<<uri<<" lvl:"<<lvl<<" root.level:"<<root.level<<endl);
-  // assert(root.path[lvl].target==this);
-  if ((!uri[0])||(uri[0]=='/'&&!uri[1])) {
-    root.escTo(lvl);
-    trace(Serial<<*(prompt*)this<<" async true! "<<uri<<endl);
-    return true;
-  }
+idx_t menuNode::parseUriNode(const char*&uri) {
   if (uri[0]=='/') uri++;//TODO check who does this part!
   assert(strchr(numericChars,uri[0]));
   int n=0;
@@ -67,7 +56,20 @@ bool menuNode::async(const char*uri,navRoot& root,idx_t lvl) {
   //state transformation (for events preservation)
   if (n>=sz()) n=sz()-1;//never trusting web!
   else if (n<0) n=0;
-  // assert(n<sz());
+  return n;
+}
+
+bool menuNode::async(const char*uri,navRoot& root,idx_t lvl) {
+  trace(Serial<<*(prompt*)this<<" menuNode::async "<<uri<<" lvl:"<<lvl<<" root.level:"<<root.level<<endl);
+  // assert(root.path[lvl].target==this);
+  if ((!uri[0])||(uri[0]=='/'&&!uri[1])) {
+    root.escTo(lvl);
+    trace(Serial<<*(prompt*)this<<" async true! "<<uri<<endl);
+    return true;
+  }
+  if (uri[0]=='/') uri++;//TODO check who does this part!
+  assert(strchr(numericChars,uri[0]));
+  int n=parseUriNode(uri);
   trace(Serial<<"n:"<<n<<" sel:"<<root.path[lvl].sel<<endl);
   if (!(root.path[lvl].sel==n&&root.path[lvl+1].target==&operator[](n)&&root.level>lvl)) {
     root.escTo(lvl/*+(lvl&&root.path[lvl].sel==n?-1:0)*/);
@@ -312,7 +314,7 @@ void textField::parseInput(navNode& nav,menuIn& in) {
 
 #ifdef MENU_ASYNC
 bool textField::async(const char*uri,navRoot& root,idx_t lvl=0) {
-  _trace(Serial<<"textField::async "<<uri<<endl);
+  trace(Serial<<"textField::async "<<uri<<endl);
   if ((!*uri)||(uri[0]=='/'&&!uri[1])) return true;
   if (uri[0]=='/') {
     StringStream i(++uri);
@@ -325,7 +327,7 @@ bool textField::async(const char*uri,navRoot& root,idx_t lvl=0) {
 }
 
 bool fieldBase::async(const char *uri,navRoot& root,idx_t lvl) {
-  _trace(Serial<<"fieldBase::async "<<uri<<endl);
+  trace(Serial<<"fieldBase::async "<<uri<<endl);
   if ((!*uri)||(uri[0]=='/'&&!uri[1])) return true;
   else if (uri[0]=='/') {
     StringStream i(++uri);
