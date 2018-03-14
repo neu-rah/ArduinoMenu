@@ -186,7 +186,7 @@ Used menuOut::printMenu(navNode &nav,idx_t panelNr) {
         #endif
         if (!asPad) {
           setColor(titleColor,false);
-          clearLine(0,panelNr);
+          clearLine(0,panelNr,titleColor);
           setColor(titleColor,true);
           setCursor(0,0,panelNr);
           //print('[');
