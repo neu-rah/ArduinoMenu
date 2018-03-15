@@ -18,10 +18,10 @@ namespace Menu {
 
 	class u8g2Out:public gfxOut {
 		public:
-      static int8_t fontMarginX;
-      static int8_t fontMarginY;
-      static int8_t offsetX;
-      static int8_t offsetY;
+      int8_t fontMarginX=1;
+      int8_t fontMarginY=1;
+      int8_t offsetX=0;
+      int8_t offsetY=0;
 			U8G2& gfx;
 			const colorDef<uint8_t> (&colors)[nColors];
 			u8g2Out(

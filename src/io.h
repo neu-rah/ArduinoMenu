@@ -22,7 +22,7 @@
 
     class noInput:public menuIn {
     public:
-      size_t write(uint8_t) override {}
+      size_t write(uint8_t) override {return 0;}
       int available() override {return 0;}
       int read() override {return -1;}
       int peek() override {return -1;}
