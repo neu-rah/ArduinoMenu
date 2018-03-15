@@ -18,8 +18,6 @@ namespace Menu {
 
 	class u8g2Out:public gfxOut {
 		public:
-      int8_t fontMarginX=1;
-      int8_t fontMarginY=1;
       int8_t offsetX=0;
       int8_t offsetY=0;
 			U8G2& gfx;
@@ -33,13 +31,11 @@ namespace Menu {
 				idx_t resY=9,
 				idx_t offsetX=0,
 				idx_t offsetY=0,
-        int fontMarginX=1,
         int fontMarginY=1
 			) :gfxOut(resX,resY,t,p,(styles)(menuOut::redraw|menuOut::rasterDraw)),gfx(gfx),colors(c) {
 					gfx.setFontPosBottom(); // U8Glib font positioning
 					this->offsetX=offsetX;
 					this->offsetY=offsetY;
-          this->fontMarginX=fontMarginX;
           this->fontMarginY=fontMarginY;
 			}
 
@@ -83,7 +79,7 @@ namespace Menu {
 
 			void setCursor(idx_t x,idx_t y,idx_t panelNr=0) override {
 				const panel p=panels[panelNr];
-				gfx.tx = (p.x+x)*resX+fontMarginX + offsetX;
+				gfx.tx = (p.x+x)*resX/*+fontMarginX*/ + offsetX;
 				gfx.ty = (p.y+y+1)*resY-fontMarginY + offsetY;
 			}
 
