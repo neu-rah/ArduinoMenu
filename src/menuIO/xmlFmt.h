@@ -71,6 +71,7 @@
                   *this<<"\n<op";// id=\""<<target.hash()<<"\"";
                   if (target.has(_asPad)) *this<<" pad=\"y\"";
                   if (nav.sel==idx) *this<<" sel=\"y\"";
+                  if (!target.enabled) *this<<" dis=\"y\"";
                   *this<<" i=\""<<idx<<"\"";
                   *this<<">";
                 } else T::operator<<("</op>");
