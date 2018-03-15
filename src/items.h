@@ -444,11 +444,13 @@
   #include "nav.h"
   namespace Menu {
 
-    template<typename T>
-    bool menuValue<T>::async(const char*uri,navRoot& root,idx_t lvl) {
-      trace(Serial<<(*(prompt*)this)<<" menuValue::async! lvl:"<<lvl<<" navRoot.level:"<<root.level<<" navFocus:"<<(*(prompt*)root.navFocus)<<endl);
-      return prompt::async(uri,root,lvl);
-    }
+    #ifdef MENU_ASYNC
+      template<typename T>
+      bool menuValue<T>::async(const char*uri,navRoot& root,idx_t lvl) {
+        trace(Serial<<(*(prompt*)this)<<" menuValue::async! lvl:"<<lvl<<" navRoot.level:"<<root.level<<" navFocus:"<<(*(prompt*)root.navFocus)<<endl);
+        return prompt::async(uri,root,lvl);
+      }
+    #endif
 
     template<typename T>
     idx_t menuField<T>::printReflex(menuOut& o) const {return o.print(reflex);}
