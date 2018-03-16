@@ -22,7 +22,20 @@ using
       Keypad& in;
       keypadIn(Keypad& in):in(in) {}
       int available(void) {return peek()!=0;}
-      int peek(void) {return key?key:(key=in.getKey()?key:-1);}
+      int peek(void) {
+        int ret;
+
+        if (key) {
+          return key;
+        } else {
+          key = (int)in.getKey();
+          if (key) {
+            return key;
+          } else {
+            return -1;
+          }
+        }
+      }
       int read() {
         if (key) {
           char k=key;
