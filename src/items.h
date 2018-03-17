@@ -23,8 +23,8 @@
       // template<> inline const char* typeStr<unsigned long>() {return "unsigned long";}
       // template<> inline const char* typeStr<long long>() {return "long long";}
       // template<> inline const char* typeStr<unsigned long long>() {return "unsigned long long";}
-      // template<> inline const char* typeStr<float>() {return "float";}
-      // template<> inline const char* typeStr<double>() {return "double";}
+      template<> inline const char* typeStr<float>() {return "f";}
+      template<> inline const char* typeStr<double>() {return "d";}
     #endif
     // Menu objects and data
     //////////////////////////////////////////////////////////////////////////
