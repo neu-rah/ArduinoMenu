@@ -17,14 +17,13 @@
 
   namespace Menu {
 
-    class esp8266Out:public menuOut {
+    class esp8266Out:public webIO {
       public:
         esp8266Out(
-          //const colorDef<webColor> (&c)[nColors],
           idx_t* t,
           panelsList& p,
           menuOut::styles styles=(menuOut::styles)(redraw|expandEnums)
-        ):menuOut(t,p,styles) {}
+        ):webIO(t,p,styles) {}
         menuOut& fill(
           int x1, int y1, int x2, int y2,char ch=' ',
           colorDefs color=bgColor,
@@ -48,19 +47,6 @@
         void setColor(colorDefs c,bool selected=false,status s=enabledStatus,bool e=false) override {};
         //template<typename T> esp8266Out& operator<<(T t)=0;
     };
-
-    //deprecated, dev. of esp8266_WiFiClientOut is stoped, use WebServer
-    // class esp8266_WiFiClientOut:public esp8266Out {
-    //   public:
-    //     WiFiClient* client;
-    //     esp8266_WiFiClientOut(
-    //       /*const colorDef<webColor> (&c)[nColors],*/
-    //       idx_t* t,
-    //       panelsList& p
-    //     ):esp8266Out(t,p) {}
-    //     template<typename T> inline esp8266_WiFiClientOut& operator<<(T t) {client->print(t);return *this;}
-    //     size_t write(uint8_t ch) override {return client->write(ch);}
-    // };
 
     menuOut& operator<<(menuOut&o,classes c);
     template<typename T> inline String& operator<<(String& o,T t) {return o.operator+=(t);}

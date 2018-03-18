@@ -101,6 +101,9 @@
           virtual result fmtStart(prompt& target,fmtParts part,navNode &nav,idx_t idx=-1) {return proceed;}
           virtual result fmtEnd(prompt& target,fmtParts part,navNode &nav,idx_t idx=-1) {return proceed;}
         #endif
+        #ifdef MENU_ASYNC
+          virtual bool isAsync();
+        #endif
       protected:
         Used printMenu(navNode &nav,idx_t panelNr);
     };
@@ -161,6 +164,15 @@
         //   //write(selected?(stat==disabledStatus? options->disabledCursor : options->selectedCursor):' ');
         // }
     };
+
+    #ifdef MENU_ASYNC
+      template<typename O>
+      class asyncIO:public O {
+        using O::O;
+        bool isAsync() override {return true;}
+      };
+      using webIO=asyncIO<menuOut>;
+    #endif
 
     //list of output devices
     //this allows parallel navigation on multiple devices

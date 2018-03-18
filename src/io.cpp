@@ -7,6 +7,10 @@ using namespace Menu;
 // menuOut - base menu output device
 //
 ////////////////////////////////////////////////////////////////////////////////
+#ifdef MENU_ASYNC
+  bool menuOut::isAsync() {return false;}
+#endif
+
 idx_t menuOut::printRaw(const char* at,idx_t len) {
   trace(Serial<<"menuOut::printRaw"<<endl);
   const char* p=at;
