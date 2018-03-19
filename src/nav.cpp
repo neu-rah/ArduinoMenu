@@ -197,6 +197,16 @@ navCmd navRoot::exit() {
   return escCmd;
 }
 
+bool navRoot::changed(const menuOut& out) {
+  if (sleepTask) return idleChanged;
+  if (node().changed(out)) {
+    lastChanged=millis();
+    return true;
+  } else if (canExit&&timeOut&&(millis()-lastChanged)/1000>timeOut) idleOn(idleTask);
+  return false;
+}
+
+
 #ifdef MENU_ASYNC
 // prompt* navRoot::seek(char* uri) {
 //   StringStream s(uri);

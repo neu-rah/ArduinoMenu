@@ -121,14 +121,7 @@
         inline navNode& node() const {return path[level];}
         inline menuNode& active() const {return *node().target;}
         inline prompt& selected() const {return active()[node().sel];}
-        bool changed(const menuOut& out) {
-          if (sleepTask) return idleChanged;
-          if (node().changed(out)) {
-            lastChanged=millis();
-            return true;
-          } else if (timeOut&&(millis()-lastChanged)/1000>timeOut) idleOn(idleTask);
-          return false;
-        }
+        bool changed(const menuOut& out);
         inline bool changed(idx_t n) {return changed(out[n]);}
         #ifdef MENU_ASYNC
           void escTo(idx_t lvl);
