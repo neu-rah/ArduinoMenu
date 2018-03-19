@@ -167,11 +167,11 @@
 
     #ifdef MENU_ASYNC
       template<typename O>
-      class asyncIO:public O {
+      class asyncOut:public O {
         using O::O;
         bool isAsync() override {return true;}
       };
-      using webIO=asyncIO<menuOut>;
+      using webOut=asyncOut<menuOut>;
     #endif
 
     //list of output devices

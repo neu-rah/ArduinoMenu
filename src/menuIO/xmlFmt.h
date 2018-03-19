@@ -115,10 +115,14 @@
                 break;
               case menuOut::fmtField:
                 if (start) {
-                  *this<<"<fld high=\"";
+                  *this<<"<fld h=\"";
                   target.printHigh(*this);
-                  *this<<"\" low=\"";
+                  *this<<"\" l=\"";
                   target.printLow(*this);
+                  *this<<"\" s=\"";
+                  target.printStep(*this);
+                  *this<<"\" t=\"";
+                  target.printTune(*this);
                   *this<<"\"><![CDATA[";
                 } else *this<<"]]></fld>";
                 break;

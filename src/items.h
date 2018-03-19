@@ -94,6 +94,8 @@
           virtual void printValue(menuOut&) const {}
           virtual void printHigh(menuOut&) const {}
           virtual void printLow(menuOut&) const {}
+          virtual void printStep(menuOut& o) const {};
+          virtual void printTune(menuOut& o) const {};
         #endif
     };
 
@@ -215,6 +217,8 @@
           void printValue(menuOut& o) const override;
           void printHigh(menuOut& o) const override;
           void printLow(menuOut& o) const override;
+          void printStep(menuOut& o) const override;
+          void printTune(menuOut& o) const override;
         #endif
         void stepit(int dir) override {
           dir*=options->invertFieldKeys?-1:1;
@@ -480,6 +484,10 @@
       void menuField<T>::printHigh(menuOut& o) const {o.print(high());}
       template<typename T>
       void menuField<T>::printLow(menuOut& o) const {o.print(low());}
+      template<typename T>
+      void menuField<T>::printStep(menuOut& o) const {o.print(step());}
+      template<typename T>
+      void menuField<T>::printTune(menuOut& o) const {o.print(tune());}
     #endif
 
     template<typename T>

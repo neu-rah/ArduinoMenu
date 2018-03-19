@@ -92,10 +92,12 @@
         idleFunc idleTask=inaction;//to do when menu exits, menu system will set idleFunc to this on exit
         idleFunc sleepTask=NULL;//menu suspended, call this function
         navTarget* navFocus=NULL;
+        int timeOut=0;
         bool nav2D=false;
         bool canExit=true;//v4.0 moved from global options
         bool useUpdateEvent=false;//if false, when field value is changed use enterEvent instead.
         idx_t inputBurst=1;//limit of inputs that can be processed before output
+        unsigned long lastChanged=0;
         navRoot(menuNode& root,navNode* path,idx_t d,menuIn& in,outputsList &o)
           :out(o),in(in),path(path),maxDepth(d-1) {
             useMenu(root);
@@ -119,10 +121,15 @@
         inline navNode& node() const {return path[level];}
         inline menuNode& active() const {return *node().target;}
         inline prompt& selected() const {return active()[node().sel];}
-        inline bool changed(const menuOut& out) const {
-          return sleepTask?idleChanged:node().changed(out);
+        bool changed(const menuOut& out) {
+          if (sleepTask) return idleChanged;
+          if (node().changed(out)) {
+            lastChanged=millis();
+            return true;
+          } else if (timeOut&&(millis()-lastChanged)/1000>timeOut) idleOn(idleTask);
+          return false;
         }
-        inline bool changed(idx_t n) const {return changed(out[n]);}
+        inline bool changed(idx_t n) {return changed(out[n]);}
         #ifdef MENU_ASYNC
           void escTo(idx_t lvl);
           // prompt* seek(idx_t* uri,idx_t len);

@@ -17,13 +17,13 @@
 
   namespace Menu {
 
-    class esp8266Out:public webIO {
+    class esp8266Out:public webOut {
       public:
         esp8266Out(
           idx_t* t,
           panelsList& p,
           menuOut::styles styles=(menuOut::styles)(redraw|expandEnums)
-        ):webIO(t,p,styles) {}
+        ):webOut(t,p,styles) {}
         menuOut& fill(
           int x1, int y1, int x2, int y2,char ch=' ',
           colorDefs color=bgColor,
