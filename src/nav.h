@@ -92,12 +92,12 @@
         idleFunc idleTask=inaction;//to do when menu exits, menu system will set idleFunc to this on exit
         idleFunc sleepTask=NULL;//menu suspended, call this function
         navTarget* navFocus=NULL;
-        int timeOut=0;
         bool nav2D=false;
         bool canExit=true;//v4.0 moved from global options
         bool useUpdateEvent=false;//if false, when field value is changed use enterEvent instead.
         idx_t inputBurst=1;//limit of inputs that can be processed before output
-        unsigned long lastChanged=0;
+        unsigned long lastChanged=0;//last change detected (can be external activity)
+        int timeOut=0;//enter idle mode after `timeOut` seconds of inactivity
         navRoot(menuNode& root,navNode* path,idx_t d,menuIn& in,outputsList &o)
           :out(o),in(in),path(path),maxDepth(d-1) {
             useMenu(root);
