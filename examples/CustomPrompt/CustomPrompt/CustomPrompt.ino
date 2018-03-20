@@ -15,11 +15,11 @@ using namespace Menu;
 
 #define LEDPIN LED_BUILTIN
 
-result ledOn() {
+result myLedOn() {
   digitalWrite(LEDPIN, HIGH);
   return proceed;
 }
-result ledOff() {
+result myLedOff() {
   digitalWrite(LEDPIN, LOW);
   return proceed;
 }
@@ -45,8 +45,8 @@ public:
 
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,altOP(altPrompt,"",doNothing,noEvent)
-  ,OP("LED On",ledOn,enterEvent)
-  ,OP("LED Off",ledOff,enterEvent)
+  ,OP("LED On",myLedOn,enterEvent)
+  ,OP("LED Off",myLedOff,enterEvent)
   ,EXIT("<Back")
 );
 

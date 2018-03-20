@@ -61,7 +61,7 @@ encoderIn<encA,encB> encoder;//simple quad encoder driver
 encoderInStream<encA,encB> encStream(encoder,4);// simple quad encoder fake Stream
 
 //a keyboard with only one key as the encoder button
-keyMap encBtn_map[]={{-encBtn,options->getCmdChar(enterCmd)}};//negative pin numbers use internal pull-up, this is on when low
+keyMap encBtn_map[]={{-encBtn,defaultNavCodes[enterCmd].ch}};//negative pin numbers use internal pull-up, this is on when low
 softKeyIn<1> encButton(encBtn_map);//1 is the number of keys
 
 serialIn serial(Serial);
@@ -70,8 +70,8 @@ serialIn serial(Serial);
 menuIn* inputsList[]={&encStream,&encButton,&serial};
 chainStream<3> in(inputsList);//3 is the number of inputs
 
-const char* constMEM hexDigit MEMMODE="0123456789ABCDEF";
-const char* constMEM hexNr[] MEMMODE={"0","x",hexDigit,hexDigit};
+char* constMEM hexDigit MEMMODE="0123456789ABCDEF";
+char* constMEM hexNr[] MEMMODE={"0","x",hexDigit,hexDigit};
 char buf1[]="0x11";
 
 //a menu using a plugin field

@@ -77,11 +77,12 @@ www.r-site.net
 
 				void drawCursor(idx_t ln,bool selected,status stat,bool edit=false,idx_t panelNr=0) override {
 					const panel p=panels[panelNr];
-					gfxOut::drawCursor(ln,selected,stat);
-					if (stat==disabledStatus) {
-						setColor(cursorColor,selected,stat);
-						gfx.drawFrame(p.x*resX,(p.y+ln)*resY,maxX()*resX,resY/*+(fontMarginY<<1)*/);
-					}
+					// gfxOut::drawCursor(ln,selected,stat);
+					// if (stat==disabledStatus) {
+					setColor(cursorColor,selected,stat);
+					// 	gfx.drawFrame(p.x*resX,(p.y+ln)*resY,maxX()*resX,resY/*+(fontMarginY<<1)*/);
+					// }
+          gfx.drawFrame(p.x*resX /*- fontMarginY*/,(p.y+ln)*resY /*- fontMarginY*/,maxX()*resX /*+ fontMarginY*/ /*+ fontMarginY*/,resY /*+ fontMarginY*/ /*+ fontMarginY*/);
 				}
   	};
 }

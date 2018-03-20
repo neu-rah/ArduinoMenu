@@ -158,11 +158,11 @@ result action2(eventMask e,navNode& nav, prompt &item);
 
 int ledCtrl=LOW;
 
-result ledOn() {
+result myLedOn() {
   ledCtrl=HIGH;
   return proceed;
 }
-result ledOff() {
+result myLedOff() {
   ledCtrl=LOW;
   return proceed;
 }
@@ -246,8 +246,8 @@ altMENU(menu,birthDate,"Birth",doNothing,noEvent,noStyle,(systemStyles)(_asPad|M
   ,FIELD(day,"","",1,31,1,0,doNothing,noEvent,wrapStyle)
 );
 
-const char* constMEM hexDigit MEMMODE="0123456789ABCDEF";
-const char* constMEM hexNr[] MEMMODE={"0","x",hexDigit,hexDigit};
+char* constMEM hexDigit MEMMODE="0123456789ABCDEF";
+char* constMEM hexNr[] MEMMODE={"0","x",hexDigit,hexDigit};
 char buf1[]="0x11";
 
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
@@ -257,8 +257,8 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,SUBMENU(birthDate)
   ,SUBMENU(subMenu)
   ,SUBMENU(setLed)
-  ,OP("LED On",ledOn,enterEvent)
-  ,OP("LED Off",ledOff,enterEvent)
+  ,OP("LED On",myLedOn,enterEvent)
+  ,OP("LED Off",myLedOff,enterEvent)
   ,SUBMENU(selMenu)
   ,SUBMENU(chooseMenu)
   ,OP("Show colors",showOutColors,enterEvent)

@@ -43,7 +43,7 @@ namespace Menu {
 					this->offsetY=offsetY;
 			}
 
-			size_t write(uint8_t ch) override {gfx.write(ch);}
+			size_t write(uint8_t ch) override {return gfx.write(ch);}
 
 			inline rgb getColor(colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) const {
 				rgb* cor=(rgb*)&(stat==enabledStatus?colors[color].enabled[selected+edit]:colors[color].disabled[selected]);
@@ -91,7 +91,7 @@ namespace Menu {
 
 			void drawCursor(idx_t ln,bool selected,status stat,bool edit=false,idx_t panelNr=0) override {
 				const panel p=panels[panelNr];
-				gfxOut::drawCursor(ln,selected,stat);
+				// gfxOut::drawCursor(ln,selected,stat);
 				setColor(cursorColor,selected,stat);
 				gfx.drawFrame(p.x*resX + offsetX ,(p.y+ln)*resY + offsetY ,maxX()*resX ,resY);
 			}

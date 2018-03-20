@@ -7,6 +7,10 @@ using namespace Menu;
 // menuOut - base menu output device
 //
 ////////////////////////////////////////////////////////////////////////////////
+#ifdef MENU_ASYNC
+  bool menuOut::isAsync() {return false;}
+#endif
+
 idx_t menuOut::printRaw(const char* at,idx_t len) {
   trace(Serial<<"menuOut::printRaw"<<endl);
   const char* p=at;
@@ -39,7 +43,7 @@ void menuOut::doNav(navCmd cmd,navNode &nav) {
   }
 }
 
-#ifdef DEBUG
+#if defined(MENU_DEBUG) || defined(MENU_ASYNC)
 menuOut& menuOut::operator<<(const prompt& p) {
   print_P(*this,p.getText());
   return *this;
@@ -50,7 +54,7 @@ Used outputsList::printMenu(navNode& nav) const {
   trace(Serial<<"outputsList::printMenu"<<endl);
   for(int n=0;n<cnt;n++) {
     menuOut& o=*((menuOut*)memPtr(outs[n]));
-    if (nav.changed(o)||(o.style&(menuOut::rasterDraw)))
+    if (nav.changed(o)||(o.style&(menuOut::rasterDraw))||(o.style&(menuOut::redraw)))
       o.printMenu(nav);
   }
   clearChanged(nav);
@@ -61,14 +65,35 @@ Used outputsList::printMenu(navNode& nav) const {
 // draw a menu preview on a panel
 void menuOut::previewMenu(navRoot& root,menuNode& menu,idx_t panelNr) {
   trace(Serial<<"menuOut::previewMenu"<<endl);
+  // #ifdef MENU_FMT_WRAPS
+  //   fmtStart(fmtBody,root.node());
+  // #endif
   setColor(fgColor,false);
   if (menu.has(_asPad)) {
     for(int i=0;i<menu.sz();i++) {
       prompt& p=menu[i];
+      #ifdef MENU_FMT_WRAPS
+        fmtStart(p,fmtOp,root.node(),i);
+      #endif
+      #ifdef MENU_FMT_WRAPS
+        fmtStart(p,fmtCursor,root.node(),i);
+      #endif
       setColor(fgColor,false,p.enabled);
       drawCursor(i,false,p.enabled,false,panelNr);
+      #ifdef MENU_FMT_WRAPS
+        fmtEnd(p,fmtCursor,root.node(),i);
+      #endif
       setColor(fgColor,false,p.enabled,false);
+      // #ifdef MENU_FMT_WRAPS
+      //   fmtStart(p,fmtOpBody,root.node(),i);
+      // #endif
       p.printTo(root,false,*this,i,panels[panelNr].w,panelNr);
+      // #ifdef MENU_FMT_WRAPS
+      //   fmtEnd(p,fmtOpBody,root.node(),i);
+      // #endif
+      #ifdef MENU_FMT_WRAPS
+        fmtEnd(p,fmtOp,root.node(),i);
+      #endif
     }
   } else {
     clear(panelNr);
@@ -84,6 +109,9 @@ void menuOut::previewMenu(navRoot& root,menuNode& menu,idx_t panelNr) {
       p.printTo(root,false,*this,i,panels[panelNr].w,panelNr);
     }
   }
+  // #ifdef MENU_FMT_WRAPS
+  //   fmtEnd(fmtBody,root.node());
+  // #endif
 }
 
 //determin panel number here and distribute menu and previews among the panels
@@ -93,7 +121,7 @@ Used menuOut::printMenu(navNode &nav) {
   int lvl=nav.root->level;
   if (focus.parentDraw()) lvl--;
   navNode& nn=nav.root->path[lvl];
-  int k=min(lvl,panels.sz-1);
+  int k=(lvl<panels.sz-1)?lvl:panels.sz-1;
   if ((style&usePreview)&&k) k--;
   for(int i=0;i<k;i++) {
     navNode &n=nav.root->path[lvl-k+i];
@@ -148,7 +176,7 @@ Used menuOut::printMenu(navNode &nav,idx_t panelNr) {
     trace(Serial<<"panel start"<<endl);
     bool titleChanged=st||nav.target->changed(nav,*this,false);
     #ifdef MENU_FMT_WRAPS
-      fmtStart(fmtPanel,nav);
+      fmtStart(*nav.target,fmtPanel,nav);
     #endif
     if (all||titleChanged) {
       trace(Serial<<"all:"<<all<<" panelNr:"<<panelNr<<endl);
@@ -158,28 +186,35 @@ Used menuOut::printMenu(navNode &nav,idx_t panelNr) {
         ///------> titleStart
         trace(Serial<<"title start"<<endl);
         #ifdef MENU_FMT_WRAPS
-          fmtStart(fmtTitle,nav,-1);
+          fmtStart(*nav.target,fmtTitle,nav,-1);
         #endif
         if (!asPad) {
           setColor(titleColor,false);
-          clearLine(0,panelNr);
+          clearLine(0,panelNr,titleColor);
           setColor(titleColor,true);
           setCursor(0,0,panelNr);
           //print('[');
           nav.target->printTo(*nav.root,true,*this,-1,pan.w-(asPad?1:2),panelNr);
         }
-        if (asPad) print(":");
-        //else print(']');
         ///<----- titleEnd
         #ifdef MENU_FMT_WRAPS
-          fmtEnd(fmtTitle,nav,-1);
+          fmtEnd(*nav.target,fmtTitle,nav,-1);
         #endif
+        if (asPad) {
+          #ifdef MENU_FMT_WRAPS
+            fmtStart(*nav.target,fmtCursor,nav,-1);
+          #endif
+          print(":");
+          #ifdef MENU_FMT_WRAPS
+            fmtEnd(*nav.target,fmtCursor,nav,-1);
+          #endif
+        }
       }
     }
     //------> bodyStart
     trace(Serial<<"body start"<<endl);
     #ifdef MENU_FMT_WRAPS
-      fmtStart(fmtBody,nav);
+      fmtStart(*nav.target,fmtBody,nav);
     #endif
     idx_t top=asPad?0:tops[topi];
     // idx_t idxCnt=top;
@@ -192,13 +227,13 @@ Used menuOut::printMenu(navNode &nav,idx_t panelNr) {
       if (all||p.changed(nav,*this,false)) {
         //-------> opStart
         #ifdef MENU_FMT_WRAPS
-          fmtStart(fmtOp,nav,i);
+          fmtStart(p,fmtOp,nav,i);
         #endif
         bool selected=nav.sel==i+top;
         bool ed=nav.target==&p;
         //-----> idxStart
         #ifdef MENU_FMT_WRAPS
-          fmtStart(fmtIdx,nav,i);
+          fmtStart(p,fmtIdx,nav,i);
         #endif
         if (!asPad) {//pad MUST be able of clearing part of a line!!!!!
           clearLine(ist,panelNr,bgColor,selected,p.enabled);//<-- THIS IS DEPENDENT OF A DROP MENU!!!!
@@ -221,34 +256,40 @@ Used menuOut::printMenu(navNode &nav,idx_t panelNr) {
         }
         //<------idxEnd
         #ifdef MENU_FMT_WRAPS
-          fmtEnd(fmtIdx,nav,i);
+          fmtEnd(p,fmtIdx,nav,i);
         #endif
         //------> cursorStart
         #ifdef MENU_FMT_WRAPS
-          fmtStart(fmtCursor,nav,i);
+          fmtStart(p,fmtCursor,nav,i);
         #endif
         if (asPad&&selected) print("[");
         else drawCursor(ist,selected,p.enabled,ed,panelNr);//assuming only one character
         //<------ cursorEnd
         #ifdef MENU_FMT_WRAPS
-          fmtEnd(fmtCursor,nav,i);
+          fmtEnd(p,fmtCursor,nav,i);
         #endif
         len--;
         //---->opBodyStart
         #ifdef MENU_FMT_WRAPS
-          fmtStart(fmtOpBody,nav,i);
+          fmtStart(p,fmtOpBody,nav,i);
         #endif
         setColor(fgColor,selected,p.enabled,ed);
         if (len>0) len=p.printTo(*nav.root,selected,*this,i,len,panelNr);
         if (len>0) {
           if (asPad) {
+            #ifdef MENU_FMT_WRAPS
+              fmtStart(p,fmtCursor,nav,i);
+            #endif
             print(selected?"]":"");
+            #ifdef MENU_FMT_WRAPS
+              fmtEnd(p,fmtCursor,nav,i);
+            #endif
             len--;
           }
         }
         //<---opBodyEnd
         #ifdef MENU_FMT_WRAPS
-          fmtEnd(fmtOpBody,nav,i);
+          fmtEnd(p,fmtOpBody,nav,i);
         #endif
         if (selected&&panels.sz>panelNr+1) {
           if(p.isMenu()&&!p.asPad()) {
@@ -260,20 +301,20 @@ Used menuOut::printMenu(navNode &nav,idx_t panelNr) {
         }
         //opEnd
         #ifdef MENU_FMT_WRAPS
-          fmtEnd(fmtOp,nav,i);
+          fmtEnd(p,fmtOp,nav,i);
         #endif
       }
     }
   }
   //<-----bodyEnd
   #ifdef MENU_FMT_WRAPS
-    fmtEnd(fmtBody,nav,-1);
+    fmtEnd(*nav.target,fmtBody,nav,-1);
   #endif
   drawn=nav.target;
   //lastSel=nav.sel;
   //<---- panel end
   #ifdef MENU_FMT_WRAPS
-    fmtEnd(fmtPanel,nav,-1);
+    fmtEnd(*nav.target,fmtPanel,nav,-1);
   #endif
   return 0;
 }

@@ -2,7 +2,7 @@
 #ifndef RSITE_ARDUINO_MENU_JSFMT
   #define RSITE_ARDUINO_MENU_JSFMT
   #include "../menu.h"
-  
+
 
   namespace Menu {
 
@@ -29,8 +29,8 @@
           }
           return proceed;
         }
-        result fmtStart(menuOut::fmtParts part,navNode &nav,idx_t idx=-1) override {return fmt(true,part,nav,idx);}
-        result fmtEnd(menuOut::fmtParts part,navNode &nav,idx_t idx=-1) override {return fmt(false,part,nav,idx);}
+        result fmtStart(prompt& target,menuOut::fmtParts part,navNode &nav,idx_t idx=-1) override {return fmt(true,part,nav,idx);}
+        result fmtEnd(prompt& target,menuOut::fmtParts part,navNode &nav,idx_t idx=-1) override {return fmt(false,part,nav,idx);}
     };
   }//namespace
 #endif

@@ -15,8 +15,12 @@ UTFT library from:
 #ifndef RSITE_ARDUINO_MENU_UTFT
 	#define RSITE_ARDUINO_MENU_UTFT
 
-	#undef pgm_read_word
-	#undef pgm_read_byte
+  #ifdef USING_PGM
+    #include <avr/pgmspace.h>
+  #else
+  	#undef pgm_read_word
+  	#undef pgm_read_byte
+  #endif
 	#include <UTFT.h>
 	#include "../menu.h"
 
@@ -84,7 +88,7 @@ UTFT library from:
 
 				void drawCursor(idx_t ln,bool selected,status stat,bool edit=false,idx_t panelNr=0) override {
 					const panel p=panels[panelNr];
-					gfxOut::drawCursor(ln,selected,stat);
+					// gfxOut::drawCursor(ln,selected,stat);
 					gfx.setColor(getColor(cursorColor,selected,enabledStatus,false));
 					gfx.drawRect(clipX(p.x*resX),clipY((p.y+ln)*resY),clipX((p.x+p.maxX())*resX),clipY((p.y+ln+1)*resY));
 				}

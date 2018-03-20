@@ -13,3 +13,6 @@ platformio.ini
 .gitignore
 !/.gitignore
 *.odg
+examples/clickEncoder
+examples/lolin32
+examples/screenNav

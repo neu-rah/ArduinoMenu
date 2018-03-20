@@ -27,12 +27,12 @@ ex: -A0 means: pin A0 normally high, low when button pushed (reverse logic)
 
   #ifndef ARDUINO_SAM_DUE
     // Arduino specific libraries
-    #if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__) || defined(__AVR_ATmega328P__)
-      #include <stdint.h>
+    // #if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__) || defined(__AVR_ATmega328P__)
+      // #include <stdint.h>
       //#include <avr/io.h>
       //#include <avr/interrupt.h>
       #include <ClickEncoder.h>
-    #endif
+    // #endif
 
     #include "../menu.h"
 

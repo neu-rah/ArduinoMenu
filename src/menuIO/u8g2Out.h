@@ -18,10 +18,9 @@ namespace Menu {
 
 	class u8g2Out:public gfxOut {
 		public:
+      int8_t offsetX=0;
+      int8_t offsetY=0;
 			U8G2& gfx;
-			//int8_t fontMarginY=1;
-			int8_t offsetX=0;
-			int8_t offsetY=0;
 			const colorDef<uint8_t> (&colors)[nColors];
 			u8g2Out(
 				U8G2& gfx,
@@ -31,11 +30,13 @@ namespace Menu {
 				idx_t resX=6,
 				idx_t resY=9,
 				idx_t offsetX=0,
-				idx_t offsetY=0
+				idx_t offsetY=0,
+        int fontMarginY=1
 			) :gfxOut(resX,resY,t,p,(styles)(menuOut::redraw|menuOut::rasterDraw)),gfx(gfx),colors(c) {
 					gfx.setFontPosBottom(); // U8Glib font positioning
 					this->offsetX=offsetX;
 					this->offsetY=offsetY;
+          this->fontMarginY=fontMarginY;
 			}
 
 			size_t write(uint8_t ch) override {return gfx.write(ch);}
@@ -78,15 +79,15 @@ namespace Menu {
 
 			void setCursor(idx_t x,idx_t y,idx_t panelNr=0) override {
 				const panel p=panels[panelNr];
-				gfx.tx = (p.x+x)*resX + offsetX;
+				gfx.tx = (p.x+x)*resX/*+fontMarginX*/ + offsetX;
 				gfx.ty = (p.y+y+1)*resY-fontMarginY + offsetY;
 			}
 
 			void drawCursor(idx_t ln,bool selected,status stat,bool edit=false,idx_t panelNr=0) override {
 				const panel p=panels[panelNr];
-				gfxOut::drawCursor(ln,selected,stat);
+				// gfxOut::drawCursor(ln,selected,stat);
 				setColor(cursorColor,selected,stat);
-				gfx.drawFrame(p.x*resX + offsetX /*- fontMarginY*/,(p.y+ln)*resY + offsetY /*- fontMarginY*/,maxX()*resX /*+ fontMarginY*/ /*+ fontMarginY*/,resY /*+ fontMarginY*/ /*+ fontMarginY*/);
+				gfx.drawFrame(p.x*resX + offsetX /*+ fontMarginX*/,(p.y+ln)*resY + offsetY /*- fontMarginY*/,maxX()*resX ,resY);
 			}
 			idx_t printRaw(const char* at,idx_t len) override {
 				trace(Serial<<"u8g2Out::printRaw"<<endl);

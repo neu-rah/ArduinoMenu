@@ -40,8 +40,8 @@ using namespace Menu;
 #define encB    3
 #define encBtn  4
 
-#define U8G2OUT PCD8544
-// #define U8G2OUT SSD1306
+// #define U8G2OUT PCD8544
+#define U8G2OUT SSD1306
 
 #ifndef U8G2OUT
   #error U8G2OUT not defined! edit the scketch to choose one.
@@ -70,7 +70,8 @@ using namespace Menu;
   #define offsetY 16
   #define U8_Width 64
   #define U8_Height 48
-  U8G2_SSD1306_128X64_NONAME_F_SW_I2C u8g2(U8G2_R0, SCL, SDA);
+  #define USE_HWI2C
+  U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0);//, SCL, SDA);
 #endif
 
 // define menu colors --------------------------------------------------------
@@ -92,11 +93,11 @@ int test=55;
 
 int ledCtrl=HIGH;
 
-result ledOn() {
+result myLedOn() {
   ledCtrl=HIGH;
   return proceed;
 }
-result ledOff() {
+result myLedOff() {
   ledCtrl=LOW;
   return proceed;
 }
@@ -147,8 +148,8 @@ altMENU(menu,time,"Time",doNothing,noEvent,noStyle,(systemStyles)(_asPad|Menu::_
   ,FIELD(mins,"","",0,59,10,1,doNothing,noEvent,wrapStyle)
 );
 
-const char* constMEM hexDigit MEMMODE="0123456789ABCDEF";
-const char* constMEM hexNr[] MEMMODE={"0","x",hexDigit,hexDigit};
+char* constMEM hexDigit MEMMODE="0123456789ABCDEF";
+char* constMEM hexNr[] MEMMODE={"0","x",hexDigit,hexDigit};
 char buf1[]="0x11";
 
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
@@ -158,8 +159,8 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,SUBMENU(time)
   ,SUBMENU(subMenu)
   ,SUBMENU(setLed)
-  ,OP("LED On",ledOn,enterEvent)
-  ,OP("LED Off",ledOff,enterEvent)
+  ,OP("LED On",myLedOn,enterEvent)
+  ,OP("LED Off",myLedOff,enterEvent)
   ,SUBMENU(selMenu)
   ,SUBMENU(chooseMenu)
   ,OP("Alert test",doAlert,enterEvent)
@@ -173,7 +174,7 @@ encoderIn<encA,encB> encoder;//simple quad encoder driver
 encoderInStream<encA,encB> encStream(encoder,4);// simple quad encoder fake Stream
 
 //a keyboard with only one key as the encoder button
-keyMap encBtn_map[]={{-encBtn,options->getCmdChar(enterCmd)}};//negative pin numbers use internal pull-up, this is on when low
+keyMap encBtn_map[]={{-encBtn,defaultNavCodes[enterCmd].ch}};//negative pin numbers use internal pull-up, this is on when low
 keyIn<1> encButton(encBtn_map);//1 is the number of keys
 
 // menuIn* inputsList[]={&encBuitton,&Serial};
@@ -226,17 +227,23 @@ void setup() {
   encoder.begin();
   #ifdef USE_HWSPI
     SPI.begin();
+    u8g2.begin();
   #endif
   #ifdef USE_HWI2C
-    u8g2_SetI2CAddress(u8g2.getU8g2(), 0x3d*2);
+    Wire.begin();
+    u8g2.setI2CAddress(0x3d<<1); // Set I2C address
+    u8g2.begin();
+    u8g2.setContrast(CONTRAST);
+    // u8g2.setFlipMode(SCR_FLIP);
+    // u8g2_SetI2CAddress(u8g2.getU8g2(), 0x3d*2);
   #endif
-  u8g2.begin();
   u8g2.setFont(fontName);
   u8g2.setBitmapMode(0);
 
   //disable second option
   mainMenu[1].enabled=disabledStatus;
   nav.idleTask=idle;//point a function to be used when menu is suspended
+  Serial.println("setup done.");Serial.flush();
 }
 
 void loop() {

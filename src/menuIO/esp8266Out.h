@@ -4,11 +4,11 @@
   #define RSITE_ARDUINO_MENU_ESP8266OUT
   #include "../menu.h"
   #include <ESP8266WiFi.h>
-  #include <ESP8266WiFiMulti.h>
+  // #include <ESP8266WiFiMulti.h>
   //#include <WiFiClient.h>
   #include <WebSocketsServer.h>
   #include <ESP8266WebServer.h>
-  #include <ESP8266mDNS.h>
+  // #include <ESP8266mDNS.h>
   //#include <Hash.h>
   //#include <FS.h>
   #include <vector>
@@ -17,14 +17,13 @@
 
   namespace Menu {
 
-    class esp8266Out:public menuOut {
+    class esp8266Out:public webOut {
       public:
         esp8266Out(
-          //const colorDef<webColor> (&c)[nColors],
           idx_t* t,
           panelsList& p,
           menuOut::styles styles=(menuOut::styles)(redraw|expandEnums)
-        ):menuOut(t,p,styles) {}
+        ):webOut(t,p,styles) {}
         menuOut& fill(
           int x1, int y1, int x2, int y2,char ch=' ',
           colorDefs color=bgColor,
@@ -49,19 +48,7 @@
         //template<typename T> esp8266Out& operator<<(T t)=0;
     };
 
-    //deprecated, dev. of esp8266_WiFiClientOut is stoped, use WebServer
-    class esp8266_WiFiClientOut:public esp8266Out {
-      public:
-        WiFiClient* client;
-        esp8266_WiFiClientOut(
-          /*const colorDef<webColor> (&c)[nColors],*/
-          idx_t* t,
-          panelsList& p
-        ):esp8266Out(t,p) {}
-        template<typename T> inline esp8266_WiFiClientOut& operator<<(T t) {client->print(t);return *this;}
-        size_t write(uint8_t ch) override {return client->write(ch);}
-    };
-
+    menuOut& operator<<(menuOut&o,classes c);
     template<typename T> inline String& operator<<(String& o,T t) {return o.operator+=(t);}
 
     class esp8266_WebServerOut:public esp8266Out {

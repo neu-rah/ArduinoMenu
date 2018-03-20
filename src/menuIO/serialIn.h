@@ -10,17 +10,13 @@ HardwareSerial input driver
   #define RSITE_ARDUINO_MENU_HW_SERIALIN
   #include "../menu.h"
 
-  #if defined(CORE_TEENSY)
-    #define SERIAL_CLASS usb_serial_class
-  #else
-    #define SERIAL_CLASS HardwareSerial
-  #endif
+  #define SERIAL_CLASS Stream
 
   namespace Menu {
     class serialIn:public menuIn {
       public:
-        SERIAL_CLASS& in;
-        serialIn(SERIAL_CLASS& serial):in(serial) {}
+        Stream& in;
+        serialIn(Stream& serial):in(serial) {}
         size_t write(uint8_t o) override {return in.write(o);}
         int available() override {return in.available();}
         int peek() override {return in.peek();}

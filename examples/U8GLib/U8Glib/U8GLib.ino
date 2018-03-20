@@ -69,11 +69,11 @@ result action2(eventMask e,navNode& nav, prompt &item) {
 
 int ledCtrl=LOW;
 
-result ledOn() {
+result myLedOn() {
   ledCtrl=HIGH;
   return proceed;
 }
-result ledOff() {
+result myLedOff() {
   ledCtrl=LOW;
   return proceed;
 }
@@ -116,8 +116,8 @@ MENU(subMenu,"Sub-Menu",showEvent,anyEvent,noStyle
   ,EXIT("<Back")
 );
 
-const char* constMEM hexDigit MEMMODE="0123456789ABCDEF";
-const char* constMEM hexNr[] MEMMODE={"0","x",hexDigit,hexDigit};
+char* constMEM hexDigit MEMMODE="0123456789ABCDEF";
+char* constMEM hexNr[] MEMMODE={"0","x",hexDigit,hexDigit};
 char buf1[]="0x11";
 
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
@@ -127,8 +127,8 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,EDIT("Hex",buf1,hexNr,doNothing,noEvent,noStyle)
   ,SUBMENU(subMenu)
   ,SUBMENU(setLed)
-  ,OP("LED On",ledOn,enterEvent)
-  ,OP("LED Off",ledOff,enterEvent)
+  ,OP("LED On",myLedOn,enterEvent)
+  ,OP("LED Off",myLedOff,enterEvent)
   ,SUBMENU(selMenu)
   ,SUBMENU(chooseMenu)
   ,OP("Alert test",doAlert,enterEvent)
@@ -152,7 +152,7 @@ encoderIn<encA,encB> encoder;//simple quad encoder driver
 encoderInStream<encA,encB> encStream(encoder,4);// simple quad encoder fake Stream
 
 //a keyboard with only one key as the encoder button
-keyMap encBtn_map[]={{-encBtn,options->getCmdChar(enterCmd)}};//negative pin numbers use internal pull-up, on = low
+keyMap encBtn_map[]={{-encBtn,defaultNavCodes[enterCmd].ch}};//negative pin numbers use internal pull-up, on = low
 keyIn<1> encButton(encBtn_map);//1 is the number of keys
 
 serialIn serial(Serial);

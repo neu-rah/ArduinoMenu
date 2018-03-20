@@ -15,7 +15,7 @@ deleting them if created with new, etc...
 
 this can turn out to be a mess
 
-objects construction is not really tested beyond this example
+objects construction is not realy tested beyond this example
 please let me know if you have any interest on this kind of things
 
 this is nice to support dynamic options like a list of detected wifi networks

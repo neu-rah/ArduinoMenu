@@ -40,11 +40,11 @@ result action2(eventMask e, prompt &item) {
 
 int ledCtrl=LOW;
 
-result ledOn() {
+result myLedOn() {
   ledCtrl=HIGH;
   return proceed;
 }
-result ledOff() {
+result myLedOff() {
   ledCtrl=LOW;
   return proceed;
 }
@@ -100,8 +100,8 @@ PADMENU(birthDate,"Birth",doNothing,noEvent,noStyle
   ,FIELD(day,"","",1,31,1,0,doNothing,noEvent,wrapStyle)
 );
 
-const char* constMEM hexDigit MEMMODE="0123456789ABCDEF";
-const char* constMEM hexNr[] MEMMODE={"0","x",hexDigit,hexDigit};
+char* constMEM hexDigit MEMMODE="0123456789ABCDEF";
+char* constMEM hexNr[] MEMMODE={"0","x",hexDigit,hexDigit};
 char buf1[]="0x11";
 
 MENU(mainMenu,"Main menu",zZz,noEvent,wrapStyle
@@ -110,8 +110,8 @@ MENU(mainMenu,"Main menu",zZz,noEvent,wrapStyle
   ,FIELD(test,"Test","%",0,100,10,1,doNothing,noEvent,wrapStyle)
   ,SUBMENU(subMenu)
   ,SUBMENU(setLed)
-  ,OP("LED On",ledOn,enterEvent)
-  ,OP("LED Off",ledOff,enterEvent)
+  ,OP("LED On",myLedOn,enterEvent)
+  ,OP("LED Off",myLedOff,enterEvent)
   ,SUBMENU(selMenu)
   ,SUBMENU(chooseMenu)
   ,OP("Alert test",doAlert,enterEvent)

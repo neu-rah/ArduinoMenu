@@ -46,11 +46,11 @@ result showEvent(eventMask e,navNode& nav,prompt& item) {
 int test=55;
 int ledCtrl=LOW;
 
-result ledOn() {
+result myLedOn() {
   ledCtrl=HIGH;
   return proceed;
 }
-result ledOff() {
+result myLedOff() {
   ledCtrl=LOW;
   return proceed;
 }
@@ -63,15 +63,15 @@ TOGGLE(ledCtrl,setLed,"Led: ",doNothing,noEvent,noStyle//,doExit,enterEvent,noSt
   ,VALUE("Off",LOW,doNothing,noEvent)
 );
 
-const char* constMEM hexDigit MEMMODE="0123456789ABCDEF";
-const char* constMEM hexNr[] MEMMODE={"0","x",hexDigit,hexDigit};
+char* constMEM hexDigit MEMMODE="0123456789ABCDEF";
+char* constMEM hexNr[] MEMMODE={"0","x",hexDigit,hexDigit};
 char buf1[]="0x11";
 
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,FIELD(test,"Test","%",0,100,10,1,doNothing,noEvent,wrapStyle)
   ,SUBMENU(setLed)
-  ,OP("LED On",ledOn,enterEvent)
-  ,OP("LED Off",ledOff,enterEvent)
+  ,OP("LED On",myLedOn,enterEvent)
+  ,OP("LED Off",myLedOff,enterEvent)
   ,OP("Alert test",doAlert,enterEvent)
   ,EDIT("Hex",buf1,hexNr,doNothing,noEvent,noStyle)
   ,EXIT("<Back")
@@ -100,7 +100,7 @@ encoderIn<encA,encB> encoder;//simple quad encoder driver
 encoderInStream<encA,encB> encStream(encoder,4);// simple quad encoder fake Stream
 
 //a keyboard with only one key as the encoder button
-keyMap encBtn_map[]={{-encBtn,options->getCmdChar(enterCmd)}};//negative pin numbers use internal pull-up, this is on when low
+keyMap encBtn_map[]={{-encBtn,defaultNavCodes[enterCmd].ch}};//negative pin numbers use internal pull-up, this is on when low
 keyIn<1> encButton(encBtn_map);//1 is the number of keys
 
 serialIn serial(Serial);
@@ -136,9 +136,12 @@ adaGfxOut adaOut(gfx,colors,gfx_tops,gfxPanels);
 menuOut* const outputs[] MEMMODE={&outSerial,&adaOut};//list of output devices
 outputsList out(outputs,2);//outputs list controller
 
+//define input device
+serialIn serial(Serial);
+
 //define navigation root and aux objects
 navNode nav_cursors[MAX_DEPTH];//aux objects to control each level of navigation
-navRoot nav(mainMenu, nav_cursors, MAX_DEPTH, Serial, out);*/
+navRoot nav(mainMenu, nav_cursors, MAX_DEPTH, serial, out);*/
 
 result alert(menuOut& o,idleEvent e) {
   if (e==idling) {

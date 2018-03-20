@@ -11,6 +11,21 @@
       enum classes {noClass=0,promptClass,textFieldClass,fieldClass,toggleClass,selectClass,chooseClass,valueClass,menuClass};
     #endif
 
+    #ifdef MENU_ASYNC
+      template<typename T> inline const char* typeStr() {return "o";}
+      template<> inline const char* typeStr<uint8_t>() {return "u8";}
+      template<> inline const char* typeStr<uint16_t>() {return "u16";}
+      template<> inline const char* typeStr<uint32_t>() {return "u32";}
+      template<> inline const char* typeStr<int8_t>() {return "i8";}
+      template<> inline const char* typeStr<int16_t>() {return "i16";}
+      template<> inline const char* typeStr<int32_t>() {return "i32";}
+      // template<> inline const char* typeStr<long>() {return "long";}
+      // template<> inline const char* typeStr<unsigned long>() {return "unsigned long";}
+      // template<> inline const char* typeStr<long long>() {return "long long";}
+      // template<> inline const char* typeStr<unsigned long long>() {return "unsigned long long";}
+      template<> inline const char* typeStr<float>() {return "f";}
+      template<> inline const char* typeStr<double>() {return "d";}
+    #endif
     // Menu objects and data
     //////////////////////////////////////////////////////////////////////////
     class prompt {
@@ -27,11 +42,11 @@
           return ((uint16_t*)&tmp)[sizeof(this)/sizeof(uint16_t)-1];
         }
         inline prompt(constMEM promptShadow& shadow):shadow(&shadow) {}
-        inline prompt(const char* t,action a=doNothing,eventMask e=noEvent,styles s=noStyle,systemStyles ss=_noStyle)
+        inline prompt(constText* t,action a=doNothing,eventMask e=noEvent,styles s=noStyle,systemStyles ss=_noStyle)
           :shadow(new promptShadow(t,a,e,s,ss)) {}
         inline void enable() {enabled=enabledStatus;}
         inline void disable() {enabled=disabledStatus;}
-        inline const char* getText() const {return shadow->getText();}
+        inline constText* getText() const {return shadow->getText();}
 
         inline systemStyles sysStyles() const {return shadow->_sysStyles();}
         inline styles style() const {return shadow->_style();}
@@ -58,34 +73,35 @@
 
         virtual void clearChanged(const navNode &nav,const menuOut& out,bool sub) {dirty=false;}
         virtual Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr=0);//raw print to output device
-        virtual bool changed(const navNode &nav,const menuOut& out,bool sub=true) {return dirty;}
+        virtual bool changed(const navNode &nav,const menuOut& out,bool sub=true,bool test=false) {return dirty;}
         //this is the system version of enter handler, its used by elements like toggle
         virtual result sysHandler(SYS_FUNC_PARAMS) {return proceed;}
-        /*virtual*/ result eventHandler(eventMask e,navNode& nav,idx_t i) {
+        virtual result eventHandler(eventMask e,navNode& nav,idx_t i) {
           return operator()(e,nav,*this);
         }
         #ifdef MENU_FMT_WRAPS
           virtual classes type() const {return promptClass;}
         #endif
         #ifdef MENU_ASYNC
-          virtual prompt* seek(idx_t* uri,idx_t len) {return len?NULL:this;}
-          virtual bool async(const char *uri,navRoot& root,idx_t lvl) {
-            return ((!*uri)||(uri[0]=='/'&&!uri[1]));
-          }
+          // virtual prompt* seek(idx_t* uri,idx_t len) {return len?NULL:this;}
+          virtual bool async(const char*uri,navRoot& root,idx_t lvl);
           //some functions to use on htmlFmt
           // for enumerations:
           virtual idx_t selected() const {return 0;}
+          virtual const char* typeName() const {return "prompt";}
         #endif
-        #ifdef DEBUG
+        #ifdef MENU_ASYNC
           virtual void printValue(menuOut&) const {}
           virtual void printHigh(menuOut&) const {}
           virtual void printLow(menuOut&) const {}
+          virtual void printStep(menuOut& o) const {};
+          virtual void printTune(menuOut& o) const {};
         #endif
     };
 
     class Exit:public prompt {
       public:
-        Exit(const char* t):prompt(t,(callback)doExit,enterEvent) {}
+        Exit(constText* t):prompt(t,(callback)doExit,enterEvent) {}
     };
 
     //--------------------------------------------------------------------------
@@ -94,10 +110,13 @@
     class navTarget:public prompt {
       public:
         navTarget(constMEM promptShadow& shadow):prompt(shadow) {}
-        navTarget(const char* t,action a=doNothing,eventMask e=noEvent,styles s=noStyle,systemStyles ss=_noStyle)
+        navTarget(constText* t,action a=doNothing,eventMask e=noEvent,styles s=noStyle,systemStyles ss=_noStyle)
           :prompt(t,a,e,s,ss) {}
         virtual void parseInput(navNode& nav,menuIn& in);
         virtual void doNav(navNode& nav,navCmd cmd);
+        #ifdef MENU_ASYNC
+          const char* typeName() const override {return "navTarget";}
+        #endif
     };
 
     //--------------------------------------------------------------------------
@@ -109,10 +128,10 @@
       idx_t cursor=0;
       textField(constMEM textFieldShadow& shadow):navTarget(shadow) {}
       textField(
-        const char*label,
+        constText*label,
         char* b,
         idx_t sz,
-        const char* constMEM* v,
+        char* const* v,
         action a=doNothing,
         eventMask e=noEvent,
         styles style=noStyle,
@@ -120,9 +139,17 @@
       ):navTarget(*new textFieldShadow(label,b,sz,v,a,e,style,ss)) {}
       inline char* buffer() const {return ((textFieldShadow*)shadow)->_buffer();}
       inline idx_t sz() const {return ((textFieldShadow*)shadow)->_sz();}
-      const char* validator(int i) {return ((textFieldShadow*)shadow)->operator[](i%sz());}
+      constText* validator(int i) {return ((textFieldShadow*)shadow)->operator[](i%sz());}
+      void parseInput(navNode& nav,menuIn& in) override;
       void doNav(navNode& nav,navCmd cmd) override;
       Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr=0) override;
+      #ifdef MENU_FMT_WRAPS
+        virtual classes type() const {return textFieldClass;}
+      #endif
+      #ifdef MENU_ASYNC
+        bool async(const char*uri,navRoot& root,idx_t lvl) override;
+        const char* typeName() const override {return "textField";}
+      #endif
     };
 
     //--------------------------------------------------------------------------
@@ -135,15 +162,18 @@
           virtual classes type() const {return fieldClass;}
         #endif
         #ifdef MENU_ASYNC
-          bool async(const char *uri,navRoot& root,idx_t lvl) override;
+          bool async(const char*uri,navRoot& root,idx_t lvl) override;
         #endif
-        inline const char* units() {return ((fieldBaseShadow*)shadow)->_units();}
+        inline constText* units() {return ((fieldBaseShadow*)shadow)->_units();}
         void doNav(navNode& nav,navCmd cmd) override;
         virtual bool canTune()=0;
         virtual void constrainField()=0;
         virtual void stepit(int increment)=0;
         virtual idx_t printReflex(menuOut& o) const =0;
         Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr=0) override;
+        #ifdef MENU_ASYNC
+          const char* typeName() const override {return "fieldBase";}
+        #endif
     };
     //--------------------------------------------------------------------------
     template<typename T>
@@ -153,8 +183,8 @@
         menuField(constMEM menuFieldShadow<T> & shadow):fieldBase(shadow) {}
         menuField(
           T &value,
-          const char * text,
-          const char *units,
+          constText* text,
+          constText*units,
           T low,
           T high,
           T step,
@@ -174,13 +204,21 @@
         inline T high() const {return ((menuFieldShadow<T>*)shadow)->_high();}
         inline T step() const {return ((menuFieldShadow<T>*)shadow)->_step();}
         inline T tune() const {return ((menuFieldShadow<T>*)shadow)->_tune();}
-        bool changed(const navNode &nav,const menuOut& out,bool sub=true) override {
+        virtual void clearChanged(const navNode &nav,const menuOut& out,bool sub) {
+          fieldBase::clearChanged(nav,out,sub);
+          reflex=target();
+        }
+        bool changed(const navNode &nav,const menuOut& out,bool sub=true,bool test=false) override {
+          trace(if (test&&dirty) Serial<<"field dirty"<<endl);
+          trace(if (test&&(reflex!=target())) Serial<<"reflex!=target reflex:"<<reflex<<" target:"<<target()<<endl);
           return dirty||(reflex!=target());
         }
-        #ifdef DEBUG
+        #ifdef MENU_ASYNC
           void printValue(menuOut& o) const override;
           void printHigh(menuOut& o) const override;
           void printLow(menuOut& o) const override;
+          void printStep(menuOut& o) const override;
+          void printTune(menuOut& o) const override;
         #endif
         void stepit(int dir) override {
           dir*=options->invertFieldKeys?-1:1;
@@ -199,6 +237,10 @@
               target() -= thisstep;
           }
         }
+        #ifdef MENU_ASYNC
+          const char* typeName() const override {return typeStr<T>();};
+          // const char* typeName() const override {return "menuField";}
+        #endif
       };
 
     //--------------------------------------------------------------------------
@@ -206,9 +248,9 @@
     class menuValue:public prompt {
       public:
         menuValue(constMEM menuValueShadow<T>& shadow):prompt(shadow) {}
-        menuValue(const char * text,T value,action a=doNothing,eventMask e=noEvent)
+        menuValue(constText* text,T value,action a=doNothing,eventMask e=noEvent)
           :menuValue(*new menuValueShadow<T>(text,value,a,e)) {}
-        // #ifdef DEBUG
+        // #ifdef MENU_DEBUG
         // bool changed(const navNode &nav,const menuOut& out,bool sub=true) override {return false;}
         // #endif
         //inline T getTypeValue(const T* from) const {return &((menuValueShadow<T>*)shadow)->getTypeValue(from);}
@@ -216,27 +258,34 @@
         #ifdef MENU_FMT_WRAPS
           virtual classes type() const {return valueClass;}
         #endif
+        #ifdef MENU_ASYNC
+          bool async(const char*uri,navRoot& root,idx_t lvl=0) override;
+          const char* typeName() const override {return "menuValue";}
+        #endif
     };
 
     //--------------------------------------------------------------------------
     class menuNode:public navTarget {
       public:
         menuNode(constMEM menuNodeShadow& s):navTarget(s) {}
-        menuNode(const char* text,idx_t sz,prompt* constMEM data[],action a=noAction,eventMask e=noEvent,styles style=wrapStyle,systemStyles ss=(systemStyles)(_menuData|_canNav))
+        menuNode(constText* text,idx_t sz,prompt* constMEM data[],action a=noAction,eventMask e=noEvent,styles style=wrapStyle,systemStyles ss=(systemStyles)(_menuData|_canNav))
           :navTarget(*new menuNodeShadow(text,sz,data,a,e,style,ss)) {}
         #ifdef MENU_FMT_WRAPS
           virtual classes type() const {return menuClass;}
         #endif
         inline prompt& operator[](idx_t i) const {return ((menuNodeShadow*)shadow)->operator[](i);}
-        bool changed(const navNode &nav,const menuOut& out,bool sub=true) override;
+        bool changed(const navNode &nav,const menuOut& out,bool sub=true,bool test=false) override;
         void clearChanged(const navNode &nav,const menuOut& out,bool sub) override;
         inline idx_t sz() const {return ((menuNodeShadow*)shadow)->_sz();}
         inline prompt* constMEM* data() const {return ((menuNodeShadow*)shadow)->_data();}
+        // #ifdef MENU_ASYNC
+        //   prompt* seek(idx_t* uri,idx_t len) override;
+        // #endif
         #ifdef MENU_ASYNC
-          prompt* seek(idx_t* uri,idx_t len) override;
-        #endif
-        #ifdef MENU_ASYNC
-          bool async(const char *uri,navRoot& root,idx_t lvl=0) override;
+          bool async(const char*uri,navRoot& root,idx_t lvl=0) override;
+          const char* typeName() const override {return "mn";}
+          //aux function, parse uri node (text to idx_t)
+          idx_t parseUriNode(const char*&uri);
         #endif
     };
 
@@ -246,6 +295,9 @@
         menu(constMEM menuNodeShadow& shadow):menuNode(shadow) {}
         // Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr=0) override {
         // }
+        #ifdef MENU_ASYNC
+          const char* typeName() const override {return "menu";}
+        #endif
     };
 
     //--------------------------------------------------------------------------
@@ -257,18 +309,21 @@
         Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr=0) override;
         idx_t togglePrintTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr);
         void doNav(navNode& nav,navCmd cmd) override;
+        #ifdef MENU_ASYNC
+          const char* typeName() const override {return "menuVariantBase";}
+        #endif
     };
     template<typename T>
     class menuVariant:public menuVariantBase {
       public:
         idx_t reflex;
         menuVariant(constMEM menuNodeShadow& s):menuVariantBase(s) {}
-        menuVariant(const char* text,T &target,idx_t sz,prompt* constMEM* data,action a,eventMask e,styles style)
+        menuVariant(constText* text,T &target,idx_t sz,prompt* constMEM* data,action a,eventMask e,styles style)
           :menuVariantBase(*new menuVariantShadow<T>(text,target,sz,data,a,e,style)) {}
         idx_t sync() override {
           for(idx_t i=0;i<sz();i++)
             if (((menuValue<T>*)&operator[](i))->target()==target()) return i;
-          #ifdef DEBUG
+          #ifdef MENU_DEBUG
             Serial.print(F("value out of range "));
             Serial.println(target());Serial.flush();
             assert(false);
@@ -276,7 +331,7 @@
           return -1;
         }
         idx_t sync(idx_t i) override {
-          #ifdef DEBUG
+          #ifdef MENU_DEBUG
             if (!(i>=0&&i<sz())){
               print_P(Serial,getText());
               Serial.print(F(" : value out of range "));
@@ -290,9 +345,10 @@
           return i;
         }
         inline T& target() const {return ((menuVariantShadow<T>*)shadow)->target();}
-        bool changed(const navNode &nav,const menuOut& out,bool sub=true) override;
+        bool changed(const navNode &nav,const menuOut& out,bool sub=true,bool test=false) override;
         #ifdef MENU_ASYNC
-        virtual idx_t selected() const {return reflex;}
+          virtual idx_t selected() const {return reflex;}
+          const char* typeName() const override {return "menuVariant";}
         #endif
     };
 
@@ -301,7 +357,7 @@
       public:
         select(constMEM menuNodeShadow& s):menuVariant<T>(s) {}
         select(
-          const char* text,
+          constText* text,
           T &target,
           idx_t sz,
           prompt* constMEM* data,
@@ -313,6 +369,9 @@
         #ifdef MENU_FMT_WRAPS
           virtual classes type() const {return selectClass;}
         #endif
+        #ifdef MENU_ASYNC
+          const char* typeName() const override {return "select";}
+        #endif
     };
 
     template<typename T>//-------------------------------------------
@@ -320,7 +379,7 @@
       public:
         toggle(constMEM menuNodeShadow& s):menuVariant<T>(s) {}
         toggle(
-          const char* text,
+          constText* text,
           T &target,
           idx_t sz,
           prompt* constMEM* data,
@@ -348,6 +407,10 @@
               return proceed;
           }
         }
+        #ifdef MENU_ASYNC
+          const char* typeName() const override {return "toggle";}
+          bool async(const char*uri,navRoot& root,idx_t lvl);
+        #endif
     };
 
     template<typename T>//-------------------------------------------
@@ -355,7 +418,7 @@
       public:
         choose(constMEM menuNodeShadow& s):menuVariant<T>(s) {}
         choose(
-          const char* text,
+          constText* text,
           T &target,
           idx_t sz,
           prompt* constMEM* data,
@@ -369,9 +432,12 @@
         #endif
         Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr=0) override;
         result sysHandler(SYS_FUNC_PARAMS) override;
-        bool changed(const navNode &nav,const menuOut& out,bool sub=true) override {
+        bool changed(const navNode &nav,const menuOut& out,bool sub=true,bool test=false) override {
           return menuVariant<T>::changed(nav,out)||menuNode::changed(nav,out);
         }
+        #ifdef MENU_ASYNC
+          const char* typeName() const override {return "choose";}
+        #endif
     };
 
   }
@@ -382,11 +448,20 @@
   #include "nav.h"
   namespace Menu {
 
+    #ifdef MENU_ASYNC
+      template<typename T>
+      bool menuValue<T>::async(const char*uri,navRoot& root,idx_t lvl) {
+        trace(Serial<<(*(prompt*)this)<<" menuValue::async! lvl:"<<lvl<<" navRoot.level:"<<root.level<<" navFocus:"<<(*(prompt*)root.navFocus)<<endl);
+        return prompt::async(uri,root,lvl);
+      }
+    #endif
+
     template<typename T>
     idx_t menuField<T>::printReflex(menuOut& o) const {return o.print(reflex);}
 
     template<typename T>
     Used menuField<T>::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr) {
+      trace(print_P(out,getText());Serial<<" menuField<T>::printTo "<<reflex<<endl);
       reflex=target();
       return fieldBase::printTo(root,sel,out,idx,len,panelNr);
     }
@@ -395,20 +470,24 @@
     void menuField<T>::parseInput(navNode& nav,menuIn& in) {
       if (strchr(numericChars,in.peek())) {//a numeric value was entered
         if (in.numValueInput) {
-          target()=(T)in.parseFloat();
+          target()=(T)in.parseFloat();//TODO: use template specialization and proper convertion
           tunning=true;
           doNav(nav,enterCmd);
         } else doNav(nav,idxCmd);
       } else doNav(nav,nav.navKeys(in.read()));
     }
 
-    #ifdef DEBUG
+    #ifdef MENU_ASYNC
       template<typename T>
       void menuField<T>::printValue(menuOut& o) const {o.print(reflex);}
       template<typename T>
       void menuField<T>::printHigh(menuOut& o) const {o.print(high());}
       template<typename T>
       void menuField<T>::printLow(menuOut& o) const {o.print(low());}
+      template<typename T>
+      void menuField<T>::printStep(menuOut& o) const {o.print(step());}
+      template<typename T>
+      void menuField<T>::printTune(menuOut& o) const {o.print(tune());}
     #endif
 
     template<typename T>
@@ -424,8 +503,23 @@
       return menuVariantBase::togglePrintTo(root,sel,out,idx,len,panelNr);
     }
 
+    #ifdef MENU_ASYNC
+      template<typename T>
+      bool toggle<T>::async(const char*uri,navRoot& root,idx_t lvl) {
+        trace(Serial<<(*(prompt*)this)<<" toggle::async! uri:"<<uri<<endl);
+        if(uri[0]) {
+          trace("selecting value by index!");
+          idx_t n=menuNode::parseUriNode(uri);
+          trace(Serial<<"n:"<<n<<" sel:"<<root.path[lvl].sel<<endl);
+          menuVariant<T>::sync(n);
+          return true;
+        }
+        return prompt::async(uri,root,lvl);
+      }
+    #endif
+
     template<typename T>
-    bool menuVariant<T>::changed(const navNode &nav,const menuOut& out,bool sub) {
+    bool menuVariant<T>::changed(const navNode &nav,const menuOut& out,bool sub,bool test) {
       return dirty||((menuValue<T>*)&operator[](reflex))->target()!=target();
     }
 

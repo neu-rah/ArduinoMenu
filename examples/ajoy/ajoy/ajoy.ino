@@ -49,7 +49,7 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
 //joystick button pin
 #define joyBtn 4
 
-keyMap btnsMap[]={{-joyBtn,options->getCmdChar(enterCmd)}};//negative pin numbers use internal pull-up, this is on when low
+keyMap btnsMap[]={{-joyBtn,defaultNavCodes[enterCmd].ch}};//negative pin numbers use internal pull-up, this is on when low
 keyIn<1> btns(btnsMap);// 1 is the number of keys
 
 serialIn menuSerialIn(Serial);

@@ -13,12 +13,13 @@
 #endif
 #if defined(USE_PGM) || (defined(pgm_read_ptr_near) && !defined(MENU_USERAM))
   //storing some values into avr flash memory (saving ram space)
-  #ifdef DEBUG
+  #ifdef MENU_DEBUG
     #warning "Using PGM"
   #endif
   #define USING_PGM
   #define MEMMODE PROGMEM
   #define constMEM const
+  #define constText const char
   #define memPtr(src) pgm_read_ptr(&(src))
   #define memByte(addr) (pgm_read_byte(addr))
   #define memWord(addr) (pgm_read_word(addr))
@@ -27,12 +28,13 @@
   #define memEnum(addr) (sizeof(int)==1?memByte(addr):memWord(addr))
 #else
   //use ram on non-avr devices or when explicit
-  #ifdef DEBUG
+  #ifdef MENU_DEBUG
     #warning "Using RAM"
   #endif
   #define USING_RAM
   #define MEMMODE
   #define constMEM
+  #define constText char
   #define memPtr(src) (src)
   #define memByte(addr) (*addr)
   #define memWord(addr) (*addr)
@@ -166,11 +168,11 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
 #define PADMENU(id,text,aFn,mask,style,...) altMENU(Menu::menu,id,text,aFn,mask,style,(Menu::_asPad|Menu::_menuData|Menu::_canNav|Menu::_parentDraw),__VA_ARGS__)
 #define altMENU(objType,id,text,aFn,mask,style,ss,...)\
   FOR_EACH(DECL,__VA_ARGS__)\
-  const char id##_text[] MEMMODE=text;\
+  constText id##_text[] MEMMODE=text;\
   Menu::prompt* constMEM id##_data[] MEMMODE={\
     FOR_EACH(DEF,__VA_ARGS__)\
   };\
-  const MEMMODE Menu::menuNodeShadowRaw id##ShadowRaw={\
+  constMEM MEMMODE Menu::menuNodeShadowRaw id##ShadowRaw={\
     (Menu::callback)aFn,\
     (Menu::systemStyles)(ss|Menu::_menuData|Menu::_canNav),\
     id##_text,\
@@ -186,7 +188,7 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
 #define CHOOSE(...) altVARIANT(Menu::choose,((systemStyles)(Menu::_menuData|Menu::_canNav|Menu::_isVariant)),__VA_ARGS__)
 #define TOGGLE(...) altVARIANT(Menu::toggle,((systemStyles)(Menu::_menuData|Menu::_isVariant)),__VA_ARGS__)
 #define altVARIANT(objType,ss,target,id,text,action,mask,style,...)\
-  const char id##_text[] MEMMODE=text;\
+  constText id##_text[] MEMMODE=text;\
   XFOR_EACH(DECL_VALUE,target,__VA_ARGS__)\
   Menu::prompt* constMEM id##_data[] MEMMODE={\
     FOR_EACH(DEF,__VA_ARGS__)\
@@ -221,7 +223,7 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
 
 //allocating space for elements and shadows -------------------------------------
 #define DECL_EXIT_(cnt,exitText)\
-  const char title_##cnt[] MEMMODE=exitText;\
+  constText title_##cnt[] MEMMODE=exitText;\
   constMEM MEMMODE Menu::promptShadowRaw opShadowRaw##cnt = {\
     (Menu::callback)Menu::doExit,\
     Menu::_Exit,\
@@ -231,7 +233,7 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
   constMEM Menu::promptShadow& opShadow##cnt=*(Menu::promptShadow*)&opShadowRaw##cnt;\
   Menu::prompt op##cnt(opShadow##cnt);
 #define DECL_ITEM_(cnt,objType,text,aFn,mask,ss,...) \
-  const char title_##cnt[] MEMMODE=text;\
+  constText title_##cnt[] MEMMODE=text;\
   constMEM MEMMODE Menu::promptShadowRaw opShadowRaw##cnt={\
     (Menu::callback)aFn,\
     ss,\
@@ -242,7 +244,7 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
   constMEM Menu::promptShadow& opShadow##cnt=*(promptShadow*)&opShadowRaw##cnt;\
   objType op##cnt(opShadow##cnt,__VA_ARGS__);
 #define DECL_OP_(cnt,objType,text,aFn,mask) \
-  const char title_##cnt[] MEMMODE=text;\
+  constText title_##cnt[] MEMMODE=text;\
   constMEM MEMMODE Menu::promptShadowRaw opShadowRaw##cnt={\
     (Menu::callback)aFn,\
     _noStyle,\
@@ -253,8 +255,8 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
   constMEM Menu::promptShadow& opShadow##cnt=*(promptShadow*)&opShadowRaw##cnt;\
   objType op##cnt(opShadow##cnt);
 #define DECL_FIELD_(cnt,objType,ss,target,text,units,low,high,step,tune,action,mask,style)\
-  const char fieldLabel##cnt[] MEMMODE=text;\
-  const char fieldUnit##cnt[] MEMMODE=units;\
+  constText fieldLabel##cnt[] MEMMODE=text;\
+  constText fieldUnit##cnt[] MEMMODE=units;\
   constMEM MEMMODE Menu::menuFieldShadowRaw<typeof(target)> fieldShadowRaw##cnt={\
     (Menu::callback)action,\
     ss,\
@@ -271,7 +273,7 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
   constMEM Menu::menuFieldShadow<typeof(target)>& _fieldShadow##cnt=*(Menu::menuFieldShadow<typeof(target)>*)&fieldShadowRaw##cnt;\
   objType<typeof(target)> _menuField##cnt(_fieldShadow##cnt);
 #define DECL_EDIT_(cnt,objType,ss,label,buf,valid,action,mask,style)\
-  const char textFieldLabel##cnt[] MEMMODE=label;\
+  constText textFieldLabel##cnt[] MEMMODE=label;\
   constMEM MEMMODE Menu::textFieldShadowRaw textFieldShadowRaw##cnt={\
     (Menu::callback)action,\
     ss,\
@@ -292,7 +294,7 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
 #define IGNORE(...)
 #define MK_VALUE(...) GET_VALUE(__VA_ARGS__,_MK_VALUE,_MK_VALUE,_MK_VALUE,_MK_VALUE,IGNORE,_MK_VALUE)(__VA_ARGS__)
 #define _MK_VALUE(target,cnt,text,value,action,mask)\
-  const char valueLabel##cnt[] MEMMODE=text;\
+  constText valueLabel##cnt[] MEMMODE=text;\
   constMEM MEMMODE Menu::menuValueShadowRaw<typeof(target)> choice##cnt##ShadowRaw={\
     (Menu::callback)action,\
     Menu::_noStyle,\

@@ -28,12 +28,13 @@ added textField (also experimental).
 #include <menuIO/esp8266Out.h>
 #include <menuIO/xmlFmt.h>//to write a menu has html page
 #include <menuIO/serialIn.h>
-#include <Streaming.h>
+// #include <Streaming.h>
+#include <streamFlow.h>
 //#include <menuIO/jsFmt.h>//to send javascript thru web socket (live update)
 #include <FS.h>
 #include <Hash.h>
 extern "C" {
-#include "user_interface.h"
+  #include "user_interface.h"
 }
 
 using namespace Menu;
@@ -45,7 +46,7 @@ using namespace Menu;
   #define MENU_SSID "r-site.net"
 #endif
 #ifndef MENU_PASS
-#error "need to define WiFi password here"
+  #error "need to define WiFi password here"
   #define MENU_PASS ""
 #endif
 
@@ -68,9 +69,9 @@ const char* serverName="192.168.1.79";
 #define HTTP_PORT 80
 #define WS_PORT 81
 #define USE_SERIAL Serial
-ESP8266WiFiMulti WiFiMulti;
-ESP8266WebServer server = ESP8266WebServer(80);
-WebSocketsServer webSocket = WebSocketsServer(81);
+// ESP8266WiFiMulti WiFiMulti;
+ESP8266WebServer server(80);
+WebSocketsServer webSocket(81);
 
 #define MAX_DEPTH 2
 idx_t tops[MAX_DEPTH];
@@ -164,7 +165,7 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length
           USE_SERIAL.print(*(char*)(payload+c),HEX);
           USE_SERIAL.write(',');
         }
-        Serial<<"]"<<endl;
+        USE_SERIAL<<"]"<<endl;
         uint16_t id=*(uint16_t*) payload++;
         idx_t len=*((idx_t*)++payload);
         idx_t* pathBin=(idx_t*)++payload;
@@ -253,7 +254,7 @@ bool handleFileRead(String path){
     file.close();
     return true;
   }
-  Serial<<"file not found "<<path<<endl;
+  // Serial<<"file not found "<<path<<endl;
   return false;
 }
 
@@ -302,14 +303,14 @@ void setup(){
   Serial.print("Connecting to ");
   Serial.println(ssid);
 
-  WiFiMulti.addAP(ssid, password);
-  while(WiFiMulti.run() != WL_CONNECTED) delay(100);
-  // WiFi.begin(ssid, password);
+  // WiFiMulti.addAP(ssid, password);
+  // while(WiFiMulti.run() != WL_CONNECTED) delay(100);
+  WiFi.begin(ssid, password);
   // Wait for connection
-  /*while (WiFi.status() != WL_CONNECTED) {
+  while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
-  }*/
+  }
   webSocket.begin();
   Serial.println("");
   webSocket.onEvent(webSocketEvent);
@@ -319,9 +320,9 @@ void setup(){
 
   webSocket.begin();
 
-  if (MDNS.begin("esp8266")) {
-    Serial.println("MDNS responder started");
-  }
+  // if (MDNS.begin("esp8266")) {
+  //   Serial.println("MDNS responder started");
+  // }
 
   nav.idleTask=idle;//point a function to be used when menu is suspended
 
