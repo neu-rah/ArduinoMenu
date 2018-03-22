@@ -187,7 +187,7 @@ bool menuNode::changed(const navNode &nav,const menuOut& out,bool sub,bool test)
     trace(Serial<<"appd!"<<endl;);
     for(int i=0;i<sz();i++)
       if (operator[](i).changed(nav,out,false,test)) {
-        trace(if (test) Serial<<"APPD! "<<operator[](i).type()<<endl);
+        // trace(if (test) Serial<<"APPD! "<<operator[](i).type()<<endl);
         return true;
       }
   } else {

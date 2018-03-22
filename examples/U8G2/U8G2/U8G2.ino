@@ -61,13 +61,11 @@ using namespace Menu;
   U8G2_PCD8544_84X48_1_4W_HW_SPI u8g2(U8G2_R0, U8_CS, U8_DC , U8_RST);
 #elif (U8G2OUT==SSD1306)
   #include <Wire.h>
-  #define fontName u8g2_font_5x7_tf
-  #define fontX 6
-  #define fontY 8
+  #define fontName u8g2_font_7x13_mf
+  #define fontX 7
+  #define fontY 16
   #define offsetX 0
-  #define offsetY 0
-  #define offsetX 32
-  #define offsetY 16
+  #define offsetY 3
   #define U8_Width 64
   #define U8_Height 48
   #define USE_HWI2C
@@ -78,13 +76,13 @@ using namespace Menu;
 //each color is in the format:
 //  {{disabled normal,disabled selected},{enabled normal,enabled selected, enabled editing}}
 // this is a monochromatic color table
-const colorDef<uint8_t> colors[] MEMMODE={
+const colorDef<uint8_t> colors[]={
   {{0,0},{0,1,1}},//bgColor
   {{1,1},{1,0,0}},//fgColor
   {{1,1},{1,0,0}},//valColor
   {{1,1},{1,0,0}},//unitColor
   {{0,1},{0,0,1}},//cursorColor
-  {{0,0},{1,1,1}},//titleColor
+  {{1,1},{1,0,0}},//titleColor
 };
 
 result doAlert(eventMask e, prompt &item);
@@ -219,23 +217,20 @@ result idle(menuOut& o,idleEvent e) {
 }
 
 void setup() {
-  pinMode(LEDPIN,OUTPUT);
   Serial.begin(115200);
   while(!Serial);
   Serial.println("menu 4.x test");Serial.flush();
   encButton.begin();
   encoder.begin();
-  #ifdef USE_HWSPI
+  #if defined(USE_HWSPI)
     SPI.begin();
     u8g2.begin();
-  #endif
-  #ifdef USE_HWI2C
+  #elif defined(USE_HWI2C)
+    pinMode(LEDPIN,OUTPUT);//cant use pin 13 when using hw spi
     Wire.begin();
-    u8g2.setI2CAddress(0x3d<<1); // Set I2C address
     u8g2.begin();
-    u8g2.setContrast(CONTRAST);
-    // u8g2.setFlipMode(SCR_FLIP);
-    // u8g2_SetI2CAddress(u8g2.getU8g2(), 0x3d*2);
+  #elif
+    #error "please choose your interface (I2c,SPI)"
   #endif
   u8g2.setFont(fontName);
   u8g2.setBitmapMode(0);
@@ -248,7 +243,9 @@ void setup() {
 
 void loop() {
   nav.doInput();
-  digitalWrite(LEDPIN, ledCtrl);
+  #ifndef USE_HWI2C
+    digitalWrite(LEDPIN, ledCtrl);
+  #endif
   if (nav.changed(0)) {//only draw if menu changed for gfx device
     //change checking leaves more time for other tasks
     u8g2.firstPage();
