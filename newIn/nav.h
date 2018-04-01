@@ -26,7 +26,7 @@
           for(int n=from;n<sz;n++) nodes[n]=NULL;
         }
         inline constMEM panel operator[](idx_t i) const {
-          // assert(i<sz);
+          assert(i<sz);
           #ifdef USING_PGM
             panel tmp;
             memcpy_P(&tmp, &panels[i], sizeof(panel));
@@ -67,7 +67,7 @@
         result event(eventMask e) {return event(e,sel);}//send event to current item
         result sysEvent(eventMask e,idx_t i);//send system event to item index i
         inline result sysEvent(eventMask e) {return sysEvent(e,sel);}//send event to current item
-        // navCmd navKeys(char ch);
+        //navCmd navKeys(char ch);
         navCmd doNavigation(navCmd cmd);//aux function
         inline bool changed(const menuOut& out) const {return out.drawn==NULL||target->changed(*this,out);}
         inline prompt& operator[](idx_t i) const {return target->operator[](i);}
@@ -96,8 +96,6 @@
         bool canExit=true;//v4.0 moved from global options
         bool useUpdateEvent=false;//if false, when field value is changed use enterEvent instead.
         idx_t inputBurst=1;//limit of inputs that can be processed before output
-        unsigned long lastChanged=0;//last change detected (can be external activity)
-        int timeOut=0;//enter idle mode after `timeOut` seconds of inactivity
         navRoot(menuNode& root,navNode* path,idx_t d,menuIn& in,outputsList &o)
           :out(o),in(in),path(path),maxDepth(d-1) {
             useMenu(root);
@@ -121,14 +119,29 @@
         inline navNode& node() const {return path[level];}
         inline menuNode& active() const {return *node().target;}
         inline prompt& selected() const {return active()[node().sel];}
-        bool changed(const menuOut& out);
-        inline bool changed(idx_t n) {return changed(out[n]);}
+        inline bool changed(const menuOut& out) const {
+          return sleepTask?idleChanged:node().changed(out);
+        }
+        inline bool changed(idx_t n) const {return changed(out[n]);}
         #ifdef MENU_ASYNC
-          void escTo(idx_t lvl);
-          // prompt* seek(idx_t* uri,idx_t len);
-          bool async(const char* at);
-          menuOut& printPath(menuOut& o,menuNode*) const;
-          Used printMenu(menuOut& o) const;
+          inline bool async(const char* at) {
+            navFocus=path[level].target;
+            return active().async(at, *this, 0);
+          }
+          menuOut& printPath(menuOut& o) const {
+            for(idx_t n=0;n<level;n++) {
+              o.print('/');
+              o.print(path[n].sel);
+            }
+            return o;
+          }
+          //async printMenu on arbitrary menuOut device
+          Used printMenu(menuOut& o) const {
+            trace(Serial<<"navRoot::printMenu(menuOut& o)"<<endl);
+            if ((active().sysStyles()&_parentDraw)&&level)
+              return o.printMenu(path[level-1]);
+            else return o.printMenu(node());
+          }
         #endif
         Used printMenu() const {
           trace(Serial<<"navRoot::printMenu"<<endl);
@@ -174,7 +187,7 @@
         }
     };
 
-    #ifdef MENU_DEBUG
+    #ifdef DEBUG
       inline Stream& operator<<(Stream&o,const navNode& p) {
         o.print((__FlashStringHelper*)p.target->getText());
         return o;
