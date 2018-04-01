@@ -142,7 +142,7 @@ serialIn serial(Serial);
   encoderIn<encA,encB> encoder;//simple quad encoder driver
   encoderInStream<encA,encB> encStream(encoder,4);// simple quad encoder fake Stream
   //a keyboard with only one key as the encoder button
-  keyMap encBtn_map[]={{-encBtn,defaultNavCodes[enterCmd].ch}};//negative pin numbers use internal pull-up, this is on when low
+  keyMap encBtn_map[]={{-encBtn,enterCmd}};//negative pin numbers use internal pull-up, this is on when low
   keyIn<1> encButton(encBtn_map);//1 is the number of keys
   MENU_INPUTS(in,&encStream,&encButton,&serial);
 #endif
