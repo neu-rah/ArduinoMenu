@@ -196,7 +196,7 @@
         bool canTune() override {return !!tune();}
         void constrainField() override {target() = constrain(target(), low(), high());}
         idx_t printReflex(menuOut& o) const override;
-        // void parseInput(navNode& nav,menuIn& in) override;
+        void parseInput(navNode& nav,menuIn& in) override;
         Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr=0) override;
         inline T& target() const {return ((menuFieldShadow<T>*)shadow)->target();}
         inline T getTypeValue(constMEM T* from) const {return ((menuFieldShadow<T>*)shadow)->getTypeValue(from);}
@@ -466,16 +466,17 @@
       return fieldBase::printTo(root,sel,out,idx,len,panelNr);
     }
 
-    // template<typename T>
-    // void menuField<T>::parseInput(navNode& nav,menuIn& in) {
-    //   if (strchr(numericChars,in.peek())) {//a numeric value was entered
-    //     if (in.numValueInput) {
-    //       target()=(T)in.parseFloat();//TODO: use template specialization and proper convertion
-    //       tunning=true;
-    //       doNav(nav,enterCmd);
-    //     } else doNav(nav,idxCmd);
-    //   } else doNav(nav,nav.navKeys(in.read()));
-    // }
+    template<typename T>
+    void menuField<T>::parseInput(navNode& nav,menuIn& in) {
+      navCmd cmd=in.peek();
+      if (cmd==numValue) {//a numeric value was entered
+        // if (in.numValueInput) {
+          target()=(T)in.parseFloat();//TODO: use template specialization and proper convertion
+          tunning=true;
+          doNav(nav,enterCmd);
+        // } else doNav(nav,idxCmd);
+      } else doNav(nav,in.getCmd());
+    }
 
     #ifdef MENU_ASYNC
       template<typename T>

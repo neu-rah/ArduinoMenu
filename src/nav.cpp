@@ -20,7 +20,7 @@ using namespace Menu;
 
 // generic navigation (aux function)
 navCmd navNode::doNavigation(navCmd cmd) {
-  _trace(Serial<<"navNode::doNavigation"<<endl);
+  trace(Serial<<"navNode::doNavigation"<<endl);
   idx_t osel=sel;
   idx_t nsel=sel;
   navCmd rCmd=cmd;
