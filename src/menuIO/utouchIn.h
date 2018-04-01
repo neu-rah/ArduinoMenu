@@ -37,7 +37,7 @@ UTouch library from:
         menuNode& m=root.active();
         panel p=out.panels[out.panels.cur];
         if (touch.dataAvailable()) {
-          if (root.sleepTask) return options->navCodes[enterCmd].ch;
+          if (root.sleepTask) return enterCmd;
           evTime=millis();
           touch.read();
           startX=touch.getX()-p.x*out.resX;
@@ -54,10 +54,10 @@ UTouch library from:
               //prompt* nf=root.navFocus;
               /*if (nf->isMenu()&&!nf->isVariant()) {
                 Serial<<"utouch scrolling "<<(d>0?"Up":"Down")<<endl;
-                return (d>0?options->navCodes[scrlUpCmd].ch:options->navCodes[scrlDownCmd].ch);
+                return (d>0?scrlUpCmd:scrlDownCmd);
               } else {*/
                 //Serial<<"utouch moving "<<(d>0?"Up":"Down")<<endl;
-                return (d>0?options->navCodes[upCmd].ch:options->navCodes[downCmd].ch);
+                return (d>0?upCmd:downCmd);
               //}
             }
           }  else {//start new touching
@@ -82,8 +82,8 @@ UTouch library from:
             //Serial<<"utouch "<<(memStrLen(a.shadow->text)*out.resX<startX?"enter":"escape")<<endl;
             return
               ((int)(memStrLen(a.getText())*out.resX))<startX?
-                options->navCodes[enterCmd].ch:
-                options->navCodes[escCmd].ch;
+                enterCmd:
+                escCmd;
           }
         }
         return -1;

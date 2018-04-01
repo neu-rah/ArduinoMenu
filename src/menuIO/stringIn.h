@@ -6,6 +6,9 @@ www.r-site.net
 string input driver
 ***/
 
+#ifdef ArduinoMenu_deprecated_code
+//this code is not compatible with new input model
+//use textValue command instead!
 #ifndef RSITE_ARDUINO_MENU_HW_STRINGIN
   #define RSITE_ARDUINO_MENU_HW_STRINGIN
   #include "../menu.h"
@@ -14,7 +17,7 @@ string input driver
     //using a circular buffer
     //attention, if using sz=0 (2^0=1) we just override previous character
     template<uint8_t sz=0>//this size is 2^sz
-    class stringIn:public menuIn {
+    class stringIn:public Stream, public streamIn {
       public:
         static_assert(sz<7,"ArduinoMenu: max buffer size is 2^7");
         enum Mask:uint8_t {
@@ -32,20 +35,21 @@ string input driver
           return 1;
         }
         int available() override {return sz?at-head:data[head]!=0;}
-        int peek() override {return available()?data[head]:0;}
-        int read() override {
+        navCmd peek() override {return available()?data[head]:noCmd;}
+        navCmd getCmd() override {
           if (available()) {
-            if (sz&&(head==at)) return -1;
+            if (sz&&(head==at)) return nocmd;
             int r=data[head];
             if(!sz) data[head]=0;
             head++;
             head&=mask;
             return r;
           }
-          return -1;
+          return nocmd;
         }
-        void flush() override {at=head=0;}//just throw away all data!
+        // void flush() override {at=head=0;}//just throw away all data!
     };
   }
 
+#endif
 #endif

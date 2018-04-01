@@ -46,19 +46,19 @@ analogAxisIn - analog joystick axis
         int available(void) {getStep();return cnt!=0;}
         int peek(void) override {
           getStep();
-          if (cnt<0) return options->navCodes[neg()].ch;
-          if (cnt>0) return options->navCodes[pos()].ch;
+          if (cnt<0) return neg();
+          if (cnt>0) return pos();
           return -1;
         }
         int read() override {
           getStep();
           if (cnt<0) {
             cnt++;
-            return options->navCodes[neg()].ch;
+            return neg();
           }
           if (cnt>0) {
             cnt--;
-            return options->navCodes[pos()].ch;
+            return pos();
           }
           return -1;
         }

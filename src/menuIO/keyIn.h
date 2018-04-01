@@ -63,12 +63,12 @@ ex: -A0 means: pin A0 normally high, low when button pushed (reverse logic)
           int8_t pin=keys[n].pin;
           if (digitalRead(pin<0?-pin:pin)!=(pin<0) ) return keys[n].cmd;
         }
-        return -1;
+        return noCmd;
       }
       navCmd getCmd() {
         //Serial<<"read"<<endl;
         navCmd ch=peek();
-        if (ch==lastkey) return -1;
+        if (ch==lastkey) return noCmd;
         navCmd tmp=lastkey;
         bool longPress=ESCAPE_TIME&&millis()-pressMills>ESCAPE_TIME;
         //Serial<<"read lastkey="<<lastkey<<" ch="<<ch<<endl;

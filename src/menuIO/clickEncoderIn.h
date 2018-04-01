@@ -19,7 +19,6 @@ ex: -A0 means: pin A0 normally high, low when button pushed (reverse logic)
 
 ***/
 
-
 #ifndef __ClickEncoderStream_h__
   #define __ClickEncoderStream_h__
 

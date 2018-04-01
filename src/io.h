@@ -80,7 +80,7 @@
           StringStream(const char*s):src(s) {}
           int available() override {return 0!=*src;}
           navCmd getCmd() override {return navKeys(*src++);}
-          int peek() override {return *src?navKeys(*src):noCmd);}
+          navCmd peek() override {return *src?navKeys(*src):noCmd;}
           // void flush() override {while(*src) src++;}
           // size_t write(uint8_t) override {return 0;}
           operator const String() {return String(src);}

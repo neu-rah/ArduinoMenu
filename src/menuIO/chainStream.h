@@ -32,7 +32,7 @@ scan a chain of several input streams to provide input
         navCmd peek(void) {
           for(int n=0;n<N;n++)
             if (streams[n]->available()) return streams[n]->peek();
-          return -1;
+          return noCmd;
         }
         navCmd getCmd() {
           for(int n=0;n<N;n++) {
