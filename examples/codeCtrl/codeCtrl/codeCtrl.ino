@@ -23,7 +23,7 @@ on this example only using
 #include <Arduino.h>
 #include <menu.h>
 #include <menuIO/serialIO.h>
-#include <menuIO/stringIn.h>
+// #include <menuIO/stringIn.h>
 #include <menuIO/chainStream.h>
 
 using namespace Menu;
@@ -131,7 +131,7 @@ MENU_OUTPUTS(out,MAX_DEPTH
   ,NONE//must have 2 items at least
 );
 
-stringIn<0> strIn;//buffer size: 2^5 = 32 bytes, eventually use 0 for a single byte
+// stringIn<0> strIn;//buffer size: 2^5 = 32 bytes, eventually use 0 for a single byte
 serialIn serial(Serial);
 // use this commented lines if you want your stringIn object to be used as part or normal menu input
 // menuIn* inputsList[]={&serial,&strIn};
@@ -165,6 +165,7 @@ void setup() {
 
 #define SOFT_DEBOUNCE_MS 100
 
+bool ext=false;//extended keys
 void loop() {
   if (!digitalRead(SEL_BTN)) {
     delay(SOFT_DEBOUNCE_MS);
@@ -178,15 +179,26 @@ void loop() {
     nav.doNav(upCmd);
     delay(SOFT_DEBOUNCE_MS);
   }
-  //if stringIn is a regular input then we should write to it here, before poll
-  // strIn.write(...);//just put the character you want to send
-  // nav.poll();//also do serial or stringIn input
-  // or deal with charater input directly... (if you have your own input driver)
   if (Serial.available()) {
-    //of course menu can read from Serial or even stringIn (se above how to use stringIn as a regular menu input)
-    //but here we demonstrate the use of stringIn in direct call, by writing the data to stream and then call doInput with that stream
-    if (strIn.write(Serial.read()))//so we just transfer data from serial to strIn
-      nav.doInput(strIn);//and then let target parse input
+    char c=Serial.read();
+    // Serial.println(c,HEX);
+    //use arrows enter and escape to navigate the menu (use a serial monitor that can send keys instead of lines)
+    switch(c) {
+      case 0x0D: if (ext) nav.doNav(enterCmd); else nav.doNav(navCmd(textValue,c));break;
+      case 0x41: if (ext) nav.doNav(downCmd); else nav.doNav(navCmd(textValue,c));break;
+      case 0x42: if (ext) nav.doNav(upCmd); else nav.doNav(navCmd(textValue,c));break;
+      case 0x1B:
+        delay(1);//otherwise serial speed might not be enought to detect the second character
+        if (Serial.peek()==0x5B) ext=true;
+        else {
+          ext=false;
+          nav.doNav(escCmd);
+        }
+        break;
+      default: ext=false;nav.doNav(navCmd(textValue,c));break;
+      case 0x0A: break;
+      case 0x5B: if (!ext) nav.doNav(navCmd(textValue,c));break;
+    }
   }
   nav.doOutput();//if not doing poll the we need to do output "manualy"
   digitalWrite(LEDPIN, ledCtrl);

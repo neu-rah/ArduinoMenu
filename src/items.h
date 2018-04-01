@@ -468,13 +468,14 @@
 
     template<typename T>
     void menuField<T>::parseInput(navNode& nav,menuIn& in) {
-      if (strchr(numericChars,in.peek())) {//a numeric value was entered
-        if (in.numValueInput) {
+      navCmd cmd=in.peek();
+      if (cmd==numValue) {//a numeric value was entered
+        // if (in.numValueInput) {
           target()=(T)in.parseFloat();//TODO: use template specialization and proper convertion
           tunning=true;
           doNav(nav,enterCmd);
-        } else doNav(nav,idxCmd);
-      } else doNav(nav,nav.navKeys(in.read()));
+        // } else doNav(nav,idxCmd);
+      } else doNav(nav,in.getCmd());
     }
 
     #ifdef MENU_ASYNC

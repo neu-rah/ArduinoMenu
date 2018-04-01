@@ -13,15 +13,22 @@ HardwareSerial input driver
   #define SERIAL_CLASS Stream
 
   namespace Menu {
-    class serialIn:public menuIn {
+    class serialIn:public streamIn {
       public:
         Stream& in;
         serialIn(Stream& serial):in(serial) {}
-        size_t write(uint8_t o) override {return in.write(o);}
-        int available() override {return in.available();}
-        int peek() override {return in.peek();}
-        int read() override {return in.read();}
-        void flush() override {in.flush();}
+        int available() override {
+          trace(Serial<<"serialIn::available"<<endl);
+          return in.available()?*this:false;
+        }
+        navCmd peek() override {
+          trace(Serial<<"serialIn::peek"<<endl);
+          return navKeys(in.peek());
+        }
+        navCmd getCmd() override {
+          trace(Serial<<"serialIn::getCmd"<<endl);
+          return navKeys(in.read());
+        }
     };
 
   }

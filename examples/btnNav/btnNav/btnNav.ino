@@ -109,9 +109,9 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
 );
 
 keyMap joystickBtn_map[]={
- {-BTN_SEL, defaultNavCodes[enterCmd].ch} ,
- {-BTN_UP, defaultNavCodes[upCmd].ch} ,
- {-BTN_DOWN, defaultNavCodes[downCmd].ch}  ,
+ {-BTN_SEL, enterCmd} ,
+ {-BTN_UP, upCmd} ,
+ {-BTN_DOWN, downCmd}  ,
 };
 keyIn<3> joystickBtns(joystickBtn_map);
 

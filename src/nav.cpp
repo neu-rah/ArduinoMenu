@@ -8,15 +8,15 @@ using namespace Menu;
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-navCmd navNode::navKeys(char ch) {
-  trace(Serial<<"navNode::navKeys"<<endl);
-  if (strchr(numericChars,ch)) {
-    return navCmd(idxCmd,ch-'1');
-  }
-  for(uint8_t i=0;i<sizeof(options->navCodes)/sizeof(navCode);i++)
-    if (options->navCodes[i].ch==ch) return options->navCodes[i].cmd;
-  return noCmd;
-}
+// navCmd navNode::navKeys(char ch) {
+//   trace(Serial<<"navNode::navKeys"<<endl);
+//   if (strchr(numericChars,ch)) {
+//     return navCmd(idxCmd,ch-'1');
+//   }
+//   for(uint8_t i=0;i<sizeof(options->navCodes)/sizeof(navCode);i++)
+//     if (options->navCodes[i].ch==ch) return options->navCodes[i].cmd;
+//   return noCmd;
+// }
 
 // generic navigation (aux function)
 navCmd navNode::doNavigation(navCmd cmd) {
@@ -111,8 +111,8 @@ result navNode::sysEvent(eventMask e,idx_t i) {
 void navRoot::doInput(menuIn& in) {
   trace(Serial<<"navRoot::doInput"<<endl);
   if (sleepTask) {
-    char c=in.read();
-    if (options->getCmdChar(enterCmd)==c || options->getCmdChar(escCmd)==c) idleOff();
+    navCmd c=in.getCmd();
+    if (c==enterCmd || c==escCmd) idleOff();
   } else {
     idx_t inputBurstCnt=inputBurst+1;
     //if (in.available())

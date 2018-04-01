@@ -16,7 +16,12 @@ ex: -A0 means: pin A0 normally high, low when button pushed (reverse logic)
 
   namespace Menu {
 
-    #include "keyMapDef.h"
+    struct keyMap {
+      int8_t pin;
+      navCmds cmd;
+    };
+
+    // #include "keyMapDef.h"
 
     //if you hold/repeat a key for this ammount of time we will consider it an escape
     #ifndef ESCAPE_TIME
@@ -28,9 +33,9 @@ ex: -A0 means: pin A0 normally high, low when button pushed (reverse logic)
     class keyIn:public menuIn {
     public:
       keyMap* keys;
-      int lastkey;
+      navCmd lastkey;
       unsigned long pressMills=0;
-      keyIn<N>(keyMap k[]):keys(k),lastkey(-1) {}
+      keyIn<N>(keyMap k[]):keys(k),lastkey(noCmd) {}
       void begin() {
         for(int n=0;n<N;n++)
           if (keys[n].pin<0) pinMode(-keys[n].pin,INPUT_PULLUP);
@@ -38,8 +43,8 @@ ex: -A0 means: pin A0 normally high, low when button pushed (reverse logic)
       }
       int available(void) {
         //Serial<<"available"<<endl;
-        int ch=peek();
-        if (lastkey==-1) {
+        navCmd ch=peek();
+        if (lastkey==noCmd) {
           lastkey=ch;
           pressMills=millis();
         } else if (ESCAPE_TIME&&millis()-pressMills>ESCAPE_TIME) return 1;
@@ -52,28 +57,28 @@ ex: -A0 means: pin A0 normally high, low when button pushed (reverse logic)
         }
         return cnt;*/
       }
-      int peek(void) {
+      navCmd peek(void) {
         //Serial<<"peek"<<endl;
         for(int n=0;n<N;n++) {
           int8_t pin=keys[n].pin;
-          if (digitalRead(pin<0?-pin:pin)!=(pin<0) ) return keys[n].code;
+          if (digitalRead(pin<0?-pin:pin)!=(pin<0) ) return keys[n].cmd;
         }
-        return -1;
+        return noCmd;
       }
-      int read() {
+      navCmd getCmd() {
         //Serial<<"read"<<endl;
-        int ch=peek();
-        if (ch==lastkey) return -1;
-        int tmp=lastkey;
+        navCmd ch=peek();
+        if (ch==lastkey) return noCmd;
+        navCmd tmp=lastkey;
         bool longPress=ESCAPE_TIME&&millis()-pressMills>ESCAPE_TIME;
         //Serial<<"read lastkey="<<lastkey<<" ch="<<ch<<endl;
         //Serial<<"down time:"<<millis()-pressMills<<endl;
         pressMills=millis();
         lastkey=ch;
-        return longPress?options->getCmdChar(escCmd):tmp;//long press will result in escape
+        return longPress?escCmd:tmp;//long press will result in escape
       }
-      void flush() {}
-      size_t write(uint8_t v) {return 0;}
+      // void flush() {}
+      // size_t write(uint8_t v) {return 0;}
     };
 
   }//namespace Menu

@@ -10,34 +10,79 @@
 
     ///////////////////////////////////////////////////////////////////////////
     // base for all menu input devices
-    class menuIn:public Stream {
+    class menuIn {
+      protected:
+        inputCaps caps;
+        menuIn(inputCaps caps=basic):caps(caps) {}
       public:
-        bool numValueInput=true;
+        bool can(inputCaps c) {return (c&caps)!=0;}
         //when inside a field some devices might invert the movement axis
-        virtual void setFieldMode(bool) {}
-        virtual bool fieldMode() const {return false;}
         inline void fieldOn() {setFieldMode(true);}
         inline void fieldOff() {setFieldMode(false);}
+        inline operator bool() {return peek()!=noCmd;}
+        // inline  uint8_t  read()             {return available()?getCmd().cmd:-1;}//TOD: this is a temporary glue to the old schema, remove it!
+        virtual bool fieldMode() const  {return false;}
+        virtual void setFieldMode(bool) {}
+        virtual int available()=0;
+        virtual navCmd peek()=0;
+        virtual navCmd getCmd()=0;
+        virtual idx_t getIdx() {return -1;}
+        virtual float parseFloat() {return 0;}
+        // virtual void parseInput(navNode& nav) {}
+        // template<typename T>
+        // virtual T getNumeric<T>() {return 0;}
     };
+
 
     class noInput:public menuIn {
     public:
-      size_t write(uint8_t) override {return 0;}
       int available() override {return 0;}
-      int read() override {return -1;}
-      int peek() override {return -1;}
+      navCmd peek() override {return noCmd;}
+      navCmd getCmd() override {return noCmd;}
+    };
+
+    class streamIn:public menuIn {
+    protected:
+      struct navCode {navCmds cmd;char ch;};
+      streamIn():menuIn((inputCaps)(canIndex|hasNumeric)){}
+    public:
+      typedef navCode navCodesDef[10];
+      static navCodesDef navCodes;
+      navCmd navKeys(char ch) {
+        trace(Serial<<"streamIn::navKeys"<<endl);
+        if (strchr(numericChars,ch)) {
+          trace(Serial<<"is numeric"<<endl);
+          return navCmd(idxCmd,ch-'1');
+        }
+        for(uint8_t i=0;i<sizeof(navCodes)/sizeof(navCode);i++)
+          if (navCodes[i].ch==ch) {
+            trace(Serial<<"its a command "<<i<<endl);
+            return navCodes[i].cmd;
+          }
+        trace(Serial<<"some text value"<<endl);
+        return navCmd(textValue,ch);
+      }
+      // void parseInput(navNode& nav) override {
+      //   if (strchr(numericChars,in.peek())) {//a numeric value was entered
+      //     if (in.numValueInput) {
+      //       target()=(T)in.parseFloat();
+      //       tunning=true;
+      //       doNav(nav,enterCmd);
+      //     } else doNav(nav,idxCmd);
+      //   } else doNav(nav,nav.navKeys(in.read()));
+      // }
     };
 
     #ifdef MENU_ASYNC
-      class StringStream:public menuIn {
+      class StringStream:public streamIn {
         public:
           const char *src;
           StringStream(const char*s):src(s) {}
           int available() override {return 0!=*src;}
-          int read() override {return *src++;}
-          int peek() override {return *src?*src:-1;}
-          void flush() override {while(*src) src++;}
-          size_t write(uint8_t) override {return 0;}
+          navCmd getCmd() override {return navKeys(*src++);}
+          navCmd peek() override {return *src?navKeys(*src):noCmd;}
+          // void flush() override {while(*src) src++;}
+          // size_t write(uint8_t) override {return 0;}
           operator const String() {return String(src);}
       };
     #endif

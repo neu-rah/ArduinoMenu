@@ -205,9 +205,9 @@ bool menuNode::changed(const navNode &nav,const menuOut& out,bool sub,bool test)
     // idx_t tit=hasTitle(nav.root->path[lev])?1:0;//TODO: this might not be correct.. checking
     idx_t my=out.maxY()-((has(showTitle)||(nav.root->showTitle&&!has(noTitle)))?1:0);
     trace(Serial<<"level:"<<level<<" target:"<<*nav.root->navFocus<<" "<<nav.root->navFocus->has(_parentDraw)<<" "<<nav.root->navFocus->has(_asPad)<<endl);
-    idx_t lev=level-(nav.root->navFocus->has(_parentDraw)&&nav.root->navFocus->isMenu());
-    // trace(Serial<<"tit:"<<tit<<endl;);
-    idx_t t=out.tops[lev];
+    // idx_t lev=level-(nav.root->navFocus->has(_parentDraw)&&(nav.root->navFocus->isMenu()||nav.root->navFocus->has(_asPad)));
+    // idx_t t=out.tops[lev];
+    idx_t t=out.tops[level-nav.root->navFocus->has(_parentDraw)&&has(_asPad)];
     trace(Serial<<"t:"<<t<<endl;);
     if (sub) for(int i=0;i<my;i++,t++) {
       if (t>=sz()) break;
@@ -233,8 +233,9 @@ void menuNode::clearChanged(const navNode &nav,const menuOut& out,bool sub) {
     if (parentDraw())
       return nav.root->path[level-1].target->clearChanged(nav.root->path[level-1],out,sub);
     idx_t my=out.maxY()-((has(showTitle)||(nav.root->showTitle&&!has(noTitle)))?1:0);
-    idx_t lev=level-(nav.root->navFocus->has(_parentDraw)&&nav.root->navFocus->isMenu());
-    idx_t t=out.tops[lev];
+    // idx_t lev=level-(nav.root->navFocus->has(_parentDraw)&&(nav.root->navFocus->isMenu()&&!has(_asPad)));
+    // idx_t t=out.tops[lev];
+    idx_t t=out.tops[level-nav.root->navFocus->has(_parentDraw)&&has(_asPad)];
     for(idx_t i=0;i<my;i++,t++) {//only signal visible
       if (t>=sz()) break;//menu ended
       operator[](t).clearChanged(nav,out,false);
@@ -252,6 +253,7 @@ void menuNode::clearChanged(const navNode &nav,const menuOut& out,bool sub) {
   #endif
 }
 
+
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -266,23 +268,18 @@ void navTarget::doNav(navNode& nav,navCmd cmd) {
 
 void navTarget::parseInput(navNode& nav,menuIn& in) {
   trace(Serial<<"navTarget::parseInput"<<endl);
-  doNav(nav,nav.navKeys(in.read()));
+  doNav(nav,in.getCmd());
 }
 
 void textField::parseInput(navNode& nav,menuIn& in) {
   trace(Serial<<"navTarget::parseInput"<<endl);
   if (/*charEdit&&*/in.available()) {
-    char c=in.peek();
-    if (options->useNavChars&&(c==options->getCmdChar(upCmd)
-      ||c==options->getCmdChar(downCmd)
-      ||c==options->getCmdChar(enterCmd)
-      ||c==options->getCmdChar(escCmd))) {
-        navTarget::parseInput(nav,in);
-        return;
-      }
+    navCmd cmd=in.peek();
+    if (cmd!=textValue) return navTarget::parseInput(nav,in);
+    char c=cmd.param;
     switch(c) {//special cases
       case 0x0D://enter
-        in.read();
+        in.getCmd();
         charEdit=false;
         dirty=true;
         // edited=false;
@@ -290,7 +287,7 @@ void textField::parseInput(navNode& nav,menuIn& in) {
         nav.root->exit();
         return;
       case 0x08://backspace
-        in.read();
+        in.getCmd();
         buffer()[cursor]=validator(cursor)[0];
         if (cursor) cursor--;
         dirty=true;
@@ -299,7 +296,7 @@ void textField::parseInput(navNode& nav,menuIn& in) {
         const char* v=validator(cursor);
         char *at=strchr(v,c);
         if (at) {
-          in.read();
+          in.getCmd();
           buffer()[cursor]=c;
           if (cursor<(idx_t)strlen(buffer())-1) cursor++;
           dirty=true;

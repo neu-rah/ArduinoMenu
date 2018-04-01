@@ -67,7 +67,7 @@
         result event(eventMask e) {return event(e,sel);}//send event to current item
         result sysEvent(eventMask e,idx_t i);//send system event to item index i
         inline result sysEvent(eventMask e) {return sysEvent(e,sel);}//send event to current item
-        navCmd navKeys(char ch);
+        // navCmd navKeys(char ch);
         navCmd doNavigation(navCmd cmd);//aux function
         inline bool changed(const menuOut& out) const {return out.drawn==NULL||target->changed(*this,out);}
         inline prompt& operator[](idx_t i) const {return target->operator[](i);}

@@ -16,7 +16,7 @@ scan a chain of several input streams to provide input
     template <int N>
     class chainStream:public menuIn {
       public:
-        static int on;
+        static navCmds on;
         menuIn** streams;
         chainStream<N>(menuIn** chain):streams(chain) {}
         void setFieldMode(bool mode) override {
@@ -29,16 +29,16 @@ scan a chain of several input streams to provide input
             cnt+=streams[n]->available();
           return cnt;
         }
-        int peek(void) {
+        navCmd peek(void) {
           for(int n=0;n<N;n++)
             if (streams[n]->available()) return streams[n]->peek();
-          return -1;
+          return noCmd;
         }
-        int read() {
+        navCmd getCmd() {
           for(int n=0;n<N;n++) {
-            int key=streams[n]->available()?streams[n]->read():-1;
+            navCmd key=streams[n]->available()?streams[n]->getCmd():noCmd;
             if (key!=on) {
-              on=-1;//key;
+              on=noCmd;//key;
               return key;
             }
               //streams[n]->read();
@@ -46,17 +46,17 @@ scan a chain of several input streams to provide input
               //while(streams[n]->peek()==key) streams[n]->read();//wait for key release
               //return key;
           }
-          return -1;
+          return noCmd;
         }
-        void flush() {
-          for(int n=0;n<N;n++)
-            streams[n]->flush();
-        }
-        size_t write(uint8_t v) {return 0;}//this is readonly, ignoring
+        // void flush() {
+        //   for(int n=0;n<N;n++)
+        //     streams[n]->flush();
+        // }
+        // size_t write(uint8_t v) {return 0;}//this is readonly, ignoring
     };
 
     template<int N>
-    int chainStream<N>::on=-1;
+    navCmds chainStream<N>::on=noCmd;
 
   }//namespace Menu
 

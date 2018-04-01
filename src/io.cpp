@@ -331,3 +331,16 @@ void cursorOut::clear(idx_t panelNr) {
   setCursor(0,0,panelNr);
   panels.nodes[panelNr]=NULL;
 }
+
+streamIn::navCodesDef streamIn::navCodes={
+  {noCmd,(char)0xff},
+  {escCmd,'/'},
+  {enterCmd,'*'},
+  {upCmd,'+'},
+  {downCmd,'-'},
+  {leftCmd,'-'},
+  {rightCmd,'+'},
+  {idxCmd,'?'},
+  {scrlUpCmd,0x35},
+  {scrlUpCmd,0x36}
+};
