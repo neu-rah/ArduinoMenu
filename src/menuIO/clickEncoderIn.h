@@ -70,48 +70,48 @@ ex: -A0 means: pin A0 normally high, low when button pushed (reverse logic)
         }
 
         int available(void) {
-            return peek() != -1;
+            return peek() != noCmd;
         }
 
-        int peek(void) {
+        navCmd peek(void) {
           update();
           if (btn == ClickEncoder::Clicked)
-            return options->navCodes[enterCmd].ch;//menu::enterCode;
+            return enterCmd;//menu::enterCode;
 
           if (btn == ClickEncoder::DoubleClicked)
-            return options->navCodes[escCmd].ch;//menu::escCode;
+            return escCmd;//menu::escCode;
 
           btn=ClickEncoder::Open;//2017, must consume not used input to proceed
 
           int d = pos - oldPos;
           if (d <= -sensivity)
-              return options->navCodes[downCmd].ch;//menu::downCode;
+              return downCmd;//menu::downCode;
           if (d >= sensivity)
-              return options->navCodes[upCmd].ch;//menu::upCode;
+              return upCmd;//menu::upCode;
           return -1;
         }
 
-        int read()
+        navCmd getCmd()
         {
-            int ch = peek();
+            navCmd ch = peek();
             btn = ClickEncoder::Open;
-            if (ch == options->navCodes[upCmd].ch)//menu::upCode)
+            if (ch == upCmd)//menu::upCode)
                 oldPos += sensivity;
-            else if (ch == options->navCodes[downCmd].ch)//menu::downCode)
+            else if (ch == downCmd)//menu::downCode)
                 oldPos -= sensivity;
             return ch;
         }
 
-        void flush() {
-            btn=ClickEncoder::Open;//2017 clear current key
-            update();
-            oldPos = pos;
-        }
-
-        size_t write(uint8_t v) {
-            oldPos = v;
-            return 1;
-        }
+        // void flush() {
+        //     btn=ClickEncoder::Open;//2017 clear current key
+        //     update();
+        //     oldPos = pos;
+        // }
+        //
+        // size_t write(uint8_t v) {
+        //     oldPos = v;
+        //     return 1;
+        // }
       };
     }//namespace Menu
 
