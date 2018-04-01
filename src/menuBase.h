@@ -190,26 +190,26 @@ www.r-site.net
     //config
     ///////////////////////////////////////////////////////////////////////////
     struct navCode {navCmds cmd;char ch;};
-    typedef navCode navCodesDef[10];
-    extern const navCodesDef defaultNavCodes;
+    // typedef navCode navCodesDef[10];
+    // extern const navCodesDef defaultNavCodes;
 
     struct config {
       config(
         char ecur='>',
         char dcur='-',
-        const navCodesDef &nc=defaultNavCodes,
+        // const navCodesDef &nc=defaultNavCodes,
         bool invKeys=true
       ):selectedCursor(ecur),
       disabledCursor(dcur),
-      navCodes(nc),
+      // navCodes(nc),
       invertFieldKeys(invKeys) {}
       //NOTE:this can be output specific
       char selectedCursor;//='>';
       char disabledCursor;//='-';
-      const navCodesDef &navCodes;//=defaultNavCodes;
+      // const navCodesDef &navCodes;//=defaultNavCodes;
       bool invertFieldKeys;
       ///TODO: MOVE THIS TO INPUT DRIVER IF NEEDED!
-      bool useNavChars=true;//textFields should watch out for nav char in the stream (can write then on keybeord if true)
+      // bool useNavChars=true;//textFields should watch out for nav char in the stream (can write then on keybeord if true)
       // inline char getCmdChar(navCmds cmd) const {return navCodes[cmd].ch;}//return character assigned to this command
     };
 

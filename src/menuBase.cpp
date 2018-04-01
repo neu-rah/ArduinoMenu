@@ -30,20 +30,20 @@ idx_t Menu::print_P(Print& s,const char* at,idx_t len) {
   return at-p-1;
 }
 
-const navCodesDef Menu::defaultNavCodes={
-  {noCmd,(char)0xff},
-  {escCmd,'/'},
-  {enterCmd,'*'},
-  {upCmd,'+'},
-  {downCmd,'-'},
-  {leftCmd,'-'},
-  {rightCmd,'+'},
-  {idxCmd,'?'},
-  {scrlUpCmd,0x35},
-  {scrlUpCmd,0x36}
-};
+// const navCodesDef Menu::defaultNavCodes={
+//   {noCmd,(char)0xff},
+//   {escCmd,'/'},
+//   {enterCmd,'*'},
+//   {upCmd,'+'},
+//   {downCmd,'-'},
+//   {leftCmd,'-'},
+//   {rightCmd,'+'},
+//   {idxCmd,'?'},
+//   {scrlUpCmd,0x35},
+//   {scrlUpCmd,0x36}
+// };
 
-config Menu::defaultOptions={'>','-',Menu::defaultNavCodes,false};
+config Menu::defaultOptions={'>','-',false};
 config* Menu::options=&defaultOptions;
 
 #ifdef MENU_DEBUG
