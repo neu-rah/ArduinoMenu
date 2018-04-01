@@ -56,21 +56,21 @@ quadrature encoder stream (fake, not using buffers)
       encoderInStream(encoderIn<pinA,pinB> &enc,int sensivity):enc(enc), sensivity(sensivity) {}
       inline void setSensivity(int s) {sensivity=s;}
       int available(void) {return abs(enc.pos-oldPos)/sensivity;}
-      int peek(void) override {
+      navCmd peek(void) override {
         int d=enc.pos-oldPos;
-        if (d<=-sensivity)return options->navCodes[downCmd].ch;
-        if (d>=sensivity) return options->navCodes[upCmd].ch;
-        return -1;
+        if (d<=-sensivity)return downCmd;
+        if (d>=sensivity) return upCmd;
+        return noCmd;
       }
-      int read() override {
+      navCmd getCmd() override {
         int d=enc.pos-oldPos;
         if (d<=-sensivity) {
           oldPos-=sensivity;
-          return options->navCodes[downCmd].ch;
+          return downCmd;
         }
         if (d>=sensivity) {
           oldPos+=sensivity;
-          return options->navCodes[upCmd].ch;
+          return upCmd;
         }
         return -1;
       }

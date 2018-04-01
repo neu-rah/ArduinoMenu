@@ -101,6 +101,8 @@ www.r-site.net
       inline navCmd(navCmds cmd,idx_t p):cmd(cmd),param(p) {}
       inline bool operator==(navCmds n) const {return cmd==n;}
       inline bool operator!=(navCmds n) const {return cmd!=n;}
+      inline bool operator==(navCmd o) const {return cmd==o.cmd;}
+      inline bool operator!=(navCmd o) const {return cmd!=o.cmd;}
       // inline operator navCmds() const {return cmd;}
     };
 
