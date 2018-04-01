@@ -72,7 +72,7 @@ quadrature encoder stream (fake, not using buffers)
           oldPos+=sensivity;
           return upCmd;
         }
-        return -1;
+        return noCmd;
       }
       void flush() {oldPos=enc.pos;}
       size_t write(uint8_t v) {oldPos=v;return 1;}
