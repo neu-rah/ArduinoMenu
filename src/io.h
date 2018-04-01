@@ -44,7 +44,7 @@
     class streamIn:public menuIn {
     protected:
       struct navCode {navCmds cmd;char ch;};
-      streamIn():menuIn(canIndex|hasNumeric){}
+      streamIn():menuIn((inputCaps)(canIndex|hasNumeric)){}
     public:
       typedef navCode navCodesDef[10];
       static navCodesDef navCodes;
