@@ -32,9 +32,10 @@ www.r-site.net
 
   #define _MAX(a,b) (((a)>(b))?(a):(b))
 
-  namespace Menu {
-    constexpr int menuVersion[3]{4,4,8};
+  #define MENU_VERSION 4
+  #define MENU_REVISION 4.9
 
+  namespace Menu {
     //menu structure objects
     class menuIn;
     class menuOut;
