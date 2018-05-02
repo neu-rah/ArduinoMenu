@@ -44,8 +44,13 @@ bool prompt::async(const char*uri,navRoot& root,idx_t lvl) {
   return true;
 }
 idx_t menuNode::parseUriNode(const char*&uri) {
-  if (uri[0]=='/') uri++;//TODO check who does this part!
-  assert(strchr(numericChars,uri[0]));
+  if (*uri=='/') uri++;//TODO check who does this part!
+  bool neg=false;
+  if (*uri=='-') {
+    uri++;
+    neg=true;
+  }
+  assert(*uri=='-'||strchr(numericChars,uri[0]));
   int n=0;
   while (*uri) {
     char* d=strchr(numericChars,uri[0]);
@@ -54,8 +59,9 @@ idx_t menuNode::parseUriNode(const char*&uri) {
     uri++;
   }
   //state transformation (for events preservation)
-  if (n>=sz()) n=sz()-1;//never trusting web!
-  else if (n<0) n=0;
+  if (neg) n=sz()-n;//allow negative index from end of list
+  if (n<0) n=0;
+  else if (n>=sz()) n=sz()-1;//never trusting web!
   return n;
 }
 
