@@ -184,7 +184,8 @@ Used textField::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len
 ////////////////////////////////////////////////////////////////////////////////
 bool menuNode::changed(const navNode &nav,const menuOut& out,bool sub,bool test) {
   trace(Serial<<*this<<" menuNode::changed"<<endl);
-  if (dirty) {
+  return menuNode::_changes<false>(nav,out,sub,test);
+  /*if (dirty) {
     trace(if (test) Serial<<"just dirty!"<<endl);
     return true;
   }
@@ -225,12 +226,13 @@ bool menuNode::changed(const navNode &nav,const menuOut& out,bool sub,bool test)
       }
     }
   }
-  return false;
+  return false;*/
 }
 
 void menuNode::clearChanged(const navNode &nav,const menuOut& out,bool sub) {
   trace(Serial<<" menuOut::clearChanged "<<nav);
-  dirty=false;
+  _changes<true>(nav,out,sub,false);
+  /*dirty=false;
   if (has((systemStyles)(_asPad|_parentDraw))) {
     for(int i=0;i<sz();i++)
       operator[](i).clearChanged(nav,out,false);
@@ -257,7 +259,7 @@ void menuNode::clearChanged(const navNode &nav,const menuOut& out,bool sub) {
     Serial.flush();
     while(1);
   }
-  #endif
+  #endif*/
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -475,67 +477,67 @@ void menuVariantBase::doNav(navNode& nav,navCmd cmd) {
   }
 }
 
-// template<bool clear>
-// bool menuNode::_changes(const navNode &nav,const menuOut& out,bool sub,bool test) {
-//   trace(Serial<<*this<<" menuNode::"<<(clear?"clearChanged":"changed")<<" test:"<<test<<endl);
-//   if (clear) dirty=false;
-//   else if (dirty) {
-//     trace(if (test) Serial<<"just dirty!"<<endl);
-//     return true;
-//   }
-//   if (has((systemStyles)(_asPad|_parentDraw))) {
-//     for(int i=0;i<sz();i++)
-//       if (clear) operator[](i).clearChanged(nav,out,false);
-//       else if (operator[](i).changed(nav,out,false,test)) {
-//         trace(if (test) Serial<<"APPD! "<<operator[](i)<<endl);
-//         return true;
-//       }
-//   } else {
-//     // if (!(nav.target==this&&sub)) return;???
-//     if (!(clear||(nav.target==this&&sub))) {
-//       trace(if (test&&dirty) Serial<<"indirect!"<<endl);
-//       return dirty;// second hand check, just report self
-//     }
-//     idx_t level=nav.root->level;
-//     if (parentDraw()) {
-//       if (clear) nav.root->path[level-1].target->clearChanged(nav.root->path[level-1],out,sub);
-//       else {
-//         trace(Serial<<"return changed of parent-draw element"<<endl);
-//         trace(if (test) Serial<<"parentDraw()!"<<endl);
-//         return nav.root->path[level-1].target->changed(nav.root->path[level-1],out,sub,test);
-//       }
-//     }
-//     // idx_t tit=hasTitle(nav.root->path[lev])?1:0;//TODO: this might not be correct.. checking
-//     idx_t my=out.maxY()-((has(showTitle)||(nav.root->showTitle&&!has(noTitle)))?1:0);
-//     // trace(Serial<<"level:"<<level<<" target:"<<*nav.root->navFocus<<" "<<nav.root->navFocus->has(_parentDraw)<<" "<<nav.root->navFocus->has(_asPad)<<endl);
-//     // idx_t lev=level-(nav.root->navFocus->has(_parentDraw)&&(nav.root->navFocus->isMenu()||nav.root->navFocus->has(_asPad)));
-//     // idx_t t=out.tops[lev];
-//     idx_t t=out.tops[level-nav.root->navFocus->has(_parentDraw)&&has(_asPad)];
-//     trace(Serial<<"t:"<<t<<endl;);
-//     if (sub) for(int i=0;i<my;i++,t++) {
-//       if (t>=sz()) break;
-//       if (clear) operator[](t).clearChanged(nav,out,false);
-//       {
-//         trace(Serial<<"checking:"<<operator[](t)<<endl);
-//         if (operator[](t).changed(nav,out,false,test)) {
-//           trace(if (test) Serial<<"sub changed!"<<endl);
-//           return true;
-//         }
-//       }
-//     }
-//   }
-//   if (clear) {
-//     #ifdef MENU_DEBUG
-//     if(changed(nav,out,sub,true)) {
-//       Serial<<"\nERROR clear changed fail!"<<endl;
-//       Serial<<*this<<endl;
-//       Serial<<"level:"<<nav.root->level<<endl;
-//       // Serial<<"type:"<<type()<<endl;
-//       Serial.flush();
-//       // while(1);
-//       return false;
-//     }
-//     #endif
-//     return true;
-//   } else return false;
-// }
+template<bool clear>
+bool menuNode::_changes(const navNode &nav,const menuOut& out,bool sub,bool test) {
+  trace(Serial<<*this<<" menuNode::"<<(clear?"clearChanged":"changed")<<" test:"<<test<<endl);
+  if (clear) dirty=false;
+  else if (dirty) {
+    trace(if (test) Serial<<"just dirty!"<<endl);
+    return true;
+  }
+  if (has((systemStyles)(_asPad|_parentDraw))) {
+    for(int i=0;i<sz();i++)
+      if (clear) operator[](i).clearChanged(nav,out,false);
+      else if (operator[](i).changed(nav,out,false,test)) {
+        trace(if (test) Serial<<"APPD! "<<operator[](i)<<endl);
+        return true;
+      }
+  } else {
+    // if (!(nav.target==this&&sub)) return;???
+    if (!(clear||(nav.target==this&&sub))) {
+      trace(if (test&&dirty) Serial<<"indirect!"<<endl);
+      return dirty;// second hand check, just report self
+    }
+    idx_t level=nav.root->level;
+    if (parentDraw()) {
+      if (clear) nav.root->path[level-1].target->clearChanged(nav.root->path[level-1],out,sub);
+      else {
+        trace(Serial<<"return changed of parent-draw element"<<endl);
+        trace(if (test) Serial<<"parentDraw()!"<<endl);
+        return nav.root->path[level-1].target->changed(nav.root->path[level-1],out,sub,test);
+      }
+    }
+    // idx_t tit=hasTitle(nav.root->path[lev])?1:0;//TODO: this might not be correct.. checking
+    idx_t my=out.maxY()-((has(showTitle)||(nav.root->showTitle&&!has(noTitle)))?1:0);
+    // trace(Serial<<"level:"<<level<<" target:"<<*nav.root->navFocus<<" "<<nav.root->navFocus->has(_parentDraw)<<" "<<nav.root->navFocus->has(_asPad)<<endl);
+    // idx_t lev=level-(nav.root->navFocus->has(_parentDraw)&&(nav.root->navFocus->isMenu()||nav.root->navFocus->has(_asPad)));
+    // idx_t t=out.tops[lev];
+    idx_t t=out.tops[level-nav.root->navFocus->has(_parentDraw)&&has(_asPad)];
+    trace(Serial<<"t:"<<t<<endl;);
+    if (sub) for(int i=0;i<my;i++,t++) {
+      if (t>=sz()) break;
+      if (clear) operator[](t).clearChanged(nav,out,false);
+      {
+        trace(Serial<<"checking:"<<operator[](t)<<endl);
+        if (operator[](t).changed(nav,out,false,test)) {
+          trace(if (test) Serial<<"sub changed!"<<endl);
+          return true;
+        }
+      }
+    }
+  }
+  if (clear) {
+    #ifdef MENU_DEBUG
+    if(changed(nav,out,sub,true)) {
+      Serial<<"\nERROR clear changed fail!"<<endl;
+      Serial<<*this<<endl;
+      Serial<<"level:"<<nav.root->level<<endl;
+      // Serial<<"type:"<<type()<<endl;
+      Serial.flush();
+      // while(1);
+      return false;
+    }
+    #endif
+    return true;
+  } else return false;
+}
