@@ -69,7 +69,7 @@
         inline result sysEvent(eventMask e) {return sysEvent(e,sel);}//send event to current item
         navCmd navKeys(char ch);
         navCmd doNavigation(navCmd cmd);//aux function
-        inline bool changed(const menuOut& out) const {return out.drawn==NULL||target->changed(*this,out);}
+        bool changed(const menuOut& out) const;
         inline prompt& operator[](idx_t i) const {return target->operator[](i);}
 
         inline bool is(systemStyles chk)  const {return target->is(chk);}
