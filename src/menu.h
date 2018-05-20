@@ -47,6 +47,11 @@ warranty, express or implied, as to its usefulness for any purpose.
   #else
     #define _trace(x)
   #endif
+  #ifndef MENU_RELEASE
+    #define __trace(x) x
+  #else
+    #define __trace(x)
+  #endif
 
   namespace Menu {
     extern const char* numericChars;
