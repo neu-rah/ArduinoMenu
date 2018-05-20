@@ -14,6 +14,8 @@ warranty, express or implied, as to its usefulness for any purpose.
 #ifndef RSITE_ARDUINO_MENU_SYSTEM
   #define RSITE_ARDUINO_MENU_SYSTEM
   #include <Arduino.h>
+  // #define MENU_ASYNC
+  // #define MENU_FMT_WRAPS
 
   #include "menuBase.h"
   #include "shadows.h"

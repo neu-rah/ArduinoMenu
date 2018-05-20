@@ -24,7 +24,7 @@ keyMap myBtn_map[]={
                       {K_ESC,options->getCmdChar(escCmd)},
                       {K_ENTER,options->getCmdChar(enterCmd)}
                     };
-PCF8574KeyIn<6> myButton(myBtn_map);
+PCF8574KeyIn<6> myButton(myBtn_map,Wire);
 
 ***/
 
@@ -48,20 +48,18 @@ PCF8574KeyIn<6> myButton(myBtn_map);
     #endif
     //emulate a stream keyboard, this is not using interrupts as a good driver should do
     // AND is not using a buffer either!
-    template <int N, int _dev=0x20, int _sda=SDA, int _scl=SCL>                 //default pcf8574 address=0x20
+    template <int N,int _dev=0x20>                 //default pcf8574 address=0x20
     class PCF8574KeyIn:public menuIn {
     private:
-      bool modeEdit;  
+      bool modeEdit;
     public:
       keyMap* keys;
+      TwoWire& dev;
       int lastkey;
       unsigned long pressMills=0;
-      PCF8574KeyIn<N, _dev, _sda, _scl>(keyMap k[]):keys(k),lastkey(-1) {}
+      PCF8574KeyIn(keyMap k[],TwoWire& dev=Wire):keys(k),dev(dev),lastkey(-1) {}
       void setFieldMode(bool mode) override {
         modeEdit = mode;
-      }
-      void begin() {
-        Wire.begin(_sda, _scl);
       }
       int available(void) {
         int ch=peek();
@@ -83,8 +81,8 @@ PCF8574KeyIn<6> myButton(myBtn_map);
       }
       int peek(void) {
         //Serial<<"peek"<<endl;
-        Wire.requestFrom(_dev, 1);
-        uint8_t val = Wire.read();
+        dev.requestFrom(_dev, 1);
+        uint8_t val = dev.read();
         for(int n=0;n<N;n++) {
           int8_t pin = keys[n].pin;
           int8_t code = keys[n].code;

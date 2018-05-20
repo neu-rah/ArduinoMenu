@@ -16,36 +16,27 @@ mcu: nano328p
 
 */
 
-#ifdef ESP8266
-  #define typeof(x) __typeof__(x)
-  #include <SPI.h>
-  #include <Wire.h>
-#endif
-
 #include <menu.h>
 #include <menuIO/u8g2Out.h>
-#include <menuIO/encoderIn.h>
-#include <menuIO/keyIn.h>
+// #include <menuIO/encoderIn.h>
+// #include <menuIO/keyIn.h>
 #include <menuIO/chainStream.h>
-// #include <menuIO/serialOut.h>
-// #include <menuIO/serialIn.h>
+#include <menuIO/serialOut.h>
+#include <menuIO/serialIn.h>
 
 using namespace Menu;
 
-// #define LEDPIN LED_BUILTIN
 #define LEDPIN LED_BUILTIN
 
-// rotary encoder pins
-#define encA    2
-#define encB    3
-#define encBtn  4
+// #define USE_PCD8544
+#define USE_SSD1306
 
-// #define U8G2OUT PCD8544
-#define U8G2OUT SSD1306
+#if defined(USE_PCD8544)
+  // rotary encoder pins
+  // #define encA    2
+  // #define encB    3
+  // #define encBtn  4
 
-#ifndef U8G2OUT
-  #error U8G2OUT not defined! edit the scketch to choose one.
-#elif (U8G2OUT==PCD8544)
   #include <SPI.h>
   #define USE_HWSPI
   #define U8_DC 9
@@ -59,32 +50,39 @@ using namespace Menu;
   #define U8_Width 84
   #define U8_Height 48
   U8G2_PCD8544_84X48_1_4W_HW_SPI u8g2(U8G2_R0, U8_CS, U8_DC , U8_RST);
-#elif (U8G2OUT==SSD1306)
+#elif defined(USE_SSD1306)
+  // rotary encoder pins
+  // #define encA    5
+  // #define encB    6
+  // #define encBtn  7
+
   #include <Wire.h>
-  #define fontName u8g2_font_5x7_tf
-  #define fontX 6
-  #define fontY 8
+  #define fontName u8g2_font_7x13_mf
+  #define fontX 7
+  #define fontY 16
   #define offsetX 0
-  #define offsetY 0
-  #define offsetX 32
-  #define offsetY 16
-  #define U8_Width 64
-  #define U8_Height 48
+  #define offsetY 3
+  #define U8_Width 128
+  #define U8_Height 64
   #define USE_HWI2C
   U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0);//, SCL, SDA);
+  // U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2(U8G2_R2, U8X8_PIN_NONE, 2, 0);
+#else
+  #error DEFINE YOUR OUTPUT HERE.
 #endif
+
 
 // define menu colors --------------------------------------------------------
 //each color is in the format:
 //  {{disabled normal,disabled selected},{enabled normal,enabled selected, enabled editing}}
 // this is a monochromatic color table
-const colorDef<uint8_t> colors[] MEMMODE={
+const colorDef<uint8_t> colors[]={
   {{0,0},{0,1,1}},//bgColor
   {{1,1},{1,0,0}},//fgColor
   {{1,1},{1,0,0}},//valColor
   {{1,1},{1,0,0}},//unitColor
   {{0,1},{0,0,1}},//cursorColor
-  {{0,0},{1,1,1}},//titleColor
+  {{1,1},{1,0,0}},//titleColor
 };
 
 result doAlert(eventMask e, prompt &item);
@@ -170,22 +168,23 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
 
 #define MAX_DEPTH 2
 
-encoderIn<encA,encB> encoder;//simple quad encoder driver
-encoderInStream<encA,encB> encStream(encoder,4);// simple quad encoder fake Stream
+// encoderIn<encA,encB> encoder;//simple quad encoder driver
+// encoderInStream<encA,encB> encStream(encoder,4);// simple quad encoder fake Stream
 
 //a keyboard with only one key as the encoder button
-keyMap encBtn_map[]={{-encBtn,defaultNavCodes[enterCmd].ch}};//negative pin numbers use internal pull-up, this is on when low
-keyIn<1> encButton(encBtn_map);//1 is the number of keys
+// keyMap encBtn_map[]={{-encBtn,defaultNavCodes[enterCmd].ch}};//negative pin numbers use internal pull-up, this is on when low
+// keyIn<1> encButton(encBtn_map);//1 is the number of keys
 
 // menuIn* inputsList[]={&encBuitton,&Serial};
 // chainStream<2> in(inputsList);//1 is the number of inputs
 
-//serialIn serial(Serial);
-MENU_INPUTS(in,&encStream,&encButton);//,&serial);
+serialIn serial(Serial);
+MENU_INPUTS(in,&serial);
+// MENU_INPUTS(in,&encStream,&encButton);//,&serial);
 
 MENU_OUTPUTS(out,MAX_DEPTH
   ,U8G2_OUT(u8g2,colors,fontX,fontY,offsetX,offsetY,{0,0,U8_Width/fontX,U8_Height/fontY})
-  ,NONE//SERIAL_OUT(Serial)
+  ,SERIAL_OUT(Serial)
 );
 
 NAVROOT(nav,mainMenu,MAX_DEPTH,in,out);
@@ -219,28 +218,27 @@ result idle(menuOut& o,idleEvent e) {
 }
 
 void setup() {
-  pinMode(LEDPIN,OUTPUT);
   Serial.begin(115200);
   while(!Serial);
   Serial.println("menu 4.x test");Serial.flush();
-  encButton.begin();
-  encoder.begin();
-  #ifdef USE_HWSPI
+  // encButton.begin();
+  // encoder.begin();
+  // pinMode(LEDPIN,OUTPUT);//cant use pin 13 when using hw spi
+  // and on esp12 i2c can be on pin 2, and that is also led pin
+  // so check first if this is adequate for your board
+  #if defined(USE_HWSPI)
     SPI.begin();
     u8g2.begin();
-  #endif
-  #ifdef USE_HWI2C
+  #elif defined(USE_HWI2C)
     Wire.begin();
-    u8g2.setI2CAddress(0x3d<<1); // Set I2C address
     u8g2.begin();
-    u8g2.setContrast(CONTRAST);
-    // u8g2.setFlipMode(SCR_FLIP);
-    // u8g2_SetI2CAddress(u8g2.getU8g2(), 0x3d*2);
+  #else
+    #error "please choose your interface (I2c,SPI)"
   #endif
   u8g2.setFont(fontName);
-  u8g2.setBitmapMode(0);
+  // u8g2.setBitmapMode(0);
 
-  //disable second option
+  // disable second option
   mainMenu[1].enabled=disabledStatus;
   nav.idleTask=idle;//point a function to be used when menu is suspended
   Serial.println("setup done.");Serial.flush();
@@ -248,7 +246,7 @@ void setup() {
 
 void loop() {
   nav.doInput();
-  digitalWrite(LEDPIN, ledCtrl);
+  // digitalWrite(LEDPIN, ledCtrl);
   if (nav.changed(0)) {//only draw if menu changed for gfx device
     //change checking leaves more time for other tasks
     u8g2.firstPage();

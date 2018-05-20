@@ -16,6 +16,9 @@ www.r-site.net
 #ifndef RSITE_ARDUINO_MENU_SYSTEM_BASE
   #define RSITE_ARDUINO_MENU_SYSTEM_BASE
 
+  // #define MENU_ASYNC
+  // #define MENU_FMT_WRAPS
+
   #ifdef MENU_DEBUG
     extern bool debugFlag;
     extern const char* libMemMode;
@@ -28,6 +31,9 @@ www.r-site.net
   #include "macros.h"
 
   #define _MAX(a,b) (((a)>(b))?(a):(b))
+
+  #define MENU_VERSION 4
+  #define MENU_REVISION 4.9
 
   namespace Menu {
     //menu structure objects

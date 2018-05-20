@@ -287,6 +287,8 @@
           //aux function, parse uri node (text to idx_t)
           idx_t parseUriNode(const char*&uri);
         #endif
+        template<bool clear>
+        bool _changes(const navNode &nav,const menuOut& out,bool sub,bool test);
     };
 
     //--------------------------------------------------------------------------
