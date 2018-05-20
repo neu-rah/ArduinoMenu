@@ -197,13 +197,20 @@ navCmd navRoot::exit() {
   return escCmd;
 }
 
-bool navRoot::changed(const menuOut& out) {
-  if (sleepTask) return idleChanged;
-  if (node().changed(out)) {
-    lastChanged=millis();
+bool navNode::changed(const menuOut& out) const {
+  if (out.drawn==NULL||target->changed(*this,out)) {
+    root->lastChanged=millis();
     return true;
-  } else if (canExit&&timeOut&&(millis()-lastChanged)/1000>timeOut) idleOn(idleTask);
+  } else
+    if (root->canExit&&root->timeOut&&(millis()-root->lastChanged)/1000>root->timeOut)
+      root->idleOn(root->idleTask);
   return false;
+}
+
+bool navRoot::changed(const menuOut& out) {
+  trace(Serial.println("DEBUG: changed"));
+  if (sleepTask) return idleChanged;
+  return node().changed(out);
 }
 
 

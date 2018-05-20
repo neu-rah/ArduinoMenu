@@ -109,7 +109,7 @@ class altPrompt:public prompt {
 public:
   altPrompt(constMEM promptShadow& p):prompt(p) {}
   Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t) override {
-    return out.printRaw("special prompt!",len);;
+    return out.printRaw("special prompt!",len);
   }
 };
 
@@ -209,5 +209,6 @@ void setup() {
 void loop() {
   nav.poll();
   digitalWrite(LEDPIN, ledCtrl);
+  test=(millis()/1000)%101;
   delay(100);//simulate a delay as if other tasks are running
 }
