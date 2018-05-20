@@ -198,7 +198,7 @@ navCmd navRoot::exit() {
 }
 
 bool navNode::changed(const menuOut& out) const {
-  _trace("navNode::changed");
+  trace("navNode::changed");
   if (out.drawn==NULL||target->changed(*this,out)) {
     root->lastChanged=millis();
     return true;
