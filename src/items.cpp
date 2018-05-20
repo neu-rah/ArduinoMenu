@@ -479,31 +479,31 @@ void menuVariantBase::doNav(navNode& nav,navCmd cmd) {
 
 template<bool clear>
 bool menuNode::_changes(const navNode &nav,const menuOut& out,bool sub,bool test) {
-  _trace(Serial<<*this<<" menuNode::"<<(clear?"clearChanged":"changed")<<" test:"<<test<<endl);
+  trace(Serial<<*this<<" menuNode::"<<(clear?"clearChanged":"changed")<<" test:"<<test<<endl);
   if (clear) dirty=false;
   else if (dirty) {
-    _trace(if (test) Serial<<"just dirty!"<<endl);
+    trace(if (test) Serial<<"just dirty!"<<endl);
     return true;
   }
   if (has((systemStyles)(_asPad|_parentDraw))) {
     for(int i=0;i<sz();i++)
       if (clear) operator[](i).clearChanged(nav,out,false);
       else if (operator[](i).changed(nav,out,false,test)) {
-        _trace(if (test) Serial<<"APPD! "<<operator[](i)<<endl);
+        trace(if (test) Serial<<"APPD! "<<operator[](i)<<endl);
         return true;
       }
   } else {
     // if (!(nav.target==this&&sub)) return;???
     if (!(clear||(nav.target==this&&sub))) {
-      _trace(if (test&&dirty) Serial<<"indirect!"<<endl);
+      trace(if (test&&dirty) Serial<<"indirect!"<<endl);
       return dirty;// second hand check, just report self
     }
     idx_t level=nav.root->level;
     if (parentDraw()) {
       if (clear) nav.root->path[level-1].target->clearChanged(nav.root->path[level-1],out,sub);
       else {
-        _trace(Serial<<"return changed of parent-draw element"<<endl);
-        _trace(if (test) Serial<<"parentDraw()!"<<endl);
+        trace(Serial<<"return changed of parent-draw element"<<endl);
+        trace(if (test) Serial<<"parentDraw()!"<<endl);
         return nav.root->path[level-1].target->changed(nav.root->path[level-1],out,sub,test);
       }
     }
@@ -513,14 +513,14 @@ bool menuNode::_changes(const navNode &nav,const menuOut& out,bool sub,bool test
     // idx_t lev=level-(nav.root->navFocus->has(_parentDraw)&&(nav.root->navFocus->isMenu()||nav.root->navFocus->has(_asPad)));
     // idx_t t=out.tops[lev];
     idx_t t=out.tops[level];//-nav.root->navFocus->has(_parentDraw)&&has(_asPad)];
-    _trace(Serial<<"t:"<<t<<endl;);
+    trace(Serial<<"t:"<<t<<endl;);
     if (sub) for(int i=0;i<my;i++,t++) {
       if (t>=sz()) break;
       if (clear) operator[](t).clearChanged(nav,out,false);
       {
-        _trace(Serial<<"checking:"<<operator[](t)<<endl);
+        trace(Serial<<"checking:"<<operator[](t)<<endl);
         if (operator[](t).changed(nav,out,false,test)) {
-          _trace(if (test) Serial<<"sub changed!"<<endl);
+          trace(if (test) Serial<<"sub changed!"<<endl);
           return true;
         }
       }
