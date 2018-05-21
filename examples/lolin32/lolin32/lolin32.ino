@@ -2,17 +2,11 @@
 
 /********************
 Arduino generic menu system
-U8G2 menu example
-U8G2: https://github.com/olikraus/u8g2
+lolin32 menu example
 
-Oct. 2016 Stephen Denne https://github.com/datacute
-Based on example from Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
-Original from: https://github.com/christophepersoz
-
-menu on U8G2 device
-output: Wemos D1 mini OLED Shield (SSD1306 64x48 I2C) + Serial
-input: Serial + encoder
-mcu: nano328p
+output: onboard oled (i2c ssd1306 u8g2)
+input: Serial
+mcu: esp32 lolin with builtin oled
 
 */
 
@@ -26,52 +20,20 @@ mcu: nano328p
 
 using namespace Menu;
 
-#define LEDPIN LED_BUILTIN
+// #define LEDPIN LED_BUILTIN
 
-// #define USE_PCD8544
-#define USE_SSD1306
-
-#if defined(USE_PCD8544)
-  // rotary encoder pins
-  // #define encA    2
-  // #define encB    3
-  // #define encBtn  4
-
-  #include <SPI.h>
-  #define USE_HWSPI
-  #define U8_DC 9
-  #define U8_CS 8
-  #define U8_RST 7
-  #define fontName u8g2_font_5x7_tf
-  #define fontX 5
-  #define fontY 9
-  #define offsetX 0
-  #define offsetY 0
-  #define U8_Width 84
-  #define U8_Height 48
-  U8G2_PCD8544_84X48_1_4W_HW_SPI u8g2(U8G2_R0, U8_CS, U8_DC , U8_RST);
-#elif defined(USE_SSD1306)
-  // rotary encoder pins
-  // #define encA    5
-  // #define encB    6
-  // #define encBtn  7
-
-  #include <Wire.h>
-  #define fontName u8g2_font_7x13_mf
-  #define fontX 7
-  #define fontY 16
-  #define offsetX 0
-  #define offsetY 3
-  #define U8_Width 128
-  #define U8_Height 64
-  #define USE_HWI2C
-  // U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0);//, SCL, SDA);
-  // U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2(U8G2_R2, U8X8_PIN_NONE, 4, 5);
-  // U8G2_SSD1306_128X64_VCOMH0_F_HW_I2C u8g2(U8G2_R2, U8X8_PIN_NONE, 4, 5);
-  U8G2_SSD1306_128X64_NONAME_1_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE, 4, 5);
-#else
-  #error DEFINE YOUR OUTPUT HERE.
-#endif
+#include <Wire.h>
+#define fontName u8g2_font_7x13_mf
+#define fontX 7
+#define fontY 16
+#define offsetX 0
+#define offsetY 3
+#define U8_Width 128
+#define U8_Height 64
+#define USE_HWI2C
+// U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE, 4, 5);
+U8G2_SSD1306_128X64_VCOMH0_F_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE, 4, 5);//allow contrast change
+// U8G2_SSD1306_128X64_NONAME_1_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE, 4, 5);
 
 
 // define menu colors --------------------------------------------------------
@@ -170,19 +132,8 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
 
 #define MAX_DEPTH 2
 
-// encoderIn<encA,encB> encoder;//simple quad encoder driver
-// encoderInStream<encA,encB> encStream(encoder,4);// simple quad encoder fake Stream
-
-//a keyboard with only one key as the encoder button
-// keyMap encBtn_map[]={{-encBtn,defaultNavCodes[enterCmd].ch}};//negative pin numbers use internal pull-up, this is on when low
-// keyIn<1> encButton(encBtn_map);//1 is the number of keys
-
-// menuIn* inputsList[]={&encBuitton,&Serial};
-// chainStream<2> in(inputsList);//1 is the number of inputs
-
 serialIn serial(Serial);
 MENU_INPUTS(in,&serial);
-// MENU_INPUTS(in,&encStream,&encButton);//,&serial);
 
 MENU_OUTPUTS(out,MAX_DEPTH
   ,U8G2_OUT(u8g2,colors,fontX,fontY,offsetX,offsetY,{0,0,U8_Width/fontX,U8_Height/fontY})
@@ -220,37 +171,35 @@ result idle(menuOut& o,idleEvent e) {
 }
 
 void setup() {
+  // pinMode(LEDPIN,OUTPUT);
   Serial.begin(115200);
   while(!Serial);
   Serial.println("menu 4.x test");Serial.flush();
-  // encButton.begin();
-  // encoder.begin();
-  // pinMode(LEDPIN,OUTPUT);//cant use pin 13 when using hw spi
-  // and on esp12 i2c can be on pin 2, and that is also led pin
-  // so check first if this is adequate for your board
-  #if defined(USE_HWSPI)
-    SPI.begin();
-    u8g2.begin();
-  #elif defined(USE_HWI2C)
-    Wire.begin();
-    u8g2.begin();
-  #else
-    #error "please choose your interface (I2c,SPI)"
-  #endif
+  Wire.begin(5,4);
+  u8g2.begin();
   u8g2.setFont(fontName);
-  // u8g2.setBitmapMode(0);
-
   // disable second option
   mainMenu[1].enabled=disabledStatus;
   nav.idleTask=idle;//point a function to be used when menu is suspended
   Serial.println("setup done.");Serial.flush();
+  u8g2.firstPage();
+  do {
+    u8g2.drawStr(0,fontY,"ArduinoMenu 4.x");
+    u8g2.drawStr(0,fontY<<1,"on lolin32");
+    u8g2.drawStr(0,fontY+(fontY<<1),"with buitin oled");
+  } while(u8g2.nextPage());
+  for(int c=256;c>0;c--) {
+    u8g2.setContrast(255-255.0*log(c)/log(255));
+    delay(8);
+  }
+  u8g2.setContrast(255);
+  delay(500);
 }
 
 void loop() {
   nav.doInput();
-  // digitalWrite(LEDPIN, ledCtrl);
+  // digitalWrite(LEDPIN, !ledCtrl);//no led on this board
   if (nav.changed(0)) {//only draw if menu changed for gfx device
-    //change checking leaves more time for other tasks
     u8g2.firstPage();
     do nav.doOutput(); while(u8g2.nextPage());
   }

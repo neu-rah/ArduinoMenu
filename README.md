@@ -94,9 +94,50 @@ void loop() {
 
 ## Applications
 
-**Fielduino** hardware PWM generator using menu to select frequency and dutty.
+Some applications using ArduinoMenu, some using older versions.  
+Do you have another? please let me know on gitter or email me.
 
+**teensy-midi-looper** Microcontroller-based midi performance sequencer  
+https://github.com/newdigate/teensy-midi-looper
+
+**AmplifierControl** Automate procedure to switch on/off amplifier and band decode of Kenwood  
+https://github.com/petrlab/AmplifierControl
+
+**spna** An Arduino Single Port Network Analyzer (SPNA)  
+https://github.com/tczerwonka/spna
+
+**LRDuino** In car multi gauge system - STM32, SSD1306, MAX31856, ADXL345, ELM327  
+https://github.com/BennehBoy/LRDuino
+
+**LRDuinoTD5** In car multi gauge system - STM32, SSD1306, MAX31856, ADXL345, L9637D, TD5 ECU  
+https://github.com/BennehBoy/LRDuinoTD5
+
+**PANOBOT** A Panorama robot  
+https://github.com/RobertFach/panobot
+
+**thom-radio** Internet radio build
+https://github.com/evfool/thom-radio
+
+**MIDI_drums** 7 chanel piezo MIDI drum box with menu on LCD
+https://github.com/Sobollion/MIDI_drums
+
+**BalancingRobot**
+https://github.com/SLBarker/BalancingRobot
+
+**swatili** 50l water meter with valve control, lcd, buttons, rtc and hall effect pulse reader  
+https://github.com/daniel-leonard-robinson/swatili
+
+**Fielduino** hardware PWM generator using menu to select frequency and dutty.  
 https://github.com/neu-rah/Fielduino
+
+**ArduinoMultiDesktop** MultiDesktop concept for hardware devices  
+https://github.com/dontsovcmc/ArduinoMultiDesktop
+
+**SmartGreenHouse**  
+https://github.com/dontsovcmc/SmartGreenHouse/tree/master/src
+
+**console.arduino** Portable serial debug console project using ILI9341
+https://github.com/malachib/console.arduino
 
 ## Platforms
 Atmel AVR, Atmel SAM, Espressif 8266, Intel ARC32, Microchip PIC32, Nordic nRF51, Teensy, TI MSP430
