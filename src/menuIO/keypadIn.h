@@ -21,28 +21,15 @@ using
       char key=0;
       Keypad& in;
       keypadIn(Keypad& in):in(in) {}
-      int available(void) {return peek()!=0;}
-      int peek(void) {
-        int ret;
-
-        if (key) {
-          return key;
-        } else {
-          key = (int)in.getKey();
-          if (key) {
-            return key;
-          } else {
-            return -1;
-          }
-        }
-      }
+      int available(void) {return peek()!=-1;}
+      int peek(void) {return key?key:(key=in.getKey())?key:-1;}
       int read() {
         if (key) {
           char k=key;
           key=0;
           return k;
         }
-        return peek();
+        return available()?read():-1;
       }
       void flush() {}
       size_t write(uint8_t v) {return 0;}
