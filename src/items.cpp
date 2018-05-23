@@ -479,19 +479,21 @@ void menuVariantBase::doNav(navNode& nav,navCmd cmd) {
 
 template<bool clear>
 bool menuNode::_changes(const navNode &nav,const menuOut& out,bool sub,bool test) {
-  _trace(MENU_DEBUG_OUT<<*this<<" menuNode::"<<(clear?"clearChanged":"changed")<<" test:"<<test<<endl);
+  trace(MENU_DEBUG_OUT<<*this<<" menuNode::"<<(clear?"clearChanged":"changed")<<" test:"<<test<<endl);
   if (clear) dirty=false;
   else if (dirty) {
     _trace(if (test) MENU_DEBUG_OUT<<"just dirty!"<<endl);
     return true;
   }
   if (has((systemStyles)(_asPad|_parentDraw))) {
+    trace(MENU_DEBUG_OUT<<*this<<" sz:"<<sz()<<" asPad or parentDraw"<<endl);
     for(int i=0;i<sz();i++)
       if (clear) operator[](i).clearChanged(nav,out,false);
       else if (operator[](i).changed(nav,out,false,test)) {
         _trace(if (test) MENU_DEBUG_OUT<<"APPD! "<<operator[](i)<<endl);
         return true;
       }
+    return false;
   } else {
     // if (!(nav.target==this&&sub)) return;???
     if (!(clear||(nav.target==this&&sub))) {
@@ -512,7 +514,8 @@ bool menuNode::_changes(const navNode &nav,const menuOut& out,bool sub,bool test
     // trace(MENU_DEBUG_OUT<<"level:"<<level<<" target:"<<*nav.root->navFocus<<" "<<nav.root->navFocus->has(_parentDraw)<<" "<<nav.root->navFocus->has(_asPad)<<endl);
     // idx_t lev=level-(nav.root->navFocus->has(_parentDraw)&&(nav.root->navFocus->isMenu()||nav.root->navFocus->has(_asPad)));
     // idx_t t=out.tops[lev];
-    idx_t t=out.tops[level];//-nav.root->navFocus->has(_parentDraw)&&has(_asPad)];
+    // idx_t t=out.tops[level];//-nav.root->navFocus->has(_parentDraw)&&has(_asPad)];
+    idx_t t=out.tops[level-(nav.root->navFocus->has(_parentDraw)||nav.root->navFocus->has(_asPad))];
     trace(MENU_DEBUG_OUT<<"t:"<<t<<endl;);
     if (sub) for(int i=0;i<my;i++,t++) {
       if (t>=sz()) break;
