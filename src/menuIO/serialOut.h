@@ -15,7 +15,7 @@
         inline serialOut(Print& o,idx_t* t,panelsList &p=default_serial_panel_list,menuOut::styles st=menuOut::none)
           :menuOut(t,p,(menuOut::styles)(st|menuOut::drawNumIndex)),device(o) {}
         size_t write(uint8_t ch) override {
-          //trace(Serial.write('|'));
+          //trace(MENU_DEBUG_OUT.write('|'));
           return device.write(ch);
         }
         void clear() override {
@@ -23,8 +23,8 @@
           panels.reset();
         }
         void clear(idx_t panelNr) override {
-          trace(Serial<<"serialOut::clear(idx_t panelNr)"<<endl;)
-          trace(Serial.flush());
+          trace(MENU_DEBUG_OUT<<"serialOut::clear(idx_t panelNr)"<<endl;)
+          trace(MENU_DEBUG_OUT.flush());
           println();
           panels.nodes[panelNr]=NULL;
         }

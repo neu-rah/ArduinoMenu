@@ -53,10 +53,10 @@ UTouch library from:
               scrlY-=(d>0?1:-1)*(out.resY/2);
               //prompt* nf=root.navFocus;
               /*if (nf->isMenu()&&!nf->isVariant()) {
-                Serial<<"utouch scrolling "<<(d>0?"Up":"Down")<<endl;
+                MENU_DEBUG_OUT<<"utouch scrolling "<<(d>0?"Up":"Down")<<endl;
                 return (d>0?options->navCodes[scrlUpCmd].ch:options->navCodes[scrlDownCmd].ch);
               } else {*/
-                //Serial<<"utouch moving "<<(d>0?"Up":"Down")<<endl;
+                //MENU_DEBUG_OUT<<"utouch moving "<<(d>0?"Up":"Down")<<endl;
                 return (d>0?options->navCodes[upCmd].ch:options->navCodes[downCmd].ch);
               //}
             }
@@ -74,12 +74,12 @@ UTouch library from:
           int st=root.showTitle?1:0;
           if (root.navFocus->isMenu()&&!root.navFocus->parentDraw()) {
             int at=startY/out.resY;
-            //Serial<<"utouch index select "<<((at>=st&&at<(m.sz()+st))?at-st+out.top(root.node())+'1':-1)<<endl;
-            //Serial<<"canNav:"<<root.navFocus->canNav()<<"isVariant:"<<root.navFocus->isVariant()<<endl;
+            //MENU_DEBUG_OUT<<"utouch index select "<<((at>=st&&at<(m.sz()+st))?at-st+out.top(root.node())+'1':-1)<<endl;
+            //MENU_DEBUG_OUT<<"canNav:"<<root.navFocus->canNav()<<"isVariant:"<<root.navFocus->isVariant()<<endl;
             return (at>=st&&at<(m.sz()+st))?at-st+out.top(root.node())+'1':-1;
           } else {//then its some sort of field
             prompt& a=m;//root.active();
-            //Serial<<"utouch "<<(memStrLen(a.shadow->text)*out.resX<startX?"enter":"escape")<<endl;
+            //MENU_DEBUG_OUT<<"utouch "<<(memStrLen(a.shadow->text)*out.resX<startX?"enter":"escape")<<endl;
             return
               ((int)(memStrLen(a.getText())*out.resX))<startX?
                 options->navCodes[enterCmd].ch:

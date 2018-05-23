@@ -246,13 +246,17 @@ https://github.com/neu-rah/AnsiStream
 
 Serial https://www.arduino.cc/en/Reference/Serial
 
-quadEncoder - Generic encoder using PCINT (builtin)
+quadEncoder - Generic encoder using PCINT (builtin)  
 
 Buttons - simple digital keyboard (builtin)
 
 Generic keyboard (no PCINT) - configurable for digital or analog keyboards (builtin)
 
 ClickEncoder https://github.com/0xPIT/encoder
+
+Matrix keypad   
+http://playground.arduino.cc/Code/Keypad
+https://github.com/Nullkraft/Keypad
 
 User defined input calling menu navigation API
 

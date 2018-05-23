@@ -80,14 +80,14 @@ PCF8574KeyIn<6> myButton(myBtn_map,Wire);
         return 1;
       }
       int peek(void) {
-        //Serial<<"peek"<<endl;
+        //MENU_DEBUG_OUT<<"peek"<<endl;
         dev.requestFrom(_dev, 1);
         uint8_t val = dev.read();
         for(int n=0;n<N;n++) {
           int8_t pin = keys[n].pin;
           int8_t code = keys[n].code;
           if (((val)&1<<pin)==0) {
-            //Serial<<"key "<<pin<<" pressed"<<endl;
+            //MENU_DEBUG_OUT<<"key "<<pin<<" pressed"<<endl;
             if (modeEdit == false && (code == options->getCmdChar(upCmd) || navCmds(code) == options->getCmdChar(downCmd))) {
               //if we navigate on menu then return code up/down (left/right) reversed as down/up (right/left)
               return (code==options->getCmdChar(upCmd)?options->getCmdChar(downCmd):options->getCmdChar(upCmd));
@@ -102,13 +102,13 @@ PCF8574KeyIn<6> myButton(myBtn_map,Wire);
         return -1;
       }
       int read() {
-        //Serial<<"read"<<endl;
+        //MENU_DEBUG_OUT<<"read"<<endl;
         int ch=peek();
         if (ch==lastkey) return -1;
         int tmp=lastkey;
         bool longPress=ESCAPE_TIME&&millis()-pressMills>ESCAPE_TIME;
-        //Serial<<"read lastkey="<<lastkey<<" ch="<<ch<<endl;
-        //Serial<<"down time:"<<millis()-pressMills<<endl;
+        //MENU_DEBUG_OUT<<"read lastkey="<<lastkey<<" ch="<<ch<<endl;
+        //MENU_DEBUG_OUT<<"down time:"<<millis()-pressMills<<endl;
         pressMills=millis();
         lastkey=ch;
         return longPress?options->getCmdChar(escCmd):tmp;//long press will result in escape

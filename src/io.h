@@ -196,7 +196,7 @@
         void doNav(navCmd cmd,class navNode &nav) {for(int n=0;n<cnt;n++) ((menuOut*)memPtr(outs[n]))->doNav(cmd,nav);}
         result idle(idleFunc f,idleEvent e) {
           #ifdef MENU_DEBUG
-          if (!f) Serial<<"idleFunc is NULL!!!"<<endl;
+          if (!f) MENU_DEBUG_OUT<<"idleFunc is NULL!!!"<<endl;
           #endif
           if (!f) return proceed;
           for(int n=0;n<cnt;n++) {

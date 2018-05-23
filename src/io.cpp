@@ -12,7 +12,7 @@ using namespace Menu;
 #endif
 
 idx_t menuOut::printRaw(const char* at,idx_t len) {
-  trace(Serial<<"menuOut::printRaw"<<endl);
+  trace(MENU_DEBUG_OUT<<"menuOut::printRaw"<<endl);
   const char* p=at;
   uint8_t ch;
   for(int n=0;(ch=*(at++))&&(len==0||n<len);n++) {
@@ -22,7 +22,7 @@ idx_t menuOut::printRaw(const char* at,idx_t len) {
 }
 
 void menuOut::doNav(navCmd cmd,navNode &nav) {
-  trace(Serial<<"menuOut::doNav"<<endl);
+  trace(MENU_DEBUG_OUT<<"menuOut::doNav"<<endl);
   panel p=panels[nav.root->level];
   idx_t t=top(nav)-1;
   idx_t sz=nav.target->sz();
@@ -51,20 +51,20 @@ menuOut& menuOut::operator<<(const prompt& p) {
 #endif
 
 Used outputsList::printMenu(navNode& nav) const {
-  trace(Serial<<"outputsList::printMenu"<<endl);
+  trace(MENU_DEBUG_OUT<<"outputsList::printMenu"<<endl);
   for(int n=0;n<cnt;n++) {
     menuOut& o=*((menuOut*)memPtr(outs[n]));
     if (nav.changed(o)||(o.style&(menuOut::rasterDraw))||(o.style&(menuOut::redraw)))
       o.printMenu(nav);
   }
   clearChanged(nav);
-  trace(Serial<<"outputsList::printMenu ended!"<<endl);
+  trace(MENU_DEBUG_OUT<<"outputsList::printMenu ended!"<<endl);
   return 0;
 }
 
 // draw a menu preview on a panel
 void menuOut::previewMenu(navRoot& root,menuNode& menu,idx_t panelNr) {
-  trace(Serial<<"menuOut::previewMenu"<<endl);
+  trace(MENU_DEBUG_OUT<<"menuOut::previewMenu"<<endl);
   // #ifdef MENU_FMT_WRAPS
   //   fmtStart(fmtBody,root.node());
   // #endif
@@ -116,7 +116,7 @@ void menuOut::previewMenu(navRoot& root,menuNode& menu,idx_t panelNr) {
 
 //determin panel number here and distribute menu and previews among the panels
 Used menuOut::printMenu(navNode &nav) {
-  trace(Serial<<"menuOut::printMenu(navNode &nav)"<<endl);
+  trace(MENU_DEBUG_OUT<<"menuOut::printMenu(navNode &nav)"<<endl);
   menuNode& focus=nav.root->active();
   int lvl=nav.root->level;
   if (focus.parentDraw()) lvl--;
@@ -144,7 +144,7 @@ Used menuOut::printMenu(navNode &nav) {
 // this function emits format messages
 // to be handler by format wrappers
 Used menuOut::printMenu(navNode &nav,idx_t panelNr) {
-  trace(Serial<<"menuOut::printMenu(navNode &nav,idx_t panelNr)"<<endl);
+  trace(MENU_DEBUG_OUT<<"menuOut::printMenu(navNode &nav,idx_t panelNr)"<<endl);
   if (!(nav.root->navFocus->has((systemStyles)(_parentDraw|_menuData)))) {
     //on this case we have a navTarget object that draws himself
     if (nav.root->navFocus->changed(nav,*this,false))
@@ -173,18 +173,18 @@ Used menuOut::printMenu(navNode &nav,idx_t panelNr) {
     panel pan=panels[panelNr];
 
     //-----> panel start
-    trace(Serial<<"panel start"<<endl);
+    trace(MENU_DEBUG_OUT<<"panel start"<<endl);
     bool titleChanged=st||nav.target->changed(nav,*this,false);
     #ifdef MENU_FMT_WRAPS
       fmtStart(*nav.target,fmtPanel,nav);
     #endif
     if (all||titleChanged) {
-      trace(Serial<<"all:"<<all<<" panelNr:"<<panelNr<<endl);
-      trace(Serial<<"{x:"<<pan.x<<" y:"<<pan.y<<" w:"<<pan.w<<" h:"<<pan.h<<"}"<<endl);
+      trace(MENU_DEBUG_OUT<<"all:"<<all<<" panelNr:"<<panelNr<<endl);
+      trace(MENU_DEBUG_OUT<<"{x:"<<pan.x<<" y:"<<pan.y<<" w:"<<pan.w<<" h:"<<pan.h<<"}"<<endl);
       if (all&&!asPad) clear(panelNr);
       if (st||asPad) {
         ///------> titleStart
-        trace(Serial<<"title start"<<endl);
+        trace(MENU_DEBUG_OUT<<"title start"<<endl);
         #ifdef MENU_FMT_WRAPS
           fmtStart(*nav.target,fmtTitle,nav,-1);
         #endif
@@ -212,7 +212,7 @@ Used menuOut::printMenu(navNode &nav,idx_t panelNr) {
       }
     }
     //------> bodyStart
-    trace(Serial<<"body start"<<endl);
+    trace(MENU_DEBUG_OUT<<"body start"<<endl);
     #ifdef MENU_FMT_WRAPS
       fmtStart(*nav.target,fmtBody,nav);
     #endif

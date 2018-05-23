@@ -131,7 +131,7 @@
           Used printMenu(menuOut& o) const;
         #endif
         Used printMenu() const {
-          trace(Serial<<"navRoot::printMenu"<<endl);
+          trace(MENU_DEBUG_OUT<<"navRoot::printMenu"<<endl);
           if ((active().sysStyles()&_parentDraw)&&level)
             return out.printMenu(path[level-1]);
           else return out.printMenu(node());

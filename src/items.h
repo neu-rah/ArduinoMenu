@@ -73,7 +73,10 @@
 
         virtual void clearChanged(const navNode &nav,const menuOut& out,bool sub) {dirty=false;}
         virtual Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr=0);//raw print to output device
-        virtual bool changed(const navNode &nav,const menuOut& out,bool sub=true,bool test=false) {return dirty;}
+        virtual bool changed(const navNode &nav,const menuOut& out,bool sub=true,bool test=false) {
+          trace(MENU_DEBUG_OUT<<"prompt::changed"<<endl);
+          return dirty;
+        }
         //this is the system version of enter handler, its used by elements like toggle
         virtual result sysHandler(SYS_FUNC_PARAMS) {return proceed;}
         virtual result eventHandler(eventMask e,navNode& nav,idx_t i) {
@@ -209,8 +212,8 @@
           reflex=target();
         }
         bool changed(const navNode &nav,const menuOut& out,bool sub=true,bool test=false) override {
-          trace(if (test&&dirty) Serial<<"field dirty"<<endl);
-          trace(if (test&&(reflex!=target())) Serial<<"reflex!=target reflex:"<<reflex<<" target:"<<target()<<endl);
+          trace(if (test&&dirty) MENU_DEBUG_OUT<<"field dirty"<<endl);
+          trace(if (test&&(reflex!=target())) MENU_DEBUG_OUT<<"reflex!=target reflex:"<<reflex<<" target:"<<target()<<endl);
           return dirty||(reflex!=target());
         }
         #ifdef MENU_ASYNC
@@ -326,8 +329,8 @@
           for(idx_t i=0;i<sz();i++)
             if (((menuValue<T>*)&operator[](i))->target()==target()) return i;
           #ifdef MENU_DEBUG
-            Serial.print(F("value out of range "));
-            Serial.println(target());Serial.flush();
+            MENU_DEBUG_OUT.print(F("value out of range "));
+            MENU_DEBUG_OUT.println(target());MENU_DEBUG_OUT.flush();
             assert(false);
           #endif
           return -1;
@@ -335,9 +338,9 @@
         idx_t sync(idx_t i) override {
           #ifdef MENU_DEBUG
             if (!(i>=0&&i<sz())){
-              print_P(Serial,getText());
-              Serial.print(F(" : value out of range "));
-              Serial.println(i);
+              print_P(MENU_DEBUG_OUT,getText());
+              MENU_DEBUG_OUT.print(F(" : value out of range "));
+              MENU_DEBUG_OUT.println(i);
             }
             assert(i>=0&&i<sz());
           #endif
@@ -453,7 +456,7 @@
     #ifdef MENU_ASYNC
       template<typename T>
       bool menuValue<T>::async(const char*uri,navRoot& root,idx_t lvl) {
-        trace(Serial<<(*(prompt*)this)<<" menuValue::async! lvl:"<<lvl<<" navRoot.level:"<<root.level<<" navFocus:"<<(*(prompt*)root.navFocus)<<endl);
+        trace(MENU_DEBUG_OUT<<(*(prompt*)this)<<" menuValue::async! lvl:"<<lvl<<" navRoot.level:"<<root.level<<" navFocus:"<<(*(prompt*)root.navFocus)<<endl);
         return prompt::async(uri,root,lvl);
       }
     #endif
@@ -463,7 +466,7 @@
 
     template<typename T>
     Used menuField<T>::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr) {
-      trace(print_P(out,getText());Serial<<" menuField<T>::printTo "<<reflex<<endl);
+      trace(print_P(out,getText());MENU_DEBUG_OUT<<" menuField<T>::printTo "<<reflex<<endl);
       reflex=target();
       return fieldBase::printTo(root,sel,out,idx,len,panelNr);
     }
@@ -508,11 +511,11 @@
     #ifdef MENU_ASYNC
       template<typename T>
       bool toggle<T>::async(const char*uri,navRoot& root,idx_t lvl) {
-        trace(Serial<<(*(prompt*)this)<<" toggle::async! uri:"<<uri<<endl);
+        trace(MENU_DEBUG_OUT<<(*(prompt*)this)<<" toggle::async! uri:"<<uri<<endl);
         if(uri[0]) {
           trace("selecting value by index!");
           idx_t n=menuNode::parseUriNode(uri);
-          trace(Serial<<"n:"<<n<<" sel:"<<root.path[lvl].sel<<endl);
+          trace(MENU_DEBUG_OUT<<"n:"<<n<<" sel:"<<root.path[lvl].sel<<endl);
           menuVariant<T>::sync(n);
           return true;
         }

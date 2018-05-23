@@ -9,7 +9,7 @@ using namespace Menu;
 ////////////////////////////////////////////////////////////////////////////////
 
 navCmd navNode::navKeys(char ch) {
-  trace(Serial<<"navNode::navKeys"<<endl);
+  trace(MENU_DEBUG_OUT<<"navNode::navKeys"<<endl);
   if (strchr(numericChars,ch)) {
     return navCmd(idxCmd,ch-'1');
   }
@@ -20,27 +20,27 @@ navCmd navNode::navKeys(char ch) {
 
 // generic navigation (aux function)
 navCmd navNode::doNavigation(navCmd cmd) {
-  trace(Serial<<"navNode::doNavigation"<<endl);
+  trace(MENU_DEBUG_OUT<<"navNode::doNavigation"<<endl);
   idx_t osel=sel;
   idx_t nsel=sel;
   navCmd rCmd=cmd;
   bool changed=false;
-  // trace(if(cmd.cmd!=noCmd) Serial<<"navigate "<<*target<<" with command:"<<cmd.cmd<<" index:"<<nsel<<endl);
+  // trace(if(cmd.cmd!=noCmd) MENU_DEBUG_OUT<<"navigate "<<*target<<" with command:"<<cmd.cmd<<" index:"<<nsel<<endl);
   switch(cmd.cmd) {
     /*case scrlDownCmd:
       if (!target->isVariant())
         root->out.doNav(cmd,*this);*/
     case upCmd:
-      // trace(Serial<<"up"<<endl;);
+      // trace(MENU_DEBUG_OUT<<"up"<<endl;);
       nsel++;
       if (nsel>=sz()) {if(wrap()) nsel=0; else nsel=sz()-1;}
-      // trace(Serial<<"new sel:"<<nsel<<endl);
+      // trace(MENU_DEBUG_OUT<<"new sel:"<<nsel<<endl);
       break;
       /*case scrlUpCmd:
         if (!target->isVariant())
           root->out.doNav(cmd,*this);*/
     case downCmd:
-      // trace(Serial<<"down"<<endl);
+      // trace(MENU_DEBUG_OUT<<"down"<<endl);
       if (nsel||!target->is(_asPad)) {
         nsel--;
         if (nsel<0) {if(wrap()) nsel=sz()-1; else nsel=0;}
@@ -66,11 +66,11 @@ navCmd navNode::doNavigation(navCmd cmd) {
     case noCmd:
     default: break;
   }
-  // trace(Serial<<"changed:"<<changed<<" sels?"<<(osel!=nsel)<<endl);
+  // trace(MENU_DEBUG_OUT<<"changed:"<<changed<<" sels?"<<(osel!=nsel)<<endl);
   if((osel!=nsel)||changed) {//selection changed, must have been and idx/sel or an up/down movement
-    // trace(Serial<<"changed"<<endl);
+    // trace(MENU_DEBUG_OUT<<"changed"<<endl);
     if (target->sysStyles()&(_parentDraw|_isVariant)) {
-      trace(Serial<<"setting dirty"<<endl);
+      trace(MENU_DEBUG_OUT<<"setting dirty"<<endl);
       target->dirty=true;
       //this works but might be too much, we dont want to invaludate all the menu!
       // if (_parentDraw/*&&root->level*/) root->path[root->level-1].target->dirty=true;
@@ -89,12 +89,12 @@ navCmd navNode::doNavigation(navCmd cmd) {
     event(focusEvent,nsel);
     if (selFocusEvent&target->events()) target->operator()(selFocusEvent,*this,*target);
   } //else its an enter/esc or a non-changing index!
-  //Serial<<"doNavigation returning "<<rCmd<<endl;
+  //MENU_DEBUG_OUT<<"doNavigation returning "<<rCmd<<endl;
   return rCmd;
 }
 
 result navNode::event(eventMask e,idx_t i) {
-  trace(Serial<<"navNode::event"<<endl);
+  trace(MENU_DEBUG_OUT<<"navNode::event"<<endl);
   prompt& p=operator[](i);
   eventMask m=p.events();
   eventMask me=(eventMask)(e&m);
@@ -103,13 +103,13 @@ result navNode::event(eventMask e,idx_t i) {
 }
 
 result navNode::sysEvent(eventMask e,idx_t i) {
-  trace(Serial<<"navNode::sysEvent"<<endl);
+  trace(MENU_DEBUG_OUT<<"navNode::sysEvent"<<endl);
   prompt& p=operator[](i);
   return p(e,*this,p);
 }
 
 void navRoot::doInput(menuIn& in) {
-  trace(Serial<<"navRoot::doInput"<<endl);
+  trace(MENU_DEBUG_OUT<<"navRoot::doInput"<<endl);
   if (sleepTask) {
     char c=in.read();
     if (options->getCmdChar(enterCmd)==c || options->getCmdChar(escCmd)==c) idleOff();
@@ -117,15 +117,15 @@ void navRoot::doInput(menuIn& in) {
     idx_t inputBurstCnt=inputBurst+1;
     //if (in.available())
     while ((!sleepTask)&&in.available()&&(--inputBurstCnt)) {//if not doing something else and there is input
-      //Serial.print(".");
+      //MENU_DEBUG_OUT.print(".");
       navFocus->parseInput(node(),in);//deliver navigation input task to target...
     }
   }
-  trace(Serial<<"navRoot::doInput ended!"<<endl);
+  trace(MENU_DEBUG_OUT<<"navRoot::doInput ended!"<<endl);
 }
 
 void navRoot::doNav(navCmd cmd) {
-  trace(Serial<<"navRoot::doNav"<<endl);
+  trace(MENU_DEBUG_OUT<<"navRoot::doNav"<<endl);
   if (sleepTask&&(cmd.cmd==enterCmd || cmd.cmd==escCmd)) idleOff();
   else if (!sleepTask) switch (cmd.cmd) {
     case scrlUpCmd:
@@ -138,21 +138,21 @@ void navRoot::doNav(navCmd cmd) {
 }
 
 navCmd navRoot::enter() {
-  trace(Serial<<"navRoot::enter"<<endl);
+  trace(MENU_DEBUG_OUT<<"navRoot::enter"<<endl);
   if (
     selected().enabled
     &&selected().sysHandler(activateEvent,node(),selected())==proceed
   ) {
-    trace(Serial<<"enabled by syshandler"<<endl);
+    trace(MENU_DEBUG_OUT<<"enabled by syshandler"<<endl);
     prompt& sel=selected();
     bool canNav=sel.canNav();
     bool isMenu=sel.isMenu();
     result go=node().event(enterEvent);//item event sent here
     navCmd rCmd=enterCmd;
     if (go==proceed&&isMenu&&canNav) {
-      trace(Serial<<"go for canNav && isMenu"<<endl);
+      trace(MENU_DEBUG_OUT<<"go for canNav && isMenu"<<endl);
       if (level<maxDepth) {
-        trace(Serial<<"level<maxDepth"<<endl);
+        trace(MENU_DEBUG_OUT<<"level<maxDepth"<<endl);
         active().dirty=true;
         menuNode* dest=(menuNode*)&selected();
         level++;
@@ -167,7 +167,7 @@ navCmd navRoot::enter() {
       }
     } else if (go==quit&&!selected().isMenu()) exit();
     if (canNav) {
-      trace(Serial<<"canNav"<<endl);
+      trace(MENU_DEBUG_OUT<<"canNav"<<endl);
       navFocus=(navTarget*)&sel;
       navFocus->dirty=true;
       if (!isMenu) in.fieldOn();
@@ -178,7 +178,7 @@ navCmd navRoot::enter() {
 }
 
 navCmd navRoot::exit() {
-  trace(Serial<<"navRoot::exit"<<endl);
+  trace(MENU_DEBUG_OUT<<"navRoot::exit"<<endl);
   navFocus->dirty=true;
   if (navFocus->isMenu()) {
     if (level) {
@@ -209,7 +209,7 @@ bool navNode::changed(const menuOut& out) const {
 }
 
 bool navRoot::changed(const menuOut& out) {
-  trace(Serial.println("DEBUG: changed"));
+  trace(MENU_DEBUG_OUT.println("DEBUG: changed"));
   if (sleepTask) return idleChanged;
   return node().changed(out);
 }
@@ -229,7 +229,7 @@ bool navRoot::changed(const menuOut& out) {
 //   return seek(sel,len);
 // }
 // prompt* navRoot::seek(idx_t* uri,idx_t len) {
-//   trace(Serial<<"menuNode::seek"<<endl);
+//   trace(MENU_DEBUG_OUT<<"menuNode::seek"<<endl);
 //   if (len&&uri[0]>=0&&uri[0]<sz()) {
 //     prompt& e=operator[](uri[0]);
 //     assert(e.isMenu());
@@ -240,29 +240,29 @@ void navRoot::escTo(idx_t lvl) {
   assert(lvl>=0);
   // if (lvl<0) return;
   while(level>lvl) {
-    trace(Serial<<"escaping "<<level<<endl);
+    trace(MENU_DEBUG_OUT<<"escaping "<<level<<endl);
     doNav(escCmd);
   }
 }
 bool navRoot::async(const char* at) {
-  trace(Serial<<"navRoot::async "<<at<<endl);
+  trace(MENU_DEBUG_OUT<<"navRoot::async "<<at<<endl);
   if (!(at&&*at)||at[0]=='/')
     return path[0].target->async(at, *this, 0);
   else
     return active().async(at, *this, level+1);//TODO: check max_depth here!
 }
 menuOut& navRoot::printPath(menuOut& o,menuNode* to) const {
-  trace(Serial<<"printPath:");
+  trace(MENU_DEBUG_OUT<<"printPath:");
   for(idx_t n=0;n<level&&path[n].target!=to;n++) {
     o.print('/');
     o.print(path[n].sel);
   }
-  trace(Serial<<endl);
+  trace(MENU_DEBUG_OUT<<endl);
   return o;
 }
 //async printMenu on arbitrary menuOut device
 Used navRoot::printMenu(menuOut& o) const {
-  trace(Serial<<"navRoot::printMenu(menuOut& o)"<<endl);
+  trace(MENU_DEBUG_OUT<<"navRoot::printMenu(menuOut& o)"<<endl);
   if ((active().sysStyles()&_parentDraw)&&level)
     return o.printMenu(path[level-1]);
   else return o.printMenu(node());

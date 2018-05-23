@@ -42,17 +42,17 @@ public:
     switch(cmd.cmd) {
       case selCmd:
       case idxCmd:
-        //Serial<<"IDX"<<endl;
+        //MENU_DEBUG_OUT<<"IDX"<<endl;
         menuField<T>::tunning=true;//prepare for exit
         return doNav(nav,cancelFieldOptions::accelSendEsc?escCmd:enterCmd);
       case escCmd:
         editing=!cancelFieldOptions::quitOnEsc;
         //menuField<T>::tunning=false;
-        //Serial<<"ESC"<<endl;
+        //MENU_DEBUG_OUT<<"ESC"<<endl;
         menuField<T>::target()=original;
         break;
       case enterCmd:
-        //Serial<<"ENTER"<<endl;
+        //MENU_DEBUG_OUT<<"ENTER"<<endl;
         if (menuField<T>::tunning||nav.root->nav2D||!menuField<T>::tune())
           editing=false;
         break;
