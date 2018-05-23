@@ -515,7 +515,7 @@ bool menuNode::_changes(const navNode &nav,const menuOut& out,bool sub,bool test
     // idx_t lev=level-(nav.root->navFocus->has(_parentDraw)&&(nav.root->navFocus->isMenu()||nav.root->navFocus->has(_asPad)));
     // idx_t t=out.tops[lev];
     // idx_t t=out.tops[level];//-nav.root->navFocus->has(_parentDraw)&&has(_asPad)];
-    idx_t t=out.tops[level-(nav.root->navFocus->has(_parentDraw)||nav.root->navFocus->has(_asPad))];
+    idx_t t=out.tops[level-((nav.root->navFocus->has(_parentDraw)&&has(_menuData))||nav.root->navFocus->has(_asPad))];
     trace(MENU_DEBUG_OUT<<"t:"<<t<<endl;);
     if (sub) for(int i=0;i<my;i++,t++) {
       if (t>=sz()) break;
