@@ -462,7 +462,7 @@ idx_t menuVariantBase::togglePrintTo(navRoot &root,bool sel,menuOut& out, idx_t 
     l+=operator[](at).printRaw(out,len-l);
     #ifdef MENU_FMT_WRAPS
   out.fmtEnd(*this,menuOut::fmtToggle,root.node(),idx);
-    #endif
+    #endif-
   }
   return l;
 }
@@ -479,7 +479,6 @@ void menuVariantBase::doNav(navNode& nav,navCmd cmd) {
 
 template<bool clear>
 bool menuNode::_changes(const navNode &nav,const menuOut& out,bool sub,bool test) {
-  trace(MENU_DEBUG_OUT<<*this<<" menuNode::"<<(clear?"clearChanged":"changed")<<" test:"<<test<<endl);
   if (clear) dirty=false;
   else if (dirty) {
     _trace(if (test) MENU_DEBUG_OUT<<"just dirty!"<<endl);
@@ -515,15 +514,32 @@ bool menuNode::_changes(const navNode &nav,const menuOut& out,bool sub,bool test
     // idx_t lev=level-(nav.root->navFocus->has(_parentDraw)&&(nav.root->navFocus->isMenu()||nav.root->navFocus->has(_asPad)));
     // idx_t t=out.tops[lev];
     // idx_t t=out.tops[level];//-nav.root->navFocus->has(_parentDraw)&&has(_asPad)];
-    idx_t t=out.tops[level-((nav.root->navFocus->has(_parentDraw)&&has(_menuData))||nav.root->navFocus->has(_asPad))];
+    // idx_t t=out.tops[level-((nav.root->navFocus->has(_parentDraw)&&nav.root->navFocus->has(_menuData))||nav.root->navFocus->has(_asPad))];
+    // idx_t t=out.tops[level-(nav.root->path[level].target->has(_asPad))];
+    menuNode* target=nav.root->path[level].target;
+    idx_t t=out.tops[level-(target->has(_asPad)||target->has(_parentDraw))];
     trace(MENU_DEBUG_OUT<<"t:"<<t<<endl;);
     if (sub) for(int i=0;i<my;i++,t++) {
       if (t>=sz()) break;
+      _trace(if (debugFlag) {
+        MENU_DEBUG_OUT<<*this
+          <<" level:"<<nav.root->level
+          <<" focus:"<<*nav.root->navFocus
+          <<" root target:"<<*nav.root->path[nav.root->level].target
+          <<" nav target:"<<*nav.target
+          <<" top:"<<out.tops[nav.root->level]
+          <<" asPad:"<<has(_asPad)
+          <<" parentdraw:"<<has(_parentDraw)
+          <<" menuData:"<<has(_menuData)
+          <<" draw level:"<<nav.root->drawLevel()
+          <<" cur panel:"<<out.panels.cur
+          <<endl;
+        });
       if (clear) operator[](t).clearChanged(nav,out,false);
       {
         trace(MENU_DEBUG_OUT<<"checking:"<<operator[](t)<<endl);
         if (operator[](t).changed(nav,out,false,test)) {
-          _trace(if (test) MENU_DEBUG_OUT<<"sub changed!"<<endl);
+          trace(if (test) MENU_DEBUG_OUT<<"sub changed!"<<endl);
           return true;
         }
       }

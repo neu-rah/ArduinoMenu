@@ -69,6 +69,7 @@
         inline result sysEvent(eventMask e) {return sysEvent(e,sel);}//send event to current item
         navCmd navKeys(char ch);
         navCmd doNavigation(navCmd cmd);//aux function
+        // inline int getPanelIdx(menuOut& out) const {return out.getPanelIdx(*this);}
         bool changed(const menuOut& out) const;
         inline prompt& operator[](idx_t i) const {return target->operator[](i);}
 
@@ -121,6 +122,9 @@
         inline navNode& node() const {return path[level];}
         inline menuNode& active() const {return *node().target;}
         inline prompt& selected() const {return active()[node().sel];}
+        inline int drawLevel() const {
+          return level-(navFocus->has((systemStyles)(_parentDraw|_asPad))&&navFocus->has(_menuData));
+        }
         bool changed(const menuOut& out);
         inline bool changed(idx_t n) {return changed(out[n]);}
         #ifdef MENU_ASYNC
