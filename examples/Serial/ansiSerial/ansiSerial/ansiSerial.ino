@@ -20,8 +20,11 @@ www.r-site.net
 #include <menu.h>
 #include <menuIO/ansiSerialOut.h>
 #include <menuIO/serialIn.h>
+// #include <streamFlow.h>
+#include <AnsiStream.h>
 
 using namespace Menu;
+using namespace ANSI;
 
 #ifndef DEBUG
 Print& operator<<(Print&o, Menu::prompt&p) {
@@ -276,8 +279,8 @@ result alert(menuOut& o,idleEvent e) {
   if (e==idling)
     o <<ANSI::xy(0,0)
       <<ANSI::setBackgroundColor(BLACK)
-      <<ANSI::setForegroundColor(WHITE)
-      <<"alert test"
+      <<ANSI::setForegroundColor(WHITE);
+    Serial<<"alert test"
       <<endl
       <<"press [select] to continue..."
       <<endl;
@@ -294,11 +297,11 @@ result idle(menuOut& o,idleEvent e) {
   switch(e) {
     //case idleStart:o<<"suspending menu!"<<endl;break;
     case idling:
-      o
-      <<ANSI::xy(0,0)
-      <<ANSI::setBackgroundColor(BLACK)
-      <<ANSI::setForegroundColor(WHITE)
-      <<"suspended..."<<endl;
+      Serial
+        <<ANSI::xy(0,0)
+        <<ANSI::setBackgroundColor(BLACK)
+        <<ANSI::setForegroundColor(WHITE);
+      Serial<<"suspended..."<<endl;
       break;
     default: break;
     //case idleEnd:o<<"resuming menu."<<endl;break;

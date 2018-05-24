@@ -86,19 +86,19 @@ CHOOSE(chooseTest,chooseMenu,"Choose",doNothing,noEvent,noStyle
   ,VALUE("Last",-1,doNothing,noEvent)
 );
 
-// //customizing a prompt look!
-// //by extending the prompt class
-// class altPrompt:public prompt {
-// public:
-//   altPrompt(constMEM promptShadow& p):prompt(p) {}
-//   Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr) override {
-//     return out.printRaw("special prompt!",len);;
-//   }
-// };
+//customizing a prompt look!
+//by extending the prompt class
+class altPrompt:public prompt {
+public:
+  altPrompt(constMEM promptShadow& p):prompt(p) {}
+  Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr) override {
+    return out.printRaw("special prompt!",len);;
+  }
+};
 
 MENU(subMenu,"Sub-Menu",doNothing,noEvent,noStyle
   ,OP("Sub1",doNothing,noEvent)
-  // ,altOP(altPrompt,"",doNothing,noEvent)
+  ,altOP(altPrompt,"",doNothing,noEvent)
   ,EXIT("<Back")
 );
 
@@ -113,8 +113,8 @@ altMENU(menu,time,"Time",doNothing,noEvent,noStyle,(systemStyles)(_asPad|Menu::_
 );
 
 char* constMEM hexDigit MEMMODE="0123456789ABCDEF";
-char* constMEM hexNr[] MEMMODE={"0","x",hexDigit,hexDigit};
-char buf1[]="0x11";
+char* constMEM hexNr[] MEMMODE={hexDigit,hexDigit};
+char buf1[]="00";
 
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,OP("Op1",doNothing,noEvent)

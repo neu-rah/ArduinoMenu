@@ -122,9 +122,6 @@
         inline navNode& node() const {return path[level];}
         inline menuNode& active() const {return *node().target;}
         inline prompt& selected() const {return active()[node().sel];}
-        inline int drawLevel() const {
-          return level-(navFocus->has((systemStyles)(_parentDraw|_asPad))&&navFocus->has(_menuData));
-        }
         bool changed(const menuOut& out);
         inline bool changed(idx_t n) {return changed(out[n]);}
         #ifdef MENU_ASYNC
@@ -155,6 +152,9 @@
           else {
             idleChanged=false;//turn it off here so that sleepTask can force it on again
             out.idle(sleepTask,idling);
+            #ifdef MENU_IDLE_BKGND
+              if (idleTask!=sleepTask) out.idle(idleTask,idling);
+            #endif
           }
         }
         inline void poll() {doInput();doOutput();};//fire and forget mode
@@ -169,9 +169,15 @@
           idleChanged=true;
           active().dirty=true;
           out.idle(sleepTask,idleStart);
+          #ifdef MENU_IDLE_BKGND
+            if (idleTask!=sleepTask) out.idle(idleTask,idleStart);
+          #endif
         }
         inline void idleOff() {
           out.idle(sleepTask,idleEnd);
+          #ifdef MENU_IDLE_BKGND
+            if (idleTask!=sleepTask) out.idle(idleTask,idleEnd);
+          #endif
           sleepTask=NULL;
           active().dirty=true;
           out.clear();
