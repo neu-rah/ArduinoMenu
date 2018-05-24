@@ -185,81 +185,11 @@ Used textField::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len
 bool menuNode::changed(const navNode &nav,const menuOut& out,bool sub,bool test) {
   trace(MENU_DEBUG_OUT<<*this<<" menuNode::changed"<<endl);
   return menuNode::_changes<false>(nav,out,sub,test);
-  /*if (dirty) {
-    trace(if (test) MENU_DEBUG_OUT<<"just dirty!"<<endl);
-    return true;
-  }
-  bool appd=has((systemStyles)(_asPad|_parentDraw));
-  if (appd) {
-    trace(MENU_DEBUG_OUT<<"appd!"<<endl;);
-    for(int i=0;i<sz();i++)
-      if (operator[](i).changed(nav,out,false,test)) {
-        // trace(if (test) MENU_DEBUG_OUT<<"APPD! "<<operator[](i).type()<<endl);
-        return true;
-      }
-  } else {
-    trace(MENU_DEBUG_OUT<<*this<<"!appd"<<endl;);
-    if (!(nav.target==this&&sub)) {
-      trace(if (test&&dirty) MENU_DEBUG_OUT<<"indirect!"<<endl);
-      return dirty;// second hand check, just report self
-    }
-    idx_t level=nav.root->level;
-    if (parentDraw()) {
-      trace(MENU_DEBUG_OUT<<"return changed of parent-draw element"<<endl);
-      trace(if (test) MENU_DEBUG_OUT<<"parentDraw()!"<<endl);
-      return nav.root->path[level-1].target->changed(nav.root->path[level-1],out,sub,test);
-    }
-    // idx_t tit=hasTitle(nav.root->path[lev])?1:0;//TODO: this might not be correct.. checking
-    idx_t my=out.maxY()-((has(showTitle)||(nav.root->showTitle&&!has(noTitle)))?1:0);
-    // trace(MENU_DEBUG_OUT<<"level:"<<level<<" target:"<<*nav.root->navFocus<<" "<<nav.root->navFocus->has(_parentDraw)<<" "<<nav.root->navFocus->has(_asPad)<<endl);
-    // idx_t lev=level-(nav.root->navFocus->has(_parentDraw)&&nav.root->navFocus->isMenu());
-    idx_t t=out.tops[level-nav.root->navFocus->has(_parentDraw)&&has(_asPad)];
-    // trace(MENU_DEBUG_OUT<<"tit:"<<tit<<endl;);
-    // idx_t t=out.tops[lev];
-    trace(MENU_DEBUG_OUT<<"t:"<<t<<endl;);
-    if (sub) for(int i=0;i<my;i++,t++) {
-      if (t>=sz()) break;
-      trace(MENU_DEBUG_OUT<<"checking:"<<operator[](t)<<endl);
-      if (operator[](t).changed(nav,out,false,test)) {
-        trace(if (test) MENU_DEBUG_OUT<<"sub changed!"<<endl);
-        return true;
-      }
-    }
-  }
-  return false;*/
 }
 
 void menuNode::clearChanged(const navNode &nav,const menuOut& out,bool sub) {
   trace(MENU_DEBUG_OUT<<" menuOut::clearChanged "<<nav);
   _changes<true>(nav,out,sub,false);
-  /*dirty=false;
-  if (has((systemStyles)(_asPad|_parentDraw))) {
-    for(int i=0;i<sz();i++)
-      operator[](i).clearChanged(nav,out,false);
-  } else {
-    if (!(nav.target==this&&sub)) return;
-    idx_t level=nav.root->level;
-    if (parentDraw())
-      return nav.root->path[level-1].target->clearChanged(nav.root->path[level-1],out,sub);
-    idx_t my=out.maxY()-((has(showTitle)||(nav.root->showTitle&&!has(noTitle)))?1:0);
-    // idx_t lev=level-(nav.root->navFocus->has(_parentDraw)&&nav.root->navFocus->isMenu());
-    // idx_t t=out.tops[lev];
-    idx_t t=out.tops[level-nav.root->navFocus->has(_parentDraw)&&has(_asPad)];
-    for(idx_t i=0;i<my;i++,t++) {//only signal visible
-      if (t>=sz()) break;//menu ended
-      operator[](t).clearChanged(nav,out,false);
-    }
-  }
-  #ifdef MENU_DEBUG
-  if(changed(nav,out,sub,true)) {
-    MENU_DEBUG_OUT<<"ERROR clear changed fail!"<<endl;
-    MENU_DEBUG_OUT<<*this<<endl;
-    MENU_DEBUG_OUT<<"level:"<<nav.root->level<<endl;
-    // MENU_DEBUG_OUT<<"type:"<<type()<<endl;
-    MENU_DEBUG_OUT.flush();
-    while(1);
-  }
-  #endif*/
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -375,9 +305,6 @@ void fieldBase::doNav(navNode& nav,navCmd cmd) {
       break;
     default:break;
   }
-  /*if (ch==options->getCmdChar(enterCmd)&&!tunning) {
-    nav.event(enterEvent);
-  }*/
   if (dirty)//sending enter or update event
     nav.event(nav.root->useUpdateEvent?updateEvent:enterEvent);
 }
@@ -481,7 +408,7 @@ template<bool clear>
 bool menuNode::_changes(const navNode &nav,const menuOut& out,bool sub,bool test) {
   if (clear) dirty=false;
   else if (dirty) {
-    _trace(if (test) MENU_DEBUG_OUT<<"just dirty!"<<endl);
+    trace(if (test) MENU_DEBUG_OUT<<"just dirty!"<<endl);
     return true;
   }
   if (has((systemStyles)(_asPad|_parentDraw))) {
@@ -489,52 +416,30 @@ bool menuNode::_changes(const navNode &nav,const menuOut& out,bool sub,bool test
     for(int i=0;i<sz();i++)
       if (clear) operator[](i).clearChanged(nav,out,false);
       else if (operator[](i).changed(nav,out,false,test)) {
-        _trace(if (test) MENU_DEBUG_OUT<<"APPD! "<<operator[](i)<<endl);
+        trace(if (test) MENU_DEBUG_OUT<<"APPD! "<<operator[](i)<<endl);
         return true;
       }
     return false;
   } else {
-    // if (!(nav.target==this&&sub)) return;???
     if (!(clear||(nav.target==this&&sub))) {
-      _trace(if (test&&dirty) MENU_DEBUG_OUT<<"indirect!"<<endl);
+      trace(if (test&&dirty) MENU_DEBUG_OUT<<"indirect!"<<endl);
       return dirty;// second hand check, just report self
     }
     idx_t level=nav.root->level;
     if (parentDraw()) {
       if (clear) nav.root->path[level-1].target->clearChanged(nav.root->path[level-1],out,sub);
       else {
-        _trace(MENU_DEBUG_OUT<<"return changed of parent-draw element"<<endl);
-        _trace(if (test) MENU_DEBUG_OUT<<"parentDraw()!"<<endl);
+        trace(MENU_DEBUG_OUT<<"return changed of parent-draw element"<<endl);
+        trace(if (test) MENU_DEBUG_OUT<<"parentDraw()!"<<endl);
         return nav.root->path[level-1].target->changed(nav.root->path[level-1],out,sub,test);
       }
     }
-    // idx_t tit=hasTitle(nav.root->path[lev])?1:0;//TODO: this might not be correct.. checking
     idx_t my=out.maxY()-((has(showTitle)||(nav.root->showTitle&&!has(noTitle)))?1:0);
-    // trace(MENU_DEBUG_OUT<<"level:"<<level<<" target:"<<*nav.root->navFocus<<" "<<nav.root->navFocus->has(_parentDraw)<<" "<<nav.root->navFocus->has(_asPad)<<endl);
-    // idx_t lev=level-(nav.root->navFocus->has(_parentDraw)&&(nav.root->navFocus->isMenu()||nav.root->navFocus->has(_asPad)));
-    // idx_t t=out.tops[lev];
-    // idx_t t=out.tops[level];//-nav.root->navFocus->has(_parentDraw)&&has(_asPad)];
-    // idx_t t=out.tops[level-((nav.root->navFocus->has(_parentDraw)&&nav.root->navFocus->has(_menuData))||nav.root->navFocus->has(_asPad))];
-    // idx_t t=out.tops[level-(nav.root->path[level].target->has(_asPad))];
     menuNode* target=nav.root->path[level].target;
     idx_t t=out.tops[level-(target->has(_asPad)||target->has(_parentDraw))];
     trace(MENU_DEBUG_OUT<<"t:"<<t<<endl;);
     if (sub) for(int i=0;i<my;i++,t++) {
       if (t>=sz()) break;
-      _trace(if (debugFlag) {
-        MENU_DEBUG_OUT<<*this
-          <<" level:"<<nav.root->level
-          <<" focus:"<<*nav.root->navFocus
-          <<" root target:"<<*nav.root->path[nav.root->level].target
-          <<" nav target:"<<*nav.target
-          <<" top:"<<out.tops[nav.root->level]
-          <<" asPad:"<<has(_asPad)
-          <<" parentdraw:"<<has(_parentDraw)
-          <<" menuData:"<<has(_menuData)
-          <<" draw level:"<<nav.root->drawLevel()
-          <<" cur panel:"<<out.panels.cur
-          <<endl;
-        });
       if (clear) operator[](t).clearChanged(nav,out,false);
       {
         trace(MENU_DEBUG_OUT<<"checking:"<<operator[](t)<<endl);
