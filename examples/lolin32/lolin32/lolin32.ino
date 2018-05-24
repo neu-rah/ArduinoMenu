@@ -21,6 +21,8 @@ mcu: esp32 lolin with builtin oled
 using namespace Menu;
 
 // #define LEDPIN LED_BUILTIN
+#define SDA 5
+#define SCL 4
 
 #include <Wire.h>
 #define fontName u8g2_font_7x13_mf
@@ -31,9 +33,9 @@ using namespace Menu;
 #define U8_Width 128
 #define U8_Height 64
 #define USE_HWI2C
-// U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE, 4, 5);
-U8G2_SSD1306_128X64_VCOMH0_F_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE, 4, 5);//allow contrast change
-// U8G2_SSD1306_128X64_NONAME_1_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE, 4, 5);
+// U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE, SCL, SDA);
+U8G2_SSD1306_128X64_VCOMH0_F_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE, SCL, SDA);//allow contrast change
+// U8G2_SSD1306_128X64_NONAME_1_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE, SCL, SDA);
 
 
 // define menu colors --------------------------------------------------------
@@ -175,7 +177,7 @@ void setup() {
   Serial.begin(115200);
   while(!Serial);
   Serial.println("menu 4.x test");Serial.flush();
-  Wire.begin(5,4);
+  Wire.begin(SDA,SCL);
   u8g2.begin();
   u8g2.setFont(fontName);
   // disable second option
