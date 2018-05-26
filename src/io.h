@@ -140,9 +140,10 @@
       public:
         idx_t resX=1;
         idx_t resY=1;
+        idx_t fontMarginX=1;//in pixels, compensate vertical font alignment
         idx_t fontMarginY=1;//in pixels, compensate vertical font alignment
         gfxOut(idx_t rx,idx_t ry,idx_t* t,panelsList &p,menuOut::styles st=menuOut::minimalRedraw,idx_t fontMarginY=1)
-          :menuOut(t,p,st),resX(rx),resY(ry) {}
+          :menuOut(t,p,st),resX(rx),resY(ry),fontMarginY(fontMarginY) {}
         idx_t startCursor(navRoot& root,idx_t x,idx_t y,bool charEdit,idx_t panelNr) override {
           if (charEdit) {
             rect(panelNr,  x-1,  y, 1, 1, bgColor, false, enabledStatus, false);
