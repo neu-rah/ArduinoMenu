@@ -87,15 +87,18 @@ void loop() {
 - async navigation for stateless clients (as web)
 - web interface (experimental)
 - can be confined to a display area (numeric fields can still overflow the area, user should take account for them)
-- Tested on Arduino: AVR, ARM, Teensy 3.2, ESP8266
+- Tested on Arduino AVR's & ARM, Teensy, ESP8266, Esp32, nRF52, STM32
 
 ## Version 2.x videos
 [![IMAGE ALT TEXT](https://img.youtube.com/vi/wHv5sU-HXVI/2.jpg)](https://youtu.be/wHv5sU-HXVI "Arduino menu 2.0 fields video") [![IMAGE ALT TEXT](https://img.youtube.com/vi/W-TRCziF67g/2.jpg)](https://youtu.be/W-TRCziF67g "Arduino menu basic features video")
 
 ## Applications
 
-Some applications using ArduinoMenu, some using older versions.  
+Some applications using ArduinoMenu, (current and older versions).  
 Do you have another? please let me know on gitter or email me.
+
+**PANOBOT** A Panorama robot  
+https://github.com/RobertFach/panobot
 
 **teensy-midi-looper** Microcontroller-based midi performance sequencer  
 https://github.com/newdigate/teensy-midi-looper
@@ -112,16 +115,13 @@ https://github.com/BennehBoy/LRDuino
 **LRDuinoTD5** In car multi gauge system - STM32, SSD1306, MAX31856, ADXL345, L9637D, TD5 ECU  
 https://github.com/BennehBoy/LRDuinoTD5
 
-**PANOBOT** A Panorama robot  
-https://github.com/RobertFach/panobot
-
-**thom-radio** Internet radio build
+**thom-radio** Internet radio build  
 https://github.com/evfool/thom-radio
 
-**MIDI_drums** 7 chanel piezo MIDI drum box with menu on LCD
+**MIDI_drums** 7 chanel piezo MIDI drum box with menu on LCD  
 https://github.com/Sobollion/MIDI_drums
 
-**BalancingRobot**
+**BalancingRobot**  
 https://github.com/SLBarker/BalancingRobot
 
 **swatili** 50l water meter with valve control, lcd, buttons, rtc and hall effect pulse reader  
@@ -136,11 +136,11 @@ https://github.com/dontsovcmc/ArduinoMultiDesktop
 **SmartGreenHouse**  
 https://github.com/dontsovcmc/SmartGreenHouse/tree/master/src
 
-**console.arduino** Portable serial debug console project using ILI9341
+**console.arduino** Portable serial debug console project using ILI9341  
 https://github.com/malachib/console.arduino
 
 ## Platforms
-Atmel AVR, Atmel SAM, Espressif 8266, Intel ARC32, Microchip PIC32, Nordic nRF51, Teensy, TI MSP430
+Atmel AVR, Atmel SAM, Espressif 32, Espressif 8266, Intel ARC32, Microchip PIC32, Nordic nRF51, Nordic nRF52, ST STM32, Teensy, TI MSP430
 
 ## Install
 
@@ -230,7 +230,7 @@ SSD1305 128X32_NONAME, SSD1305 128X32_NONAME, SSD1305 128X64_ADAFRUIT, SSD1305 1
 
 https://github.com/olikraus/Ucglib_Arduino
 
-ST7735, ILI9163, ILI9325, ILI9341, ILI9486,LD50T6160, PCF8833, SEPS225, SSD1331, SSD1351, HX8352C
+ST7735, ILI9163, ILI9325, ILI9341, ILI9486, LD50T6160, PCF8833, SEPS225, SSD1331, SSD1351, HX8352C
 
 **Serial ANSI terminal**
 
