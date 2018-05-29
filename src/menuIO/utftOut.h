@@ -74,9 +74,9 @@ UTFT library from:
 					const panel p=panels[panelNr];
           gfx.setColor(getColor(bgColor,false,enabledStatus,false));
 					gfx.fillRect(clipX(p.x*resX),clipY(p.y*resY),clipX((p.x+p.w)*resX),clipY((p.y+p.h)*resY));
-					//Serial<<"panel:"<<panelNr<<"("<<p.x<<","<<p.y<<","<<(p.x+p.w)<<","<<(p.y+p.h)<<")"<<endl;
-					//Serial<<"rect("<<p.x*resX<<","<<p.y*resY<<","<<(p.x+p.w)*resX<<","<<(p.y+p.h)*resY<<")"<<endl;
-					//Serial<<"fillRect("<<clipX(p.x*resX)<<","<<clipY(p.y*resY)<<","<<clipX((p.x+p.w)*resX)<<","<<clipY((p.y+p.h)*resY)<<")"<<endl;
+					//MENU_DEBUG_OUT<<"panel:"<<panelNr<<"("<<p.x<<","<<p.y<<","<<(p.x+p.w)<<","<<(p.y+p.h)<<")"<<endl;
+					//MENU_DEBUG_OUT<<"rect("<<p.x*resX<<","<<p.y*resY<<","<<(p.x+p.w)*resX<<","<<(p.y+p.h)*resY<<")"<<endl;
+					//MENU_DEBUG_OUT<<"fillRect("<<clipX(p.x*resX)<<","<<clipY(p.y*resY)<<","<<clipX((p.x+p.w)*resX)<<","<<clipY((p.y+p.h)*resY)<<")"<<endl;
 					panels.nodes[panelNr]=NULL;
 				}
 

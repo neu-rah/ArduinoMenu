@@ -39,7 +39,7 @@ analogAxisIn - analog joystick axis
             cnt+=p>center?1:-1;
             last=m;
           }
-          // Serial<<endl<<"dt:"<<dt<<" >s:"<<s;
+          // MENU_DEBUG_OUT<<endl<<"dt:"<<dt<<" >s:"<<s;
         }
         inline navCmds pos() const {return inv^field_mode?negCmd:posCmd;}
         inline navCmds neg() const {return inv^field_mode?posCmd:negCmd;}

@@ -37,7 +37,7 @@ ex: -A0 means: pin A0 normally high, low when button pushed (reverse logic)
           else pinMode(keys[n].pin,INPUT);
       }
       int available(void) {
-        //Serial<<"available"<<endl;
+        //MENU_DEBUG_OUT<<"available"<<endl;
         int ch=peek();
         if (lastkey==-1) {
           lastkey=ch;
@@ -53,7 +53,7 @@ ex: -A0 means: pin A0 normally high, low when button pushed (reverse logic)
         return cnt;*/
       }
       int peek(void) {
-        //Serial<<"peek"<<endl;
+        //MENU_DEBUG_OUT<<"peek"<<endl;
         for(int n=0;n<N;n++) {
           int8_t pin=keys[n].pin;
           if (digitalRead(pin<0?-pin:pin)!=(pin<0) ) return keys[n].code;
@@ -61,13 +61,13 @@ ex: -A0 means: pin A0 normally high, low when button pushed (reverse logic)
         return -1;
       }
       int read() {
-        //Serial<<"read"<<endl;
+        //MENU_DEBUG_OUT<<"read"<<endl;
         int ch=peek();
         if (ch==lastkey) return -1;
         int tmp=lastkey;
         bool longPress=ESCAPE_TIME&&millis()-pressMills>ESCAPE_TIME;
-        //Serial<<"read lastkey="<<lastkey<<" ch="<<ch<<endl;
-        //Serial<<"down time:"<<millis()-pressMills<<endl;
+        //MENU_DEBUG_OUT<<"read lastkey="<<lastkey<<" ch="<<ch<<endl;
+        //MENU_DEBUG_OUT<<"down time:"<<millis()-pressMills<<endl;
         pressMills=millis();
         lastkey=ch;
         return longPress?options->getCmdChar(escCmd):tmp;//long press will result in escape

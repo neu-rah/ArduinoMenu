@@ -14,5 +14,4 @@ platformio.ini
 !/.gitignore
 *.odg
 examples/clickEncoder
-examples/lolin32
 examples/screenNav

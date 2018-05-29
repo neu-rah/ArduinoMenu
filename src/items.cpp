@@ -4,12 +4,12 @@ using namespace Menu;
 bool prompt::hasTitle(navNode& nav) const {return (nav.target->has(showTitle)||(nav.root->showTitle&&!nav.target->has(noTitle)));}
 
 idx_t prompt::printRaw(menuOut& out,idx_t len) const {
-  trace(Serial<<"prompt::printRaw"<<endl;print_P(Serial,getText(),len));
+  trace(MENU_DEBUG_OUT<<"prompt::printRaw"<<endl;print_P(MENU_DEBUG_OUT,getText(),len));
   return print_P(out,getText(),len);
 }
 
 Used prompt::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr) {
-  trace(Serial<<*(prompt*)this<<" prompt::printTo"<<endl);
+  trace(MENU_DEBUG_OUT<<*(prompt*)this<<" prompt::printTo"<<endl);
   #ifdef MENU_FMT_WRAPS
     out.fmtStart(*this,menuOut::fmtPrompt,root.node(),idx);
   #endif
@@ -20,15 +20,15 @@ Used prompt::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,id
   if (is((systemStyles)(_menuData|_parentDraw|_asPad))
     //&&((&((menuNode*)root.node().target)->operator[](idx))==this)
   ) {
-    trace(Serial<<*(prompt*)this<<" some parentDraw or asPad menu... idx:"<<idx<<endl);
+    trace(MENU_DEBUG_OUT<<*(prompt*)this<<" some parentDraw or asPad menu... idx:"<<idx<<endl);
     // #ifdef MENU_FMT_WRAPS
     //   out.fmtStart(*this,menuOut::fmtBody,root.node(),idx);
     // #endif
     if (root.node().target==this) {
-      trace(Serial<<"printMenu"<<endl);
+      trace(MENU_DEBUG_OUT<<"printMenu"<<endl);
       out.printMenu(root.node(), panelNr);
     } else {
-      trace(Serial<<"previewMenu"<<endl);
+      trace(MENU_DEBUG_OUT<<"previewMenu"<<endl);
       out.previewMenu(root,*(menuNode*)this,panelNr);
     }
     // #ifdef MENU_FMT_WRAPS
@@ -40,7 +40,7 @@ Used prompt::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,id
 
 #ifdef MENU_ASYNC
 bool prompt::async(const char*uri,navRoot& root,idx_t lvl) {
-  trace(Serial<<"prompt::async ["<<uri<<"]"<<endl;);
+  trace(MENU_DEBUG_OUT<<"prompt::async ["<<uri<<"]"<<endl;);
   return true;
 }
 idx_t menuNode::parseUriNode(const char*&uri) {
@@ -66,17 +66,17 @@ idx_t menuNode::parseUriNode(const char*&uri) {
 }
 
 bool menuNode::async(const char*uri,navRoot& root,idx_t lvl) {
-  trace(Serial<<*(prompt*)this<<" menuNode::async "<<uri<<" lvl:"<<lvl<<" root.level:"<<root.level<<endl);
+  trace(MENU_DEBUG_OUT<<*(prompt*)this<<" menuNode::async "<<uri<<" lvl:"<<lvl<<" root.level:"<<root.level<<endl);
   // assert(root.path[lvl].target==this);
   if ((!uri[0])||(uri[0]=='/'&&!uri[1])) {
     root.escTo(lvl);
-    trace(Serial<<*(prompt*)this<<" async true! "<<uri<<endl);
+    trace(MENU_DEBUG_OUT<<*(prompt*)this<<" async true! "<<uri<<endl);
     return true;
   }
   if (uri[0]=='/') uri++;//TODO check who does this part!
   assert(strchr(numericChars,uri[0]));
   int n=parseUriNode(uri);
-  trace(Serial<<"n:"<<n<<" sel:"<<root.path[lvl].sel<<endl);
+  trace(MENU_DEBUG_OUT<<"n:"<<n<<" sel:"<<root.path[lvl].sel<<endl);
   if (!(root.path[lvl].sel==n&&root.path[lvl+1].target==&operator[](n)&&root.level>lvl)) {
     root.escTo(lvl/*+(lvl&&root.path[lvl].sel==n?-1:0)*/);
     root.doNav(navCmd(idxCmd,n));
@@ -86,7 +86,7 @@ bool menuNode::async(const char*uri,navRoot& root,idx_t lvl) {
 #endif
 
 void textField::doNav(navNode& nav,navCmd cmd) {
-  trace(Serial<<"textField::doNav:"<<cmd.cmd<<endl);
+  trace(MENU_DEBUG_OUT<<"textField::doNav:"<<cmd.cmd<<endl);
   switch(cmd.cmd) {
     case enterCmd:
       if (edited&&!charEdit) {
@@ -138,15 +138,15 @@ void textField::doNav(navNode& nav,navCmd cmd) {
       break;
     default:break;
   }
-  trace(Serial<<"cursor:"<<cursor<<endl);
+  trace(MENU_DEBUG_OUT<<"cursor:"<<cursor<<endl);
 }
 
 Used textField::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr) {
-  trace(Serial<<*this<<" textField::printTo"<<endl);
+  trace(MENU_DEBUG_OUT<<*this<<" textField::printTo"<<endl);
   // out.fmtStart(menuOut::fmtPrompt,root.node(),idx);
   idx_t at=0;
   bool editing=this==root.navFocus;
-  trace(Serial<<"editing:"<<editing<<" len:"<<len;)
+  trace(MENU_DEBUG_OUT<<"editing:"<<editing<<" len:"<<len;)
   idx_t l=navTarget::printTo(root,sel,out,idx,len,panelNr);
   if (l<len) {
     out.write(editing?":":" ");
@@ -159,11 +159,11 @@ Used textField::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len
   #endif
   idx_t tit=hasTitle(root.node())?1:0;
   idx_t line=idx+tit;//-out.tops[root.level];
-  trace(Serial<<" tit:"<<tit<<" line:"<<line<<" cursor:"<<cursor<<" l:"<<l<<" len:"<<len<<endl;)
+  trace(MENU_DEBUG_OUT<<" tit:"<<tit<<" line:"<<line<<" cursor:"<<cursor<<" l:"<<l<<" len:"<<len<<endl;)
   idx_t c=l+1;
   while(buffer()[at]&&l++<len)
     if (at==cursor&&editing) {
-      // Serial<<"idx:"<<idx<<" line:"<<line<<" at:"<<at<<" l:"<<l<<endl;
+      // MENU_DEBUG_OUT<<"idx:"<<idx<<" line:"<<line<<" at:"<<at<<" l:"<<l<<endl;
       // c=l+1;
       l+=out.startCursor(root,l,line,charEdit);//draw textual cursor or color code start
       out.write(buffer()[at++]);//draw focused character
@@ -183,83 +183,13 @@ Used textField::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len
 //
 ////////////////////////////////////////////////////////////////////////////////
 bool menuNode::changed(const navNode &nav,const menuOut& out,bool sub,bool test) {
-  trace(Serial<<*this<<" menuNode::changed"<<endl);
+  trace(MENU_DEBUG_OUT<<*this<<" menuNode::changed"<<endl);
   return menuNode::_changes<false>(nav,out,sub,test);
-  /*if (dirty) {
-    trace(if (test) Serial<<"just dirty!"<<endl);
-    return true;
-  }
-  bool appd=has((systemStyles)(_asPad|_parentDraw));
-  if (appd) {
-    trace(Serial<<"appd!"<<endl;);
-    for(int i=0;i<sz();i++)
-      if (operator[](i).changed(nav,out,false,test)) {
-        // trace(if (test) Serial<<"APPD! "<<operator[](i).type()<<endl);
-        return true;
-      }
-  } else {
-    trace(Serial<<*this<<"!appd"<<endl;);
-    if (!(nav.target==this&&sub)) {
-      trace(if (test&&dirty) Serial<<"indirect!"<<endl);
-      return dirty;// second hand check, just report self
-    }
-    idx_t level=nav.root->level;
-    if (parentDraw()) {
-      trace(Serial<<"return changed of parent-draw element"<<endl);
-      trace(if (test) Serial<<"parentDraw()!"<<endl);
-      return nav.root->path[level-1].target->changed(nav.root->path[level-1],out,sub,test);
-    }
-    // idx_t tit=hasTitle(nav.root->path[lev])?1:0;//TODO: this might not be correct.. checking
-    idx_t my=out.maxY()-((has(showTitle)||(nav.root->showTitle&&!has(noTitle)))?1:0);
-    // trace(Serial<<"level:"<<level<<" target:"<<*nav.root->navFocus<<" "<<nav.root->navFocus->has(_parentDraw)<<" "<<nav.root->navFocus->has(_asPad)<<endl);
-    // idx_t lev=level-(nav.root->navFocus->has(_parentDraw)&&nav.root->navFocus->isMenu());
-    idx_t t=out.tops[level-nav.root->navFocus->has(_parentDraw)&&has(_asPad)];
-    // trace(Serial<<"tit:"<<tit<<endl;);
-    // idx_t t=out.tops[lev];
-    trace(Serial<<"t:"<<t<<endl;);
-    if (sub) for(int i=0;i<my;i++,t++) {
-      if (t>=sz()) break;
-      trace(Serial<<"checking:"<<operator[](t)<<endl);
-      if (operator[](t).changed(nav,out,false,test)) {
-        trace(if (test) Serial<<"sub changed!"<<endl);
-        return true;
-      }
-    }
-  }
-  return false;*/
 }
 
 void menuNode::clearChanged(const navNode &nav,const menuOut& out,bool sub) {
-  trace(Serial<<" menuOut::clearChanged "<<nav);
+  trace(MENU_DEBUG_OUT<<" menuOut::clearChanged "<<nav);
   _changes<true>(nav,out,sub,false);
-  /*dirty=false;
-  if (has((systemStyles)(_asPad|_parentDraw))) {
-    for(int i=0;i<sz();i++)
-      operator[](i).clearChanged(nav,out,false);
-  } else {
-    if (!(nav.target==this&&sub)) return;
-    idx_t level=nav.root->level;
-    if (parentDraw())
-      return nav.root->path[level-1].target->clearChanged(nav.root->path[level-1],out,sub);
-    idx_t my=out.maxY()-((has(showTitle)||(nav.root->showTitle&&!has(noTitle)))?1:0);
-    // idx_t lev=level-(nav.root->navFocus->has(_parentDraw)&&nav.root->navFocus->isMenu());
-    // idx_t t=out.tops[lev];
-    idx_t t=out.tops[level-nav.root->navFocus->has(_parentDraw)&&has(_asPad)];
-    for(idx_t i=0;i<my;i++,t++) {//only signal visible
-      if (t>=sz()) break;//menu ended
-      operator[](t).clearChanged(nav,out,false);
-    }
-  }
-  #ifdef MENU_DEBUG
-  if(changed(nav,out,sub,true)) {
-    Serial<<"ERROR clear changed fail!"<<endl;
-    Serial<<*this<<endl;
-    Serial<<"level:"<<nav.root->level<<endl;
-    // Serial<<"type:"<<type()<<endl;
-    Serial.flush();
-    while(1);
-  }
-  #endif*/
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -270,17 +200,17 @@ void menuNode::clearChanged(const navNode &nav,const menuOut& out,bool sub) {
 ////////////////////////////////////////////////////////////////////////////////
 
 void navTarget::doNav(navNode& nav,navCmd cmd) {
-  trace(Serial<<"navTarget::doNav"<<endl);
+  trace(MENU_DEBUG_OUT<<"navTarget::doNav"<<endl);
   nav.doNavigation(cmd);
 }
 
 void navTarget::parseInput(navNode& nav,menuIn& in) {
-  trace(Serial<<"navTarget::parseInput"<<endl);
+  trace(MENU_DEBUG_OUT<<"navTarget::parseInput"<<endl);
   doNav(nav,nav.navKeys(in.read()));
 }
 
 void textField::parseInput(navNode& nav,menuIn& in) {
-  trace(Serial<<"navTarget::parseInput"<<endl);
+  trace(MENU_DEBUG_OUT<<"navTarget::parseInput"<<endl);
   if (/*charEdit&&*/in.available()) {
     char c=in.peek();
     if (options->useNavChars&&(c==options->getCmdChar(upCmd)
@@ -315,7 +245,7 @@ void textField::parseInput(navNode& nav,menuIn& in) {
           dirty=true;
           return;
         }
-        // Serial<<hex(c)<<endl;
+        // MENU_DEBUG_OUT<<hex(c)<<endl;
         navTarget::parseInput(nav,in);
       }
     }
@@ -324,12 +254,12 @@ void textField::parseInput(navNode& nav,menuIn& in) {
 
 #ifdef MENU_ASYNC
 bool textField::async(const char*uri,navRoot& root,idx_t lvl=0) {
-  trace(Serial<<"textField::async "<<uri<<endl);
+  trace(MENU_DEBUG_OUT<<"textField::async "<<uri<<endl);
   if ((!*uri)||(uri[0]=='/'&&!uri[1])) return true;
   if (uri[0]=='/') {
     StringStream i(++uri);
     while(i.available()) parseInput(root.node(), i);
-    trace(Serial<<"textField::enterCmd"<<endl);
+    trace(MENU_DEBUG_OUT<<"textField::enterCmd"<<endl);
     doNav(root.node(),escCmd);
     return true;
   }
@@ -337,7 +267,7 @@ bool textField::async(const char*uri,navRoot& root,idx_t lvl=0) {
 }
 
 bool fieldBase::async(const char *uri,navRoot& root,idx_t lvl) {
-  trace(Serial<<"fieldBase::async "<<uri<<endl);
+  trace(MENU_DEBUG_OUT<<"fieldBase::async "<<uri<<endl);
   if ((!*uri)||(uri[0]=='/'&&!uri[1])) return true;
   else if (uri[0]=='/') {
     StringStream i(++uri);
@@ -349,11 +279,11 @@ bool fieldBase::async(const char *uri,navRoot& root,idx_t lvl) {
 #endif
 
 void fieldBase::doNav(navNode& nav,navCmd cmd) {
-  trace(Serial<<"fieldBase::doNav "<<cmd;Serial<<endl);
+  trace(MENU_DEBUG_OUT<<"fieldBase::doNav "<<cmd;MENU_DEBUG_OUT<<endl);
   switch(cmd.cmd) {
     //by default esc and enter cmds do the same by changing the value
     //it might be set by numeric parsing when allowed
-    case idxCmd: //Serial<<"menuField::doNav with idxCmd"<<endl;
+    case idxCmd: //MENU_DEBUG_OUT<<"menuField::doNav with idxCmd"<<endl;
     case escCmd:
       tunning=true;//prepare for exit
     case enterCmd:
@@ -375,15 +305,12 @@ void fieldBase::doNav(navNode& nav,navCmd cmd) {
       break;
     default:break;
   }
-  /*if (ch==options->getCmdChar(enterCmd)&&!tunning) {
-    nav.event(enterEvent);
-  }*/
   if (dirty)//sending enter or update event
     nav.event(nav.root->useUpdateEvent?updateEvent:enterEvent);
 }
 
 Used fieldBase::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr) {
-  trace(Serial<<"fieldBase::printTo"<<endl);
+  trace(MENU_DEBUG_OUT<<"fieldBase::printTo"<<endl);
   idx_t l=prompt::printTo(root,sel,out,idx,len,panelNr);
   bool ed=this==root.navFocus;
   //bool sel=nav.sel==i;
@@ -420,7 +347,7 @@ Used fieldBase::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len
 
 /////////////////////////////////////////////////////////////////
 Used menuVariantBase::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr) {
-  trace(Serial<<"menuVariantBase::printTo"<<endl);
+  trace(MENU_DEBUG_OUT<<"menuVariantBase::printTo"<<endl);
   idx_t l=len;
   l-=prompt::printTo(root,sel,out,idx,len,panelNr);
   idx_t at=sync(sync());
@@ -432,9 +359,9 @@ Used menuVariantBase::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx
   #ifdef MENU_FMT_WRAPS
     if (out.fmtStart(*this,type()==selectClass?menuOut::fmtSelect:menuOut::fmtChoose,root.node(),idx)==proceed) {
   #endif
-    // Serial<<"variant ";
-    // print_P(Serial,operator[](at).getText());
-    // Serial<<endl;
+    // MENU_DEBUG_OUT<<"variant ";
+    // print_P(MENU_DEBUG_OUT,operator[](at).getText());
+    // MENU_DEBUG_OUT<<endl;
     out.setColor(valColor,sel,prompt::enabled,ed);
     if (l>0) l-=operator[](at).printRaw(out,l);
   #ifdef MENU_FMT_WRAPS
@@ -443,12 +370,12 @@ Used menuVariantBase::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx
   #ifdef MENU_FMT_WRAPS
   out.fmtEnd(*this,type()==selectClass?menuOut::fmtSelect:menuOut::fmtChoose,root.node(),idx);
   #endif
-  trace(Serial<<"menuVariantBase::printTo ended!"<<endl);
+  trace(MENU_DEBUG_OUT<<"menuVariantBase::printTo ended!"<<endl);
   return len-l;
 }
 
 idx_t menuVariantBase::togglePrintTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr) {
-  trace(Serial<<"menuVariantBase::togglePrintTo"<<endl);
+  trace(MENU_DEBUG_OUT<<"menuVariantBase::togglePrintTo"<<endl);
   idx_t l=prompt::printTo(root,sel,out,idx,len,panelNr);
   idx_t at=sync(sync());
   bool ed=this==root.navFocus;
@@ -462,13 +389,13 @@ idx_t menuVariantBase::togglePrintTo(navRoot &root,bool sel,menuOut& out, idx_t 
     l+=operator[](at).printRaw(out,len-l);
     #ifdef MENU_FMT_WRAPS
   out.fmtEnd(*this,menuOut::fmtToggle,root.node(),idx);
-    #endif
+    #endif-
   }
   return l;
 }
 
 void menuVariantBase::doNav(navNode& nav,navCmd cmd) {
-  trace(Serial<<"menuVariantBase::doNav"<<endl);
+  trace(MENU_DEBUG_OUT<<"menuVariantBase::doNav"<<endl);
   nav.sel=sync();
   navCmd c=nav.doNavigation(cmd);
   sync(nav.sel);
@@ -479,48 +406,45 @@ void menuVariantBase::doNav(navNode& nav,navCmd cmd) {
 
 template<bool clear>
 bool menuNode::_changes(const navNode &nav,const menuOut& out,bool sub,bool test) {
-  trace(Serial<<*this<<" menuNode::"<<(clear?"clearChanged":"changed")<<" test:"<<test<<endl);
   if (clear) dirty=false;
   else if (dirty) {
-    trace(if (test) Serial<<"just dirty!"<<endl);
+    trace(if (test) MENU_DEBUG_OUT<<"just dirty!"<<endl);
     return true;
   }
   if (has((systemStyles)(_asPad|_parentDraw))) {
+    trace(MENU_DEBUG_OUT<<*this<<" sz:"<<sz()<<" asPad or parentDraw"<<endl);
     for(int i=0;i<sz();i++)
       if (clear) operator[](i).clearChanged(nav,out,false);
       else if (operator[](i).changed(nav,out,false,test)) {
-        trace(if (test) Serial<<"APPD! "<<operator[](i)<<endl);
+        trace(if (test) MENU_DEBUG_OUT<<"APPD! "<<operator[](i)<<endl);
         return true;
       }
+    return false;
   } else {
-    // if (!(nav.target==this&&sub)) return;???
     if (!(clear||(nav.target==this&&sub))) {
-      trace(if (test&&dirty) Serial<<"indirect!"<<endl);
+      trace(if (test&&dirty) MENU_DEBUG_OUT<<"indirect!"<<endl);
       return dirty;// second hand check, just report self
     }
     idx_t level=nav.root->level;
     if (parentDraw()) {
       if (clear) nav.root->path[level-1].target->clearChanged(nav.root->path[level-1],out,sub);
       else {
-        trace(Serial<<"return changed of parent-draw element"<<endl);
-        trace(if (test) Serial<<"parentDraw()!"<<endl);
+        trace(MENU_DEBUG_OUT<<"return changed of parent-draw element"<<endl);
+        trace(if (test) MENU_DEBUG_OUT<<"parentDraw()!"<<endl);
         return nav.root->path[level-1].target->changed(nav.root->path[level-1],out,sub,test);
       }
     }
-    // idx_t tit=hasTitle(nav.root->path[lev])?1:0;//TODO: this might not be correct.. checking
     idx_t my=out.maxY()-((has(showTitle)||(nav.root->showTitle&&!has(noTitle)))?1:0);
-    // trace(Serial<<"level:"<<level<<" target:"<<*nav.root->navFocus<<" "<<nav.root->navFocus->has(_parentDraw)<<" "<<nav.root->navFocus->has(_asPad)<<endl);
-    // idx_t lev=level-(nav.root->navFocus->has(_parentDraw)&&(nav.root->navFocus->isMenu()||nav.root->navFocus->has(_asPad)));
-    // idx_t t=out.tops[lev];
-    idx_t t=out.tops[level];//-nav.root->navFocus->has(_parentDraw)&&has(_asPad)];
-    trace(Serial<<"t:"<<t<<endl;);
+    menuNode* target=nav.root->path[level].target;
+    idx_t t=out.tops[level-(target->has(_asPad)||target->has(_parentDraw))];
+    trace(MENU_DEBUG_OUT<<"t:"<<t<<endl;);
     if (sub) for(int i=0;i<my;i++,t++) {
       if (t>=sz()) break;
       if (clear) operator[](t).clearChanged(nav,out,false);
       {
-        trace(Serial<<"checking:"<<operator[](t)<<endl);
+        trace(MENU_DEBUG_OUT<<"checking:"<<operator[](t)<<endl);
         if (operator[](t).changed(nav,out,false,test)) {
-          trace(if (test) Serial<<"sub changed!"<<endl);
+          trace(if (test) MENU_DEBUG_OUT<<"sub changed!"<<endl);
           return true;
         }
       }
@@ -529,11 +453,11 @@ bool menuNode::_changes(const navNode &nav,const menuOut& out,bool sub,bool test
   if (clear) {
     #ifdef MENU_DEBUG
       if(changed(nav,out,sub,true)) {
-        Serial<<"\nERROR clear changed fail!"<<endl;
-        Serial<<*this<<endl;
-        Serial<<"level:"<<nav.root->level<<endl;
-        // Serial<<"type:"<<type()<<endl;
-        Serial.flush();
+        MENU_DEBUG_OUT<<"\nERROR clear changed fail!"<<endl;
+        MENU_DEBUG_OUT<<*this<<endl;
+        MENU_DEBUG_OUT<<"level:"<<nav.root->level<<endl;
+        // MENU_DEBUG_OUT<<"type:"<<type()<<endl;
+        MENU_DEBUG_OUT.flush();
         // while(1);
         return false;
       }

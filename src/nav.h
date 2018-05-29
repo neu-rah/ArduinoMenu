@@ -69,6 +69,7 @@
         inline result sysEvent(eventMask e) {return sysEvent(e,sel);}//send event to current item
         navCmd navKeys(char ch);
         navCmd doNavigation(navCmd cmd);//aux function
+        // inline int getPanelIdx(menuOut& out) const {return out.getPanelIdx(*this);}
         bool changed(const menuOut& out) const;
         inline prompt& operator[](idx_t i) const {return target->operator[](i);}
 
@@ -131,7 +132,7 @@
           Used printMenu(menuOut& o) const;
         #endif
         Used printMenu() const {
-          trace(Serial<<"navRoot::printMenu"<<endl);
+          trace(MENU_DEBUG_OUT<<"navRoot::printMenu"<<endl);
           if ((active().sysStyles()&_parentDraw)&&level)
             return out.printMenu(path[level-1]);
           else return out.printMenu(node());
@@ -151,6 +152,9 @@
           else {
             idleChanged=false;//turn it off here so that sleepTask can force it on again
             out.idle(sleepTask,idling);
+            #ifdef MENU_IDLE_BKGND
+              if (idleTask!=sleepTask) out.idle(idleTask,idling);
+            #endif
           }
         }
         inline void poll() {doInput();doOutput();};//fire and forget mode
@@ -165,9 +169,15 @@
           idleChanged=true;
           active().dirty=true;
           out.idle(sleepTask,idleStart);
+          #ifdef MENU_IDLE_BKGND
+            if (idleTask!=sleepTask) out.idle(idleTask,idleStart);
+          #endif
         }
         inline void idleOff() {
           out.idle(sleepTask,idleEnd);
+          #ifdef MENU_IDLE_BKGND
+            if (idleTask!=sleepTask) out.idle(idleTask,idleEnd);
+          #endif
           sleepTask=NULL;
           active().dirty=true;
           out.clear();
