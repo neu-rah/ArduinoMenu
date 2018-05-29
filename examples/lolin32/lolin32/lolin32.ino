@@ -33,6 +33,8 @@ using namespace Menu;
 #define U8_Width 128
 #define U8_Height 64
 #define USE_HWI2C
+#define fontMarginX 2
+#define fontMarginY 2
 // U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE, SCL, SDA);
 U8G2_SSD1306_128X64_VCOMH0_F_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE, SCL, SDA);//allow contrast change
 // U8G2_SSD1306_128X64_NONAME_1_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE, SCL, SDA);
@@ -137,10 +139,23 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
 serialIn serial(Serial);
 MENU_INPUTS(in,&serial);
 
-MENU_OUTPUTS(out,MAX_DEPTH
-  ,U8G2_OUT(u8g2,colors,fontX,fontY,offsetX,offsetY,{0,0,U8_Width/fontX,U8_Height/fontY})
-  ,SERIAL_OUT(Serial)
-);
+//define output device serial
+idx_t serialTops[MAX_DEPTH]={0};
+serialOut outSerial(*(Print*)&Serial,serialTops);
+
+// MENU_OUTPUTS(out,MAX_DEPTH
+//   ,U8G2_OUT(u8g2,colors,fontX,fontY,offsetX,offsetY,{0,0,U8_Width/fontX,U8_Height/fontY})
+//   ,SERIAL_OUT(Serial)
+// );//can use this macro or the following lines to define customized outputs
+
+//define output device oled
+idx_t gfx_tops[MAX_DEPTH];
+PANELS(gfxPanels,{0,0,U8_Width/fontX,U8_Height/fontY});
+u8g2Out oledOut(u8g2,colors,gfx_tops,gfxPanels,fontX,fontY,offsetX,offsetY,fontMarginX,fontMarginY);
+
+//define outputs controller
+menuOut* outputs[]{&outSerial,&oledOut};//list of output devices
+outputsList out(outputs,sizeof(outputs)/sizeof(menuOut*));//outputs list controller
 
 NAVROOT(nav,mainMenu,MAX_DEPTH,in,out);
 
