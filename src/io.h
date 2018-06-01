@@ -51,7 +51,15 @@
         panelsList& panels;
         idx_t lastSel=-1;
         //TODO: turn this bool's into bitfield flags
-        enum styles {none=0<<0,redraw=1<<0,minimalRedraw=1<<1, drawNumIndex=1<<2, usePreview=1<<3, expandEnums=1<<4,rasterDraw=1<<5} style;
+        enum styles {
+          none=0<<0, // default serialOut
+          redraw=1<<0,// changing one part implies printing all visible
+          minimalRedraw=1<<1, // can draw part of the screen
+          drawNumIndex=1<<2, // numerical index should be displayed
+          usePreview=1<<3, // reserve one panel for preview
+          expandEnums=1<<4, // enumerated typed should be printed along with the option (web interface)
+          rasterDraw=1<<5 // can request multiple draws to complete a screen
+        } style;
         enum fmtParts {
           fmtPanel,fmtTitle,fmtBody,fmtOp,
           fmtIdx,fmtCursor,fmtOpBody,fmtPreview,

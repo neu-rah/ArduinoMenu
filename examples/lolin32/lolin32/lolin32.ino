@@ -33,10 +33,10 @@ using namespace Menu;
 #define U8_Width 128
 #define U8_Height 64
 #define USE_HWI2C
-#define fontMarginX 2
+#define fontMarginX 1
 #define fontMarginY 2
 // U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE, SCL, SDA);
-U8G2_SSD1306_128X64_VCOMH0_F_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE, SCL, SDA);//allow contrast change
+U8G2_SSD1306_128X64_VCOMH0_F_HW_I2C u8g2(U8G2_R2, U8X8_PIN_NONE, SCL, SDA);//allow contrast change
 // U8G2_SSD1306_128X64_NONAME_1_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE, SCL, SDA);
 
 
@@ -115,13 +115,18 @@ altMENU(menu,time,"Time",doNothing,noEvent,noStyle,(systemStyles)(_asPad|Menu::_
 );
 
 char* constMEM hexDigit MEMMODE="0123456789ABCDEF";
-char* constMEM hexNr[] MEMMODE={hexDigit,hexDigit};
-char buf1[]="00";
+char* constMEM hexNr[] MEMMODE={hexDigit};
+char buf1[]="0000";
+
+char* constMEM alphaNum MEMMODE=" 0123456789.ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz,\\|!\"#$%&/()=?~*^+-{}[]€";
+char* constMEM alphaNumMask[] MEMMODE={alphaNum};
+char name[]="          ";
 
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,OP("Op1",doNothing,noEvent)
   ,OP("Op2",doNothing,noEvent)
-  //,FIELD(test,"Test","%",0,100,10,1,doNothing,noEvent,wrapStyle)
+  ,FIELD(test,"Test","%",0,100,10,1,doNothing,noEvent,wrapStyle)
+  ,EDIT("Name",name,alphaNumMask,doNothing,noEvent,noStyle)
   ,SUBMENU(time)
   ,SUBMENU(subMenu)
   ,SUBMENU(setLed)
@@ -205,12 +210,13 @@ void setup() {
     u8g2.drawStr(0,fontY<<1,"on lolin32");
     u8g2.drawStr(0,fontY+(fontY<<1),"with buitin oled");
   } while(u8g2.nextPage());
-  for(int c=256;c>0;c--) {
+  for(int c=255;c>0;c--) {
     u8g2.setContrast(255-255.0*log(c)/log(255));
     delay(8);
   }
   u8g2.setContrast(255);
   delay(500);
+  nav.timeOut=60;//seconds
 }
 
 void loop() {
