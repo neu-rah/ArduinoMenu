@@ -158,9 +158,13 @@ Used menuOut::printMenu(navNode &nav,idx_t panelNr) {
       =((nav.target->style()&showTitle)||(nav.root->showTitle&&(!(nav.target->style()&noTitle))))
       &&!(asPad||(maxY(panelNr)<2));//do not use titles on single line devices!
     if (!nav.target->parentDraw()) {
-      while(nav.sel+st>=(tops[topi]+maxY(panelNr))) tops[topi]++;
-      while(nav.sel<tops[topi]||(tops[topi]&&((nav.sz()-tops[topi])<maxY(panelNr)-st)))
-        tops[topi]--;
+      if (pageScroll)
+        tops[topi]=nav.sel-(nav.sel%(pageScroll?panels[panelNr].maxY()-st:1));
+      else {
+        while(nav.sel+st>=(tops[topi]+maxY(panelNr))) tops[topi]++;
+        while(nav.sel<tops[topi]||(tops[topi]&&((nav.sz()-tops[topi])<maxY(panelNr)-st)))
+          tops[topi]--;
+      }
     }
     bool all=(style&redraw)
       ||(tops[topi]!=ot)

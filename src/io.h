@@ -67,6 +67,7 @@
           fmtChoose,fmtUnit,fmtTextField
         };
         menuNode* drawn=NULL;
+        bool pageScroll=false;
         menuOut(idx_t *topsList,panelsList &p,styles os=minimalRedraw)
           :tops(topsList),panels(p),style(os) {}
         idx_t maxX(idx_t i=0) const;

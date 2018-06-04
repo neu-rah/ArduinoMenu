@@ -35,7 +35,9 @@ www.r-site.net
   // #define MENU_VERSION 4
   // #define MENU_REVISION 4.9
 
-  // #define MENU_DEBUG_OUT Serial3
+  #ifndef MENU_DEBUG_OUT
+    #define MENU_DEBUG_OUT Serial
+  #endif
 
   namespace Menu {
     //menu structure objects
