@@ -58,7 +58,10 @@ www.r-site.net
     template<typename T> class choose;
 
     typedef int8_t idx_t;
+    #ifdef DEBUG
     idx_t print_P(Print& s,const char* at,idx_t sz=0);
+    #endif
+    idx_t print_P(menuOut& s,const char* at,idx_t sz=0);
 
     enum result {proceed=0,quit};
     enum systemStyles {

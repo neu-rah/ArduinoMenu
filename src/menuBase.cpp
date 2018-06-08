@@ -21,13 +21,18 @@ template<void (*A)(eventMask event)> result Menu::callCaster(eventMask event) {A
 template<void (*A)()> result Menu::callCaster() {A();return proceed;}
 
 //MEMMODE AUX PRINT
+#ifdef DEBUG
 idx_t Menu::print_P(Print& s,const char* at,idx_t len) {
   const char* p=at;
   uint8_t ch;
-  for(int n=0;(ch=memByte(at++))&&(len==0||n<len);n++) {
+  for(int n=0;(ch=memByte(at++))&&(len==0||n<len);n++)
     s.write(ch);
-}
   return at-p-1;
+}
+#endif
+
+idx_t Menu::print_P(menuOut& s,const char* at,idx_t len) {
+  return s.printRaw(at,len);
 }
 
 const navCodesDef Menu::defaultNavCodes={

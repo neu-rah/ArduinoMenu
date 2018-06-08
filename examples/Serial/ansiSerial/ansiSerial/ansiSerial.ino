@@ -26,7 +26,7 @@ www.r-site.net
 using namespace Menu;
 using namespace ANSI;
 
-#ifndef DEBUG
+#ifdef DEBUG
 Print& operator<<(Print&o, Menu::prompt&p) {
   print_P(o,p.getText());
   return o;
@@ -134,7 +134,10 @@ result showEvent(eventMask e,navNode& nav,prompt& item) {
     <<ANSI::setForegroundColor(WHITE)
     <<ANSI::setBackgroundColor(BLACK)
     <<ANSI::eraseLine()
-    <<e<<" on "<<item;
+    <<e<<" on ";
+  #ifdef DEBUG
+    Serial<<item;
+  #endif
   return proceed;
 }
 
@@ -145,7 +148,11 @@ result action1(eventMask e,navNode& nav, prompt &item) {
     <<ANSI::xy(0,13)
     <<ANSI::setForegroundColor(WHITE)
     <<ANSI::setBackgroundColor(BLACK)
-    <<e<<" event on "<<item<<", proceed menu";
+    <<e<<" event on ";
+    #ifdef DEBUG
+      Serial<<item;
+    #endif
+    Serial<<", proceed menu";
   Serial.flush();
   return proceed;
 }
@@ -269,8 +276,15 @@ serialIn serial(Serial);
 NAVROOT(nav,mainMenu,MAX_DEPTH,serial,out);
 
 result action2(eventMask e,navNode& nav, prompt &item) {
-  Serial<<ANSI::xy(24,nav.sel+nav.root->showTitle)
-    <<item<<" "<<e<<" event on "<<item<<", quiting menu.";
+  Serial<<ANSI::xy(24,nav.sel+nav.root->showTitle);
+  #ifdef DEBUG
+    Serial<<item;
+  #endif
+  Serial<<" "<<e<<" event on ";
+  #ifdef DEBUG
+    Serial<<item;
+  #endif
+  Serial<<", quiting menu.";
   Serial.flush();
   return quit;
 }

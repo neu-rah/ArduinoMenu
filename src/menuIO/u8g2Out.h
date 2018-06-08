@@ -108,6 +108,19 @@ namespace Menu {
 				setColor(cursorColor,selected,stat);
 				gfx.drawFrame(p.x*resX + offsetX /*+ fontMarginX*/,(p.y+ln)*resY + offsetY /*- fontMarginY*/,maxX()*resX ,resY);
 			}
+			idx_t printRaw(const char* at,idx_t len) override {
+				trace(Serial<<"u8g2Out::printRaw"<<endl);
+				trace(Serial<<"["<<at<<"]");
+				return print((__FlashStringHelper*)at);
+			  // const char* p=at;
+			  // uint8_t ch;
+			  // for(int n=0;(ch=memByte(at++))&&(len==0||n<len);n++) {
+				// 	trace(Serial<<"["<<ch<<"]");
+			  //   write(ch);
+			  // }
+			  // return at-p-1;
+			}
+
 	};
 }
 #endif //RSITE_ARDUINOP_MENU_U8G2
