@@ -10,10 +10,10 @@
 
     namespace Menu {
 
-      inline Print& operator<<(Print&o, Menu::prompt&p) {
-        print_P(o,p.getText());
-        return o;
-      }
+      // inline Print& operator<<(Print&o, Menu::prompt&p) {
+      //   print_P(o,p.getText());
+      //   return o;
+      // }
 
       inline menuOut& operator<<(menuOut&o, idx_t i) {
         o.print(i);
@@ -25,10 +25,10 @@
         return o;
       }
 
-      inline Print& operator<<(Print&o, const char* p) {
-        print_P(o,p);
-        return o;
-      }
+      // inline Print& operator<<(Print&o, const char* p) {
+      //   print_P(o,p);
+      //   return o;
+      // }
 
       void outputOptions(menuOut& o,navNode &nav,menuNode& node,idx_t idx);
 
