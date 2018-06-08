@@ -137,13 +137,17 @@ PANELS(gfx_panels,{0,0,12,8},{13,0,12,8});
 idx_t gfx_tops[MAX_DEPTH];
 utftOut outGfx(tft,colors,gfx_tops,gfx_panels,16,16);//output device, latter set resolution from font measure
 
-MENU_OUTLIST(out,&outGfx);
+idx_t serialTops[MAX_DEPTH]={0};
+serialOut outSerial(Serial,serialTops);
+MENU_OUTLIST(out,&outGfx,&outSerial);
 
 extern navRoot nav;
 URTouch  uTouch( 6, 5, 4, 3, 2);
 menuUTouch touchPanel(uTouch,nav,outGfx);
+serialIn serial(Serial);
+MENU_INPUTS(in,&touchPanel,&serial);
 
-NAVROOT(nav,mainMenu,MAX_DEPTH,touchPanel,out);
+NAVROOT(nav,mainMenu,MAX_DEPTH,in,out);
 
 result alert(menuOut& o,idleEvent e) {
   if (e==idling) {
