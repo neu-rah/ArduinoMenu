@@ -19,7 +19,7 @@ class confirmExit:public menu {
 public:
   confirmExit(constMEM menuNodeShadow& shadow):menu(shadow) {}
   Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t) override {
-    return out.printRaw("Exit",len);
+    return out.printRaw((constText*)F("Exit"),len);
   }
 };
 
