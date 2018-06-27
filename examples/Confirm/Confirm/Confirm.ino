@@ -19,7 +19,7 @@ class confirmExit:public menu {
 public:
   confirmExit(constMEM menuNodeShadow& shadow):menu(shadow) {}
   Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t p) override {
-    return idx<0?//idx woll be -1 when printing a menu title or a valid index when printing as option
+    return idx<0?//idx will be -1 when printing a menu title or a valid index when printing as option
       menu::printTo(root,sel,out,idx,len,p)://when printing title
       out.printRaw((constText*)F("Exit"),len);//when printing as regular option
   }
