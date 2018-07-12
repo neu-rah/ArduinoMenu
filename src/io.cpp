@@ -84,13 +84,13 @@ void menuOut::previewMenu(navRoot& root,menuNode& menu,idx_t panelNr) {
         fmtEnd(p,fmtCursor,root.node(),i);
       #endif
       setColor(fgColor,false,p.enabled,false);
-      // #ifdef MENU_FMT_WRAPS
-      //   fmtStart(p,fmtOpBody,root.node(),i);
-      // #endif
+      #ifdef MENU_FMT_WRAPS
+        fmtStart(p,fmtOpBody,root.node(),i);
+      #endif
       p.printTo(root,false,*this,i,panels[panelNr].w,panelNr);
-      // #ifdef MENU_FMT_WRAPS
-      //   fmtEnd(p,fmtOpBody,root.node(),i);
-      // #endif
+      #ifdef MENU_FMT_WRAPS
+        fmtEnd(p,fmtOpBody,root.node(),i);
+      #endif
       #ifdef MENU_FMT_WRAPS
         fmtEnd(p,fmtOp,root.node(),i);
       #endif
