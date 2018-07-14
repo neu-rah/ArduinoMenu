@@ -59,7 +59,7 @@ warranty, express or implied, as to its usefulness for any purpose.
   }
 
   #include "items.h"
-  #include "io.h"
+  #include "menuIo.h"
   #include "nav.h"
 
 #endif
