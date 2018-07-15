@@ -2,7 +2,7 @@
 #ifndef RSITE_ARDUINO_MENU_SYSTEM_NAV
   #define RSITE_ARDUINO_MENU_SYSTEM_NAV
   #include "menuBase.h"
-  #include "io.h"
+  #include "menuIo.h"
   namespace Menu {
 
     //navigation panels (min 1) describe output dimensions (in characters)
