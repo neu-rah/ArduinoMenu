@@ -79,10 +79,8 @@ result outputsList::idle(idleFunc f,idleEvent e,bool idleChanged) {
         } else return quit;
         break;
       case idling:
-        if (idleChanged||o.style&menuOut::redraw) {
-          result r=(*f)(o,e);
-          if (r==quit) return r;
-        }
+        if (o.style&menuOut::redraw||(idleChanged&&(o.style&menuOut::minimalRedraw)))
+          return (*f)(o,e);
         break;
       case idleEnd:
         result r=(*f)(o,e);
