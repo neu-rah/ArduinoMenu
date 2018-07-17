@@ -204,36 +204,7 @@
         }
         void clear() {for(int n=0;n<cnt;n++) ((menuOut*)memPtr(outs[n]))->clear();}
         void doNav(navCmd cmd,class navNode &nav) {for(int n=0;n<cnt;n++) ((menuOut*)memPtr(outs[n]))->doNav(cmd,nav);}
-        result idle(idleFunc f,idleEvent e) {
-          #ifdef MENU_DEBUG
-          if (!f) MENU_DEBUG_OUT<<"idleFunc is NULL!!!"<<endl;
-          #endif
-          if (!f) return proceed;
-          for(int n=0;n<cnt;n++) {
-            menuOut& o=*((menuOut*)memPtr(outs[n]));
-            switch(e) {
-              case idleStart:
-                if ((*f)(o,e)==proceed) {
-                  if (!(o.style&menuOut::redraw)) {
-                    result r=(*f)(o,idling);
-                    if (r==quit) return r;
-                  }
-                } else return quit;
-                break;
-              case idling:
-                if (o.style&menuOut::redraw) {
-                  result r=(*f)(o,e);
-                  if (r==quit) return r;
-                }
-                break;
-              case idleEnd:
-                result r=(*f)(o,e);
-                if (r==quit) return r;
-                break;
-            }
-          }
-          return proceed;
-        }
+        result idle(idleFunc f,idleEvent e,bool idleChanged=false);
     };
   }//namespace Menu
 

@@ -150,8 +150,8 @@
         inline void doOutput() {
           if (!sleepTask) printMenu();
           else {
+            out.idle(sleepTask,idling,idleChanged);
             idleChanged=false;//turn it off here so that sleepTask can force it on again
-            out.idle(sleepTask,idling);
             #ifdef MENU_IDLE_BKGND
               if (idleTask!=sleepTask) out.idle(idleTask,idling);
             #endif
