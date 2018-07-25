@@ -62,4 +62,5 @@ warranty, express or implied, as to its usefulness for any purpose.
   #include "menuIo.h"
   #include "nav.h"
 
+  #include "itemsTemplates.cpp"
 #endif
