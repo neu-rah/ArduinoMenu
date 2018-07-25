@@ -2,7 +2,7 @@
 
 #ifndef RSITE_ARDUINO_MENU_SERIALOUT
   #define RSITE_ARDUINO_MENU_SERIALOUT
-  #include "../menu.h"
+  #include "../menuDefs.h"
 
   namespace Menu {
 

@@ -4,7 +4,7 @@
   #define RSITE_ARDUINO_MENU_XMLFMT
 
   #ifdef MENU_FMT_WRAPS
-  #include "../menu.h"
+  #include "../menuDefs.h"
   #include "../items.h"
   #include "esp8266Out.h"
 

@@ -1,4 +1,4 @@
-#include "menu.h"
+#include "menuDefs.h"
 using namespace Menu;
 
 const char* Menu::numericChars="0123456789.";

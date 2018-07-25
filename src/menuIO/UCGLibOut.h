@@ -11,7 +11,7 @@ www.r-site.net
 #ifndef RSITE_ARDUINOP_MENU_UCGLIB
 #define RSITE_ARDUINOP_MENU_UCGLIB
 #include <Ucglib.h>
-#include "menu.h"
+#include "menuDefs.h"
 
 namespace Menu {
 

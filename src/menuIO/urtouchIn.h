@@ -16,7 +16,7 @@ UTouch library from:
   #define RSITE_ARDUINO_MENU_UTOUCH
 
   #include <URTouch.h>
-  #include "../menu.h"
+  #include "../menuDefs.h"
 
   namespace Menu {
 

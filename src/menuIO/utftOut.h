@@ -22,7 +22,7 @@ UTFT library from:
   	#undef pgm_read_byte
   #endif
 	#include <UTFT.h>
-	#include "../menu.h"
+	#include "../menuDefs.h"
 
   namespace Menu {
 

@@ -8,7 +8,7 @@ HardwareSerial input driver
 
 #ifndef RSITE_ARDUINO_MENU_HW_SERIALIN
   #define RSITE_ARDUINO_MENU_HW_SERIALIN
-  #include "../menu.h"
+  #include "../menuDefs.h"
 
   #define SERIAL_CLASS Stream
 

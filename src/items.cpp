@@ -1,4 +1,4 @@
-#include "menu.h"
+#include "menuDefs.h"
 using namespace Menu;
 
 bool prompt::hasTitle(navNode& nav) const {return (nav.target->has(showTitle)||(nav.root->showTitle&&!nav.target->has(noTitle)));}
@@ -7,6 +7,19 @@ idx_t prompt::printRaw(menuOut& out,idx_t len) const {
   trace(MENU_DEBUG_OUT<<"prompt::printRaw"<<endl;print_P(MENU_DEBUG_OUT,getText(),len));
   return print_P(out,getText(),len);
 }
+
+bool prompt::changed(const navNode &nav,const menuOut& out,bool sub,bool test) {
+  trace(MENU_DEBUG_OUT<<"prompt::changed"<<endl);
+  return dirty;
+}
+
+result prompt::eventHandler(eventMask e,navNode& nav,idx_t i) {
+  return operator()(e,nav,*this);
+}
+
+#ifdef MENU_FMT_WRAPS
+  classes prompt::type() const {return promptClass;}
+#endif
 
 Used prompt::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr) {
   trace(MENU_DEBUG_OUT<<*(prompt*)this<<" prompt::printTo"<<endl);
@@ -39,51 +52,65 @@ Used prompt::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,id
 }
 
 #ifdef MENU_ASYNC
-bool prompt::async(const char*uri,navRoot& root,idx_t lvl) {
-  trace(MENU_DEBUG_OUT<<"prompt::async ["<<uri<<"]"<<endl;);
-  return true;
-}
-idx_t menuNode::parseUriNode(const char*&uri) {
-  if (*uri=='/') uri++;//TODO check who does this part!
-  bool neg=false;
-  if (*uri=='-') {
-    uri++;
-    neg=true;
-  }
-  assert(*uri=='-'||strchr(numericChars,uri[0]));
-  int n=0;
-  while (*uri) {
-    char* d=strchr(numericChars,uri[0]);
-    if (d) n=n*10+((*d)-'0');
-    else break;
-    uri++;
-  }
-  //state transformation (for events preservation)
-  if (neg) n=sz()-n;//allow negative index from end of list
-  if (n<0) n=0;
-  else if (n>=sz()) n=sz()-1;//never trusting web!
-  return n;
-}
-
-bool menuNode::async(const char*uri,navRoot& root,idx_t lvl) {
-  trace(MENU_DEBUG_OUT<<*(prompt*)this<<" menuNode::async "<<uri<<" lvl:"<<lvl<<" root.level:"<<root.level<<endl);
-  // assert(root.path[lvl].target==this);
-  if ((!uri[0])||(uri[0]=='/'&&!uri[1])) {
-    root.escTo(lvl);
-    trace(MENU_DEBUG_OUT<<*(prompt*)this<<" async true! "<<uri<<endl);
+  idx_t prompt::selected() const {return 0;}
+  const char* prompt::typeName() const {return "prompt";}
+  bool prompt::async(const char*uri,navRoot& root,idx_t lvl) {
+    trace(MENU_DEBUG_OUT<<"prompt::async ["<<uri<<"]"<<endl;);
     return true;
   }
-  if (uri[0]=='/') uri++;//TODO check who does this part!
-  assert(strchr(numericChars,uri[0]));
-  int n=parseUriNode(uri);
-  trace(MENU_DEBUG_OUT<<"n:"<<n<<" sel:"<<root.path[lvl].sel<<endl);
-  if (!(root.path[lvl].sel==n&&root.path[lvl+1].target==&operator[](n)&&root.level>lvl)) {
-    root.escTo(lvl/*+(lvl&&root.path[lvl].sel==n?-1:0)*/);
-    root.doNav(navCmd(idxCmd,n));
+  idx_t menuNode::parseUriNode(const char*&uri) {
+    if (*uri=='/') uri++;//TODO check who does this part!
+    bool neg=false;
+    if (*uri=='-') {
+      uri++;
+      neg=true;
+    }
+    assert(*uri=='-'||strchr(numericChars,uri[0]));
+    int n=0;
+    while (*uri) {
+      char* d=strchr(numericChars,uri[0]);
+      if (d) n=n*10+((*d)-'0');
+      else break;
+      uri++;
+    }
+    //state transformation (for events preservation)
+    if (neg) n=sz()-n;//allow negative index from end of list
+    if (n<0) n=0;
+    else if (n>=sz()) n=sz()-1;//never trusting web!
+    return n;
   }
-  return operator[](n).async(uri,root,lvl+1);
-}
+
+  bool menuNode::async(const char*uri,navRoot& root,idx_t lvl) {
+    trace(MENU_DEBUG_OUT<<*(prompt*)this<<" menuNode::async "<<uri<<" lvl:"<<lvl<<" root.level:"<<root.level<<endl);
+    // assert(root.path[lvl].target==this);
+    if ((!uri[0])||(uri[0]=='/'&&!uri[1])) {
+      root.escTo(lvl);
+      trace(MENU_DEBUG_OUT<<*(prompt*)this<<" async true! "<<uri<<endl);
+      return true;
+    }
+    if (uri[0]=='/') uri++;//TODO check who does this part!
+    assert(strchr(numericChars,uri[0]));
+    int n=parseUriNode(uri);
+    trace(MENU_DEBUG_OUT<<"n:"<<n<<" sel:"<<root.path[lvl].sel<<endl);
+    if (!(root.path[lvl].sel==n&&root.path[lvl+1].target==&operator[](n)&&root.level>lvl)) {
+      root.escTo(lvl/*+(lvl&&root.path[lvl].sel==n?-1:0)*/);
+      root.doNav(navCmd(idxCmd,n));
+    }
+    return operator[](n).async(uri,root,lvl+1);
+  }
+  const char* navTarget::typeName() const {return "navTarget";}
 #endif
+
+constText* textField::validator(int i) {return ((textFieldShadow*)shadow)->operator[](i%sz());}
+
+#ifdef MENU_FMT_WRAPS
+  classes textField::type() const {return textFieldClass;}
+#endif
+
+#ifdef MENU_ASYNC
+  const char* textField::typeName() const {return "textField";}
+#endif
+
 
 void textField::doNav(navNode& nav,navCmd cmd) {
   trace(MENU_DEBUG_OUT<<"textField::doNav:"<<cmd.cmd<<endl);
@@ -176,6 +203,14 @@ Used textField::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len
   return l;
 }
 
+#ifdef MENU_FMT_WRAPS
+  classes fieldBase::type() const {return fieldClass;}
+#endif
+
+#ifdef MENU_ASYNC
+  const char* fieldBase::typeName() const {return "fieldBase";}
+#endif
+
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -191,6 +226,15 @@ void menuNode::clearChanged(const navNode &nav,const menuOut& out,bool sub) {
   trace(MENU_DEBUG_OUT<<" menuOut::clearChanged "<<nav);
   _changes<true>(nav,out,sub,false);
 }
+
+#ifdef MENU_FMT_WRAPS
+  classes menuNode::type() const {return menuClass;}
+#endif
+
+#ifdef MENU_ASYNC
+  const char* menuNode::typeName() const {return "mn";}
+#endif
+
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -465,3 +509,11 @@ bool menuNode::_changes(const navNode &nav,const menuOut& out,bool sub,bool test
     return true;
   } else return false;
 }
+
+#ifdef MENU_ASYNC
+  const char* menu::typeName() const {return "menu";}
+#endif
+
+#ifdef MENU_ASYNC
+  const char* menuVariantBase::typeName() const {return "menuVariantBase";}
+#endif

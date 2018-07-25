@@ -1,5 +1,17 @@
-#include "menu.h"
+#include "menuDefs.h"
 using namespace Menu;
+
+void panelsList::reset(idx_t from) {for(int n=from;n<sz;n++) nodes[n]=NULL;}
+idx_t panelsList::maxX() const {
+  idx_t r=0;
+  for(int n=0;n<sz;n++) r=_MAX(operator[](n).maxX(),r);
+  return r;
+}
+idx_t panelsList::maxY() const {
+  idx_t r=0;
+  for(int n=0;n<sz;n++) r=_MAX(operator[](n).maxY(),r);
+  return r;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -108,6 +120,24 @@ result navNode::sysEvent(eventMask e,idx_t i) {
   return p(e,*this,p);
 }
 
+void navRoot::initPath(idx_t d) {
+  for(idx_t n=0;n<=d;n++)//initialize path chain for this root (v4.0)
+    path[n].root=this;
+}
+void navRoot::useMenu(menuNode &menu) {
+  navFocus=&menu;
+  path[0].target=&menu;
+  reset();
+  refresh();
+}
+
+Used navRoot::printMenu() const {
+  trace(MENU_DEBUG_OUT<<"navRoot::printMenu"<<endl);
+  if ((active().sysStyles()&_parentDraw)&&level)
+    return out.printMenu(path[level-1]);
+  else return out.printMenu(node());
+}
+
 void navRoot::doInput(menuIn& in) {
   trace(MENU_DEBUG_OUT<<"navRoot::doInput"<<endl);
   if (sleepTask) {
@@ -122,6 +152,18 @@ void navRoot::doInput(menuIn& in) {
     }
   }
   trace(MENU_DEBUG_OUT<<"navRoot::doInput ended!"<<endl);
+}
+
+void navRoot::doOutput() {
+  if (!sleepTask) printMenu();
+  else {
+    bool c=idleChanged;
+    idleChanged=false;//turn it off here so that sleepTask can force it on again
+    out.idle(sleepTask,idling,c);
+    #ifdef MENU_IDLE_BKGND
+      if (idleTask!=sleepTask) out.idle(idleTask,idling);
+    #endif
+  }
 }
 
 void navRoot::doNav(navCmd cmd) {
@@ -195,6 +237,27 @@ navCmd navRoot::exit() {
   active().dirty=true;
   navFocus=&active();
   return escCmd;
+}
+
+void navRoot::idleOn(idleFunc task) {
+  out.clear();
+  sleepTask=task;
+  idleChanged=true;
+  active().dirty=true;
+  out.idle(sleepTask,idleStart);
+  #ifdef MENU_IDLE_BKGND
+    if (idleTask!=sleepTask) out.idle(idleTask,idleStart);
+  #endif
+}
+
+void navRoot::idleOff() {
+  out.idle(sleepTask,idleEnd);
+  #ifdef MENU_IDLE_BKGND
+    if (idleTask!=sleepTask) out.idle(idleTask,idleEnd);
+  #endif
+  sleepTask=NULL;
+  active().dirty=true;
+  out.clear();
 }
 
 bool navNode::changed(const menuOut& out) const {

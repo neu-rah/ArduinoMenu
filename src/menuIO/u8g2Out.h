@@ -12,7 +12,7 @@ www.r-site.net
 #ifndef RSITE_ARDUINOP_MENU_U8G2
 #define RSITE_ARDUINOP_MENU_U8G2
 #include <U8g2lib.h>
-#include "menu.h"
+#include "menuDefs.h"
 
 namespace Menu {
 

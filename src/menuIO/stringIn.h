@@ -8,7 +8,7 @@ string input driver
 
 #ifndef RSITE_ARDUINO_MENU_HW_STRINGIN
   #define RSITE_ARDUINO_MENU_HW_STRINGIN
-  #include "../menu.h"
+  #include "../menuDefs.h"
 
   namespace Menu {
     //using a circular buffer

@@ -9,7 +9,7 @@ scan a chain of several input streams to provide input
 #ifndef RSITE_CHAINSTREAM_DEF_H
   #define RSITE_CHAINSTREAM_DEF_H
 
-  #include "../menu.h"
+  #include "../menuDefs.h"
 
   namespace Menu {
 

@@ -2,7 +2,7 @@
 
 #ifndef RSITE_ARDUINO_MENU_ESP8266OUT
   #define RSITE_ARDUINO_MENU_ESP8266OUT
-  #include "../menu.h"
+  #include "../menuDefs.h"
   #include <ESP8266WiFi.h>
   // #include <ESP8266WiFiMulti.h>
   //#include <WiFiClient.h>
