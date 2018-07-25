@@ -1,4 +1,4 @@
-#include "menu.h"
+#include "menuDefs.h"
 using namespace Menu;
 
 void menuIn::setFieldMode(bool) {}

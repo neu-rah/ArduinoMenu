@@ -1,7 +1,7 @@
 /* -*- C++ -*- */
 #ifndef RSITE_ARDUINO_MENU_JSFMT
   #define RSITE_ARDUINO_MENU_JSFMT
-  #include "../menu.h"
+  #include "../menuDefs.h"
 
 
   namespace Menu {

@@ -7,7 +7,7 @@
   #define RSITE_ARDUINO_MENU_LCDOUT
 
   #ifndef ARDUINO_SAM_DUE
-    #include "../menu.h"
+    #include "../menuDefs.h"
     #include <Wire.h>
     #include <LCD.h>
 

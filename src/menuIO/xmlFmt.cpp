@@ -1,5 +1,5 @@
 #ifdef MENU_FMT_WRAPS
-  #include "../menu.h"
+  #include "../menuDefs.h"
   #include "xmlFmt.h"
 
   namespace Menu {

@@ -8,7 +8,7 @@ Based on: Stephen Denne https://github.com/datacute U8G2 Driver
 
 #ifndef RSITE_ARDUINO_MENU_U8X8
   #define RSITE_ARDUINO_MENU_U8X8
-  #include "../menu.h"
+  #include "../menuDefs.h"
   #include <U8x8lib.h>
 
   namespace Menu {

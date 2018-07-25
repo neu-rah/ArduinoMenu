@@ -17,7 +17,7 @@ the remaining parameters are the same as the regular FIELD
 #ifndef RSITE_ARDUINO_MENU_CANCEL_FIELD
   #define RSITE_ARDUINO_MENU_CANCEL_FIELD
 
-#include "../menu.h"
+#include "../menuDefs.h"
 
 using namespace Menu;
 

@@ -11,7 +11,7 @@ using
 
 #ifndef RSITE_KEYPAD_DEF_H
   #define RSITE_KEYPAD_DEF_H
-  #include "../menu.h"
+  #include "../menuDefs.h"
 
   #include <Keypad.h>
   namespace Menu {

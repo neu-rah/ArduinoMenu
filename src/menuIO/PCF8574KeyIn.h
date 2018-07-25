@@ -31,7 +31,7 @@ PCF8574KeyIn<6> myButton(myBtn_map,Wire);
 #ifndef __PCF8574KeyIn_h__
   #define __PCF8574KeyIn_h__
 
-  #include "../menu.h"
+  #include "../menuDefs.h"
   #include <Wire.h>
 
   namespace Menu {

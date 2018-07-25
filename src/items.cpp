@@ -1,4 +1,4 @@
-#include "menu.h"
+#include "menuDefs.h"
 using namespace Menu;
 
 bool prompt::hasTitle(navNode& nav) const {return (nav.target->has(showTitle)||(nav.root->showTitle&&!nav.target->has(noTitle)));}

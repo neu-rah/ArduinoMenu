@@ -12,7 +12,7 @@ ex: -A0 means: pin A0 normally high, low when button pushed (reverse logic)
 
 #ifndef RSITE_KEYIN_DEF_H
   #define RSITE_KEYIN_DEF_H
-  #include "../menu.h"
+  #include "../menuDefs.h"
 
   namespace Menu {
 

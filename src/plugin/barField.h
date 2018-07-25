@@ -32,7 +32,7 @@ the remaining parameters are the same as the regular FIELD
 #ifndef RSITE_ARDUINO_MENU_BAR_FIELD
   #define RSITE_ARDUINO_MENU_BAR_FIELD
 
-#include "../menu.h"
+#include "../menuDefs.h"
 #include "cancelField.h"
 
 using namespace Menu;

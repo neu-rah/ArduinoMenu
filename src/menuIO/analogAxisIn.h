@@ -7,7 +7,7 @@ analogAxisIn - analog joystick axis
 
 #ifndef RSITE_ARDUINO_MENU_ANALOG_JOYSTICK_INPUT
   #define RSITE_ARDUINO_MENU_ANALOG_JOYSTICK_INPUT
-  #include "../menu.h"
+  #include "../menuDefs.h"
 
   namespace Menu {
 

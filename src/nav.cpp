@@ -1,4 +1,4 @@
-#include "menu.h"
+#include "menuDefs.h"
 using namespace Menu;
 
 void panelsList::reset(idx_t from) {for(int n=from;n<sz;n++) nodes[n]=NULL;}

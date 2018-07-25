@@ -9,7 +9,7 @@ www.r-site.net
 #ifndef RSITE_ARDUINOP_MENU_TFT
 	#define RSITE_ARDUINOP_MENU_TFT
 	#include <TFT.h>
-	#include "../menu.h"
+	#include "../menuDefs.h"
 
 namespace Menu {
 

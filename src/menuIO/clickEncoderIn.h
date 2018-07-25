@@ -34,7 +34,7 @@ ex: -A0 means: pin A0 normally high, low when button pushed (reverse logic)
       #include <ClickEncoder.h>
     // #endif
 
-    #include "../menu.h"
+    #include "../menuDefs.h"
 
     namespace Menu {
 

@@ -6,7 +6,7 @@
 #ifndef RSITE_ARDUINO_MENU_OZOLEDASCIIOUT
 #define RSITE_ARDUINO_MENU_OZOLEDASCIIOUT
 
-  #include "../menu.h"
+  #include "../menuDefs.h"
   // #include <Wire.h>
   // #include <LCD.h>
 

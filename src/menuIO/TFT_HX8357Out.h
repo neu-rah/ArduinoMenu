@@ -9,7 +9,7 @@ www.r-site.net
 #ifndef RSITE_TFT_HX8357_DEF_H
 	#define RSITE_TFT_HX8357_DEF_H
   #include <TFT_HX8357.h>
-	#include "../menu.h"
+	#include "../menuDefs.h"
 
 namespace Menu {
 
