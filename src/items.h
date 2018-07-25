@@ -78,7 +78,7 @@
         virtual result sysHandler(SYS_FUNC_PARAMS) {return proceed;}
         virtual result eventHandler(eventMask e,navNode& nav,idx_t i);
         #ifdef MENU_FMT_WRAPS
-          virtual classes type();
+          virtual classes type() const;
         #endif
         #ifdef MENU_ASYNC
           // virtual prompt* seek(idx_t* uri,idx_t len) {return len?NULL:this;}
@@ -142,7 +142,7 @@
       void doNav(navNode& nav,navCmd cmd) override;
       Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr=0) override;
       #ifdef MENU_FMT_WRAPS
-        classes type() const override;
+        virtual classes type() const;
       #endif
       #ifdef MENU_ASYNC
         bool async(const char*uri,navRoot& root,idx_t lvl) override;
@@ -157,7 +157,7 @@
         bool tunning=false;
         inline fieldBase(constMEM promptShadow& shadow):navTarget(shadow) {}
         #ifdef MENU_FMT_WRAPS
-          classes type() const override;
+          virtual classes type() const;
         #endif
         #ifdef MENU_ASYNC
           bool async(const char*uri,navRoot& root,idx_t lvl) override;
@@ -239,7 +239,7 @@
         inline menuNode(constText* text,idx_t sz,prompt* constMEM data[],action a=noAction,eventMask e=noEvent,styles style=wrapStyle,systemStyles ss=(systemStyles)(_menuData|_canNav))
           :navTarget(*new menuNodeShadow(text,sz,data,a,e,style,ss)) {}
         #ifdef MENU_FMT_WRAPS
-          classes type() const override;
+          virtual classes type() const;
         #endif
         inline prompt& operator[](idx_t i) const {return ((menuNodeShadow*)shadow)->operator[](i);}
         bool changed(const navNode &nav,const menuOut& out,bool sub=true,bool test=false) override;

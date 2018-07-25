@@ -8,7 +8,7 @@ idx_t prompt::printRaw(menuOut& out,idx_t len) const {
   return print_P(out,getText(),len);
 }
 
-bool prompt::changed(const navNode &nav,const menuOut& out,bool sub=true,bool test=false) {
+bool prompt::changed(const navNode &nav,const menuOut& out,bool sub,bool test) {
   trace(MENU_DEBUG_OUT<<"prompt::changed"<<endl);
   return dirty;
 }
@@ -108,7 +108,7 @@ constText* textField::validator(int i) {return ((textFieldShadow*)shadow)->opera
 #endif
 
 #ifdef MENU_ASYNC
-  const char* textField::typeName() const override {return "textField";}
+  const char* textField::typeName() const {return "textField";}
 #endif
 
 
@@ -232,7 +232,7 @@ void menuNode::clearChanged(const navNode &nav,const menuOut& out,bool sub) {
 #endif
 
 #ifdef MENU_ASYNC
-  const char* menuNode::typeName() const override {return "mn";}
+  const char* menuNode::typeName() const {return "mn";}
 #endif
 
 

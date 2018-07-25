@@ -14,31 +14,31 @@
       public:
         bool numValueInput=true;
         //when inside a field some devices might invert the movement axis
-        virtual void setFieldMode(bool) {}
-        virtual bool fieldMode() const {return false;}
+        virtual void setFieldMode(bool);
+        virtual bool fieldMode() const;
         inline void fieldOn() {setFieldMode(true);}
         inline void fieldOff() {setFieldMode(false);}
     };
 
     class noInput:public menuIn {
     public:
-      size_t write(uint8_t) override {return 0;}
-      int available() override {return 0;}
-      int read() override {return -1;}
-      int peek() override {return -1;}
+      size_t write(uint8_t) override;
+      int available() override;
+      int read() override;
+      int peek() override;
     };
 
     #ifdef MENU_ASYNC
       class StringStream:public menuIn {
         public:
           const char *src;
-          StringStream(const char*s):src(s) {}
-          int available() override {return 0!=*src;}
-          int read() override {return *src++;}
-          int peek() override {return *src?*src:-1;}
-          void flush() override {while(*src) src++;}
-          size_t write(uint8_t) override {return 0;}
-          operator const String() {return String(src);}
+          inline StringStream(const char*s):src(s) {}
+          int available() override;
+          int read() override;
+          int peek() override;
+          void flush() override;
+          size_t write(uint8_t) override;
+          inline operator const String() {return String(src);}
       };
     #endif
 
@@ -68,7 +68,7 @@
         };
         menuNode* drawn=NULL;
         bool pageScroll=false;
-        menuOut(idx_t *topsList,panelsList &p,styles os=minimalRedraw)
+        inline menuOut(idx_t *topsList,panelsList &p,styles os=minimalRedraw)
           :tops(topsList),panels(p),style(os) {}
         idx_t maxX(idx_t i=0) const;
         idx_t maxY(idx_t i=0) const;
@@ -77,7 +77,7 @@
         #if defined(MENU_DEBUG) || defined(MENU_ASYNC)
           virtual menuOut& operator<<(prompt const &p);
           #ifdef ESP8266
-            template<typename T> menuOut& operator<<(T o) {(*(Stream*)this)<<(o);return *this;}
+            template<typename T> menuOut& operator<<(T o);
           #endif
         #endif
         virtual menuOut& fill(
@@ -86,7 +86,7 @@
           bool selected=false,
           status stat=enabledStatus,
           bool edit=false
-        ) {return *this;}
+        );
         void clearChanged(navNode &nav);//clean up changed flags after everyone printed!
         void previewMenu(navRoot& root,menuNode& menu,idx_t panelNr);//draw a preview on a panel
         Used printMenu(navNode &nav);//print menus and previews on panels
@@ -95,20 +95,17 @@
         virtual void clear()=0;
         virtual void clear(idx_t panelNr)=0;
         virtual void setCursor(idx_t x,idx_t y,idx_t panelNr=0)=0;
-        virtual void setColor(colorDefs c,bool selected=false,status s=enabledStatus,bool edit=false) {}
-        virtual void drawCursor(idx_t ln,bool selected,status stat,bool edit=false,idx_t panelNr=0) {
-          setColor(cursorColor, selected, stat,edit);
-          write(selected?(stat==disabledStatus? options->disabledCursor : options->selectedCursor):' ');
-        }
+        virtual void setColor(colorDefs c,bool selected=false,status s=enabledStatus,bool edit=false);
+        virtual void drawCursor(idx_t ln,bool selected,status stat,bool edit=false,idx_t panelNr=0);
         //text editor cursors
-        virtual idx_t startCursor(navRoot& root,idx_t x,idx_t y,bool charEdit,idx_t panelNr=0) {write(charEdit?">":"[");return 1;}
-        virtual idx_t endCursor(navRoot& root,idx_t x,idx_t y,bool charEdit,idx_t panelNr=0) {write(charEdit?"<":"]");return 1;}
-        virtual idx_t editCursor(navRoot& root,idx_t x,idx_t y,bool editing,bool charEdit,idx_t panelNr=0) {return 0;}
-        virtual void rect(idx_t panelNr,idx_t x,idx_t y,idx_t w=1,idx_t h=1,colorDefs c=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) {}
-        virtual void box(idx_t panelNr,idx_t x,idx_t y,idx_t w=1,idx_t h=1,colorDefs c=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) {}
+        virtual idx_t startCursor(navRoot& root,idx_t x,idx_t y,bool charEdit,idx_t panelNr=0);
+        virtual idx_t endCursor(navRoot& root,idx_t x,idx_t y,bool charEdit,idx_t panelNr=0);
+        virtual idx_t editCursor(navRoot& root,idx_t x,idx_t y,bool editing,bool charEdit,idx_t panelNr=0);
+        virtual void rect(idx_t panelNr,idx_t x,idx_t y,idx_t w=1,idx_t h=1,colorDefs c=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false);
+        virtual void box(idx_t panelNr,idx_t x,idx_t y,idx_t w=1,idx_t h=1,colorDefs c=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false);
         #ifdef MENU_FMT_WRAPS
-          virtual result fmtStart(prompt& target,fmtParts part,navNode &nav,idx_t idx=-1) {return proceed;}
-          virtual result fmtEnd(prompt& target,fmtParts part,navNode &nav,idx_t idx=-1) {return proceed;}
+          virtual result fmtStart(prompt& target,fmtParts part,navNode &nav,idx_t idx=-1);
+          virtual result fmtEnd(prompt& target,fmtParts part,navNode &nav,idx_t idx=-1);
         #endif
         #ifdef MENU_ASYNC
           virtual bool isAsync();
@@ -120,28 +117,11 @@
     //for devices that can position a print cursor (like LCD's)
     class cursorOut:public menuOut {
     public:
-      cursorOut(idx_t *topsList,panelsList &p,styles os=minimalRedraw)
+      inline cursorOut(idx_t *topsList,panelsList &p,styles os=minimalRedraw)
         :menuOut(topsList,p,os) {}
-      void clearLine(idx_t ln,idx_t panelNr=0,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) override {
-        setCursor(0,ln,panelNr);
-        for(int n=0;n<maxX();n++) print(' ');
-        setCursor(0,ln,panelNr);
-      }
+      void clearLine(idx_t ln,idx_t panelNr=0,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) override;
       void clear(idx_t panelNr) override;
-      menuOut& fill(
-        int x1, int y1, int x2, int y2,char ch=' ',
-        colorDefs color=bgColor,
-        bool selected=false,
-        status stat=enabledStatus,
-        bool edit=false
-      ) override {
-        for(int r=y1;r<=y2;r++) {
-          setCursor(x1,r);
-          for(int c=x1;c<=x2;c++)
-            write(ch);
-        }
-        return *this;
-      }
+      menuOut& fill(int x1, int y1, int x2, int y2,char ch=' ',colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) override;
     };
 
     //base for graphics displays
@@ -151,28 +131,11 @@
         idx_t resY=1;
         idx_t fontMarginX=1;//in pixels, compensate vertical font alignment
         idx_t fontMarginY=1;//in pixels, compensate vertical font alignment
-        gfxOut(idx_t rx,idx_t ry,idx_t* t,panelsList &p,menuOut::styles st=menuOut::minimalRedraw,idx_t fontMarginY=1)
+        inline gfxOut(idx_t rx,idx_t ry,idx_t* t,panelsList &p,menuOut::styles st=menuOut::minimalRedraw,idx_t fontMarginY=1)
           :menuOut(t,p,st),resX(rx),resY(ry),fontMarginY(fontMarginY) {}
-        idx_t startCursor(navRoot& root,idx_t x,idx_t y,bool charEdit,idx_t panelNr) override {
-          if (charEdit) {
-            rect(panelNr,  x-1,  y, 1, 1, bgColor, false, enabledStatus, false);
-            setColor(fgColor,false,enabledStatus,false);
-          }/* else
-            box(panelNr,  x,  y, 1, 1, bgColor, false, enabledStatus, false);*/
-          return 0;
-        }
-        idx_t endCursor(navRoot& root,idx_t x,idx_t y,bool charEdit,idx_t panelNr) override {
-          setColor(fgColor,true,enabledStatus,true);return 0;
-        }
-        idx_t editCursor(navRoot& root,idx_t x,idx_t y,bool editing,bool charEdit,idx_t panelNr) override {
-          //TODO: next version, this furntiosn should return an USED value (and avoid nasty x-1)
-          if (editing) box(panelNr,x-1,y);
-          return 0;
-        }
-        // void drawCursor(idx_t ln,bool selected,status stat,bool edit=false,idx_t panelNr=0) override {
-        //   setColor(cursorColor, selected, stat,edit);
-        //   //write(selected?(stat==disabledStatus? options->disabledCursor : options->selectedCursor):' ');
-        // }
+        idx_t startCursor(navRoot& root,idx_t x,idx_t y,bool charEdit,idx_t panelNr) override;
+        idx_t endCursor(navRoot& root,idx_t x,idx_t y,bool charEdit,idx_t panelNr) override;
+        idx_t editCursor(navRoot& root,idx_t x,idx_t y,bool editing,bool charEdit,idx_t panelNr) override;
     };
 
     #ifdef MENU_ASYNC
@@ -191,19 +154,15 @@
         int cnt=1;
         menuOut* constMEM* outs;
         outputsList(menuOut* constMEM o[],int n):cnt(n),outs(o) {}
-        menuOut& operator[](idx_t i) {
+        inline menuOut& operator[](idx_t i) {
           assert(i<cnt);
           return *(menuOut*)memPtr(outs[i]);
         }
         Used printMenu(navNode& nav) const;
-        void refresh() {//force redraw of all outputs on next output call
-          for(int n=0;n<cnt;n++) ((menuOut*)memPtr(outs[n]))->drawn=NULL;
-        }
-        void clearChanged(navNode& nav) const {
-          for(int n=0;n<cnt;n++) ((menuOut*)memPtr(outs[n]))->clearChanged(nav);
-        }
-        void clear() {for(int n=0;n<cnt;n++) ((menuOut*)memPtr(outs[n]))->clear();}
-        void doNav(navCmd cmd,class navNode &nav) {for(int n=0;n<cnt;n++) ((menuOut*)memPtr(outs[n]))->doNav(cmd,nav);}
+        void refresh();//force redraw of all outputs on next output call
+        void clearChanged(navNode& nav) const;
+        void clear();
+        void doNav(navCmd cmd,class navNode &nav);
         result idle(idleFunc f,idleEvent e,bool idleChanged=false);
     };
   }//namespace Menu

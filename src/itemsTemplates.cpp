@@ -28,7 +28,7 @@ namespace Menu {
     reflex=target();
   }
   template<typename T>
-  bool menuField<T>::changed(const navNode &nav,const menuOut& out,bool sub=true,bool test=false) {
+  bool menuField<T>::changed(const navNode &nav,const menuOut& out,bool sub,bool test) {
     trace(if (test&&dirty) MENU_DEBUG_OUT<<"field dirty"<<endl);
     trace(if (test&&(reflex!=target())) MENU_DEBUG_OUT<<"reflex!=target reflex:"<<reflex<<" target:"<<target()<<endl);
     return dirty||(reflex!=target());
@@ -104,7 +104,7 @@ namespace Menu {
 
   #ifdef MENU_ASYNC
     template<typename T>
-    const char* typeName() const {return "toggle";}
+    const char* toggle<T>::typeName() const {return "toggle";}
     template<typename T>
     bool toggle<T>::async(const char*uri,navRoot& root,idx_t lvl) {
       trace(MENU_DEBUG_OUT<<(*(prompt*)this)<<" toggle::async! uri:"<<uri<<endl);
@@ -192,7 +192,7 @@ namespace Menu {
   }
 
   template<typename T>
-  bool choose<T>::changed(const navNode &nav,const menuOut& out,bool sub=true,bool test=false) {
+  bool choose<T>::changed(const navNode &nav,const menuOut& out,bool sub,bool test) {
     return menuVariant<T>::changed(nav,out)||menuNode::changed(nav,out);
   }
 

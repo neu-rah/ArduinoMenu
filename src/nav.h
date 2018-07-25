@@ -19,12 +19,10 @@
         navNode** nodes;
         constMEM idx_t sz;
         idx_t cur=0;
-        panelsList(constMEM panel p[],navNode* nodes[],idx_t sz):panels(p),nodes(nodes),sz(sz) {
+        inline panelsList(constMEM panel p[],navNode* nodes[],idx_t sz):panels(p),nodes(nodes),sz(sz) {
           reset();
         }
-        void reset(idx_t from=0) {
-          for(int n=from;n<sz;n++) nodes[n]=NULL;
-        }
+        void reset(idx_t from=0);
         inline constMEM panel operator[](idx_t i) const {
           // assert(i<sz);
           #ifdef USING_PGM
@@ -35,16 +33,8 @@
             return panels[i];
           #endif
         }
-        idx_t maxX() const {
-          idx_t r=0;
-          for(int n=0;n<sz;n++) r=_MAX(operator[](n).maxX(),r);
-          return r;
-        }
-        idx_t maxY() const {
-          idx_t r=0;
-          for(int n=0;n<sz;n++) r=_MAX(operator[](n).maxY(),r);
-          return r;
-        }
+        idx_t maxX() const;
+        idx_t maxY() const;
     };
 
     // Navigation
@@ -64,7 +54,7 @@
         inline prompt& selected() const {return *(prompt*)memPtr(data()[sel]);}
         inline bool wrap() const {return target->style()&wrapStyle;}
         result event(eventMask e,idx_t i);//send event to item index i
-        result event(eventMask e) {return event(e,sel);}//send event to current item
+        inline result event(eventMask e) {return event(e,sel);}//send event to current item
         result sysEvent(eventMask e,idx_t i);//send system event to item index i
         inline result sysEvent(eventMask e) {return sysEvent(e,sel);}//send event to current item
         navCmd navKeys(char ch);
@@ -99,21 +89,13 @@
         idx_t inputBurst=1;//limit of inputs that can be processed before output
         unsigned long lastChanged=0;//last change detected (can be external activity)
         int timeOut=0;//enter idle mode after `timeOut` seconds of inactivity
-        navRoot(menuNode& root,navNode* path,idx_t d,menuIn& in,outputsList &o)
+        inline navRoot(menuNode& root,navNode* path,idx_t d,menuIn& in,outputsList &o)
           :out(o),in(in),path(path),maxDepth(d-1) {
             useMenu(root);
             initPath(d-1);
           }
-        void initPath(idx_t d) {
-          for(idx_t n=0;n<=d;n++)//initialize path chain for this root (v4.0)
-            path[n].root=this;
-        }
-        void useMenu(menuNode &menu) {
-          navFocus=&menu;
-          path[0].target=&menu;
-          reset();
-          refresh();
-        }
+        void initPath(idx_t d);
+        void useMenu(menuNode &menu);
         inline void reset() {
           level=0;
           path[0].sel=0;
@@ -131,13 +113,7 @@
           menuOut& printPath(menuOut& o,menuNode*) const;
           Used printMenu(menuOut& o) const;
         #endif
-        Used printMenu() const {
-          trace(MENU_DEBUG_OUT<<"navRoot::printMenu"<<endl);
-          if ((active().sysStyles()&_parentDraw)&&level)
-            return out.printMenu(path[level-1]);
-          else return out.printMenu(node());
-        }
-
+        Used printMenu() const;
         //menu IO - external iteration functions
         void doInput(menuIn& in);
         #ifdef MENU_ASYNC
@@ -147,42 +123,15 @@
           }
         #endif
         inline void doInput() {doInput(in);}
-        inline void doOutput() {
-          if (!sleepTask) printMenu();
-          else {
-            bool c=idleChanged;
-            idleChanged=false;//turn it off here so that sleepTask can force it on again
-            out.idle(sleepTask,idling,c);
-            #ifdef MENU_IDLE_BKGND
-              if (idleTask!=sleepTask) out.idle(idleTask,idling);
-            #endif
-          }
-        }
+        void doOutput();
         inline void poll() {doInput();doOutput();};//fire and forget mode
         void doNav(navCmd cmd);//fly by wire mode
         navCmd enter();//aux function
         navCmd exit();//aux function
 
         //enter idle mode ---------------------------------
-        inline void idleOn(idleFunc task=inaction) {
-          out.clear();
-          sleepTask=task;
-          idleChanged=true;
-          active().dirty=true;
-          out.idle(sleepTask,idleStart);
-          #ifdef MENU_IDLE_BKGND
-            if (idleTask!=sleepTask) out.idle(idleTask,idleStart);
-          #endif
-        }
-        inline void idleOff() {
-          out.idle(sleepTask,idleEnd);
-          #ifdef MENU_IDLE_BKGND
-            if (idleTask!=sleepTask) out.idle(idleTask,idleEnd);
-          #endif
-          sleepTask=NULL;
-          active().dirty=true;
-          out.clear();
-        }
+        void idleOn(idleFunc task=inaction);
+        void idleOff();
     };
 
     #ifdef MENU_DEBUG

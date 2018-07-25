@@ -1,15 +1,46 @@
 #include "menu.h"
 using namespace Menu;
 
+void menuIn::setFieldMode(bool) {}
+bool menuIn::fieldMode() const {return false;}
+
+size_t noInput::write(uint8_t) {return 0;}
+int noInput::available() {return 0;}
+int noInput::read() {return -1;}
+int noInput::peek() {return -1;}
+
+#ifdef MENU_ASYNC
+  int StringStream::available() {return 0!=*src;}
+  int StringStream::read() {return *src++;}
+  int StringStream::peek() {return *src?*src:-1;}
+  void StringStream::flush() {while(*src) src++;}
+  size_t StringStream::write(uint8_t) {return 0;}
+#endif
+
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 // menuOut - base menu output device
 //
 ////////////////////////////////////////////////////////////////////////////////
+#if defined(MENU_DEBUG) || defined(MENU_ASYNC)
+  #ifdef ESP8266
+    template<typename T>
+    menuOut& menuOut::operator<<(T o) {(*(Stream*)this)<<(o);return *this;}
+  #endif
+#endif
+
 #ifdef MENU_ASYNC
   bool menuOut::isAsync() {return false;}
 #endif
+
+menuOut& menuOut::fill(
+  int x1, int y1, int x2, int y2,char ch,
+  colorDefs color,
+  bool selected,
+  status stat,
+  bool edit
+) {return *this;}
 
 idx_t menuOut::printRaw(const char* at,idx_t len) {
   trace(MENU_DEBUG_OUT<<"menuOut::printRaw"<<endl);
@@ -43,12 +74,67 @@ void menuOut::doNav(navCmd cmd,navNode &nav) {
   }
 }
 
+void menuOut::setColor(colorDefs c,bool selected,status s,bool edit) {}
+void menuOut::drawCursor(idx_t ln,bool selected,status stat,bool edit,idx_t panelNr) {
+  setColor(cursorColor, selected, stat,edit);
+  write(selected?(stat==disabledStatus? options->disabledCursor : options->selectedCursor):' ');
+}
+idx_t menuOut::startCursor(navRoot& root,idx_t x,idx_t y,bool charEdit,idx_t panelNr) {write(charEdit?">":"[");return 1;}
+idx_t menuOut::endCursor(navRoot& root,idx_t x,idx_t y,bool charEdit,idx_t panelNr) {write(charEdit?"<":"]");return 1;}
+idx_t menuOut::editCursor(navRoot& root,idx_t x,idx_t y,bool editing,bool charEdit,idx_t panelNr) {return 0;}
+void menuOut::rect(idx_t panelNr,idx_t x,idx_t y,idx_t w,idx_t h,colorDefs c,bool selected,status stat,bool edit) {}
+void menuOut::box(idx_t panelNr,idx_t x,idx_t y,idx_t w,idx_t h,colorDefs c,bool selected,status stat,bool edit) {}
+#ifdef MENU_FMT_WRAPS
+  result menuOut::fmtStart(prompt& target,fmtParts part,navNode &nav,idx_t idx) {return proceed;}
+  result menuOut::fmtEnd(prompt& target,fmtParts part,navNode &nav,idx_t idx) {return proceed;}
+#endif
+
 #if defined(MENU_DEBUG) || defined(MENU_ASYNC)
 menuOut& menuOut::operator<<(const prompt& p) {
   print_P(*this,p.getText());
   return *this;
 }
 #endif
+
+void cursorOut::clearLine(idx_t ln,idx_t panelNr,colorDefs color,bool selected,status stat,bool edit) {
+  setCursor(0,ln,panelNr);
+  for(int n=0;n<maxX();n++) print(' ');
+  setCursor(0,ln,panelNr);
+}
+
+menuOut& cursorOut::fill(
+  int x1, int y1, int x2, int y2,char ch,
+  colorDefs color,
+  bool selected,
+  status stat,
+  bool edit
+) {
+  for(int r=y1;r<=y2;r++) {
+    setCursor(x1,r);
+    for(int c=x1;c<=x2;c++)
+      write(ch);
+  }
+  return *this;
+}
+
+idx_t gfxOut::startCursor(navRoot& root,idx_t x,idx_t y,bool charEdit,idx_t panelNr) {
+  if (charEdit) {
+    rect(panelNr,  x-1,  y, 1, 1, bgColor, false, enabledStatus, false);
+    setColor(fgColor,false,enabledStatus,false);
+  }/* else
+    box(panelNr,  x,  y, 1, 1, bgColor, false, enabledStatus, false);*/
+  return 0;
+}
+
+idx_t gfxOut::endCursor(navRoot& root,idx_t x,idx_t y,bool charEdit,idx_t panelNr) {
+  setColor(fgColor,true,enabledStatus,true);return 0;
+}
+
+idx_t gfxOut::editCursor(navRoot& root,idx_t x,idx_t y,bool editing,bool charEdit,idx_t panelNr) {
+  //TODO: next version, this furntiosn should return an USED value (and avoid nasty x-1)
+  if (editing) box(panelNr,x-1,y);
+  return 0;
+}
 
 Used outputsList::printMenu(navNode& nav) const {
   trace(MENU_DEBUG_OUT<<"outputsList::printMenu"<<endl);
@@ -89,6 +175,19 @@ result outputsList::idle(idleFunc f,idleEvent e,bool idleChanged) {
     }
   }
   return proceed;
+}
+
+void outputsList::refresh() {
+  for(int n=0;n<cnt;n++) ((menuOut*)memPtr(outs[n]))->drawn=NULL;
+}
+void outputsList::clearChanged(navNode& nav) const {
+  for(int n=0;n<cnt;n++) ((menuOut*)memPtr(outs[n]))->clearChanged(nav);
+}
+void outputsList::clear() {
+  for(int n=0;n<cnt;n++) ((menuOut*)memPtr(outs[n]))->clear();
+}
+void outputsList::doNav(navCmd cmd,class navNode &nav) {
+  for(int n=0;n<cnt;n++) ((menuOut*)memPtr(outs[n]))->doNav(cmd,nav);
 }
 
 // draw a menu preview on a panel
