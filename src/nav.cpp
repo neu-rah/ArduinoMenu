@@ -22,7 +22,7 @@ idx_t panelsList::maxY() const {
 
 navCmd navNode::navKeys(char ch) {
   trace(MENU_DEBUG_OUT<<"navNode::navKeys"<<endl);
-  if (strchr(numericChars,ch)) {
+  if (root->useAccel&&strchr(numericChars,ch)) {
     return navCmd(idxCmd,ch-'1');
   }
   for(uint8_t i=0;i<sizeof(options->navCodes)/sizeof(navCode);i++)
