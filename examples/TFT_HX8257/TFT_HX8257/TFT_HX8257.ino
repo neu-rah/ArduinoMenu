@@ -87,7 +87,7 @@ class altPrompt:public prompt {
 public:
   altPrompt(constMEM promptShadow& p):prompt(p) {}
   Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t) override {
-    return out.printRaw("special prompt!",len);;
+    return out.printRaw(F("special prompt!"),len);;
   }
 };
 

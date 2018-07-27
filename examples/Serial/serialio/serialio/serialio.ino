@@ -73,9 +73,10 @@ CHOOSE(chooseTest,chooseMenu,"Choose",doNothing,noEvent,noStyle
 //by extending the prompt class
 class altPrompt:public prompt {
 public:
-  altPrompt(constMEM promptShadow& p):prompt(p) {}
+  // altPrompt(constMEM promptShadow& p):prompt(p) {}
+  using prompt::prompt;
   Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t) override {
-    return out.printRaw("special prompt!",len);
+    return out.printRaw(F("special prompt!"),len);
   }
 };
 
@@ -168,6 +169,7 @@ void setup() {
   //nav.idleTask=idle;//point a function to be used when menu is suspended
   //nav.idleOn();//this menu will start on idle state, press select to enter menu
   //nav.doInput("323");
+  // nav.useAccel=false;
 }
 
 void loop() {

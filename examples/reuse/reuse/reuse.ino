@@ -83,15 +83,15 @@ class AlarmPrompt:public prompt {
       if (use) {
         switch(type) {
           case alarm:
-            len-=out.printRaw("Alarm ",len);
+            len-=out.printRaw(F("Alarm "),len);
             len-=out.print(h);
-            len-=out.printRaw(":",len);
+            len-=out.printRaw(F(":"),len);
             len-=out.print(m);
-            len-=out.printRaw(":",len);
+            len-=out.printRaw(F(":"),len);
             len-=out.print(s);
             break;
           case countDown:
-            len-=out.printRaw("Countdown ",len);
+            len-=out.printRaw(F("Countdown "),len);
             long ss=msTime/1000;
             long hh=ss/(60*60);
             ss-=hh*60*60;
@@ -99,18 +99,18 @@ class AlarmPrompt:public prompt {
             ss-=mm*60;
             if (hh<10) len-=out.print("0");
             len-=out.print(hh);
-            len-=out.printRaw(":",len);
+            len-=out.printRaw(F(":"),len);
             if (mm<10) len-=out.print("0");
             len-=out.print(mm);
-            len-=out.printRaw(":",len);
+            len-=out.printRaw(F(":"),len);
             if (ss<10) len-=out.print("0");
             len-=out.print(ss);
             break;
         }
       } else {
-        len-=out.printRaw("Alarm",len);
+        len-=out.printRaw(F("Alarm"),len);
         len-=out.print(idx+1);
-        len-=out.printRaw(" Off",len);
+        len-=out.printRaw(F(" Off"),len);
       }
       return len;
     }
@@ -130,13 +130,13 @@ class AlarmMenu:public menu {
       long mm=ss/60;
       ss-=mm*60;
       len-=print_P(out,getText(),len);
-      len-=out.printRaw(" ",len);
+      len-=out.printRaw(F(" "),len);
       if (hh<10) len-=out.print("0");
       len-=out.print(hh);
-      len-=out.printRaw(":",len);
+      len-=out.printRaw(F(":"),len);
       if (mm<10) len-=out.print("0");
       len-=out.print(mm);
-      len-=out.printRaw(":",len);
+      len-=out.printRaw(F(":"),len);
       if (ss<10) len-=out.print("0");
       len-=out.print(ss);
       //dirty=true;useless here because dirty flag is cleaned after all devices print
