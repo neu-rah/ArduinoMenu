@@ -373,7 +373,7 @@ Used menuOut::printMenu(navNode &nav,idx_t panelNr) {
         }
         setColor(fgColor,selected,p.enabled,ed);
         //should we use accels on pads?
-        if ((!asPad)&&(drawNumIndex&style)) {//<-- NO INDEX FOR PADS
+        if (nav.root->useAccel&&(!asPad)&&(drawNumIndex&style)) {//<-- NO INDEX FOR PADS
           char a=top+i+'1';
           print('[');
           // if (p.is(_Exit)) {//this would require an enourmous confusiuon on keyboard accels
