@@ -299,7 +299,7 @@ Used menuOut::printMenu(navNode &nav,idx_t panelNr) {
       ||(drawn!=nav.target)
       ||(panels.nodes[panelNr]!=&nav);
     if (!(all||(style&minimalRedraw))) {//non minimal draw will redraw all if any change
-      _trace(MENU_DEBUG_OUT<<"request full draw "<<style<<endl);
+      trace(MENU_DEBUG_OUT<<"request full draw "<<style<<endl);
       all|=nav.target->changed(nav,*this);
     }
     all|=nav.target->dirty;
@@ -313,13 +313,13 @@ Used menuOut::printMenu(navNode &nav,idx_t panelNr) {
       fmtStart(*nav.target,fmtPanel,nav);
     #endif
     if (all||titleChanged) {
-      _trace(MENU_DEBUG_OUT<<"clear title "<<titleChanged<<endl);
-      _trace(MENU_DEBUG_OUT<<"all:"<<all<<" panelNr:"<<panelNr<<endl);
+      trace(MENU_DEBUG_OUT<<"clear title "<<titleChanged<<endl);
+      trace(MENU_DEBUG_OUT<<"all:"<<all<<" panelNr:"<<panelNr<<endl);
       trace(MENU_DEBUG_OUT<<"{x:"<<pan.x<<" y:"<<pan.y<<" w:"<<pan.w<<" h:"<<pan.h<<"}"<<endl);
       if (all&&!asPad) clear(panelNr);
       if (st||asPad) {
         ///------> titleStart
-        _trace(MENU_DEBUG_OUT<<"title start"<<endl);
+        trace(MENU_DEBUG_OUT<<"title start"<<endl);
         #ifdef MENU_FMT_WRAPS
           fmtStart(*nav.target,fmtTitle,nav,-1);
         #endif
@@ -347,7 +347,7 @@ Used menuOut::printMenu(navNode &nav,idx_t panelNr) {
       }
     }
     //------> bodyStart
-    _trace(MENU_DEBUG_OUT<<"body start all:"<<all<<endl);
+    trace(MENU_DEBUG_OUT<<"body start all:"<<all<<endl);
     #ifdef MENU_FMT_WRAPS
       fmtStart(*nav.target,fmtBody,nav);
     #endif

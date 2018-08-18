@@ -36,12 +36,12 @@
           device->clear(resX*p.x,resX*(p.x+maxX(panelNr))-1,y,y+resY-1);
         }
         void clear() override {
-          _trace(Serial<<"clear!!"<<endl;);
+          trace(Serial<<"clear!!"<<endl;);
           device->clear();
           panels.reset();
         }
         void clear(idx_t panelNr) override {
-          _trace(Serial<<"clear panel!! "<<panelNr<<endl;);
+          trace(Serial<<"clear panel!! "<<panelNr<<endl;);
           const panel p=panels[panelNr];
           device->clear(p.x,p.y,p.x+p.w-1,p.y+p.h-1);
           // setCursor(0,0,panelNr);
