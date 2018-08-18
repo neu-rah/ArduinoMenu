@@ -27,7 +27,6 @@ int test=55;
 result action1(eventMask e) {
   Serial.print(e);
   Serial.println(" action1 executed, proceed menu");Serial.flush();
-  _trace(if (e==enterEvent) oled.clear(0,oled.displayWidth(),2,3));
   return proceed;
 }
 
