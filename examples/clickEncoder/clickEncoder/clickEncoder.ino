@@ -143,12 +143,12 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
 
 #define MAX_DEPTH 2
 
-/*const panel panels[] MEMMODE={{0,0,16,2}};
+/*constMEM panel panels[] MEMMODE={{0,0,16,2}};
 navNode* nodes[sizeof(panels)/sizeof(panel)];
 panelsList pList(panels,nodes,1);
 idx_t tops[MAX_DEPTH];
 lcdOut outLCD(&lcd,tops,pList);//output device for LCD
-menuOut* outputs[]={&outLCD};//list of output devices
+menuOut* constMEM outputs[] MEMMODE={&outLCD};//list of output devices
 outputsList out(outputs,1);//outputs list with 2 outputs
 */
 

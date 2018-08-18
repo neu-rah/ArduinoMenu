@@ -54,7 +54,7 @@ const colorDef<uint8_t> colors[] MEMMODE={
 // panelsList pList(panels,nodes,sizeof(panels)/sizeof(panel));
 // idx_t ansi_tops[MAX_DEPTH];
 // ansiSerialOut ansi(Serial,colors,ansi_tops,pList);//the output device, ansi-terminal Cols x Rows
-// menuOut* outputs[]={&ansi};
+// menuOut* constMEM outputs[] MEMMODE={&ansi};
 // outputsList out(outputs,1);
 
 MENU_OUTPUTS(out,MAX_DEPTH

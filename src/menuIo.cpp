@@ -137,7 +137,7 @@ idx_t gfxOut::editCursor(navRoot& root,idx_t x,idx_t y,bool editing,bool charEdi
 }
 
 Used outputsList::printMenu(navNode& nav) const {
-  trace(MENU_DEBUG_OUT<<"outputsList::printMenu"<<endl);
+  trace(MENU_DEBUG_OUT<<"outputsList::printMenu"<<endl;MENU_DEBUG_OUT.flush());
   for(int n=0;n<cnt;n++) {
     menuOut& o=*((menuOut*)memPtr(outs[n]));
     if (nav.changed(o)||(o.style&(menuOut::rasterDraw))||(o.style&(menuOut::redraw)))

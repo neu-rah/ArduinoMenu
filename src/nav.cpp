@@ -132,7 +132,7 @@ void navRoot::useMenu(menuNode &menu) {
 }
 
 Used navRoot::printMenu() const {
-  trace(MENU_DEBUG_OUT<<"navRoot::printMenu"<<endl);
+  trace(MENU_DEBUG_OUT<<"printMenu()"<<endl);
   if ((active().sysStyles()&_parentDraw)&&level)
     return out.printMenu(path[level-1]);
   else return out.printMenu(node());
@@ -155,6 +155,7 @@ void navRoot::doInput(menuIn& in) {
 }
 
 void navRoot::doOutput() {
+  trace(Serial<<"navRoot::doOutput "<<(int)sleepTask<<endl);
   if (!sleepTask) printMenu();
   else {
     bool c=idleChanged;

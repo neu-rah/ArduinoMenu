@@ -38,7 +38,7 @@ Used prompt::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,id
     //   out.fmtStart(*this,menuOut::fmtBody,root.node(),idx);
     // #endif
     if (root.node().target==this) {
-      trace(MENU_DEBUG_OUT<<"printMenu"<<endl);
+      trace(MENU_DEBUG_OUT<<"calling printMenu"<<endl);
       out.printMenu(root.node(), panelNr);
     } else {
       trace(MENU_DEBUG_OUT<<"previewMenu"<<endl);

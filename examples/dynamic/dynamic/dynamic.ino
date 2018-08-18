@@ -131,7 +131,7 @@ idx_t tops[MAX_DEPTH];
 serialOut out(Serial,tops);
 
 //outputs -------------------------------------
-menuOut* outList[]={&out};
+menuOut* constMEM outList[] MEMMODE={&out};
 outputsList outs(outList,sizeof(outList)/sizeof(menuOut*));
 
 //navigation control -------------------------------------

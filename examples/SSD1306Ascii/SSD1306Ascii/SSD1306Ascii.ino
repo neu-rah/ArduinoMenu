@@ -9,7 +9,7 @@
 
 #include <menu.h>
 #include <menuIO/SSD1306AsciiOut.h>
-#include <menuIO/serialIn.h>
+#include <menuIO/serialIO.h>
 using namespace Menu;
 
 SSD1306AsciiWire oled;
@@ -73,7 +73,7 @@ class altPrompt:public prompt {
 public:
   altPrompt(constMEM promptShadow& p):prompt(p) {}
   Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t) override {
-    return out.printRaw(F("special prompt!"),len);
+    return out.printRaw(F( "special prompt!"),len);
   }
 };
 
@@ -81,7 +81,7 @@ MENU(subMenu,"Sub-Menu",showEvent,anyEvent,noStyle
   ,OP("Sub1",showEvent,anyEvent)
   ,OP("Sub2",showEvent,anyEvent)
   ,OP("Sub3",showEvent,anyEvent)
-  ,altOP(altPrompt,"",showEvent,anyEvent)
+  // ,altOP(altPrompt,"",showEvent,anyEvent)
   ,EXIT("<Back")
 );
 
@@ -104,6 +104,10 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
 #define fontW 5
 #define fontH 8
 
+//define output device
+idx_t serialTops[MAX_DEPTH]={0};
+serialOut outSerial(Serial,serialTops);
+
 //describing a menu output device without macros
 //define at least one panel for menu output
 constMEM panel panels[] MEMMODE={{0,0,128/fontW,64/fontH}};
@@ -111,8 +115,8 @@ navNode* nodes[sizeof(panels)/sizeof(panel)];//navNodes to store navigation stat
 panelsList pList(panels,nodes,1);//a list of panels and nodes
 idx_t tops[MAX_DEPTH]={0,0};//store cursor positions for each level
 SSD1306AsciiOut outOLED(&oled,tops,pList);//oled output device menu driver
-menuOut* outputs[]={&outOLED};//list of output devices
-outputsList out(outputs,1);//outputs list
+menuOut* constMEM outputs[] MEMMODE ={&outSerial,&outOLED,};//list of output devices
+outputsList out(outputs,sizeof(outputs)/sizeof(menuOut*));//outputs list
 
 //macro to create navigation control root object (nav) using mainMenu
 serialIn serial(Serial);
@@ -154,8 +158,8 @@ void setup() {
   oled.begin(&Adafruit128x64, I2C_ADDRESS);
   oled.setFont(System5x7);
   oled.clear();
-  oled.print("Hello world!");
-  nav.idleTask=idle;//point a function to be used when menu is suspended
+  oled.print("menu 4.x test");
+  // nav.idleTask=idle;//point a function to be used when menu is suspended
 }
 
 void loop() {

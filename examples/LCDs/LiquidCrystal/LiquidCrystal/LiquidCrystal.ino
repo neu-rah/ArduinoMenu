@@ -153,7 +153,7 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
 #define MAX_DEPTH 2
 /*idx_t tops[MAX_DEPTH];
 liquidCrystalOut outLCD(lcd,tops,pList);//output device for LCD
-menuOut* outputs[]={&outLCD};//list of output devices
+menuOut* constMEM outputs[] MEMMODE={&outLCD};//list of output devices
 outputsList out(outputs,1);//outputs list with 2 outputs*/
 
 MENU_OUTPUTS(out, MAX_DEPTH
