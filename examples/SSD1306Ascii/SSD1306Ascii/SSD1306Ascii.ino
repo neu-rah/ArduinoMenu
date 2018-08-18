@@ -157,9 +157,15 @@ void setup() {
   Wire.begin();
   oled.begin(&Adafruit128x64, I2C_ADDRESS);
   oled.setFont(System5x7);
+  // oled.setFont(Verdana12);
   oled.clear();
+  oled.setCursor(0,0);
   oled.print("menu 4.x test");
-  // nav.idleTask=idle;//point a function to be used when menu is suspended
+  oled.setCursor(0,1);
+  oled.print("SSD1306Ascii");
+  delay(2000);
+  oled.clear();
+  nav.idleTask=idle;//point a function to be used when menu is suspended
 }
 
 void loop() {
