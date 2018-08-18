@@ -32,18 +32,8 @@
         size_t write(uint8_t ch) override {return device->write(ch);}
         void clearLine(idx_t ln,idx_t panelNr=0,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) override {
           const panel p=panels[panelNr];
-          _trace(MENU_DEBUG_OUT<<"ln "<<ln<<endl);
-          _trace(MENU_DEBUG_OUT<<"p.y "<<p.y<<endl);
-          _trace(MENU_DEBUG_OUT<<"resY "<<resY<<endl);
-          _trace(MENU_DEBUG_OUT<<"fontHeight() "<<((device->fontHeight()-1)>>3)<<endl);
-          // int h=resY*(((device->fontHeight()-1)>>3)+1);
-          // _trace(MENU_DEBUG_OUT<<"h "<<h<<endl);
           int y=(p.y+ln)*resY;
-          _trace(Serial<<"clearing line "<<y<<","<<(y+resY-1)<<endl;);
           device->clear(resX*p.x,resX*(p.x+maxX(panelNr))-1,y,y+resY-1);
-          // setCursor(0,ln,panelNr);
-        	// for(int n=0;n<maxX();n++) print(' ');
-        	// setCursor(0,ln,panelNr);
         }
         void clear() override {
           _trace(Serial<<"clear!!"<<endl;);
