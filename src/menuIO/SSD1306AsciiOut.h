@@ -41,9 +41,9 @@
           panels.reset();
         }
         void clear(idx_t panelNr) override {
-          trace(Serial<<"clear panel!! "<<panelNr<<endl;);
           const panel p=panels[panelNr];
-          device->clear(p.x,p.y,p.x+p.w-1,p.y+p.h-1);
+          trace(Serial<<"clear panel!! "<<panelNr<<"{"<<p.x<<","<<p.y<<","<<p.w<<","<<p.h<<"}"<<endl;);
+          device->clear(resX*p.x,resX*(p.x+p.w)-1,resY*p.y,resY*(p.y+p.h)-1);
           // setCursor(0,0,panelNr);
           panels.nodes[panelNr]=NULL;
         }

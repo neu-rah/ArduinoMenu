@@ -27,6 +27,7 @@ int test=55;
 result action1(eventMask e) {
   Serial.print(e);
   Serial.println(" action1 executed, proceed menu");Serial.flush();
+  trace(if (e==enterEvent) oled.clear(0,oled.displayWidth(),2,3));
   return proceed;
 }
 
@@ -102,7 +103,7 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
 #define MAX_DEPTH 2
 
 #ifdef LOC
-  #define LARGE_FONT
+  // #define LARGE_FONT
   #define INV
 #endif
 
@@ -114,7 +115,7 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   // #define menuFont System5x7
   #define menuFont lcd5x7
   #define fontW 5
-  #define fontH 9
+  #define fontH 8
 #endif
 
 //define output device
@@ -132,7 +133,7 @@ idx_t tops[MAX_DEPTH]={0,0};//store cursor positions for each level
 #else
   SSD1306AsciiOut outOLED(&oled,tops,pList,5,1);//oled output device menu driver
 #endif
-menuOut* constMEM outputs[] MEMMODE ={&outOLED};//,&outSerial};//list of output devices
+menuOut* constMEM outputs[] MEMMODE ={&outOLED,&outSerial};//list of output devices
 outputsList out(outputs,sizeof(outputs)/sizeof(menuOut*));//outputs list
 
 //macro to create navigation control root object (nav) using mainMenu
