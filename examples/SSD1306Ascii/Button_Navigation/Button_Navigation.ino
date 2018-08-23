@@ -1,19 +1,20 @@
 /**************************************************************************
-* Sketch: MENU NAVIGATION WITH JUST 3 BUTTONS
-*
-* This Sketch displays Menu without any Serial Communication and the
-* navigation is performed by 3 buttons attached to D6, D7, D8.
-* Also, attach led on D11 to control brightness from menu. 
-* Default brightness is 15% (check line 78)
-*  
-*  NOTE: By default, navigation buttons use INTERNAL_PULLUP feature.
-*        This can be changed by commenting the line 45 in "config.h" file
-*        
-*  Uses SSD1306Ascii Library(https://github.com/greiman/SSD1306Ascii)
-*  by Bill Grieman
-*
-*  Modifed by Tamojit Saha(https://github.com/TamojitSaha)
-*  August 19, 2018
+  Sketch: MENU NAVIGATION WITH JUST 4 BUTTONS
+
+  This Sketch displays Menu without any Serial Communication and the
+  navigation is performed by 4 buttons attached to D3, D8, D4 and D1.
+  Also, attach led on D11 to control brightness from menu.
+  Default brightness is 15% (check line 78)
+
+   NOTE: By default, navigation buttons use INTERNAL_PULLUP feature.
+         This can be changed by commenting the line 45 in "config.h" file
+
+   Uses SSD1306Ascii Library(https://github.com/greiman/SSD1306Ascii)
+   by Bill Grieman
+
+   Created by Tamojit Saha
+    Github: https://github.com/TamojitSaha
+    Website: https://www.tamojitsaha.info/
 ***************************************************************************/
 #include <Arduino.h>
 
@@ -79,12 +80,7 @@ int brightnessValue = 15;   //Default LED brightness value
 result adjustBrightness() {
   if (ledCtrl == HIGH) {
     int pwm = int(2.55 * float(brightnessValue));
-    Serial.println("Brightness: " + String(brightnessValue));
-    Serial.println("PWM: " + String(pwm));
     analogWrite(LED_PIN, pwm);
-  }
-  else {
-
   }
 }
 
@@ -151,7 +147,7 @@ MENU(mainMenu, "Main menu", doNothing, noEvent, wrapStyle
 
 //describing a menu output device without macros
 //define at least one panel for menu output
-constMEM panel panels[] MEMMODE = {{0, 0, 128 / fontW, 64 / fontH}};
+const panel panels[] MEMMODE = {{0, 0, 128 / fontW, 64 / fontH}};
 navNode* nodes[sizeof(panels) / sizeof(panel)]; //navNodes to store navigation status
 panelsList pList(panels, nodes, 1); //a list of panels and nodes
 idx_t tops[MAX_DEPTH] = {0, 0}; //store cursor positions for each level
@@ -172,6 +168,7 @@ keyMap joystickBtn_map[] = {
   { -BTN_SEL, defaultNavCodes[enterCmd].ch} ,
   { -BTN_UP, defaultNavCodes[upCmd].ch} ,
   { -BTN_DOWN, defaultNavCodes[downCmd].ch}  ,
+  { -BTN_ESC, defaultNavCodes[escCmd].ch}  ,
 };
 keyIn<TOTAL_NAV_BUTTONS> joystickBtns(joystickBtn_map);//the input driver
 #else
@@ -180,6 +177,7 @@ keyMap joystickBtn_map[] = {
   { BTN_SEL, defaultNavCodes[enterCmd].ch} ,
   { BTN_UP, defaultNavCodes[upCmd].ch} ,
   { BTN_DOWN, defaultNavCodes[downCmd].ch}  ,
+  { BTN_ESC, defaultNavCodes[escCmd].ch},
 };
 keyIn<TOTAL_NAV_BUTTONS> joystickBtns(joystickBtn_map);//the input driver
 #endif
@@ -215,18 +213,17 @@ result idle(menuOut &o, idleEvent e) {
 }
 
 void setup() {
-  joystickBtns.begin();//
+  joystickBtns.begin();
   pinMode(LED_PIN, OUTPUT);
   pinMode(LED_BUILTIN, OUTPUT);
   Wire.begin();
   oled.begin(&Adafruit128x64, OLED_I2C_ADDRESS); //check config
   oled.setFont(menuFont);
   oled.clear();
-  bool inv(true);
   nav.idleTask = idle; //point a function to be used when menu is suspended
 }
 
 void loop() {
   nav.poll();
-  delay(50);//simulate a delay when other tasks are done
+  delay(1);//simulate a delay when other tasks are done
 }
