@@ -1,4 +1,4 @@
-/*<CONGIGURATION FILE>*/
+/*config.h*/
 
 /* List of Supported Fonts
  *
@@ -36,17 +36,17 @@
  * Default font: lcd5x7
  * Comment out the following for using the default font.
  */
-#define LARGE_FONT Arial14
+#define LARGE_FONT Verdana12
 
 //Navigate buttons
-#define BTN_SEL     6                 // Select button
-#define BTN_UP      7                 // Up Button
-#define BTN_DOWN    8                 // Down Button
-
+#define BTN_SEL     3                 // Select button
+#define BTN_UP      8                 // Up Button
+#define BTN_DOWN    4                 // Down Button
+#define BTN_ESC     1                 // Exit Button
 // Comment the following to disable internal pullup for Navigate buttons
-//#define NAV_BUTTONS_INPUT_PULLUP
+#define NAV_BUTTONS_INPUT_PULLUP
 
-#define TOTAL_NAV_BUTTONS 3       // Total Navigation Button used
+#define TOTAL_NAV_BUTTONS 4       // Total Navigation Button used
 
 /*Demonstrate PWM with LED on D11*/
 #define LED_PIN 11                //Defined LED Pin to D11
