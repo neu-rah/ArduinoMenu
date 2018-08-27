@@ -53,7 +53,7 @@
         //TODO: turn this bool's into bitfield flags
         enum styles {
           none=0<<0, // default serialOut
-          redraw=1<<0,// changing one part implies printing all visible
+          redraw=1<<0,// changing one part implies printing all visible (deprecated)
           minimalRedraw=1<<1, // can draw part of the screen
           drawNumIndex=1<<2, // numerical index should be displayed
           usePreview=1<<3, // reserve one panel for preview

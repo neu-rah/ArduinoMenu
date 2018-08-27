@@ -137,26 +137,30 @@ idx_t gfxOut::editCursor(navRoot& root,idx_t x,idx_t y,bool editing,bool charEdi
 }
 
 Used outputsList::printMenu(navNode& nav) const {
-  trace(MENU_DEBUG_OUT<<"outputsList::printMenu"<<endl;MENU_DEBUG_OUT.flush());
+  trace(MENU_DEBUG_OUT<<"outputsList::printMenu");
   for(int n=0;n<cnt;n++) {
+    trace(MENU_DEBUG_OUT.write('.'));
     menuOut& o=*((menuOut*)memPtr(outs[n]));
-    if (nav.changed(o)||(o.style&(menuOut::rasterDraw))||(o.style&(menuOut::redraw)))
+    if ((o.style&(menuOut::rasterDraw))||(o.style&(menuOut::redraw))||nav.changed(o))
       o.printMenu(nav);
   }
+  trace(MENU_DEBUG_OUT<<endl);
   clearChanged(nav);
-  trace(MENU_DEBUG_OUT<<"outputsList::printMenu ended!"<<endl);
+  _trace(MENU_DEBUG_OUT<<"outputsList::printMenu ended!"<<endl);
   return 0;
 }
 
 result outputsList::idle(idleFunc f,idleEvent e,bool idleChanged) {
   #ifdef MENU_DEBUG
-  if (!f) MENU_DEBUG_OUT<<"idleFunc is NULL!!!"<<endl;
+    if (!f) MENU_DEBUG_OUT<<"idleFunc is NULL!!!"<<endl;
   #endif
   if (!f) return proceed;
+  trace(MENU_DEBUG_OUT<<"idling on output list cnt:"<<cnt<<endl);
   for(int n=0;n<cnt;n++) {
     menuOut& o=*((menuOut*)memPtr(outs[n]));
     switch(e) {
       case idleStart:
+        trace(MENU_DEBUG_OUT<<"idleStart"<<endl);
         if ((*f)(o,e)==proceed) {
           if (!(o.style&menuOut::redraw)) {
             result r=(*f)(o,idling);
@@ -165,10 +169,12 @@ result outputsList::idle(idleFunc f,idleEvent e,bool idleChanged) {
         } else return quit;
         break;
       case idling:
+      trace(MENU_DEBUG_OUT<<"idling"<<endl);
         if (o.style&menuOut::redraw||(idleChanged&&(o.style&menuOut::minimalRedraw)))
           return (*f)(o,e);
         break;
       case idleEnd:
+        trace(MENU_DEBUG_OUT<<"idle end"<<endl);
         result r=(*f)(o,e);
         if (r==quit) return r;
         break;

@@ -45,8 +45,14 @@
 using namespace Menu;
 
 //Define your font here. Default font: lcd5x7
-//Comment out the following for using the default font.
-#define LARGE_FONT X11fixed7x14
+#define menuFont X11fixed7x14
+#define fontW 7
+#define fontH 15
+
+// #define menuFont System5x7
+// #define menuFont lcd5x7
+// #define fontW 5
+// #define fontH 8
 
 SSD1306AsciiWire oled;
 
@@ -138,22 +144,6 @@ MENU(mainMenu, "Main menu", doNothing, noEvent, wrapStyle
 
 #define MAX_DEPTH 2
 
-#ifdef LOC
-// #define LARGE_FONT
-#define INV
-#endif
-
-#ifdef LARGE_FONT
-#define menuFont LARGE_FONT
-#define fontW 8
-#define fontH 16
-#else
-// #define menuFont System5x7
-#define menuFont lcd5x7
-#define fontW 5
-#define fontH 8
-#endif
-
 //define output device
 idx_t serialTops[MAX_DEPTH] = {0};
 serialOut outSerial(Serial, serialTops);
@@ -164,11 +154,7 @@ constMEM panel panels[] MEMMODE = {{0, 0, 128 / fontW, 64 / fontH}};
 navNode* nodes[sizeof(panels) / sizeof(panel)]; //navNodes to store navigation status
 panelsList pList(panels, nodes, 1); //a list of panels and nodes
 idx_t tops[MAX_DEPTH] = {0, 0}; //store cursor positions for each level
-#ifdef LARGE_FONT
-SSD1306AsciiOut outOLED(&oled, tops, pList, 8, 2); //oled output device menu driver
-#else
-SSD1306AsciiOut outOLED(&oled, tops, pList, 5, 1); //oled output device menu driver
-#endif
+SSD1306AsciiOut outOLED(&oled, tops, pList, 8, 1+((fontH-1)>>3) ); //oled output device menu driver
 menuOut* constMEM outputs[] MEMMODE = {&outOLED, &outSerial}; //list of output devices
 outputsList out(outputs, sizeof(outputs) / sizeof(menuOut*)); //outputs list
 
@@ -196,11 +182,17 @@ result doAlert(eventMask e, prompt &item) {
 //when menu is suspended
 result idle(menuOut &o, idleEvent e) {
   o.clear();
-  switch (e) {
-    case idleStart: o.println("suspending menu!"); break;
-    case idling: o.println("suspended..."); break;
-    case idleEnd: o.println("resuming menu."); break;
-  }
+  if (&o==&outOLED) {
+    if (e==idling) {
+      o.println("OLED");
+      o.println("Suspended menu");
+    }
+  } else
+    switch (e) {
+      case idleStart: o.println("suspending menu!"); break;
+      case idling: o.println("suspended..."); break;
+      case idleEnd: o.println("resuming menu."); break;
+    }
   return proceed;
 }
 
