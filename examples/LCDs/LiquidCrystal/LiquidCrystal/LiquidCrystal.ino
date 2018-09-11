@@ -9,6 +9,7 @@ input: encoder and Serial
 www.r-site.net
 ***/
 
+#include <Wire.h>
 #include <menu.h>
 #include <menuIO/liquidCrystalOut.h>
 #include <menuIO/serialOut.h>
