@@ -26,7 +26,7 @@ cache:
 env:
    - PLATFORMIO_CI_SRC=examples/Blink/Blink/Blink.ino
    - PLATFORMIO_CI_SRC=examples/Serial/serialio/serialio/serialio.ino
-   - PLATFORMIO_CI_SRC=examples/Serial/ansiSerial/ansiSerial/ansiSerial.ino
+   # - PLATFORMIO_CI_SRC=examples/Serial/ansiSerial/ansiSerial/ansiSerial.ino
    - PLATFORMIO_CI_SRC=examples/codeCtrl/codeCtrl/codeCtrl.ino
    - PLATFORMIO_CI_SRC=examples/adafruitGfx/lcdMono/lcdMono/lcdMono.ino
    - PLATFORMIO_CI_SRC=examples/adafruitGfx/tft/tft/tft.ino
