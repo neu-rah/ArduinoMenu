@@ -261,6 +261,9 @@ Matrix keypad
 http://playground.arduino.cc/Code/Keypad
 https://github.com/Nullkraft/Keypad
 
+PCF8574 based i2c matrix keypad
+https://github.com/whatnick/i2ckeypad
+
 User defined input calling menu navigation API
 
 Web browser (experimental) when using ESP devices
