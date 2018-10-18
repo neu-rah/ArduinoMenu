@@ -171,7 +171,6 @@ void textField::doNav(navNode& nav,navCmd cmd) {
 Used textField::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr) {
   trace(MENU_DEBUG_OUT<<*this<<" textField::printTo"<<endl);
   // out.fmtStart(menuOut::fmtPrompt,root.node(),idx);
-  idx_t at=0;
   bool editing=this==root.navFocus;
   trace(MENU_DEBUG_OUT<<"editing:"<<editing<<" len:"<<len;)
   idx_t l=navTarget::printTo(root,sel,out,idx,len,panelNr);
@@ -186,8 +185,10 @@ Used textField::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len
   #endif
   idx_t tit=hasTitle(root.node())?1:0;
   idx_t line=idx+tit;//-out.tops[root.level];
-  trace(MENU_DEBUG_OUT<<" tit:"<<tit<<" line:"<<line<<" cursor:"<<cursor<<" l:"<<l<<" len:"<<len<<endl;)
   idx_t c=l+1;
+  idx_t w=len-l;
+  idx_t at=cursor>=w?cursor-w:0;
+  trace(MENU_DEBUG_OUT<<"at:"<<at<<" tit:"<<tit<<" line:"<<line<<" cursor:"<<cursor<<" l:"<<l<<" len:"<<len);//<<endl;)
   while(buffer()[at]&&l++<len)
     if (at==cursor&&editing) {
       // MENU_DEBUG_OUT<<"idx:"<<idx<<" line:"<<line<<" at:"<<at<<" l:"<<l<<endl;

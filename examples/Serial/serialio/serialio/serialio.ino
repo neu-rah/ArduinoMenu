@@ -105,6 +105,10 @@ char* constMEM hexDigit MEMMODE="0123456789ABCDEF";
 char* constMEM hexNr[] MEMMODE={"0","x",hexDigit,hexDigit};
 char buf1[]="0x11";
 
+char* constMEM alphaNum MEMMODE=" 0123456789.ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz,\\|!\"#$%&/()=?~*^+-{}[]€";
+char* constMEM alphaNumMask[] MEMMODE={alphaNum};
+char name[]="                                                  ";
+
 MENU(mainMenu,"Main menu",zZz,noEvent,wrapStyle
   ,OP("Op1",action1,anyEvent)
   ,OP("Op2",action2,enterEvent)
@@ -116,6 +120,7 @@ MENU(mainMenu,"Main menu",zZz,noEvent,wrapStyle
   ,SUBMENU(selMenu)
   ,SUBMENU(chooseMenu)
   ,OP("Alert test",doAlert,enterEvent)
+  ,EDIT("Name",name,alphaNumMask,doNothing,noEvent,noStyle)
   ,EDIT("Hex",buf1,hexNr,doNothing,noEvent,noStyle)
   ,SUBMENU(birthDate)
   ,EXIT("<Back")

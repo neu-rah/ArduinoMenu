@@ -146,7 +146,7 @@ Used outputsList::printMenu(navNode& nav) const {
   }
   trace(MENU_DEBUG_OUT<<endl);
   clearChanged(nav);
-  _trace(MENU_DEBUG_OUT<<"outputsList::printMenu ended!"<<endl);
+  trace(MENU_DEBUG_OUT<<"outputsList::printMenu ended!"<<endl);
   return 0;
 }
 
