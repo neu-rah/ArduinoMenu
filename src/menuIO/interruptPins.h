@@ -20,24 +20,24 @@ quadrature encoder stream (fake, not using buffers)
     class encoderIn {
     public:
       volatile int pos = 0;
-	  volatile bool menu_running = false;
-	  volatile bool menu_interrupt = false;
-	  volatile unsigned long last_interrupt_time = 0;
+      volatile bool menu_running = false;
+      volatile bool menu_interrupt = false;
+      volatile unsigned long last_interrupt_time = 0;
       void begin() {
         pinMode(pinUP, INPUT_PULLUP);
         pinMode(pinDOWN, INPUT_PULLUP);
-		pinMode(pinSEL, INPUT_PULLUP);
+	pinMode(pinSEL, INPUT_PULLUP);
         pinMode(pinLEFT, INPUT_PULLUP);		
         pinMode(pinRIGHT, INPUT_PULLUP);
         PCattachInterrupt<pinUP>(mixHandler((void(*)(void*))encoderInUpdateA,this), LOW);
         PCattachInterrupt<pinDOWN>(mixHandler((void(*)(void*))encoderInUpdateB,this), LOW);
         PCattachInterrupt<pinSEL>(mixHandler((void(*)(void*))encoderInUpdateC,this), LOW);
-		PCattachInterrupt<pinLEFT>(mixHandler((void(*)(void*))encoderInUpdateD,this), LOW);
-	    PCattachInterrupt<pinRIGHT>(mixHandler((void(*)(void*))encoderInUpdateE,this), LOW);
+	PCattachInterrupt<pinLEFT>(mixHandler((void(*)(void*))encoderInUpdateD,this), LOW);
+	PCattachInterrupt<pinRIGHT>(mixHandler((void(*)(void*))encoderInUpdateE,this), LOW);
       }
       static void encoderInUpdateA(class encoderIn<pinUP,pinDOWN,pinSEL,pinLEFT,pinRIGHT> *e);
       static void encoderInUpdateB(class encoderIn<pinUP,pinDOWN,pinSEL,pinLEFT,pinRIGHT> *e);
-	  static void encoderInUpdateC(class encoderIn<pinUP,pinDOWN,pinSEL,pinLEFT,pinRIGHT> *e);
+      static void encoderInUpdateC(class encoderIn<pinUP,pinDOWN,pinSEL,pinLEFT,pinRIGHT> *e);
       static void encoderInUpdateD(class encoderIn<pinUP,pinDOWN,pinSEL,pinLEFT,pinRIGHT> *e);
       static void encoderInUpdateE(class encoderIn<pinUP,pinDOWN,pinSEL,pinLEFT,pinRIGHT> *e);
     };	
@@ -113,24 +113,24 @@ quadrature encoder stream (fake, not using buffers)
     public:
       encoderIn<pinUP,pinDOWN,pinSEL,pinLEFT,pinRIGHT> &enc;//associated hardware encoderIn
       encoderInStream(encoderIn<pinUP,pinDOWN,pinSEL,pinLEFT,pinRIGHT> &enc):enc(enc) {}
-	  int oldPos = 0;
+      int oldPos = 0;
       int available(void) {return abs(enc.pos-oldPos);}
       int peek(void) override {
         int d = enc.pos-oldPos;
         if (d==-1)return options->navCodes[downCmd].ch;
         if (d==1) return options->navCodes[upCmd].ch;
-		if (d>=2) {
-			if (d>=3){
-				return options->navCodes[leftCmd].ch;
-			}else{
-				return options->navCodes[enterCmd].ch;
-				}
+	if (d>=2) {
+		if (d>=3){
+			return options->navCodes[leftCmd].ch;
+		}else{
+			return options->navCodes[enterCmd].ch;
+			}
         }
-		if (d<=-3){
-			return options->navCodes[rightCmd].ch;
-			}		
+	if (d<=-3){
+		return options->navCodes[rightCmd].ch;
+		}		
         return -1;
-		}
+	}
       int read() override {	
         int d=enc.pos-oldPos;
         if (d==-1) {
@@ -141,21 +141,21 @@ quadrature encoder stream (fake, not using buffers)
           oldPos+=1;
           return options->navCodes[upCmd].ch;
         }		
-		if (d>=2) {
-			if (d>=3){
-				oldPos+=3;
-				return options->navCodes[leftCmd].ch;
-			}else{
-				oldPos+=2;
-				return options->navCodes[enterCmd].ch;
-				}
-        }
-		if (d<=-3){
-			oldPos-=3;
-			return options->navCodes[rightCmd].ch;
+	if (d>=2) {
+		if (d>=3){
+			oldPos+=3;
+			return options->navCodes[leftCmd].ch;
+		}else{
+			oldPos+=2;
+			return options->navCodes[enterCmd].ch;
 			}
-        return -1;
+        }
+	if (d<=-3){
+		oldPos-=3;
+		return options->navCodes[rightCmd].ch;
 		}
+        return -1;
+	}
       void flush() {
 		  oldPos = enc.pos;
 		}
