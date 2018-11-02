@@ -11,7 +11,7 @@ quadrature encoder stream (fake, not using buffers)
 #ifndef RSITE_ARDUINO_MENU_ENCODER
   #define RSITE_ARDUINO_MENU_ENCODER
 
-  //#include <pcint.h> //https://github.com/neu-rah/PCINT
+  #include <pcint.h> //https://github.com/neu-rah/PCINT
   #include "../menuDefs.h"
 	
   namespace Menu {
