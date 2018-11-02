@@ -24,14 +24,14 @@ quadrature encoder stream (fake, not using buffers)
       volatile bool menu_interrupt = false;
       volatile unsigned long last_interrupt_time = 0;
       void begin() {
-        pinMode(pinUP, INPUT_PULLUP);
-        pinMode(pinDOWN, INPUT_PULLUP);
+      	pinMode(pinUP, INPUT_PULLUP);
+	pinMode(pinDOWN, INPUT_PULLUP);
 	pinMode(pinSEL, INPUT_PULLUP);
-        pinMode(pinLEFT, INPUT_PULLUP);		
-        pinMode(pinRIGHT, INPUT_PULLUP);
-        PCattachInterrupt<pinUP>(mixHandler((void(*)(void*))encoderInUpdateA,this), LOW);
-        PCattachInterrupt<pinDOWN>(mixHandler((void(*)(void*))encoderInUpdateB,this), LOW);
-        PCattachInterrupt<pinSEL>(mixHandler((void(*)(void*))encoderInUpdateC,this), LOW);
+	pinMode(pinLEFT, INPUT_PULLUP);
+	pinMode(pinRIGHT, INPUT_PULLUP);
+	PCattachInterrupt<pinUP>(mixHandler((void(*)(void*))encoderInUpdateA,this), LOW);
+	PCattachInterrupt<pinDOWN>(mixHandler((void(*)(void*))encoderInUpdateB,this), LOW);
+	PCattachInterrupt<pinSEL>(mixHandler((void(*)(void*))encoderInUpdateC,this), LOW);
 	PCattachInterrupt<pinLEFT>(mixHandler((void(*)(void*))encoderInUpdateD,this), LOW);
 	PCattachInterrupt<pinRIGHT>(mixHandler((void(*)(void*))encoderInUpdateE,this), LOW);
       }
