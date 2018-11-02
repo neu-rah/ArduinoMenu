@@ -192,6 +192,7 @@ navCmd navRoot::enter() {
     bool isMenu=sel.isMenu();
     result go=node().event(enterEvent);//item event sent here
     navCmd rCmd=enterCmd;
+    trace(Serial<<"go:"<<go<<" isMenu:"<<isMenu<<" canNav:"<<canNav<<endl;);
     if (go==proceed&&isMenu&&canNav) {
       trace(MENU_DEBUG_OUT<<"go for canNav && isMenu"<<endl);
       if (level<maxDepth) {
@@ -210,7 +211,7 @@ navCmd navRoot::enter() {
       }
     } else if (go==quit&&!selected().isMenu()) exit();
     if (canNav) {
-      trace(MENU_DEBUG_OUT<<"canNav"<<endl);
+      trace(MENU_DEBUG_OUT<<"canNav "<<path[level].sel<<endl);
       navFocus=(navTarget*)&sel;
       navFocus->dirty=true;
       if (!isMenu) in.fieldOn();
