@@ -146,7 +146,7 @@ namespace Menu {
     for(idx_t i=0;i<sz();i++)
       if (((menuValue<T>*)&operator[](i))->target()==target()) return i;
     #ifdef MENU_DEBUG
-      MENU_DEBUG_OUT.print(F("value out of range "));
+      MENU_DEBUG_OUT.print("value out of range ");
       MENU_DEBUG_OUT.println(target());MENU_DEBUG_OUT.flush();
       assert(false);
     #endif
@@ -157,7 +157,7 @@ namespace Menu {
     #ifdef MENU_DEBUG
       if (!(i>=0&&i<sz())){
         print_P(MENU_DEBUG_OUT,getText());
-        MENU_DEBUG_OUT.print(F(" : value out of range "));
+        MENU_DEBUG_OUT.print(" : value out of range ");
         MENU_DEBUG_OUT.println(i);
       }
       assert(i>=0&&i<sz());

@@ -12,6 +12,7 @@
   //#include <Hash.h>
   //#include <FS.h>
   #include <vector>
+  #include "xmlFmt.h"
 
   using namespace std;
 

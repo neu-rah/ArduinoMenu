@@ -15,7 +15,7 @@ result Menu::inaction(menuOut& o,idleEvent) {
 
 result Menu::maxDepthError(menuOut& o,idleEvent e) {
   trace(MENU_DEBUG_OUT<<"maxDepthError"<<endl);
-  o.print(F("Error: maxDepth reached!\n\rincrease maxDepth on your scketch."));
+  o.print("Error: maxDepth reached!\n\rincrease maxDepth on your scketch.");
   return proceed;
 }
 

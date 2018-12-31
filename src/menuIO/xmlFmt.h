@@ -135,6 +135,8 @@
                 else *this<<"]]></idx>";
                 break;
               case menuOut::fmtCursor:
+              case menuOut::fmtCursorOpen:
+              case menuOut::fmtCursorClose:
                 if (start) *this<<"<cur><![CDATA[";
                 else *this<<"]]></cur>";
                 break;
