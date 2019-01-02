@@ -22,6 +22,9 @@
           case menuOut::fmtChoose: return "fmtChoose";
           case menuOut::fmtUnit: return "fmtUnit";
           case menuOut::fmtTextField: return "fmtTextField";
+          case menuOut::fmtCursorOpen: return "fmtCursorOpen";
+          case menuOut::fmtCursorClose: return "fmtCursorClose";
+          case menuOut::fmtValue: return "fmtVluea";
           default: return "???";
         }
       }
@@ -31,7 +34,7 @@
     #endif
     int cursorCtrl=0;
     void jsonOptions(menuOut& o,navNode &nav,menuNode& node,idx_t idx) {
-      o<<"\",options\":[";
+      o<<",\"options\":[";
       // o<<node.sz();
       for(idx_t n=0;n<node.sz();n++)
         o<<(n?",":"")<<"\""<<node[n]<<"\"";

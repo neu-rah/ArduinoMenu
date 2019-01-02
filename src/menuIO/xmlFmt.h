@@ -126,6 +126,10 @@
                   *this<<"\"><![CDATA[";
                 } else *this<<"]]></fld>";
                 break;
+              case menuOut::fmtEditCursor:
+                if (start) *this<<"<ec><![CDATA[";
+                else *this<<"]]></ec>";
+                break;
               case menuOut::fmtTextField:
                 if (start) *this<<"<fv><![CDATA[";
                 else *this<<"]]></fv>";

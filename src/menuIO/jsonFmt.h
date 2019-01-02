@@ -33,35 +33,36 @@
                 break;
               case menuOut::fmtTitle:
                 if (start) T::operator<<("\"title\":{");
-                else T::operator<<("},\n");
+                else T::operator<<("}\n");
                 break;
               case menuOut::fmtBody:
                 if (start) {
-                  *this<<"\"sel\":\""<<nav.sel<<"\",";
-                  *this<<"\"items\":[\n";
-                } else T::operator<<("\n]\n");      break;
+                  *this<<",\"sel\":\""<<nav.sel<<"\"";
+                  *this<<",\"items\":[\n";
+                } else T::operator<<("\n]\n");
+                break;
               case menuOut::fmtUnit:
-                *this<<(start?"\"unit\":\"":"\"");
+                *this<<(start?",\"unit\":\"":"\"");
                 break;
               case menuOut::fmtOp:
                 if (start) {
                   if (idx>0) *this<<",\n";
-                  else "\n";
-                  *this<<"{\"idx\":\""<<idx<<"\","
-                    <<"\"enabled\":\""<<target.enabled<<"\",";
+                  *this<<"{\"idx\":\""<<idx<<"\""
+                    <<",\"enabled\":\""<<target.enabled<<"\"";
                 } else *this<<("}");
                 break;
               case menuOut::fmtToggle:
                 if (start) {
                   *this<<",\"value\":\"";
                 } else {
-                  *this<<"\",";
+                  *this<<"\"";
                   jsonOptions(*this,nav,*(menuNode*)&target,idx);
                   // *this<<",";
                 }
                 break;
               case menuOut::fmtPrompt:
                 if (start) {
+                  if (idx>=0) *this<<",";
                   *this<<"\"prompt\":\"";
                 } else {
                   *this<<"\"";
@@ -69,17 +70,25 @@
                     *this<<",\"pad\":[";
                 };
                 break;
+              case menuOut::fmtValue:
+                if (start) *this<<",\"value\":\"";
+                else *this<<"\"";
+                break;
               case menuOut::fmtSelect:
                 if (start) {
-                  *this<<",\"type\":\"select\"";
+                  *this<<",\"select\":\"";
+                } else {
+                  *this<<"\"";
                   jsonOptions(*this,nav,*(menuNode*)&target,idx);
-                } else *this<<"";
+                }
                 break;
               case menuOut::fmtChoose:
                 if (start) {
-                  *this<<"\"choose\":";
+                  *this<<",\"choose\":\"";
+                } else {
+                  *this<<"\"";
                   jsonOptions(*this,nav,*(menuNode*)&target,idx);
-                } else *this<<",";
+                }
                 break;
                 break;
               case menuOut::fmtField:
@@ -95,24 +104,27 @@
                   *this<<"\",\"tune\":\"";
                   target.printTune(*this);
                   *this<<"\"}";
-                  *this<<",";
                 }
+                break;
+              case menuOut::fmtEditCursor:
+                if (start) *this<<",\"editCursor\":\"";
+                else *this<<"\"";
                 break;
               case menuOut::fmtTextField:
                 if (start) *this<<",\"text\":\"";
-                else *this<<"\"\n";
+                else *this<<"\"";
                 break;
               case menuOut::fmtIdx:
                 // if (start) *this<<"\"idx\":";
                 // else *this<<",";
                 break;
               case menuOut::fmtCursor:
-                if (start) *this<<"\"cursor\":\"";
-                else *this<<"\",";
+                if (start) *this<<",\"cursor\":\"";
+                else *this<<"\"";
                 break;
               case menuOut::fmtCursorOpen:
-                if (start) *this<<"\"selStart\":\"";
-                else *this<<"\",";
+                if (start) *this<<",\"selStart\":\"";
+                else *this<<"\"";
                 break;
               case menuOut::fmtCursorClose:
                 if (start) *this<<",\"selEnd\":\"";
@@ -128,8 +140,8 @@
                 }
                 break;
               case menuOut::fmtPreview:
-                if (start) *this<<"\"preview\":";
-                else *this<<",\n";
+                if (start) *this<<",\"preview\":\"";
+                else *this<<"\"\n";
                 break;
               default:break;
             }

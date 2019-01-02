@@ -1,27 +1,21 @@
 {
   "output":"",
-  "menu":{
-    "title":{"prompt":"Zeit/Datum einstellen"},
-    "sel":"0","items":[
-      {"idx":"0","enabled":"1","cursor":">","prompt":"",
-        "pad":[
-          {"idx":"0","enabled":"1","cursor":" ","prompt":"" ,"field":"1","range":{"low":"1","high":"31","step":"1","tune":"0"},"unit":"/"},
-          {"idx":"1","enabled":"1","cursor":" ","prompt":"" ,"field":"1","range":{"low":"1","high":"12","step":"1","tune":"0"},"unit":"/"},
-          {"idx":"2","enabled":"1","cursor":" ","prompt":"" ,"field":"2000","range":{"low":"2000","high":"2100","step":"10","tune":"1"},"unit":""}
-        ]
-      },
-      {"idx":"1","enabled":"1","cursor":" ","prompt":"",
-        "pad":[
-          {"idx":"0","enabled":"1","cursor":" ","prompt":"" ,"field":"0","range":{"low":"0","high":"23","step":"1","tune":"0"},"unit":":"},
-          {"idx":"1","enabled":"1","cursor":" ","prompt":"" ,"field":"6","range":{"low":"0","high":"59","step":"10","tune":"1"},"unit":":"},
-          {"idx":"2","enabled":"1","cursor":" ","prompt":"" ,"field":"33","range":{"low":"0","high":"59","step":"10","tune":"1"},"unit":""}
-        ]
-      },
-      {"idx":"2","enabled":"1","cursor":" ","prompt":"GMT" ,"field":"-1","range":{"low":"-11","high":"12","step":"1","tune":"0"},"unit":""},
-      {"idx":"3","enabled":"1","cursor":" ","prompt":"Sommerzeit:""tog":["options":[2]],"value":An,},
-      {"idx":"4","enabled":"1","cursor":" ","prompt":"benutze NTP"},
-      {"idx":"5","enabled":"1","cursor":" ","prompt":"Speichern"},
-      {"idx":"6","enabled":"1","cursor":" ","prompt":"Zurück"}
-    ]
-  }
+  "menu":{"title":{"prompt":"Einstellungen"},
+  ,"sel":"0","items":[
+{"idx":"0","enabled":"1","selStart":">""prompt":"Standby" ,"field":"5","range":{"low":"2","high":"5","step":"1","tune":"0"},"unit":"min."},
+{"idx":"1","enabled":"1","selStart":" ""prompt":"Key" ,"text":"QUYxMkJH"
+},
+{"idx":"2","enabled":"1","selStart":" ""prompt":"Mondlicht" ,"type":"select"",options":["Aus","#1","#2","#3","#4","#5","#6"]#4},
+{"idx":"3","enabled":"1","selStart":" ""prompt":"max" ,"field":"1","range":{"low":"0","high":"100","step":"10","tune":"1"},"unit":"%"},
+{"idx":"4","enabled":"1","selStart":" ""prompt":"Wolken:","value":"Aus",options":["Aus","An"]},
+{"idx":"5","enabled":"1","selStart":" ""prompt":"max" ,"field":"50","range":{"low":"0","high":"100","step":"10","tune":"1"},"unit":"%"},
+{"idx":"6","enabled":"1","selStart":" ""prompt":"Gewitter:","value":"Aus",options":["Aus","An"]},
+{"idx":"7","enabled":"1","selStart":" ""prompt":"max" ,"field":"50","range":{"low":"0","high":"100","step":"10","tune":"1"},"unit":"%"},
+{"idx":"8","enabled":"1","selStart":" ""prompt":"Wi-Fi"},
+{"idx":"9","enabled":"1","selStart":" ""prompt":"Sprache" ,"type":"select"",options":["DE","EN","PT"]DE},
+{"idx":"10","enabled":"1","selStart":" ""prompt":"Aktualisieren..."},
+{"idx":"11","enabled":"1","selStart":" ""prompt":"Speichern"},
+{"idx":"12","enabled":"1","selStart":" ""prompt":"Zurück"}
+]
+}
 }

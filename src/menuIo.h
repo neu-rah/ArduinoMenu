@@ -64,7 +64,8 @@
           fmtPanel,fmtTitle,fmtBody,fmtOp,
           fmtIdx,fmtCursor,fmtOpBody,fmtPreview,
           fmtPrompt,fmtField,fmtToggle,fmtSelect,
-          fmtChoose,fmtUnit,fmtTextField,fmtCursorOpen,fmtCursorClose
+          fmtChoose,fmtUnit,fmtTextField,fmtCursorOpen,
+          fmtCursorClose,fmtValue,fmtEditCursor
         };
         menuNode* drawn=NULL;
         bool pageScroll=false;

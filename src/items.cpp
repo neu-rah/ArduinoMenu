@@ -174,10 +174,16 @@ Used textField::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len
   bool editing=this==root.navFocus;
   trace(MENU_DEBUG_OUT<<"editing:"<<editing<<" len:"<<len;)
   idx_t l=navTarget::printTo(root,sel,out,idx,len,panelNr);
+  #ifdef MENU_FMT_WRAPS
+    out.fmtStart(*this,menuOut::fmtEditCursor,root.node(),idx);
+  #endif
   if (l<len) {
     out.write(editing?":":" ");
     l++;
   }
+  #ifdef MENU_FMT_WRAPS
+    out.fmtEnd(*this,menuOut::fmtEditCursor,root.node(),idx);
+  #endif
   // idx_t c=l;
   //idx_t top=out.tops[root.level];
   #ifdef MENU_FMT_WRAPS
