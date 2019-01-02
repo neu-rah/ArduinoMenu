@@ -148,7 +148,7 @@
             return proceed;
           }
           result fmtStart(prompt& target,menuOut::fmtParts part,navNode &nav,idx_t idx=-1) override {
-            _trace(printIndent();MENU_DEBUG_OUT<<">"<<partName(part)<<" "<<idx<<" "<<target<<endl);
+            trace(printIndent();MENU_DEBUG_OUT<<">"<<partName(part)<<" "<<idx<<" "<<target<<endl);
             #ifdef MENU_DEBUG
               partIndent++;
             #endif
@@ -158,7 +158,7 @@
             #ifdef MENU_DEBUG
               partIndent--;
             #endif
-            _trace(printIndent();MENU_DEBUG_OUT<<"<"<<partName(part)<<endl);
+            trace(printIndent();MENU_DEBUG_OUT<<"<"<<partName(part)<<endl);
             return fmt(false,target,part,nav,idx);
           }
       };
