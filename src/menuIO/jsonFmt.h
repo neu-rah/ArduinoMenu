@@ -37,7 +37,9 @@
                 break;
               case menuOut::fmtBody:
                 if (start) {
-                  *this<<",\"sel\":\""<<nav.sel<<"\"";
+                  *this<<",\"path\":\"";
+                  nav.root->printPath(*this,(menuNode*)&target);
+                  *this<<"\",\"sel\":\""<<nav.sel<<"\"";
                   *this<<",\"items\":[\n";
                 } else T::operator<<("\n]\n");
                 break;
