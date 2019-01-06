@@ -86,21 +86,6 @@ function walkStates(i,j) {
   if(i.items) walkStates(i.items,j.items)
 }
 
-// function walkStates() {_walkStates(lastResult,previousResult)}
-// function _walkStates(o,p) {//lets try a dynamic state transition
-//   console.log("walking states...");
-//   if (o.menu&&p.menu) _walk(o.menu.items,p.menu.items);
-//   function _walk(i,j) {
-//     // if (i.idx) i.path=path+"/"+i.idx;
-//     if (i.path===j.path) {
-//     }
-//     if (typeof i[Symbol.iterator] === 'function'&&typeof j[Symbol.iterator] === 'function')
-//       for(var n=0;n<i.length;n++)
-//         _walk(i[n],j[n]);
-//     if(i.pad) _walk(i.pad,j.pad)
-//   }
-// }
-//
 function mkPath(m) {
   if (m.menu) _mkPath(m.menu.items,m.menu.path||"")
   function _mkPath(i,path) {
