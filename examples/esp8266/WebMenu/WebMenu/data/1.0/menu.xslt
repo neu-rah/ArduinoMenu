@@ -78,7 +78,7 @@
 
               <div class="mastfoot">
                 <div class="inner">
-                  ArduinoMenu Library
+                  <p>ArduinoMenu library <a href="https://github.com/neu-rah/ArduinoMenu">https://github.com/neu-rah/ArduinoMenu</a>.</p>
                 </div>
               </div>
             </div>

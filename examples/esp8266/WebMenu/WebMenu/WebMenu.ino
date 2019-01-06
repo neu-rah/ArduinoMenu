@@ -110,7 +110,7 @@ result action2(eventMask event, navNode& nav, prompt &item) {
 int ledCtrl=LOW;
 #define LEDPIN LED_BUILTIN
 void updLed() {
-  //digitalWrite(LEDPIN,!ledCtrl);
+  digitalWrite(LEDPIN,!ledCtrl);
 }
 
 TOGGLE(ledCtrl,setLed,"Led: ",updLed,enterEvent,noStyle//,doExit,enterEvent,noStyle
@@ -293,8 +293,8 @@ auto mainPage= []() {
 
 void setup(){
   //check your pins before activating this
-  // pinMode(LEDPIN,OUTPUT);
-  // updLed();
+  pinMode(LEDPIN,OUTPUT);
+  updLed();
   // analogWriteRange(1023);
   // pinMode(ANALOG_PIN,OUTPUT);
   // updAnalog();
