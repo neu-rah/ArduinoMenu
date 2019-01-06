@@ -24,10 +24,13 @@ so don't forget to change it.
 added textField (also experimental).
 
 */
+
 #include <menu.h>
 #include <menuIO/esp8266Out.h>
 #include <menuIO/xmlFmt.h>//to write a menu has html page
 #include <menuIO/serialIn.h>
+#include <menuIO/xmlFmt.h>//to write a menu has xml page
+#include <menuIO/jsonFmt.h>//to write a menu has xml page
 // #include <Streaming.h>
 #include <streamFlow.h>
 //#include <menuIO/jsFmt.h>//to send javascript thru web socket (live update)
@@ -39,7 +42,13 @@ extern "C" {
 
 using namespace Menu;
 
+#define CUR_VERSION 1.0
+bool fromWeb=false;
+#define APName "WebMenu"
 #define ANALOG_PIN 4
+
+constexpr size_t wifiSSIDLen=64;
+constexpr size_t wifiPwdLen=32;
 
 #ifndef MENU_SSID
   #error "need to define WiFi SSID here"
@@ -49,6 +58,48 @@ using namespace Menu;
   #error "need to define WiFi password here"
   #define MENU_PASS ""
 #endif
+
+char wifiSSID[wifiSSIDLen+1];//="                                ";
+char wifiPwd [wifiPwdLen+1];//="                                ";
+
+// result wifiScan(eventMask event, navNode& nav, prompt &item) {
+//   int n=WiFi.scanNetworks(false);
+//   Serial.println();
+//   nav.target->dirty=true;
+//   if (n == 0) {
+//     Serial.println("no network found.";Serial.flush();
+//     nav.root->idleOn((idleFunc)noWifiFound);
+//   } else {
+//     prompt** nets=new prompt*[n+1];
+//     for (int i = 0; i < n; ++i) {
+//       // Print SSID and RSSI for each network found
+//       char *ssid = new char[WiFi.SSID(i).length() + 1];
+//       strcpy(ssid, WiFi.SSID(i).c_str());
+//       // Serial.print(i + 1);
+//       // Serial.print(F(": "));
+//       // Serial.print(ssid);
+//       // Serial.print(F(" ("));
+//       // Serial.print(WiFi.RSSI(i));
+//       // Serial.print(F(")"));
+//       // Serial.println((WiFi.encryptionType(i) == WIFI_OPEN)?" ":"*");
+//       nets[i]=new prompt(ssid,selectWifi,enterEvent);
+//     }
+//     nets[n]=(prompt*)&back;
+//     for (int i = 0; i < selNetworkMenu.sz()-1; i++)
+//       delItem(((menuNodeShadow*)selNetworkMenu.shadow)->data[i]);
+//     delete [] ((menuNodeShadow*)selNetworkMenu.shadow)->data;
+//     ((menuNodeShadow*)selNetworkMenu.shadow)->data=nets;
+//     ((menuNodeShadow*)selNetworkMenu.shadow)->sz=n+1;
+//   }
+//   // Serial.println(F(""));
+//   return proceed;
+// }
+
+// SelNetMenu selNetworkMenu(
+//   lang[txtSSID],
+//   len(networkMenu_data),
+//   networkMenu_data,wifiScan,enterEvent,wrapStyle
+// );
 
 const char* ssid = MENU_SSID;
 const char* password = MENU_PASS;
@@ -74,9 +125,13 @@ ESP8266WebServer server(80);
 WebSocketsServer webSocket(81);
 
 #define MAX_DEPTH 2
-idx_t tops[MAX_DEPTH];
-PANELS(webPanels,{0,0,30,20});
-xmlFmt<esp8266_WebServerOut> serverOut(server,tops,webPanels);
+// idx_t tops[MAX_DEPTH];
+// PANELS(webPanels,{0,0,30,20});
+idx_t web_tops[MAX_DEPTH];
+PANELS(webPanels,{0,0,80,100});
+xmlFmt<esp8266_WebServerStreamOut> serverOut(server,web_tops,webPanels);
+jsonFmt<esp8266_WebServerStreamOut> jsonOut(server,web_tops,webPanels);
+jsonFmt<esp8266BufferedOut> wsOut(web_tops,webPanels);
 
 //menu action functions
 result action1(eventMask event, navNode& nav, prompt &item) {
@@ -138,9 +193,32 @@ result idle(menuOut& o,idleEvent e) {
   return quit;
 }
 
+template<typename T>//some utill to help us calculate array sizes (known at compile time)
+constexpr inline size_t len(T& o) {return sizeof(o)/sizeof(decltype(o[0]));}
+
+//serial menu navigation
 MENU_OUTLIST(out,&serverOut);
 serialIn serial(Serial);
 NAVROOT(nav,mainMenu,MAX_DEPTH,serial,out);
+
+//xml+http navigation control
+noInput none;//web uses its own API
+menuOut* web_outputs[]={&serverOut};
+outputsList web_out(web_outputs,len(web_outputs));
+navNode web_cursors[MAX_DEPTH];
+navRoot webNav(mainMenu, web_cursors, MAX_DEPTH, none, web_out);
+
+//json+http navigation control
+menuOut* json_outputs[]={&jsonOut};
+outputsList json_out(json_outputs,len(json_outputs));
+navNode json_cursors[MAX_DEPTH];
+navRoot jsonNav(mainMenu, json_cursors, MAX_DEPTH, none, json_out);
+
+//websockets navigation control
+menuOut* ws_outputs[]={&wsOut};
+outputsList ws_out(ws_outputs,len(ws_outputs));
+navNode ws_cursors[MAX_DEPTH];
+navRoot wsNav(mainMenu, ws_cursors, MAX_DEPTH, none, ws_out);
 
 //config myOptions('*','-',defaultNavCodes,false);
 
@@ -186,23 +264,54 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length
 }
 
 void pageStart() {
-  server.sendHeader("Cache-Control","no-cache, no-store, must-revalidate");
-  server.sendHeader("Pragma","no-cache");
-  server.sendHeader("Expires","0");
-  serverOut
-    <<"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\r\n"
-      "<?xml-stylesheet type=\"text/xsl\" href=\""
-      xslt
-      "\"?>\r\n<menuLib>\r\n"
-      "<sourceURL>"
-    <<serverName
-    <<"</sourceURL>";
+  _trace(Serial<<"pasgeStart!"<<endl);
+  serverOut<<"HTTP/1.1 200 OK\r\n"
+    <<"Content-Type: text/xml\r\n"
+    <<"Connection: close\r\n"
+    <<"Expires: 0\r\n"
+    // <<"Access-Control-Allow-Origin: *\r\n"
+    <<"\r\n";
+  serverOut<<"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\r\n"
+    "<?xml-stylesheet type=\"text/xsl\" href=\"";
+  serverOut<<"CUR_VERSION/device.xslt";
+  serverOut<<"\"?>\r\n<menuLib"
+    #ifdef WEB_DEBUG
+      <<" debug=\"yes\""
+    #endif
+    <<" host=\"";
+    serverOut.print(APName/*WiFi.localIP()*/);
+    // serverOut<<"\">\r\n<sourceURL ver=\"\">";
+    serverOut<<"\">\r\n<sourceURL ver=\"CUR_VERSION/\">";
+  if (server.hasHeader("host"))
+    serverOut.print(server.header("host"));
+  else
+    serverOut.print(APName/*WiFi.localIP()*/);
+  serverOut<<"</sourceURL>";
 }
 
 void pageEnd() {
   serverOut<<"</menuLib>";
-  server.send(200, "text/xml", serverOut.response);
+  server.client().stop();
 }
+
+// void pageStart() {
+//   server.sendHeader("Cache-Control","no-cache, no-store, must-revalidate");
+//   server.sendHeader("Pragma","no-cache");
+//   server.sendHeader("Expires","0");
+//   serverOut
+//     <<"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\r\n"
+//       "<?xml-stylesheet type=\"text/xsl\" href=\""
+//       xslt
+//       "\"?>\r\n<menuLib>\r\n"
+//       "<sourceURL>"
+//     <<serverName
+//     <<"</sourceURL>";
+// }
+//
+// void pageEnd() {
+//   serverOut<<"</menuLib>";
+//   server.send(200, "text/xml", serverOut.response);
+// }
 
 void handleNotFound(){
   //digitalWrite(led, 1);
@@ -223,49 +332,86 @@ void handleNotFound(){
   //digitalWrite(led, 0);
 }
 
-String getContentType(String filename){
-  if(server.hasArg("download")) return "application/octet-stream";
-  else if(filename.endsWith(".htm")) return "text/html";
-  else if(filename.endsWith(".html")) return "text/html";
-  else if(filename.endsWith(".css")) return "text/css";
-  else if(filename.endsWith(".js")) return "application/javascript";
-  else if(filename.endsWith(".png")) return "image/png";
-  else if(filename.endsWith(".gif")) return "image/gif";
-  else if(filename.endsWith(".jpg")) return "image/jpeg";
-  else if(filename.endsWith(".ico")) return "image/x-icon";
-  else if(filename.endsWith(".xml")) return "text/xml";
-  else if(filename.endsWith(".xsl")) return "text/xml";
-  else if(filename.endsWith(".xslt")) return "text/xsl";
-  else if(filename.endsWith(".pdf")) return "application/x-pdf";
-  else if(filename.endsWith(".zip")) return "application/x-zip";
-  else if(filename.endsWith(".gz")) return "application/x-gzip";
-  return "text/plain";
+// String getContentType(String filename){
+//   if(server.hasArg("download")) return "application/octet-stream";
+//   else if(filename.endsWith(".htm")) return "text/html";
+//   else if(filename.endsWith(".html")) return "text/html";
+//   else if(filename.endsWith(".css")) return "text/css";
+//   else if(filename.endsWith(".js")) return "application/javascript";
+//   else if(filename.endsWith(".png")) return "image/png";
+//   else if(filename.endsWith(".gif")) return "image/gif";
+//   else if(filename.endsWith(".jpg")) return "image/jpeg";
+//   else if(filename.endsWith(".ico")) return "image/x-icon";
+//   else if(filename.endsWith(".xml")) return "text/xml";
+//   else if(filename.endsWith(".xsl")) return "text/xml";
+//   else if(filename.endsWith(".xslt")) return "text/xsl";
+//   else if(filename.endsWith(".pdf")) return "application/x-pdf";
+//   else if(filename.endsWith(".zip")) return "application/x-zip";
+//   else if(filename.endsWith(".gz")) return "application/x-gzip";
+//   return "text/plain";
+// }
+
+// bool handleFileRead(String path){
+//   if(path.endsWith("/")) path += "index.html";
+//   String contentType = getContentType(path);
+//   String pathWithGz = path + ".gz";
+//   if(SPIFFS.exists(pathWithGz) || SPIFFS.exists(path)){
+//     if(SPIFFS.exists(pathWithGz))
+//       path += ".gz";
+//     File file = SPIFFS.open(path, "r");
+//     size_t sent = server.streamFile(file, contentType);
+//     file.close();
+//     return true;
+//   }
+//   // Serial<<"file not found "<<path<<endl;
+//   return false;
+// }
+
+// inline void notfound() {
+//   server.send(404, "text/plain", "FileNotFound"+server.uri());
+// }
+
+// bool handleMenu(){
+//   if (server.hasArg("at"))
+//     return nav.async(server.arg("at").c_str());
+//   else return true;
+// }
+
+void jsonStart() {
+  _trace(Serial<<"jsonStart!"<<endl);
+  // toJsonOut=true;
+  serverOut<<"HTTP/1.1 200 OK\r\n"
+    <<"Content-Type: application/json; charset=utf-8\r\n"
+    <<"Connection: close\r\n"
+    <<"Expires: 0\r\n"
+    // <<"Access-Control-Allow-Origin: *\r\n"
+    <<"\r\n";
+  // server.sendHeader("Cache-Control","no-cache, no-store, must-revalidate");
+  // server.sendHeader("Pragma","no-cache");
+  // server.sendHeader("Expires","0");
+  // serverOut<<"/*ArduinoMenu library json output*/\n";
 }
 
-bool handleFileRead(String path){
-  if(path.endsWith("/")) path += "index.html";
-  String contentType = getContentType(path);
-  String pathWithGz = path + ".gz";
-  if(SPIFFS.exists(pathWithGz) || SPIFFS.exists(path)){
-    if(SPIFFS.exists(pathWithGz))
-      path += ".gz";
-    File file = SPIFFS.open(path, "r");
-    size_t sent = server.streamFile(file, contentType);
-    file.close();
-    return true;
-  }
-  // Serial<<"file not found "<<path<<endl;
-  return false;
+void jsonEnd() {
+  // toJsonOut=false;
+  // serverOut<<"//end!";
+  server.client().stop();
 }
 
-inline void notfound() {
-  server.send(404, "text/plain", "FileNotFound"+server.uri());
-}
-
-bool handleMenu(){
-  if (server.hasArg("at"))
-    return nav.async(server.arg("at").c_str());
-  else return true;
+bool handleMenu(navRoot& nav){
+  _trace(
+    uint32_t free = system_get_free_heap_size();
+    Serial.print(F("free memory:"));
+    Serial.print(free);
+    Serial.print(F(" handleMenu "));
+    Serial.println(server.arg("at").c_str());
+  );
+  fromWeb=true;
+  String at=server.arg("at");
+  bool r;
+  r=nav.async(server.hasArg("at")?at.c_str():"/");
+  fromWeb=false;
+  return r;
 }
 
 void setup(){
@@ -329,36 +475,65 @@ void setup(){
   //we have none, so do not ask again! use a standard...
   server.on("/favicon.ico",handleNotFound);
 
-  server.on("/", HTTP_GET, []() {
-    handleMenu();//no output will be done on this mode
-    if(!handleFileRead("/index.html")) notfound();}//static page
-  );
+  // server.on("/", HTTP_GET, []() {
+  //   handleMenu();//no output will be done on this mode
+  //   if(!handleFileRead("/index.html")) notfound();}//static page
+  // );
 
-  //menu xml server
+  //menu xml server over http
   server.on("/menu", HTTP_GET, []() {
-    handleMenu();
-    String r(serverOut.response);
-    serverOut.response.remove(0);
     pageStart();
-    nav.doOutput();
-    serverOut<<"<output>";
-    serverOut<<r;
-    serverOut<<"</output>";
+    serverOut<<"<output state=\""<<((int)&webNav.idleTask)<<"\"><![CDATA[";
+    _trace(Serial<<"output count"<<webNav.out.cnt<<endl);
+    handleMenu(webNav);//do navigation (read input) and produce output messages or reports
+    serverOut<<"]]></output>";
+    fromWeb=true;
+    webNav.doOutput();
+    fromWeb=false;
     pageEnd();
-    delay(1);
+    // handleMenu();
+    // String r(serverOut.response);
+    // serverOut.response.remove(0);
+    // pageStart();
+    // nav.doOutput();
+    // serverOut<<"<output>";
+    // serverOut<<r;
+    // serverOut<<"</output>";
+    // pageEnd();
+    // delay(1);
+  });
+
+  //menu json server over http
+  server.on("/json", HTTP_GET, []() {
+    _trace(Serial<<"json request!"<<endl);
+    jsonStart();
+    serverOut<<"{\"output\":\"";
+    handleMenu(jsonNav);
+    serverOut<<"\",\n\"menu\":";
+    fromWeb=true;
+    jsonNav.doOutput();
+    fromWeb=false;
+    serverOut<<"\n}";
+    jsonEnd();
   });
 
   //file server, if MDNS handler not found.
   //so, do not put sensitive info in the data files
-  server.onNotFound([](){if (!handleFileRead(server.uri())) notfound();});
+  // server.onNotFound([](){if (!handleFileRead(server.uri())) notfound();});
 
   server.begin();
   Serial.println("HTTP server started");
   Serial.println("Serving ArduinoMenu example.");
+  #ifdef uTC_DEBUG
+    server.serveStatic("/", SPIFFS, "/","max-age=30");//31536000");
+  #else
+    server.serveStatic("/", SPIFFS, "/","max-age=31536000");
+  #endif
 }
 
 void loop(void){
-  serverOut.response.remove(0);
+  // serverOut.response.remove(0);
+  wsOut.response.remove(0);//clear websocket json buffer
   webSocket.loop();
   server.handleClient();
   delay(1);
