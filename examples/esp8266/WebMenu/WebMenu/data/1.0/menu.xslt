@@ -63,8 +63,8 @@
         				  </h1>
                           <nav>
                             <ul class="nav masthead-nav">
-                              <li class="active"><a href="/" id="start">Home</a></li>
-                              <li><a href="/menu?at=/" id="menu">Menu</a></li>
+                              <li><a href="/" id="start">Home</a></li>
+                              <li class="active"><a href="/menu?at=/" id="menu">Menu</a></li>
                               <li><a href="https://github.com/neu-rah/ArduinoMenu" id="repo" target="_blank">Repo</a></li>
                               <li><a href="http://www.r-site.net/site/struct.asp?at=//menu[@id=%27main%27]/*[5]" id="contact" target="_blank">Contact</a></li>
                             </ul>
