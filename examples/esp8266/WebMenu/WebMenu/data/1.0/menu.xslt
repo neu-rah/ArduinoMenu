@@ -27,16 +27,28 @@
         <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
         <meta name="description" content="ArduinoMenu Library auto generated web menu"/>
         <meta name="author" content="Rui Azevedo ruihfazevedo@gmail.com (https://github.com/neu-rah)"/>
-        <title>AquaGrow - MicroTC360</title>
+        <title>ArduinoMenu&lt;web&gt;</title>
+        <!-- <script src="{$auxFilesSrc}/jquery-3.3.1.min.js"></script> -->
+        <script
+          src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+          integrity="sha256-3edrmyuQ0w65f8gfBsqowzjJe2iM6n0nKciPUp8y+7E="
+          crossorigin="anonymous"></script>
 
-        <script src="{$auxFilesSrc}/jquery-3.3.1.min.js"></script>
-        <link href="{$auxFilesSrc}/bootstrap.min.css" rel="stylesheet"/>
-        <script src="{$auxFilesSrc}/bootstrap.min.js"></script>
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"/>
+
+        <!-- Optional theme -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous"/>
+
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+        <!-- <link href="{$auxFilesSrc}/bootstrap.min.css" rel="stylesheet"/>
+        <script src="{$auxFilesSrc}/bootstrap.min.js"></script> -->
         <link href="{$auxFilesSrc}/bootstrap-slider.min.css" rel="stylesheet"/>
         <script src="{$auxFilesSrc}/bootstrap-slider.min.js"></script>
         <link rel="stylesheet" type="text/css" href="{$auxFilesSrc}/{/menuLib/sourceURL/@ver}menu.css"/>
         <script src="{$auxFilesSrc}/{/menuLib/sourceURL/@ver}r-site.js"></script>
-        <script src="{$auxFilesSrc}/{/menuLib/sourceURL/@ver}microTc360.js"></script>
         <link rel="icon" type="image/png" href="/img/icon.png"/>
       </head>
       <body class="ArduinoMenu">
@@ -47,14 +59,14 @@
                 <div class="wrap">
                 <div class="inner">
                   <h1 class="masthead-brand">
-                    <a href="http://aqua-grow.de/" target="_blank"><img src="/img/logo.png" height="72px" alt="Aqua-Grow"/></a>
+                    <a href="http://r-site.net/" target="_blank"><img src="/img/logo.png" height="72px" alt="r-site.net"/></a>
         				  </h1>
                           <nav>
                             <ul class="nav masthead-nav">
                               <li><a href="/" id="txt_start"></a></li>
                               <li class="active"><a href="/menu?at=/" id="txt_menu"></a></li>
-                              <li><a href="http://aqua-grow.de/led-tagesverlaeufe/" id="txt_onlinetool" target="_blank"></a></li>
-                              <li><a href="http://aqua-grow.de/kontakt/" id="txt_contact" target="_blank"></a></li>
+                              <li><a href="https://github.com/neu-rah/ArduinoMenu" id="repo" target="_blank">Repo</a></li>
+                              <li><a href="http://www.r-site.net/site/struct.asp?at=//menu[@id=%27main%27]/*[5]" id="contact" target="_blank">Contact</a></li>
                             </ul>
                           </nav>
                 </div>
@@ -66,7 +78,7 @@
 
               <div class="mastfoot">
                 <div class="inner">
-                	<script src="{$auxFilesSrc}/{/menuLib/sourceURL/@ver}lang.js" language="javascript" type="text/javascript" charset="UTF-8"></script>
+                  ArduinoMenu Library
                 </div>
               </div>
             </div>

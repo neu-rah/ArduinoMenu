@@ -1,39 +1,16 @@
-/********************
-Arduino generic menu system
-XmlServer menu example
-based on WebServer:
-  https://github.com/esp8266/Arduino/tree/master/libraries/ESP8266WebServer
-  https://github.com/Links2004/arduinoWebSockets
-
-Dec. 2016 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
-
-menu on web browser served by esp8266 device (experimental)
-output: ESP8266WebServer -> Web browser
-input: ESP8266WebSocket <- Web browser
-format: xml
-
-this requires the data folder to be stored on esp8266 spiff
-for development purposes some files are left external,
-therefor requiring an external webserver to provide them (just for dev purposes)
-i'm using nodejs http-server (https://www.npmjs.com/package/http-server)
-to static serve content from the data folder. This allows me to quick change
-the files without having to upload them to SPIFFS
-also gateway ssid and password are stored on this code (bellow),
-so don't forget to change it.
-'dynamic' list of detected wi-fi and password request would require the new
-added textField (also experimental).
-
-*/
-
+# 1 "/tmp/tmpTgRVqU"
+#include <Arduino.h>
+# 1 "/home/azevedo/Sketchbook/LIBDEV/ArduinoMenu/examples/esp8266/WebMenu/WebMenu/WebMenu.ino"
+# 28 "/home/azevedo/Sketchbook/LIBDEV/ArduinoMenu/examples/esp8266/WebMenu/WebMenu/WebMenu.ino"
 #include <menu.h>
 #include <menuIO/esp8266Out.h>
-#include <menuIO/xmlFmt.h>//to write a menu has html page
+#include <menuIO/xmlFmt.h>
 #include <menuIO/serialIn.h>
-#include <menuIO/xmlFmt.h>//to write a menu has xml page
-#include <menuIO/jsonFmt.h>//to write a menu has xml page
-// #include <Streaming.h>
+#include <menuIO/xmlFmt.h>
+#include <menuIO/jsonFmt.h>
+
 #include <streamFlow.h>
-//#include <menuIO/jsFmt.h>//to send javascript thru web socket (live update)
+
 #include <FS.h>
 #include <Hash.h>
 extern "C" {
@@ -43,8 +20,8 @@ extern "C" {
 using namespace Menu;
 
 #ifdef WEB_DEBUG
-  // on debug mode I put aux files on external server to allow changes without SPIFF update
-  // on this mode the browser MUST be instructed to accept cross domain files
+
+
   String xslt("http://neurux:8080/");
 #else
   String xslt("");
@@ -75,8 +52,8 @@ constexpr size_t wifiPwdLen=32;
   #define MENU_PASS ""
 #endif
 
-char wifiSSID[wifiSSIDLen+1];//="                                ";
-char wifiPwd [wifiPwdLen+1];//="                                ";
+char wifiSSID[wifiSSIDLen+1];
+char wifiPwd [wifiPwdLen+1];
 
 const char* ssid = MENU_SSID;
 const char* password = MENU_PASS;
@@ -94,8 +71,20 @@ PANELS(webPanels,{0,0,80,100});
 xmlFmt<esp8266_WebServerStreamOut> serverOut(server,web_tops,webPanels);
 jsonFmt<esp8266_WebServerStreamOut> jsonOut(server,web_tops,webPanels);
 jsonFmt<esp8266BufferedOut> wsOut(web_tops,webPanels);
-
-//menu action functions
+result action1(eventMask event, navNode& nav, prompt &item);
+result action2(eventMask event, navNode& nav, prompt &item);
+void updLed();
+void updAnalog();
+result idle(menuOut& o,idleEvent e);
+void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length);
+void pageStart();
+void pageEnd();
+void jsonStart();
+void jsonEnd();
+bool handleMenu(navRoot& nav);
+void setup();
+void loop(void);
+#line 99 "/home/azevedo/Sketchbook/LIBDEV/ArduinoMenu/examples/esp8266/WebMenu/WebMenu/WebMenu.ino"
 result action1(eventMask event, navNode& nav, prompt &item) {
   Serial.println("action A called!");
   serverOut<<"This is action <b>A</b> web report "<<(millis()%1000)<<"<br/>";
@@ -110,10 +99,10 @@ result action2(eventMask event, navNode& nav, prompt &item) {
 int ledCtrl=LOW;
 #define LEDPIN LED_BUILTIN
 void updLed() {
-  //digitalWrite(LEDPIN,!ledCtrl);
+
 }
 
-TOGGLE(ledCtrl,setLed,"Led: ",updLed,enterEvent,noStyle//,doExit,enterEvent,noStyle
+TOGGLE(ledCtrl,setLed,"Led: ",updLed,enterEvent,noStyle
   ,VALUE("On",HIGH,doNothing,noEvent)
   ,VALUE("Off",LOW,doNothing,noEvent)
 );
@@ -135,10 +124,10 @@ CHOOSE(chooseTest,chooseMenu,"Choose",doNothing,noEvent,noStyle
 
 int timeOn=50;
 void updAnalog() {
-  // analogWrite(ANALOG_PIN,map(timeOn,0,100,0,255/*PWMRANGE*/));
+
 }
 
-//the menu
+
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,SUBMENU(setLed)
   ,OP("Action A",action1,enterEvent)
@@ -149,55 +138,55 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
 );
 
 result idle(menuOut& o,idleEvent e) {
-  //if (e==idling)
+
   Serial.println("suspended");
   o<<"suspended..."<<endl<<"press [select]"<<endl<<"to continue"<<endl<<(millis()%1000);
   return quit;
 }
 
-template<typename T>//some utill to help us calculate array sizes (known at compile time)
+template<typename T>
 constexpr inline size_t len(T& o) {return sizeof(o)/sizeof(decltype(o[0]));}
 
-//serial menu navigation
+
 MENU_OUTLIST(out,&serverOut);
 serialIn serial(Serial);
 NAVROOT(nav,mainMenu,MAX_DEPTH,serial,out);
 
-//xml+http navigation control
-noInput none;//web uses its own API
+
+noInput none;
 menuOut* web_outputs[]={&serverOut};
 outputsList web_out(web_outputs,len(web_outputs));
 navNode web_cursors[MAX_DEPTH];
 navRoot webNav(mainMenu, web_cursors, MAX_DEPTH, none, web_out);
 
-//json+http navigation control
+
 menuOut* json_outputs[]={&jsonOut};
 outputsList json_out(json_outputs,len(json_outputs));
 navNode json_cursors[MAX_DEPTH];
 navRoot jsonNav(mainMenu, json_cursors, MAX_DEPTH, none, json_out);
 
-//websockets navigation control
+
 menuOut* ws_outputs[]={&wsOut};
 outputsList ws_out(ws_outputs,len(ws_outputs));
 navNode ws_cursors[MAX_DEPTH];
 navRoot wsNav(mainMenu, ws_cursors, MAX_DEPTH, none, ws_out);
 
-//config myOptions('*','-',defaultNavCodes,false);
+
 
 void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length) {
   switch(type) {
     case WStype_DISCONNECTED:
-      //USE_SERIAL.printf("[%u] Disconnected!\n", num);
+
       break;
     case WStype_CONNECTED: {
         IPAddress ip = webSocket.remoteIP(num);
-        //USE_SERIAL.printf("[%u] Connected from %d.%d.%d.%d url: %s\n", num, ip[0], ip[1], ip[2], ip[3], payload);
+
         webSocket.sendTXT(num, "console.log('ArduinoMenu Connected')");
       }
       break;
     case WStype_TEXT:
-      //USE_SERIAL.printf("[%u] get Text: %s\n", num, payload);
-      nav.async((const char*)payload);//this is slow!!!!!!!!
+
+      nav.async((const char*)payload);
       break;
     case WStype_BIN: {
         USE_SERIAL<<"[WSc] get binary length:"<<length<<"[";
@@ -210,16 +199,16 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length
         idx_t len=*((idx_t*)++payload);
         idx_t* pathBin=(idx_t*)++payload;
         const char* inp=(const char*)(payload+len);
-        //Serial<<"id:"<<id<<endl;
+
         if (id==nav.active().hash()) {
-          //Serial<<"id ok."<<endl;Serial.flush();
-          //Serial<<"input:"<<inp<<endl;
-          //StringStream inStr(inp);
-          //while(inStr.available())
+
+
+
+
           nav.doInput(inp);
-          webSocket.sendTXT(num, "binBusy=false;");//send javascript to unlock the state
-        } //else Serial<<"id not ok!"<<endl;
-        //Serial<<endl;
+          webSocket.sendTXT(num, "binBusy=false;");
+        }
+
       }
       break;
     default:break;
@@ -283,8 +272,8 @@ bool handleMenu(navRoot& nav){
   return r;
 }
 
-//redirect to version folder,
-//this allows agressive caching with no need to cache reset on version change
+
+
 auto mainPage= []() {
   _trace(Serial<<"serving main page from root!"<<endl);
   server.sendHeader("Location", CUR_VERSION "/index.html", true);
@@ -292,16 +281,16 @@ auto mainPage= []() {
 };
 
 void setup(){
-  //check your pins before activating this
-  // pinMode(LEDPIN,OUTPUT);
-  // updLed();
-  // analogWriteRange(1023);
-  // pinMode(ANALOG_PIN,OUTPUT);
-  // updAnalog();
-  //options=&myOptions;//menu options
+
+
+
+
+
+
+
   Serial.begin(115200);
   while(!Serial)
-  //USE_SERIAL.setDebugOutput(true);
+
   Serial.println();
   Serial.println();
   Serial.println();
@@ -312,11 +301,11 @@ void setup(){
       delay(1000);
   }
 
-  // Serial.setDebugOutput(1);
-  // Serial.setDebugOutput(0);
-  // while(!Serial);
-  // delay(10);
-  // wifi_station_set_hostname((char*)serverName);
+
+
+
+
+
   Serial.println("");
   Serial.println("Arduino menu webserver example");
 
@@ -326,7 +315,7 @@ void setup(){
   Serial.println(ssid);
 
   WiFi.begin(ssid, password);
-  // Wait for connection
+
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
@@ -340,22 +329,22 @@ void setup(){
 
   webSocket.begin();
 
-  nav.idleTask=idle;//point a function to be used when menu is suspended
+  nav.idleTask=idle;
 
   server.on("/",HTTP_GET,mainPage);
 
-  //menu xml server over http
+
   server.on("/menu", HTTP_GET, []() {
     pageStart();
     serverOut<<"<output state=\""<<((int)&webNav.idleTask)<<"\"><![CDATA[";
     _trace(Serial<<"output count"<<webNav.out.cnt<<endl);
-    handleMenu(webNav);//do navigation (read input) and produce output messages or reports
+    handleMenu(webNav);
     serverOut<<"]]></output>";
     webNav.doOutput();
     pageEnd();
   });
 
-  //menu json server over http
+
   server.on("/json", HTTP_GET, []() {
     _trace(Serial<<"json request!"<<endl);
     jsonStart();
@@ -378,7 +367,7 @@ void setup(){
 }
 
 void loop(void){
-  wsOut.response.remove(0);//clear websocket json buffer
+  wsOut.response.remove(0);
   webSocket.loop();
   server.handleClient();
   delay(1);

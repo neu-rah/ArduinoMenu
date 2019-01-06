@@ -9,7 +9,7 @@
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h3 class="modal-title">MicroTC360</h3>
+            <h3 class="modal-title">Arduino&lt;Web&gt;Menu </h3>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true"><xsl:text disable-output-escaping="yes">X</xsl:text></span>
             </button>
