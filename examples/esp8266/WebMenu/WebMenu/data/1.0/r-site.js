@@ -12,7 +12,11 @@ function connectWS() {
   connection.onopen = init;
   connection.onerror = function(e) {console.log("WebSocket Error ", e)};
   connection.onmessage = function(e) {
-    console.log(JSON.parse(e.data));//just for checking it
+    try {
+      console.log(JSON.parse(e.data));//just for checking it
+    } catch(err) {
+      console.log("NO JSON!",e.data);
+    }
     eval("lastResult="+e.data);
     updatePage();
   };

@@ -198,9 +198,9 @@
       </xsl:choose>
     </xsl:variable>
     <xsl:choose>
-      <xsl:when test="$ln>=10000"><!-- disabled in pactice, with a large value -->
+      <xsl:when test="$ln>=100"><!-- disabled in pactice, with a large value -->
         <!-- some fancy slider.. not working yet -->
-        <xsl:element name="input">
+        <!-- <xsl:element name="input">
           <xsl:attribute name="id">fld_<xsl:value-of select="/menuLib/panel/@id"/>_<xsl:value-of select="../../@i"/></xsl:attribute>
           <xsl:attribute name="data-slider-id">fld_<xsl:value-of select="/menuLib/panel/@id"/>_<xsl:value-of select="../../@i"/></xsl:attribute>
           <xsl:attribute name="type">text</xsl:attribute>
@@ -208,7 +208,7 @@
           <xsl:attribute name="data-slider-max"><xsl:value-of select="@h"/></xsl:attribute>
           <xsl:attribute name="data-slider-step"><xsl:value-of select="@t"/></xsl:attribute>
           <xsl:attribute name="data-slider-value"><xsl:apply-templates/></xsl:attribute>
-        </xsl:element>
+        </xsl:element> -->
         <!-- standard slider -->
         <xsl:element name="input">
           <xsl:copy-of select="node/@*"/>
@@ -221,7 +221,7 @@
         </xsl:element>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:element name="input">
+      <xsl:element name="input">
           <xsl:attribute name="id">fld_<xsl:value-of select="/menuLib/panel/@id"/>_<xsl:value-of select="../../@i"/></xsl:attribute>
           <xsl:attribute name="type">text</xsl:attribute>
           <xsl:attribute name="size"><xsl:value-of select="$sz"/></xsl:attribute>
@@ -237,11 +237,11 @@
     </xsl:choose>
   </xsl:template>
 
-  <xsl:template match="select">
+  <xsl:template match="select|choose">
     <xsl:apply-templates select="node"/>
   </xsl:template>
 
-  <xsl:template match="select/node">
+  <xsl:template match="node">
     <xsl:element name="select">
       <xsl:attribute name="id">fld_<xsl:value-of select="/menuLib/panel/@id"/>_<xsl:value-of select="../../../p/@i"/></xsl:attribute>
       <xsl:attribute name="class">form-control</xsl:attribute>
@@ -251,7 +251,7 @@
     </xsl:element>
   </xsl:template>
 
-  <xsl:template match="select/node/value">
+  <xsl:template match="node/value">
     <xsl:element name="option">
       <xsl:copy-of select="@*"/>
       <xsl:apply-templates/>
