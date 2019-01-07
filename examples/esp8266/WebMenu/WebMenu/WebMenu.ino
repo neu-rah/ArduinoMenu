@@ -238,10 +238,22 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length
         webSocket.sendTXT(num, "console.log('ArduinoMenu Connected')");
       }
       break;
-    case WStype_TEXT:
-      //USE_SERIAL.printf("[%u] get Text: %s\n", num, payload);
-      nav.async((const char*)payload);//this is slow!!!!!!!!
-      break;
+    case WStype_TEXT: {
+        //USE_SERIAL.printf("[%u] get Text: %s\n", num, payload);
+        // nav.async((const char*)payload);//this is slow!!!!!!!!
+        __trace(Serial.printf("[%u] get Text: %s\n", num, payload));
+        char*s=(char*)payload;
+        _trace(Serial<<"serve websocket menu"<<endl);
+        wsOut.response.remove(0);
+        wsOut<<"{\"output\":\"";
+        wsNav.async((const char*)payload);
+        wsOut<<"\",\n\"menu\":";
+        wsNav.doOutput();
+        wsOut<<"\n}";
+        webSocket.sendTXT(num,wsOut.response);
+        // wsOut.response.remove(0);
+        // jsonEnd();
+      } break;
     case WStype_BIN: {
         USE_SERIAL<<"[WSc] get binary length:"<<length<<"[";
         for(int c=0;c<length;c++) {
