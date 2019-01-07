@@ -60,7 +60,7 @@ menuOut& operator<<(menuOut& o,endlObj) {
 }
 
 //this version numbers MUST be the same as data/1.2
-#define CUR_VERSION "1.2"
+#define CUR_VERSION "1.3"
 #define APName "WebMenu"
 #define ANALOG_PIN 4
 
@@ -134,7 +134,7 @@ CHOOSE(chooseTest,chooseMenu,"Choose",doNothing,noEvent,noStyle
   ,VALUE("Last",-1,doNothing,noEvent)
 );
 
-int dutty=50;//%
+int duty=50;//%
 int timeOn=50;//ms
 void updAnalog() {
   // analogWrite(ANALOG_PIN,map(timeOn,0,100,0,255/*PWMRANGE*/));
@@ -181,7 +181,7 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,SUBMENU(setLed)
   ,OP("Action A",action1,enterEvent)
   ,OP("Action B",action2,enterEvent)
-  ,FIELD(dutty,"Dutty","%",0,100,10,1, updAnalog, anyEvent, noStyle)
+  ,FIELD(duty,"Duty","%",0,100,10,1, updAnalog, anyEvent, noStyle)
   ,FIELD(timeOn,"On","ms",0,100,10,1, updAnalog, anyEvent, noStyle)
   ,EDIT("Name",name,alphaNumMask,doNothing,noEvent,noStyle)
   ,SUBMENU(birthDate)
@@ -332,6 +332,8 @@ auto mainPage= []() {
   _trace(Serial<<"serving main page from root!"<<endl);
   server.sendHeader("Location", CUR_VERSION "/index.html", true);
   server.send ( 302, "text/plain", "");
+  if (server.hasArg("at"))
+    nav.async(server.arg("at").c_str());
 };
 
 void setup(){
