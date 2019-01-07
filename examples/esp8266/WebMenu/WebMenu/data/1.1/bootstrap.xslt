@@ -138,7 +138,27 @@
   <xsl:template name="ignore" match="cur|fv"/>
   <xsl:template name="ignorePad" match="cur|fv" mode="pad"/>
 
-  <xsl:template match="fld[../p[@t='f']]">
+  <!-- <xsl:template match="fld[../p[@t='f']]">
+    <xsl:variable name="path">
+      <xsl:value-of select="ancestor::*/@r"/>
+      <xsl:for-each select="ancestor::*/@i">/<xsl:value-of select="."/></xsl:for-each>
+    </xsl:variable>
+    <xsl:element name="input">
+      <xsl:attribute name="id">fld_<xsl:value-of select="/menuLib/panel/@id"/>_<xsl:value-of select="../../@i"/></xsl:attribute>
+      <xsl:attribute name="data-slider-id">fld_<xsl:value-of select="/menuLib/panel/@id"/>_<xsl:value-of select="../../@i"/></xsl:attribute>
+      <xsl:attribute name="type">text</xsl:attribute>
+      <xsl:attribute name="class">slider ledField</xsl:attribute>
+      <xsl:attribute name="data-slider-min"><xsl:value-of select="@l"/></xsl:attribute>
+      <xsl:attribute name="data-slider-max"><xsl:value-of select="@h"/></xsl:attribute>
+      <xsl:attribute name="data-slider-step"><xsl:value-of select="@t"/></xsl:attribute>
+      <xsl:attribute name="data-slider-value"><xsl:apply-templates/></xsl:attribute>
+      <xsl:attribute name="value"><xsl:apply-templates/></xsl:attribute>
+      <xsl:attribute name="data-src"><xsl:value-of select="$path"/></xsl:attribute>
+      <xsl:attribute name="onchange">window.location='/menu?at='+getAttribute("data-src")+'/'+value</xsl:attribute>
+    </xsl:element>
+  </xsl:template> -->
+
+  <xsl:template match="fld[../u='%']">
     <xsl:variable name="path">
       <xsl:value-of select="ancestor::*/@r"/>
       <xsl:for-each select="ancestor::*/@i">/<xsl:value-of select="."/></xsl:for-each>
@@ -198,7 +218,20 @@
       </xsl:choose>
     </xsl:variable>
     <xsl:choose>
-      <xsl:when test="$ln>=100"><!-- disabled in pactice, with a large value -->
+      <xsl:when test="$ln>=10000 and $ln&lt;=1000"><!-- disabled in pactice, with a large value -->
+        <xsl:element name="input">
+          <xsl:attribute name="id">fld_<xsl:value-of select="/menuLib/panel/@id"/>_<xsl:value-of select="../../@i"/></xsl:attribute>
+          <xsl:attribute name="data-slider-id">fld_<xsl:value-of select="/menuLib/panel/@id"/>_<xsl:value-of select="../../@i"/></xsl:attribute>
+          <xsl:attribute name="type">text</xsl:attribute>
+          <xsl:attribute name="class">slider ledField</xsl:attribute>
+          <xsl:attribute name="data-slider-min"><xsl:value-of select="@l"/></xsl:attribute>
+          <xsl:attribute name="data-slider-max"><xsl:value-of select="@h"/></xsl:attribute>
+          <xsl:attribute name="data-slider-step"><xsl:value-of select="@t"/></xsl:attribute>
+          <xsl:attribute name="data-slider-value"><xsl:apply-templates/></xsl:attribute>
+          <xsl:attribute name="value"><xsl:apply-templates/></xsl:attribute>
+          <!-- <xsl:attribute name="data-src"><xsl:value-of select="$path"/></xsl:attribute> -->
+          <xsl:attribute name="onchange">window.location='/menu?at='+getAttribute("data-src")+'/'+value</xsl:attribute>
+        </xsl:element>
         <!-- some fancy slider.. not working yet -->
         <!-- <xsl:element name="input">
           <xsl:attribute name="id">fld_<xsl:value-of select="/menuLib/panel/@id"/>_<xsl:value-of select="../../@i"/></xsl:attribute>
@@ -210,7 +243,7 @@
           <xsl:attribute name="data-slider-value"><xsl:apply-templates/></xsl:attribute>
         </xsl:element> -->
         <!-- standard slider -->
-        <xsl:element name="input">
+        <!-- <xsl:element name="input">
           <xsl:copy-of select="node/@*"/>
           <xsl:copy-of select="../../p/@i"/>
           <xsl:attribute name="class">menu-range-fld</xsl:attribute>
@@ -218,7 +251,7 @@
           <xsl:attribute name="value"><xsl:apply-templates/></xsl:attribute>
           <xsl:attribute name="data-src"><xsl:value-of select="$at"/></xsl:attribute>
           <xsl:attribute name="onchange">window.location='/menu?at='+getAttribute("data-src")+'/'+value</xsl:attribute>
-        </xsl:element>
+        </xsl:element> -->
       </xsl:when>
       <xsl:otherwise>
       <xsl:element name="input">

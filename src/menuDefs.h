@@ -8,6 +8,7 @@
 // #define USE_RAM
 // #define MENU_DEBUG
 
+#include "macros.h"
 #include "menuBase.h"
 #include "shadows.h"
 

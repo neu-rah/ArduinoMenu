@@ -1,5 +1,5 @@
+#include "../menuDefs.h"
 #ifdef MENU_FMT_WRAPS
-  #include "../menuDefs.h"
   #include "jsonFmt.h"
 
   namespace Menu {

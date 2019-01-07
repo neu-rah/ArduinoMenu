@@ -59,7 +59,7 @@ menuOut& operator<<(menuOut& o,endlObj) {
   return o;
 }
 
-#define CUR_VERSION "1.0"
+#define CUR_VERSION "1.1"
 #define APName "WebMenu"
 #define ANALOG_PIN 4
 
@@ -133,19 +133,61 @@ CHOOSE(chooseTest,chooseMenu,"Choose",doNothing,noEvent,noStyle
   ,VALUE("Last",-1,doNothing,noEvent)
 );
 
-int timeOn=50;
+int dutty=50;//%
+int timeOn=50;//ms
 void updAnalog() {
   // analogWrite(ANALOG_PIN,map(timeOn,0,100,0,255/*PWMRANGE*/));
 }
+
+char* constMEM alphaNum MEMMODE=" 0123456789.ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz,\\|!\"#$%&/()=?~*^+-{}[]€";
+char* constMEM alphaNumMask[] MEMMODE={alphaNum};
+char name[]="                                                  ";
+
+uint16_t year=2017;
+uint16_t month=10;
+uint16_t day=7;
+
+//define a pad style menu (single line menu)
+//here with a set of fields to enter a date in YYYY/MM/DD format
+//altMENU(menu,birthDate,"Birth",doNothing,noEvent,noStyle,(systemStyles)(_asPad|Menu::_menuData|Menu::_canNav|_parentDraw)
+PADMENU(birthDate,"Birth",doNothing,noEvent,noStyle
+  ,FIELD(year,"","/",1900,3000,20,1,doNothing,noEvent,noStyle)
+  ,FIELD(month,"","/",1,12,1,0,doNothing,noEvent,wrapStyle)
+  ,FIELD(day,"","",1,31,1,0,doNothing,noEvent,wrapStyle)
+);
+
+//customizing a prompt look!
+//by extending the prompt class
+class altPrompt:public prompt {
+public:
+  // altPrompt(constMEM promptShadow& p):prompt(p) {}
+  using prompt::prompt;
+  Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t) override {
+    return out.printRaw(F("special prompt!"),len);
+  }
+};
+
+MENU(subMenu,"Sub-Menu",doNothing,noEvent,noStyle
+  ,OP("Sub1",doNothing,noEvent)
+  ,OP("Sub2",doNothing,noEvent)
+  ,OP("Sub3",doNothing,noEvent)
+  // ,altOP(altPrompt,"",doNothing,noEvent)
+  ,EXIT("<Back")
+);
 
 //the menu
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,SUBMENU(setLed)
   ,OP("Action A",action1,enterEvent)
   ,OP("Action B",action2,enterEvent)
+  ,FIELD(dutty,"Dutty","%",0,100,10,1, updAnalog, anyEvent, noStyle)
   ,FIELD(timeOn,"On","ms",0,100,10,1, updAnalog, anyEvent, noStyle)
+  ,EDIT("Name",name,alphaNumMask,doNothing,noEvent,noStyle)
+  ,SUBMENU(birthDate)
   ,SUBMENU(selMenu)
   ,SUBMENU(chooseMenu)
+  ,SUBMENU(subMenu)
+  ,EXIT("Exit!")
 );
 
 result idle(menuOut& o,idleEvent e) {
@@ -305,6 +347,14 @@ void setup(){
   Serial.println();
   Serial.println();
   Serial.println();
+
+  // #ifndef MENU_DEBUG
+    //do not allow web heads to exit, they wont be able to return (for now)
+    //we should resume this heads on async requests!
+    webNav.canExit=false;
+    jsonNav.canExit=false;
+    wsNav.canExit=false;
+  // #endif
 
   for(uint8_t t = 4; t > 0; t--) {
       Serial.printf("[SETUP] BOOT WAIT %d...\n", t);

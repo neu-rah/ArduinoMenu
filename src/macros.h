@@ -10,6 +10,9 @@
 #endif
 #if defined(ESP8266) | defined(CORE_TEENSY)
   #define typeof(x) __typeof__(x)
+  #define MENU_ASYNC
+  #define MENU_FMT_WRAPS
+  #define MENU_IDLE_BKGND
 #endif
 #if defined(USE_PGM) || (defined(pgm_read_ptr_near) && !defined(MENU_USERAM))
   //storing some values into avr flash memory (saving ram space)
@@ -41,9 +44,9 @@
   #define memIdx(src) (src)
   #define memStrLen strlen
   #define memEnum(addr) (*addr)
-  #ifndef F
+  // #ifndef F
     #define F(x) (x)
-  #endif
+  // #endif
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
