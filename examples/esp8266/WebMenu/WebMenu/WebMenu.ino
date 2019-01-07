@@ -59,7 +59,8 @@ menuOut& operator<<(menuOut& o,endlObj) {
   return o;
 }
 
-#define CUR_VERSION "1.1"
+//this version numbers MUST be the same as data/1.2
+#define CUR_VERSION "1.2"
 #define APName "WebMenu"
 #define ANALOG_PIN 4
 
@@ -171,7 +172,7 @@ MENU(subMenu,"Sub-Menu",doNothing,noEvent,noStyle
   ,OP("Sub1",doNothing,noEvent)
   ,OP("Sub2",doNothing,noEvent)
   ,OP("Sub3",doNothing,noEvent)
-  // ,altOP(altPrompt,"",doNothing,noEvent)
+  ,altOP(altPrompt,"",doNothing,noEvent)
   ,EXIT("<Back")
 );
 

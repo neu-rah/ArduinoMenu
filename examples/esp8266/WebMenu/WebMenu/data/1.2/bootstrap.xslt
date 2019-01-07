@@ -51,7 +51,10 @@
     </li>
   </xsl:template>
 
-  <!-- something special for light schedulle menu, μTC is sending a resume to conserve trafic  -->
+  <xsl:template match="p[@t='menu']">
+    <xsl:call-template name="linkBtn"/>
+  </xsl:template>
+
   <xsl:template match="p[@t='mn']" mode="pad">
     <xsl:call-template name="linkBtn"/>
   </xsl:template>

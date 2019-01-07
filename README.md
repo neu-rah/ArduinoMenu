@@ -241,9 +241,17 @@ https://github.com/neu-rah/AnsiStream
 
 - Unix terminal
 
-**Web browser** _(experimental)_
+**Web browser**
 
-- ESP8266 Web Server
+- ESP8266
+
+**Web JSON REST**
+
+- ESP8266
+
+**Websockets**
+
+- ESP8266
 
 ### Input devices
 
