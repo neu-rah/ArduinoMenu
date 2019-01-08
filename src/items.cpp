@@ -55,7 +55,7 @@ Used prompt::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,id
   idx_t prompt::selected() const {return 0;}
   const char* prompt::typeName() const {return "prompt";}
   bool prompt::async(const char*uri,navRoot& root,idx_t lvl) {
-    trace(MENU_DEBUG_OUT<<"prompt::async ["<<uri<<"]"<<endl;);
+    _trace(MENU_DEBUG_OUT<<"prompt::async ["<<uri<<"]"<<endl;);
     return true;
   }
   idx_t menuNode::parseUriNode(const char*&uri) {
@@ -92,10 +92,22 @@ Used prompt::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,id
     assert(strchr(numericChars,uri[0]));
     int n=parseUriNode(uri);
     trace(MENU_DEBUG_OUT<<"n:"<<n<<" sel:"<<root.path[lvl].sel<<endl);
-    if (!(root.path[lvl].sel==n&&root.path[lvl+1].target==&operator[](n)&&root.level>lvl)) {
+    _trace(Serial<<"root.level>lvl:"<<(root.level>lvl)<<endl);
+    _trace(Serial<<"root.path[lvl].sel==n:"<<(root.path[lvl].sel==n)<<endl);
+    _trace(Serial<<"root.path[lvl+1].target==&operator[](n))):"<<(root.path[lvl+1].target==&operator[](n))<<endl);
+    _trace(Serial<<"operator[](n).type()==toggleClass:"<<(operator[](n).type()==toggleClass)<<endl);
+    if (!(
+        //if updating a toggle to not toggle the value, was deffault action
+        //but as we can't enter toggles this action would be preceeding every update otherwise.
+        (operator[](n).type()==toggleClass&&strchr(uri,'/'))
+        ||(root.level>lvl&&root.path[lvl].sel==n&&root.path[lvl+1].target==&operator[](n))
+      )) {
+      _trace(Serial<<"menuNode, escTo "<<lvl<<endl);
       root.escTo(lvl/*+(lvl&&root.path[lvl].sel==n?-1:0)*/);
+      _trace(Serial<<"menuNode, doNav "<<n<<endl);
       root.doNav(navCmd(idxCmd,n));
     }
+    _trace(Serial<<"menuNode, proceed async"<<endl);
     return operator[](n).async(uri,root,lvl+1);
   }
   const char* navTarget::typeName() const {return "navTarget";}

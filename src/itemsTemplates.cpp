@@ -107,20 +107,26 @@ namespace Menu {
     const char* toggle<T>::typeName() const {return "toggle";}
     template<typename T>
     bool toggle<T>::async(const char*uri,navRoot& root,idx_t lvl) {
-      trace(MENU_DEBUG_OUT<<(*(prompt*)this)<<" toggle::async! uri:"<<uri<<endl);
+      _trace(MENU_DEBUG_OUT<<(*(prompt*)this)<<" toggle::async! uri:"<<uri<<endl);
       if(uri[0]) {
-        trace("selecting value by index!");
+        _trace(Serial<<"selecting value by index!"<<endl);
         idx_t n=menuNode::parseUriNode(uri);
-        trace(MENU_DEBUG_OUT<<"n:"<<n<<" sel:"<<root.path[lvl].sel<<endl);
-        menuVariant<T>::sync(n);
+        _trace(MENU_DEBUG_OUT<<"n:"<<n<<" sel:"<<root.path[lvl].sel<<endl);
+        menuVariant<T>::sync(n);//sync to index!
+        root.node().event(root.useUpdateEvent?updateEvent:enterEvent);
         return true;
       }
-      return prompt::async(uri,root,lvl);
+      //if not by index then do the toggle
+      _trace(Serial<<"toggle proceed..."<<endl);
+      bool r=prompt::async(uri,root,lvl);
+      root.node().event(root.useUpdateEvent?updateEvent:enterEvent);
+      return r;
     }
   #endif
 
   template<typename T>
   result toggle<T>::sysHandler(SYS_FUNC_PARAMS) {
+    _trace(Serial<<"toggle sysHandler!"<<endl;);
     switch(event) {
         case activateEvent: {
         idx_t at=menuVariant<T>::sync();

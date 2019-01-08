@@ -108,7 +108,7 @@
         bool changed(const menuOut& out);
         inline bool changed(idx_t n) {return changed(out[n]);}
         #ifdef MENU_ASYNC
-          void escTo(idx_t lvl);
+          idx_t escTo(idx_t lvl);
           // prompt* seek(idx_t* uri,idx_t len);
           bool async(const char* at);
           menuOut& printPath(menuOut& o,menuNode*) const;

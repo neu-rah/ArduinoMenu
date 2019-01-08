@@ -18,7 +18,7 @@ function connectWS() {
       console.log("NO JSON!",e.data);
     }
     eval("lastResult="+e.data);
-    updatePage();
+    //updatePage();
   };
   return connection.readyState;
 }
@@ -103,21 +103,21 @@ function mkPath(m) {
 }
 
 function menu(o,cnt) {
-  if(connection.readyState!=1) {//not connected (yet)?
-    console.log("not connected yet...")
-    if (connection.readyState==3) {//disconnected?
-      console.log("connecting websocket");
-      connectWS();
-    }
-    setTimeout(function() {//check latter...
-      console.log("checking websocket connetion");
-      if (connection.readyState!=1&&cnt>5) {//give up?
-        alert("websocket disconnected, please refresh page");//TODO: put mutilang here
-        return;
-      } else menu(o,cnt?cnt+1:0);
-    },500);
-    return;
-  }
+  // if(connection.readyState!=1) {//not connected (yet)?
+  //   console.log("not connected yet...")
+  //   if (connection.readyState==3) {//disconnected?
+  //     console.log("connecting websocket");
+  //     connectWS();
+  //   }
+  //   setTimeout(function() {//check latter...
+  //     console.log("checking websocket connetion");
+  //     if (connection.readyState!=1&&cnt>5) {//give up?
+  //       alert("websocket disconnected, please refresh page");//TODO: put mutilang here
+  //       return;
+  //     } else menu(o,cnt?cnt+1:0);
+  //   },500);
+  //   return;
+  // }
   console.log("send ws",o);
   return connection.send(o);
 }
@@ -139,11 +139,11 @@ function updateLink_(e) {
   var n = $(e),
     o = n.attr("data-grp"),
     t = n.attr("data-src");
-  console.log("removing selections");
+  // console.log("removing selections");
   $("a[data-grp='" + o + "']").removeClass("btn-primary btn-success");
-  console.log("adding selection to", e);
+  // console.log("adding selection to", e);
   n.addClass("btn-primary");
-  console.log("sending: " + t);
+  // console.log("sending: " + t);
   menu(t);
   // connection.send(t)
 }
@@ -154,7 +154,7 @@ function updateSelect(e) {
 
 function updateSelect_(e) {
   var n = $(e).attr("data-src") + "/" + e.selectedIndex;
-  console.log("sending: " + n);
+  // console.log("sending: " + n);
   menu(n);
   // connection.send(n);
 }

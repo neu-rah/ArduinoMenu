@@ -60,12 +60,23 @@ menuOut& operator<<(menuOut& o,endlObj) {
 }
 
 //this version numbers MUST be the same as data/1.2
-#define CUR_VERSION "1.3"
+#define CUR_VERSION "1.4"
 #define APName "WebMenu"
+
+int ledCtrl=LOW;
+//on my esp12e led pin is 2
+#define LEDPIN 2
+//this is ok on other boards
+// #define LEDPIN LED_BUILTIN
+void updLed() {
+  _trace(Serial<<"update led state!"<<endl);
+  digitalWrite(LEDPIN,!ledCtrl);
+}
+
 #define ANALOG_PIN 4
 
-constexpr size_t wifiSSIDLen=64;
-constexpr size_t wifiPwdLen=32;
+// constexpr size_t wifiSSIDLen=64;
+// constexpr size_t wifiPwdLen=32;
 
 #ifndef MENU_SSID
   #error "need to define WiFi SSID here"
@@ -76,8 +87,8 @@ constexpr size_t wifiPwdLen=32;
   #define MENU_PASS ""
 #endif
 
-char wifiSSID[wifiSSIDLen+1];//="                                ";
-char wifiPwd [wifiPwdLen+1];//="                                ";
+// char wifiSSID[wifiSSIDLen+1];//="                                ";
+// char wifiPwd [wifiPwdLen+1];//="                                ";
 
 const char* ssid = MENU_SSID;
 const char* password = MENU_PASS;
@@ -108,15 +119,13 @@ result action2(eventMask event, navNode& nav, prompt &item) {
   return proceed;
 }
 
-int ledCtrl=LOW;
-#define LEDPIN LED_BUILTIN
-void updLed() {
-  digitalWrite(LEDPIN,!ledCtrl);
+void debugLedUpd() {
+  _trace(Serial<<"debug led update! "<<ledCtrl<<endl);
 }
 
-TOGGLE(ledCtrl,setLed,"Led: ",updLed,enterEvent,noStyle//,doExit,enterEvent,noStyle
-  ,VALUE("On",HIGH,doNothing,noEvent)
+TOGGLE(ledCtrl,setLed,"Led: ",updLed,(Menu::eventMask)(updateEvent|enterEvent),noStyle
   ,VALUE("Off",LOW,doNothing,noEvent)
+  ,VALUE("On",HIGH,doNothing,noEvent)
 );
 
 int selTest=0;
@@ -138,6 +147,7 @@ int duty=50;//%
 int timeOn=50;//ms
 void updAnalog() {
   // analogWrite(ANALOG_PIN,map(timeOn,0,100,0,255/*PWMRANGE*/));
+  analogWrite(ANALOG_PIN,map(duty,0,100,0,255/*PWMRANGE*/));
 }
 
 char* constMEM alphaNum MEMMODE=" 0123456789.ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz,\\|!\"#$%&/()=?~*^+-{}[]€";
@@ -182,7 +192,7 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,OP("Action A",action1,enterEvent)
   ,OP("Action B",action2,enterEvent)
   ,FIELD(duty,"Duty","%",0,100,10,1, updAnalog, anyEvent, noStyle)
-  ,FIELD(timeOn,"On","ms",0,100,10,1, updAnalog, anyEvent, noStyle)
+  // ,FIELD(timeOn,"On","ms",0,100,10,1, updAnalog, anyEvent, noStyle)
   ,EDIT("Name",name,alphaNumMask,doNothing,noEvent,noStyle)
   ,SUBMENU(birthDate)
   ,SUBMENU(selMenu)
@@ -353,8 +363,8 @@ void setup(){
   pinMode(LEDPIN,OUTPUT);
   updLed();
   // analogWriteRange(1023);
-  // pinMode(ANALOG_PIN,OUTPUT);
-  // updAnalog();
+  pinMode(ANALOG_PIN,OUTPUT);
+  updAnalog();
   //options=&myOptions;//menu options
   Serial.begin(115200);
   while(!Serial)

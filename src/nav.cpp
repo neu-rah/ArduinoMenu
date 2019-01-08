@@ -301,13 +301,16 @@ bool navRoot::changed(const menuOut& out) {
 //     return e.seek(++uri,--len);
 //   } else return NULL;
 // }
-void navRoot::escTo(idx_t lvl) {
+idx_t navRoot::escTo(idx_t lvl) {
   assert(lvl>=0);
   // if (lvl<0) return;
+  idx_t cnt=0;
   while(level>lvl) {
     trace(MENU_DEBUG_OUT<<"escaping "<<level<<endl);
     doNav(escCmd);
+    cnt++;
   }
+  return cnt;
 }
 bool navRoot::async(const char* at) {
   trace(MENU_DEBUG_OUT<<"navRoot::async "<<at<<endl);
