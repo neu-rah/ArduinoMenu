@@ -112,15 +112,18 @@ namespace Menu {
         _trace(Serial<<"selecting value by index!"<<endl);
         idx_t n=menuNode::parseUriNode(uri);
         _trace(MENU_DEBUG_OUT<<"n:"<<n<<" sel:"<<root.path[lvl].sel<<endl);
-        menuVariant<T>::sync(n);//sync to index!
-        root.node().event(root.useUpdateEvent?updateEvent:enterEvent);
+        menuVariant<T>::sync(n);//sync to index n!
+        // root.node().event(root.useUpdateEvent?updateEvent:enterEvent);
         return true;
       }
       //if not by index then do the toggle
       _trace(Serial<<"toggle proceed..."<<endl);
-      bool r=prompt::async(uri,root,lvl);
-      root.node().event(root.useUpdateEvent?updateEvent:enterEvent);
-      return r;
+      // root.doNav(navCmd(enterCmd));
+      // return true;
+      // bool r=prompt::async(uri,root,lvl);
+      // root.node().event(root.useUpdateEvent?updateEvent:enterEvent);
+      // return r;
+      return prompt::async(uri,root,lvl);
     }
   #endif
 

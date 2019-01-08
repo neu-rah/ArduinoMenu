@@ -96,10 +96,11 @@ Used prompt::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,id
     _trace(Serial<<"root.path[lvl].sel==n:"<<(root.path[lvl].sel==n)<<endl);
     _trace(Serial<<"root.path[lvl+1].target==&operator[](n))):"<<(root.path[lvl+1].target==&operator[](n))<<endl);
     _trace(Serial<<"operator[](n).type()==toggleClass:"<<(operator[](n).type()==toggleClass)<<endl);
+    bool toggleUpdate=operator[](n).type()==toggleClass&&strchr(uri,'/');
     if (!(
         //if updating a toggle to not toggle the value, was deffault action
         //but as we can't enter toggles this action would be preceeding every update otherwise.
-        (operator[](n).type()==toggleClass&&strchr(uri,'/'))
+        toggleUpdate
         ||(root.level>lvl&&root.path[lvl].sel==n&&root.path[lvl+1].target==&operator[](n))
       )) {
       _trace(Serial<<"menuNode, escTo "<<lvl<<endl);
@@ -108,7 +109,10 @@ Used prompt::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,id
       root.doNav(navCmd(idxCmd,n));
     }
     _trace(Serial<<"menuNode, proceed async"<<endl);
-    return operator[](n).async(uri,root,lvl+1);
+    operator[](n).async(uri,root,lvl+1);
+    if (toggleUpdate)
+      root.node().event(root.useUpdateEvent?updateEvent:enterEvent,n);
+    return true;
   }
   const char* navTarget::typeName() const {return "navTarget";}
 #endif
