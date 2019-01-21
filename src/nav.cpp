@@ -125,8 +125,7 @@ void navRoot::initPath(idx_t d) {
     path[n].root=this;
 }
 void navRoot::useMenu(menuNode &menu) {
-  navFocus=&menu;
-  path[0].target=&menu;
+  path[0].useMenu(menu);
   reset();
   refresh();
 }
@@ -161,7 +160,7 @@ void navRoot::doOutput() {
     bool c=idleChanged;
     idleChanged=false;//turn it off here so that sleepTask can force it on again
     out.idle(sleepTask,idling,c);
-    #ifdef MENU_IDLE_BKGND
+    #ifdef MENU_IDLE_BKGND//cascade menu sysrtem idle behind user idle task
       if (idleTask!=sleepTask) out.idle(idleTask,idling);
     #endif
   }

@@ -74,6 +74,7 @@
         idx_t maxX(idx_t i=0) const;
         idx_t maxY(idx_t i=0) const;
         idx_t& top(navNode& nav) const;
+        // inline void reset() {panelsList.reset();}
         inline idx_t printRaw(const __FlashStringHelper* at,idx_t len) {
           return printRaw((const char*)at,len);
         }
@@ -166,6 +167,7 @@
         void refresh();//force redraw of all outputs on next output call
         void clearChanged(navNode& nav) const;
         void clear();
+        // void reset();
         void doNav(navCmd cmd,class navNode &nav);
         result idle(idleFunc f,idleEvent e,bool idleChanged=false);
     };

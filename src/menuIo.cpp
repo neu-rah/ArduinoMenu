@@ -192,6 +192,9 @@ void outputsList::clearChanged(navNode& nav) const {
 void outputsList::clear() {
   for(int n=0;n<cnt;n++) ((menuOut*)memPtr(outs[n]))->clear();
 }
+// void outputsList::reset() {
+//   for(int n=0;n<cnt;n++) ((menuOut*)memPtr(outs[n]))->reset();
+// }
 void outputsList::doNav(navCmd cmd,class navNode &nav) {
   for(int n=0;n<cnt;n++) ((menuOut*)memPtr(outs[n]))->doNav(cmd,nav);
 }

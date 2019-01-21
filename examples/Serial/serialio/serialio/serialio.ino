@@ -153,13 +153,14 @@ result doAlert(eventMask e, prompt &item) {
   return proceed;
 }
 
-//when menu is suspended
 result idle(menuOut &o, idleEvent e) {
   // o.clear();
   switch(e) {
     case idleStart:o.println("suspending menu!");break;
     case idling:o.println("suspended...");break;
-    case idleEnd:o.println("resuming menu.");break;
+    case idleEnd:o.println("resuming menu.");
+      nav.reset();
+      break;
   }
   return proceed;
 }
@@ -171,8 +172,9 @@ void setup() {
   Serial.begin(115200);
   while(!Serial);
   Serial.println("menu 4.x test");Serial.flush();
-  //nav.idleTask=idle;//point a function to be used when menu is suspended
-  //nav.idleOn();//this menu will start on idle state, press select to enter menu
+  nav.timeOut=3;
+  nav.idleTask=idle;//point a function to be used when menu is suspended
+  // nav.idleOn();//this menu will start on idle state, press select to enter menu
   //nav.doInput("323");
   // nav.useAccel=false;
 }

@@ -99,7 +99,9 @@
         void useMenu(menuNode &menu);
         inline void reset() {
           level=0;
-          path[0].sel=0;
+          navFocus=path[level].target;
+          path[level].reset();
+          refresh();
         }
         inline void refresh() {out.refresh();}
         inline navNode& node() const {return path[level];}
