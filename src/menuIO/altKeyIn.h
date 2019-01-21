@@ -16,7 +16,7 @@ ex: -A0 means: pin A0 normally high, low when button pushed (reverse logic)
 
   namespace Menu {
 
-    #include "keyMapDef.h"
+    #include "altKeyMapDef.h"
 
     //if you hold/repeat a key for this ammount of time we will consider it an escape
     #ifndef ESCAPE_TIME
@@ -34,7 +34,7 @@ ex: -A0 means: pin A0 normally high, low when button pushed (reverse logic)
       void begin() {
         for(int n=0;n<N;n++)
           pinMode(keys[n].pin,keys[n].mode);
-          
+
       }
       int available(void) {
         //MENU_DEBUG_OUT<<"available"<<endl;

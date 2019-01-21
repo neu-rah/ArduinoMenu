@@ -8,7 +8,7 @@ Digital keypad (3 buttons) using the menu keyIn driver
 #include <menu.h>
 #include <menuIO/serialIn.h>
 #include <menuIO/serialOut.h>
-#include <menuIO/keyIn.h>
+#include <menuIO/altKeyIn.h>
 #include <menuIO/chainStream.h>
 
 using namespace Menu;
@@ -109,9 +109,9 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
 );
 
 keyMap joystickBtn_map[]={
- {-BTN_SEL, defaultNavCodes[enterCmd].ch} ,
- {-BTN_UP, defaultNavCodes[upCmd].ch} ,
- {-BTN_DOWN, defaultNavCodes[downCmd].ch}  ,
+ {-BTN_SEL, defaultNavCodes[enterCmd].ch,INPUT_PULLUP} ,
+ {-BTN_UP, defaultNavCodes[upCmd].ch,INPUT_PULLUP} ,
+ {-BTN_DOWN, defaultNavCodes[downCmd].ch,INPUT_PULLUP}  ,
 };
 keyIn<3> joystickBtns(joystickBtn_map);
 
