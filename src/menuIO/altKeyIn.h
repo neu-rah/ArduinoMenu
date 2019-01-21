@@ -33,8 +33,8 @@ ex: -A0 means: pin A0 normally high, low when button pushed (reverse logic)
       keyIn<N>(keyMap k[]):keys(k),lastkey(-1) {}
       void begin() {
         for(int n=0;n<N;n++)
-          if (keys[n].pin<0) pinMode(-keys[n].pin,INPUT_PULLUP);
-          else pinMode(keys[n].pin,INPUT);
+          pinMode(keys[n].pin,keys[n].mode);
+          
       }
       int available(void) {
         //MENU_DEBUG_OUT<<"available"<<endl;
@@ -56,7 +56,8 @@ ex: -A0 means: pin A0 normally high, low when button pushed (reverse logic)
         //MENU_DEBUG_OUT<<"peek"<<endl;
         for(int n=0;n<N;n++) {
           int8_t pin=keys[n].pin;
-          if (digitalRead(pin<0?-pin:pin)!=(pin<0) ) return keys[n].code;
+		  uint8_t mode = keys[n].mode == INPUT_PULLUP ? LOW : HIGH;
+          if (digitalRead(pin) == mode ) return keys[n].code;
         }
         return -1;
       }
