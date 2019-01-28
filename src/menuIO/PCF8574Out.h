@@ -5,7 +5,7 @@
 #ifndef RSITE_ARDUINO_MENU_PCF8574OUT
   #define RSITE_ARDUINO_MENU_PCF8574OUT
 
-  #ifndef ARDUINO_SAM_DUE
+  // #ifndef ARDUINO_SAM_DUE
     #include "../menuDefs.h"
     #include <Wire.h>
     #include <LiquidCrystal_PCF8574.h>
@@ -46,4 +46,4 @@
     }//namespace Menu
 
   #endif
-#endif
+// #endif
