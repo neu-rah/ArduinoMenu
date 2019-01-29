@@ -10,7 +10,7 @@ Dec. 2016 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
 menu on web browser served by esp8266 device (experimental)
 output: ESP8266WebServer -> Web browser
 input: ESP8266WebSocket <- Web browser
-format: xml
+format: xml, json
 
 this requires the data folder to be stored on esp8266 spiff
 for development purposes some files are left external,
@@ -20,9 +20,6 @@ to static serve content from the data folder. This allows me to quick change
 the files without having to upload them to SPIFFS
 also gateway ssid and password are stored on this code (bellow),
 so don't forget to change it.
-'dynamic' list of detected wi-fi and password request would require the new
-added textField (also experimental).
-
 */
 
 #include <menu.h>
@@ -31,8 +28,11 @@ added textField (also experimental).
 #include <menuIO/serialIn.h>
 #include <menuIO/xmlFmt.h>//to write a menu has xml page
 #include <menuIO/jsonFmt.h>//to write a menu has xml page
-// #include <Streaming.h>
-#include <streamFlow.h>
+#ifndef ARDUINO_STREAMING
+  #include <streamFlow.h>//https://github.com/neu-rah/streamFlow
+#else
+  #include <Streaming.h>//https://github.com/scottdky/Streaming
+#endif
 //#include <menuIO/jsFmt.h>//to send javascript thru web socket (live update)
 #include <FS.h>
 #include <Hash.h>
