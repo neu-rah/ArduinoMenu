@@ -57,7 +57,12 @@ www.r-site.net
     template<typename T> class select;
     template<typename T> class choose;
 
-    typedef int8_t idx_t;
+    #ifdef __AVR_ARCH__
+      typedef int8_t idx_t;//int8_t on AVR's
+    #else
+      typedef int16_t idx_t;//int16_t on non AVR's
+    #endif
+
     #if defined(MENU_DEBUG) || defined(MENU_ASYNC)
       idx_t print_P(Print& s,const char* at,idx_t sz=0);
     #endif
