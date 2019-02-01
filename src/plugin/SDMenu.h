@@ -9,7 +9,6 @@
 using namespace Menu;
 
 #ifdef MENU_USERAM
-  #include <SPI.h>
   #include <SD.h>
   // instead of allocating options for each file we will instead customize a menu
   // to print the files list, we can opt to use objects for each file for a
