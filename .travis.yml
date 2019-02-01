@@ -62,6 +62,9 @@ install:
    - wget https://github.com/adafruit/Adafruit-ST7735-Library/archive/master.zip -O /tmp/Adafruit-ST7735-Library-master.zip
    - unzip /tmp/Adafruit-ST7735-Library-master.zip -d /tmp/
 
+    - wget https://github.com/PaulStoffregen/SD/archive/master.zip -O /tmp/SD.zip
+    - unzip /tmp/SD.zip -d /tmp/
+
 script:
   #  - platformio ci --lib="."  --board=nanoatmega328 --board=teensy31
-   - platformio ci --lib="." --lib="/tmp/Streaming-master" --lib="/tmp/Adafruit-GFX-Library-master" --lib="/tmp/PCINT-master" --lib="/tmp/U8glib_Arduino-master" --lib="/tmp/AnsiStream-master" --lib="/tmp/NewliquidCrystal" --lib="/tmp/Adafruit-PCD8544-Nokia-5110-LCD-library-master" --lib="/tmp/Adafruit-ST7735-Library-master" --board=nanoatmega328 --board=teensy31 --board=due
+   - platformio ci --lib="." --lib="/tmp/Streaming-master" --lib="/tmp/Adafruit-GFX-Library-master" --lib="/tmp/PCINT-master" --lib="/tmp/U8glib_Arduino-master" --lib="/tmp/AnsiStream-master" --lib="/tmp/NewliquidCrystal" --lib="/tmp/Adafruit-PCD8544-Nokia-5110-LCD-library-master" --lib="/tmp/Adafruit-ST7735-Library-master" --lib="/tmp/SD-master" --board=nanoatmega328 --board=teensy31 --board=due
