@@ -8,9 +8,7 @@
 
 using namespace Menu;
 
-#ifndef MENU_USERAM
-  #error "This requires a dynamic menu, not the default on AVR's, see wiki"
-#else
+#ifdef MENU_USERAM
   #include <SPI.h>
   #include <SD.h>
   // instead of allocating options for each file we will instead customize a menu

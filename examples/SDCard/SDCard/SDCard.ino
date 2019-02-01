@@ -49,7 +49,6 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,EXIT("<Back")
 );
 
-
 MENU_OUTPUTS(out,MAX_DEPTH
   ,SERIAL_OUT(Serial)
   ,NONE//must have 2 items at least
