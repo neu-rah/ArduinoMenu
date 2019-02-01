@@ -4,8 +4,6 @@
 // IO: Serial
 // Feb 2019 - Rui Azevedo [ruihfazevedo@gmail.com]
 
-#include <SPI.h>
-#include <SD.h>
 #include <menu.h>
 
 using namespace Menu;
@@ -13,6 +11,8 @@ using namespace Menu;
 #ifndef MENU_USERAM
   #error "This requires a dynamic menu, not the default on AVR's, see wiki"
 #else
+  #include <SPI.h>
+  #include <SD.h>
   // instead of allocating options for each file we will instead customize a menu
   // to print the files list, we can opt to use objects for each file for a
   // faster reopening.. but its working quite fast
