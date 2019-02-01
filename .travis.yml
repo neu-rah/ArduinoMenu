@@ -62,7 +62,7 @@ install:
    - wget https://github.com/adafruit/Adafruit-ST7735-Library/archive/master.zip -O /tmp/Adafruit-ST7735-Library-master.zip
    - unzip /tmp/Adafruit-ST7735-Library-master.zip -d /tmp/
 
-   - wget https://github.com/PaulStoffregen/SD/archive/master.zip -O /tmp/SD.zip
+   - wget https://github.com/PaulStoffregen/SD/archive/master.zip -O /tmp/SD-master.zip
    - unzip /tmp/SD.zip -d /tmp/
 
 script:
