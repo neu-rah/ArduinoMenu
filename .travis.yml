@@ -63,7 +63,7 @@ install:
    - unzip /tmp/Adafruit-ST7735-Library-master.zip -d /tmp/
 
    - wget https://github.com/PaulStoffregen/SD/archive/master.zip -O /tmp/SD-master.zip
-   - unzip /tmp/SD.zip -d /tmp/
+   - unzip /tmp/SD-master.zip -d /tmp/
 
 script:
   #  - platformio ci --lib="."  --board=nanoatmega328 --board=teensy31
