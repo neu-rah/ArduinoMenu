@@ -200,6 +200,7 @@ navCmd navRoot::enter() {
         menuNode* dest=(menuNode*)&selected();
         level++;
         node().target=dest;
+        //if (node().has(_menuData))
         node().sel=0;
         active().dirty=true;
         sel.sysHandler(enterEvent,node(),selected());
@@ -215,6 +216,7 @@ navCmd navRoot::enter() {
       navFocus->dirty=true;
       if (!isMenu) in.fieldOn();
     }
+    //node().event(activateEvent);//item is active.. not here, root info is not set yet
     return rCmd;
   }
   return noCmd;

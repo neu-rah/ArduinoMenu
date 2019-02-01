@@ -241,17 +241,19 @@
         #ifdef MENU_FMT_WRAPS
           virtual classes type() const;
         #endif
-        inline prompt& operator[](idx_t i) const {return ((menuNodeShadow*)shadow)->operator[](i);}
+        virtual prompt& operator[](idx_t i) const {return ((menuNodeShadow*)shadow)->operator[](i);}
         bool changed(const navNode &nav,const menuOut& out,bool sub=true,bool test=false) override;
         void clearChanged(const navNode &nav,const menuOut& out,bool sub) override;
         inline idx_t sz() const {return ((menuNodeShadow*)shadow)->_sz();}
         inline prompt* constMEM* data() const {return ((menuNodeShadow*)shadow)->_data();}
         #ifdef MENU_USERAM
           void swap(idx_t a,idx_t b) {
-            auto ops=((menuNodeShadow*)shadow)->_data();
-            auto tmp=ops[a];
-            ops[a]=ops[b];
-            ops[b]=tmp;
+            if (has(_menuData)) {//ignore on virtual data menus
+              auto ops=((menuNodeShadow*)shadow)->_data();
+              auto tmp=ops[a];
+              ops[a]=ops[b];
+              ops[b]=tmp;
+            }
           }
         #endif
         // #ifdef MENU_ASYNC

@@ -18,7 +18,7 @@ void op1Func();
 constMEM char op1Text[] MEMMODE="Op 1";
 constMEM promptShadowRaw op1InfoRaw MEMMODE={(callback)op1Func,_noStyle,op1Text,enterEvent,noStyle};
 constMEM promptShadow& op1Info=*(promptShadow*)&op1InfoRaw;
-//or just this line on non MEMMODE devices like teensy or esp8266 instead of the above three
+//or just this line on non AVR devices like teensy or esp8266 instead of the above three
 //promptShadow op1Info("Op 1",(callback)op1Func,enterEvent);
 prompt op1(op1Info);
 
@@ -45,7 +45,7 @@ constMEM menuNodeShadowRaw menuInfoRaw MEMMODE={
   menuData
 };
 constMEM menuNodeShadow& menuInfo=*(menuNodeShadow*)&menuInfoRaw;
-//or just this line on non MEMMODE devices like teensy or esp8266 instead of the above three
+//or just this line on non AVR devices like teensy or esp8266 instead of the above three
 //menuNodeShadow menuInfo("Main menu",2,menuData,(callback)doNothing,noEvent,wrapStyle);
 menuNode mainMenu(menuInfo);
 
