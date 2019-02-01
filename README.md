@@ -97,7 +97,7 @@ void loop() {
 Some applications using ArduinoMenu, (current and older versions).  
 Do you have another? please let me know on gitter or email me.
 
-**ServoBox** Servo tester & monitor
+**ServoBox** Servo tester & monitor  
 https://github.com/jarkman/ServoBox
 
 **PANOBOT** A Panorama robot  
@@ -189,6 +189,14 @@ https://www.arduino.cc/en/Guide/TFT
 https://github.com/greiman/SSD1306Ascii
 
 - OLED Screens based on SSD1306 controller
+
+**TFT_eSPI**
+
+An Arduino IDE compatible graphics and fonts library for ESP8266 and ESP32  
+https://github.com/Bodmer/TFT_eSPI
+
+- ILI9341, ILI9163, ST7735, S6D02A1, ILI9481, ILI9486, ILI9488, HX8357D, ST7789, ILI9486
+- Waveshare 2 and 3 colour SPI ePaper displays
 
 **TFT_HX8357 driver**
 
