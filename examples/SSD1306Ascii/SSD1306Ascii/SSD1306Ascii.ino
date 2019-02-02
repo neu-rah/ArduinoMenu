@@ -34,6 +34,9 @@
 
 #include <Arduino.h>
 
+constexpr int OLED_SDA=4;
+constexpr int OLED_SDC=5;
+
 #define I2C_ADDRESS 0x3C
 // #include <Wire.h>
 #include "SSD1306Ascii.h"
