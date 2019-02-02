@@ -26,8 +26,8 @@ SDMenu<decltype(SD)> sdFolderMenu(SD,"SD Card","/",sdFolder,enterEvent);
 
 //implementing the handler here after sdFolder is defined...
 result sdFolder(eventMask event, navNode& nav, prompt &item) {
-  switch(event) {
-    case enterCmd:
+  // switch(event) {//for now events are filtered only for enter, so we dont need this checking
+  //   case enterCmd:
       if (nav.root->navFocus==&sdFolderMenu) {
         Serial.println();
         Serial.print("selected file:");
@@ -35,8 +35,8 @@ result sdFolder(eventMask event, navNode& nav, prompt &item) {
         Serial.print("from folder:");
         Serial.println(sdFolderMenu.folderName);
       }
-      break;
-  }
+  //     break;
+  // }
   return proceed;
 }
 

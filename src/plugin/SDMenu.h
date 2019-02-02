@@ -24,7 +24,9 @@ using namespace Menu;
   class SDMenu:public menuNode {
   public:
     SDC& SD;
-    idx_t selIdx=0;//preserve selection context, because we preserve folder ctx too
+    //idx_t selIdx=0;//preserve selection context, because we preserve folder ctx too
+    //we should use filename instead!
+
     String folderName="/";//set this to other folder when needed
     String selectedFile="";
     // using menuNode::menuNode;//do not use default constructors as we wont allocate for data
@@ -55,7 +57,7 @@ using namespace Menu;
     switch(event) {
       case enterEvent:
         if (nav.root->navFocus!=nav.target) {//on sd card entry
-          nav.sel=((SDMenu*)(&item))->selIdx;//restore context
+          nav.sel=((SDMenu*)(&item))->entryIdx(((SDMenu*)(&item))->selectedFile);//restore context
         }
     }
     return proceed;
@@ -73,7 +75,6 @@ using namespace Menu;
             dirty=true;//redraw menu
             nav.sel=0;
           } else {
-            selIdx=nav.sel;
             //Serial.print("\nFile selected:");
             //select a file and return
             selectedFile=selFile;
@@ -93,11 +94,9 @@ using namespace Menu;
           dirty=true;//redraw menu
           nav.sel=entryIdx(fn);
         }
-        selIdx=nav.sel;
         return;
     }
     menuNode::doNav(nav,cmd);
-    selIdx=nav.sel;
   }
 
   template<typename SDC>
