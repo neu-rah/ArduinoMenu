@@ -12,13 +12,13 @@ www.r-site.net
 #include <TFT_eSPI.h>
 
 #include <menu.h>
-#include <menuIO/serialIn.h>
-#include <menuIO/serialOut.h>
+#include <menuIO/serialIO.h>
 #include <menuIO/TFT_eSPIOut.h>
+// #include <menuIO/chainStream.h>
 
 using namespace Menu;
 
-TFT_eSPI gfx = TFT_eSPI();
+TFT_eSPI gfx;
 
 result doAlert(eventMask e, prompt &item);
 
@@ -120,23 +120,30 @@ const colorDef<uint16_t> colors[] MEMMODE={
   {{(uint16_t)White,(uint16_t)Yellow},{(uint16_t)Blue,  (uint16_t)Red,   (uint16_t)Red}},//titleColor
 };
 
-serialIn serial(Serial);
-
-MENU_INPUTS(in,&serial);
-
-TFT_eSPIOut gfxOut(gfx);
-
 #define MAX_DEPTH 4
 
-menuOut* constMEM outputs[] MEMMODE={&outSerial,&gfxOut};//list of output devices
+serialIn serial(Serial);
+
+//MENU_INPUTS(in,&serial);its single, no need to `chainStream`
+
+//define serial output device
+idx_t serialTops[MAX_DEPTH]={0};
+serialOut outSerial(Serial,serialTops);
+
+#define GFX_WIDTH 128
+#define GFX_HEIGHT 64
+#define fontW 6
+#define fontH 9
+
+constMEM panel panels[] MEMMODE = {{0, 0, GFX_WIDTH / fontW, GFX_HEIGHT / fontH}};
+navNode* nodes[sizeof(panels) / sizeof(panel)]; //navNodes to store navigation status
+panelsList pList(panels, nodes, 1); //a list of panels and nodes
+idx_t eSpiTops[MAX_DEPTH]={0};
+TFT_eSPIOut eSpiOut(gfx,colors,eSpiTops,pList,fontW,fontH+1);
+menuOut* constMEM outputs[] MEMMODE={&outSerial,&eSpiOut};//list of output devices
 outputsList out(outputs,sizeof(outputs)/sizeof(menuOut*));//outputs list controller
 
-// MENU_OUTPUTS(out,MAX_DEPTH
-//   ,ADAGFX_OUT(gfx,colors,6*textScale,9*textScale,{0,0,14,8},{14,0,14,8})
-//   ,SERIAL_OUT(Serial)
-// );
-
-NAVROOT(nav,mainMenu,MAX_DEPTH,in,out);
+NAVROOT(nav,mainMenu,MAX_DEPTH,serial,out);
 
 //when menu is suspended
 result idle(menuOut& o,idleEvent e) {
@@ -162,19 +169,10 @@ void setup() {
   //outGfx.usePreview=true;//reserve one panel for preview?
   //nav.showTitle=false;//show menu title?
 
-  //pinMode(encBtn, INPUT_PULLUP);
-  #ifdef USE_CLICK_ENCODER
-    Timer1.initialize(1000);
-    Timer1.attachInterrupt(timerIsr);
-  #else
-    encButton.begin();
-    encoder.begin();
-  #endif
-
   SPI.begin();
   // gfx.initR(INITR_BLACKTAB);
   gfx.setRotation(3);
-  gfx.setTextSize(textScale);//test scalling
+  // gfx.setTextSize(textScale);//test scalling
   gfx.setTextWrap(false);
   gfx.fillScreen(Black);
   gfx.setTextColor(Red,Black);

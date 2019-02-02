@@ -10,6 +10,8 @@ Use graphics screens (adafruit library based) as menu output
 www.r-site.net
 
 ***/
+#pragma once
+
 #ifndef RSITE_ARDUINOP_MENU_TFT_ESPI
 	#define RSITE_ARDUINOP_MENU_TFT_ESPI
 	#include <TFT_eSPI.h>
