@@ -23,7 +23,7 @@ using namespace Menu;
   template<typename SDC>
   class SDMenu:public menuNode {
   public:
-    SDC SD;
+    SDC& SD;
     idx_t selIdx=0;//preserve selection context, because we preserve folder ctx too
     String folderName="/";//set this to other folder when needed
     String selectedFile="";
@@ -165,8 +165,11 @@ using namespace Menu;
   template<typename SDC>
   Used SDMenu<SDC>::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t pn) {
     ((menuNodeShadow*)shadow)->sz=count();
-    if(root.navFocus!=this) //show given title
-      return menuNode::printTo(root,sel,out,idx,len,pn);
+    if(root.navFocus!=this) {//show given title or filename if selected
+      return selectedFile==""?
+        menuNode::printTo(root,sel,out,idx,len,pn):
+        out.printRaw(selectedFile.c_str(),len);
+    }
     else if(idx==-1)//when menu open (show folder name)
       return out.printRaw(folderName.c_str(),len);
     //drawing options
