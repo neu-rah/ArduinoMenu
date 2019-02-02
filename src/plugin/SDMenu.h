@@ -21,7 +21,7 @@ using namespace Menu;
   // not the mennu presents it self as the menu and as the options
   // ands does all drawing navigation.
   template<typename SDC>
-  class SDMenu:public menuNode {
+  class SDMenuT:public menuNode {
   public:
     SDC& SD;
     //idx_t selIdx=0;//preserve selection context, because we preserve folder ctx too
@@ -30,8 +30,8 @@ using namespace Menu;
     String folderName="/";//set this to other folder when needed
     String selectedFile="";
     // using menuNode::menuNode;//do not use default constructors as we wont allocate for data
-    virtual ~SDMenu() {}
-    SDMenu(SDC& sd,constText* title,const char* at,Menu::action act=doNothing,Menu::eventMask mask=noEvent)
+    virtual ~SDMenuT() {}
+    SDMenuT(SDC& sd,constText* title,const char* at,Menu::action act=doNothing,Menu::eventMask mask=noEvent)
       :menuNode(title,0,NULL,act,mask,
         wrapStyle,(systemStyles)(_menuData|_canNav))
       ,SD(sd)
@@ -53,18 +53,18 @@ using namespace Menu;
   };
 
   template<typename SDC>
-  result SDMenu<SDC>::sysHandler(SYS_FUNC_PARAMS) {
+  result SDMenuT<SDC>::sysHandler(SYS_FUNC_PARAMS) {
     switch(event) {
       case enterEvent:
         if (nav.root->navFocus!=nav.target) {//on sd card entry
-          nav.sel=((SDMenu*)(&item))->entryIdx(((SDMenu*)(&item))->selectedFile);//restore context
+          nav.sel=((SDMenuT<SDC>*)(&item))->entryIdx(((SDMenuT<SDC>*)(&item))->selectedFile);//restore context
         }
     }
     return proceed;
   }
 
   template<typename SDC>
-  void SDMenu<SDC>::doNav(navNode& nav,navCmd cmd) {
+  void SDMenuT<SDC>::doNav(navNode& nav,navCmd cmd) {
     switch(cmd.cmd) {
       case enterCmd: {
           String selFile=entry(nav.sel);
@@ -100,7 +100,7 @@ using namespace Menu;
   }
 
   template<typename SDC>
-  idx_t SDMenu<SDC>::count() {
+  idx_t SDMenuT<SDC>::count() {
     File dir=SD.open(folderName.c_str());
     int cnt=0;
     while(true) {
@@ -118,7 +118,7 @@ using namespace Menu;
   }
 
   template<typename SDC>
-  idx_t SDMenu<SDC>::entryIdx(String name) {
+  idx_t SDMenuT<SDC>::entryIdx(String name) {
     File dir=SD.open(folderName.c_str());
     int cnt=0;
     while(true) {
@@ -140,7 +140,7 @@ using namespace Menu;
   }
 
   template<typename SDC>
-  String SDMenu<SDC>::entry(idx_t idx) {
+  String SDMenuT<SDC>::entry(idx_t idx) {
     File dir=SD.open(folderName.c_str());
     idx_t cnt=0;
     while(true) {
@@ -162,7 +162,7 @@ using namespace Menu;
   }
 
   template<typename SDC>
-  Used SDMenu<SDC>::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t pn) {
+  Used SDMenuT<SDC>::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t pn) {
     ((menuNodeShadow*)shadow)->sz=count();
     if(root.navFocus!=this) {//show given title or filename if selected
       return selectedFile==""?
@@ -175,5 +175,11 @@ using namespace Menu;
     len-=out.printRaw(entry(idx).c_str(),len);
     return len;
   }
+
+  class SDMenu:public SDMenuT<decltype(SD)> {
+  public:
+    SDMenu(constText* title,const char* at,Menu::action act=doNothing,Menu::eventMask mask=noEvent)
+      :SDMenuT(SD,title,at,act,mask) {}
+  };
 
 #endif

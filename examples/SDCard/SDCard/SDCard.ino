@@ -18,17 +18,17 @@ using namespace Menu;
 
 //function to handle file select
 // declared here and implemented bellow because we need
-// to give it as event handler for `sdFolder`
-// and we also need to refer to `sdFolder` inside the function
+// to give it as event handler for `sdFolderMenu`
+// and we also need to refer to `sdFolderMenu` inside the function
 result sdFolder(eventMask event, navNode& nav, prompt &item);
 
-SDMenu<decltype(SD)> sdFolderMenu(SD,"SD Card","/",sdFolder,enterEvent);
+SDMenu sdFolderMenu("SD Card","/",sdFolder,enterEvent);
 
 //implementing the handler here after sdFolder is defined...
 result sdFolder(eventMask event, navNode& nav, prompt &item) {
   // switch(event) {//for now events are filtered only for enter, so we dont need this checking
   //   case enterCmd:
-      if (nav.root->navFocus==&sdFolderMenu) {
+      if (nav.root->navFocus==(navTarget*)&sdFolderMenu) {
         Serial.println();
         Serial.print("selected file:");
         Serial.println(sdFolderMenu.selectedFile);
