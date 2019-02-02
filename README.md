@@ -336,6 +336,10 @@ multiple stream packing for input to mix encoder stream with encoder keyboard (u
 ## History
 
 ### 4.0
+  - support Bodmer/TFT_eSPI
+  - SDCard file picker plugin
+  - Allow virtual/dynamic data custom menus
+  - alternative key driver with explicit pin modes
   - More examples
   - Text edit fields with validation *
   - Pad style menus (horizontal list)
