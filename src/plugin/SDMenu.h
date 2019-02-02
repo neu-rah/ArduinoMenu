@@ -2,6 +2,7 @@
 #pragma once
 // a full automated SDCard file select
 // plugin for arduino menu library
+// requires a dynamic menu (MENU_USERAM)
 // IO: Serial
 // Feb 2019 - Rui Azevedo [ruihfazevedo@gmail.com]
 #include <menu.h>
@@ -19,16 +20,21 @@ using namespace Menu;
   // an exit option (or [..] as would be appropriate for a file system)
   // not the mennu presents it self as the menu and as the options
   // ands does all drawing navigation.
-  class SDMenu:public menuNode {
+  template<typename SDC>
+  class SDMenuT:public menuNode {
   public:
-    idx_t selIdx=0;//preserve selection context, because we preserve folder ctx too
+    SDC& SD;
+    //idx_t selIdx=0;//preserve selection context, because we preserve folder ctx too
+    //we should use filename instead!
+
     String folderName="/";//set this to other folder when needed
     String selectedFile="";
     // using menuNode::menuNode;//do not use default constructors as we wont allocate for data
-    virtual ~SDMenu() {}
-    SDMenu(constText* title,const char* at,Menu::action act=doNothing,Menu::eventMask mask=noEvent)
+    virtual ~SDMenuT() {}
+    SDMenuT(SDC& sd,constText* title,const char* at,Menu::action act=doNothing,Menu::eventMask mask=noEvent)
       :menuNode(title,0,NULL,act,mask,
         wrapStyle,(systemStyles)(_menuData|_canNav))
+      ,SD(sd)
       ,folderName(at)
       {}
 
@@ -46,17 +52,19 @@ using namespace Menu;
     Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t pn);
   };
 
-  result SDMenu::sysHandler(SYS_FUNC_PARAMS) {
+  template<typename SDC>
+  result SDMenuT<SDC>::sysHandler(SYS_FUNC_PARAMS) {
     switch(event) {
       case enterEvent:
         if (nav.root->navFocus!=nav.target) {//on sd card entry
-          nav.sel=((SDMenu*)(&item))->selIdx;//restore context
+          nav.sel=((SDMenuT<SDC>*)(&item))->entryIdx(((SDMenuT<SDC>*)(&item))->selectedFile);//restore context
         }
     }
     return proceed;
   }
 
-  void SDMenu::doNav(navNode& nav,navCmd cmd) {
+  template<typename SDC>
+  void SDMenuT<SDC>::doNav(navNode& nav,navCmd cmd) {
     switch(cmd.cmd) {
       case enterCmd: {
           String selFile=entry(nav.sel);
@@ -67,7 +75,6 @@ using namespace Menu;
             dirty=true;//redraw menu
             nav.sel=0;
           } else {
-            selIdx=nav.sel;
             //Serial.print("\nFile selected:");
             //select a file and return
             selectedFile=selFile;
@@ -87,14 +94,13 @@ using namespace Menu;
           dirty=true;//redraw menu
           nav.sel=entryIdx(fn);
         }
-        selIdx=nav.sel;
         return;
     }
     menuNode::doNav(nav,cmd);
-    selIdx=nav.sel;
   }
 
-  idx_t SDMenu::count() {
+  template<typename SDC>
+  idx_t SDMenuT<SDC>::count() {
     File dir=SD.open(folderName.c_str());
     int cnt=0;
     while(true) {
@@ -111,7 +117,8 @@ using namespace Menu;
     return cnt;
   }
 
-  idx_t SDMenu::entryIdx(String name) {
+  template<typename SDC>
+  idx_t SDMenuT<SDC>::entryIdx(String name) {
     File dir=SD.open(folderName.c_str());
     int cnt=0;
     while(true) {
@@ -132,7 +139,8 @@ using namespace Menu;
     return 0;//stay at menu start if not found
   }
 
-  String SDMenu::entry(idx_t idx) {
+  template<typename SDC>
+  String SDMenuT<SDC>::entry(idx_t idx) {
     File dir=SD.open(folderName.c_str());
     idx_t cnt=0;
     while(true) {
@@ -153,15 +161,25 @@ using namespace Menu;
     return "";
   }
 
-  Used SDMenu::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t pn) {
+  template<typename SDC>
+  Used SDMenuT<SDC>::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t pn) {
     ((menuNodeShadow*)shadow)->sz=count();
-    if(root.navFocus!=this) //show given title
-      return menuNode::printTo(root,sel,out,idx,len,pn);
+    if(root.navFocus!=this) {//show given title or filename if selected
+      return selectedFile==""?
+        menuNode::printTo(root,sel,out,idx,len,pn):
+        out.printRaw(selectedFile.c_str(),len);
+    }
     else if(idx==-1)//when menu open (show folder name)
       return out.printRaw(folderName.c_str(),len);
     //drawing options
     len-=out.printRaw(entry(idx).c_str(),len);
     return len;
   }
+
+  class SDMenu:public SDMenuT<decltype(SD)> {
+  public:
+    SDMenu(constText* title,const char* at,Menu::action act=doNothing,Menu::eventMask mask=noEvent)
+      :SDMenuT(SD,title,at,act,mask) {}
+  };
 
 #endif

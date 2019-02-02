@@ -3,11 +3,11 @@
 #ifndef RSITE_ARDUINO_MENU_ESP8266OUT
   #define RSITE_ARDUINO_MENU_ESP8266OUT
   #include "../menuDefs.h"
-  #include <ESP8266WiFi.h>
+  // #include <ESP8266WiFi.h>
   // based on WebServer:
   //   https://github.com/esp8266/Arduino/tree/master/libraries/ESP8266WebServer
   //   https://github.com/Links2004/arduinoWebSockets
-  #include <WebSocketsServer.h>
+  // #include <WebSocketsServer.h>
   #include <ESP8266WebServer.h>
   #include <vector>
   #include "xmlFmt.h"
