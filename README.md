@@ -251,15 +251,21 @@ https://github.com/neu-rah/AnsiStream
 
 **Web browser**
 
-- ESP8266
+- ESP8266 (builtin)  
 
-**Web JSON REST**
+**Web JSON**
 
-- ESP8266
+- ESP8266 (builtin)  
 
 **Websockets**
 
-- ESP8266
+- ESP8266 (builtin)  
+
+**note:** esp8266 will require a streaming library even if not using web interface
+
+depending on your output driver it may be one of (can install both)
+- https://github.com/neu-rah/streamFlow
+- https://github.com/scottdky/Streaming
 
 ### Input devices
 
