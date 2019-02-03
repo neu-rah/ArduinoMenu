@@ -25,18 +25,28 @@ using namespace Menu;
   public:
     SDC& sdc;
     //idx_t selIdx=0;//preserve selection context, because we preserve folder ctx too
-    //we should use filename instead!
+    //we should use filename instead! idx is useful for delete operations thou...
+
+    File dir;
 
     String folderName="/";//set this to other folder when needed
     String selectedFile="";
     // using menuNode::menuNode;//do not use default constructors as we wont allocate for data
-    virtual ~SDMenuT() {}
+    virtual ~SDMenuT() {dir.close();}
     SDMenuT(SDC& sd,constText* title,const char* at,Menu::action act=doNothing,Menu::eventMask mask=noEvent)
       :menuNode(title,0,NULL,act,mask,
         wrapStyle,(systemStyles)(_menuData|_canNav))
       ,sdc(sd)
       ,folderName(at)
-      {}
+      // ,dir(sdc.open(at))
+      {
+        // Serial.println("open dir, construction");
+        // dir=sdc.open(at);
+      }
+
+      void begin() {
+        dir=sdc.open(folderName);
+      }
 
     //this requires latest menu version to virtualize data tables
     prompt& operator[](idx_t i) const override {return *(prompt*)this;}//this will serve both as menu and as its own prompt
@@ -72,6 +82,9 @@ using namespace Menu;
             // Serial.print("\nOpen folder...");
             //open folder (reusing the menu)
             folderName+=selFile;
+            dir.close();
+            // Serial.println("reopen dir, context");
+            dir=sdc.open(folderName);
             dirty=true;//redraw menu
             nav.sel=0;
           } else {
@@ -91,6 +104,9 @@ using namespace Menu;
           String fn=folderName.substring(at,folderName.length()-1);
           folderName.remove(folderName.lastIndexOf("/",folderName.length()-2)+1);
           // Serial.println(folderName);
+          dir.close();
+          // Serial.println("reopen dir, back-nav");
+          dir=sdc.open(folderName);
           dirty=true;//redraw menu
           nav.sel=entryIdx(fn);
         }
@@ -101,25 +117,29 @@ using namespace Menu;
 
   template<typename SDC>
   idx_t SDMenuT<SDC>::count() {
-    File dir=sdc.open(folderName.c_str());
+    // Serial.print("count:");
+    //File dir=sdc.open(folderName.c_str());
+    dir.rewindDirectory();
     int cnt=0;
     while(true) {
       File file=dir.openNextFile();
       if (!file) {
         file.close();
-        dir.close();
+        //dir.close();
         break;
       }
       file.close();
       cnt++;
     }
-    dir.close();
+    // Serial.println(cnt);
+    //dir.close();
     return cnt;
   }
 
   template<typename SDC>
   idx_t SDMenuT<SDC>::entryIdx(String name) {
-    File dir=sdc.open(folderName.c_str());
+    // File dir=sdc.open(folderName.c_str());
+    dir.rewindDirectory();
     int cnt=0;
     while(true) {
       File file=dir.openNextFile();
@@ -129,19 +149,20 @@ using namespace Menu;
       }
       if(name==file.name()) {
         file.close();
-        dir.close();
+        //dir.close();
         return cnt;
       }
       file.close();
       cnt++;
     }
-    dir.close();
+    //dir.close();
     return 0;//stay at menu start if not found
   }
 
   template<typename SDC>
   String SDMenuT<SDC>::entry(idx_t idx) {
-    File dir=sdc.open(folderName.c_str());
+    // File dir=sdc.open(folderName.c_str());
+    dir.rewindDirectory();
     idx_t cnt=0;
     while(true) {
       File file=dir.openNextFile();
@@ -152,25 +173,25 @@ using namespace Menu;
       if(idx==cnt++) {
         String n=String(file.name())+(file.isDirectory()?"/":"");
         file.close();
-        dir.close();
+        //dir.close();
         return n;
       }
       file.close();
     }
-    dir.close();
+    //dir.close();
     return "";
   }
 
   template<typename SDC>
   Used SDMenuT<SDC>::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t pn) {
-    ((menuNodeShadow*)shadow)->sz=count();
     if(root.navFocus!=this) {//show given title or filename if selected
       return selectedFile==""?
         menuNode::printTo(root,sel,out,idx,len,pn):
         out.printRaw(selectedFile.c_str(),len);
-    }
-    else if(idx==-1)//when menu open (show folder name)
+    } else if(idx==-1) {//when menu open (show folder name)
+      ((menuNodeShadow*)shadow)->sz=count();
       return out.printRaw(folderName.c_str(),len);
+    }
     //drawing options
     len-=out.printRaw(entry(idx).c_str(),len);
     return len;

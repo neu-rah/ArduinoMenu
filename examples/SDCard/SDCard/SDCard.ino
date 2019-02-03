@@ -65,6 +65,7 @@ void setup() {
     Serial.println("initialization failed!");
     while (1);
   }
+  sdFolderMenu.begin();//need this after sd begin
   Serial.println("initialization done.");
 }
 
