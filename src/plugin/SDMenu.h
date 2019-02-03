@@ -23,7 +23,7 @@ using namespace Menu;
   template<typename SDC>
   class SDMenuT:public menuNode {
   public:
-    SDC& SD;
+    SDC& sdc;
     //idx_t selIdx=0;//preserve selection context, because we preserve folder ctx too
     //we should use filename instead!
 
@@ -34,7 +34,7 @@ using namespace Menu;
     SDMenuT(SDC& sd,constText* title,const char* at,Menu::action act=doNothing,Menu::eventMask mask=noEvent)
       :menuNode(title,0,NULL,act,mask,
         wrapStyle,(systemStyles)(_menuData|_canNav))
-      ,SD(sd)
+      ,sdc(sd)
       ,folderName(at)
       {}
 
@@ -101,7 +101,7 @@ using namespace Menu;
 
   template<typename SDC>
   idx_t SDMenuT<SDC>::count() {
-    File dir=SD.open(folderName.c_str());
+    File dir=sdc.open(folderName.c_str());
     int cnt=0;
     while(true) {
       File file=dir.openNextFile();
@@ -119,7 +119,7 @@ using namespace Menu;
 
   template<typename SDC>
   idx_t SDMenuT<SDC>::entryIdx(String name) {
-    File dir=SD.open(folderName.c_str());
+    File dir=sdc.open(folderName.c_str());
     int cnt=0;
     while(true) {
       File file=dir.openNextFile();
@@ -141,7 +141,7 @@ using namespace Menu;
 
   template<typename SDC>
   String SDMenuT<SDC>::entry(idx_t idx) {
-    File dir=SD.open(folderName.c_str());
+    File dir=sdc.open(folderName.c_str());
     idx_t cnt=0;
     while(true) {
       File file=dir.openNextFile();
