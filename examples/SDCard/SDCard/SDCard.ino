@@ -22,7 +22,8 @@ using namespace Menu;
 // and we also need to refer to `sdFolderMenu` inside the function
 result sdFolder(eventMask event, navNode& nav, prompt &item);
 
-SDMenu sdFolderMenu("SD Card","/",sdFolder,enterEvent);
+// SDMenu sdFolderMenu("SD Card","/",sdFolder,enterEvent);
+CachedSDMenu<32> sdFolderMenu("SD Card","/",sdFolder,enterEvent);
 
 //implementing the handler here after sdFolder is defined...
 result sdFolder(eventMask event, navNode& nav, prompt &item) {

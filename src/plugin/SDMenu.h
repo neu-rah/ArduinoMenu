@@ -31,7 +31,7 @@ public:
     return dir;
   }
   //count entries on folder (files and dirs)
-  idx_t count() {
+  long count() {
     // Serial.print("count:");
     dir.rewindDirectory();
     int cnt=0;
@@ -49,7 +49,7 @@ public:
   }
 
   //get entry index by filename
-  idx_t entryIdx(String name) {
+  long entryIdx(String name) {
     dir.rewindDirectory();
     int cnt=0;
     while(true) {
@@ -69,7 +69,7 @@ public:
   }
 
   //get folder content entry by index
-  String entry(idx_t idx) {
+  String entry(long idx) {
     dir.rewindDirectory();
     idx_t cnt=0;
     while(true) {
@@ -88,6 +88,58 @@ public:
     return "";
   }
 
+};
+
+template<typename SDC,idx_t maxSz>
+class CachedFSO:public FSO<SDC> {
+public:
+  using Type=SDC;
+  long cacheStart=0;
+  String cache[maxSz];
+  long size=0;//folder size (count of files and folders)
+  CachedFSO(Type& sdc):FSO<SDC>(sdc) {}
+  void refresh(long start=0) {
+    if (start<0) start=0;
+    // Serial.print("Refreshing from:");
+    // Serial.println(start);
+    cacheStart=start;
+    FSO<SDC>::dir.rewindDirectory();
+    size=0;
+    while(true) {
+      File file=FSO<SDC>::dir.openNextFile();
+      if (!file) {
+        file.close();
+        break;
+      }
+      if (start<=size&&size<start+maxSz)
+        cache[size-start]=String(file.name())+(file.isDirectory()?"/":"");
+      file.close();
+      size++;
+    }
+  }
+  //open a folder
+  bool goFolder(String folderName) {
+    if (!FSO<SDC>::goFolder(folderName)) return false;
+    refresh();
+    return true;
+  }
+  long count() {return size;}
+
+  long entryIdx(String name) {
+    idx_t sz=min(count(),(long)maxSz);
+    for(int i=0;i<sz;i++)
+      if (name==cache[i]) return i+cacheStart;
+    long at=FSO<SDC>::entryIdx(name);
+    //put cache around the missing item
+    refresh(at-(maxSz>>1));
+    return at;
+  }
+  String entry(long idx) {
+    if (0>idx||idx>=size) return "";
+    if (cacheStart<=idx&&idx<(cacheStart+maxSz)) return cache[idx-cacheStart];
+    refresh(idx-(maxSz>>1));
+    return entry(idx);
+  }
 };
 
 ////////////////////////////////////////////////////////////////////////////
@@ -111,13 +163,7 @@ public:
     :menuNode(title,0,NULL,act,mask,
       wrapStyle,(systemStyles)(_menuData|_canNav))
     ,FS(sd)
-    // ,sdc(sd)
-    // ,folderName(at)
-    // ,dir(sdc.open(at))
-    {
-      // Serial.println("open dir, construction");
-      // dir=sdc.open(at);
-    }
+    {}
 
   void begin() {FS::goFolder(folderName);}
 
@@ -180,7 +226,7 @@ public:
       return out.printRaw(folderName.c_str(),len);
     }
     //drawing options
-    len-=out.printRaw(SDMenuT<FS>::entry(idx).c_str(),len);
+    len-=out.printRaw(SDMenuT<FS>::entry(out.tops[root.level]+idx).c_str(),len);
     return len;
   }
 };
@@ -188,5 +234,12 @@ public:
 class SDMenu:public SDMenuT<FSO<decltype(SD)>> {
 public:
   SDMenu(constText* title,const char* at,Menu::action act=doNothing,Menu::eventMask mask=noEvent)
-    :SDMenuT(SD,title,at,act,mask) {}
+    :SDMenuT<FSO<decltype(SD)>>(SD,title,at,act,mask) {}
+};
+
+template<idx_t cacheSize>
+class CachedSDMenu:public SDMenuT<CachedFSO<decltype(SD),cacheSize>> {
+public:
+  CachedSDMenu(constText* title,const char* at,Menu::action act=doNothing,Menu::eventMask mask=noEvent)
+    :SDMenuT<CachedFSO<decltype(SD),cacheSize>>(SD,title,at,act,mask) {}
 };
