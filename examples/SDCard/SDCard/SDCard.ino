@@ -22,7 +22,9 @@ using namespace Menu;
 // and we also need to refer to `sdFolderMenu` inside the function
 result sdFolder(eventMask event, navNode& nav, prompt &item);
 
+
 // SDMenu sdFolderMenu("SD Card","/",sdFolder,enterEvent);
+//caching 32 file entries
 CachedSDMenu<32> sdFolderMenu("SD Card","/",sdFolder,enterEvent);
 
 //implementing the handler here after sdFolder is defined...

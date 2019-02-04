@@ -90,6 +90,8 @@ public:
 
 };
 
+//////////////////////////////////////////////////////////////////////
+// SD Card cached menu
 template<typename SDC,idx_t maxSz>
 class CachedFSO:public FSO<SDC> {
 public:
