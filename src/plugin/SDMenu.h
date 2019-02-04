@@ -153,6 +153,7 @@ public:
 // an exit option (or [..] as would be appropriate for a file system)
 // not the mennu presents it self as the menu and as the options
 // ands does all drawing navigation.
+//TODO: we can specialize input too, for typing filename select
   #define USE_BACKDOTS 1
 
 template<typename FS>
