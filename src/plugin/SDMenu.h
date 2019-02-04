@@ -149,16 +149,17 @@ public:
 // instead of allocating options for each file we will instead customize a menu
 // to print the files list, we can opt to use objects for each file for a
 // faster reopening.. but its working quite fast
-// avr's will be limited to 127 file (not a good idea)
-// this can be changed without breaking compatibility thou, but wasting more memory.
 // On this example we assume the existence of an esc button as we are not drawing
 // an exit option (or [..] as would be appropriate for a file system)
 // not the mennu presents it self as the menu and as the options
 // ands does all drawing navigation.
+  #define USE_BACKDOTS 1
+
 template<typename FS>
 class SDMenuT:public menuNode,public FS {
 public:
   String folderName="/";//set this to other folder when needed
+  String selectedFolder="/";
   String selectedFile="";
   // using menuNode::menuNode;//do not use default constructors as we wont allocate for data
   SDMenuT(typename FS::Type& sd,constText* title,const char* at,Menu::action act=doNothing,Menu::eventMask mask=noEvent)
@@ -175,7 +176,7 @@ public:
     switch(event) {
       case enterEvent:
         if (nav.root->navFocus!=nav.target) {//on sd card entry
-          nav.sel=((SDMenuT<FS>*)(&item))->entryIdx(((SDMenuT<FS>*)(&item))->selectedFile);//restore context
+          nav.sel=((SDMenuT<FS>*)(&item))->entryIdx(((SDMenuT<FS>*)(&item))->selectedFile)+USE_BACKDOTS;//restore context
         }
     }
     return proceed;
@@ -183,8 +184,8 @@ public:
 
   void doNav(navNode& nav,navCmd cmd) {
     switch(cmd.cmd) {
-      case enterCmd: {
-          String selFile=SDMenuT<FS>::entry(nav.sel);
+      case enterCmd: if (nav.sel>=USE_BACKDOTS) {
+          String selFile=SDMenuT<FS>::entry(nav.sel-USE_BACKDOTS);
           if (selFile.endsWith("/")) {
             // Serial.print("\nOpen folder...");
             //open folder (reusing the menu)
@@ -196,6 +197,7 @@ public:
             //Serial.print("\nFile selected:");
             //select a file and return
             selectedFile=selFile;
+            selectedFolder=folderName;
             nav.root->node().event(enterEvent);
             menuNode::doNav(nav,escCmd);
           }
@@ -210,7 +212,7 @@ public:
           folderName.remove(folderName.lastIndexOf("/",folderName.length()-2)+1);
           SDMenuT<FS>::goFolder(folderName);
           dirty=true;//redraw menu
-          nav.sel=SDMenuT<FS>::entryIdx(fn);
+          nav.sel=SDMenuT<FS>::entryIdx(fn)+USE_BACKDOTS;
         }
         return;
     }
@@ -224,11 +226,17 @@ public:
         menuNode::printTo(root,sel,out,idx,len,pn):
         out.printRaw(selectedFile.c_str(),len);
     } else if(idx==-1) {//when menu open (show folder name)
-      ((menuNodeShadow*)shadow)->sz=SDMenuT<FS>::count();
-      return out.printRaw(folderName.c_str(),len);
+      ((menuNodeShadow*)shadow)->sz=SDMenuT<FS>::count()+USE_BACKDOTS;
+      idx_t at=folderName.lastIndexOf("/",folderName.length()-2)+1;
+      String fn=folderName.substring(at,folderName.length()-1);
+      return out.printRaw(fn.c_str(),len);
+      // return out.printRaw(folderName.c_str(),len);
+      // return out.printRaw(SDMenuT<FS>::dir.name(),len);
     }
     //drawing options
-    len-=out.printRaw(SDMenuT<FS>::entry(out.tops[root.level]+idx).c_str(),len);
+    idx_t i=out.tops[root.level]+idx;
+    if (i<USE_BACKDOTS) len-=out.printRaw("[..]",len);
+    else len-=out.printRaw(SDMenuT<FS>::entry(out.tops[root.level]+idx-USE_BACKDOTS).c_str(),len);
     return len;
   }
 };

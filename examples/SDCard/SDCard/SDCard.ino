@@ -18,25 +18,25 @@ using namespace Menu;
 
 //function to handle file select
 // declared here and implemented bellow because we need
-// to give it as event handler for `sdFolderMenu`
-// and we also need to refer to `sdFolderMenu` inside the function
-result sdFolder(eventMask event, navNode& nav, prompt &item);
+// to give it as event handler for `filePickMenu`
+// and we also need to refer to `filePickMenu` inside the function
+result filePick(eventMask event, navNode& nav, prompt &item);
 
 
-// SDMenu sdFolderMenu("SD Card","/",sdFolder,enterEvent);
+// SDMenu filePickMenu("SD Card","/",filePick,enterEvent);
 //caching 32 file entries
-CachedSDMenu<32> sdFolderMenu("SD Card","/",sdFolder,enterEvent);
+CachedSDMenu<32> filePickMenu("SD Card","/",filePick,enterEvent);
 
-//implementing the handler here after sdFolder is defined...
-result sdFolder(eventMask event, navNode& nav, prompt &item) {
+//implementing the handler here after filePick is defined...
+result filePick(eventMask event, navNode& nav, prompt &item) {
   // switch(event) {//for now events are filtered only for enter, so we dont need this checking
   //   case enterCmd:
-      if (nav.root->navFocus==(navTarget*)&sdFolderMenu) {
+      if (nav.root->navFocus==(navTarget*)&filePickMenu) {
         Serial.println();
         Serial.print("selected file:");
-        Serial.println(sdFolderMenu.selectedFile);
+        Serial.println(filePickMenu.selectedFile);
         Serial.print("from folder:");
-        Serial.println(sdFolderMenu.folderName);
+        Serial.println(filePickMenu.selectedFolder);
       }
   //     break;
   // }
@@ -47,7 +47,7 @@ result sdFolder(eventMask event, navNode& nav, prompt &item) {
 #define MAX_DEPTH 15
 
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
-  ,SUBMENU(sdFolderMenu)
+  ,SUBMENU(filePickMenu)
   ,OP("Something else...",doNothing,noEvent)
   ,EXIT("<Back")
 );
@@ -68,7 +68,7 @@ void setup() {
     Serial.println("initialization failed!");
     while (1);
   }
-  sdFolderMenu.begin();//need this after sd begin
+  filePickMenu.begin();//need this after sd begin
   Serial.println("initialization done.");
 }
 
