@@ -1,16 +1,7 @@
 /********************
 Arduino generic menu system
-XmlServer menu example
-based on WebServer:
-  https://github.com/esp8266/Arduino/tree/master/libraries/ESP8266WebServer
-  https://github.com/Links2004/arduinoWebSockets
 
-Dec. 2016 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
-
-menu on web browser served by esp8266 device
-output: ESP8266WebServer -> Web browser
-input: ESP8266WebSocket <- Web browser
-format: xml, json
+Feb. 2019 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
 
 IMPORTANT!:
 this requires the data folder to be stored on esp8266 spiff
@@ -20,15 +11,8 @@ arduinoWebSockets - https://github.com/Links2004/arduinoWebSockets
 ESP8266WiFi - https://github.com/esp8266/Arduino/tree/master/libraries/ESP8266WiFi
 ESP8266WebServer - https://github.com/esp8266/Arduino/tree/master/libraries/ESP8266WebServer
 
-for development purposes some files are left external,
-therefor requiring an external webserver to provide them (just for dev purposes)
-i'm using nodejs http-server (https://www.npmjs.com/package/http-server)
-to static serve content from the data folder. This allows me to quick change
-the files without having to upload them to SPIFFS
-also gateway ssid and password are stored on this code (bellow),
-so don't forget to change it.
-
 */
+#include <Servo.h>
 
 #include <menu.h>
 #include <menuIO/esp8266Out.h>
@@ -69,22 +53,10 @@ menuOut& operator<<(menuOut& o,endlObj) {
 
 //this version numbers MUST be the same as data/1.2
 #define CUR_VERSION "1.4"
-#define APName "WebMenu"
+#define APName "EscControl"
 
-int ledCtrl=LOW;
-//on my esp12e led pin is 2
-#define LEDPIN 2
-//this is ok on other boards
-// #define LEDPIN LED_BUILTIN
-void updLed() {
-  _trace(Serial<<"update led state!"<<endl);
-  digitalWrite(LEDPIN,!ledCtrl);
-}
-
-#define ANALOG_PIN 4
-
-// constexpr size_t wifiSSIDLen=64;
-// constexpr size_t wifiPwdLen=32;
+#define ESCPIN 2
+Servo myservo;
 
 #ifndef MENU_SSID
   #error "need to define WiFi SSID here"
@@ -115,97 +87,32 @@ xmlFmt<esp8266_WebServerStreamOut> serverOut(server,web_tops,webPanels);
 jsonFmt<esp8266_WebServerStreamOut> jsonOut(server,web_tops,webPanels);
 jsonFmt<esp8266BufferedOut> wsOut(web_tops,webPanels);
 
-//menu action functions
-result action1(eventMask event, navNode& nav, prompt &item) {
-  Serial.println("action A called!");
-  serverOut<<"This is action <b>A</b> web report "<<(millis()%1000)<<"<br/>";
+int speed=0;//0 to 180
+result setEsc() {
+  myservo.write(speed);
+}
+result armEsc() {
+  Serial.println("arming ESC");
+  serverOut<<"arming ESC<br/>";
+  // arm the speed controller, modify as necessary for your ESC
+  speed=0;
+  setEsc();
+  delay(1000); //delay 1 second,  some speed controllers may need longer
   return proceed;
 }
-result action2(eventMask event, navNode& nav, prompt &item) {
-  Serial.println("action B called!");
-  serverOut<<"This is action <b>B</b> web report "<<(millis()%1000)<<"<br/>";
+result stopEsc() {
+  Serial.println("ESC stop");
+  serverOut<<"ESC stop<br/>";
+  speed=0;
+  setEsc();
   return proceed;
 }
-
-void debugLedUpd() {
-  _trace(Serial<<"debug led update! "<<ledCtrl<<endl);
-}
-
-TOGGLE(ledCtrl,setLed,"Led: ",updLed,(Menu::eventMask)(updateEvent|enterEvent),noStyle
-  ,VALUE("Off",LOW,doNothing,noEvent)
-  ,VALUE("On",HIGH,doNothing,noEvent)
-);
-
-int selTest=0;
-SELECT(selTest,selMenu,"Select",doNothing,noEvent,noStyle
-  ,VALUE("Zero",0,doNothing,noEvent)
-  ,VALUE("One",1,doNothing,noEvent)
-  ,VALUE("Two",2,doNothing,noEvent)
-);
-
-int chooseTest=-1;
-CHOOSE(chooseTest,chooseMenu,"Choose",doNothing,noEvent,noStyle
-  ,VALUE("First",1,doNothing,noEvent)
-  ,VALUE("Second",2,doNothing,noEvent)
-  ,VALUE("Third",3,doNothing,noEvent)
-  ,VALUE("Last",-1,doNothing,noEvent)
-);
-
-int duty=50;//%
-int timeOn=50;//ms
-void updAnalog() {
-  // analogWrite(ANALOG_PIN,map(timeOn,0,100,0,255/*PWMRANGE*/));
-  analogWrite(ANALOG_PIN,map(duty,0,100,0,255/*PWMRANGE*/));
-}
-
-char* constMEM alphaNum MEMMODE=" 0123456789.ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz,\\|!\"#$%&/()=?~*^+-{}[]€";
-char* constMEM alphaNumMask[] MEMMODE={alphaNum};
-char name[]="                                                  ";
-
-uint16_t year=2017;
-uint16_t month=10;
-uint16_t day=7;
-
-//define a pad style menu (single line menu)
-//here with a set of fields to enter a date in YYYY/MM/DD format
-//altMENU(menu,birthDate,"Birth",doNothing,noEvent,noStyle,(systemStyles)(_asPad|Menu::_menuData|Menu::_canNav|_parentDraw)
-PADMENU(birthDate,"Birth",doNothing,noEvent,noStyle
-  ,FIELD(year,"","/",1900,3000,20,1,doNothing,noEvent,noStyle)
-  ,FIELD(month,"","/",1,12,1,0,doNothing,noEvent,wrapStyle)
-  ,FIELD(day,"","",1,31,1,0,doNothing,noEvent,wrapStyle)
-);
-
-//customizing a prompt look!
-//by extending the prompt class
-class altPrompt:public prompt {
-public:
-  // altPrompt(constMEM promptShadow& p):prompt(p) {}
-  using prompt::prompt;
-  Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t) override {
-    return out.printRaw(F("special prompt!"),len);
-  }
-};
-
-MENU(subMenu,"Sub-Menu",doNothing,noEvent,noStyle
-  ,OP("Sub1",doNothing,noEvent)
-  ,OP("Sub2",doNothing,noEvent)
-  ,OP("Sub3",doNothing,noEvent)
-  ,altOP(altPrompt,"",doNothing,noEvent)
-  ,EXIT("<Back")
-);
 
 //the menu
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
-  ,SUBMENU(setLed)
-  ,OP("Action A",action1,enterEvent)
-  ,OP("Action B",action2,enterEvent)
-  ,FIELD(duty,"Duty","%",0,100,10,1, updAnalog, anyEvent, noStyle)
-  // ,FIELD(timeOn,"On","ms",0,100,10,1, updAnalog, anyEvent, noStyle)
-  ,EDIT("Name",name,alphaNumMask,doNothing,noEvent,noStyle)
-  ,SUBMENU(birthDate)
-  ,SUBMENU(selMenu)
-  ,SUBMENU(chooseMenu)
-  ,SUBMENU(subMenu)
+  ,OP("Stop",stopEsc,enterEvent)
+  ,OP("Arm",armEsc,enterEvent)
+  ,FIELD(speed,"Speed","%",0,100,10,1, setEsc, enterEvent, noStyle)
   ,EXIT("Exit!")
 );
 
@@ -367,27 +274,14 @@ auto mainPage= []() {
 };
 
 void setup(){
-  //check your pins before activating this
-  pinMode(LEDPIN,OUTPUT);
-  updLed();
-  // analogWriteRange(1023);
-  pinMode(ANALOG_PIN,OUTPUT);
-  updAnalog();
-  //options=&myOptions;//menu options
   Serial.begin(115200);
-  while(!Serial)
-  //USE_SERIAL.setDebugOutput(true);
-  Serial.println();
-  Serial.println();
-  Serial.println();
+  while(!Serial);
 
-  // #ifndef MENU_DEBUG
-    //do not allow web heads to exit, they wont be able to return (for now)
-    //we should resume this heads on async requests!
-    webNav.canExit=false;
-    jsonNav.canExit=false;
-    wsNav.canExit=false;
-  // #endif
+  myservo.attach(ESCPIN);
+
+  webNav.canExit=false;
+  jsonNav.canExit=false;
+  wsNav.canExit=false;
 
   for(uint8_t t = 4; t > 0; t--) {
       Serial.printf("[SETUP] BOOT WAIT %d...\n", t);
@@ -395,12 +289,7 @@ void setup(){
       delay(1000);
   }
 
-  // Serial.setDebugOutput(1);
-  // Serial.setDebugOutput(0);
-  // while(!Serial);
-  // delay(10);
-  // wifi_station_set_hostname((char*)serverName);
-  Serial.println("");
+  Serial.println();
   Serial.println("Arduino menu webserver example");
 
   SPIFFS.begin();
