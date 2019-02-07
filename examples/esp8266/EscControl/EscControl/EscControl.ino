@@ -87,24 +87,24 @@ xmlFmt<esp8266_WebServerStreamOut> serverOut(server,web_tops,webPanels);
 jsonFmt<esp8266_WebServerStreamOut> jsonOut(server,web_tops,webPanels);
 jsonFmt<esp8266BufferedOut> wsOut(web_tops,webPanels);
 
-int speed=0;//0 to 180
+int speed=0;
 result setEsc() {
-  myservo.write(speed);
+  myservo.write(map(speed,0,100,90,170));//this parameters are for my esc, please adapt
 }
 result armEsc() {
-  Serial.println("arming ESC");
-  serverOut<<"arming ESC<br/>";
   // arm the speed controller, modify as necessary for your ESC
   speed=0;
   setEsc();
   delay(1000); //delay 1 second,  some speed controllers may need longer
+  Serial.println("arming ESC");
+  serverOut<<"arming ESC<br/>";
   return proceed;
 }
 result stopEsc() {
-  Serial.println("ESC stop");
-  serverOut<<"ESC stop<br/>";
   speed=0;
   setEsc();
+  Serial.println("ESC stop");
+  serverOut<<"ESC stop<br/>";
   return proceed;
 }
 
