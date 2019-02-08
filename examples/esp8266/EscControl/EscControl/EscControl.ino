@@ -51,8 +51,8 @@ menuOut& operator<<(menuOut& o,endlObj) {
   return o;
 }
 
-//this version numbers MUST be the same as data/1.2
-#define CUR_VERSION "1.4"
+//this version number MUST be the same as data/*
+#define CUR_VERSION "1.5"
 #define APName "EscControl"
 
 #define ESCPIN 2
@@ -72,7 +72,7 @@ Servo myservo;
 
 const char* ssid = MENU_SSID;
 const char* password = MENU_PASS;
-const char* serverName="192.168.1.79";
+// const char* serverName="192.168.1.79";
 
 #define HTTP_PORT 80
 #define WS_PORT 81

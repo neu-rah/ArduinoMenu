@@ -43,8 +43,7 @@ result filePick(eventMask event, navNode& nav, prompt &item) {
   return proceed;
 }
 
-//this limit also the folders depth we can nav
-#define MAX_DEPTH 15
+#define MAX_DEPTH 2
 
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,SUBMENU(filePickMenu)
