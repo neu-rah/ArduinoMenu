@@ -68,7 +68,7 @@ menuOut& operator<<(menuOut& o,endlObj) {
 }
 
 //this version numbers MUST be the same as data/1.2
-#define CUR_VERSION "1.4"
+#define CUR_VERSION "1.5"
 #define APName "WebMenu"
 
 int ledCtrl=LOW;
