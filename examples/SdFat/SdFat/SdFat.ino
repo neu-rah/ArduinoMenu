@@ -4,12 +4,12 @@
 #include <menuIO/serialIO.h>
 #include <plugin/SdFatMenu.h>
 //enable this include if using esp8266
-// #include <menuIO/esp8266Out.h>
+#include <menuIO/esp8266Out.h>
 
 using namespace Menu;
 
-//esp8266 SS
-#define SDCARD_SS 15
+//esp8266 SS (wemos mini)
+#define SDCARD_SS SS
 SdFat sd;
 
 //function to handle file select
@@ -62,6 +62,7 @@ void setup() {
   }
   filePickMenu.begin();//need this after sd begin
   Serial.println("initialization done.");
+  nav.useAccel=false;
 }
 
 constexpr int menuFPS=25;

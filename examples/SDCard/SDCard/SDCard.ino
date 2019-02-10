@@ -3,8 +3,6 @@
 #include <menu.h>
 #include <menuIO/serialIO.h>
 #include <plugin/SDMenu.h>
-//enable this include if using esp8266
-// #include <menuIO/esp8266Out.h>
 
 using namespace Menu;
 
@@ -71,6 +69,7 @@ void setup() {
   }
   filePickMenu.begin();//need this after sd begin
   Serial.println("initialization done.");
+  nav.useAccel=false;
 }
 
 constexpr int menuFPS=25;
