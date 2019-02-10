@@ -8,6 +8,11 @@
 #ifndef __AVR_ARCH__
   #define MENU_USERAM
 #endif
+#if defined(ESP8266)
+  #define MENU_ASYNC
+  #define MENU_FMT_WRAPS
+  #define MENU_IDLE_BKGND
+#endif
 #if defined(ESP8266) | defined(CORE_TEENSY)
   #define typeof(x) __typeof__(x)
 #endif
