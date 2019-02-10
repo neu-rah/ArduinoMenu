@@ -15,6 +15,7 @@ www.r-site.net
 #include <menuIO/serialIO.h>
 #include <menuIO/TFT_eSPIOut.h>
 // #include <menuIO/chainStream.h>
+#include <menuIO/esp8266Out.h>//must include this even if not doing web output...
 
 using namespace Menu;
 

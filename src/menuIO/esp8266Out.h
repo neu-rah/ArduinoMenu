@@ -108,5 +108,4 @@
     //template<typename T> inline esp8266Out& operator<<(esp8266Out&o , T t) {return o.operator<<(t);}
 
   }//namespace Menu
-
 #endif
