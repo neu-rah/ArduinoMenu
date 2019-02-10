@@ -21,12 +21,14 @@ using namespace Menu;
 #endif
 
 #if defined(MENU_DEBUG) || defined(MENU_ASYNC)
-  #ifndef ARDUINO_STREAMING
-    //https://github.com/neu-rah/streamFlow
-    #include <streamFlow.h>
-  #else
-    //https://github.com/scottdky/Streaming
-    #include <Streaming.h>
+  #ifndef ios_h
+    #ifndef ARDUINO_STREAMING
+      //https://github.com/neu-rah/streamFlow
+      #include <streamFlow.h>
+    #else
+      //https://github.com/scottdky/Streaming
+      #include <Streaming.h>
+    #endif
   #endif
 #endif
 

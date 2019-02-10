@@ -89,8 +89,19 @@ void loop() {
 - can be confined to a display area (numeric fields can still overflow the area, user should take account for them)
 - Tested on Arduino AVR's & ARM, Teensy, ESP8266, Esp32, nRF52, STM32
 
-## Version 2.x videos
+## Videos
 [![IMAGE ALT TEXT](https://img.youtube.com/vi/wHv5sU-HXVI/2.jpg)](https://youtu.be/wHv5sU-HXVI "Arduino menu 2.0 fields video") [![IMAGE ALT TEXT](https://img.youtube.com/vi/W-TRCziF67g/2.jpg)](https://youtu.be/W-TRCziF67g "Arduino menu basic features video")[![IMAGE ALT TEXT](https://img.youtube.com/vi/27KEUTpCHfg/2.jpg)](https://youtu.be/27KEUTpCHfg "Arduino menu 4.x")
+
+## Plugins
+
+Plugins are particular menu combinations or item customized behaviors and/or drawing.
+
+Some plugins might be platform specific or require some hardware.
+
+- barField - displays a bar for numeric field on LCD
+- cancelField - allows to restore previous numeric value on escape.
+- SDMenu - full automated SD Card file picker, using standard Arduino SD lib.
+- SdFatMenu - full automated SD Card file picker, using standard SdFat (https://github.com/greiman/SdFat).
 
 ## Applications
 
@@ -261,7 +272,7 @@ https://github.com/neu-rah/AnsiStream
 
 - ESP8266 (builtin)  
 
-**note:** esp8266 will require a streaming library even if not using web interface
+**note:** esp8266 will require a streaming library even if not using web interface, along with `#include <menuIO/esp8266Out.h>`
 
 depending on your output driver it may be one of (can install both)
 - https://github.com/neu-rah/streamFlow
@@ -336,6 +347,8 @@ multiple stream packing for input to mix encoder stream with encoder keyboard (u
 ## History
 
 ### 4.0
+  - SdFat plugin and example
+  - EscControl examle
   - support Bodmer/TFT_eSPI
   - SDCard file picker plugin
   - Allow virtual/dynamic data custom menus

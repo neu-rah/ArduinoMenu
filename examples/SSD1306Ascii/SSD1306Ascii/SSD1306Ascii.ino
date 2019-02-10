@@ -45,6 +45,8 @@ constexpr int OLED_SDC=5;
 #include <menu.h>
 #include <menuIO/SSD1306AsciiOut.h>
 #include <menuIO/serialIO.h>
+//enable this include if using esp8266
+// #include <menuIO/esp8266Out.h>
 using namespace Menu;
 
 //Define your font here. Default font: lcd5x7

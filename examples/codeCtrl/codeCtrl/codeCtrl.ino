@@ -107,7 +107,7 @@ MENU(subMenu,"Sub-Menu",doNothing,anyEvent,wrapStyle
 );
 
 constText* constMEM textFilter MEMMODE=" .0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTWXYZ";
-constText* constMEM textMask[] MEMMODE={textFilter};//this mask will repear till the end of the field
+constText* constMEM textMask[] MEMMODE={textFilter};//this mask will repeat till the end of the field
 char name[]="          ";//<-- menu will edit this text
 
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle

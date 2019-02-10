@@ -1,22 +1,16 @@
 #include <SPI.h>
-#include <SD.h>
+#include <SdFat.h>
 #include <menu.h>
 #include <menuIO/serialIO.h>
-#include <plugin/SDMenu.h>
+#include <plugin/SdFatMenu.h>
 //enable this include if using esp8266
 // #include <menuIO/esp8266Out.h>
 
 using namespace Menu;
 
-//from: https://www.arduino.cc/en/Tutorial/listfiles
-// The circuit:
-// * SD card attached to SPI bus as follows:
-// ** MOSI - pin 11
-// ** MISO - pin 12
-// ** CLK - pin 13
-// ** CS - pin 4 (for MKRZero SD: SDCARD_SS_PIN)
-//this is for my due tft+sd shield
-#define SDCARD_SS 53
+//esp8266 SS
+#define SDCARD_SS 15
+SdFat sd;
 
 //function to handle file select
 // declared here and implemented bellow because we need
@@ -25,9 +19,7 @@ using namespace Menu;
 result filePick(eventMask event, navNode& nav, prompt &item);
 
 
-// SDMenu filePickMenu("SD Card","/",filePick,enterEvent);
-//caching 32 file entries
-CachedSDMenu<32> filePickMenu("SD Card","/",filePick,enterEvent);
+SDMenuT<CachedFSO<SdFat,32>> filePickMenu(sd,"SD Card","/",filePick,enterEvent);
 
 //implementing the handler here after filePick is defined...
 result filePick(eventMask event, navNode& nav, prompt &item) {
@@ -65,9 +57,8 @@ void setup() {
   Serial.begin(115200);
   while (!Serial);
   Serial.print("Initializing SD card...");
-  if (!SD.begin(SDCARD_SS)) {
-    Serial.println("initialization failed!");
-    while (1);
+  if (!sd.begin(SDCARD_SS, SD_SCK_MHZ(50))) {
+    sd.initErrorHalt();
   }
   filePickMenu.begin();//need this after sd begin
   Serial.println("initialization done.");
