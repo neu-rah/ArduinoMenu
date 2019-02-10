@@ -13,8 +13,5 @@ warranty, express or implied, as to its usefulness for any purpose.
 #pragma once
 
 #include "menuDefs.h"
-#ifdef ESP8266
-  #include "menuIO/esp8266Out.h"
-#endif
 
 #include "itemsTemplates.cpp"

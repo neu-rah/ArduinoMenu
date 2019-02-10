@@ -1,5 +1,5 @@
-#ifdef MENU_FMT_WRAPS
 #include "../menuDefs.h"
+#ifdef MENU_FMT_WRAPS
 #include "esp8266Out.h"
 
   menuOut& operator<<(menuOut&o,classes c) {
