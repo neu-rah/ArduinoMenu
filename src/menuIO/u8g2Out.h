@@ -97,16 +97,43 @@ namespace Menu {
 			}
 
 			void setCursor(idx_t x,idx_t y,idx_t panelNr=0) override {
+				// _trace(Serial<<"setCursor"<<endl);
 				const panel p=panels[panelNr];
 				gfx.tx = (p.x+x)*resX+fontMarginX + offsetX;
 				gfx.ty = (p.y+y+1)*resY-fontMarginY + offsetY;
 			}
 
+			idx_t startCursor(navRoot& root,idx_t x,idx_t y,bool charEdit,idx_t panelNr) override {
+			  if (charEdit) {
+			    // rect(panelNr,  x-1,  y, 1, 1, bgColor, false, enabledStatus, false);
+					const panel p=panels[panelNr];
+					gfx.drawBox((p.x+x)*resX + offsetX +fontMarginX,(p.y+y)*resY+ offsetY -fontMarginY,resX,resY);
+			    setColor(fgColor,false,enabledStatus,false);
+			  }/* else
+			    box(panelNr,  x,  y, 1, 1, bgColor, false, enabledStatus, false);*/
+			  return 0;
+			}
+
+			// idx_t endCursor(navRoot& root,idx_t x,idx_t y,bool charEdit,idx_t panelNr) override {
+			//   setColor(fgColor,true,enabledStatus,true);return 0;
+			// }
+
+      idx_t editCursor(navRoot& root,idx_t x,idx_t y,bool editing,bool charEdit,idx_t panelNr=0) override {
+			  if (editing) {
+					_trace(Serial<<"editCursor"<<endl);
+					// box(panelNr,x-1,y);
+					const panel p=panels[panelNr];
+					gfx.drawFrame((x+p.x-1)*resX + offsetX + fontMarginX-1,(p.y+y)*resY + offsetY - fontMarginY+2,resX+1 ,resY);
+				}
+			  return 0;
+			}
+
 			void drawCursor(idx_t ln,bool selected,status stat,bool edit=false,idx_t panelNr=0) override {
+				// _trace(Serial<<"drawCursor"<<endl);
 				const panel p=panels[panelNr];
 				// gfxOut::drawCursor(ln,selected,stat);
 				setColor(cursorColor,selected,stat);
-				gfx.drawFrame(p.x*resX + offsetX /*+ fontMarginX*/,(p.y+ln)*resY + offsetY /*- fontMarginY*/,maxX()*resX ,resY);
+				gfx.drawFrame(p.x*resX + offsetX /*+ fontMarginX*/,(p.y+ln)*resY + offsetY /*+ fontMarginY*/,maxX()*resX ,resY);
 			}
 			idx_t printRaw(const char* at,idx_t len) override {
 				trace(Serial<<"u8g2Out::printRaw"<<endl);

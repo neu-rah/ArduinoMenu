@@ -215,11 +215,11 @@ Used textField::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len
     if (at==cursor&&editing) {
       // MENU_DEBUG_OUT<<"idx:"<<idx<<" line:"<<line<<" at:"<<at<<" l:"<<l<<endl;
       // c=l+1;
-      l+=out.startCursor(root,l,line,charEdit);//draw textual cursor or color code start
+      l+=out.startCursor(root,l,line,charEdit);//draw text cursor or color code start
       out.write(buffer()[at++]);//draw focused character
-      l+=out.endCursor(root,l,line,charEdit);//draw textual cursor or color code end
+      l+=out.endCursor(root,l,line,charEdit);//draw text cursor or color code end
     } else out.write(buffer()[at++]);
-  out.editCursor(root,c+cursor,line,editing,charEdit);//reposition a non text cursor
+  out.editCursor(root,c+cursor,line,editing,charEdit);//reposition a gfx cursor
   #ifdef MENU_FMT_WRAPS
     out.fmtEnd(*this,menuOut::fmtTextField,root.node(),idx);
   #endif
