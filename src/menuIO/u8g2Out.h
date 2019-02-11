@@ -107,7 +107,7 @@ namespace Menu {
 			  if (charEdit) {
 			    // rect(panelNr,  x-1,  y, 1, 1, bgColor, false, enabledStatus, false);
 					const panel p=panels[panelNr];
-					gfx.drawBox((p.x+x)*resX + offsetX +fontMarginX,(p.y+y)*resY+ offsetY -fontMarginY,resX,resY);
+					gfx.drawBox((p.x+x)*resX + offsetX +fontMarginX,(p.y+y)*resY+ offsetY /*-fontMarginY*/,resX,resY);
 			    setColor(fgColor,false,enabledStatus,false);
 			  }/* else
 			    box(panelNr,  x,  y, 1, 1, bgColor, false, enabledStatus, false);*/
@@ -123,7 +123,7 @@ namespace Menu {
 					_trace(Serial<<"editCursor"<<endl);
 					// box(panelNr,x-1,y);
 					const panel p=panels[panelNr];
-					gfx.drawFrame((x+p.x-1)*resX + offsetX + fontMarginX-1,(p.y+y)*resY + offsetY - fontMarginY+2,resX+1 ,resY);
+					gfx.drawFrame((x+p.x-1)*resX + offsetX + fontMarginX-1,(p.y+y)*resY + offsetY /*- fontMarginY+2*/,resX+1 ,resY);
 				}
 			  return 0;
 			}
