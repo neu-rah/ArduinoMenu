@@ -34,9 +34,9 @@ using namespace Menu;
 #define U8_Height 64
 #define USE_HWI2C
 #define fontMarginX 1
-#define fontMarginY 2
+#define fontMarginY 1
 // U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE, SCL, SDA);
-U8G2_SSD1306_128X64_VCOMH0_F_HW_I2C u8g2(U8G2_R2, U8X8_PIN_NONE, SCL, SDA);//allow contrast change
+U8G2_SSD1306_128X64_VCOMH0_F_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE, SCL, SDA);//allow contrast change
 // U8G2_SSD1306_128X64_NONAME_1_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE, SCL, SDA);
 
 
@@ -109,7 +109,7 @@ uint16_t mins=0;
 
 //define a pad style menu (single line menu)
 //here with a set of fields to enter a date in YYYY/MM/DD format
-altMENU(menu,time,"Time",doNothing,noEvent,noStyle,(systemStyles)(_asPad|Menu::_menuData|Menu::_canNav|_parentDraw)
+altMENU(menu,timeMenu,"Time",doNothing,noEvent,noStyle,(systemStyles)(_asPad|Menu::_menuData|Menu::_canNav|_parentDraw)
   ,FIELD(hrs,"",":",0,11,1,0,doNothing,noEvent,noStyle)
   ,FIELD(mins,"","",0,59,10,1,doNothing,noEvent,wrapStyle)
 );
@@ -127,7 +127,7 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,OP("Op2",doNothing,noEvent)
   ,FIELD(test,"Test","%",0,100,10,1,doNothing,noEvent,wrapStyle)
   ,EDIT("Name",name,alphaNumMask,doNothing,noEvent,noStyle)
-  ,SUBMENU(time)
+  ,SUBMENU(timeMenu)
   ,SUBMENU(subMenu)
   ,SUBMENU(setLed)
   ,OP("LED On",myLedOn,enterEvent)
