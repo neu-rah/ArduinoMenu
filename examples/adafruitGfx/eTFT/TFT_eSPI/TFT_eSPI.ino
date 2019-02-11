@@ -171,7 +171,7 @@ void setup() {
   //nav.showTitle=false;//show menu title?
 
   SPI.begin();
-  // gfx.initR(INITR_BLACKTAB);
+  gfx.init();
   gfx.setRotation(3);
   // gfx.setTextSize(textScale);//test scalling
   gfx.setTextWrap(false);
