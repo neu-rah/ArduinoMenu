@@ -38,7 +38,7 @@
       // o<<node.sz();
       for(idx_t n=0;n<node.sz();n++)
         o<<(n?",":"")<<"\""<<node[n]<<"\"";
-      o<<"]";
+      o<<"],\"sel\":\""<<idx<<"\"";
     }
   };
 #endif
