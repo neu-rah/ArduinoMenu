@@ -38,7 +38,11 @@
       // o<<node.sz();
       for(idx_t n=0;n<node.sz();n++)
         o<<(n?",":"")<<"\""<<node[n]<<"\"";
+<<<<<<< HEAD
       o<<"],\"sel\":\""<<((menuVariantBase*)&node)->sync()<<"\"";
+=======
+      o<<"],\"sel\":\""<<idx<<"\"";
+>>>>>>> 57bebe9dcca687d9db2cd771847bc5e6c45aae03
     }
   };
 #endif
