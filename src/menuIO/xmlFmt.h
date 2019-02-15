@@ -49,7 +49,8 @@
             switch(part) {
               case menuOut::fmtPanel:
                 if (start)
-                  *this<<"\n<panel id=\""<<nav.target->hash()<<"\">";
+                  // *this<<"\n<panel id=\""<<nav.target->hash()<<"\">";
+                  *this<<"\n<panel>";
                 else T::operator<<("</panel>");
                 break;
               case menuOut::fmtTitle:

@@ -37,10 +37,10 @@
       public:
         status enabled=enabledStatus;//ignore enter if false
         bool dirty=true;//needs to be  redrawn
-        inline uint16_t hash() const {
-          int tmp=(int)this;
-          return ((uint16_t*)&tmp)[sizeof(this)/sizeof(uint16_t)-1];
-        }
+        // inline uint16_t hash() const {
+        //   int tmp=(int)this;
+        //   return ((uint16_t*)&tmp)[sizeof(this)/sizeof(uint16_t)-1];
+        // }
         inline prompt(constMEM promptShadow& shadow):shadow(&shadow) {}
         inline prompt(constText* t,action a=doNothing,eventMask e=noEvent,styles s=noStyle,systemStyles ss=_noStyle)
           :shadow(new promptShadow(t,a,e,s,ss)) {}

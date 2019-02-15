@@ -24,7 +24,7 @@ www.r-site.net
     extern const char* libMemMode;
   #endif
 
-  #include <Arduino.h>
+  // #include <Arduino.h>
   #ifndef assert
     #define assert(x)
   #endif
