@@ -15,3 +15,5 @@ platformio.ini
 *.odg
 examples/clickEncoder
 examples/screenNav
+obj
+out

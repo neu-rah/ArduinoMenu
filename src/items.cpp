@@ -154,7 +154,7 @@ void textField::doNav(navNode& nav,navCmd cmd) {
     case upCmd:
       if (charEdit) {
         const char* v=validator(cursor);
-        char *at=strchr(v,buffer()[cursor]);
+        const char *at=strchr(v,buffer()[cursor]);
         idx_t pos=at?at-v+1:1;
         if (pos>=(idx_t)strlen(v)) pos=0;
         buffer()[cursor]=v[pos];
@@ -168,7 +168,7 @@ void textField::doNav(navNode& nav,navCmd cmd) {
     case downCmd:
       if (charEdit) {
         const char* v=validator(cursor);
-        char *at=strchr(v,buffer()[cursor]);//at is not stored on the class to save memory
+        const char *at=strchr(v,buffer()[cursor]);//at is not stored on the class to save memory
         idx_t pos=at?at-v-1:0;
         if (pos<0) pos=strlen(v)-1;
         buffer()[cursor]=v[pos];
@@ -304,7 +304,7 @@ void textField::parseInput(navNode& nav,menuIn& in) {
         return;
       default: {
         const char* v=validator(cursor);
-        char *at=strchr(v,c);
+        const char *at=strchr(v,c);
         if (at) {
           in.read();
           buffer()[cursor]=c;

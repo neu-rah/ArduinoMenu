@@ -9,6 +9,15 @@ www.r-site.net
 
 ***/
 
+#ifndef ARDUINO
+  #include <cstdint>
+  #include "naf/extra.h"
+  #include "naf/WString.h"
+  #include "naf/Stream.h"
+  #include "naf/Print.h"
+  #include "naf/Printable.h"
+#endif
+
 // #define MENU_DEBUG
 //DRAW_2D adds 260 bytes to flash
 //#define DRAW_2D
