@@ -9,7 +9,9 @@ www.r-site.net
 
 ***/
 
-#ifndef ARDUINO
+#ifdef ARDUINO
+  #include <Arduino.h>
+#else
   #include <cstdint>
   #include "naf/extra.h"
   #include "naf/WString.h"

@@ -1,3 +1,4 @@
+#ifndef ARDUINO
 /*
  Stream.cpp - adds parsing methods to Stream class
  Copyright (c) 2008 David A. Mellis.  All right reserved.
@@ -318,3 +319,4 @@ int Stream::findMulti( struct Stream::MultiTarget *targets, int tCount) {
   // unreachable
   return -1;
 }
+#endif
