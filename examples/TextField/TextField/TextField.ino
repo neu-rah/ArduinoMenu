@@ -10,7 +10,7 @@ using namespace Menu;
 //list of allowed characters
 char* const  digit="0123456789";
 char* const hexChars MEMMODE="0123456789ABCDEF";
-char* const alphaNum[] MEMMODE = {" 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"};
+char* const alphaNum[] MEMMODE = {" 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.,+-_"};
 //individual character validators
 char* constMEM validData[] MEMMODE={hexChars,hexChars,hexChars,hexChars};
 
@@ -27,15 +27,17 @@ constMEM textFieldShadowRaw op1InfoRaw MEMMODE={
   noStyle,
   buf0,//edit buffer
   validIP,
-  4
+  4//this is the number of entries on validators array, not th efield length
 };//MEMMODE static stuff
 constMEM textFieldShadow& op1Info=*(textFieldShadow*)&op1InfoRaw;//hacking c++ to use progmem (hugly)
 textField option0(op1Info);
 
 char buf1[]="0000";
+char name[]="                              ";//field will initialize its size by this string length
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,OBJ(option0)
   ,EDIT("Hex",buf1,validData,doNothing,noEvent,noStyle)
+  ,EDIT("Name",name,alphaNum,doNothing,noEvent,noStyle)
   ,EXIT("<Exit")
 );
 

@@ -161,6 +161,7 @@ void textField::doNav(navNode& nav,navCmd cmd) {
         dirty=true;
       } else {
         if(cursor<(idx_t)strlen(buffer())-1) cursor++;
+        // if(cursor<sz()) cursor++;
         edited=false;
       }
       dirty=true;
@@ -325,6 +326,7 @@ bool textField::async(const char*uri,navRoot& root,idx_t lvl=0) {
   if ((!*uri)||(uri[0]=='/'&&!uri[1])) return true;
   if (uri[0]=='/') {
     StringStream i(++uri);
+    memset(buffer(), validator(0)[0], (idx_t)strlen(buffer()));//clear buffer
     while(i.available()) parseInput(root.node(), i);
     trace(MENU_DEBUG_OUT<<"textField::enterCmd"<<endl);
     doNav(root.node(),escCmd);
