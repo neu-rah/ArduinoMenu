@@ -46,9 +46,22 @@ namespace Menu {
 
   template<typename T>
   void menuField<T>::parseInput(navNode& nav,menuIn& in) {
-    if (strchr(numericChars,in.peek())) {//a numeric value was entered
+    //TODO: on a cmd based nav (not streams) this mess will be pushed to stream input only
+    //can not enter negative number literals by serial, using steps or web is ok
+    bool neg=false;
+    char nc=in.peek();
+    if (nc=='-') {
+      in.read();
+      if (!strchr(numericChars,in.peek())) {
+        doNav(nav,downCmd);
+        return;
+      }
+      // Serial.println("NEGATIVE NUMBER PARSE THEN!");
+      neg=true;
+    }
+    if (neg||strchr(numericChars,nc)) {//a numeric value was entered
       if (in.numValueInput) {
-        target()=(T)in.parseFloat();//TODO: use template specialization and proper convertion
+        target()=(T)((neg?-1:1)*in.parseFloat());//TODO: use template specialization and proper convertion
         tunning=true;
         doNav(nav,enterCmd);
       } else doNav(nav,idxCmd);
