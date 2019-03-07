@@ -239,7 +239,6 @@ navCmd navRoot::exit() {
   }
   active().dirty=true;
   navFocus=&active();
-  Serial.println("check asPad elements and exit them too");
   if (navFocus->asPad()) exit();
   return escCmd;
 }
