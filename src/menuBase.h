@@ -184,6 +184,7 @@ www.r-site.net
         // inline action(result (*f)(eventMask,navNode&,prompt&)):hFn((callback)f) {}
         //inline action(result (*f)(eventMask,navNode&,prompt&,Stream&)):hFn((callback)f) {}
         inline action(callback f):hFn(f) {}
+        inline operator callback() const {return hFn;}
         inline result operator()(FUNC_PARAMS) const {return ((callback)memPtr(hFn))(FUNC_VALUES);}
     };
 
