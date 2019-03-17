@@ -108,6 +108,9 @@ Some plugins might be platform specific or require some hardware.
 Some applications using ArduinoMenu, (current and older versions).  
 Do you have another? please let me know on gitter or email me.
 
+**Reloading powder hopper level gauge and alarm**  
+https://github.com/nathandarnell/Reloading-Powder-Hopper-Level-Gauge-and-Alarm
+
 **ServoBox** Servo tester & monitor  
 https://github.com/jarkman/ServoBox
 
