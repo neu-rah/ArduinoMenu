@@ -1,8 +1,8 @@
-#include <defs/tiny.h>
+#include <defs/simple.h>
 
-//tiny text menu example
-//294 bytes, just text prompts, we print the menu
-//and would deal to whatever input or output is needed
+//simple text menu example
+//Rui Azevedo - Mar2019
+//ruihfazevedo@gmail.com
 
 /*output:
 AM5 test ------------------
@@ -11,11 +11,10 @@ Op2
 -------
 */
 
-const char* op1_text="Op1";
-OP<&op1_text> op1;
-const char* op2_text="Op2";
-OP<&op2_text> op2;
-MENU<2> mainMenu({&op1,&op2});
+MENU<2> mainMenu("Main menu",{
+  new OP("Op1"),
+  new OP("Op2"),
+});
 
 void setup() {
   Serial.begin(115200);

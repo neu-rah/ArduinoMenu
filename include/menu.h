@@ -7,13 +7,13 @@
 
 struct Nil {};
 
-/*// menu system trait /////////////////////////////////////////*
-
+// menu system trait /////////////////////////////////////////*
+/*
 still we need a way of including types between every type in composition
-to allow conuter-part initializers
+to allow counter-part initializers
 ex: default space usage info when geometry constrains are used on drawing...
 1-include in base api?
-  - we might not need it
+  - we might not need it, it it will be inconditional!
 2-injected by used core
   - not device dependent, its ok we need it when we need it
   => SysDef must include the core => Core must not be partameterized by SysDef
@@ -44,7 +44,8 @@ struct SysDef {
     cursorRole=32,
     modeRole=64,
     valueRole=128,
-    unitRole=256
+    unitRole=256,
+    menuRole=512,
   };
 
   template<Roles m,typename O>
@@ -61,6 +62,7 @@ struct SysDef {
   template<typename O> using asCursor=Role<cursorRole,O>;
   template<typename O> using asMode=Role<modeRole,O>;
   template<typename O> using asUnit=Role<unitRole,O>;
+  template<typename O> using asMenu=Role<menuRole,O>;
 
   ////////////////////////////////////////////////////////////
   // the interface ///////////////////////////////////////
@@ -76,6 +78,10 @@ struct SysDef {
   struct Prompt:public IfPrompt,public O {
     using Type=O;//get sub type
     using O::O;
+    template<typename ... V>
+    Prompt(V ... v):O(v...) {}
+    template<typename ... V>
+    Prompt(const char* o,V ... v):O(o,v...) {}
     inline size_t sz() const override {return O::sz();}
     inline IfPrompt& operator[](size_t i) override {return O::get(i);}
     // inline void set(size_t i,IfPrompt& o) override {return O::set(i,o);}
@@ -85,7 +91,7 @@ struct SysDef {
   /////////////////////////////////////////////////////////////////////
   // static mixins ///////////////////////////////////
 
-  //static interface terminal
+  //static interface terminal (with an user cargo)
   struct Item:public Src {
     inline size_t sz() const {return 0;}
     inline IfPrompt& get(size_t) {return *(Prompt<Item>*)this;}
@@ -98,7 +104,7 @@ struct SysDef {
   // for efficient composition (type level)
   // this can be extended outside here as this is an open data type
   template<typename O=Item>
-  class Text:public O {
+  class Text:public virtual O {
   protected:
     const char* text;
   public:
@@ -109,11 +115,11 @@ struct SysDef {
   template<typename O=Item>
   struct Static {
     template<const char**text>
-    struct Text:public O {
+    struct Text:public virtual O {
       static inline RawOut& print(RawOut& o) {o<<text[0];return O::print(o);}
     };
     template<idx_t n>
-    class Menu:public O {
+    class Menu:public virtual O {
     protected:
       IfPrompt* data[n];
     public:
