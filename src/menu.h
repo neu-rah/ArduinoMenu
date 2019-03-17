@@ -78,10 +78,6 @@ struct SysDef {
   struct Prompt:public IfPrompt,public O {
     using Type=O;//get sub type
     using O::O;
-    template<typename ... V>
-    Prompt(V ... v):O(v...) {}
-    template<typename ... V>
-    Prompt(const char* o,V ... v):O(o,v...) {}
     inline size_t sz() const override {return O::sz();}
     inline IfPrompt& operator[](size_t i) override {return O::get(i);}
     // inline void set(size_t i,IfPrompt& o) override {return O::set(i,o);}
@@ -126,7 +122,7 @@ struct SysDef {
       template<typename ... V>
       Menu(V ... v):data{v...} {}
       template<typename ... V>
-      Menu(const char* o,V ... v):O(o),data{v...} {}
+      Menu(const char* o,V... v):O(o),data{v...} {}
       // Menu(const char* o,initializer_list<IfPrompt*> v):O(o),data(v) {}
       inline size_t sz() const {return n;}
       inline IfPrompt& get(size_t i) {return *data[i];}

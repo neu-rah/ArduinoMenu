@@ -4,7 +4,7 @@
 #include <vector>
 using namespace std;
 
-template<typename Sys,typename O=Sys::Item>
+template<typename Sys,typename O=typename Sys::Item>
 class Menu:public O,public vector<IfPrompt*> {
 public:
   using vector<IfPrompt*>::vector;
