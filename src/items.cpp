@@ -207,20 +207,22 @@ Used textField::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len
     out.fmtStart(*this,menuOut::fmtTextField,root.node(),idx);
   #endif
   idx_t tit=hasTitle(root.node())?1:0;
+  idx_t c=l+1;//initial cursor, after label
   idx_t line=idx+tit;//-out.tops[root.level];
-  idx_t c=l+1;
-  idx_t w=len-l;
-  idx_t at=cursor>=w?cursor-w:0;
-  trace(MENU_DEBUG_OUT<<"at:"<<at<<" tit:"<<tit<<" line:"<<line<<" cursor:"<<cursor<<" l:"<<l<<" len:"<<len);//<<endl;)
-  while(buffer()[at]&&l++<len)
-    if (at==cursor&&editing) {
-      // MENU_DEBUG_OUT<<"idx:"<<idx<<" line:"<<line<<" at:"<<at<<" l:"<<l<<endl;
-      // c=l+1;
+  idx_t ew=len-c;//editable width
+  idx_t at=cursor>=ew?cursor-ew:0;//adjust print start
+  while(buffer()[at]&&l++<len) {//while not string terminated or buffer length reached
+    trace(if (editing) MENU_DEBUG_OUT<<endl<<"{"<<at<<"}");
+    if (at==cursor&&editing) {//edit cursor
+      trace(MENU_DEBUG_OUT<<"ew:"<<ew<<" cursor:"<<cursor<<" l:"<<l<<" len:"<<len<<endl);
+      c=l;//store cursor position
       l+=out.startCursor(root,l,line,charEdit);//draw text cursor or color code start
       out.write(buffer()[at++]);//draw focused character
       l+=out.endCursor(root,l,line,charEdit);//draw text cursor or color code end
-    } else out.write(buffer()[at++]);
-  out.editCursor(root,c+cursor,line,editing,charEdit);//reposition a gfx cursor
+    } else out.write(buffer()[at++]);//just the character
+  }
+  //this is the cursor frame
+  out.editCursor(root,c,line,editing,charEdit);//reposition a gfx cursor
   #ifdef MENU_FMT_WRAPS
     out.fmtEnd(*this,menuOut::fmtTextField,root.node(),idx);
   #endif
