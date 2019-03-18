@@ -4,10 +4,11 @@
 using namespace std;
 #include <menu.h>
 
-template<typename Out,typename O>
-class VectorMenuDef:public O {
+template<typename Out,typename Q>
+class VectorMenuDef:public asMenu<Q> {
 //straight transpose objectpreserving templates... on production code we will be more succinct
 public:
+  using O=asMenu<Q>;
   using Def=MenuSystemDef<Out>;
   using Base=typename Def::Base;
   template<typename T>

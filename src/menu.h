@@ -1,21 +1,8 @@
 /* -*- C++ -*- */
 #pragma once
 
-#if defined(MENU_DEBUG) && defined(TRACE)
-  #define trace(x) x
-#else
-  #define trace(x)
-#endif
-#ifdef MENU_DEBUG
-  #define _trace(x) x
-#else
-  #define _trace(x)
-#endif
-#ifndef MENU_RELEASE
-  #define __trace(x) x
-#else
-  #define __trace(x)
-#endif
+#include <base/roles.h>
+#include <base/debug.h>
 
 template<typename Out>
 struct MenuSystemDef {
@@ -31,8 +18,9 @@ struct MenuSystemDef {
   };
 
   //adapter
-  template<typename O>
-  struct Item:public Base,public O {
+  template<typename Q>
+  struct Item:public Base,public asItem<Q> {
+    using O=asItem<Q>;
     using O::O;
 
     template<typename... OO>
@@ -71,11 +59,12 @@ struct MenuSystemDef {
     inline Out& out(Out& o) const {return o<<text;}
   };
 
-  template<size_t n,typename O=Empty>
-  class StaticMenu:public O {
+  template<size_t n,typename Q=Empty>
+  class StaticMenu:public asMenu<Q> {
   protected:
     Base* data[n];
   public:
+    using O=asMenu<Q>;
     template<typename... OO>
     inline StaticMenu(OO... oo):data{oo...} {}
     template<typename... OO>
