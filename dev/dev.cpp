@@ -1,20 +1,20 @@
 #include "dev.h"
 
 const char* op1_text="op1";
-Prompt<Sys::asTitle<Static::Text<&op1_text>>> op1;
-Prompt<Sys::asTitle<Sys::Text<>>> op2("op2");
+Prompt<Sys::asTitle<Static<Sys>::Text<&op1_text>>> op1;
+Prompt<Sys::asTitle<Text<Sys>>> op2("op2");
 
 // Prompt<
 // >
-Menu<Sys::Text<>>
-subMenu((const char*)"non-static title",{&op1,&op2});
+Prompt<VectorMenu<Sys,Text<Sys>>>
+subMenu("non-static title",&op1,&op2);
 
 const char* sm_title="static menu";
-Prompt<Sys::Static<Static::Text<&sm_title>>::Menu<2>> sm({&op1,&op2});
+Prompt<Static<Sys,Static<Sys>::Text<&sm_title>>::Menu<2>> sm({&op1,&op2});
 
 //a dynamic (vector) menu with static text title
 const char* mainMenu_title="Main menu";
-Prompt<Sys::Menu<Static::Text<&mainMenu_title>>> mainMenu {
+VectorMenu<Sys,Static<Sys>::Text<&mainMenu_title>> mainMenu(
   &op1,//a static text option
   &op2,//a non-static text option
   &subMenu,//dynamic menu with a non-static text title
@@ -22,8 +22,8 @@ Prompt<Sys::Menu<Static::Text<&mainMenu_title>>> mainMenu {
   new Prompt<Lang<Sys,Code>::Text<yesText>>,
   new Prompt<Title<noText>>,
   new Prompt<Title<okText>>,
-  new Prompt<Title<cancelText>>,
-};
+  new Prompt<Title<cancelText>>
+);
 
 template<typename Sys>
 struct Core {

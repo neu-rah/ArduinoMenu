@@ -1,6 +1,9 @@
 /* -*- C++ -*- */
 #pragma once
 
+#include <vector>
+using namespace std;
+
 // A menu system with minimalistic assumptions
 // Rui Azevedo - Mar2019
 // ruihfazevedo@gmail.com
@@ -30,6 +33,9 @@ ex: default space usage info when geometry constrains are used on drawing...
 template<typename RawOut,typename Src=Nil,typename idx_t=int>
 struct SysDef {
   using Interface=struct IfPrompt;
+  template<typename O> struct Prompt;
+  template<typename O>
+  using Terminal=struct Prompt<O>;
   using RawOutput=RawOut;
   using Source=Src;
   using Idx=idx_t;
@@ -51,6 +57,7 @@ struct SysDef {
   template<Roles m,typename O>
   struct Role:public O {
     using O::O;
+    Role(O& o):O(o) {}
     static constexpr Roles mask=m;
   };
 
@@ -78,58 +85,65 @@ struct SysDef {
   struct Prompt:public IfPrompt,public O {
     using Type=O;//get sub type
     using O::O;
+    Prompt(O& o):O(o) {}
+    // Prompt(vector<IfPrompt*>&& v):O(v) {}
     inline size_t sz() const override {return O::sz();}
     inline IfPrompt& operator[](size_t i) override {return O::get(i);}
     // inline void set(size_t i,IfPrompt& o) override {return O::set(i,o);}
     inline RawOut& operator<<(RawOut& o) override {return O::print(o);}
   };
+};
 
-  /////////////////////////////////////////////////////////////////////
-  // static mixins ///////////////////////////////////
+/////////////////////////////////////////////////////////////////////
+// static mixins ///////////////////////////////////
 
-  //static interface terminal (with an user cargo)
-  struct Item:public Src {
-    inline size_t sz() const {return 0;}
-    inline IfPrompt& get(size_t) {return *(Prompt<Item>*)this;}
-    // inline IfPrompt& set(size_t i,IfPrompt& o) {throw 1;}
-    static inline RawOut& print(RawOut& o) {return o;}
+//static interface terminal (with an user cargo)
+template<typename Sys>
+struct Item:public Sys::Source {
+  using RawOut=typename Sys::RawOutput;
+  // using Prompt=typename Sys::Prompt<>;
+  inline size_t sz() const {return 0;}
+  inline IfPrompt& get(size_t) {return *this;}
+  // inline IfPrompt& set(size_t i,IfPrompt& o) {throw 1;}
+  static inline RawOut& print(RawOut& o) {return o;}
+  inline IfPrompt& operator[](size_t i) {return get(i);}
+};
+
+// default static parts --------------
+// for efficient composition (type level)
+// this can be extended outside here as this is an open data type
+template<typename Sys,typename O=Item<Sys>>
+class Text:public virtual O {
+public:
+  using RawOut=typename Sys::RawOutput;
+  inline Text(const char* text):text(text) {}
+  inline RawOut& print(RawOut& o) {o<<text;return O::print(o);}
+protected:
+  const char* text;
+};
+
+template<typename Sys,typename O=Item<Sys>>
+struct Static {
+  using Idx=typename Sys::Idx;
+  template<const char**text>
+  struct Text:public virtual O {
+    using RawOut=typename Sys::RawOutput;
+    static inline RawOut& print(RawOut& o) {o<<text[0];return O::print(o);}
+  };
+  template<Idx n>
+  class Menu:public virtual O {
+  protected:
+    IfPrompt* data[n];
+  public:
+    template<typename ... V>
+    Menu(V ... v):data{v...} {}
+    template<typename ... V>
+    Menu(const char* o,V... v):O(o),data{v...} {}
+    // Menu(const char* o,initializer_list<IfPrompt*> v):O(o),data(v) {}
+    inline size_t sz() const {return n;}
+    inline IfPrompt& get(size_t i) {return *data[i];}
     inline IfPrompt& operator[](size_t i) {return get(i);}
   };
-
-  // default static parts --------------
-  // for efficient composition (type level)
-  // this can be extended outside here as this is an open data type
-  template<typename O=Item>
-  class Text:public virtual O {
-  protected:
-    const char* text;
-  public:
-    inline Text(const char* text):text(text) {}
-    inline RawOut& print(RawOut& o) {o<<text;return O::print(o);}
-  };
-
-  template<typename O=Item>
-  struct Static {
-    template<const char**text>
-    struct Text:public virtual O {
-      static inline RawOut& print(RawOut& o) {o<<text[0];return O::print(o);}
-    };
-    template<idx_t n>
-    class Menu:public virtual O {
-    protected:
-      IfPrompt* data[n];
-    public:
-      template<typename ... V>
-      Menu(V ... v):data{v...} {}
-      template<typename ... V>
-      Menu(const char* o,V... v):O(o),data{v...} {}
-      // Menu(const char* o,initializer_list<IfPrompt*> v):O(o),data(v) {}
-      inline size_t sz() const {return n;}
-      inline IfPrompt& get(size_t i) {return *data[i];}
-      inline IfPrompt& operator[](size_t i) {return get(i);}
-    };
-  };
-
 };
 
 template<typename RawOut,typename idx_t=int>

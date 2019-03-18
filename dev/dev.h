@@ -27,7 +27,6 @@ const char *Lang<Sys,Code>::texts[][Code::cnt]{
 
 //using components, usually we have a restricter set, but this is a demo...
 template<typename O> using Prompt=Sys::Prompt<O>;
-using Static=Sys::Static<>;
 
 //a multilanguage title
 template<size_t id>
