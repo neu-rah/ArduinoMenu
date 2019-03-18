@@ -28,7 +28,6 @@ struct MenuSystemDef {
     template<typename... OO>
     inline Item(const char*title,OO... oo):O(title,oo...) {}
     inline Item(const char*title):O(title) {}
-
     inline Out& operator<<(Out& o) const override {return O::out(o);}
     inline size_t size() const override {return O::size();}
     inline Base& operator[](size_t n) const override {return O::operator[](n);}
@@ -37,6 +36,7 @@ struct MenuSystemDef {
   /////////////////////////////////////////////////////////
   //static routers
   struct Empty {
+    template<Roles>
     static inline Out& out(Out& o) {return o;}
     static inline size_t size() {return 0;}
     inline Base& operator[](size_t n) const {
@@ -47,6 +47,7 @@ struct MenuSystemDef {
 
   template<const char** text,typename O=Empty>
   struct StaticText:public O {
+    template<Roles>
     static inline Out& out(Out& o) {return o<<text[0];}
   };
 
@@ -56,6 +57,7 @@ struct MenuSystemDef {
     const char *text;
   public:
     Text(const char* t):text(t) {}
+    template<Roles>
     inline Out& out(Out& o) const {return o<<text;}
   };
 
@@ -71,6 +73,20 @@ struct MenuSystemDef {
     inline StaticMenu(const char*title,OO... oo):O(title),data{oo...} {}
     static inline size_t size() {return n;}
     inline Base& operator[](size_t i) const {return *data[i];}
+  };
+
+  //runtime compositions
+  template<typename O>
+  class Prefix:public O {
+  public:
+    Prefix(Base& o):inner(o) {}
+    template<Roles>
+    inline Out& out(Out& o) const {
+      O::out(o);
+      return o<<inner;
+    }
+  protected:
+    Base& inner;
   };
 };
 
