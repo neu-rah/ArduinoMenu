@@ -8,6 +8,8 @@ using Out=ostream;
 // interface
 struct Base {
   inline virtual Out& operator<<(Out& o) const {return o;}
+  inline virtual size_t size() const {return 0;}
+  inline virtual Base& operator[](size_t n) const {throw 1;}
 };
 
 //adapter
@@ -15,13 +17,19 @@ template<typename O>
 struct Item:public Base,public O {
   using O::O;
   inline Out& operator<<(Out& o) const override {return O::out(o);}
+  inline size_t size() const override {return O::size();}
+  inline Base& operator[](size_t n) const override {return O::operator[](n);}
 };
+
+inline Out& operator<<(Out& out,Base& item) {return item.operator<<(out);}
 
 /////////////////////////////////////////////////////////
 //static routers
 
 struct Empty {
   static inline Out& out(Out& o) {return o;}
+  static inline size_t size() {return 0;}
+  inline Base& operator[](size_t n) const {throw 1;}
 };
 
 template<const char** text,typename O=Empty>
@@ -30,7 +38,7 @@ struct StaticText:public O {
 };
 
 template<typename O=Empty>
-class Text:public O {
+class Text:public virtual O {
 protected:
   const char *text;
 public:
@@ -40,14 +48,16 @@ public:
 };
 
 template<size_t n,typename O=Empty>
-class StaticMenu:public O {
+class StaticMenu:public virtual O {
 protected:
   Base* data[n];
 public:
   template<typename... OO>
-  StaticMenu(OO... oo):data{oo...} {}
+  inline StaticMenu(OO... oo):data{oo...} {}
   template<typename... OO>
-  StaticMenu(const char*title,OO... oo):O(title),data{oo...} {}
+  inline StaticMenu(const char*title,OO... oo):O(title),data{oo...} {}
+  static inline size_t size() {return n;}
+  inline Base& operator[](size_t i) const {return *data[i];}
 };
 
 template<typename O=Empty>
@@ -61,6 +71,8 @@ public:
   VectorMenu(const char*title,OO... oo):O(title),data{oo...} {}
   template<typename... OO>
   VectorMenu(OO... oo):data{oo...} {}
+  inline size_t size() const {return data.size();}
+  inline Base& operator[](size_t n) const {return *data[n];}
 };
 
 const char* op1_text="op 1";
@@ -72,13 +84,36 @@ Item<StaticText<&op2_text>> op2;
 Item<Text<>> op3("op 3");
 
 const char* aTitle="a title!";
-Item<StaticMenu<2,StaticText<&aTitle>>> staticMenu_staticTitle(&op1,&op2);
-Item<StaticMenu<2,Text<>>> staticMenu_dynTitle("staticMenu with dyn. title",&op1,&op2);
-Item<VectorMenu<StaticText<&aTitle>>> vectorMenu_staticTitle(&op1,&op2);
-Item<VectorMenu<Text<>>> vectorMenu_dynTitle("vector menu with dyn. title",&op1,&op2);
+Item<StaticMenu<3,StaticText<&aTitle>>> staticMenu_staticTitle(&op1,&op2,&op3);
+Item<StaticMenu<3,Text<>>> staticMenu_dynTitle("staticMenu with dyn. title",&op1,&op2,&op3);
+Item<StaticMenu<3>> staticMenu_noTitle(&op1,&op2,&op3);
+Item<VectorMenu<StaticText<&aTitle>>> vectorMenu_staticTitle(&op1,&op2,&op3);
+Item<VectorMenu<Text<>>> vectorMenu_dynTitle("vector menu with dyn. title",&op1,&op2,&op3);
+Item<VectorMenu<>> vectorMenu_noTitle(&op1,&op2,&op3);
+
+using Menu=Item<VectorMenu<Text<>>>;
+
+Menu mainMenu("Main menu",
+  &staticMenu_staticTitle,
+  &staticMenu_dynTitle,
+  &staticMenu_noTitle,
+  &vectorMenu_staticTitle,
+  &vectorMenu_dynTitle,
+  &vectorMenu_noTitle
+);
+
+struct Core {
+  Out& printMenu(Out& out,Base& menu) {
+    out<<menu<<endl;//this `endl`s will be compose on out device style instead!
+    for(int n=0;n<menu.size();n++)
+      out<<menu[n]<<endl;
+    return out;
+  }
+} core;
 
 int main(int argc, char** argv) {
   cout<<"AM5 test ------------------"<<endl;
+  core.printMenu(cout,mainMenu);
   // cout<<mainMenu<<endl;
   // cout<<mainMenu.data[0]<<endl;
   // cout<<mainMenu.data[1]<<endl;
