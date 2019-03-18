@@ -16,6 +16,13 @@ struct Base {
 template<typename O>
 struct Item:public Base,public O {
   using O::O;
+
+  template<typename... OO>
+  inline Item(OO... oo):O(oo...) {}
+  template<typename... OO>
+  inline Item(const char*title,OO... oo):O(title,oo...) {}
+  inline Item(const char*title):O(title) {}
+
   inline Out& operator<<(Out& o) const override {return O::out(o);}
   inline size_t size() const override {return O::size();}
   inline Base& operator[](size_t n) const override {return O::operator[](n);}
@@ -38,17 +45,17 @@ struct StaticText:public O {
 };
 
 template<typename O=Empty>
-class Text:public virtual O {
+class Text:public O {
 protected:
   const char *text;
 public:
-  Text():text("") {}
-  Text(const char* t):text(t) {}
+  // Text():text("") {cout<<"constructing empty text!!!!"<<endl;}
+  Text(const char* t):text(t) {cout<<"constructing text "<<t<<endl;}
   inline Out& out(Out& o) const {return o<<text;}
 };
 
 template<size_t n,typename O=Empty>
-class StaticMenu:public virtual O {
+class StaticMenu:public O {
 protected:
   Base* data[n];
 public:
@@ -61,7 +68,7 @@ public:
 };
 
 template<typename O=Empty>
-class VectorMenu:public virtual O {
+class VectorMenu:public O {
 protected:
   vector<Base*> data;
 public:
@@ -84,7 +91,8 @@ Item<StaticText<&op2_text>> op2;
 Item<Text<>> op3("op 3");
 
 const char* aTitle="a title!";
-Item<StaticMenu<3,StaticText<&aTitle>>> staticMenu_staticTitle(&op1,&op2,&op3);
+const char* staticMenu_staticTitle_text="StaticMenu with static title";
+Item<StaticMenu<3,StaticText<&staticMenu_staticTitle_text>>> staticMenu_staticTitle(&op1,&op2,&op3);
 Item<StaticMenu<3,Text<>>> staticMenu_dynTitle("staticMenu with dyn. title",&op1,&op2,&op3);
 Item<StaticMenu<3>> staticMenu_noTitle(&op1,&op2,&op3);
 Item<VectorMenu<StaticText<&aTitle>>> vectorMenu_staticTitle(&op1,&op2,&op3);
@@ -93,14 +101,16 @@ Item<VectorMenu<>> vectorMenu_noTitle(&op1,&op2,&op3);
 
 //using some sugar
 using Menu=Item<VectorMenu<Text<>>>;
+using Op=Item<Text<>>;
 
-Menu mainMenu("Main menu",
-  &staticMenu_staticTitle,
-  &staticMenu_dynTitle,
-  &staticMenu_noTitle,
-  &vectorMenu_staticTitle,
-  &vectorMenu_dynTitle,
-  &vectorMenu_noTitle
+Menu mainMenu("Main menu"
+  ,new Op("Ok")
+  ,&staticMenu_staticTitle
+  ,&staticMenu_dynTitle
+  ,&staticMenu_noTitle
+  ,&vectorMenu_staticTitle
+  ,&vectorMenu_dynTitle
+  ,&vectorMenu_noTitle
 );
 
 struct Core {
@@ -114,11 +124,7 @@ struct Core {
 
 int main(int argc, char** argv) {
   cout<<"AM5 test ------------------"<<endl;
-  cout<<op3<<endl;
   core.printMenu(cout,mainMenu);
-  // cout<<mainMenu<<endl;
-  // cout<<mainMenu.data[0]<<endl;
-  // cout<<mainMenu.data[1]<<endl;
   cout<<"-------"<<endl;
   return 0;
 }
