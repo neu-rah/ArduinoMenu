@@ -32,7 +32,6 @@ inline Out& operator<<(Out& out,Base& item) {return item.operator<<(out);}
 
 /////////////////////////////////////////////////////////
 //static routers
-
 struct Empty {
   static inline Out& out(Out& o) {return o;}
   static inline size_t size() {return 0;}
@@ -49,8 +48,7 @@ class Text:public O {
 protected:
   const char *text;
 public:
-  // Text():text("") {cout<<"constructing empty text!!!!"<<endl;}
-  Text(const char* t):text(t) {cout<<"constructing text "<<t<<endl;}
+  Text(const char* t):text(t) {}
   inline Out& out(Out& o) const {return o<<text;}
 };
 
