@@ -4,7 +4,7 @@
 namespace ArduinoMenu{
   namespace Framework {
     namespace Arduino {
-      #include <menu/tiny.h>
+      #include <menu/def/tiny.h>
     }
   }
 }
@@ -52,19 +52,16 @@ struct Fmt {
 
 ////////////////////////////////////////////////////////
 
-const char* op1_text="Op 1";
-Op<&op1_text> op1;
+const char op1_text[] PROGMEM="Op 1";
+FlashText<Out> op1(op1_text);
 
-const char* op2_text="Op 2";
-Op<&op2_text> op2;
+void test(PGM_P text) {Serial.println(text[0]);}
 
-const char* menu_title="Main menu";
-Item<
-  PrintBody<
-    Out,
-    Menu<&menu_title,2>
-  >
-> mainMenu(&op1,&op2);
+const char op2_text[] PROGMEM="Op 2";
+Op op2(op2_text);
+
+// const char* menu_title="Main menu";
+// Item<Menu<2>> mainMenu(menu_title,&op1,&op2);
 
 inline Out& operator<<(Out& o,const Base& i) {
   i.operator<<(o);
@@ -74,8 +71,9 @@ inline Out& operator<<(Out& o,const Base& i) {
 void setup() {
   Serial.begin(115200);
   while (!Serial);
-  Serial.println("AM5 Tiny def test");
-  Serial<<mainMenu<<endl;
+  Serial.println(F("AM5 Tiny def test"));
+  test(op1_text);
+  // Serial<<mainMenu<<endl;
 }
 
 void loop() {}

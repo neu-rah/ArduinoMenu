@@ -18,6 +18,7 @@ struct MenuSystemDef {
   //adapter
   //a version of this (vtable only) is created for each unique combination type
   //should we multiply it by the number of output devices?
+  //we already doing it for raw out, so, no big deal
   template<typename Q>
   struct Item:public Base,public asItem<Q> {
     using O=asItem<Q>;
