@@ -11,10 +11,11 @@ struct MenuSystemDef {
   struct Base {
     inline virtual Out& operator<<(Out& o) const {return o;}
     inline virtual size_t size() const {return 0;}
-    inline virtual Base& operator[](size_t n) const {
-      _trace(MENU_DEBUG_OUT<<"Item not available as non-constant"<<endl);
-      throw 1;
-    }
+    inline virtual Base& operator[](size_t n) const =0;
+    // {
+    //   _trace(MENU_DEBUG_OUT<<"Item not available as non-constant"<<endl);
+    //   throw 1;
+    // }
   };
 
   //adapter
@@ -29,6 +30,7 @@ struct MenuSystemDef {
     inline Item(const char*title,OO... oo):O(title,oo...) {}
     inline Item(const char*title):O(title) {}
     inline Out& operator<<(Out& o) const override {return O::out(o);}
+    // static inline Out& out(Out& o) {return O::out(o);}
     inline size_t size() const override {return O::size();}
     inline Base& operator[](size_t n) const override {return O::operator[](n);}
   };
@@ -36,19 +38,23 @@ struct MenuSystemDef {
   /////////////////////////////////////////////////////////
   //static routers
   struct Empty {
-    template<Roles>
+    Empty() {}
     static inline Out& out(Out& o) {return o;}
     static inline size_t size() {return 0;}
     inline Base& operator[](size_t n) const {
       _trace(MENU_DEBUG_OUT<<"Item not available as non-constant"<<endl);
-      throw 1;
+      while(true);
     }
   };
 
   template<const char** text,typename O=Empty>
   struct StaticText:public O {
-    template<Roles>
-    static inline Out& out(Out& o) {return o<<text[0];}
+    using O::O;
+    // template<Roles>
+    static inline Out& out(Out& o) {
+      o<<text[0];
+      return o;
+    }
   };
 
   template<typename O=Empty>
@@ -57,7 +63,7 @@ struct MenuSystemDef {
     const char *text;
   public:
     Text(const char* t):text(t) {}
-    template<Roles>
+    // template<Roles>
     inline Out& out(Out& o) const {return o<<text;}
   };
 
@@ -76,21 +82,22 @@ struct MenuSystemDef {
   };
 
   //runtime compositions
-  template<typename O>
-  class Prefix:public O {
-  public:
-    Prefix(Base& o):inner(o) {}
-    template<Roles>
-    inline Out& out(Out& o) const {
-      O::out(o);
-      return o<<inner;
-    }
-  protected:
-    Base& inner;
-  };
+  // template<typename O>
+  // class Prefix:public O {
+  // public:
+  //   Prefix(Base& o):inner(o) {}
+  //   template<Roles>
+  //   inline Out& out(Out& o) const {
+  //     O::out(o);
+  //     return o<<inner;
+  //   }
+  // protected:
+  //   Base& inner;
+  // };
 };
 
-template<typename Out,typename O>
-inline Out& operator<<(Out& out,O& item) {
-  return item.operator<<(out);
-}
+// template<typename Out,typename O>
+// inline Out& operator<<(Out& out,O& item) {
+//   item.operator<<(out);
+//   return o;
+// }

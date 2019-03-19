@@ -19,7 +19,7 @@
   template<Roles m,typename O>
   struct Role:public O {
     using O::O;
-    Role(O& o):O(o) {}
+    // Role(O& o):O(o) {}
     static constexpr Roles mask=m;
   };
 

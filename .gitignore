@@ -13,7 +13,5 @@ platformio.ini
 .gitignore
 !/.gitignore
 *.odg
-examples/clickEncoder
-examples/screenNav
 dev
 .out

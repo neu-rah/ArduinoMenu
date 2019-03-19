@@ -10,7 +10,11 @@ https://gitter.im/ArduinoMenu/Lobby
 
 ### Why a new version
 
-In a word, size.
+In a word, **size**.
+
+Things I wish were available:
+- C++14 or +
+- AVR stl
 
 ### Embedded systems
 
@@ -19,14 +23,23 @@ So we need to seek modularity even further.
 
 After some research and experimentation here are some considerations about various aspects of menu systems with focus on embedding.
 
-#### No assumptions
+### Is it possible?
 
-Assumptions reveal most of the time a trade or a burden, assuming that all prompts/options will have a text might not be correct, useful or sufficient, some systems might need multiple texts for multi-language.
-Same goes to all assumptions about menus, even associated actions.
+You might be using a single line display, therefor printing a menu title is useless and inconvenient.  
+instead of having a run-time config and code checking if title enabled and skipping title prints on single line devices even if active makes a menu system easy to use but also makes it heavier. Examples like this are behind all assumptions we make about a menu system.  
+So instead of having extra runtime check/config we opt instead on having compile time compositions, think it like, if you want title on your menus you can simply include that part on the construct.  
+Shifting the burden to compile time reduces the run-time checking, code size and increases speed.
+
+_**technical:** using type to guide the composition decision, types and not used code vanish at compile time._
 
 #### Mixed content
 
 Instead of setting a menu structure to reside on flash or on ram we can use them mixed. And this is working.
+
+#### No assumptions
+
+Assumptions reveal most of the time a trade or a burden, assuming that all prompts/options will have a text might not be correct, useful or sufficient, some systems might need multiple texts for multi-language.
+Same goes to all assumptions about menus, even associated actions.
 
 #### Composition (type level)
 
@@ -56,7 +69,7 @@ struct Interface {
   //some virtual functions here
 };
 
-//make composition adhere to the interface (top level cap)
+//make static composition adhere to the interface (as a top level cap)
 template<typename O>
 struct Adapt:public Interface,public O {
   //redirect virtual call to the correct type (because we know it)
@@ -68,7 +81,7 @@ struct Adapt:public Interface,public O {
 // however nothing requires you to derive from it as the members are `inline static`
 // consider it just a guide, deriving from it is a discipline
 struct Empty {
-  //add base version
+  //add base functionality to derived items, not enforced but handy
 };
 
 template<typename O=Empty>
@@ -79,9 +92,12 @@ public:
   Text(const char* t):text(t) {}
   //... add specific implementations
 };
-```
 
-we might add some sugar ontop of this construction methods
+```
+we can implement other building blocks _a la carte_  
+they contain the functionality and its code is vacuous if not used
+
+we might add some sugar on top of this construction methods and build more elaborated blocks for each system.
 
 ### Lessons learned
 
