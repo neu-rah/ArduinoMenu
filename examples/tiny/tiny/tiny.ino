@@ -26,12 +26,16 @@ struct EndlDef:public O {
 template<typename O>
 using Endl=EndlDef<Out,O>;
 
+//this is on the chain, we know about the menu type but not about
+//the item types, we can not template virtuals, but...
+//we might template a virtual class... will generate a lot of vtables
+//still avoiding runtime composition until none left to explore....
 template<typename Out,typename O> //,template<typename> class Fmt>
 struct PrintBody:public O {
   using O::O;
   Out& out(Out& o) const {//TODO: add non-const versions
     for(size_t n=0;n<O::size();n++)
-      o<<operator[](n);//the only place to store this is?
+      o<<O::operator[](n);//the only place to store this is?
     //explore alternative where this is also the format handler or composed with (not just a param)
     return o;
   }

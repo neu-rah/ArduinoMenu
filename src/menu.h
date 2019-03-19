@@ -8,17 +8,16 @@ template<typename Out>
 struct MenuSystemDef {
   //////////////////////////////////////////////////
   // interface
+  // keep vtable small!
   struct Base {
     inline virtual Out& operator<<(Out& o) const {return o;}
     inline virtual size_t size() const {return 0;}
     inline virtual Base& operator[](size_t n) const =0;
-    // {
-    //   _trace(MENU_DEBUG_OUT<<"Item not available as non-constant"<<endl);
-    //   throw 1;
-    // }
   };
 
   //adapter
+  //a version of this (vtable only) is created for each unique combination type
+  //should we multiply it by the number of output devices?
   template<typename Q>
   struct Item:public Base,public asItem<Q> {
     using O=asItem<Q>;
@@ -30,7 +29,6 @@ struct MenuSystemDef {
     inline Item(const char*title,OO... oo):O(title,oo...) {}
     inline Item(const char*title):O(title) {}
     inline Out& operator<<(Out& o) const override {return O::out(o);}
-    // static inline Out& out(Out& o) {return O::out(o);}
     inline size_t size() const override {return O::size();}
     inline Base& operator[](size_t n) const override {return O::operator[](n);}
   };
