@@ -60,8 +60,8 @@ void test(PGM_P text) {Serial.println(text[0]);}
 const char op2_text[] PROGMEM="Op 2";
 Op op2(op2_text);
 
-// const char* menu_title="Main menu";
-// Item<Menu<2>> mainMenu(menu_title,&op1,&op2);
+const char menu_title[] PROGMEM="Main menu";
+Item<Menu<2>> mainMenu(menu_title,&op1,&op2);
 
 inline Out& operator<<(Out& o,const Base& i) {
   i.operator<<(o);
