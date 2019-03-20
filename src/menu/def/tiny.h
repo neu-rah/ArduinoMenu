@@ -12,7 +12,7 @@ using Empty=typename Def::Empty;
 template<typename O>
 using Item=Def::Item<O>;
 
-using Text=FlashText<Out,Empty>;
+using Text=FlashTextDef<Empty>;
 
 using Title=asTitle<Text>;
 

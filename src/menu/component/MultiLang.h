@@ -4,8 +4,10 @@
 
 //an example of extending the base schema, here a multilanguage text
 
-template<typename Out,typename Code>
+template<typename Code>
 struct Lang {
+  using Out=typename O::OutDef;
+  using OutDef=Out;
   using Def=MenuSystemDef<Out>;
   using Base=typename Def::Base;
   using Empty=typename Def::Empty;

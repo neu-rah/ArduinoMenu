@@ -37,6 +37,7 @@ struct MenuSystemDef {
   /////////////////////////////////////////////////////////
   //static routers
   struct Empty {
+    using OutDef=Out;
     Empty() {}
     static inline Out& out(Out& o) {return o;}
     static inline size_t size() {return 0;}
