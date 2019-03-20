@@ -12,7 +12,7 @@ public:
   using Base=typename Def::Base;
   using Empty=typename Def::Empty;
   template<Roles>
-  inline Out& out(Out& o) const {
+  inline RawOut& out(RawOut& o) const {
     o<<text;
     return o;
   }

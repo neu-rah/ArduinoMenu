@@ -19,17 +19,21 @@
   template<Roles m,typename O>
   struct Role:public O {
     using O::O;
+    using OutDef=typename O::OutDef;
+    using RawOut=typename OutDef::RawOut;
     // Role(O& o):O(o) {}
     // static constexpr Roles mask=m;
-    inline Out& out(Out& o) const {}
+    inline RawOut& out(RawOut& o) const {}
   };
 
   template<typename O>
   struct Role<itemRole,O>:public O {
     using O::O;
+    using OutDef=typename O::OutDef;
+    using RawOut=typename OutDef::RawOut;
     // Role(O& o):O(o) {}
     // static constexpr Roles mask=m;
-    inline Out& out(Out& o) const {}
+    inline RawOut& out(RawOut& o) const {}
   };
 
   template<typename O> using asPanel=Role<panelRole,O>;

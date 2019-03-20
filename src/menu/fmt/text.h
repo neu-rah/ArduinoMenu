@@ -26,11 +26,11 @@
 //   using Base=typename Def::Base;
 //   using Empty=typename Def::Empty;
 //   template<Roles role>
-//   inline Out& out(Out& o) const {
+//   inline RawOut& out(RawOut& o) const {
 //     return O::out<role>(o);
 //   }
 //   template<Roles role>
-//   inline Out& out<role>(Out& o) const {
+//   inline RawOut& out<role>(RawOut& o) const {
 //     O::out<role>(o);
 //     return o<<endl;
 //   }

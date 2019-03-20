@@ -111,7 +111,9 @@ Finally found a decent initialization schema so that we can drop the macros (may
 
 Target framework should not be limited to Arduino (essay on Linux went well)
 
-On version 4 we shifted the complexity to a central core, this makes IO drivers easier to implement but makes an extremely heavy core with many if's and considering too many cases, we need to break this down. Type level composition was the way.
+Keep menu definitions platform agnostic as was on AM4, make them also framework agnostic.
+
+On version 4 we shifted the complexity to a central core, this makes IO drivers easier to implement an is more efficient when using multiple outputs, but makes an extremely heavy core with many if's and considering too many cases, we need to break this down. Type level composition was the way.
 
 Avoid castings, macros and other bad style c++
 

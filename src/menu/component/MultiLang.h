@@ -16,7 +16,7 @@ struct Lang {
   template<size_t id,typename O=Empty>
   struct Text:public O {
     template<Roles>
-    inline Out& out(Out& o) const {
+    inline RawOut& out(RawOut& o) const {
       o<<texts[id][Lang::sel];
       return O::out(o);
     }

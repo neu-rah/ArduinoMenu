@@ -4,7 +4,7 @@
 #include <base/roles.h>
 #include <base/debug.h>
 
-template<typename Raw,typename O>
+template<typename O,typename Raw=RawOutType>
 struct OutDef:public O {
   using This=OutDef<Raw,O>;
   using RawOut=Raw;
@@ -12,11 +12,15 @@ struct OutDef:public O {
 
 template<typename Out>
 struct MenuSystemDef {
+  using SysDef=MenuSystemDef<Out>;
+  using This=SysDef;
+  using OutDef=typename Out::This;
+  using RawOut=typename OutDef::RawOut;
   //////////////////////////////////////////////////
   // interface
   // keep vtable small!
   struct Base {
-    inline virtual Out& operator<<(Out& o) const {return o;}
+    inline virtual RawOut& operator<<(RawOut& o) const {return o;}
     inline virtual size_t size() const {return 0;}
     inline virtual Base& operator[](size_t n) const =0;
   };
@@ -35,7 +39,7 @@ struct MenuSystemDef {
     template<typename... OO>
     inline Item(const char*title,OO... oo):O(title,oo...) {}
     inline Item(const char*title):O(title) {}
-    inline Out& operator<<(Out& o) const override {return O::out(o);}
+    inline RawOut& operator<<(RawOut& o) const override {return O::out(o);}
     inline size_t size() const override {return O::size();}
     inline Base& operator[](size_t n) const override {return O::operator[](n);}
   };
@@ -45,7 +49,7 @@ struct MenuSystemDef {
   struct Empty {
     using OutDef=Out;
     Empty() {}
-    static inline Out& out(Out& o) {return o;}
+    static inline RawOut& out(RawOut& o) {return o;}
     static inline size_t size() {return 0;}
     inline Base& operator[](size_t n) const {
       _trace(MENU_DEBUG_OUT<<"Item not available as non-constant"<<endl);
@@ -57,7 +61,7 @@ struct MenuSystemDef {
   struct StaticText:public O {
     using O::O;
     // template<Roles>
-    static inline Out& out(Out& o) {
+    static inline RawOut& out(RawOut& o) {
       o<<text[0];
       return o;
     }
@@ -70,7 +74,7 @@ struct MenuSystemDef {
   public:
     Text(const char* t):text(t) {}
     // template<Roles>
-    inline Out& out(Out& o) const {return o<<text;}
+    inline RawOut& out(RawOut& o) const {return o<<text;}
   };
 
   template<size_t n,typename Q=Empty>
@@ -93,7 +97,7 @@ struct MenuSystemDef {
   // public:
   //   Prefix(Base& o):inner(o) {}
   //   template<Roles>
-  //   inline Out& out(Out& o) const {
+  //   inline RawOut& out(RawOut& o) const {
   //     O::out(o);
   //     return o<<inner;
   //   }
@@ -103,7 +107,7 @@ struct MenuSystemDef {
 };
 
 // template<typename Out,typename O>
-// inline Out& operator<<(Out& out,O& item) {
+// inline RawOut& operator<<(RawOut& out,O& item) {
 //   item.operator<<(out);
 //   return o;
 // }
