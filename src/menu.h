@@ -4,6 +4,12 @@
 #include <base/roles.h>
 #include <base/debug.h>
 
+template<typename Raw,typename O>
+struct OutDef:public O {
+  using This=OutDef<Raw,O>;
+  using RawOut=Raw;
+};
+
 template<typename Out>
 struct MenuSystemDef {
   //////////////////////////////////////////////////

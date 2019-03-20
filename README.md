@@ -30,7 +30,7 @@ instead of having a run-time config and code checking if title enabled and skipp
 So instead of having extra runtime check/config we opt instead on having compile time compositions, think it like, if you want title on your menus you can simply include that part on the construct.  
 Shifting the burden to compile time reduces the run-time checking, code size and increases speed.
 
-_**technical:** using type to guide the composition decision, types and not used code vanish at compile time._
+_**technical:** using type to guide the composition decision, not used code vanish at compile time._
 
 #### Mixed content
 

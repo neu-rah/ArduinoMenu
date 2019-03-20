@@ -5,6 +5,7 @@ namespace ArduinoMenu{
   namespace Framework {
     namespace Arduino {
       #include <menu/def/tiny.h>
+      #include <menu/fmt/text.h>
     }
   }
 }

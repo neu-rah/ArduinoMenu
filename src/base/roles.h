@@ -20,7 +20,16 @@
   struct Role:public O {
     using O::O;
     // Role(O& o):O(o) {}
-    static constexpr Roles mask=m;
+    // static constexpr Roles mask=m;
+    inline Out& out(Out& o) const {}
+  };
+
+  template<typename O>
+  struct Role<itemRole,O>:public O {
+    using O::O;
+    // Role(O& o):O(o) {}
+    // static constexpr Roles mask=m;
+    inline Out& out(Out& o) const {}
   };
 
   template<typename O> using asPanel=Role<panelRole,O>;
