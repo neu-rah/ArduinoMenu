@@ -64,9 +64,14 @@ namespace AM5 {
       //role format tag, and typelevel continuation
       //we can wrap, translate or abort printing here
       template<Roles,typename Next>
-      inline void out() {Next::out(*this);}
+      // inline void out() {
+      //   Serial<<"Fmt::out<Roles,Next>()"<<endl;
+      //   Next::out(*this);
+      // }
       template<typename T>
-      static inline void raw(T o) {}
+      static inline void raw(T o) {
+        Serial<<"Fmt::raw(T)"<<endl;
+      }
     };
 
     // item interface
@@ -84,6 +89,7 @@ namespace AM5 {
       inline Prompt(const char*title,OO... oo):O(title,oo...) {}
       inline Prompt(const char*title):O(title) {}
       inline void out(Fmt& o) const override {
+        //problem! from now on all will be Fmt!!!!
         Serial<<"Prompt::out(Fmt)"<<endl;
         O::out(o);
       }
@@ -108,23 +114,26 @@ namespace AM5 {
   using RootFmt=typename R::Fmt;
 
   template<typename F,typename P>
-  void RootDef<F,P>::Fmt::out(Item& i) {i.out(*this);}
-
-  template<typename R>
-  inline RootFmt<R>& operator<<(RootFmt<R>& o, RootItem<R>& i) {
-    o.out(i);
-    return o;
+  void RootDef<F,P>::Fmt::out(Item& i) {
+    Serial<<"void RootDef<F,P>::Fmt::out(Item& i)"<<endl;
+    i.out(*this);
   }
 
-  template<typename T,typename R>
-  inline RootFmt<R>& operator<<(RootFmt<R>& o, T& i) {
-    o.raw(i);
-    return o;
-  }
-
-  template<typename O,typename R>
-  inline O& operator<<(O& o,RootItem<R>& i) {O::out(i);return o;}
-
+  // template<typename R>
+  // inline RootFmt<R>& operator<<(RootFmt<R>& o, RootItem<R>& i) {
+  //   o.out(i);
+  //   return o;
+  // }
+  //
+  // template<typename T,typename R>
+  // inline RootFmt<R>& operator<<(RootFmt<R>& o, T& i) {
+  //   o.raw(i);
+  //   return o;
+  // }
+  //
+  // template<typename O,typename R>
+  // inline O& operator<<(O& o,RootItem<R>& i) {O::out(i);return o;}
+  //
   // template<typename O,typename T>
   // inline O& operator<<(O& o,T& i) {return o<<i;}
 

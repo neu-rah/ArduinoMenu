@@ -13,7 +13,7 @@ namespace AM5 {
       Serial<<"RawOut::raw(T)"<<endl;
       dev<<o;
     }
-    inline void out(Item& i) {
+    static inline void out(Item& i) {
       Serial<<"RawOut::out(Item)"<<endl;
       i.out(*this);
     }

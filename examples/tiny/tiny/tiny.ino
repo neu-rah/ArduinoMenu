@@ -31,24 +31,9 @@ using namespace AM5::Arduino::Avr;
 
 Out SerialOut;
 
-template<typename T>
-inline Out& operator<<(Out& o,T i) {
-  Serial<<"Out<<T"<<endl;
-  o.raw(i);
-  return o;
-}
-
-template<>
-inline Out& operator<<<Item&>(Out& o,Item& i) {
+inline Out& operator<<(Out& o,Item& i) {
   Serial<<"Out<<Item"<<endl;
   o.out(i);
-  return o;
-}
-
-template<>
-inline Out& operator<<<Prompt&>(Out& o,Prompt& i) {
-  Serial<<"Out<<Prompt"<<endl;
-  // o.out(i);
   return o;
 }
 
@@ -57,11 +42,11 @@ Prompt op1("Op 1");
 void setup() {
   Serial.begin(115200);
   while (!Serial);
-  Serial<<F("AM5 Tiny def test ---------------")<<endl;
   Serial<<F("Framework:")<<Framework::Name<<endl;
   Serial<<F("Platform:")<<Platform::Name<<" "<<(sizeof(Platform::Idx)<<3)<<"bits"<<endl;
-  SerialOut.out(op1);
-  SerialOut<<endl;
+  Serial<<F("AM5 Tiny def test ---------------")<<endl;
+  SerialOut<<op1;
+  Serial<<endl;
   Serial<<F("test end ---------------")<<endl;
 }
 

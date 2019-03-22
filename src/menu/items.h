@@ -26,8 +26,8 @@ namespace AM5 {
     // template<Roles>
     template<typename Out>
     static inline void out(Out& o) {
-      Serial<<"Text::out(Out)"<<endl;
-      o<<text[0];
+      Serial<<"StaticText::out(Out)"<<endl;
+      o.raw(text[0]);
     }
   };
 
@@ -40,7 +40,11 @@ namespace AM5 {
     // using Fmt=typename Root::Fmt;
     Text(const char* t):text(t) {}
     template<typename Out>
-    inline void out(Out& o) const {o.raw(text);}
+    inline void out(Out& o) const {
+      Serial<<"Text::out(Out)"<<endl;
+      o.raw("printing raw text");
+      o.raw(text);
+    }
   };
 
   // template<typename O>
