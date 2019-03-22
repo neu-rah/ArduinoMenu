@@ -1,7 +1,7 @@
 /* -*- C++ -*- */
 #pragma once
 
-#include "../arduino.h"
+// #include "../arduino.h"
 
 namespace AM5{namespace Arduino{namespace Avr {
   struct Platform {

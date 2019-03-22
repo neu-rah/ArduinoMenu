@@ -25,6 +25,36 @@ namespace AM5 {
       menuRole=512,
     };
 
+    template<Roles m,typename O>
+    struct Role:public O {
+      using O::O;
+      using OutDef=typename O::OutDef;
+      using RawOut=typename OutDef::RawOut;
+      // Role(O& o):O(o) {}
+      // static constexpr Roles mask=m;
+      inline RawOut& out(RawOut& o) const {}
+    };
+
+    template<typename O>
+    struct Role<itemRole,O>:public O {
+      using O::O;
+      using OutDef=typename O::OutDef;
+      using RawOut=typename OutDef::RawOut;
+      // Role(O& o):O(o) {}
+      // static constexpr Roles mask=m;
+      inline RawOut& out(RawOut& o) const {}
+    };
+
+    template<typename O> using asPanel=Role<panelRole,O>;
+    template<typename O> using asTitle=Role<titleRole,O>;
+    template<typename O> using asBody=Role<bodyRole,O>;
+    template<typename O> using asItem=Role<itemRole,O>;
+    template<typename O> using asAccel=Role<accelRole,O>;
+    template<typename O> using asCursor=Role<cursorRole,O>;
+    template<typename O> using asMode=Role<modeRole,O>;
+    template<typename O> using asUnit=Role<unitRole,O>;
+    template<typename O> using asMenu=Role<menuRole,O>;
+
     class Item;
 
     //the output interface
@@ -35,43 +65,66 @@ namespace AM5 {
       //we can wrap, translate or abort printing here
       template<Roles,typename Next>
       inline void out() {Next::out(*this);}
+      template<typename T>
+      static inline void raw(T o) {}
     };
 
     // item interface
-    struct Item:public Root {
+    struct Item {
       using Idx=typename Root::Idx;
-      inline virtual void out(Fmt& o) const {}
+      inline virtual void out(Fmt& o) const {Serial<<"Item::out(Fmt)"<<endl;}
       inline virtual Idx size() const {return 0;}
       inline virtual Item& operator[](Idx) {return *this;};
     };
 
-    template<typename O=Item>
-    struct Prompt:public O {
+    template<typename O>
+    struct Prompt:public Item,private O {
       using O::O;
+      template<typename... OO>
+      inline Prompt(const char*title,OO... oo):O(title,oo...) {}
+      inline Prompt(const char*title):O(title) {}
+      inline void out(Fmt& o) const override {
+        Serial<<"Prompt::out(Fmt)"<<endl;
+        O::out(o);
+      }
+      inline Idx size() const override {return O::size();}
+      inline Item& operator[](Idx n) override {return O::operator[](n);}
+    // private: using Item& O::operator[](Idx);
     };
 
+    static inline void out(Fmt& o) {
+      Serial<<"Root::out(Fmt)"<<endl;
+      return o;
+    }
+    static inline Idx size() {return 0;}
+    inline Item& operator[](Idx n) {return *(Prompt<Root>*)this;}
   };
+
+  // template<typename F,typename P>
+  // using Root=RootDef<F,P>;
+  template<typename R>
+  using RootItem=typename R::Item;
+  template<typename R>
+  using RootFmt=typename R::Fmt;
 
   template<typename F,typename P>
   void RootDef<F,P>::Fmt::out(Item& i) {i.out(*this);}
 
-  //menu output with root device
-  template<typename Device,Device& dev,typename O>
-  struct RawOut:public O {
-    using This=RawOut<Device,dev,O>;
-    using Root=typename O::Root;
-    using Item=typename Root::Item;
-    template<typename T>
-    static inline void raw(T o) {dev<<o;}
-    inline void out(Item& i) {i.out(*this);}
-    // template<typename T> static inline void out(T o) {dev<<o;}
-  };
+  template<typename R>
+  inline RootFmt<R>& operator<<(RootFmt<R>& o, RootItem<R>& i) {
+    o.out(i);
+    return o;
+  }
 
+  template<typename T,typename R>
+  inline RootFmt<R>& operator<<(RootFmt<R>& o, T& i) {
+    o.raw(i);
+    return o;
+  }
 
+  template<typename O,typename R>
+  inline O& operator<<(O& o,RootItem<R>& i) {O::out(i);return o;}
 
-  // template<typename O,typename F,typename P>
-  // inline O& operator<<(O& o,RootDef<F,P>& i) {O::out(i);return o;}
-  //
   // template<typename O,typename T>
   // inline O& operator<<(O& o,T& i) {return o<<i;}
 
