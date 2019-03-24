@@ -5,6 +5,7 @@ namespace AM5 {
 
   template<typename F,typename P>
   struct RootDef {
+    inline RootDef() {}
     using Root=RootDef<F,P>;
     using Framework=F;
     using Platform=P;
@@ -25,100 +26,96 @@ namespace AM5 {
       menuRole=512,
     };
 
-    template<Roles m,typename O>
+    template<typename O,Roles m>
     struct Role:public O {
       using O::O;
-      using OutDef=typename O::OutDef;
-      using RawOut=typename OutDef::RawOut;
+      // using OutDef=typename O::OutDef;
+      // using RawOut=typename OutDef::RawOut;
       // Role(O& o):O(o) {}
       // static constexpr Roles mask=m;
-      inline RawOut& out(RawOut& o) const {}
+      // inline RawOut& out(RawOut& o) const {}
     };
 
-    template<typename O>
-    struct Role<itemRole,O>:public O {
-      using O::O;
-      using OutDef=typename O::OutDef;
-      using RawOut=typename OutDef::RawOut;
-      // Role(O& o):O(o) {}
-      // static constexpr Roles mask=m;
-      inline RawOut& out(RawOut& o) const {}
-    };
+    // template<typename O>
+    // struct Role<O,itemRole>:public O {
+    //   using O::O;
+    //   // using OutDef=typename O::OutDef;
+    //   // using RawOut=typename OutDef::RawOut;
+    //   // Role(O& o):O(o) {}
+    //   // static constexpr Roles mask=m;
+    //   // inline RawOut& out(RawOut& o) const {}
+    // };
 
-    template<typename O> using asPanel=Role<panelRole,O>;
-    template<typename O> using asTitle=Role<titleRole,O>;
-    template<typename O> using asBody=Role<bodyRole,O>;
-    template<typename O> using asItem=Role<itemRole,O>;
-    template<typename O> using asAccel=Role<accelRole,O>;
-    template<typename O> using asCursor=Role<cursorRole,O>;
-    template<typename O> using asMode=Role<modeRole,O>;
-    template<typename O> using asUnit=Role<unitRole,O>;
-    template<typename O> using asMenu=Role<menuRole,O>;
+    template<typename O> using asPanel  =Role<O,O::Roles::panelRole>;
+    template<typename O> using asTitle  =Role<O,O::Roles::titleRole>;
+    template<typename O> using asBody   =Role<O,O::Roles::bodyRole>;
+    template<typename O> using asItem   =Role<O,O::Roles::itemRole>;
+    template<typename O> using asAccel  =Role<O,O::Roles::accelRole>;
+    template<typename O> using asCursor =Role<O,O::Roles::cursorRole>;
+    template<typename O> using asMode   =Role<O,O::Roles::modeRole>;
+    template<typename O> using asUnit   =Role<O,O::Roles::unitRole>;
+    template<typename O> using asMenu   =Role<O,O::Roles::menuRole>;
 
-    class Item;
+    struct Item;
 
     //the output interface
-    struct Fmt:public Root {
-      using Root=Root;
-      inline void out(Item& i);
+    struct Fmt {
+
+      using Root=RootDef<F,P>;
+
+      size_t out(Item& i);
+
       //role format tag, and typelevel continuation
       //we can wrap, translate or abort printing here
       template<Roles,typename Next>
-      // inline void out() {
-      //   Serial<<"Fmt::out<Roles,Next>()"<<endl;
-      //   Next::out(*this);
-      // }
-      template<typename T>
-      static inline void raw(T o) {
-        Serial<<"Fmt::raw(T)"<<endl;
+      inline size_t out() {
+        Serial<<"Fmt::out<Roles,Next>()"<<endl;
+        Next::out(*this);
       }
+      inline virtual size_t raw(const char[]) {return 0;}
+      inline virtual size_t raw(char) {return 0;}
+      inline virtual size_t raw(unsigned char, int = DEC) {return 0;}
+      inline virtual size_t raw(int, int = DEC) {return 0;}
+      inline virtual size_t raw(unsigned int, int = DEC) {return 0;}
+      inline virtual size_t raw(long, int = DEC) {return 0;}
+      inline virtual size_t raw(unsigned long, int = DEC) {return 0;}
+      inline virtual size_t raw(double, int = 2) {return 0;}
+      inline virtual size_t raw(const __FlashStringHelper *) {return 0;}
+      inline virtual size_t raw(const String &) {return 0;}
+      inline virtual size_t raw(const Printable&) {return 0;}
     };
 
-    // item interface
     struct Item {
-      using Idx=typename Root::Idx;
-      inline virtual void out(Fmt& o) const {Serial<<"Item::out(Fmt)"<<endl;}
+      inline virtual size_t out(Fmt& o) const {return 0;}
       inline virtual Idx size() const {return 0;}
       inline virtual Item& operator[](Idx) {return *this;};
     };
 
+    static inline size_t out(Fmt& o) {return 0;}
+    static inline Idx size() {return 0;}
+    inline Item& operator[](Idx n) {return *(Item*)this;}
+
     template<typename O>
     struct Prompt:public Item,private O {
       using O::O;
+      using Root=typename O::Root;
+      using Item=typename Root::Item;
+      using Fmt=typename Root::Fmt;
+      using Idx=typename Root::Idx;
+      inline Prompt():O() {}
       template<typename... OO>
       inline Prompt(const char*title,OO... oo):O(title,oo...) {}
       inline Prompt(const char*title):O(title) {}
-      inline void out(Fmt& o) const override {
-        //problem! from now on all will be Fmt!!!!
-        Serial<<"Prompt::out(Fmt)"<<endl;
-        O::out(o);
-      }
+      inline size_t out(Fmt& o) const override {return O::out(o);}
       inline Idx size() const override {return O::size();}
       inline Item& operator[](Idx n) override {return O::operator[](n);}
-    // private: using Item& O::operator[](Idx);
     };
 
-    static inline void out(Fmt& o) {
-      Serial<<"Root::out(Fmt)"<<endl;
-      return o;
-    }
-    static inline Idx size() {return 0;}
-    inline Item& operator[](Idx n) {return *(Prompt<Root>*)this;}
-  };
+  };//RootDef
+
 
   // template<typename F,typename P>
   // using Root=RootDef<F,P>;
-  template<typename R>
-  using RootItem=typename R::Item;
-  template<typename R>
-  using RootFmt=typename R::Fmt;
-
-  template<typename F,typename P>
-  void RootDef<F,P>::Fmt::out(Item& i) {
-    Serial<<"void RootDef<F,P>::Fmt::out(Item& i)"<<endl;
-    i.out(*this);
-  }
-
   // template<typename R>
   // inline RootFmt<R>& operator<<(RootFmt<R>& o, RootItem<R>& i) {
   //   o.out(i);
@@ -140,11 +137,19 @@ namespace AM5 {
   /*
   Out<Comp<Root>>
   call:
-  Out::operator<<(Item&)->Comp(Out&)->[Out::out<N>]->Root()
+  Out::operator<<(Item&)->Out::out(Item&)->virtual Prompt(Out&)->[virtual Out::raw(...)]->Root()
 
   this way compositions are output device agnostic
   and still depend on a Framwork/Platform
 
   */
+
+  template<typename R>
+  using RootItem=typename R::Item;
+  template<typename R>
+  using RootFmt=typename R::Fmt;
+
+  template<typename F,typename P>
+  size_t RootDef<F,P>::Fmt::out(Item& i) {return i.out(*this);}
 
 };//AM5

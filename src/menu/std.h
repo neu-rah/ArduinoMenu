@@ -2,6 +2,7 @@
 #pragma once
 
 #include <cstdint>
+#include <string>
 using namespace std;
 #include "../menu.h"
 
@@ -13,5 +14,6 @@ namespace AM5{namespace Std {
   struct Platform {
     static constexpr char* Name="Std IO";
     using Idx=size_t;
+    using Str=string;
   };
 }};

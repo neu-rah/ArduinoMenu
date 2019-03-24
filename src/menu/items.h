@@ -17,56 +17,54 @@ namespace AM5 {
   //   }
   // };
 
+  template<typename T,typename O>
+  class DataDef:public O {
+  protected:
+    T data;
+  public:
+    using O::O;
+    inline DataDef(T t):data(t) {}
+    template<typename Out>
+    inline size_t out(Out& o) const {return o.raw(data);}
+  };
+
   // using Root=RootDef<Framework,Platform>;
   template<const char** text,typename O>
-  struct StaticText:public O {
+  struct StaticTextDef:public O {
     using O::O;
-    using Root=typename O::Root;
-    // using Fmt=typename Root::Fmt;
-    // template<Roles>
+    inline StaticTextDef() {}
     template<typename Out>
-    static inline void out(Out& o) {
-      Serial<<"StaticText::out(Out)"<<endl;
-      o.raw(text[0]);
-    }
+    static inline size_t out(Out& o) {return o.raw(text[0]);}
   };
 
   template<typename O>
-  class Text:public O {
+  class TextDef:public O {
   protected:
     const char *text;
   public:
     using Root=typename O::Root;
-    // using Fmt=typename Root::Fmt;
-    Text(const char* t):text(t) {}
+    TextDef(const char* t):text(t) {}
     template<typename Out>
-    inline void out(Out& o) const {
-      Serial<<"Text::out(Out)"<<endl;
-      o.raw("printing raw text");
-      o.raw(text);
-    }
+    inline size_t out(Out& o) const {return o.raw(text);}
   };
 
-  // template<typename O>
-  // using Root=typename O::Root;
-
-  template<typename Root,typename O>
-  using asMenu=typename Root::template asMenu<O>;
+  template<typename O>
+  using asMenu=typename O::Root::template asMenu<O>;
 
   template<typename O>
   using Idx=typename O::Root::Idx;
 
   template<typename Q,Idx<Q> n>
-  class StaticMenu:public asMenu<Q::Root,Q> {
-    using O=asMenu<Q::Root,Q>;
+  class StaticMenuDef:public asMenu<Q> {
+    using O=asMenu<Q>;
     using Root=typename Q::Root;
     using Item=typename Root::Item;
     using Idx=typename Root::Idx;
   public:
     template<typename... OO>
-    inline StaticMenu(OO... oo):data{oo...} {}
+    inline StaticMenuDef(OO... oo):data{oo...} {}
     template<typename... OO>
-    inline StaticMenu(const char*title,OO... oo):O(title),data{oo...} {}
+    inline StaticMenuDef(const char*title,OO... oo):O(title),data{oo...} {}
     static inline Idx size() {return n;}
     // inline Item& operator[](Idx i) const {return *data[i];}
   protected:
