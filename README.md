@@ -40,10 +40,11 @@ void loop() {}
 
 outputs:
 ```text
-[Example option]
+[Op 1]
+[Op 2]
 ```
 
-_tinyArduino.h_ defines `SerialOut` and `Op` as:
+_tinyArduino.h_ defines `SerialOut`, `Op` and `FlashOp` as:
 ```c++
 /* -*- C++ -*- */
 //describing an output -----------------------------------------
