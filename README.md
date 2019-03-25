@@ -93,11 +93,36 @@ public:
   //... add specific implementations
 };
 
+//composing thing for user
+using Op=Prompt<Text>;
+//using Op=Prompt<FlashText>;//with this def we can put all Op's into flash (because they share constructor parameter format)
+
+Op op1("Op 1");//now we can simply build an option like this
+
 ```
 we can implement other building blocks _a la carte_  
 they contain the functionality and its code is vacuous if not used
 
 we might add some sugar on top of this construction methods and build more elaborated blocks for each system.
+
+**extending**
+
+on a separate file, meaning the library can be extended without changing library files
+
+```c++
+  template<typename O>
+  class FlashTextDef:public O {
+  protected:
+    const char *text PROGMEM;
+  public:
+    FlashTextDef(PGM_P t):text(t) {}
+    template<typename Out>
+    inline size_t out(Out& o) {
+      o.raw(reinterpret_cast<const __FlashStringHelper *>(text));
+      return O::out(o);//chain the call
+    }
+  };
+```
 
 ### Lessons learned
 

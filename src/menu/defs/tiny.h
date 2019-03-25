@@ -1,26 +1,7 @@
-/*
-on this essay, i'm testing an usable print chain
-where the output device provides both menu wise print as well as raw print
-print chain:
-`out<<item`
-  -> Output driver `out(Item&)`
-    -> `Item::out(Out&)``
-      -> `Out::raw(...)` this is a call back to the output driver
+/* -*- C++ -*- */
+#pragma once
 
-items colaborate with the oujtput driver to produce output
-*/
-
-#include <streamFlow.h>
-
-#include <menu.h>
-#include <menu/arduino.h>
-#include <menu/arduino/avr.h>
-#include <menu/items.h>
-#include <menu/IO/serialOut.h>
-#include <menu/components/flashText.h>
-using namespace AM5;
-using namespace AM5::Arduino;
-using namespace AM5::Arduino::Avr;
+#include "../menu.h"
 
 using Root=RootDef<Framework,Platform>;
 using Item=Root::Item;

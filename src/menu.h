@@ -113,43 +113,40 @@ namespace AM5 {
 
   };//RootDef
 
-
-  // template<typename F,typename P>
-  // using Root=RootDef<F,P>;
-  // template<typename R>
-  // inline RootFmt<R>& operator<<(RootFmt<R>& o, RootItem<R>& i) {
-  //   o.out(i);
-  //   return o;
-  // }
-  //
-  // template<typename T,typename R>
-  // inline RootFmt<R>& operator<<(RootFmt<R>& o, T& i) {
-  //   o.raw(i);
-  //   return o;
-  // }
-  //
-  // template<typename O,typename R>
-  // inline O& operator<<(O& o,RootItem<R>& i) {O::out(i);return o;}
-  //
-  // template<typename O,typename T>
-  // inline O& operator<<(O& o,T& i) {return o<<i;}
-
-  /*
-  Out<Comp<Root>>
-  call:
-  Out::operator<<(Item&)->Out::out(Item&)->virtual Prompt(Out&)->[virtual Out::raw(...)]->Root()
-
-  this way compositions are output device agnostic
-  and still depend on a Framwork/Platform
-
-  */
-
-  template<typename R>
-  using RootItem=typename R::Item;
-  template<typename R>
-  using RootFmt=typename R::Fmt;
+  template<typename F,typename P>
+  using RootItem=typename RootDef<F,P>::Item;
+  template<typename F,typename P>
+  using RootFmt=typename RootDef<F,P>::Fmt;
 
   template<typename F,typename P>
   size_t RootDef<F,P>::Fmt::out(Item& i) {return i.out(*this);}
+
+  /////////////////////////////////////////////////
+  template<typename F,typename P>
+  inline RootFmt<F,P>& operator<<(RootFmt<F,P>& o,RootItem<F,P>& i) {o.out(i);return o;}
+
+  template<typename F,typename P>
+  inline RootFmt<F,P>& operator<<(RootFmt<F,P>& o,const char i[]) {o.raw(i);return o;}
+  template<typename F,typename P>
+  inline RootFmt<F,P>& operator<<(RootFmt<F,P>& o,char i) {o.raw(i);return o;}
+  template<typename F,typename P>
+  inline RootFmt<F,P>& operator<<(RootFmt<F,P>& o,unsigned char i) {o.raw(i);return o;}
+  template<typename F,typename P>
+  inline RootFmt<F,P>& operator<<(RootFmt<F,P>& o,int i) {o.raw(i);return o;}
+  template<typename F,typename P>
+  inline RootFmt<F,P>& operator<<(RootFmt<F,P>& o,unsigned int i) {o.raw(i);return o;}
+  template<typename F,typename P>
+  inline RootFmt<F,P>& operator<<(RootFmt<F,P>& o,long i) {o.raw(i);return o;}
+  template<typename F,typename P>
+  inline RootFmt<F,P>& operator<<(RootFmt<F,P>& o,unsigned long i) {o.raw(i);return o;}
+  template<typename F,typename P>
+  inline RootFmt<F,P>& operator<<(RootFmt<F,P>& o,double i) {o.raw(i);return o;}
+  //arduino specific!!!!
+  template<typename F,typename P>
+  inline RootFmt<F,P>& operator<<(RootFmt<F,P>& o,const __FlashStringHelper *i) {o.raw(i);return o;}
+  template<typename F,typename P>
+  inline RootFmt<F,P>& operator<<(RootFmt<F,P>& o,const String &i) {o.raw(i);return o;}
+  template<typename F,typename P>
+  inline RootFmt<F,P>& operator<<(RootFmt<F,P>& o,const Printable&i) {o.raw(i);return o;}
 
 };//AM5
