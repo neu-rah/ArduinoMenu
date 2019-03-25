@@ -2,6 +2,50 @@
 
 **Generic menu/interactivity system for the arduino framework**
 
+## Current state
+
+_tiny.ino_ example is using a single option print-out chain
+
+with composing menu items, role description tags and role tag catch on output format
+
+output is also a composition, we can compose role tag format
+
+```c++
+#include <menu/def/tinyArduino.h>
+
+SerialOut serialOut;
+Op op("Example option");
+
+void setup() {
+  Serial.begin(115200);
+  while(!Serial);
+  serialOut<<op;
+}
+
+void loop() {}
+```
+
+outputs:
+```text
+[Example option]
+```
+
+_tinyArduino.h_ defines `SerialOut` and `Op` as:
+```c++
+/* -*- C++ -*- */
+//describing an output -----------------------------------------
+//MenuOutCap - top level adapter for menu output, wraps a type-level composition
+//WrapTitle - type level block will format all titles with surrounding []
+//SerialOutDev - an output device bound to a serial port (arduino)
+using SerialOut=MenuOutCap<WrapTitle<SerialOutDev<Serial>>>;
+
+//describing an option ------------------------------------
+// Prompt - top level adapter for menu items, wraps a type-level composition
+// asTitle - role description, its meaning is interpreted by
+//           an inner output device/format/filter (output composition chain)
+using Op=Prompt<asTitle<Text<Empty>>>;//option will be formatted as title
+```
+
 ## Development discussion about next menu version
 
 This is an experimental area, please contribute with ideas, experience or code. Thank you.
@@ -18,10 +62,12 @@ Things I wish were available:
 
 ### Embedded systems
 
-This classical approach to library development is not sufficient for embedded systems, modularity by includes is not enough as a means of optimization. As we start adding features soon the menu becomes tight on small devices.
+The AM4 approach to library development is not sufficient for embedded systems, modularity by includes is not enough as a means of optimization. As we start adding features soon the menu becomes tight on small devices.
 So we need to seek modularity even further.
 
 After some research and experimentation here are some considerations about various aspects of menu systems with focus on embedding.
+
+This can also be achieved with C style defines and code exclusion, both approaches are hard. Hopefully this one can be more succinct.
 
 ### Is it possible?
 

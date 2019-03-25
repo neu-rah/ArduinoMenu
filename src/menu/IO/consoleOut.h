@@ -6,4 +6,6 @@ using namespace std;
 
 #include "../menuOut.h"
 
-using ConsoleOutDef=OutDev<ostream,cout,Void>;
+namespace Menu {
+  using ConsoleOutDef=OutDev<ostream,cout,Void>;
+};//Menu

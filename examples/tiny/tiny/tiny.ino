@@ -1,14 +1,7 @@
-#include <streamFlow.h>
-
-#include <menu.h>
-#include <items.h>
-#include <menuIO/serialOut.h>
-
-using SerialOut=MenuOutCap<WrapTitle<SerialOutDef>>;
+#include <menu/def/tinyArduino.h>
 
 SerialOut serialOut;
-
-Prompt<asTitle<Text<Empty>>> op("Ok");
+Op op("Example option");
 
 void setup() {
   Serial.begin(115200);

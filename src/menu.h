@@ -1,11 +1,13 @@
 /* -*- C++ -*- */
 #pragma once
 
-#include <menuBase.h>
-#include <menuOut.h>
-#include <items.h>
+#include "menu/base.h"
+#include "menu/out.h"
+#include "menu/items.h"
 
-template<typename O>
-MenuOut& MenuOutCap<O>::operator<<(Item& i) {i.out(*this);return *this;}
+namespace Menu {
+  template<typename O>
+  MenuOut& MenuOutCap<O>::operator<<(Item& i) {i.out(*this);return *this;}
 
-inline MenuOut& operator<<(MenuOut& o, Item& i) {i.out(o);return o;}
+  inline MenuOut& operator<<(MenuOut& o, Item& i) {i.out(o);return o;}
+};//Menu
