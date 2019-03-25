@@ -12,14 +12,27 @@ output is also a composition, we can compose role tag format
 
 ```c++
 #include <menu/def/tinyArduino.h>
+using namespace Menu;
 
+//normal option
 SerialOut serialOut;
-Op op("Example option");
+Op op1("Op 1");
+
+//option using flash text
+const char op2_text[] PROGMEM="Op 2";
+FlashOp op2(op2_text);
+
+//they can fit on same array
+//and will preserve the composed behavior
+Item* ops[]{&op1,&op2};
 
 void setup() {
   Serial.begin(115200);
   while(!Serial);
-  serialOut<<op;
+  for(int n=0;n<sizeof(ops)/sizeof(Item*);n++) {
+    serialOut<<*ops[n];
+    Serial<<endl;
+  }
 }
 
 void loop() {}
@@ -44,6 +57,9 @@ using SerialOut=MenuOutCap<WrapTitle<SerialOutDev<Serial>>>;
 // asTitle - role description, its meaning is interpreted by
 //           an inner output device/format/filter (output composition chain)
 using Op=Prompt<asTitle<Text<Empty>>>;//option will be formatted as title
+
+//a menu option using flash text
+using FlashOp=Prompt<asTitle<FlashTextDef<Empty>>>;
 ```
 
 ## Development discussion about next menu version

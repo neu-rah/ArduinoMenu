@@ -2,8 +2,9 @@
 #pragma once
 
 #include <streamFlow.h>//https://github.com/neu-rah/streamFlow
-#include <menu.h>
-#include <menu/IO/serialOut.h>
+#include "../../menu.h"
+#include "../IO/serialOut.h"
+#include "../comp/flashText.h"
 
 using namespace Menu;
 
@@ -18,3 +19,6 @@ using SerialOut=MenuOutCap<WrapTitle<SerialOutDev<Serial>>>;
 // asTitle - role description, its meaning is interpreted by
 //           an inner output device/format/filter (output composition chain)
 using Op=Prompt<asTitle<Text<Empty>>>;//option will be formatted as title
+
+//a menu option using flash text
+using FlashOp=Prompt<asTitle<FlashTextDef<Empty>>>;

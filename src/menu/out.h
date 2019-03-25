@@ -7,10 +7,11 @@ namespace Menu {
   ///////////////////////////////////////////////////////////////////
   // output interface
   struct MenuOut {
-    virtual MenuOut& operator<<(Item& i) {return *this;}
-    virtual MenuOut& operator<<(const char* i) {return *this;}
-    virtual MenuOut& operator<<(char i) {return *this;}
-    virtual MenuOut& operator<<(unsigned char i) {return *this;}
+    virtual MenuOut& operator<<(Item&) {return *this;}
+    virtual MenuOut& operator<<(const char*) {return *this;}
+    virtual MenuOut& operator<<(char) {return *this;}
+    virtual MenuOut& operator<<(unsigned char) {return *this;}
+    virtual MenuOut& operator<<(const __FlashStringHelper *i) {return *this;}
     template<Roles role>
     void fmt(bool io) {}
     virtual void fmtTitle(bool io) {}
@@ -25,6 +26,7 @@ namespace Menu {
     MenuOut& operator<<(const char* i) override {O::raw(i);return *this;}
     MenuOut& operator<<(char i) override {O::raw(i);return *this;}
     MenuOut& operator<<(unsigned char i) override {O::raw(i);return *this;}
+    MenuOut& operator<<(const __FlashStringHelper * i) override {O::raw(i);return *this;}
     void fmtTitle(bool io) override {O::fmtTitle(io);}
   };
 
@@ -52,6 +54,7 @@ namespace Menu {
     static inline void raw(const char*i) {dev<<i;}
     static inline void raw(char i) {dev<<i;}
     static inline void raw(unsigned char i) {dev<<i;}
+    static inline void raw(const __FlashStringHelper * i) {dev<<i;}
     //.. add more type here
   };
 };//Menu
