@@ -11,7 +11,9 @@ namespace Menu {
     virtual MenuOut& operator<<(const char*) {return *this;}
     virtual MenuOut& operator<<(char) {return *this;}
     virtual MenuOut& operator<<(unsigned char) {return *this;}
-    virtual MenuOut& operator<<(const __FlashStringHelper *i) {return *this;}
+    #ifdef ARDUINO
+      virtual MenuOut& operator<<(const __FlashStringHelper *i) {return *this;}
+    #endif
     template<Roles role>
     void fmt(bool io) {}
     virtual void fmtTitle(bool io) {}
@@ -26,7 +28,9 @@ namespace Menu {
     MenuOut& operator<<(const char* i) override {O::raw(i);return *this;}
     MenuOut& operator<<(char i) override {O::raw(i);return *this;}
     MenuOut& operator<<(unsigned char i) override {O::raw(i);return *this;}
-    MenuOut& operator<<(const __FlashStringHelper * i) override {O::raw(i);return *this;}
+    #ifdef ARDUINO
+      MenuOut& operator<<(const __FlashStringHelper * i) override {O::raw(i);return *this;}
+    #endif
     void fmtTitle(bool io) override {O::fmtTitle(io);}
   };
 
@@ -56,7 +60,9 @@ namespace Menu {
     static inline void raw(const char*i) {dev<<i;}
     static inline void raw(char i) {dev<<i;}
     static inline void raw(unsigned char i) {dev<<i;}
-    static inline void raw(const __FlashStringHelper * i) {dev<<i;}
+    #ifdef ARDUINO
+      static inline void raw(const __FlashStringHelper * i) {dev<<i;}
+    #endif
     //.. add more type here
   };
 };//Menu

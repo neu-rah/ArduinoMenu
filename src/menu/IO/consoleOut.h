@@ -4,7 +4,7 @@
 #include <iostream>
 using namespace std;
 
-#include "../menuOut.h"
+#include "../out.h"
 
 namespace Menu {
   using ConsoleOutDef=OutDev<ostream,cout,Void>;
