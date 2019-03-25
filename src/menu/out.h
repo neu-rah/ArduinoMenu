@@ -36,11 +36,13 @@ namespace Menu {
     template<typename T>
     void raw(T) {}//just ignore stuff
     void fmtTitle(bool io) {}
+    enum OUTPUT_BASE {};//do not define this elsewhere
   };
 
   //just and example of wrapper/formnat
   template<typename O,char pref='[',char suf=']'>
   struct WrapTitle:public O {
+    using RAW_DEVICE=typename O::RAW_DEVICE;//must have a raw device!
     void fmtTitle(bool io) {//io: true->start, false->end
       this->O::raw(io?pref:suf);
     }
@@ -50,7 +52,7 @@ namespace Menu {
   //use any stream as menu output
   template<typename Dev, Dev& dev, typename O>
   struct OutDev:public O {
-    // inline void out(Item& i) override {i.out()}
+    enum RAW_DEVICE {};
     static inline void raw(const char*i) {dev<<i;}
     static inline void raw(char i) {dev<<i;}
     static inline void raw(unsigned char i) {dev<<i;}

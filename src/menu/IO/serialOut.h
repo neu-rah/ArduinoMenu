@@ -8,7 +8,8 @@ namespace Menu {
 
   template<decltype(Serial)& dev=Serial, typename O=Void>
   struct SerialOutDev:public O {
-    // inline void out(Item& i) override {i.out()}
+    enum RAW_DEVICE {};
+    // using MUST_BE_AT_OUTPUT_BASE=O::OUTPUT_BASE;//or maybe not
     static inline void raw(const char*i) {dev<<i;}
     static inline void raw(char i) {dev<<i;}
     static inline void raw(unsigned char i) {dev<<i;}
