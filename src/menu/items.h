@@ -12,7 +12,7 @@ namespace Menu {
   };
 
   template<typename O>
-  struct Prompt:public Item,public O {
+  struct Prompt:public virtual Item,public O {
     using O::O;
     void out(MenuOut &o) override {O::out(o);}
   };
