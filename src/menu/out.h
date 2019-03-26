@@ -12,6 +12,7 @@ namespace Menu {
     virtual MenuOut& operator<<(char) {return *this;}
     virtual MenuOut& operator<<(unsigned char) {return *this;}
     #ifdef ARDUINO
+      MenuOut& operator<<(endlObj) {return *this;}
       virtual MenuOut& operator<<(const __FlashStringHelper *i) {return *this;}
     #endif
     template<Roles role>
@@ -29,6 +30,7 @@ namespace Menu {
     MenuOut& operator<<(char i) override {O::raw(i);return *this;}
     MenuOut& operator<<(unsigned char i) override {O::raw(i);return *this;}
     #ifdef ARDUINO
+      MenuOut& operator<<(endlObj) {O::raw("\n");return *this;}
       MenuOut& operator<<(const __FlashStringHelper * i) override {O::raw(i);return *this;}
     #endif
     void fmtTitle(bool io) override {O::fmtTitle(io);}
