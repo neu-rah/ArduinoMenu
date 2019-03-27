@@ -6,7 +6,6 @@
 #include <menu/comp/multiLang.h>
 
 enum LangCodes:size_t {textOk,textCancel};
-
 Text enLang[]{"Ok","Cancel"};
 Text ptLang[]{"Vá","Esquece"};
 
