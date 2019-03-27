@@ -3,6 +3,7 @@
 #include <Dump.h>
 using namespace Menu;
 
+using FlashText=FlashTextDef<Empty>;
 
 //string id's
 enum LangCodes:size_t {textOk=0,textCancel,langStringsCnt};
@@ -15,13 +16,15 @@ const PROGMEM char ok_pt[]="Vá";
 const PROGMEM char cancel_en[]="Cancel";
 const PROGMEM char cancel_pt[]="Esquece";
 
-using MultiLang=Lang<FlashTextDef<Empty>>;
-//define MultiLang::texts table
-const PROGMEM MultiLang::TextsType enLang[]{ok_en,cancel_en};
-const PROGMEM MultiLang::TextsType ptLang[]{ok_pt,cancel_pt};
+using MultiLang=Lang<FlashText>;
+// define MultiLang::texts table
+const PROGMEM FlashText enLang[]{ok_en,cancel_en};
+const PROGMEM FlashText ptLang[]{ok_pt,cancel_pt};
+
+MultiLang langs(enLang);
 
 template<LangCodes id>
-using LangOp=Prompt<asTitle<MultiLang::Text<id>>>;
+using LangOp=Prompt<MultiLang::Text<langs,id>>;
 
 //normal option
 SerialOut serialOut;
@@ -41,16 +44,12 @@ Item* ops[]{&op1,&op2,&op3,&op4};
 void setup() {
   Serial.begin(115200);
   while(!Serial);
-  for(int n=0;n<sizeof(ops)/sizeof(Item*);n++) {
-    serialOut<<*ops[n];
-    Serial<<endl;
-  }
+  serialOut<<"AM5 tiny example ----"<<endl;
+  for(auto o: ops) serialOut<<*o<<endl;
   Serial<<"change language ----"<<endl;
-  MultiLang::setLangTable(ptLang);
-  for(int n=0;n<sizeof(ops)/sizeof(Item*);n++) {
-    serialOut<<*ops[n];
-    Serial<<endl;
-  }
+  langs.setLangTable(ptLang);
+  for(auto o: ops) serialOut<<*o<<endl;
+  serialOut<<"----"<<endl;
 }
 
 void loop() {}

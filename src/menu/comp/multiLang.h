@@ -7,17 +7,20 @@
 static int langSel=0;
 
 namespace Menu {
-  template<typename TO,typename T=const char *>
+  template<typename T> //=const char *>
   struct Lang {
-    using TextsType=T;
-    Lang(TextsType& lt) {texts=&lt;}
-    template<size_t id>
-    class Text {
     public:
-      inline void out(MenuOut &o) {TO(texts[id]).out(o);}
-    };
-    static inline void setLangTable(TextsType lt) {texts=lt;}
-  protected:
-    static TextsType texts;
+      using This=Lang<T>;
+      using TextsType=T;
+    protected:
+      TextsType* texts;
+    public:
+      Lang(TextsType* lt):texts(lt) {}
+      template<This& lang,size_t id>
+      class Text {
+      public:
+        inline void out(MenuOut &o) {lang.texts[id].out(o);}
+      };
+      inline void setLangTable(TextsType* lt) {texts=lt;}
   };
 };
