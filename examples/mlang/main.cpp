@@ -4,48 +4,45 @@
 
 #include <menu/def/console.h>
 #include <menu/comp/multiLang.h>
-using namespace Menu;
-
-enum Langs {en,pt,cnt};
 
 enum LangCodes:size_t {textOk,textCancel};
 
-using MultiLang=Lang<Langs>;
+Text enLang[]{"Ok","Cancel"};
+Text ptLang[]{"Vá","Esquece"};
 
-template<>
-const char* MultiLang::texts[][cnt]{
-  {"Ok","Vá"},//textOk
-  {"Cancel","Esquece"}//textCancel
-};
+using MultiLang=Menu::Lang<Text>;
+MultiLang langs(enLang);
 
 template<LangCodes id>
-using LangOp=Prompt<asTitle<MultiLang::Text<id,Text<Empty>>>>;
+using LangOp=Prompt<asTitle<MultiLang::Text<langs,id>>>;
 
 ConsoleOut consoleOut;
 
 //normal option
-Op op1("Op 1");
+Prompt<Op> op1("Op 1");
 
 //option using flash text
-Op op2("Op 2");
+Prompt<Op> op2("Op 2");
 
 LangOp<textOk> op3;
 LangOp<textCancel> op4;
 
 //they can fit on same array
 //and will preserve the composed behavior
-Item* ops[]{&op1,&op2,&op3,&op4};
+Menu::Item* ops[]{&op1,&op2,&op3,&op4};
 
 int main(int,const char**) {
-  for(int n=0;n<sizeof(ops)/sizeof(Item*);n++) {
-    consoleOut<<*ops[n];
+  cout<<"AM5 example ----"<<endl;
+  for(auto o: ops) {
+    consoleOut<<*o;
     cout<<endl;
   }
-  cout<<"change language"<<endl;
-  MultiLang::sel=pt;
+  cout<<"change language ----"<<endl;
+  langs.setLangTable(ptLang);
 
-  for(int n=0;n<sizeof(ops)/sizeof(Item*);n++) {
-    consoleOut<<*ops[n];
+  for(auto o: ops) {
+    consoleOut<<*o;
     cout<<endl;
   }
+  cout<<"----"<<endl;
 }

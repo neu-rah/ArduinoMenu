@@ -2,6 +2,7 @@
 #pragma once
 
 #include <Arduino.h>
+#include <streamFlow.h>
 #include "../out.h"
 
 namespace Menu {

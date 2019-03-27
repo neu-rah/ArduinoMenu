@@ -16,23 +16,22 @@ const PROGMEM char ok_pt[]="Vá";
 const PROGMEM char cancel_en[]="Cancel";
 const PROGMEM char cancel_pt[]="Esquece";
 
-using MultiLang=Lang<FlashText>;
-// define MultiLang::texts table
 const PROGMEM FlashText enLang[]{ok_en,cancel_en};
 const PROGMEM FlashText ptLang[]{ok_pt,cancel_pt};
 
+using MultiLang=Lang<FlashText>;
 MultiLang langs(enLang);
 
 template<LangCodes id>
-using LangOp=Prompt<MultiLang::Text<langs,id>>;
+using LangOp=Prompt<asTitle<MultiLang::Text<langs,id>>>;
 
 //normal option
 SerialOut serialOut;
-Op op1("Op 1");
+Prompt<Op> op1("Op 1");
 
 //option using flash text
 const char op2_text[] PROGMEM="Op 2";
-FlashOp op2(op2_text);
+Prompt<FlashOp> op2(op2_text);
 
 LangOp<textOk> op3;
 LangOp<textCancel> op4;
