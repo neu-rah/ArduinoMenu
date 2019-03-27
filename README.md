@@ -15,8 +15,10 @@ output is also a composition, we can compose role tag format
 
 using FlashText=FlashTextDef<Empty>;
 
-//normal option
+//serial output
 SerialOut serialOut;
+
+//normal option
 Prompt<Op> op1("Op 1");
 
 //option using flash text
