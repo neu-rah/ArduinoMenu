@@ -1,7 +1,4 @@
 #include <menu/def/tinyArduino.h>
-#include <menu/comp/multiLang.h>
-#include <Dump.h>
-using namespace Menu;
 
 using FlashText=FlashTextDef<Empty>;
 
@@ -21,7 +18,7 @@ void setup() {
   Serial.begin(115200);
   while(!Serial);
   serialOut<<"AM5 tiny example ----"<<endl;
-  //and we print them, just
+  //and we print them, just.
   for(auto o: ops) serialOut<<*o<<endl;
   serialOut<<"----"<<endl;
 }

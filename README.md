@@ -12,15 +12,16 @@ output is also a composition, we can compose role tag format
 
 ```c++
 #include <menu/def/tinyArduino.h>
-using namespace Menu;
+
+using FlashText=FlashTextDef<Empty>;
 
 //normal option
 SerialOut serialOut;
-Op op1("Op 1");
+Prompt<Op> op1("Op 1");
 
 //option using flash text
 const char op2_text[] PROGMEM="Op 2";
-FlashOp op2(op2_text);
+Prompt<FlashOp> op2(op2_text);
 
 //they can fit on same array
 //and will preserve the composed behavior
@@ -29,10 +30,10 @@ Item* ops[]{&op1,&op2};
 void setup() {
   Serial.begin(115200);
   while(!Serial);
-  for(int n=0;n<sizeof(ops)/sizeof(Item*);n++) {
-    serialOut<<*ops[n];
-    Serial<<endl;
-  }
+  serialOut<<"AM5 tiny example ----"<<endl;
+  //and we print them, just.
+  for(auto o: ops) serialOut<<*o<<endl;
+  serialOut<<"----"<<endl;
 }
 
 void loop() {}
@@ -47,6 +48,15 @@ outputs:
 _tinyArduino.h_ defines `SerialOut`, `Op` and `FlashOp` as:
 ```c++
 /* -*- C++ -*- */
+#pragma once
+
+#include <streamFlow.h>//https://github.com/neu-rah/streamFlow
+#include "../../menu.h"
+#include "../IO/serialOut.h"
+#include "../comp/flashText.h"
+
+using namespace Menu;
+
 //describing an output -----------------------------------------
 //MenuOutCap - top level adapter for menu output, wraps a type-level composition
 //WrapTitle - type level block will format all titles with surrounding []
@@ -54,13 +64,12 @@ _tinyArduino.h_ defines `SerialOut`, `Op` and `FlashOp` as:
 using SerialOut=MenuOutCap<WrapTitle<SerialOutDev<Serial>>>;
 
 //describing an option ------------------------------------
-// Prompt - top level adapter for menu items, wraps a type-level composition
 // asTitle - role description, its meaning is interpreted by
 //           an inner output device/format/filter (output composition chain)
-using Op=Prompt<asTitle<Text<Empty>>>;//option will be formatted as title
+using Op=asTitle<Text<Empty>>;//option will be formatted as title
 
 //a menu option using flash text
-using FlashOp=Prompt<asTitle<FlashTextDef<Empty>>>;
+using FlashOp=asTitle<FlashTextDef<Empty>>;
 ```
 
 ## Development discussion about next menu version
