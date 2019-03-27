@@ -43,8 +43,10 @@ void loop() {}
 
 outputs:
 ```text
+AM5 tiny example ----
 [Op 1]
 [Op 2]
+----
 ```
 
 _tinyArduino.h_ defines `SerialOut`, `Op` and `FlashOp` as:
