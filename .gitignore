@@ -17,3 +17,5 @@ examples/clickEncoder
 examples/screenNav
 /dev
 /examples/dev
+/composition_test
+/examples/tiny

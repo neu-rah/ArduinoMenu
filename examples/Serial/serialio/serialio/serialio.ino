@@ -32,7 +32,7 @@ result action1(eventMask e) {
   return proceed;
 }
 
-result action2(eventMask e, prompt &item) {
+result action2(eventMask e,navNode& nav,prompt& item) {
   Serial.print(e);
   Serial.print(" action2 executed, quiting menu");
   return quit;
