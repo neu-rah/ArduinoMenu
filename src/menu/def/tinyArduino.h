@@ -6,18 +6,32 @@
 #include "../IO/serialOut.h"
 #include "../comp/flashText.h"
 
-using namespace Menu;
+template<typename O>
+using MenuOut=Menu::MenuOutCap<O>;
 
 //describing an output -----------------------------------------
 //MenuOutCap - top level adapter for menu output, wraps a type-level composition
 //WrapTitle - type level block will format all titles with surrounding []
 //SerialOutDev - an output device bound to a serial port (arduino)
-using SerialOut=MenuOutCap<WrapTitle<SerialOutDev<Serial>>>;
+using SerialOut=Menu::WrapTitle<Menu::SerialOutDev<Serial>>;
+
+template<typename O>
+using asTitle=Menu::asTitle<O>;
+using Text=Menu::Text<Menu::Empty>;
 
 //describing an option ------------------------------------
 // asTitle - role description, its meaning is interpreted by
 //           an inner output device/format/filter (output composition chain)
-using Op=asTitle<Text<Empty>>;//option will be formatted as title
+using Op=Text;
+
+using FlashText=Menu::FlashTextDef<Menu::Empty>;
 
 //a menu option using flash text
-using FlashOp=asTitle<FlashTextDef<Empty>>;
+using FlashOp=FlashText;
+
+using Item=Menu::Item;
+template<typename O>
+using Prompt=Menu::Prompt<O>;
+
+template<size_t n>
+using StaticMenu=Menu::StaticMenu<n,asTitle<Text>>;

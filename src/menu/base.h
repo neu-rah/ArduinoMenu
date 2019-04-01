@@ -7,7 +7,7 @@ namespace Menu {
 
   //////////////////////////////////////////////////////////
   // roles -----------------
-  enum class Roles {Title,Item,Menu,Panel,Pad};
+  enum class Roles {Self,Menu,Panel,Title,Item,Pad,Accel,Cursor,Label,Mode,Value,Unit};
 
   template<Roles role,typename O,void (MenuOut::*f)(bool)>
   struct Role:public O {

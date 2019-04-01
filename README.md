@@ -2,13 +2,17 @@
 
 **Generic menu/interactivity system for the arduino framework**
 
+## Development discussion about next menu version
+
+This is an experimental area, please contribute with ideas, experience or code. Thank you.
+
 ## Current state
 
 _tiny.ino_ example is using a single option print-out chain
 
 with composing menu items, role description tags and role tag catch on output format
 
-output is also a composition, we can compose role tag format
+output is also a composition, we can compose role tag format handlers and translations.
 
 ```c++
 #include <menu/def/tinyArduino.h>
@@ -41,12 +45,18 @@ void setup() {
 void loop() {}
 ```
 
-outputs:
+**outputs:**
 ```text
 AM5 tiny example ----
 [Op 1]
 [Op 2]
 ----
+```
+
+**footprint:**
+```text
+DATA:    [=         ]  14.1% (used 288 bytes from 2048 bytes)
+PROGRAM: [=         ]   7.5% (used 2306 bytes from 30720 bytes)
 ```
 
 _tinyArduino.h_ defines `SerialOut`, `Op` and `FlashOp` as:
@@ -76,10 +86,6 @@ using Op=asTitle<Text<Empty>>;//option will be formatted as title
 using FlashOp=asTitle<FlashTextDef<Empty>>;
 ```
 
-## Development discussion about next menu version
-
-This is an experimental area, please contribute with ideas, experience or code. Thank you.
-
 https://gitter.im/ArduinoMenu/Lobby
 
 ### Why a new version
@@ -101,9 +107,9 @@ This can also be achieved with C style defines and code exclusion, both approach
 
 ### Is it possible?
 
-You might be using a single line display, therefor printing a menu title is useless and inconvenient.  
-instead of having a run-time config and code checking if title enabled and skipping title prints on single line devices even if active makes a menu system easy to use but also makes it heavier. Examples like this are behind all assumptions we make about a menu system.  
-So instead of having extra runtime check/config we opt instead on having compile time compositions, think it like, if you want title on your menus you can simply include that part on the construct.  
+You might be using a single line display, therefore printing a menu title is useless and inconvenient.  
+instead of having a run-time config and code checking if title enabled and skipping title prints on single line devices even if active make a menu system easy to use but also makes it heavier. Examples like this are behind all assumptions we make about a menu system.  
+So instead of having extra runtime check/config we opt instead on having compile-time compositions, think it like, if you want the title on your menus you can simply include that part on the construct.  
 Shifting the burden to compile time reduces the run-time checking, code size and increases speed.
 
 _**technical:** using type to guide the composition decision, not used code vanish at compile time._
@@ -114,7 +120,7 @@ Instead of setting a menu structure to reside on flash or on ram we can use them
 
 #### No assumptions
 
-Assumptions reveal most of the time a trade or a burden, assuming that all prompts/options will have a text might not be correct, useful or sufficient, some systems might need multiple texts for multi-language.
+Assumptions reveal most of the time, a trade or a burden, assuming that all prompts/options will have a text might not be correct, useful or sufficient, some systems might need multiple texts for multi-language.
 Same goes to all assumptions about menus, even associated actions.
 
 #### Composition (type level)

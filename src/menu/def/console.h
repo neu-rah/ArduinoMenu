@@ -7,7 +7,9 @@ using namespace std;
 #include "../../menu.h"
 #include "../IO/consoleOut.h"
 
-// using namespace Menu;
+/*
+tipical definitions for standard output
+*/
 
 //describing an output -----------------------------------------
 using ConsoleOut=Menu::MenuOutCap<Menu::WrapTitle<Menu::ConsoleOutDef>>;
