@@ -16,8 +16,6 @@ namespace Menu {
       virtual MenuOut& operator<<(endlObj) {return *this;}
       virtual MenuOut& operator<<(const __FlashStringHelper *i) {return *this;}
     #endif
-    template<Roles role>
-    void fmt(bool io) {}
     virtual void fmtMenu(bool io) {}
     virtual void fmtPanel(bool io) {}
     virtual void fmtTitle(bool io) {}

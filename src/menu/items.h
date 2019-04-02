@@ -34,10 +34,16 @@ namespace Menu {
     }
     size_t size() override {return O::size();}
     Item& operator[](size_t n) override {return O::operator[](n);}
+    template<template<typename> class T>
+    void stack(MenuOut &o) {
+      Prompt<T<O>>(*this).out(o);
+    }
   };
 
   //static composition blocks -----------------------
   struct Empty {
+    Empty() {}
+    Empty(Empty&) {}
     static inline void out(MenuOut&) {}
     static inline size_t size() {return 1;}
     inline Item& operator[](size_t n) {return *reinterpret_cast<Item*>(this);}
@@ -47,6 +53,7 @@ namespace Menu {
   struct Text:public O {
     const char* text;
     inline Text(const char* text):text(text) {}
+    inline Text(const Text<O>& t):text(t.text) {}
     inline void out(MenuOut &o) {o<<text;}
   };
 

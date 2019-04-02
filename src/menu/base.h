@@ -12,6 +12,7 @@ namespace Menu {
   template<Roles role,typename O,void (MenuOut::*f)(bool)>
   struct Role:public O {
     using O::O;
+    Role(O& o):O(o) {}
     inline void out(MenuOut&);
     inline void fmt(MenuOut& o,bool io);
   };

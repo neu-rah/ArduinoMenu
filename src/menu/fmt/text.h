@@ -7,7 +7,11 @@ namespace Menu {
   struct TextFmt:public O {
     using RAW_DEVICE=typename O::RAW_DEVICE;//must have a raw device!
     void fmtTitle(bool io) {
-      if (!io) O::raw(endl);
+      if (io) O::raw("[");
+      else {
+        O::raw("]");
+        O::raw(endl);
+      }
     }
   };
 
