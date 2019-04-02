@@ -16,8 +16,8 @@ namespace Menu {
     using This=FullPrinter<O>;
     using O::O;
     using RAW_DEVICE=typename O::RAW_DEVICE;//must have a raw device!
-    void printMenu(Item& o) {
-      //TODO: need to call parts here (type composed)
+    void printMenuRaw(Item& o) {
+      O::printMenuRaw(o);
       for(size_t n=0;n<o.size();n++)
         o[n].out(*(MenuOut*)this);
     }
@@ -27,9 +27,15 @@ namespace Menu {
   struct TitlePrinter:public O {
     using O::O;
     using RAW_DEVICE=typename O::RAW_DEVICE;//must have a raw device!
-    void printMenu(Item& o) {
-      o.out(*(MenuOut*)this);//TODO: need viewport for non-text devices
-      O::printMenu(o);
+    void printMenuRaw(Item& o) {
+      Serial<<"TitlePrinter::printMenuRaw"<<endl;
+      #if (MENU_INJECT_PARTS==true)
+        PrinterPart pp;
+        o.out(*reinterpret_cast<MenuOutCap<TitlePrinter<O>>*>(this),pp);
+      #else
+        o.out(*(MenuOut*)this);//TODO: need viewport for non-text devices
+      #endif
+      O::printMenuRaw(o);
     }
   };
 };//Menu namespace

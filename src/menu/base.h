@@ -1,9 +1,15 @@
 /* -*- C++ -*- */
 #pragma once
 
+
 namespace Menu {
+  #define MENU_INJECT_PARTS false
   struct Item;
+  template<typename> struct Prompt;
   struct MenuOut;
+  #if (MENU_INJECT_PARTS==true)
+    struct PrinterPart;
+  #endif
 
   //////////////////////////////////////////////////////////
   // roles -----------------

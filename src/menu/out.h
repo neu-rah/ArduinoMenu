@@ -26,6 +26,7 @@ namespace Menu {
     virtual void fmtMode(bool io) {}
     virtual void fmtValue(bool io) {}
     virtual void fmtUnit(bool io) {}
+    virtual void printMenu(Item&) {}
   };
 
   template<typename O> using asMenu=Role<Roles::Menu,O,&MenuOut::fmtMenu>;
@@ -41,6 +42,7 @@ namespace Menu {
 
   template<typename O>
   struct MenuOutCap:public MenuOut,public O {
+    // using This=MenuOutCap<asMenu<O>>;
     MenuOut& operator<<(Item& i) override;
     MenuOut& operator<<(const char* i) override {O::raw(i);return *this;}
     MenuOut& operator<<(char i) override {O::raw(i);return *this;}
@@ -59,6 +61,7 @@ namespace Menu {
     void fmtMode(bool io) override {O::fmtMode(io);}
     void fmtValue(bool io) override {O::fmtValue(io);}
     void fmtUnit(bool io) override {O::fmtUnit(io);}
+    void printMenu(Item& i) override {O::printMenuRaw(i);}
   };
 
   //base for output combinators --------------------------
@@ -76,6 +79,7 @@ namespace Menu {
     void fmtMode  (bool io) {}
     void fmtValue (bool io) {}
     void fmtUnit  (bool io) {}
+    void printMenuRaw(Item& o) {}
     enum OUTPUT_BASE {};//do not define this elsewhere
 };
 

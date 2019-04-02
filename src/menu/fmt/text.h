@@ -6,6 +6,11 @@ namespace Menu {
   template<typename O>
   struct TextFmt:public O {
     using RAW_DEVICE=typename O::RAW_DEVICE;//must have a raw device!
+    void fmtMenu(bool io) {
+      O::raw("-----------");
+      O::raw(endl);
+    }
+    void fmtItem(bool io) {if (!io) O::raw(endl);}
     void fmtTitle(bool io) {
       if (io) O::raw("[");
       else {

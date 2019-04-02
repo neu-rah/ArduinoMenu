@@ -13,7 +13,7 @@ using MenuOut=Menu::MenuOutCap<O>;
 //MenuOutCap - top level adapter for menu output, wraps a type-level composition
 //WrapTitle - type level block will format all titles with surrounding []
 //SerialOutDev - an output device bound to a serial port (arduino)
-using SerialOut=Menu::WrapTitle<Menu::SerialOutDev<Serial>>;
+using SerialOut=Menu::SerialOutDev<Serial>;
 
 template<typename O>
 using asTitle=Menu::asTitle<O>;
@@ -22,16 +22,21 @@ using Text=Menu::Text<Menu::Empty>;
 //describing an option ------------------------------------
 // asTitle - role description, its meaning is interpreted by
 //           an inner output device/format/filter (output composition chain)
-using Op=Text;
+using Op=Menu::asItem<Text>;
 
 using FlashText=Menu::FlashTextDef<Menu::Empty>;
 
 //a menu option using flash text
-using FlashOp=FlashText;
+using FlashOp=Menu::asItem<FlashText>;
 
 using Item=Menu::Item;
 template<typename O>
 using Prompt=Menu::Prompt<O>;
 
 template<size_t n>
-using StaticMenu=Menu::StaticMenu<n,asTitle<Text>>;
+using StaticMenu=Menu::asMenu<
+  Menu::StaticMenu<
+    n,
+    asTitle<Text>
+  >
+>;

@@ -20,6 +20,9 @@ namespace Menu {
   // menu items -----------------------------------
   struct Item {
     virtual void out(MenuOut& o) {}
+    #if (MENU_INJECT_PARTS==true)
+      virtual void out(MenuOut& o,PrinterPart& pp) {}
+    #endif
     virtual size_t size() {return 1;}
     virtual Item& operator[](size_t) {return *this;}
   };
@@ -29,21 +32,40 @@ namespace Menu {
   template<typename O>
   struct Prompt:public virtual Item,public O {
     using O::O;
-    void out(MenuOut &o) override {
-      O::out(o);
-    }
+    using This=Prompt<O>;
+    inline void out(MenuOut& o) override {O::out(o);}
+    #if (MENU_INJECT_PARTS==true)
+      void out(MenuOut& o,PrinterPart& pp) override;
+    #endif
     size_t size() override {return O::size();}
     Item& operator[](size_t n) override {return O::operator[](n);}
     template<template<typename> class T>
-    void stack(MenuOut &o) {
-      Prompt<T<O>>(*this).out(o);
-    }
+    //type injection
+    inline void stack(MenuOut& o) {Prompt<T<O>>(*this).out(o);}
   };
+
+  #if (MENU_INJECT_PARTS==true)
+    struct PrinterPart {
+      template<typename O>
+      void use(MenuOut& o,Prompt<O>& i) {
+        Serial<<"PrinterPart::use..."<<endl;
+        Prompt<O>(i).out(o);
+        // i.stack<part>(o);
+      }
+    };
+  #endif
+
+  #if (MENU_INJECT_PARTS==true)
+    template<typename O>
+    void Prompt<O>::out(MenuOut& o,PrinterPart& pp) {
+      pp.use<O>(o,*this);
+    }
+  #endif
 
   //static composition blocks -----------------------
   struct Empty {
-    Empty() {}
-    Empty(Empty&) {}
+    inline Empty() {}
+    inline Empty(Empty&) {}
     static inline void out(MenuOut&) {}
     static inline size_t size() {return 1;}
     inline Item& operator[](size_t n) {return *reinterpret_cast<Item*>(this);}
