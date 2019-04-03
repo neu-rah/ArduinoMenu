@@ -1,5 +1,5 @@
 #include <menu/def/tinyArduino.h>
-#include <menu/printer/full.h>
+#include <menu/printers.h>
 #include <menu/fmt/text.h>
 #include <menu/fmt/debug.h>
 #include <menu/comp/flashMenu.h>

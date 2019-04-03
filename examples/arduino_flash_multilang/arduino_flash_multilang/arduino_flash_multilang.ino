@@ -1,6 +1,6 @@
 #include <menu/def/tinyArduino.h>
 #include <menu/comp/multiLang.h>
-#include <menu/printer/full.h>
+#include <menu/printers.h>
 #include <menu/fmt/text.h>
 #include <menu/fmt/debug.h>
 #include <Dump.h>

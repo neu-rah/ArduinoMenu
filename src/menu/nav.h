@@ -1,22 +1,23 @@
 /* -*- C++ -*- */
 #pragma once
 
-#include "../items.h"
+#include "items.h"
 
 namespace Menu {
 
   template<typename O>
   class NavNode:public O {
     protected:
-      size_t sel;
+      size_t sel=0;
     public:
+      using O::O;
       constexpr static inline bool canNav() {return true;}
-      void up() {if (sel>0) sel--;}
-      void down() {if (sel<size()-1) sel++;}
-      void left() {up();}
-      void left() {down();}
-      void enter() {}
-      void esc() {}
+      inline void up() {if (sel>0) sel--;}
+      inline void down() {if (sel<size()-1) sel++;}
+      static inline void left() {up();}
+      static inline void right() {down();}
+      static inline void enter() {}
+      static inline void esc() {}
   };
 
 };//Menu namespace
