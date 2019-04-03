@@ -1,7 +1,6 @@
 /* -*- C++ -*- */
 #pragma once
 
-
 namespace Menu {
   #define MENU_INJECT_PARTS false
   struct Item;

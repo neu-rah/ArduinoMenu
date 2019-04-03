@@ -39,8 +39,8 @@ namespace Menu {
     #endif
     size_t size() override {return O::size();}
     Item& operator[](size_t n) override {return O::operator[](n);}
+    //type injection, alls should have copy constructor and they must align
     template<template<typename> class T>
-    //type injection
     inline void stack(MenuOut& o) {Prompt<T<O>>(*this).out(o);}
   };
 
@@ -76,7 +76,10 @@ namespace Menu {
     const char* text;
     inline Text(const char* text):text(text) {}
     inline Text(const Text<O>& t):text(t.text) {}
-    inline void out(MenuOut &o) {o<<text;}
+    inline void out(MenuOut &o) {
+      o<<text;
+      O::out(o);
+    }
   };
 
   template<size_t n,typename O>

@@ -88,7 +88,14 @@ namespace Menu {
   struct WrapTitle:public O {
     using RAW_DEVICE=typename O::RAW_DEVICE;//must have a raw device!
     void fmtTitle(bool io) {//io: true->start, false->end
-      this->O::raw(io?pref:suf);
+      // Serial<<(io?"{":"|")<<"WrapTitle"<<(io?"|":"}")<<endl;
+      if (io) {
+        O::raw(pref);
+        O::fmtTitle(io);
+      } else {
+        O::fmtTitle(io);
+        O::raw(suf);
+      }
     }
   };
 

@@ -17,9 +17,12 @@ namespace Menu {
     using O::O;
     using RAW_DEVICE=typename O::RAW_DEVICE;//must have a raw device!
     void printMenuRaw(Item& o) {
+      Serial<<"FullPrinter::printMenuRaw"<<endl;
+      O::fmtMenu(true);
       O::printMenuRaw(o);
       for(size_t n=0;n<o.size();n++)
         o[n].out(*(MenuOut*)this);
+      O::fmtMenu(false);
     }
   };
 
