@@ -17,6 +17,14 @@ namespace Menu {
         O::endl();
       }
     }
+    void fmtCursor(bool io) {
+      if (io) {
+        O::raw(">");
+        O::fmtCursor(io);
+      } else {
+        O::fmtCursor(io);
+      }
+    }
     void fmtItem(bool io) {
       if (io) {
         O::fmtItem(io);

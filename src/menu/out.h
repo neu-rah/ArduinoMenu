@@ -3,10 +3,10 @@
 
 #include "menu.h"
 
-
 namespace Menu {
   ///////////////////////////////////////////////////////////////////
   // output interface
+
   struct MenuOut {
     virtual MenuOut& operator<<(Item&) {return *this;}
     virtual MenuOut& operator<<(const char*) {return *this;}
@@ -40,9 +40,14 @@ namespace Menu {
   template<typename O> using asValue=Role<Roles::Value,O,&MenuOut::fmtValue>;
   template<typename O> using asUnit=Role<Roles::Unit,O,&MenuOut::fmtUnit>;
 
+  struct PrintHead {
+    MenuOut& printer;
+    size_t pos;
+  };
+
   template<typename O>
   struct MenuOutCap:public MenuOut,public O {
-    // using This=MenuOutCap<asMenu<O>>;
+    using This=MenuOutCap<O>;
     MenuOut& operator<<(Item& i) override;
     MenuOut& operator<<(const char* i) override {O::raw(i);return *this;}
     MenuOut& operator<<(char i) override {O::raw(i);return *this;}
@@ -61,7 +66,7 @@ namespace Menu {
     void fmtMode(bool io) override {O::fmtMode(io);}
     void fmtValue(bool io) override {O::fmtValue(io);}
     void fmtUnit(bool io) override {O::fmtUnit(io);}
-    void printMenu(Item& i) override {O::printMenuRaw(i);}
+    void printMenu(Item& i) override {O::printMenuRaw(PrintHead{*this,0},i);}
   };
 
   //base for output combinators --------------------------
@@ -79,8 +84,9 @@ namespace Menu {
     void fmtMode  (bool io) {}
     void fmtValue (bool io) {}
     void fmtUnit  (bool io) {}
-    void printMenuRaw(Item& o) {}
+    void printMenuRaw(PrintHead,Item&) {}
     enum OUTPUT_BASE {};//do not define this elsewhere
+    constexpr static inline bool canNav() {return false;}
 };
 
   //just and example of wrapper/formnat
