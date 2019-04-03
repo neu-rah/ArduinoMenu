@@ -19,4 +19,5 @@ namespace Menu {
     template<typename O>
     bool DebugFmt<O>::debugFmt=false;
   #endif
+
 };//Menu

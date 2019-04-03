@@ -40,14 +40,17 @@ namespace Menu {
   template<typename O> using asValue=Role<Roles::Value,O,&MenuOut::fmtValue>;
   template<typename O> using asUnit=Role<Roles::Unit,O,&MenuOut::fmtUnit>;
 
+  template<typename O>
   struct PrintHead {
-    MenuOut& printer;
+    MenuOut& menuOut;
+    O& printer;
     size_t pos;
   };
 
   template<typename O>
   struct MenuOutCap:public MenuOut,public O {
     using This=MenuOutCap<O>;
+    PrintHead<O> head{*this,*this,0};
     MenuOut& operator<<(Item& i) override;
     MenuOut& operator<<(const char* i) override {O::raw(i);return *this;}
     MenuOut& operator<<(char i) override {O::raw(i);return *this;}
@@ -56,17 +59,19 @@ namespace Menu {
       MenuOut& operator<<(endlObj) override {O::raw("\n");return *this;}
       MenuOut& operator<<(const __FlashStringHelper * i) override {O::raw(i);return *this;}
     #endif
-    void fmtMenu(bool io) override {O::fmtMenu(io);}
-    void fmtPanel(bool io) override {O::fmtPanel(io);}
-    void fmtTitle(bool io) override {O::fmtTitle(io);}
-    void fmtItem(bool io) override {O::fmtItem(io);}
-    void fmtAccel(bool io) override {O::fmtAccel(io);}
-    void fmtCursor(bool io) override {O::fmtCursor(io);}
-    void fmtLabel(bool io) override {O::fmtLabel(io);}
-    void fmtMode(bool io) override {O::fmtMode(io);}
-    void fmtValue(bool io) override {O::fmtValue(io);}
-    void fmtUnit(bool io) override {O::fmtUnit(io);}
-    void printMenu(Item& i) override {O::printMenuRaw(PrintHead{*this,0},i);}
+    void fmtMenu(bool io) override {O::fmtMenu(head,io);}
+    void fmtPanel(bool io) override {O::fmtPanel(head,io);}
+    void fmtTitle(bool io) override {O::fmtTitle(head,io);}
+    void fmtItem(bool io) override {O::fmtItem(head,io);}
+    void fmtAccel(bool io) override {O::fmtAccel(head,io);}
+    void fmtCursor(bool io) override {O::fmtCursor(head,io);}
+    void fmtLabel(bool io) override {O::fmtLabel(head,io);}
+    void fmtMode(bool io) override {O::fmtMode(head,io);}
+    void fmtValue(bool io) override {O::fmtValue(head,io);}
+    void fmtUnit(bool io) override {O::fmtUnit(head,io);}
+    void printMenu(Item& i) override {
+      O::printMenuRaw(PrintHead<O>{*this,*this,0},i);
+    }
   };
 
   //base for output combinators --------------------------
@@ -74,32 +79,33 @@ namespace Menu {
     // inline void out(Item& i);
     template<typename T>
     void raw(T) {}//just ignore stuff
-    void fmtMenu  (bool io) {}
-    void fmtPanel (bool io) {}
-    void fmtTitle (bool io) {}
-    void fmtItem  (bool io) {}
-    void fmtAccel (bool io) {}
-    void fmtCursor(bool io) {}
-    void fmtLabel (bool io) {}
-    void fmtMode  (bool io) {}
-    void fmtValue (bool io) {}
-    void fmtUnit  (bool io) {}
-    void printMenuRaw(PrintHead,Item&) {}
+    template<typename P> inline void fmtMenu  (PrintHead<P>,bool io) {}
+    template<typename P> inline void fmtPanel (PrintHead<P>,bool io) {}
+    template<typename P> inline void fmtTitle (PrintHead<P>,bool io) {}
+    template<typename P> inline void fmtItem  (PrintHead<P>,bool io) {}
+    template<typename P> inline void fmtAccel (PrintHead<P>,bool io) {}
+    template<typename P> inline void fmtCursor(PrintHead<P>,bool io) {}
+    template<typename P> inline void fmtLabel (PrintHead<P>,bool io) {}
+    template<typename P> inline void fmtMode  (PrintHead<P>,bool io) {}
+    template<typename P> inline void fmtValue (PrintHead<P>,bool io) {}
+    template<typename P> inline void fmtUnit  (PrintHead<P>,bool io) {}
     enum OUTPUT_BASE {};//do not define this elsewhere
     constexpr static inline bool canNav() {return false;}
-};
+    template<typename P> inline void printMenuRaw(PrintHead<P>,const Item&) {}
+  };
 
   //just and example of wrapper/formnat
   template<typename O,char pref='[',char suf=']'>
   struct WrapTitle:public O {
     using RAW_DEVICE=typename O::RAW_DEVICE;//must have a raw device!
-    void fmtTitle(bool io) {//io: true->start, false->end
+    template<typename P>
+    void fmtTitle(PrintHead<P> p, bool io) {//io: true->start, false->end
       // Serial<<(io?"{":"|")<<"WrapTitle"<<(io?"|":"}")<<endl;
       if (io) {
         O::raw(pref);
-        O::fmtTitle(io);
+        O::fmtTitle(p,io);
       } else {
-        O::fmtTitle(io);
+        O::fmtTitle(p,io);
         O::raw(suf);
       }
     }

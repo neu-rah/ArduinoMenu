@@ -9,7 +9,7 @@ namespace Menu {
   struct DebugFmt:public O {
     static bool debugFmt;
     using RAW_DEVICE=typename O::RAW_DEVICE;//must have a raw device!
-    void fmtMenu(bool io) {
+    template<typename P> void fmtMenu(PrintHead<P> p,bool io) {
       if (io) {
         if (debugFmt) O::raw("{fmtMenu|");
         O::fmtMenu(io);
@@ -18,7 +18,7 @@ namespace Menu {
         if (debugFmt) O::raw("|fmtMenu}");
       }
     }
-    void fmtPanel(bool io) {
+    template<typename P> void fmtPanel(PrintHead<P> p,bool io) {
       if (io) {
         if (debugFmt) O::raw("{fmtPanel|");
         O::fmtPanel(io);
@@ -27,7 +27,7 @@ namespace Menu {
         if (debugFmt) O::raw("|fmtPanel}");
       }
     }
-    void fmtTitle(bool io) {
+    template<typename P> void fmtTitle(PrintHead<P> p,bool io) {
       if (io) {
         if (debugFmt) O::raw("{fmtTitle|");
         O::fmtTitle(io);
@@ -36,7 +36,7 @@ namespace Menu {
         if (debugFmt) O::raw("|fmtTitle}");
       }
     }
-    void fmtItem(bool io) {
+    template<typename P> void fmtItem(PrintHead<P> p,bool io) {
       if (io) {
         if (debugFmt) O::raw("{fmtItem|");
         O::fmtItem(io);
@@ -45,7 +45,7 @@ namespace Menu {
         if (debugFmt) O::raw("|fmtItem}");
       }
     }
-    void fmtAccel(bool io) {
+    template<typename P> void fmtAccel(PrintHead<P> p,bool io) {
       if (io) {
         if (debugFmt) O::raw("{fmtAccel|");
         O::fmtAccel(io);
@@ -54,7 +54,7 @@ namespace Menu {
         if (debugFmt) O::raw("|fmtAccel}");
       }
     }
-    void fmtCursor(bool io) {
+    template<typename P> void fmtCursor(PrintHead<P> p,bool io) {
       if (io) {
         if (debugFmt) O::raw("{fmtCursor|");
         O::fmtCursor(io);
@@ -63,7 +63,7 @@ namespace Menu {
         if (debugFmt) O::raw("|fmtCursor}");
       }
     }
-    void fmtLabel(bool io) {
+    template<typename P> void fmtLabel(PrintHead<P> p,bool io) {
       if (io) {
         if (debugFmt) O::raw("{fmtLabel|");
         O::fmtLabel(io);
@@ -72,7 +72,7 @@ namespace Menu {
         if (debugFmt) O::raw("|fmtLabel}");
       }
     }
-    void fmtMode(bool io) {
+    template<typename P> void fmtMode(PrintHead<P> p,bool io) {
       if (io) {
         if (debugFmt) O::raw("{fmtMode|");
         O::fmtMode(io);
@@ -81,7 +81,7 @@ namespace Menu {
         if (debugFmt) O::raw("|fmtMode}");
       }
     }
-    void fmtValue(bool io) {
+    template<typename P> void fmtValue(PrintHead<P> p,bool io) {
       if (io) {
         if (debugFmt) O::raw("{fmtValue|");
         O::fmtValue(io);
@@ -90,7 +90,7 @@ namespace Menu {
         if (debugFmt) O::raw("|fmtValue}");
       }
     }
-    void fmtUnit(bool io) {
+    template<typename P> void fmtUnit(PrintHead<P> p,bool io) {
       if (io) {
         if (debugFmt) O::raw("{fmtUnit|");
         O::fmtUnit(io);

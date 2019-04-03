@@ -23,8 +23,8 @@ namespace Menu {
     #if (MENU_INJECT_PARTS==true)
       virtual void out(MenuOut& o,PrinterPart& pp) const {}
     #endif
-    virtual size_t size() {return 1;}
-    virtual const Item& operator[](size_t) {return *this;}
+    virtual size_t size() const {return 1;}
+    virtual const Item& operator[](size_t) const {return *this;}
   };
 
   //adapt specific types as menu items
@@ -37,8 +37,8 @@ namespace Menu {
     #if (MENU_INJECT_PARTS==true)
       void out(MenuOut& o,PrinterPart& pp) const override;
     #endif
-    size_t size() override {return O::size();}
-    const Item& operator[](size_t n) override {return O::operator[](n);}
+    size_t size() const override {return O::size();}
+    const Item& operator[](size_t n) const override {return O::operator[](n);}
     //type injection, alls should have copy constructor and they must align
     template<template<typename> class T>
     inline void stack(MenuOut& o) const {Prompt<T<O>>(*this).out(o);}
@@ -68,7 +68,7 @@ namespace Menu {
     inline Empty(Empty&) {}
     static inline void out(MenuOut&) {}
     static inline size_t size() {return 1;}
-    inline const Item& operator[](size_t n) {return *reinterpret_cast<Item*>(this);}
+    inline const Item& operator[](size_t n) const {return *reinterpret_cast<const Item*>(this);}
     constexpr static inline bool canNav() {return false;}
   };
 
