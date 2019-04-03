@@ -3,13 +3,13 @@
 
 namespace Menu {
 
-  template<
-    typename O,
-    template<typename> class itemFmt=asItem,
-    template<typename> class titleFmt=asTitle,
-    template<typename> class menuFmt=asMenu,
-    template<typename> class panelFmt=asPanel
-  > struct deviceParts:public O {};
+  // template<
+  //   typename O,
+  //   template<typename> class itemFmt=asItem,
+  //   template<typename> class titleFmt=asTitle,
+  //   template<typename> class menuFmt=asMenu,
+  //   template<typename> class panelFmt=asPanel
+  // > struct deviceParts:public O {};
 
   template<typename O>
   struct FullPrinter:public O {

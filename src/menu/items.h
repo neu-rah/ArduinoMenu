@@ -69,6 +69,7 @@ namespace Menu {
     static inline void out(MenuOut&) {}
     static inline size_t size() {return 1;}
     inline const Item& operator[](size_t n) {return *reinterpret_cast<Item*>(this);}
+    constexpr static inline bool canNav() {return false;}
   };
 
   template<typename O>
