@@ -17,7 +17,7 @@ namespace Menu {
     using O::O;
     using RAW_DEVICE=typename O::RAW_DEVICE;//must have a raw device!
     void printMenuRaw(Item& o) {
-      Serial<<"FullPrinter::printMenuRaw"<<endl;
+      // Serial<<"FullPrinter::printMenuRaw"<<endl;
       O::fmtMenu(true);
       O::printMenuRaw(o);
       for(size_t n=0;n<o.size();n++)
@@ -31,7 +31,7 @@ namespace Menu {
     using O::O;
     using RAW_DEVICE=typename O::RAW_DEVICE;//must have a raw device!
     void printMenuRaw(Item& o) {
-      Serial<<"TitlePrinter::printMenuRaw"<<endl;
+      // Serial<<"TitlePrinter::printMenuRaw"<<endl;
       #if (MENU_INJECT_PARTS==true)
         PrinterPart pp;
         o.out(*reinterpret_cast<MenuOutCap<TitlePrinter<O>>*>(this),pp);
