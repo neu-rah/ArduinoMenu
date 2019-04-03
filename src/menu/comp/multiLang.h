@@ -20,7 +20,7 @@ namespace Menu {
       class Text:public O {
       public:
         using O::O;
-        inline void out(MenuOut &o) {lang.texts[id].out(o);}
+        inline void out(MenuOut &o) const {lang.texts[id].out(o);}
       };
       inline void setLangTable(TextsType* lt) {texts=lt;}
   };

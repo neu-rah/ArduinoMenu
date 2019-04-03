@@ -2,6 +2,7 @@
 #include <menu/printer/full.h>
 #include <menu/fmt/text.h>
 #include <menu/fmt/debug.h>
+#include <menu/comp/flashMenu.h>
 
 //serial output
 MenuOut<//menu part injection MUST occur here (top level)
@@ -25,7 +26,10 @@ Prompt<Op> op1("Op 1");
 const char op2_text[] PROGMEM="Op 2";
 Prompt<FlashOp> op2(op2_text);
 
-Prompt<StaticMenu<2>> mainMenu("Main menu",&op1,&op2);
+// Prompt<StaticMenu<2>> mainMenu("Main menu",&op1,&op2);
+const char menuTitle_text[] PROGMEM="Main menu";
+Prompt<FlashOp> menuTitle(menuTitle_text);
+Prompt<Menu::FlashMenuDef<2,FlashText>> mainMenu(menuTitle_text,&op1,&op2);
 
 void setup() {
   Serial.begin(115200);
