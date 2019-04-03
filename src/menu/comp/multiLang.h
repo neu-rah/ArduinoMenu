@@ -16,9 +16,10 @@ namespace Menu {
       TextsType* texts;
     public:
       Lang(TextsType* lt):texts(lt) {}
-      template<This& lang,size_t id>
-      class Text {
+      template<This& lang,size_t id,typename O>
+      class Text:public O {
       public:
+        using O::O;
         inline void out(MenuOut &o) {lang.texts[id].out(o);}
       };
       inline void setLangTable(TextsType* lt) {texts=lt;}

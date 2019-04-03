@@ -1,9 +1,11 @@
 #include <menu/def/tinyArduino.h>
 #include <menu/comp/multiLang.h>
+#include <menu/printer/full.h>
+#include <menu/fmt/text.h>
+#include <menu/fmt/debug.h>
 #include <Dump.h>
-using namespace Menu;
 
-using FlashText=FlashTextDef<Empty>;
+using FlashText=Menu::FlashTextDef<Menu::Empty>;
 
 //string id's
 enum LangCodes:size_t {textOk=0,textCancel,langStringsCnt};
@@ -16,17 +18,36 @@ const PROGMEM char ok_pt[]="Vá";
 const PROGMEM char cancel_en[]="Cancel";
 const PROGMEM char cancel_pt[]="Esquece";
 
-const PROGMEM FlashText enLang[]{ok_en,cancel_en};
-const PROGMEM FlashText ptLang[]{ok_pt,cancel_pt};
+FlashText ok_enOp(ok_en);
+FlashText cancel_enOp(cancel_en);
+FlashText ok_ptOp(ok_pt);
+FlashText cancel_ptOp(cancel_pt);
 
-using MultiLang=Lang<FlashText>;
+FlashText const enLang[] PROGMEM {ok_enOp,cancel_enOp};
+FlashText const ptLang[] PROGMEM {ok_ptOp,cancel_ptOp};
+
+using MultiLang=Menu::Lang<FlashText>;
 MultiLang langs(enLang);
 
 template<LangCodes id>
-using LangOp=Prompt<asTitle<MultiLang::Text<langs,id>>>;
+using LangOp=Menu::Prompt<asTitle<MultiLang::Text<langs,id,Menu::Empty>>>;
 
 //normal option
-SerialOut serialOut;
+//serial output
+MenuOut<//menu part injection MUST occur here (top level)
+  Menu::DebugFmt<//add debug info to output
+    Menu::FullPrinter<//print innet then options
+      Menu::TitlePrinter<//print the title
+        Menu::TextFmt<//text format, insert \n at item or title end, etc...
+          Menu::WrapTitle<//print title surrounded by []
+            SerialOut//use arduino default Serial port
+          >
+        >
+      >
+    >
+  >
+> serialOut;
+
 Prompt<Op> op1("Op 1");
 
 //option using flash text

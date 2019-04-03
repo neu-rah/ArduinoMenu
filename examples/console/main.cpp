@@ -3,23 +3,33 @@
 // g++ examples/console/main.cpp -o am5 -I src -std=c++11
 
 #include <menu/def/console.h>
-using namespace Menu;
+#include <menu/comp/multiLang.h>
+#include <menu/printer/full.h>
+#include <menu/fmt/text.h>
+#include <menu/fmt/debug.h>
 
-ConsoleOut consoleOut;
+Menu::MenuOutCap<
+  Menu::DebugFmt<//add debug info to output (if enabled)
+    Menu::FullPrinter<//print innet then options
+      Menu::TitlePrinter<//print the title
+        Menu::TextFmt<//text format, insert \n at item or title end, etc...
+          Menu::WrapTitle<//print title surrounded by []
+            ConsoleOut//standard output
+          >
+        >
+      >
+    >
+  >
+> consoleOut;
 
-//normal option
 Prompt<Op> op1("Op 1");
-
-//option using flash text
 Prompt<Op> op2("Op 2");
-
-//they can fit on same array
-//and will preserve the composed behavior
-Item* ops[]{&op1,&op2};
+Prompt<StaticMenu<3>> mainMenu("Main menu",
+  &op1,
+  &op2,
+  new Prompt<Op>("on heap")
+);
 
 int main(int,const char**) {
-  for(auto o : ops) {
-    consoleOut<<*o;
-    cout <<endl;
-  }
+  consoleOut.printMenu(mainMenu);
 }

@@ -9,12 +9,12 @@ namespace Menu {
     void fmtMenu(bool io) {
       if (io) {
         O::raw("Menu------");
-        O::raw(endl);
+        O::endl();
         O::fmtMenu(io);
       } else {
         O::fmtMenu(io);
         O::raw("Menu------");
-        O::raw(endl);
+        O::endl();
       }
     }
     void fmtItem(bool io) {
@@ -22,7 +22,7 @@ namespace Menu {
         O::fmtItem(io);
       } else {
         O::fmtItem(io);
-        O::raw(endl);
+        O::endl();
       }
     }
     void fmtTitle(bool io) {
@@ -30,7 +30,7 @@ namespace Menu {
         O::fmtTitle(io);
       } else {
         O::fmtTitle(io);
-        O::raw(endl);
+        O::endl();
       }
     }
   };

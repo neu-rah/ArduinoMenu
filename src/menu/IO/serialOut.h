@@ -15,6 +15,7 @@ namespace Menu {
     static inline void raw(char i) {dev<<i;}
     static inline void raw(unsigned char i) {dev<<i;}
     static inline void raw(endlObj i) {dev<<i;}
+    static inline void endl() {dev<<::endl;}
     static inline void raw(const __FlashStringHelper *i) {dev.print(i);}
     //.. add more type here
   };

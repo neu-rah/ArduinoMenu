@@ -14,9 +14,9 @@ namespace Menu {
 
   #ifdef MENU_DEBUG
     template<typename O>
-    static bool DebugFmt<O>::debugFmt=true;
+    bool DebugFmt<O>::debugFmt=true;
   #else
     template<typename O>
-    static bool DebugFmt<O>::debugFmt=false;
+    bool DebugFmt<O>::debugFmt=false;
   #endif
 };//Menu
