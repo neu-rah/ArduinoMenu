@@ -1,5 +1,10 @@
 /* -*- C++ -*- */
 #pragma once
+////////////////////////////////////////////////////
+// Rui Azevedo - Apr2019
+// neu-rah (ruihfazevedo@gmail.com)
+// use std::vector to hold menu data... not done yet
+
 #include <vector>
 using namespace std;
 #include <menu.h>

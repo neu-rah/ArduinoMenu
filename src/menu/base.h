@@ -1,5 +1,9 @@
 /* -*- C++ -*- */
 #pragma once
+////////////////////////////////////////////////////
+// Rui Azevedo - Apr2019
+// neu-rah (ruihfazevedo@gmail.com)
+// some utilities and base definitions
 
 namespace Menu {
 
@@ -37,8 +41,12 @@ namespace Menu {
 
   //////////////////////////////////////////////////////////
   // roles -----------------
-  enum class Roles {Self,Menu,Panel,Title,Item,Pad,Accel,Cursor,Label,Mode,Value,Unit};
+  // menu structure can include this tags (in the form asTitle,asItem,asMenu,...)
+  // output device fmt translators hook to this tags to generate addicional content
+    enum class Roles {Self,Menu,Panel,Title,Item,Pad,Accel,Cursor,Label,Mode,Value,Unit};
 
+  //hook out and fmt callbacks for role tags included on menu structure
+  //they provide a direct access to specific output driver
   template<Roles role,typename O,void (MenuOut::*f)(bool)>
   struct Role:public O {
     using O::O;

@@ -1,5 +1,9 @@
 /* -*- C++ -*- */
 #pragma once
+////////////////////////////////////////////////////
+// Rui Azevedo - Apr2019
+// neu-rah (ruihfazevedo@gmail.com)
+// use std console as menu output
 
 #include <ostream>
 using namespace std;

@@ -1,5 +1,9 @@
 /* -*- C++ -*- */
 #pragma once
+////////////////////////////////////////////////////
+// Rui Azevedo - Apr2019
+// neu-rah (ruihfazevedo@gmail.com)
+// common definitions for standard output
 
 #include <iostream>
 using namespace std;

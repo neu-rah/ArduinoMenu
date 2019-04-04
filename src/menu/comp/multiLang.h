@@ -1,5 +1,11 @@
 /* -*- C++ -*- */
 #pragma once
+////////////////////////////////////////////////////
+// Rui Azevedo - Apr2019
+// neu-rah (ruihfazevedo@gmail.com)
+// multilanguage field...
+// TODO: change language table to a menu structure
+
 #include <menu.h>
 
 //an example of extending the base schema, here a multilanguage text

@@ -1,5 +1,9 @@
 /* -*- C++ -*- */
 #pragma once
+////////////////////////////////////////////////////
+// Rui Azevedo - Apr2019
+// neu-rah (ruihfazevedo@gmail.com)
+// common definitions for arduino framework
 
 #include <streamFlow.h>//https://github.com/neu-rah/streamFlow
 #include "../../menu.h"

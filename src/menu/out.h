@@ -1,5 +1,11 @@
 /* -*- C++ -*- */
 #pragma once
+////////////////////////////////////////////////////
+// Rui Azevedo - Apr2019
+// neu-rah (ruihfazevedo@gmail.com)
+// ouput internal process
+// output drivers are a composition between MenuOut<->MenuOutCap
+// delivered as O parameter of MenuOutCap template
 
 #include "menu.h"
 

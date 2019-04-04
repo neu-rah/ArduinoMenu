@@ -1,5 +1,10 @@
 /* -*- C++ -*- */
 #pragma once
+////////////////////////////////////////////////////
+// Rui Azevedo - Apr2019
+// neu-rah (ruihfazevedo@gmail.com)
+// output addicional debug information
+// when enabled by -DMENU_DEBUG
 
 // #include "../names.h"
 

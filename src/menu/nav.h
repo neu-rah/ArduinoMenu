@@ -1,5 +1,10 @@
 /* -*- C++ -*- */
 #pragma once
+////////////////////////////////////////////////////
+// Rui Azevedo - Apr2019
+// neu-rah (ruihfazevedo@gmail.com)
+// flat navigation node... we will use it to navigate the tree navigation
+// not implemented yet
 
 #include "items.h"
 

@@ -1,5 +1,9 @@
 /* -*- C++ -*- */
 #pragma once
+////////////////////////////////////////////////////
+// Rui Azevedo - Apr2019
+// neu-rah (ruihfazevedo@gmail.com)
+// translate roles enum to text, this helps debug and will be used by xml and json
 
 namespace Menu {
   template<Roles role> constexpr char* roleName();

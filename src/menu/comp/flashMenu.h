@@ -1,5 +1,9 @@
 /* -*- C++ -*- */
 #pragma once
+////////////////////////////////////////////////////
+// Rui Azevedo - Apr2019
+// neu-rah (ruihfazevedo@gmail.com)
+// store menu data on flash memory (Arduino framework)
 
 #include "../base.h"
 #include <Arduino.h>
