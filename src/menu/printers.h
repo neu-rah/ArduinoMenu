@@ -27,6 +27,18 @@ namespace Menu {
   };
 
   template<typename O>
+  struct TextAccelPrinter:public O {
+    using O::O;
+    using RAW_DEVICE=typename O::RAW_DEVICE;//must have a raw device!
+    template<typename P>
+    void printMenuRaw(PrintHead<P> p,const Item& o) {
+      p.printer.fmtAccel(p,true);
+      p.printer.fmtAccel(p,false);
+      O::printMenuRaw(p,o);
+    }
+  };
+
+  template<typename O>
   struct TextCursorPrinter:public O {
     using O::O;
     using RAW_DEVICE=typename O::RAW_DEVICE;//must have a raw device!
@@ -37,7 +49,7 @@ namespace Menu {
       p.printer.fmtCursor(p,true);
       // o.out(p.printer);
       O::printMenuRaw(p,o);
-      if (selected(p)) p.printer.fmtCursor(p,false);
+      p.printer.fmtCursor(p,false);
     }
   };
 

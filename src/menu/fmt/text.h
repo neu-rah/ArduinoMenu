@@ -19,6 +19,18 @@ namespace Menu {
       }
     }
     template<typename P>
+    inline void fmtAccel(PrintHead<P> p,bool io) {
+      if (io) {
+        O::raw("[");
+        if (p.pos<10) O::raw((int)p.pos);
+        else O::raw(" ");
+        O::raw("]");
+        O::fmtAccel(p,io);
+      } else {
+        O::fmtAccel(p,io);
+      }
+    }
+    template<typename P>
     inline void fmtCursor(PrintHead<P> p,bool io) {
       if (io) {
         O::raw(p.printer.selected(p)?">":" ");
