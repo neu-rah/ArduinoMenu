@@ -26,8 +26,10 @@ namespace Menu {
     virtual void fmtMode(bool io) {}
     virtual void fmtValue(bool io) {}
     virtual void fmtUnit(bool io) {}
-    virtual void printMenu(Item&) {}
-  };
+    virtual void printMenu() {}
+    virtual void setTarget(Item& i) {}
+    // virtual Item& getTarget() {return *(Item*)NULL;}
+};
 
   template<typename O> using asMenu=Role<Roles::Menu,O,&MenuOut::fmtMenu>;
   template<typename O> using asPanel=Role<Roles::Panel,O,&MenuOut::fmtPanel>;
@@ -70,9 +72,13 @@ namespace Menu {
     void fmtMode(bool io) override {O::fmtMode(head,io);}
     void fmtValue(bool io) override {O::fmtValue(head,io);}
     void fmtUnit(bool io) override {O::fmtUnit(head,io);}
-    void printMenu(Item& i) override {
-      O::printMenuRaw(PrintHead<O>{*this,*this,0},i);
+    void printMenu() override {
+      O::printMenuRaw(PrintHead<O>{*this,*this,0},O::getTarget());
     }
+    void setTarget(Item& i) override {O::setTarget(i);}
+    // Item& getTarget() override {
+    //   return O::getTarget();
+    // }
   };
 
   //base for output combinators --------------------------
@@ -97,6 +103,8 @@ namespace Menu {
     template<typename T> using titleFmt=ID<T>;
     template<typename T> using menuFmt=ID<T>;
     template<typename T> using panelFmt=ID<T>;
+    // inline void setTarget(Item& i) {}
+    // inline Item& getTarget(Item& i) {return *this;}
   };
 
   //just and example of wrapper/formnat

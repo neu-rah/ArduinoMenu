@@ -14,9 +14,13 @@ namespace Menu {
       inline size_t pos() const {return sel;}
       template<typename P>
       inline bool selected(PrintHead<P> p) const {return sel==p.pos;}
+
+      inline void setTarget(Item& i) {target=&i;}
+      inline Item& getTarget() {return *target;}
+
       inline void idx(size_t i) {sel=idx;}
-      inline void up() {if (sel>0) sel--;}
-      inline void down() {if (sel<(target?target->size()-1:0)) sel++;}
+      inline void down() {if (sel>0) sel--;}
+      inline void up() {if (sel<(target?target->size()-1:0)) sel++;}
       static inline void left() {up();}
       static inline void right() {down();}
       static inline void enter() {}
