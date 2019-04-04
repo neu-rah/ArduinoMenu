@@ -2,6 +2,10 @@
 #pragma once
 
 namespace Menu {
+  
+  template<typename O>
+  struct ID:public O {using O::O;};
+
   #define MENU_INJECT_PARTS false
   struct Item;
   template<typename> struct Prompt;

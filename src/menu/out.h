@@ -49,7 +49,8 @@ namespace Menu {
 
   template<typename O>
   struct MenuOutCap:public MenuOut,public O {
-    using This=MenuOutCap<O>;
+    // using This=MenuOutCap<O>;
+    using O::O;
     PrintHead<O> head{*this,*this,0};
     MenuOut& operator<<(Item& i) override;
     MenuOut& operator<<(const char* i) override {O::raw(i);return *this;}
@@ -92,6 +93,10 @@ namespace Menu {
     enum OUTPUT_BASE {};//do not define this elsewhere
     constexpr static inline bool canNav() {return false;}
     template<typename P> inline void printMenuRaw(PrintHead<P>,const Item&) {}
+    template<typename T> using itemFmt=ID<T>;
+    template<typename T> using titleFmt=ID<T>;
+    template<typename T> using menuFmt=ID<T>;
+    template<typename T> using panelFmt=ID<T>;
   };
 
   //just and example of wrapper/formnat

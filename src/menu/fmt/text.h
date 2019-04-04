@@ -21,7 +21,6 @@ namespace Menu {
     template<typename P>
     inline void fmtCursor(PrintHead<P> p,bool io) {
       if (io) {
-        O::raw("!");
         O::raw(p.printer.selected(p)?">":" ");
         O::fmtCursor(p,io);
       } else {

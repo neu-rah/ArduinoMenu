@@ -5,12 +5,14 @@
 #include "../../menu.h"
 #include "../IO/serialOut.h"
 #include "../comp/flashText.h"
+#include "../printers.h"
 
 template<typename O>
 using MenuOut=Menu::MenuOutCap<O>;
 
 //describing an output -----------------------------------------
-using SerialOut=Menu::SerialOutDev<Serial>;
+template<typename P=Menu::DeviceParts<>>
+using SerialOut=Menu::SerialOutDev<P,Serial>;
 
 //common role
 template<typename O>

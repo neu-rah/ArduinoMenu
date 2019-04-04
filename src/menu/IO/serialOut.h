@@ -7,9 +7,10 @@
 
 namespace Menu {
 
-  template<decltype(Serial)& dev=Serial, typename O=Void>
+  template<typename P,decltype(Serial)& dev=Serial, typename O=Void>
   struct SerialOutDev:public O {
-    enum RAW_DEVICE {};
+    using RAW_DEVICE = SerialOutDev<P,dev,O>;
+    using Parts=P;
     // using MUST_BE_AT_OUTPUT_BASE=O::OUTPUT_BASE;//or maybe not
     static inline void raw(const char*i) {dev<<i;}
     static inline void raw(char i) {dev<<i;}

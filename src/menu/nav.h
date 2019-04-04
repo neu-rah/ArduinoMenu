@@ -8,6 +8,7 @@ namespace Menu {
   template<typename O>
   class NavNode:public O {
     public:
+      using RAW_DEVICE=typename O::RAW_DEVICE;//must have a raw device!
       using O::O;
       constexpr static inline bool canNav() {return true;}
       inline size_t pos() const {return sel;}
