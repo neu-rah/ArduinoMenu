@@ -6,6 +6,14 @@
 
 This is an experimental area, please contribute with ideas, experience or code. Thank you.
 
+### Why a new version
+
+In a word, **size**.
+
+Things I wish were available:
+- C++14 or +
+- AVR stl
+
 ## Current state
 
 _tiny.ino_ example is using a single option print-out chain
@@ -16,85 +24,97 @@ output is also a composition, we can compose role tag format handlers and transl
 
 ```c++
 #include <menu/def/tinyArduino.h>
+#include <menu/IO/lcdOut.h>
+#include <menu/printers.h>
+#include <menu/fmt/debug.h>
+#include <menu/comp/flashMenu.h>
+#include <menu/panels.h>
 
-using FlashText=FlashTextDef<Empty>;
+// LCD /////////////////////////////////////////
+#define RS 2
+#define RW 4
+#define EN A4
+LiquidCrystal lcd(RS, RW, EN, A0, A1, A2, A3);
 
-//serial output
-SerialOut serialOut;
+//menu output ------------------------
 
-//normal option
-Prompt<Op> op1("Op 1");
+//bind a format to the lcd
+MenuOut<Menu::LCDFmt::To<LCDOutDev<lcd>/*by default its 16x2*/>> lcdOut;
 
-//option using flash text
-const char op2_text[] PROGMEM="Op 2";
-Prompt<FlashOp> op2(op2_text);
-
-//they can fit on same array
-//and will preserve the composed behavior
-Item* ops[]{&op1,&op2};
+// quick define menu
+Prompt<StaticMenu<2>> mainMenu(
+  "Main menu"
+  ,new Prompt<Text>("Op 1")
+  ,new Prompt<Text>("Op 2")
+);
 
 void setup() {
   Serial.begin(115200);
   while(!Serial);
-  serialOut<<"AM5 tiny example ----"<<endl;
-  //and we print them, just.
-  for(auto o: ops) serialOut<<*o<<endl;
-  serialOut<<"----"<<endl;
+  Serial<<"AM5 example ----"<<endl;
+  lcd.begin(16,2);
+  lcd.setCursor(0,0);
+  lcdOut<<"AM5 example ---";
+  delay(1);
+  lcd.clear();
+  lcdOut.setTarget(mainMenu);
+  lcdOut.printMenu();
 }
 
-void loop() {}
-```
+bool keys(int key) {
+  switch(key) {
+    case '+': lcdOut.up();return true;
+    case '-': lcdOut.down();return true;
+    case '*': lcdOut.enter();return true;
+    case '/': lcdOut.esc();return true;
+  }
+  return false;
+}
 
-**outputs:**
-```text
-AM5 tiny example ----
-[Op 1]
-[Op 2]
-----
+void loop() {
+  if (Serial.available()) {
+    if (keys(Serial.read())) lcdOut.printMenu();
+  }
+}
 ```
 
 **footprint:**
 ```text
-DATA:    [=         ]  14.1% (used 288 bytes from 2048 bytes)
-PROGRAM: [=         ]   7.5% (used 2306 bytes from 30720 bytes)
+DATA:    [==        ]  19.1% (used 392 bytes from 2048 bytes)
+PROGRAM: [==        ]  17.1% (used 5242 bytes from 30720 bytes)
 ```
 
 _tinyArduino.h_ defines `SerialOut`, `Op` and `FlashOp` as:
 ```c++
-/* -*- C++ -*- */
-#pragma once
-
 #include <streamFlow.h>//https://github.com/neu-rah/streamFlow
 #include "../../menu.h"
 #include "../IO/serialOut.h"
 #include "../comp/flashText.h"
+#include "../printers.h"
 
-using namespace Menu;
+template<typename O>
+using MenuOut=Menu::MenuOutCap<O>;
 
 //describing an output -----------------------------------------
-//MenuOutCap - top level adapter for menu output, wraps a type-level composition
-//WrapTitle - type level block will format all titles with surrounding []
-//SerialOutDev - an output device bound to a serial port (arduino)
-using SerialOut=MenuOutCap<WrapTitle<SerialOutDev<Serial>>>;
+template<typename P=Menu::DeviceParts<>>
+using SerialOut=Menu::SerialOutDev<P,Serial>;
+
+//common element
+using Text=Menu::Text<Menu::Empty>;
 
 //describing an option ------------------------------------
-// asTitle - role description, its meaning is interpreted by
-//           an inner output device/format/filter (output composition chain)
-using Op=asTitle<Text<Empty>>;//option will be formatted as title
+using FlashText=Menu::FlashTextDef<Menu::Empty>;
 
-//a menu option using flash text
-using FlashOp=asTitle<FlashTextDef<Empty>>;
+using Item=Menu::Item;
+
+template<typename O>
+using Prompt=Menu::Prompt<O>;
+
+template<size_t n>
+using StaticMenu=Menu::StaticMenu<n,Text>;
 ```
 
 https://gitter.im/ArduinoMenu/Lobby
-
-### Why a new version
-
-In a word, **size**.
-
-Things I wish were available:
-- C++14 or +
-- AVR stl
 
 ### Embedded systems
 
