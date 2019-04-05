@@ -40,8 +40,8 @@ namespace Menu {
       }
       static inline bool left() {return up();}
       static inline bool right() {return down();}
-      static inline bool enter() {}
-      static inline bool esc() {}
+      static inline bool enter() {return false;}
+      static inline bool esc() {return false;}
     protected:
       size_t sel=0;
       Item* target=NULL;

@@ -14,6 +14,7 @@ MenuOut<//menu output
     Menu::DebugFmt,//add debug info when enabled
     Menu::TextFmt,//text format, insert \n at item or title end, etc...
     WrapTitle,//surround titles with []
+    Menu::TitlePrinter,
     Menu::FullPrinter,//print inner then options
     Menu::NavNode,//flat navigation control (no sub menus)
     SerialOut//use arduino default Serial port

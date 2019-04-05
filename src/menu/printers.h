@@ -8,7 +8,7 @@
 namespace Menu {
 
   template<typename O>
-  struct FullPrinter:public O {
+  struct SelItemPrinter:public O {
     // using This=FullPrinter<O>;
     using O::O;
     using RAW_DEVICE=typename O::RAW_DEVICE;//must have a raw device!
@@ -20,9 +20,28 @@ namespace Menu {
     void printMenuRaw(PrintHead<P> p,const Item& o) {
       // MENU_DEBUG_OUT<<"FullPrinter::printMenuRaw "<<o.size()<<endl;
       p.printer.fmtMenu(p,true);
-      reinterpret_cast<titleFmt<O>*>(this)->printMenuRaw(p,o);
-      // MenuOutCap<titleFmt<O>>(p.menuOut).printMenuRaw(p,o);;
       O::printMenuRaw(p,o);
+      reinterpret_cast<itemFmt<O>*>(this)->printMenuRaw(PrintHead<P>{p.menuOut,p.printer,pos()},o[pos()]);
+      p.printer.fmtMenu(p,false);
+    }
+  };
+
+  template<typename O>
+  struct FullPrinter:public O {
+    // using This=FullPrinter<O>;
+    using O::O;
+    using RAW_DEVICE=typename O::RAW_DEVICE;//must have a raw device!
+    template<typename P>
+    using titleFmt=typename RAW_DEVICE::Parts::template titleFmt<P>;
+    template<typename P>
+    using itemFmt=typename RAW_DEVICE::Parts::template itemFmt<P>;
+    template<typename P>
+    void printMenuRaw(PrintHead<P> p,const Item& o) {
+      // MENU_DEBUG_OUT<<"FullPrinter::printMenuRaw "<<o.size()<<endl;
+      // p.printer.fmtMenu(p,true);
+      // reinterpret_cast<titleFmt<O>*>(this)->printMenuRaw(p,o);
+      // MenuOutCap<titleFmt<O>>(p.menuOut).printMenuRaw(p,o);;
+      // O::printMenuRaw(p,o);
       for(size_t n=0;n<o.size();n++) {
         reinterpret_cast<itemFmt<O>*>(this)->printMenuRaw(PrintHead<P>{p.menuOut,p.printer,n},o[n]);
       }
@@ -75,8 +94,9 @@ namespace Menu {
         //since we have access to th eprinter head
         p.printer.fmtTitle(p,true);
         o.out(p.menuOut);
-        O::printMenuRaw(p,o);
         p.printer.fmtTitle(p,false);
+        //this part does NOT wrap the next
+        O::printMenuRaw(p,o);
       #endif
     }
   };

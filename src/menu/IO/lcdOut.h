@@ -39,16 +39,18 @@ namespace Menu {
   template<typename O>
   using TitleWrap=TitleWrapFmt<O>;
 
-  template<typename O>
-  using SingleLineMenu=SingleLineScrollCtrl<O,1>;
+  // template<typename O>
+  // using SingleLineMenu=SingleLineScrollCtrl<O,1>;
 
   using LCDFmt = Menu::Chain<//wrap inner types
     DebugFmt,//add debug info when enabled
-    TextCursorFmt,//signal selected option on text mode
+    // TextCursorFmt,//signal selected option on text mode
     CursorPosFmt,//cursor control, change line at item end
     TitleWrap,//wrap title in []
-    FullPrinter,//print inner then options
-    SingleLineMenu,//scroll on every move (text lines)
+    TitlePrinter,
+    SelItemPrinter,
+    // FullPrinter,//print inner then options
+    // SingleLineMenu,//scroll on every move (text lines)
     NavNode//flat navigation control (no sub menus)
   >;
 

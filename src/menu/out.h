@@ -132,12 +132,12 @@ namespace Menu {
   };
 
   //single line scroll controller for text devices
-  template<typename O,int step=1>
-  struct SingleLineScrollCtrl:public ScrollPos<O,step> {
-    using This=ScrollPos<O,step>;
-    inline bool down() {if (O::down()) This::scrlDown();}
-    inline bool up() {if (O::up()) This::scrlUp();}
-};
+//   template<typename O,int step=1>
+//   struct SingleLineScrollCtrl:public ScrollPos<O,step> {
+//     using This=ScrollPos<O,step>;
+//     inline bool down() {if (O::down()) return This::scrlDown();}
+//     inline bool up() {if (O::up()) return This::scrlUp();}
+// };
 
   //bind output to existing device ---------------------------
   //use any stream as menu output
