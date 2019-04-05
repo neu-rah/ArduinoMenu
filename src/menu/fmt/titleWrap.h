@@ -24,4 +24,7 @@ namespace Menu {
     }
   };
 
+  template<typename O>
+  using TitleWrap=TitleWrapFmt<O>;
+
 };

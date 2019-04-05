@@ -14,6 +14,8 @@
 #include "../fmt/textCursor.h"
 #include "../fmt/cursorPos.h"
 #include "../fmt/titleWrap.h"
+#include "../printers.h"
+#include "../fmt/debug.h"
 
 namespace Menu {
 
@@ -32,12 +34,12 @@ namespace Menu {
   };
 
   using LCDParts=DeviceParts<
-    Chain<TextCursorPrinter,ItemPrinter>::To,//emit format messages for accel, cursor amd item
+    ItemPrinter,//emit format messages for accel, cursor amd item
     TitlePrinter//emit format messages for titles (fmtTitle)
   >;
 
-  template<typename O>
-  using TitleWrap=TitleWrapFmt<O>;
+  // template<typename O>
+  // using TitleWrap=TitleWrapFmt<O>;
 
   // template<typename O>
   // using SingleLineMenu=SingleLineScrollCtrl<O,1>;

@@ -1,9 +1,5 @@
 #include <menu/def/tinyArduino.h>
 #include <menu/IO/lcdOut.h>
-#include <menu/printers.h>
-#include <menu/fmt/debug.h>
-#include <menu/comp/flashMenu.h>
-#include <menu/panels.h>
 
 // LCD /////////////////////////////////////////
 #define RS 2
@@ -12,7 +8,6 @@
 LiquidCrystal lcd(RS, RW, EN, A0, A1, A2, A3);
 
 //menu output ------------------------
-
 // bind a format to the lcd
 MenuOut<Menu::LCDFmt::To<LCDOutDev<lcd>/*by default its 16x2*/>> lcdOut;
 
@@ -36,12 +31,13 @@ void setup() {
   lcdOut.printMenu();
 }
 
+//handle serial keys to navigate menu
 bool keys(int key) {
   switch(key) {
-    case '+': lcdOut.up();return true;
-    case '-': lcdOut.down();return true;
-    case '*': lcdOut.enter();return true;
-    case '/': lcdOut.esc();return true;
+    case '+': return lcdOut.up();;
+    case '-': return lcdOut.down();;
+    case '*': return lcdOut.enter();;
+    case '/': return lcdOut.esc();;
   }
   return false;
 }

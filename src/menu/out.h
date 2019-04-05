@@ -105,7 +105,7 @@ namespace Menu {
     template<typename P> static inline void fmtMode  (PrintHead<P>,bool io) {}
     template<typename P> static inline void fmtValue (PrintHead<P>,bool io) {}
     template<typename P> static inline void fmtUnit  (PrintHead<P>,bool io) {}
-    enum OUTPUT_BASE {};//do not define this elsewhere
+    // enum OUTPUT_BASE {};//do not define this elsewhere
     constexpr static inline bool canNav() {return false;}
     template<typename P> inline void printMenuRaw(PrintHead<P>,const Item&) {}
     template<typename T> using itemFmt=ID<T>;

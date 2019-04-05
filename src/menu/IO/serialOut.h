@@ -8,22 +8,41 @@
 #include <Arduino.h>
 #include <streamFlow.h>
 #include "../out.h"
+#include "../nav.h"
+#include "../panels.h"
+#include "../fmt/textCursor.h"
+#include "../fmt/cursorPos.h"
+#include "../fmt/titleWrap.h"
+#include "../printers.h"
 
 namespace Menu {
 
   template<typename P,decltype(Serial)& dev=Serial, typename O=Void>
-  struct SerialOutDev:public O {
-    using RAW_DEVICE = SerialOutDev<P,dev,O>;
+  struct SerialOutDef:public O {
+    using RAW_DEVICE = SerialOutDef<P,dev,O>;
     using Parts=P;
     // using MUST_BE_AT_OUTPUT_BASE=O::OUTPUT_BASE;//or maybe not
-    static inline void raw(const char*i) {dev<<i;}
-    static inline void raw(char i) {dev<<i;}
-    static inline void raw(unsigned char i) {dev<<i;}
-    static inline void raw(int i) {dev<<i;}
-    static inline void raw(unsigned int i) {dev<<i;}
-    static inline void raw(endlObj i) {dev<<i;}
+    template<typename T>
+    inline void raw(T i) {dev.print(i);}
     static inline void endl() {dev<<::endl;}
-    static inline void raw(const __FlashStringHelper *i) {dev.print(i);}
-    //.. add more type here
   };
+
+  using SerialParts=DeviceParts<
+    Chain<TextCursorPrinter,ItemPrinter>::To,//emit format messages for accel, cursor amd item
+    TitlePrinter//emit format messages for titles (fmtTitle)
+  >;
+
+  using SerialFmt = Menu::Chain<//wrap inner types
+    DebugFmt,//add debug info when enabled
+    TextCursorFmt,//signal selected option on text mode
+    CursorPosFmt,//cursor control, change line at item end
+    TitleWrap,//wrap title in []
+    TitlePrinter,
+    FullPrinter,//print inner then options
+    NavNode//flat navigation control (no sub menus)
+  >;
+
 };//Menu
+
+template<decltype(Serial)& dev=Serial,typename Parts=Menu::SerialParts>
+using SerialOutDev=Menu::SerialOutDef<Parts,Serial>;

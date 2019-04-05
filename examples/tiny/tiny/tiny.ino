@@ -1,33 +1,7 @@
 #include <menu/def/tinyArduino.h>
-#include <menu/nav.h>
-#include <menu/printers.h>
-#include <menu/fmt/text.h>
-#include <menu/fmt/debug.h>
-#include <menu/fmt/titleWrap.h>
 #include <menu/comp/flashMenu.h>
 
-template<typename O>
-using WrapTitle=Menu::TitleWrapFmt<O>;
-
-MenuOut<//menu output
-  Menu::Chain<//wrap inner types
-    Menu::DebugFmt,//add debug info when enabled
-    Menu::TextFmt,//text format, insert \n at item or title end, etc...
-    WrapTitle,//surround titles with []
-    Menu::TitlePrinter,
-    Menu::FullPrinter,//print inner then options
-    Menu::NavNode,//flat navigation control (no sub menus)
-    SerialOut//use arduino default Serial port
-  >::To<//device parts to be used for panel|menu|title|item
-    Menu::DeviceParts<
-      //install format message emitter for items,titles,menu and panel, use Menu::ID to ommit the parts
-      Menu::Chain<Menu::TextAccelPrinter,Menu::TextCursorPrinter,Menu::ItemPrinter>::To,//emit format messages for accel, cursor amd item
-      Menu::TitlePrinter,//emit format messages for titles (fmtTitle)
-      Menu::ID,//menu parfts (not used yet)
-      Menu::ID//panel parts (not used yet)
-    >
-  >
-> serialOut;
+MenuOut<Menu::SerialFmt::To<SerialOutDev<>>> serialOut;
 
 //normal option
 Prompt<Text> op1("Op 1");
@@ -61,7 +35,6 @@ bool keys(int key) {
 }
 
 void loop() {
-  if (Serial.available()) {
-    if (keys(Serial.read())) serialOut.printMenu();
-  }
+  if (Serial.available()&&keys(Serial.read()))
+    serialOut.printMenu();
 }

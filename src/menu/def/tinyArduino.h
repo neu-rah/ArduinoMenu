@@ -15,8 +15,8 @@ template<typename O>
 using MenuOut=Menu::MenuOutCap<O>;
 
 //describing an output -----------------------------------------
-template<typename P=Menu::DeviceParts<>>
-using SerialOut=Menu::SerialOutDev<P,Serial>;
+// template<typename P=Menu::DeviceParts<>>
+// using SerialOut=Menu::SerialOutDev<P,Serial>;
 
 //common element
 using Text=Menu::Text<Menu::Empty>;
