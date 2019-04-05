@@ -116,22 +116,28 @@ namespace Menu {
     // inline Item& getTarget(Item& i) {return *this;}
   };
 
-  //just and example of wrapper/formnat-> deprecated, use fmt/*
-  // template<typename O,char pref='[',char suf=']'>
-  // struct WrapTitle:public O {
-  //   using RAW_DEVICE=typename O::RAW_DEVICE;//must have a raw device!
-  //   template<typename P>
-  //   void fmtTitle(PrintHead<P> p, bool io) {//io: true->start, false->end
-  //     // Serial<<(io?"{":"|")<<"WrapTitle"<<(io?"|":"}")<<endl;
-  //     if (io) {
-  //       O::raw(pref);
-  //       O::fmtTitle(p,io);
-  //     } else {
-  //       O::fmtTitle(p,io);
-  //       O::raw(suf);
-  //     }
-  //   }
-  // };
+  //holds scroll position. step should be font size in device coordinates
+  template<typename O,int step=1>
+  class ScrollPos:public O {
+  public:
+    //this should be a device only thing
+    //not related to menu structure
+    //but eventually controlled by it
+    inline size_t top() const {return oi;}
+    inline size_t scrlUp() {oi+=step;}
+    inline size_t scrlDown() {oi-=step;}
+    inline size_t scrlTo(size_t i) {oi=i;}
+  protected:
+    size_t oi;//option index
+  };
+
+  //single line scroll controller for text devices
+  template<typename O,int step=1>
+  struct SingleLineScrollCtrl:public ScrollPos<O,step> {
+    using This=ScrollPos<O,step>;
+    inline bool down() {if (O::down()) This::scrlDown();}
+    inline bool up() {if (O::up()) This::scrlUp();}
+};
 
   //bind output to existing device ---------------------------
   //use any stream as menu output

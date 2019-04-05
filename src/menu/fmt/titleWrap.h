@@ -3,7 +3,8 @@
 ////////////////////////////////////////////////////
 // Rui Azevedo - Apr2019
 // neu-rah (ruihfazevedo@gmail.com)
-// output text format
+// output wrap title between 2 characters
+// define used characters at type level
 
 namespace Menu {
 

@@ -24,12 +24,24 @@ namespace Menu {
       inline Item& getTarget() {return *target;}
 
       inline void idx(size_t i) {sel=idx;}
-      inline void down() {if (sel>0) sel--;}
-      inline void up() {if (sel<(target?target->size()-1:0)) sel++;}
-      static inline void left() {up();}
-      static inline void right() {down();}
-      static inline void enter() {}
-      static inline void esc() {}
+      inline bool down() {
+        if (sel>0) {
+          sel--;
+          return true;
+        }
+        return false;
+      }
+      inline bool up() {
+        if (sel<(target?target->size()-1:0)) {
+          sel++;
+          return true;
+        }
+        return false;
+      }
+      static inline bool left() {return up();}
+      static inline bool right() {return down();}
+      static inline bool enter() {}
+      static inline bool esc() {}
     protected:
       size_t sel=0;
       Item* target=NULL;

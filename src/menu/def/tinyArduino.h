@@ -29,9 +29,6 @@ using Op=Text;
 
 using FlashText=Menu::FlashTextDef<Menu::Empty>;
 
-//a menu option using flash text
-using FlashOp=FlashText;
-
 using Item=Menu::Item;
 
 template<typename O>

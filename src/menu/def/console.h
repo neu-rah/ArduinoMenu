@@ -20,7 +20,8 @@ template<typename O>
 using MenuOut=Menu::MenuOutCap<O>;
 
 //describing an output -----------------------------------------
-using ConsoleOut=Menu::ConsoleOutDef<>;
+template<typename O>
+using ConsoleOut=Menu::ConsoleOutDef<O>;
 
 using Text=Menu::Text<Menu::Empty>;
 

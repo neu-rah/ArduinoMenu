@@ -58,6 +58,11 @@ namespace Menu {
       // using O::O;
       inline Viewport() {newView();}
       inline Viewport(const Viewport<O>& o) {fx=o.width();fy=o.height()-1;}
+      inline operator bool() const {return fx||fy;}
+      inline operator int() const {return free();}
+      inline void newView() {fx=O::width();fy=O::height()-1;}
+      inline void endl() {useY(1);}
+
       inline size_t freeX() const {return fx;}
       inline size_t freeY() const {return fy;}
       inline size_t free() const {return fx+width()*fy;}
@@ -71,10 +76,6 @@ namespace Menu {
           fx=width();
         }
       }
-      inline operator bool() const {return fx||fy;}
-      inline operator int() const {return free();}
-      inline void newView() {fx=O::width();fy=O::height()-1;}
-      inline void endl() {useY(1);}
     protected:
       size_t fx,fy;
   };

@@ -1,9 +1,11 @@
+#include <Dump.h>
 #include <menu/def/tinyArduino.h>
 #include <menu/comp/multiLang.h>
 #include <menu/printers.h>
+#include <menu/nav.h>
 #include <menu/fmt/text.h>
 #include <menu/fmt/debug.h>
-#include <Dump.h>
+#include <menu/fmt/titleWrap.h>
 
 using FlashText=Menu::FlashTextDef<Menu::Empty>;
 
@@ -30,29 +32,37 @@ using MultiLang=Menu::Lang<FlashText>;
 MultiLang langs(enLang);
 
 template<LangCodes id>
-using LangOp=Menu::Prompt<asTitle<MultiLang::Text<langs,id,Menu::Empty>>>;
+using LangOp=Menu::Prompt<MultiLang::Text<langs,id,Menu::Empty>>;
 
-//normal option
+template<typename O>
+using WrapTitle=Menu::TitleWrapFmt<O>;
+
 //serial output
-MenuOut<//menu part injection MUST occur here (top level)
-  Menu::DebugFmt<//add debug info to output
-    Menu::FullPrinter<//print innet then options
-      Menu::TitlePrinter<//print the title
-        Menu::TextFmt<//text format, insert \n at item or title end, etc...
-          Menu::WrapTitle<//print title surrounded by []
-            SerialOut//use arduino default Serial port
-          >
-        >
-      >
+MenuOut<//menu output
+  Menu::Chain<//wrap inner types
+    Menu::DebugFmt,//add debug info when enabled
+    Menu::TextFmt,//text format, insert \n at item or title end, etc...
+    WrapTitle,//surround titles with []
+    Menu::FullPrinter,//print inner then options
+    Menu::NavNode,//flat navigation control (no sub menus)
+    SerialOut//use arduino default Serial port
+  >::To<//device parts to be used for panel|menu|title|item
+    Menu::DeviceParts<
+      //install format message emitter for items,titles,menu and panel, use Menu::ID to ommit the parts
+      Menu::Chain<Menu::TextAccelPrinter,Menu::TextCursorPrinter,Menu::ItemPrinter>::To,//emit format messages for accel, cursor amd item
+      Menu::TitlePrinter,//emit format messages for titles (fmtTitle)
+      Menu::ID,//menu parfts (not used yet)
+      Menu::ID//panel parts (not used yet)
     >
   >
 > serialOut;
 
+//normal option
 Prompt<Op> op1("Op 1");
 
 //option using flash text
 const char op2_text[] PROGMEM="Op 2";
-Prompt<FlashOp> op2(op2_text);
+Prompt<FlashText> op2(op2_text);
 
 LangOp<textOk> op3;
 LangOp<textCancel> op4;

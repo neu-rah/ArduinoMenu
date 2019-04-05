@@ -57,7 +57,7 @@ namespace Menu {
 
   #if (MENU_INJECT_PARTS==true)
     template<typename O>
-    void Prompt<O>::out(MenuOut& o,PrinterPart& pp) {
+    void Prompt<O>::out(MenuOut& o,PrinterPart& pp) const {
       pp.use<O>(o,*this);
     }
   #endif
