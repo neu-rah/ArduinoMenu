@@ -54,10 +54,10 @@ namespace Menu {
 
 };//Menu
 
-template<typename LCD,LCD& lcd,typename Panel=Menu::StaticPanel<0,0,16,2>,typename Parts=Menu::LCDParts>
+template<LiquidCrystal& lcd,typename Panel=Menu::StaticPanel<0,0,16,2>,typename Parts=Menu::LCDParts>
 using LCDOutDev=Menu::LCDOutDef<
   Parts,
-  LCD,
+  LiquidCrystal,
   lcd,
   Menu::Viewport<Panel>
 >;

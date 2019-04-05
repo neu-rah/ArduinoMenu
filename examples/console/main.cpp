@@ -1,4 +1,4 @@
-//example for std::iostream
+// AM5 example for std::iostream
 // compile command example
 // g++ examples/console/main.cpp -o am5 -I src -std=c++11
 
@@ -20,7 +20,7 @@ MenuOut<//menu output
     WrapTitle,//surround titles with []
     Menu::FullPrinter,//print inner then options
     Menu::NavNode,//flat navigation control (no sub menus)
-    ConsoleOut//use arduino default Serial port
+    ConsoleOut//use std default console (cout)
   >::To<//device parts to be used for panel|menu|title|item
     Menu::DeviceParts<
       //install format message emitter for items,titles,menu and panel, use Menu::ID to ommit the parts
@@ -31,20 +31,6 @@ MenuOut<//menu output
     >
   >
 > consoleOut;
-
-// Menu::MenuOutCap<
-//   Menu::DebugFmt<//add debug info to output (if enabled)
-//     Menu::FullPrinter<//print innet then options
-//       Menu::TitlePrinter<//print the title
-//         Menu::TextFmt<//text format, insert \n at item or title end, etc...
-//           Menu::TitleWrapFmt<//print title surrounded by []
-//             ConsoleOut//standard output
-//           >
-//         >
-//       >
-//     >
-//   >
-// > consoleOut;
 
 Prompt<Op> op1("Op 1");
 Prompt<Op> op2("Op 2");

@@ -29,10 +29,10 @@ template<typename O>
 using asTitle=Menu::asTitle<O>;
 
 //describing an option ------------------------------------
-using Op=Menu::asItem<Text>;//option will be formatted as title
+using Op=Text;//option will be formatted as title
 
 template<typename O>
 using Prompt=Menu::Prompt<O>;
 
 template<size_t n>
-using StaticMenu=Menu::StaticMenu<n,asTitle<Text>>;
+using StaticMenu=Menu::StaticMenu<n,Text>;

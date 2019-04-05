@@ -12,22 +12,16 @@
 LiquidCrystal lcd(RS, RW, EN, A0, A1, A2, A3);
 
 //menu output ------------------------
-//by default its 16x2
-using LCDRaw=LCDOutDev<decltype(lcd),lcd>;
+
 //bind a format to the lcd
-MenuOut<Menu::LCDFmt::To<LCDRaw>> lcdOut;
+MenuOut<Menu::LCDFmt::To<LCDOutDev<lcd>/*by default its 16x2*/>> lcdOut;
 
-// normal option
-Prompt<Op> op1("Op 1");
-
-//option using flash text
-const char op2_text[] PROGMEM="Op 2";
-Prompt<FlashOp> op2(op2_text);
-
-// Prompt<StaticMenu<2>> mainMenu("Main menu",&op1,&op2);
-const char menuTitle_text[] PROGMEM="Main menu";
-Prompt<FlashOp> menuTitle(menuTitle_text);
-Prompt<Menu::FlashMenuDef<2,FlashText>> mainMenu(menuTitle_text,&op1,&op2);
+// quick define menu
+Prompt<StaticMenu<2>> mainMenu(
+  "Main menu"
+  ,new Prompt<Text>("Op 1")
+  ,new Prompt<Text>("Op 2")
+);
 
 void setup() {
   Serial.begin(115200);

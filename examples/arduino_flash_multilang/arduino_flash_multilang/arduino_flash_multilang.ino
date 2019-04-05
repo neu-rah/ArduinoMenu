@@ -58,7 +58,7 @@ MenuOut<//menu output
 > serialOut;
 
 //normal option
-Prompt<Op> op1("Op 1");
+Prompt<Text> op1("Op 1");
 
 //option using flash text
 const char op2_text[] PROGMEM="Op 2";
