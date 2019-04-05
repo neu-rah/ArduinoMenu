@@ -25,16 +25,17 @@ using asTitle=Menu::asTitle<O>;
 using Text=Menu::Text<Menu::Empty>;
 
 //describing an option ------------------------------------
-using Op=Menu::asItem<Text>;
+using Op=Text;
 
 using FlashText=Menu::FlashTextDef<Menu::Empty>;
 
 //a menu option using flash text
-using FlashOp=Menu::asItem<FlashText>;
+using FlashOp=FlashText;
 
 using Item=Menu::Item;
+
 template<typename O>
 using Prompt=Menu::Prompt<O>;
 
 template<size_t n>
-using StaticMenu=Menu::StaticMenu<n,asTitle<Text>>;
+using StaticMenu=Menu::StaticMenu<n,Text>;

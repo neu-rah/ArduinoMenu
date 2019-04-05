@@ -79,6 +79,8 @@ namespace Menu {
     void fmtValue(bool io) override {O::fmtValue(head,io);}
     void fmtUnit(bool io) override {O::fmtUnit(head,io);}
     void printMenu() override {
+      //TODO: install panel browser here
+      O::newView();
       O::printMenuRaw(PrintHead<O>{*this,*this,0},O::getTarget());
     }
     void setTarget(Item& i) override {O::setTarget(i);}
@@ -91,17 +93,18 @@ namespace Menu {
   struct Void {
     // inline void out(Item& i);
     template<typename T>
-    void raw(T) {}//just ignore stuff
-    template<typename P> inline void fmtMenu  (PrintHead<P>,bool io) {}
-    template<typename P> inline void fmtPanel (PrintHead<P>,bool io) {}
-    template<typename P> inline void fmtTitle (PrintHead<P>,bool io) {}
-    template<typename P> inline void fmtItem  (PrintHead<P>,bool io) {}
-    template<typename P> inline void fmtAccel (PrintHead<P>,bool io) {}
-    template<typename P> inline void fmtCursor(PrintHead<P>,bool io) {}
-    template<typename P> inline void fmtLabel (PrintHead<P>,bool io) {}
-    template<typename P> inline void fmtMode  (PrintHead<P>,bool io) {}
-    template<typename P> inline void fmtValue (PrintHead<P>,bool io) {}
-    template<typename P> inline void fmtUnit  (PrintHead<P>,bool io) {}
+    static inline void raw(T) {}//just ignore stuff
+    static inline void newView() {}//restart the viewport from the panel definition
+    template<typename P> static inline void fmtMenu  (PrintHead<P>,bool io) {}
+    template<typename P> static inline void fmtPanel (PrintHead<P>,bool io) {}
+    template<typename P> static inline void fmtTitle (PrintHead<P>,bool io) {}
+    template<typename P> static inline void fmtItem  (PrintHead<P>,bool io) {}
+    template<typename P> static inline void fmtAccel (PrintHead<P>,bool io) {}
+    template<typename P> static inline void fmtCursor(PrintHead<P>,bool io) {}
+    template<typename P> static inline void fmtLabel (PrintHead<P>,bool io) {}
+    template<typename P> static inline void fmtMode  (PrintHead<P>,bool io) {}
+    template<typename P> static inline void fmtValue (PrintHead<P>,bool io) {}
+    template<typename P> static inline void fmtUnit  (PrintHead<P>,bool io) {}
     enum OUTPUT_BASE {};//do not define this elsewhere
     constexpr static inline bool canNav() {return false;}
     template<typename P> inline void printMenuRaw(PrintHead<P>,const Item&) {}
@@ -113,22 +116,22 @@ namespace Menu {
     // inline Item& getTarget(Item& i) {return *this;}
   };
 
-  //just and example of wrapper/formnat
-  template<typename O,char pref='[',char suf=']'>
-  struct WrapTitle:public O {
-    using RAW_DEVICE=typename O::RAW_DEVICE;//must have a raw device!
-    template<typename P>
-    void fmtTitle(PrintHead<P> p, bool io) {//io: true->start, false->end
-      // Serial<<(io?"{":"|")<<"WrapTitle"<<(io?"|":"}")<<endl;
-      if (io) {
-        O::raw(pref);
-        O::fmtTitle(p,io);
-      } else {
-        O::fmtTitle(p,io);
-        O::raw(suf);
-      }
-    }
-  };
+  //just and example of wrapper/formnat-> deprecated, use fmt/*
+  // template<typename O,char pref='[',char suf=']'>
+  // struct WrapTitle:public O {
+  //   using RAW_DEVICE=typename O::RAW_DEVICE;//must have a raw device!
+  //   template<typename P>
+  //   void fmtTitle(PrintHead<P> p, bool io) {//io: true->start, false->end
+  //     // Serial<<(io?"{":"|")<<"WrapTitle"<<(io?"|":"}")<<endl;
+  //     if (io) {
+  //       O::raw(pref);
+  //       O::fmtTitle(p,io);
+  //     } else {
+  //       O::fmtTitle(p,io);
+  //       O::raw(suf);
+  //     }
+  //   }
+  // };
 
   //bind output to existing device ---------------------------
   //use any stream as menu output

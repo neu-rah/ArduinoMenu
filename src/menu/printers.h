@@ -18,7 +18,7 @@ namespace Menu {
     using itemFmt=typename RAW_DEVICE::Parts::template itemFmt<P>;
     template<typename P>
     void printMenuRaw(PrintHead<P> p,const Item& o) {
-      // MENU_DEBUG_OUT<<"FullPrinter::printMenuRaw"<<endl;
+      // MENU_DEBUG_OUT<<"FullPrinter::printMenuRaw "<<o.size()<<endl;
       p.printer.fmtMenu(p,true);
       reinterpret_cast<titleFmt<O>*>(this)->printMenuRaw(p,o);
       // MenuOutCap<titleFmt<O>>(p.menuOut).printMenuRaw(p,o);;
@@ -68,10 +68,16 @@ namespace Menu {
         //guess i wont need this
         PrinterPart pp;
         o.out(*reinterpret_cast<MenuOutCap<TitlePrinter<O>>*>(this),pp);
+        O::printMenuRaw(p,o);
       #else
+        //instead of sending the request thru a chain of calls (as above)
+        //we just call the fmt functions direrctly (this would be the result of the above)
+        //since we have access to th eprinter head
+        p.printer.fmtTitle(p,true);
         o.out(p.menuOut);
+        O::printMenuRaw(p,o);
+        p.printer.fmtTitle(p,false);
       #endif
-      O::printMenuRaw(p,o);
     }
   };
 
@@ -81,12 +87,16 @@ namespace Menu {
     using RAW_DEVICE=typename O::RAW_DEVICE;//must have a raw device!
     template<typename P>
     void printMenuRaw(PrintHead<P> p,const Item& o) {
+      // MENU_DEBUG_OUT<<"ItemPrinter::printMenuRaw"<<endl;
+      p.printer.fmtItem(p,true);
       o.out(p.menuOut);
       O::printMenuRaw(p,o);
+      p.printer.fmtItem(p,false);
     }
   };
 
   //collection of printer parts to customize part printing
+  //for panel|menu|title|items
   template<
     template<typename> class i=ID,
     template<typename> class t=ID,

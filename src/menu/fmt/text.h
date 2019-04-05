@@ -10,6 +10,7 @@ namespace Menu {
   template<typename O>
   struct TextFmt:public O {
     using RAW_DEVICE=typename O::RAW_DEVICE;//must have a raw device!
+    using O::O;
     template<typename P>
     inline void fmtMenu(PrintHead<P> p,bool io) {
       if (io) {
