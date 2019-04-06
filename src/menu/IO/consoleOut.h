@@ -9,6 +9,11 @@
 using namespace std;
 
 #include "../out.h"
+#include "../printers.h"
+#include "../nav.h"
+#include "../fmt/textCursor.h"
+#include "../fmt/cursorPos.h"
+#include "../fmt/titleWrap.h"
 
 namespace Menu {
   // using ConsoleOutDef=OutDev<ostream,cout,Void>;
@@ -26,4 +31,24 @@ template<typename P,ostream& dev=cout, typename O=Void>
     //.. add more type here
     static inline void endl() {dev<<::endl;}
   };
+
+  using ConsoleParts=DeviceParts<
+    Chain<TextAccelPrinter,TextCursorPrinter,ItemPrinter>::To,//emit format messages for accel, cursor amd item
+    TitlePrinter//emit format messages for titles (fmtTitle)
+  >;
+
+  template<template<typename> class N=NavNode>
+  using ConsoleFmt = Menu::Chain<//wrap inner types
+    DebugFmt,//add debug info when enabled
+    TextCursorFmt,//signal selected option on text mode
+    CursorPosFmt,//cursor control, change line at item end
+    TitleWrap,//wrap title in []
+    TitlePrinter,
+    FullPrinter,//print inner then options
+    N//flat navigation control (no sub menus)
+  >;
+
 };//Menu
+
+template<ostream& dev=cout,typename Parts=Menu::ConsoleParts>
+using ConsoleOutDev=Menu::ConsoleOutDef<Parts,cout>;

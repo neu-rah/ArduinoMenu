@@ -38,7 +38,7 @@ template<typename O>
 using WrapTitle=Menu::TitleWrapFmt<O>;
 
 //serial output
-MenuOut<Menu::SerialFmt::To<SerialOutDev<>>> serialOut;
+MenuOut<Menu::SerialFmt<>::To<SerialOutDev<>>> serialOut;
 
 //normal option
 Prompt<Text> op1("Op 1");

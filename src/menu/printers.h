@@ -21,7 +21,8 @@ namespace Menu {
       // MENU_DEBUG_OUT<<"FullPrinter::printMenuRaw "<<o.size()<<endl;
       p.printer.fmtMenu(p,true);
       O::printMenuRaw(p,o);
-      reinterpret_cast<itemFmt<O>*>(this)->printMenuRaw(PrintHead<P>{p.menuOut,p.printer,pos()},o[pos()]);
+      reinterpret_cast<itemFmt<O>*>(this)
+        ->printMenuRaw(PrintHead<P>{p.menuOut,p.printer,O::pos()},o[O::pos()]);
       p.printer.fmtMenu(p,false);
     }
   };

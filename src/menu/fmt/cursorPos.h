@@ -16,7 +16,7 @@ namespace Menu {
     inline void fmtItem(PrintHead<P> p,bool io) {
       if (io) O::fmtItem(p,io);
       else {
-        O::fmtItem(p,io);
+        // O::fmtItem(p,io);
         O::endl();
       }
     }
@@ -25,7 +25,7 @@ namespace Menu {
     inline void fmtTitle(PrintHead<P> p,bool io) {
       if (io) O::fmtTitle(p,io);
       else {
-        O::fmtTitle(p,io);
+        // O::fmtTitle(p,io);
         O::endl();
       }
     }

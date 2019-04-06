@@ -20,16 +20,10 @@ template<typename O>
 using MenuOut=Menu::MenuOutCap<O>;
 
 //describing an output -----------------------------------------
-template<typename O>
-using ConsoleOut=Menu::ConsoleOutDef<O>;
+// template<typename O>
+// using ConsoleOut=Menu::ConsoleOutDef<O>;
 
 using Text=Menu::Text<Menu::Empty>;
-
-template<typename O>
-using asTitle=Menu::asTitle<O>;
-
-//describing an option ------------------------------------
-using Op=Text;//option will be formatted as title
 
 template<typename O>
 using Prompt=Menu::Prompt<O>;

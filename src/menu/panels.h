@@ -66,9 +66,9 @@ namespace Menu {
 
       inline idx_t freeX() const {return fx;}
       inline idx_t freeY() const {return fy;}
-      inline idx_t free() const {return fx+width()*fy;}
-      inline idx_t posX() const {return (width()-fx)+O::posX();}
-      inline idx_t posY() const {return (height()-fy)+O::posY();}
+      inline idx_t free() const {return fx+O::width()*fy;}
+      inline idx_t posX() const {return (O::width()-fx)+O::posX();}
+      inline idx_t posY() const {return (O::height()-fy)+O::posY();}
       inline void useX(idx_t ux=1) {if (fx) fx-=ux; else useY();}
       inline void useY(idx_t uy=1) {
         if (!fy) {
@@ -76,7 +76,7 @@ namespace Menu {
           fy=0;
         } else {
           fy-=uy;
-          fx=width();
+          fx=O::width();
         }
       }
     protected:

@@ -1,3 +1,11 @@
+// Rui Azevedo - Apr2019
+// neu-rah (ruihfazevedo@gmail.com)
+// store text on flash (Arduino framework)
+//
+// ArduinoMenu libtary 5.x code example
+// Output: Serial+LCD
+// Input: user serial driver
+
 #include <menu/def/tinyArduino.h>
 #include <menu/IO/lcdOut.h>
 
@@ -7,16 +15,29 @@
 #define EN A4
 LiquidCrystal lcd(RS, RW, EN, A0, A1, A2, A3);
 
+//common nav node
+Menu::NavNode<> commonNav;
+
+//to attach the nav node to output devices
+template<typename O>
+using Nav=Menu::SharedNavNode<O,commonNav>;
+
 //menu output ------------------------
-// bind a format to the lcd
-MenuOut<Menu::LCDFmt::To<LCDOutDev<lcd>>> lcdOut;
-// MenuOut<Menu::LCDFmt::To<LCDOutDev<lcd>,Menu::Panel<20,4>>> lcdOut;
+//define multiple outputs as one device
+Menu::MenuOutCap<
+  Menu::OutList<
+    Menu::SerialFmt<Nav>::To<SerialOutDev<>>,
+    Menu::LCDFmt<Nav>::To<LCDOutDev<lcd>>
+  >
+> menuOut;
+
+using Op=Prompt<Text>;
 
 // quick define menu
 Prompt<StaticMenu<2>> mainMenu(
   "Main menu"
-  ,new Prompt<Text>("Op 1")
-  ,new Prompt<Text>("Op 2")
+  ,new Op("Op 1")
+  ,new Op("Op 2")
 );
 
 void setup() {
@@ -25,26 +46,26 @@ void setup() {
   Serial<<"AM5 example ----"<<endl;
   lcd.begin(16,2);
   lcd.setCursor(0,0);
-  lcdOut<<"AM5 example ---";
+  menuOut<<"AM5 example ---";
   delay(300);
   lcd.clear();
-  lcdOut.setTarget(mainMenu);
-  lcdOut.printMenu();
+  menuOut.setTarget(mainMenu);
+  menuOut.printMenu();
 }
 
 //handle serial keys to navigate menu
 bool keys(int key) {
   switch(key) {
-    case '+': return lcdOut.up();;
-    case '-': return lcdOut.down();;
-    case '*': return lcdOut.enter();;
-    case '/': return lcdOut.esc();;
+    case '+': return menuOut.up();;
+    case '-': return menuOut.down();;
+    case '*': return menuOut.enter();;
+    case '/': return menuOut.esc();;
   }
   return false;
 }
 
 void loop() {
   if (Serial.available()) {
-    if (keys(Serial.read())) lcdOut.printMenu();
+    if (keys(Serial.read())) menuOut.printMenu();
   }
 }

@@ -9,6 +9,10 @@
 
 #include "menu.h"
 
+#ifdef ARDUINO
+  #include "arduino_assert.h"
+#endif
+
 namespace Menu {
   ///////////////////////////////////////////////////////////////////
   // output interface
@@ -117,6 +121,37 @@ namespace Menu {
     static inline void endl() {}//we use no viewport
   };
 
+  template<typename O,typename... OO>
+  class OutList:public O {
+    public:
+      using O::O;
+      template<typename P>
+      inline void printMenuRaw(Menu::PrintHead<P> p,const Item&i) {
+        O::newView();
+        O::printMenuRaw(p,i);
+        next.printMenuRaw(Menu::PrintHead<OutList<OO...>>{next,next,0},i);
+      }
+      inline void setTarget(Item& i) {
+        O::setTarget(i);
+        assert(O::sharedNav());
+        //next.setTarget(i);
+      }
+    protected:
+      Menu::MenuOutCap<OutList<OO...>> next;
+  };
+
+  template<typename O>
+  struct OutList<O>:public O {
+    public:
+      using O::O;
+      template<typename P>
+      inline void printMenuRaw(Menu::PrintHead<P> p,const Item&i) {
+        O::newView();
+        O::printMenuRaw(p,i);
+      }
+  };
+
+
   //holds scroll position. step should be font size in device coordinates
   template<typename O,int step=1>
   class ScrollPos:public O {
@@ -125,9 +160,9 @@ namespace Menu {
     //not related to menu structure
     //but eventually controlled by it
     inline size_t top() const {return oi;}
-    inline size_t scrlUp() {oi+=step;}
-    inline size_t scrlDown() {oi-=step;}
-    inline size_t scrlTo(size_t i) {oi=i;}
+    inline void scrlUp() {oi+=step;}
+    inline void scrlDown() {oi-=step;}
+    inline void scrlTo(size_t i) {oi=i;}
   protected:
     size_t oi;//option index
   };

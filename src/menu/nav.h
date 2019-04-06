@@ -7,7 +7,6 @@
 // not implemented yet
 
 #include "items.h"
-#include "arduino_assert.h"
 
 namespace Menu {
 

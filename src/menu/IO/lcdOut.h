@@ -27,7 +27,7 @@ namespace Menu {
     // static inline void endl() {O::useY();}//the viewport will catch it
     template<typename T>
     inline void raw(T i) {
-      if (!operator bool()) return;
+      if (!O::operator bool()) return;
       dev.setCursor(O::posX(),O::posY());
       // Serial<<"lcd.setCursor("<<posX()<<","<<posY()<<") "<<i<<endl;
       O::useX(dev.print(i));

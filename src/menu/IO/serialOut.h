@@ -10,6 +10,7 @@
 #include "../out.h"
 #include "../nav.h"
 #include "../panels.h"
+#include "../fmt/text.h"
 #include "../fmt/textCursor.h"
 #include "../fmt/cursorPos.h"
 #include "../fmt/titleWrap.h"
@@ -28,7 +29,7 @@ namespace Menu {
   };
 
   using SerialParts=DeviceParts<
-    Chain<TextCursorPrinter,ItemPrinter>::To,//emit format messages for accel, cursor amd item
+    Chain<TextAccelPrinter,TextCursorPrinter,ItemPrinter>::To,//emit format messages for accel, cursor amd item
     TitlePrinter//emit format messages for titles (fmtTitle)
   >;
 
@@ -37,6 +38,7 @@ namespace Menu {
     DebugFmt,//add debug info when enabled
     TextCursorFmt,//signal selected option on text mode
     CursorPosFmt,//cursor control, change line at item end
+    TextFmt,//text output format
     TitleWrap,//wrap title in []
     TitlePrinter,
     FullPrinter,//print inner then options

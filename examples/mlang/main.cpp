@@ -16,24 +16,25 @@ using MultiLang=Menu::Lang<Text>;
 MultiLang langs(enLang);
 
 template<LangCodes id>
-using LangOp=Prompt<asTitle<MultiLang::Text<langs,id,Menu::Empty>>>;
+using LangOp=Prompt<MultiLang::Text<langs,id,Menu::Empty>>;
 
-Menu::MenuOutCap<
-  Menu::DebugFmt<//add debug info to output (if enabled)
-    Menu::FullPrinter<//print innet then options
-      Menu::TitlePrinter<//print the title
-        Menu::TextFmt<//text format, insert \n at item or title end, etc...
-          Menu::WrapTitle<//print title surrounded by []
-            ConsoleOut//standard output
-          >
-        >
-      >
-    >
-  >
-> consoleOut;
+MenuOut<Menu::ConsoleFmt<>::To<ConsoleOutDev<>>> consoleOut;
+// Menu::MenuOutCap<
+//   Menu::DebugFmt<//add debug info to output (if enabled)
+//     Menu::FullPrinter<//print innet then options
+//       Menu::TitlePrinter<//print the title
+//         Menu::TextFmt<//text format, insert \n at item or title end, etc...
+//           Menu::WrapTitle<//print title surrounded by []
+//             ConsoleOut//standard output
+//           >
+//         >
+//       >
+//     >
+//   >
+// > consoleOut;
 
-Prompt<Op> op1("Op 1");
-Prompt<Op> op2("Op 2");
+Prompt<Text> op1("Op 1");
+Prompt<Text> op2("Op 2");
 //some multilanguage options
 LangOp<textOk> op3;
 LangOp<textCancel> op4;
@@ -43,9 +44,10 @@ Prompt<StaticMenu<4>> mainMenu("Main menu",&op1,&op2,&op3,&op4);
 
 int main(int,const char**) {
   cout<<"AM5 example ----"<<endl;
-  consoleOut.printMenu(mainMenu);
+  consoleOut.setTarget(mainMenu);
+  consoleOut.printMenu();
   cout<<"change language ----"<<endl;
   langs.setLangTable(ptLang);
-  consoleOut.printMenu(mainMenu);
+  consoleOut.printMenu();
   cout<<"----"<<endl;
 }
