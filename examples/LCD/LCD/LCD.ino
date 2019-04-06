@@ -7,6 +7,7 @@
 // Input: user serial driver
 
 #include <menu/def/tinyArduino.h>
+#include <menu/IO/serialOut.h>
 #include <menu/IO/lcdOut.h>
 
 // LCD /////////////////////////////////////////

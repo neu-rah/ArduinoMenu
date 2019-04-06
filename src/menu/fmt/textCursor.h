@@ -16,7 +16,7 @@ namespace Menu {
     inline void fmtCursor(PrintHead<P> p,bool io) {
       if (io) {
         O::raw(p.printer.selected(p)?">":" ");
-        // O::fmtCursor(p,io);
+        O::fmtCursor(p,io);
       } else O::fmtCursor(p,io);
     }
   };

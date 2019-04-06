@@ -12,7 +12,6 @@
 #include "../panels.h"
 #include "../fmt/text.h"
 #include "../fmt/textCursor.h"
-#include "../fmt/cursorPos.h"
 #include "../fmt/titleWrap.h"
 #include "../printers.h"
 
@@ -37,7 +36,6 @@ namespace Menu {
   using SerialFmt = Menu::Chain<//wrap inner types
     DebugFmt,//add debug info when enabled
     TextCursorFmt,//signal selected option on text mode
-    CursorPosFmt,//cursor control, change line at item end
     TextFmt,//text output format
     TitleWrap,//wrap title in []
     TitlePrinter,

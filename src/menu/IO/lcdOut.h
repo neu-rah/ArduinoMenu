@@ -12,7 +12,6 @@
 #include "../nav.h"
 #include "../panels.h"
 #include "../fmt/textCursor.h"
-#include "../fmt/cursorPos.h"
 #include "../fmt/titleWrap.h"
 #include "../printers.h"
 #include "../fmt/debug.h"
@@ -49,12 +48,11 @@ namespace Menu {
   using LCDFmt = Menu::Chain<//wrap inner types
     DebugFmt,//add debug info when enabled
     // TextCursorFmt,//signal selected option on text mode
-    CursorPosFmt,//cursor control, change line at item end
+    TextFmt,//normal text format
     TitleWrap,//wrap title in []
     TitlePrinter,
-    SelItemPrinter,
+    SelItemPrinter,//we only have a free line
     // FullPrinter,//print inner then options
-    // SingleLineMenu,//scroll on every move (text lines)
     N//flat navigation control (no sub menus)
   >;
 

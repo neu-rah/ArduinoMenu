@@ -19,19 +19,6 @@ template<LangCodes id>
 using LangOp=Prompt<MultiLang::Text<langs,id,Menu::Empty>>;
 
 MenuOut<Menu::ConsoleFmt<>::To<ConsoleOutDev<>>> consoleOut;
-// Menu::MenuOutCap<
-//   Menu::DebugFmt<//add debug info to output (if enabled)
-//     Menu::FullPrinter<//print innet then options
-//       Menu::TitlePrinter<//print the title
-//         Menu::TextFmt<//text format, insert \n at item or title end, etc...
-//           Menu::WrapTitle<//print title surrounded by []
-//             ConsoleOut//standard output
-//           >
-//         >
-//       >
-//     >
-//   >
-// > consoleOut;
 
 Prompt<Text> op1("Op 1");
 Prompt<Text> op2("Op 2");
@@ -39,7 +26,6 @@ Prompt<Text> op2("Op 2");
 LangOp<textOk> op3;
 LangOp<textCancel> op4;
 
-// Menu::Item* ops[]{&op1,&op2,&op3,&op4};
 Prompt<StaticMenu<4>> mainMenu("Main menu",&op1,&op2,&op3,&op4);
 
 int main(int,const char**) {

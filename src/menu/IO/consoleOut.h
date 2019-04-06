@@ -11,8 +11,8 @@ using namespace std;
 #include "../out.h"
 #include "../printers.h"
 #include "../nav.h"
+#include "../fmt/text.h"
 #include "../fmt/textCursor.h"
-#include "../fmt/cursorPos.h"
 #include "../fmt/titleWrap.h"
 
 namespace Menu {
@@ -41,7 +41,7 @@ template<typename P,ostream& dev=cout, typename O=Void>
   using ConsoleFmt = Menu::Chain<//wrap inner types
     DebugFmt,//add debug info when enabled
     TextCursorFmt,//signal selected option on text mode
-    CursorPosFmt,//cursor control, change line at item end
+    TextFmt,//normal text format
     TitleWrap,//wrap title in []
     TitlePrinter,
     FullPrinter,//print inner then options

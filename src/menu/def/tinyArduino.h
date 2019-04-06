@@ -8,7 +8,6 @@
 #include <streamFlow.h>//https://github.com/neu-rah/streamFlow
 #include "../../menu.h"
 #include "../printers.h"
-#include "../IO/serialOut.h"
 #include "../comp/flashText.h"
 #include "../comp/flashMenu.h"
 
