@@ -1,4 +1,5 @@
 #include <menu/def/tinyArduino.h>
+#include <menu/IO/serialOut.h>
 
 MenuOut<Menu::SerialFmt<>::To<SerialOutDev<>>> serialOut;
 

@@ -11,6 +11,7 @@
 #include "../out.h"
 #include "../nav.h"
 #include "../panels.h"
+#include "../fmt/text.h"
 #include "../fmt/textCursor.h"
 #include "../fmt/titleWrap.h"
 #include "../printers.h"

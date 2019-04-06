@@ -12,8 +12,8 @@ namespace Menu {
   template<typename O=Empty>
   class FlashTextDef:public O {
   protected:
-  public:
     const __FlashStringHelper * text;
+  public:
     // using O::O;
     inline FlashTextDef(PGM_P t):text(reinterpret_cast<const __FlashStringHelper *>(t)) {}
     inline FlashTextDef(FlashTextDef<O>& o):text(o.text) {}

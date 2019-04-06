@@ -25,6 +25,11 @@ namespace Menu {
     #endif
     virtual size_t size() const {return 1;}
     virtual const Item& operator[](size_t) const {return *this;}
+    virtual bool canNav() const {return false;}
+    virtual bool up() {return false;}
+    virtual bool down() {return false;}
+    virtual bool enter() {return false;}
+    virtual bool esc() {return false;}
   };
 
   //adapt specific types as menu items
@@ -39,6 +44,11 @@ namespace Menu {
     #endif
     size_t size() const override {return O::size();}
     const Item& operator[](size_t n) const override {return O::operator[](n);}
+    bool canNav() const override {return O::canNav();}
+    bool up() override {return O::up();}
+    bool down() override {return O::down();}
+    bool enter() override {return O::enter();}
+    bool esc() override {return O::esc();}
     //type injection, alls should have copy constructor and they must align
     template<template<typename> class T>
     inline void stack(MenuOut& o) const {Prompt<T<O>>(*this).out(o);}
@@ -70,6 +80,10 @@ namespace Menu {
     static inline size_t size() {return 1;}
     inline const Item& operator[](size_t n) const {return *reinterpret_cast<const Item*>(this);}
     constexpr static inline bool canNav() {return false;}
+    static inline bool up() {return false;}
+    static inline bool down() {return false;}
+    static inline bool enter() {return false;}
+    static inline bool esc() {return false;}
   };
 
   template<typename O>

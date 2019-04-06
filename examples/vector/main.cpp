@@ -20,8 +20,10 @@ Prompt<Menu::VectorMenuDef<Text>> mainMenu("Main menu"
 Op extra("extra option, dynamic add");
 
 int main(int,const char**) {
-  mainMenu.push_back(&extra);//append an option at runtime
   consoleOut.setTarget(mainMenu);
+  consoleOut.printMenu();
+  cout<<"append an option"<<endl;
+  mainMenu.push_back(&extra);//append an option at runtime
   consoleOut.printMenu();
   return 0;
 }
