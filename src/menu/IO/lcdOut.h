@@ -45,6 +45,7 @@ namespace Menu {
   // template<typename O>
   // using SingleLineMenu=SingleLineScrollCtrl<O,1>;
 
+  template<template<typename> class N=NavNode>
   using LCDFmt = Menu::Chain<//wrap inner types
     DebugFmt,//add debug info when enabled
     // TextCursorFmt,//signal selected option on text mode
@@ -54,7 +55,7 @@ namespace Menu {
     SelItemPrinter,
     // FullPrinter,//print inner then options
     // SingleLineMenu,//scroll on every move (text lines)
-    NavNode//flat navigation control (no sub menus)
+    N//flat navigation control (no sub menus)
   >;
 
 };//Menu

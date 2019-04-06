@@ -32,6 +32,7 @@ namespace Menu {
     TitlePrinter//emit format messages for titles (fmtTitle)
   >;
 
+  template<template<typename> class N=NavNode>
   using SerialFmt = Menu::Chain<//wrap inner types
     DebugFmt,//add debug info when enabled
     TextCursorFmt,//signal selected option on text mode
@@ -39,7 +40,7 @@ namespace Menu {
     TitleWrap,//wrap title in []
     TitlePrinter,
     FullPrinter,//print inner then options
-    NavNode//flat navigation control (no sub menus)
+    N//flat navigation control (no sub menus)
   >;
 
 };//Menu
