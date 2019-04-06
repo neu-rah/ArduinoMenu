@@ -7,22 +7,17 @@
 
 #include <streamFlow.h>//https://github.com/neu-rah/streamFlow
 #include "../../menu.h"
+#include "../printers.h"
 #include "../IO/serialOut.h"
 #include "../comp/flashText.h"
-#include "../printers.h"
+#include "../comp/flashMenu.h"
 
 template<typename O>
 using MenuOut=Menu::MenuOutCap<O>;
 
-//describing an output -----------------------------------------
-// template<typename P=Menu::DeviceParts<>>
-// using SerialOut=Menu::SerialOutDev<P,Serial>;
-
-//common element
-using Text=Menu::Text<Menu::Empty>;
-
-//describing an option ------------------------------------
 using FlashText=Menu::FlashTextDef<Menu::Empty>;
+
+using Text=Menu::Text<Menu::Empty>;
 
 using Item=Menu::Item;
 
@@ -31,3 +26,6 @@ using Prompt=Menu::Prompt<O>;
 
 template<size_t n>
 using StaticMenu=Menu::StaticMenu<n,Text>;
+
+template<size_t n>
+using FlashMenu=Menu::StaticMenu<n,FlashText>;

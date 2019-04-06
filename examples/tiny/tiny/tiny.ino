@@ -1,5 +1,4 @@
 #include <menu/def/tinyArduino.h>
-#include <menu/comp/flashMenu.h>
 
 MenuOut<Menu::SerialFmt::To<SerialOutDev<>>> serialOut;
 
@@ -13,7 +12,7 @@ Prompt<FlashText> op2(op2_text);
 // Prompt<StaticMenu<2>> mainMenu("Main menu",&op1,&op2);
 const char menuTitle_text[] PROGMEM="Main menu";
 Prompt<FlashText> menuTitle(menuTitle_text);
-Prompt<Menu::FlashMenuDef<2,FlashText>> mainMenu(menuTitle_text,&op1,&op2);
+Prompt<FlashMenu<2>> mainMenu(menuTitle_text,&op1,&op2);
 
 void setup() {
   Serial.begin(115200);

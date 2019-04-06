@@ -2,6 +2,8 @@
 
 ## actions and events
 
+- ...
+
 ## manage free/used space
 
 - panel->viewport
@@ -15,11 +17,14 @@ viewport design
 - new views can be based on free area, to account for usage
 - support 2D scroll
 - independent of menu structure or size, but must collaborate to adjust scroll position
+- use menu range to manage device panels
+
+**=>** need font size and glyph measure API, optionally account for UTF8
 
 ## tree nav
 
 - separate the base nav
-- use menu range to manage device panels
+- use menu range to manage navigation levels
 
 ## accelerators
 
@@ -27,4 +32,8 @@ viewport design
 
 ## redraw need check
 
+- draw, calc and redraw need should have the same functional root
+
 ## extra field types
+
+- redirect input commands to fields... but keep vtable small

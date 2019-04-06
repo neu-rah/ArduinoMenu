@@ -9,7 +9,8 @@ LiquidCrystal lcd(RS, RW, EN, A0, A1, A2, A3);
 
 //menu output ------------------------
 // bind a format to the lcd
-MenuOut<Menu::LCDFmt::To<LCDOutDev<lcd>/*by default its 16x2*/>> lcdOut;
+MenuOut<Menu::LCDFmt::To<LCDOutDev<lcd>>> lcdOut;
+// MenuOut<Menu::LCDFmt::To<LCDOutDev<lcd>,Menu::Panel<20,4>>> lcdOut;
 
 // quick define menu
 Prompt<StaticMenu<2>> mainMenu(

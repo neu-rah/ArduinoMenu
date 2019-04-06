@@ -24,6 +24,7 @@ namespace Menu {
     using RAW_DEVICE = LCDOutDef<P,Dev,dev,O>;
     using Parts=P;
     using O::O;
+    // static inline void endl() {O::useY();}//the viewport will catch it
     template<typename T>
     inline void raw(T i) {
       if (!operator bool()) return;
@@ -58,7 +59,7 @@ namespace Menu {
 
 };//Menu
 
-template<LiquidCrystal& lcd,typename Panel=Menu::StaticPanel<0,0,16,2>,typename Parts=Menu::LCDParts>
+template<LiquidCrystal& lcd,typename Panel=Menu::StaticPanel<16,2>,typename Parts=Menu::LCDParts>
 using LCDOutDev=Menu::LCDOutDef<
   Parts,
   LiquidCrystal,

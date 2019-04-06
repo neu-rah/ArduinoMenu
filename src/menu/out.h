@@ -22,18 +22,18 @@ namespace Menu {
       virtual MenuOut& operator<<(endlObj) {return *this;}
       virtual MenuOut& operator<<(const __FlashStringHelper *i) {return *this;}
     #endif
-    virtual void fmtMenu(bool io) {}
-    virtual void fmtPanel(bool io) {}
-    virtual void fmtTitle(bool io) {}
-    virtual void fmtItem(bool io) {}
-    virtual void fmtAccel(bool io) {}
-    virtual void fmtCursor(bool io) {}
-    virtual void fmtLabel(bool io) {}
-    virtual void fmtMode(bool io) {}
-    virtual void fmtValue(bool io) {}
-    virtual void fmtUnit(bool io) {}
-    virtual void printMenu() {}
-    virtual void setTarget(Item& i) {}
+    virtual void fmtMenu(bool io)=0;
+    virtual void fmtPanel(bool io)=0;
+    virtual void fmtTitle(bool io)=0;
+    virtual void fmtItem(bool io)=0;
+    virtual void fmtAccel(bool io)=0;
+    virtual void fmtCursor(bool io)=0;
+    virtual void fmtLabel(bool io)=0;
+    virtual void fmtMode(bool io)=0;
+    virtual void fmtValue(bool io)=0;
+    virtual void fmtUnit(bool io)=0;
+    virtual void printMenu()=0;
+    virtual void setTarget(Item& i)=0;
     // virtual Item& getTarget() {return *(Item*)NULL;}
 };
 
@@ -114,6 +114,7 @@ namespace Menu {
     template<typename T> using panelFmt=ID<T>;
     // inline void setTarget(Item& i) {}
     // inline Item& getTarget(Item& i) {return *this;}
+    static inline void endl() {}//we use no viewport
   };
 
   //holds scroll position. step should be font size in device coordinates

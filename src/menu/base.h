@@ -28,6 +28,8 @@ namespace Menu {
   #undef Expr
   #undef Term
 
+  using idx_t = int;//size_t sucks for scrolling
+
   template<typename O>
   struct ID:public O {using O::O;};
 
