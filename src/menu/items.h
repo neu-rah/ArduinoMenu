@@ -6,6 +6,10 @@
 
 namespace Menu {
 
+  //not sure if i implement This
+  //it will grow the vtable footprint a bit
+  //or maybe not as it is only requested for containers
+  //and we only need 1 virtual to get an iterator
   // template<typename I>
   // struct ItemIterator {
   //   size_t at=0;
@@ -16,6 +20,29 @@ namespace Menu {
   //   virtual inline I operator++(I) {return data[at++];}
   // };
 
+  //events should be flagged start/end
+  //this should be used only for drawing custom items
+  //still is preferable to extend a class
+  //using this can encourage users to allocate/deallocate resources
+  //and that does not play well with async request
+  //as for web
+  //for compatinilioty we should have them
+  // make them optional thou!
+  // enum class Events {
+  //   enterEvent,
+  //   exitEvent,
+  //   updateEvent,
+  //   focusEvent,
+  //   blurEvent,
+  //   ...
+  // };
+
+  enum class Styles {
+    CanNav,//nav commands should be send to this item
+    Wrap,//this menu wraps (numFields can look at this too)
+    Action,//can receive enter
+  };
+
   ///////////////////////////////////////////////////////////////
   // menu items -----------------------------------
   struct Item {
@@ -24,8 +51,8 @@ namespace Menu {
       virtual void out(MenuOut& o,PrinterPart& pp) const {}
     #endif
     virtual size_t size() const {return 1;}
-    virtual const Item& operator[](size_t) const {return *this;}
-    virtual bool canNav() const {return false;}
+    virtual Item& operator[](size_t)=0;// const {return *this;}
+    virtual bool canNav() const {return false;}//TODO: use flags/properties field to reuse this virtual
     virtual bool up() {return false;}
     virtual bool down() {return false;}
     virtual bool enter() {return false;}
@@ -43,7 +70,7 @@ namespace Menu {
       void out(MenuOut& o,PrinterPart& pp) const override;
     #endif
     size_t size() const override {return O::size();}
-    const Item& operator[](size_t n) const override {return O::operator[](n);}
+    Item& operator[](size_t n) override {return O::operator[](n);}
     bool canNav() const override {return O::canNav();}
     bool up() override {return O::up();}
     bool down() override {return O::down();}
@@ -78,7 +105,7 @@ namespace Menu {
     inline Empty(Empty&) {}
     static inline void out(MenuOut&) {}
     static inline size_t size() {return 1;}
-    inline const Item& operator[](size_t n) const {return *reinterpret_cast<const Item*>(this);}
+    inline Item& operator[](size_t n) {return *reinterpret_cast<Item*>(this);}
     constexpr static inline bool canNav() {return false;}
     static inline bool up() {return false;}
     static inline bool down() {return false;}
@@ -107,7 +134,7 @@ namespace Menu {
     template<typename... OO>
     inline StaticMenu(const char*title,OO... oo):O(title),data{oo...} {}
     static inline size_t size() {return n;}
-    inline const Item& operator[](size_t i) const {return *data[i];}
+    inline Item& operator[](size_t i) {return *data[i];}
   };
 
 };//Menu

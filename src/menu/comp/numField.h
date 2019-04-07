@@ -43,8 +43,8 @@ namespace Menu {
       inline bool esc() {return false;}
     protected:
       bool tunning=false;//TODO: this state should be stored on navigation! (or field agent)
-      T reflex;//to check if original value changed
       T* value;
+      T reflex;//to check if original value changed
       T low,high,step,tune;
   };
 

@@ -91,17 +91,13 @@ namespace Menu {
     void printMenu() override {
       //TODO: install panel browser here
       O::newView();
-      O::printMenuRaw(*this,PrintHead<O>{/**this,*/*this,0},O::getTarget());
+      O::printMenuRaw(*this,PrintHead<O>{*this,0},O::getTarget());
     }
     void setTarget(Item& i) override {O::setTarget(i);}
-    // Item& getTarget() override {
-    //   return O::getTarget();
-    // }
   };
 
   //base for output combinators --------------------------
   struct Void {
-    // inline void out(Item& i);
     template<typename T>
     static inline void raw(T) {}//just ignore stuff
     static inline void newView() {}//restart the viewport from the panel definition
@@ -115,16 +111,13 @@ namespace Menu {
     template<typename P> static inline void fmtMode  (PrintHead<P>,bool io) {}
     template<typename P> static inline void fmtValue (PrintHead<P>,bool io) {}
     template<typename P> static inline void fmtUnit  (PrintHead<P>,bool io) {}
-    // enum OUTPUT_BASE {};//do not define this elsewhere
     constexpr static inline bool canNav() {return false;}
-    template<typename P> inline void printMenuRaw(MenuOut& menuOut,P,const Item&) {}
+    template<typename P> inline void printMenuRaw(MenuOut& menuOut,P,Item&) {}
     template<typename T> using itemFmt=ID<T>;
     template<typename T> using titleFmt=ID<T>;
     template<typename T> using menuFmt=ID<T>;
     template<typename T> using panelFmt=ID<T>;
-    // inline void setTarget(Item& i) {}
-    // inline Item& getTarget(Item& i) {return *this;}
-    static inline void endl() {}//we use no viewport
+    static inline void endl() {}
     template<typename H>
     static inline void clearLine(PrintHead<H>) {}
   };
@@ -134,7 +127,7 @@ namespace Menu {
     public:
       using O::O;
       template<typename P>
-      inline void printMenuRaw(MenuOut& menuOut,P p,const Item&i) {
+      inline void printMenuRaw(MenuOut& menuOut,P p,Item&i) {
         O::newView();
         O::printMenuRaw(menuOut,p,i);
         next.printMenuRaw(next,PrintHead<OutList<OO...>>{/*next,*/next,0},i);
@@ -153,7 +146,7 @@ namespace Menu {
     public:
       using O::O;
       template<typename P>
-      inline void printMenuRaw(MenuOut& menuOut,P p,const Item&i) {
+      inline void printMenuRaw(MenuOut& menuOut,P p,Item&i) {
         O::newView();
         O::printMenuRaw(menuOut,p,i);
       }
@@ -174,14 +167,6 @@ namespace Menu {
   protected:
     size_t oi;//option index
   };
-
-  //single line scroll controller for text devices
-//   template<typename O,int step=1>
-//   struct SingleLineScrollCtrl:public ScrollPos<O,step> {
-//     using This=ScrollPos<O,step>;
-//     inline bool down() {if (O::down()) return This::scrlDown();}
-//     inline bool up() {if (O::up()) return This::scrlUp();}
-// };
 
   //bind output to existing device ---------------------------
   //use any stream as menu output

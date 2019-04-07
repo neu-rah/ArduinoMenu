@@ -15,7 +15,7 @@ namespace Menu {
     inline void fmtItem(PrintHead<P> p,bool io) {
       if (io) {
         O::fmtItem(p,io);
-        clearLine(p);
+        O::clearLine(p);
       } else {
         O::fmtItem(p,io);
         O::endl();
