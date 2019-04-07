@@ -50,7 +50,7 @@ namespace Menu {
   template<typename O> using asAccel=Role<Roles::Accel,O,&MenuOut::fmtAccel>;
   template<typename O> using asCursor=Role<Roles::Cursor,O,&MenuOut::fmtCursor>;
   template<typename O> using asLabel=Role<Roles::Label,O,&MenuOut::fmtLabel>;
-  template<typename O> using asMode=Role<Roles::Mode,O,&MenuOut::fmtMode>;
+  // template<typename O> using asMode=Role<Roles::Mode,O,&MenuOut::fmtMode>;
   template<typename O> using asValue=Role<Roles::Value,O,&MenuOut::fmtValue>;
   template<typename O> using asUnit=Role<Roles::Unit,O,&MenuOut::fmtUnit>;
 
@@ -126,6 +126,8 @@ namespace Menu {
     // inline void setTarget(Item& i) {}
     // inline Item& getTarget(Item& i) {return *this;}
     static inline void endl() {}//we use no viewport
+    template<typename H>
+    static inline void clearLine(PrintHead<H>) {}
   };
 
   template<typename O,typename... OO>

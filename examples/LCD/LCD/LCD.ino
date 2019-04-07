@@ -9,6 +9,7 @@
 #include <menu/def/tinyArduino.h>
 #include <menu/IO/serialOut.h>
 #include <menu/IO/lcdOut.h>
+#include <menu/comp/numField.h>
 
 // LCD /////////////////////////////////////////
 #define RS 2
@@ -17,11 +18,12 @@
 LiquidCrystal lcd(RS, RW, EN, A0, A1, A2, A3);
 
 //common nav node
-Menu::NavNode<> commonNav;
+using CommonNav=Menu::ItemNav<Menu::NavNode<>>;
+CommonNav commonNav;
 
 //to attach the nav node to output devices
 template<typename O>
-using Nav=Menu::SharedNavNode<O,commonNav>;
+using Nav=Menu::SharedNavNode<O,CommonNav,commonNav>;
 
 //menu output ------------------------
 //define multiple outputs as one device
@@ -34,21 +36,24 @@ Menu::MenuOutCap<
 
 using Op=Prompt<Text>;
 
+int myvar=50;
+Prompt<Menu::NumField<int>> fld(myvar,0,100,10,1);
+
 // quick define menu
-Prompt<StaticMenu<2>> mainMenu(
+Prompt<StaticMenu<4>> mainMenu(
   "Main menu"
   ,new Op("Op 1")
   ,new Op("Op 2")
+  ,&fld
+  ,new Op("...")
 );
 
 void setup() {
   Serial.begin(115200);
   while(!Serial);
-  Serial<<"AM5 example ----"<<endl;
   lcd.begin(16,2);
-  lcd.setCursor(0,0);
   menuOut<<"AM5 example ---";
-  delay(300);
+  delay(1500);
   lcd.clear();
   menuOut.setTarget(mainMenu);
   menuOut.printMenu();

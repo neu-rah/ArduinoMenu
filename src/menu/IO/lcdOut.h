@@ -32,6 +32,13 @@ namespace Menu {
       // Serial<<"lcd.setCursor("<<posX()<<","<<posY()<<") "<<i<<endl;
       O::useX(dev.print(i));
     }
+    template<typename H>
+    inline void clear(PrintHead<H>) {dev.clear();}
+    inline void clearLine(PrintHead<P> p) {
+      dev.setCursor(0,p.printer.posY());
+      for(int n=0;n<p.printer.width();n++)
+        dev.print(" ");
+    }
   };
 
   using LCDParts=DeviceParts<

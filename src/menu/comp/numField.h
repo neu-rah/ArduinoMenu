@@ -42,9 +42,12 @@ namespace Menu {
       inline bool enter() {return tunning^=true;}
       inline bool esc() {return false;}
     protected:
-      bool tunning=false;//this state should be stored on navigation! (or field agent)
+      bool tunning=false;//TODO: this state should be stored on navigation! (or field agent)
       T reflex;//to check if original value changed
       T* value;
       T low,high,step,tune;
   };
+
+  template<typename T>
+  using NumField=Menu::asValue<Menu::NumFieldDef<T>>;
 };

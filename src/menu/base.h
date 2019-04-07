@@ -45,7 +45,7 @@ namespace Menu {
   // roles -----------------
   // menu structure can include this tags (in the form asTitle,asItem,asMenu,...)
   // output device fmt translators hook to this tags to generate addicional content
-    enum class Roles {Self,Menu,Panel,Title,Item,Pad,Accel,Cursor,Label,Mode,Value,Unit};
+    enum class Roles {Self,Menu,Panel,Title,Item,Pad,Accel,Cursor,Label,Value,Unit};
 
   //hook out and fmt callbacks for role tags included on menu structure
   //they provide a direct access to specific output driver
