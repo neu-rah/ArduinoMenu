@@ -17,12 +17,12 @@ namespace Menu {
     template<typename P>
     using itemFmt=typename RAW_DEVICE::Parts::template itemFmt<P>;
     template<typename P>
-    void printMenuRaw(PrintHead<P> p,const Item& o) {
+    void printMenuRaw(MenuOut& menuOut,P p,const Item& o) {
       // MENU_DEBUG_OUT<<"FullPrinter::printMenuRaw "<<o.size()<<endl;
       p.printer.fmtMenu(p,true);
-      O::printMenuRaw(p,o);
+      O::printMenuRaw(menuOut,p,o);
       reinterpret_cast<itemFmt<O>*>(this)
-        ->printMenuRaw(PrintHead<P>{p.menuOut,p.printer,O::pos()},o[O::pos()]);
+        ->printMenuRaw(menuOut,P{/*p.XmenuOut,*/p.printer,O::pos()},o[O::pos()]);
       p.printer.fmtMenu(p,false);
     }
   };
@@ -37,14 +37,14 @@ namespace Menu {
     template<typename P>
     using itemFmt=typename RAW_DEVICE::Parts::template itemFmt<P>;
     template<typename P>
-    void printMenuRaw(PrintHead<P> p,const Item& o) {
+    void printMenuRaw(MenuOut& menuOut,P p,const Item& o) {
       // MENU_DEBUG_OUT<<"FullPrinter::printMenuRaw "<<o.size()<<endl;
       // p.printer.fmtMenu(p,true);
       // reinterpret_cast<titleFmt<O>*>(this)->printMenuRaw(p,o);
       // MenuOutCap<titleFmt<O>>(p.menuOut).printMenuRaw(p,o);;
       // O::printMenuRaw(p,o);
       for(size_t n=0;n<o.size();n++) {
-        reinterpret_cast<itemFmt<O>*>(this)->printMenuRaw(PrintHead<P>{p.menuOut,p.printer,n},o[n]);
+        reinterpret_cast<itemFmt<O>*>(this)->printMenuRaw(menuOut,P{/*p.XmenuOut,*/p.printer,n},o[n]);
       }
       p.printer.fmtMenu(p,false);
     }
@@ -55,10 +55,10 @@ namespace Menu {
     using O::O;
     using RAW_DEVICE=typename O::RAW_DEVICE;//must have a raw device!
     template<typename P>
-    void printMenuRaw(PrintHead<P> p,const Item& o) {
+    void printMenuRaw(MenuOut& menuOut,P p,const Item& o) {
       p.printer.fmtAccel(p,true);
       p.printer.fmtAccel(p,false);
-      O::printMenuRaw(p,o);
+      O::printMenuRaw(menuOut,p,o);
     }
   };
 
@@ -67,12 +67,12 @@ namespace Menu {
     using O::O;
     using RAW_DEVICE=typename O::RAW_DEVICE;//must have a raw device!
     template<typename P>
-    void printMenuRaw(PrintHead<P> p,const Item& o) {
+    void printMenuRaw(MenuOut& menuOut,P p,const Item& o) {
       // MENU_DEBUG_OUT<<"TextCursorPrinter::printMenuRaw"<<endl;
       // if (p.menuOut.selected(p))
       p.printer.fmtCursor(p,true);
       // o.out(p.printer);
-      O::printMenuRaw(p,o);
+      O::printMenuRaw(menuOut,p,o);
       p.printer.fmtCursor(p,false);
     }
   };
@@ -82,22 +82,22 @@ namespace Menu {
     using O::O;
     using RAW_DEVICE=typename O::RAW_DEVICE;//must have a raw device!
     template<typename P>
-    void printMenuRaw(PrintHead<P> p,const Item& o) {
+    void printMenuRaw(MenuOut& menuOut,P p,const Item& o) {
       // MENU_DEBUG_OUT<<"TitlePrinter::printMenuRaw"<<endl;
       #if (MENU_INJECT_PARTS==true)
         //guess i wont need this
         PrinterPart pp;
         o.out(*reinterpret_cast<MenuOutCap<TitlePrinter<O>>*>(this),pp);
-        O::printMenuRaw(p,o);
+        O::printMenuRaw(menuOut,p,o);
       #else
         //instead of sending the request thru a chain of calls (as above)
         //we just call the fmt functions direrctly (this would be the result of the above)
         //since we have access to th eprinter head
         p.printer.fmtTitle(p,true);
-        o.out(p.menuOut);
+        o.out(menuOut);
         p.printer.fmtTitle(p,false);
         //this part does NOT wrap the next
-        O::printMenuRaw(p,o);
+        O::printMenuRaw(menuOut,p,o);
       #endif
     }
   };
@@ -107,11 +107,11 @@ namespace Menu {
     using O::O;
     using RAW_DEVICE=typename O::RAW_DEVICE;//must have a raw device!
     template<typename P>
-    void printMenuRaw(PrintHead<P> p,const Item& o) {
+    void printMenuRaw(MenuOut& menuOut,P p,const Item& o) {
       // MENU_DEBUG_OUT<<"ItemPrinter::printMenuRaw"<<endl;
       p.printer.fmtItem(p,true);
-      o.out(p.menuOut);
-      O::printMenuRaw(p,o);
+      o.out(menuOut);
+      O::printMenuRaw(menuOut,p,o);
       p.printer.fmtItem(p,false);
     }
   };

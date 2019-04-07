@@ -56,7 +56,7 @@ namespace Menu {
 
   template<typename O>
   struct PrintHead {
-    MenuOut& menuOut;
+    // MenuOut& XmenuOut;
     O& printer;
     size_t pos;
   };
@@ -68,7 +68,7 @@ namespace Menu {
   struct MenuOutCap:public MenuOut,public O {
     // using This=MenuOutCap<O>;
     using O::O;
-    PrintHead<O> head{*this,*this,0};
+    PrintHead<O> head{/**this,*/*this,0};
     MenuOut& operator<<(Item& i) override;
     MenuOut& operator<<(const char* i) override {O::raw(i);return *this;}
     MenuOut& operator<<(char i) override {O::raw(i);return *this;}
@@ -92,7 +92,7 @@ namespace Menu {
     void printMenu() override {
       //TODO: install panel browser here
       O::newView();
-      O::printMenuRaw(PrintHead<O>{*this,*this,0},O::getTarget());
+      O::printMenuRaw(*this,PrintHead<O>{/**this,*/*this,0},O::getTarget());
     }
     void setTarget(Item& i) override {O::setTarget(i);}
     // Item& getTarget() override {
@@ -118,7 +118,7 @@ namespace Menu {
     template<typename P> static inline void fmtUnit  (PrintHead<P>,bool io) {}
     // enum OUTPUT_BASE {};//do not define this elsewhere
     constexpr static inline bool canNav() {return false;}
-    template<typename P> inline void printMenuRaw(PrintHead<P>,const Item&) {}
+    template<typename P> inline void printMenuRaw(MenuOut& menuOut,P,const Item&) {}
     template<typename T> using itemFmt=ID<T>;
     template<typename T> using titleFmt=ID<T>;
     template<typename T> using menuFmt=ID<T>;
@@ -135,10 +135,10 @@ namespace Menu {
     public:
       using O::O;
       template<typename P>
-      inline void printMenuRaw(Menu::PrintHead<P> p,const Item&i) {
+      inline void printMenuRaw(MenuOut& menuOut,P p,const Item&i) {
         O::newView();
-        O::printMenuRaw(p,i);
-        next.printMenuRaw(Menu::PrintHead<OutList<OO...>>{next,next,0},i);
+        O::printMenuRaw(menuOut,p,i);
+        next.printMenuRaw(next,PrintHead<OutList<OO...>>{/*next,*/next,0},i);
       }
       inline void setTarget(Item& i) {
         O::setTarget(i);
@@ -154,9 +154,9 @@ namespace Menu {
     public:
       using O::O;
       template<typename P>
-      inline void printMenuRaw(Menu::PrintHead<P> p,const Item&i) {
+      inline void printMenuRaw(MenuOut& menuOut,P p,const Item&i) {
         O::newView();
-        O::printMenuRaw(p,i);
+        O::printMenuRaw(menuOut,p,i);
       }
   };
 
