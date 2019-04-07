@@ -56,7 +56,6 @@ namespace Menu {
 
   template<typename O>
   struct PrintHead {
-    // MenuOut& XmenuOut;
     O& printer;
     size_t pos;
   };
