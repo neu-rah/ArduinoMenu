@@ -18,7 +18,7 @@ namespace Menu {
     inline void fmtAccel(PrintHead<P> p,bool io) {
       if (io) {
         O::raw("[");
-        if (p.pos<10) O::raw((int)p.pos);
+        if (p.pos<9) O::raw((int)p.pos+1);
         else O::raw(" ");
         O::raw("]");
         O::fmtAccel(p,io);
