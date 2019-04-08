@@ -9,15 +9,21 @@
 #include <Arduino.h>
 
 namespace Menu {
-  template<size_t n,typename O>
+  template<Item* const* data,size_t n,typename O>
   class FlashMenuDef:public O {
   protected:
   public:
-    Item const* data[n] PROGMEM;
-    template<typename... OO>
-    inline FlashMenuDef(PGM_P title,OO... oo):O(title),data{oo...} {}
+    using O::O;
+    // Item const** data[n] PROGMEM;
+    // template<typename... OO>
+    // inline FlashMenuDef(PGM_P title):O(title)/*,data{oo...}*/ {}
     static inline size_t size() {return n;}
-    inline const Item& operator[](size_t i) const {return *data[i];}
+    inline Item& operator[](size_t i) {
+      //strange pointer arithmetic!
+      return *(Item*)pgm_read_ptr(data+i);
+    }
   };
+
+  // using FlashData=constexpr PROGMEM Item* const ;
 
 };//Menu

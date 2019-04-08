@@ -1,35 +1,53 @@
+#include <Dump.h>
 #include <menu/def/tinyArduino.h>
 #include <menu/IO/serialOut.h>
 
+//or accept the defauls
 MenuOut<Menu::SerialFmt<>::To<SerialOutDev<>>> serialOut;
 
-//normal option
-Prompt<Text> op1("Op 1");
+using Op=Prompt<FlashText>;
 
-//option using flash text
+const char op1_text[] PROGMEM="Op 1";
+Op op1(op1_text);
+
 const char op2_text[] PROGMEM="Op 2";
-Prompt<FlashText> op2(op2_text);
+Op op2(op2_text);
+
+const char op3_text[] PROGMEM="Op 3";
+Op op3(op3_text);
+
+const char op4_text[] PROGMEM="Op 4";
+Op op4(op4_text);
+
+const char op5_text[] PROGMEM="Op 5";
+Op op5(op5_text);
 
 // Prompt<StaticMenu<2>> mainMenu("Main menu",&op1,&op2);
 const char menuTitle_text[] PROGMEM="Main menu";
 Prompt<FlashText> menuTitle(menuTitle_text);
-Prompt<FlashMenu<2>> mainMenu(menuTitle_text,&op1,&op2);
+constexpr Item* const data[5] PROGMEM {&op1,&op2,&op3,&op4,&op5};
+Prompt<Menu::FlashMenuDef<data,5,FlashText>> mainMenu(menuTitle_text);
+
+//footprint ----------------------
+//4 bytes of ram for each flash text option (as is)
+//  2 - flash text pointer
+//  2 - vtable pointer
 
 void setup() {
   Serial.begin(115200);
   while(!Serial);
-  serialOut<<"AM5 tiny example ----"<<endl;
-  serialOut<<"use keys +-*/"<<endl<<endl;
+  serialOut<<F("AM5 tiny example ----")<<endl;
+  serialOut<<F("use keys +-*/")<<endl<<endl;
   serialOut.setTarget(mainMenu);
   serialOut.printMenu();
 }
 
 bool keys(int key) {
   switch(key) {
-    case '+': serialOut.up();return true;
-    case '-': serialOut.down();return true;
-    case '*': serialOut.enter();return true;
-    case '/': serialOut.esc();return true;
+    case '+': return serialOut.up();
+    case '-': return serialOut.down();
+    case '*': return serialOut.enter();
+    case '/': return serialOut.esc();
   }
   return false;
 }
