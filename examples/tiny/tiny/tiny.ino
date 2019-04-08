@@ -1,4 +1,3 @@
-#include <Dump.h>
 #include <menu/def/tinyArduino.h>
 #include <menu/IO/serialOut.h>
 
@@ -22,10 +21,10 @@ Op op4(op4_text);
 const char op5_text[] PROGMEM="Op 5";
 Op op5(op5_text);
 
-// Prompt<StaticMenu<2>> mainMenu("Main menu",&op1,&op2);
+// Prompt<StaticMenu<5>> mainMenu("Main menu",&op1,&op2,&op3,&op4,&op5);
 const char menuTitle_text[] PROGMEM="Main menu";
 Prompt<FlashText> menuTitle(menuTitle_text);
-constexpr Item* const data[5] PROGMEM {&op1,&op2,&op3,&op4,&op5};
+constexpr Menu::FlashData data[5] {&op1,&op2,&op3,&op4,&op5};
 Prompt<Menu::FlashMenuDef<data,5,FlashText>> mainMenu(menuTitle_text);
 
 //footprint ----------------------

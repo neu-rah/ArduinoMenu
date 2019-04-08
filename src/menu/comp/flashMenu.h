@@ -14,9 +14,6 @@ namespace Menu {
   protected:
   public:
     using O::O;
-    // Item const** data[n] PROGMEM;
-    // template<typename... OO>
-    // inline FlashMenuDef(PGM_P title):O(title)/*,data{oo...}*/ {}
     static inline size_t size() {return n;}
     inline Item& operator[](size_t i) {
       //strange pointer arithmetic!
@@ -24,6 +21,6 @@ namespace Menu {
     }
   };
 
-  // using FlashData=constexpr PROGMEM Item* const ;
+  using FlashData=PROGMEM Item* const;
 
 };//Menu

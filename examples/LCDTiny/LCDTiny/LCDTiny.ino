@@ -3,13 +3,12 @@
 // store text on flash (Arduino framework)
 //
 // ArduinoMenu libtary 5.x code example
-// Output: Serial+LCD
+// Output: LCD
+// flash data
 // Input: user serial driver
 
 #include <menu/def/tinyArduino.h>
-#include <menu/IO/serialOut.h>
 #include <menu/IO/lcdOut.h>
-#include <menu/comp/numField.h>
 
 // LCD /////////////////////////////////////////
 #define RS 2
@@ -17,42 +16,38 @@
 #define EN A4
 LiquidCrystal lcd(RS, RW, EN, A0, A1, A2, A3);
 
-//common nav node
-using CommonNav=Menu::ItemNav<Menu::NavNode<>>;
-CommonNav commonNav;
-
-//to attach the nav node to output devices
-template<typename O>
-using Nav=Menu::SharedNavNode<O,CommonNav,commonNav>;
-
 //menu output ------------------------
-//define multiple outputs as one device
-Menu::MenuOutCap<
-  Menu::OutList<
-    // Menu::SerialFmt<Nav>::To<SerialOutDev<>>,
-    Menu::LCDFmt<Nav>::To<LCDOutDev<lcd>>
-  >
-> menuOut;
+MenuOut<Menu::LCDFmt<>::To<LCDOutDev<lcd>>> menuOut;
 
-using Op=Prompt<Text>;
+using Op=Prompt<FlashText>;
 
-int myvar=50;
-Prompt<Menu::NumField<int>> fld(myvar,0,100,10,1);
+const char op1_text[] PROGMEM="Op 1";
+Op op1(op1_text);
 
-// quick define menu
-Prompt<StaticMenu<4>> mainMenu(
-  "Main menu"
-  ,new Op("Op 1")
-  ,new Op("Op 2")
-  ,&fld
-  ,new Op("...")
-);
+const char op2_text[] PROGMEM="Op 2";
+Op op2(op2_text);
+
+const char op3_text[] PROGMEM="Op 3";
+Op op3(op3_text);
+
+const char op4_text[] PROGMEM="Op 4";
+Op op4(op4_text);
+
+const char op5_text[] PROGMEM="Op 5";
+Op op5(op5_text);
+
+// Prompt<StaticMenu<5>> mainMenu("Main menu",&op1,&op2,&op3,&op4,&op5);
+const char menuTitle_text[] PROGMEM="Main menu";
+Prompt<FlashText> menuTitle(menuTitle_text);
+constexpr Menu::FlashData data[5] {&op1,&op2,&op3,&op4,&op5};
+Prompt<Menu::FlashMenuDef<data,5,FlashText>> mainMenu(menuTitle_text);
 
 void setup() {
   Serial.begin(115200);
   while(!Serial);
   lcd.begin(16,2);
-  menuOut<<"AM5 example ---";
+  menuOut<<F("AM5 example ----")<<endl;
+  menuOut<<F("<www.r-site.net>")<<endl;
   delay(1500);
   lcd.clear();
   menuOut.setTarget(mainMenu);
