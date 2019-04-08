@@ -88,6 +88,19 @@ namespace Menu {
       idx_t fx,fy;
   };
 
+    //its different than a scroll viewport
+    //as it refers to the top line of the menu structure
+    //minimize printing on line menus
+    template<typename O>
+    class RangePanel:public O {
+      public:
+        constexpr static inline bool isRangePanel() {return true;}
+        inline size_t top() const {return topLine;}
+        inline void setTop(size_t n) {topLine=n;}
+      protected:
+        size_t topLine=0;
+    };
+
   //track space usage and scroll position
   // right now its just crap
   // template<typename O>

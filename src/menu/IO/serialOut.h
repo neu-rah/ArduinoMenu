@@ -29,8 +29,8 @@ namespace Menu {
   };
 
   using SerialParts=DeviceParts<
-    Chain<TextAccelPrinter,TextCursorPrinter,ItemPrinter>::To,//emit format messages for accel, cursor amd item
-    TitlePrinter//emit format messages for titles (fmtTitle)
+    Chain<TextAccelPrinter,TextCursorPrinter,ItemPrinter>::To//emit format messages for accel, cursor amd item
+    // ,TitlePrinter//emit format messages for titles (fmtTitle)
   >;
 
   template<template<typename> class N=NavNode>

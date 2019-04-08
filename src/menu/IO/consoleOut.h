@@ -14,6 +14,7 @@ using namespace std;
 #include "../fmt/text.h"
 #include "../fmt/textCursor.h"
 #include "../fmt/titleWrap.h"
+#include "../fmt/index.h"
 
 namespace Menu {
   // using ConsoleOutDef=OutDev<ostream,cout,Void>;
@@ -33,13 +34,14 @@ template<typename P,ostream& dev=cout, typename O=Void>
   };
 
   using ConsoleParts=DeviceParts<
-    Chain<TextAccelPrinter,TextCursorPrinter,ItemPrinter>::To,//emit format messages for accel, cursor amd item
-    TitlePrinter//emit format messages for titles (fmtTitle)
+    Chain<TextAccelPrinter,TextCursorPrinter,ItemPrinter>::To//emit format messages for accel, cursor amd item
+    // ,TitlePrinter//emit format messages for titles (fmtTitle)
   >;
 
   template<template<typename> class N=NavNode>
   using ConsoleFmt = Menu::Chain<//wrap inner types
-    DebugFmt,//add debug info when enabled
+    // DebugFmt,//add debug info when enabled
+    IndexFmt,//print option index (1-9)
     TextCursorFmt,//signal selected option on text mode
     TextFmt,//normal text format
     TitleWrap,//wrap title in []

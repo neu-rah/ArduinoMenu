@@ -27,11 +27,11 @@ namespace Menu {
     // static inline void endl() {O::useY();}//the viewport will catch it
     template<typename T>
     inline void raw(T i) {
-      // Serial<<"LCDOutDef::raw("<<i<<")"<<endl;
+      Serial<<"LCDOutDef::raw("<<i<<")"<<endl;
       // if (!O::operator bool()) return;//TODO: this is naive, we need to measure
       // if (O::posY()+scrlPosY()>O::height()) return;
       dev.setCursor(O::posX(),O::posY());
-      // Serial<<"lcd.setCursor("<<posX()<<","<<posY()<<") "<<i<<endl;
+      Serial<<"lcd.setCursor("<<posX()<<","<<posY()<<") "<<i<<endl;
       O::useX(dev.print(i));
     }
     template<typename H>
@@ -42,7 +42,7 @@ namespace Menu {
       // Serial<<"LCDOutDef::clearLine "<<p.pos<<(O::scrlPosY()>=0?"+":"")<<O::scrlPosY()<<"="<<line<<endl;
       // Serial<<"height:"<<p.printer.height()<<endl;
       if (line<0||line>=p.printer.height()) return;
-      // Serial<<"LCDOutDef::clearLine "<<line<<endl;
+      Serial<<"LCDOutDef::clearLine "<<line<<endl;
       dev.setCursor(0,line);
       for(int n=0;n<p.printer.width();n++)
         dev.print(" ");
@@ -50,8 +50,11 @@ namespace Menu {
   };
 
   using LCDParts=DeviceParts<
-    ItemPrinter,//emit format messages for accel, cursor amd item
-    TitlePrinter//emit format messages for titles (fmtTitle)
+    Chain<
+      TextCursorPrinter
+      ,ItemPrinter
+    >::To//how to print items
+    // ,TitlePrinter//emit format messages for titles (fmtTitle)
   >;
 
   // template<typename O>
@@ -63,11 +66,12 @@ namespace Menu {
   template<template<typename> class N=NavNode>
   using LCDFmt = Menu::Chain<//wrap inner types
     // DebugFmt,//add debug info when enabled
-    // TextCursorFmt,//signal selected option on text mode
+    TextCursorFmt,//signal selected option on text mode
     TextFmt,//normal text format
     TitleWrap,//wrap title in []
     TitlePrinter,
-    SelItemPrinter,//we only have a free line
+    // SelItemPrinter,//we only have a free line
+    RangePrinter,//print a range adequated to this device
     // FullPrinter,//print inner then options
     N//flat navigation control (no sub menus)
   >;

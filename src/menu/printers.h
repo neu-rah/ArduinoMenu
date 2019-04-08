@@ -5,8 +5,11 @@
 // neu-rah (ruihfazevedo@gmail.com)
 // Printers - generate event messages for the formatter and walk the structure
 
+#include "panels.h"
+
 namespace Menu {
 
+  //ideal for single line menu (or full page options)
   template<typename O>
   struct SelItemPrinter:public O {
     // using This=FullPrinter<O>;
@@ -20,11 +23,36 @@ namespace Menu {
     void printMenuRaw(MenuOut& menuOut,P p,Item& o) {
       // MENU_DEBUG_OUT<<"FullPrinter::printMenuRaw "<<o.size()<<endl;
       p.printer.fmtMenu(p,true);
-      P np{p.printer,O::pos()};
+      P np{p.printer,O::pos(),O::posY()};
+      // Serial<<"SelItemPrinter::printMenuRaw posY():"<<O::posY()<<endl;
       O::clearLine(np);
       O::printMenuRaw(menuOut,p,o);
       reinterpret_cast<itemFmt<O>*>(this)
         ->printMenuRaw(menuOut,np,o[O::pos()]);
+      p.printer.fmtMenu(p,false);
+    }
+  };
+
+  template<typename O>
+  struct RangePrinter:public RangePanel<O> {
+    using This=RangePanel<O>;
+    using O::O;
+    using RAW_DEVICE=typename O::RAW_DEVICE;//must have a raw device!
+    template<typename P>
+    using itemFmt=typename RAW_DEVICE::Parts::template itemFmt<P>;
+    template<typename P>
+    void printMenuRaw(MenuOut& menuOut,P p,Item& o) {
+      // Serial<<"RangePrinter::printMenuRaw "<<posY()<<endl;
+      while(This::top()>O::pos())
+        This::setTop(This::top()-1);
+      while(O::pos()>=This::top()+O::height()-O::posY())
+        This::setTop(This::top()+1);
+      for(size_t i=This::top(),n=O::posY();n<O::height()&&i<o.size();n++,i++) {
+        // Serial<<"print item "<<i<<" at line "<<n<<endl;
+        P np{p.printer,i,n};
+        O::clearLine(np);
+        reinterpret_cast<itemFmt<O>*>(this)->printMenuRaw(menuOut,np,o[i]);
+      }
       p.printer.fmtMenu(p,false);
     }
   };

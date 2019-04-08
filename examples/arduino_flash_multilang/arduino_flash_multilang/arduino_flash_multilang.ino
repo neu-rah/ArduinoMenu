@@ -1,11 +1,7 @@
 #include <Dump.h>
 #include <menu/def/tinyArduino.h>
+#include <menu/IO/serialOut.h>
 #include <menu/comp/multiLang.h>
-#include <menu/printers.h>
-#include <menu/nav.h>
-#include <menu/fmt/text.h>
-#include <menu/fmt/debug.h>
-#include <menu/fmt/titleWrap.h>
 
 using FlashText=Menu::FlashTextDef<Menu::Empty>;
 
