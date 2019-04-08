@@ -25,7 +25,7 @@ namespace Menu {
     // using MUST_BE_AT_OUTPUT_BASE=O::OUTPUT_BASE;//or maybe not
     template<typename T>
     inline void raw(T i) {dev.print(i);}
-    static inline void endl() {dev<<::endl;O::endl();}//we use no viewport
+    inline void endl() {dev<<::endl;O::endl();}//we use no viewport
   };
 
   using SerialParts=DeviceParts<

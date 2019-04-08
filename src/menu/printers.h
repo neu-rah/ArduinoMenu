@@ -110,7 +110,7 @@ namespace Menu {
     using RAW_DEVICE=typename O::RAW_DEVICE;//must have a raw device!
     template<typename P>
     void printMenuRaw(MenuOut& menuOut,P p,Item& o) {
-      MENU_DEBUG_OUT<<"ItemPrinter::printMenuRaw"<<endl;
+      // MENU_DEBUG_OUT<<"ItemPrinter::printMenuRaw"<<endl;
       p.printer.fmtItem(p,true);
       o.out(menuOut);
       O::printMenuRaw(menuOut,p,o);

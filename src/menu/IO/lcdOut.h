@@ -27,11 +27,11 @@ namespace Menu {
     // static inline void endl() {O::useY();}//the viewport will catch it
     template<typename T>
     inline void raw(T i) {
-      Serial<<"LCDOutDef::raw("<<i<<")"<<endl;
+      // Serial<<"LCDOutDef::raw("<<i<<")"<<endl;
       // if (!O::operator bool()) return;//TODO: this is naive, we need to measure
       // if (O::posY()+scrlPosY()>O::height()) return;
       dev.setCursor(O::posX(),O::posY());
-      Serial<<"lcd.setCursor("<<posX()<<","<<posY()<<") "<<i<<endl;
+      // Serial<<"lcd.setCursor("<<posX()<<","<<posY()<<") "<<i<<endl;
       O::useX(dev.print(i));
     }
     template<typename H>

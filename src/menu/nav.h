@@ -61,7 +61,7 @@ namespace Menu {
       using O::O;
       ItemNav() {assert(O::canNav());}
       constexpr inline bool canNav() {
-        return focus&&focus->canNav()||O::canNav();
+        return focus||O::canNav();//we only have focus when it can nav
       }
       inline Item& getFocus() {
         return focus?*focus:O::getTarget();
