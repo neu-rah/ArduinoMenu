@@ -63,7 +63,8 @@ namespace Menu {
       inline Viewport(const Viewport<O>& o) {fx=o.width();fy=o.height();}
       inline operator bool() const {return fx&&fy;}
       inline operator int() const {return free();}
-      inline void newView() {fx=O::width();fy=O::height();}
+      inline void newView() {
+        fx=O::width();fy=O::height();}
       //TODO: need font size and char measure API
       inline void endl() {useY(1);}
       //device coordinates ---------

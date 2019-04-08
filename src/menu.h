@@ -20,4 +20,5 @@ namespace Menu {
     bool DebugFmt<O>::debugFmt=false;
   #endif
 
+  #include "menu/out.hpp"
 };//Menu

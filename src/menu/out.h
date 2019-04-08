@@ -16,32 +16,35 @@
 namespace Menu {
   ///////////////////////////////////////////////////////////////////
   // output interface
-
-  struct MenuOut {
-    virtual MenuOut& operator<<(Item&) {return *this;}
-    virtual MenuOut& operator<<(const char*) {return *this;}
-    virtual MenuOut& operator<<(char) {return *this;}
-    virtual MenuOut& operator<<(unsigned char) {return *this;}
-    virtual MenuOut& operator<<(int) {return *this;}
-    virtual MenuOut& operator<<(unsigned int) {return *this;}
-    #ifdef ARDUINO
-      virtual MenuOut& operator<<(endlObj) {return *this;}
-      virtual MenuOut& operator<<(const __FlashStringHelper *i) {return *this;}
-    #endif
-    virtual void fmtMenu(bool io)=0;
-    virtual void fmtPanel(bool io)=0;
-    virtual void fmtTitle(bool io)=0;
-    virtual void fmtItem(bool io)=0;
-    virtual void fmtAccel(bool io)=0;
-    virtual void fmtCursor(bool io)=0;
-    virtual void fmtLabel(bool io)=0;
-    virtual void fmtMode(bool io)=0;
-    virtual void fmtValue(bool io)=0;
-    virtual void fmtUnit(bool io)=0;
-    virtual void printMenu()=0;
-    virtual void setTarget(Item& i)=0;
-    // virtual Item& getTarget() {return *(Item*)NULL;}
-};
+  class MenuOut {
+    friend class Void;
+    public:
+      virtual MenuOut& operator<<(Item&) {return *this;}
+      virtual MenuOut& operator<<(const char*) {return *this;}
+      virtual MenuOut& operator<<(char) {return *this;}
+      virtual MenuOut& operator<<(unsigned char) {return *this;}
+      virtual MenuOut& operator<<(int) {return *this;}
+      virtual MenuOut& operator<<(unsigned int) {return *this;}
+      #ifdef ARDUINO
+        virtual MenuOut& operator<<(endlObj) {return *this;}
+        virtual MenuOut& operator<<(const __FlashStringHelper *i) {return *this;}
+      #endif
+      virtual void fmtMenu(bool io)=0;
+      virtual void fmtPanel(bool io)=0;
+      virtual void fmtTitle(bool io)=0;
+      virtual void fmtItem(bool io)=0;
+      virtual void fmtAccel(bool io)=0;
+      virtual void fmtCursor(bool io)=0;
+      virtual void fmtLabel(bool io)=0;
+      virtual void fmtMode(bool io)=0;
+      virtual void fmtValue(bool io)=0;
+      virtual void fmtUnit(bool io)=0;
+      virtual void printMenu()=0;
+      virtual void setTarget(Item& i)=0;
+      // virtual Item& getTarget() {return *(Item*)NULL;}
+    protected:
+      static bool onMenu;
+    };
 
   template<typename O> using asMenu=Role<Roles::Menu,O,&MenuOut::fmtMenu>;
   template<typename O> using asPanel=Role<Roles::Panel,O,&MenuOut::fmtPanel>;
@@ -91,8 +94,10 @@ namespace Menu {
     void fmtUnit(bool io) override {O::fmtUnit(head,io);}
     void printMenu() override {
       //TODO: install panel browser here
+      O::enterMenuRender();
       O::newView();
       O::printMenuRaw(*this,PrintHead<O>{*this,0},O::getTarget());
+      O::exitMenuRender();
     }
     void setTarget(Item& i) override {O::setTarget(i);}
   };
@@ -121,6 +126,9 @@ namespace Menu {
     static inline void endl() {}
     template<typename H>
     static inline void clearLine(PrintHead<H>) {}
+    static inline bool onMenuRender() {return MenuOut::onMenu;}
+    static inline void enterMenuRender() {MenuOut::onMenu=true;}
+    static inline void exitMenuRender() {MenuOut::onMenu=false;}
   };
 
   template<typename O,typename... OO>
@@ -129,14 +137,21 @@ namespace Menu {
       using O::O;
       //this works because printer head is never taken at this level
       //so dont do it!
+      inline void newView() {
+        O::newView();
+        if (!O::onMenuRender()) next.newView();
+      }
       template<typename T> inline void raw(T o) {
         O::raw(o);
-        next.raw(o);
-      }//just ignore stuff
+        //without this glojbal print hits only the first device
+        //with it menus will chain printing to next devices creating chaos
+        if (!O::onMenuRender()) next.raw(o);//chain printing to all devices!
+      }
       template<typename P>
       inline void printMenuRaw(MenuOut& menuOut,P p,Item&i) {
-        O::newView();
+        assert(O::onMenuRender());
         O::printMenuRaw(menuOut,p,i);
+        next.newView();
         next.printMenuRaw(next,PrintHead<OutList<OO...>>{/*next,*/next,0},i);
       }
       inline void setTarget(Item& i) {
@@ -149,15 +164,7 @@ namespace Menu {
   };
 
   template<typename O>
-  struct OutList<O>:public O {
-    public:
-      using O::O;
-      template<typename P>
-      inline void printMenuRaw(MenuOut& menuOut,P p,Item&i) {
-        O::newView();
-        O::printMenuRaw(menuOut,p,i);
-      }
-  };
+  struct OutList<O>:public O {using O::O;};
 
 
   //holds scroll position. step should be font size in device coordinates
@@ -181,14 +188,15 @@ namespace Menu {
   struct OutDev:public O {
     enum RAW_DEVICE {};
     constexpr bool hasRawDevice() {return true;}
-    static inline void raw(const char*i) {dev<<i;}
-    static inline void raw(char i) {dev<<i;}
-    static inline void raw(unsigned char i) {dev<<i;}
-    #ifdef ARDUINO
-      static inline void raw(endlObj i) {dev<<i;}
-      static inline void raw(const __FlashStringHelper * i) {dev<<i;}
-    #endif
-    //.. add more type here
+    template<typename T> inline void raw(T o) {dev<<o;}
+    // static inline void raw(const char*i) {dev<<i;}
+    // static inline void raw(char i) {dev<<i;}
+    // static inline void raw(unsigned char i) {dev<<i;}
+    // #ifdef ARDUINO
+    //   static inline void raw(endlObj i) {dev<<i;}
+    //   static inline void raw(const __FlashStringHelper * i) {dev<<i;}
+    // #endif
+    //.. add more types here
   };
 
 };//Menu
