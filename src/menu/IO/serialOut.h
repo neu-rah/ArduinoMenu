@@ -13,6 +13,7 @@
 #include "../fmt/text.h"
 #include "../fmt/textCursor.h"
 #include "../fmt/titleWrap.h"
+#include "../fmt/index.h"
 #include "../printers.h"
 
 namespace Menu {
@@ -34,8 +35,9 @@ namespace Menu {
 
   template<template<typename> class N=NavNode>
   using SerialFmt = Menu::Chain<//wrap inner types
-    DebugFmt,//add debug info when enabled
+    // DebugFmt,//add debug info when enabled
     TextCursorFmt,//signal selected option on text mode
+    IndexFmt,//print option index (1-9)
     TextFmt,//text output format
     TitleWrap,//wrap title in []
     TitlePrinter,

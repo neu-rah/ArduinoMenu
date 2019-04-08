@@ -20,9 +20,11 @@ namespace Menu {
     void printMenuRaw(MenuOut& menuOut,P p,Item& o) {
       // MENU_DEBUG_OUT<<"FullPrinter::printMenuRaw "<<o.size()<<endl;
       p.printer.fmtMenu(p,true);
+      P np{p.printer,O::pos()};
+      O::clearLine(np);
       O::printMenuRaw(menuOut,p,o);
       reinterpret_cast<itemFmt<O>*>(this)
-        ->printMenuRaw(menuOut,P{p.printer,O::pos()},o[O::pos()]);
+        ->printMenuRaw(menuOut,np,o[O::pos()]);
       p.printer.fmtMenu(p,false);
     }
   };
@@ -32,14 +34,18 @@ namespace Menu {
     // using This=FullPrinter<O>;
     using O::O;
     using RAW_DEVICE=typename O::RAW_DEVICE;//must have a raw device!
-    template<typename P>
-    using titleFmt=typename RAW_DEVICE::Parts::template titleFmt<P>;
+    // template<typename P>
+    // using titleFmt=typename RAW_DEVICE::Parts::template titleFmt<P>;
     template<typename P>
     using itemFmt=typename RAW_DEVICE::Parts::template itemFmt<P>;
     template<typename P>
     void printMenuRaw(MenuOut& menuOut,P p,Item& o) {
+      // Serial<<"fullPrint"<<endl;
       for(size_t n=0;n<o.size();n++) {
-        reinterpret_cast<itemFmt<O>*>(this)->printMenuRaw(menuOut,P{p.printer,n},o[n]);
+        // Serial<<"print item "<<n<<endl;
+        P np{p.printer,n};
+        O::clearLine(np);
+        reinterpret_cast<itemFmt<O>*>(this)->printMenuRaw(menuOut,np,o[n]);
       }
       p.printer.fmtMenu(p,false);
     }
@@ -63,6 +69,7 @@ namespace Menu {
     using RAW_DEVICE=typename O::RAW_DEVICE;//must have a raw device!
     template<typename P>
     void printMenuRaw(MenuOut& menuOut,P p,Item& o) {
+      // Serial<<"TextCursorPrinter"<<endl;
       // MENU_DEBUG_OUT<<"TextCursorPrinter::printMenuRaw"<<endl;
       // if (p.menuOut.selected(p))
       p.printer.fmtCursor(p,true);
@@ -103,7 +110,7 @@ namespace Menu {
     using RAW_DEVICE=typename O::RAW_DEVICE;//must have a raw device!
     template<typename P>
     void printMenuRaw(MenuOut& menuOut,P p,Item& o) {
-      // MENU_DEBUG_OUT<<"ItemPrinter::printMenuRaw"<<endl;
+      MENU_DEBUG_OUT<<"ItemPrinter::printMenuRaw"<<endl;
       p.printer.fmtItem(p,true);
       o.out(menuOut);
       O::printMenuRaw(menuOut,p,o);

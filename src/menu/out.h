@@ -58,6 +58,7 @@ namespace Menu {
   struct PrintHead {
     O& printer;
     size_t pos;
+    size_t line;
   };
 
   //interestingly we know the exact type of output
@@ -98,8 +99,7 @@ namespace Menu {
 
   //base for output combinators --------------------------
   struct Void {
-    template<typename T>
-    static inline void raw(T) {}//just ignore stuff
+    template<typename T> static inline void raw(T) {}//just ignore stuff
     static inline void newView() {}//restart the viewport from the panel definition
     template<typename P> static inline void fmtMenu  (PrintHead<P>,bool io) {}
     template<typename P> static inline void fmtPanel (PrintHead<P>,bool io) {}
@@ -112,6 +112,7 @@ namespace Menu {
     template<typename P> static inline void fmtValue (PrintHead<P>,bool io) {}
     template<typename P> static inline void fmtUnit  (PrintHead<P>,bool io) {}
     constexpr static inline bool canNav() {return false;}
+    constexpr static inline bool isRangePanel() {return false;}
     template<typename P> inline void printMenuRaw(MenuOut& menuOut,P,Item&) {}
     template<typename T> using itemFmt=ID<T>;
     template<typename T> using titleFmt=ID<T>;
@@ -126,6 +127,12 @@ namespace Menu {
   class OutList:public O {
     public:
       using O::O;
+      //this works because printer head is never taken at this level
+      //so dont do it!
+      template<typename T> inline void raw(T o) {
+        O::raw(o);
+        next.raw(o);
+      }//just ignore stuff
       template<typename P>
       inline void printMenuRaw(MenuOut& menuOut,P p,Item&i) {
         O::newView();

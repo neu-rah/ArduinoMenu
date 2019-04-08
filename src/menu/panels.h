@@ -13,12 +13,15 @@
 namespace Menu {
 
   //static panel
-  template<idx_t w,idx_t h,typename O=Void>
+  //describes output dimension (may not be whole device)
+  //but must not exceed
+  //it has origin coordinates to be displaced around
+  template<idx_t x,idx_t y,idx_t w,idx_t h,typename O=Void>
   struct StaticPanel:public O {
-    static inline idx_t posX() {return 0;}
-    static inline idx_t posY() {return 0;}
-    static inline idx_t width() {return w;}
-    static inline idx_t height() {return h;}
+    constexpr static inline idx_t orgX() {return x;}
+    constexpr static inline idx_t orgY() {return y;}
+    constexpr static inline idx_t width() {return w;}
+    constexpr static inline idx_t height() {return h;}
   };
 
   //dynamic panel, do we need this?
@@ -60,15 +63,18 @@ namespace Menu {
       inline Viewport(const Viewport<O>& o) {fx=o.width();fy=o.height();}
       inline operator bool() const {return fx&&fy;}
       inline operator int() const {return free();}
-      inline void newView() {fx=O::width();fy=O::height();}
+      inline void newView() {
+        fx=O::width();fy=O::height();
+        // Serial<<"Viewport::newView "<<fx<<","<<fy<<::endl;
+      }
       //TODO: new font size and char measure API
       inline void endl() {useY(1);}//can't implement separate axis because of this
 
       inline idx_t freeX() const {return fx;}
       inline idx_t freeY() const {return fy;}
       inline idx_t free() const {return fx+O::width()*fy;}
-      inline idx_t posX() const {return (O::width()-fx)+O::posX();}
-      inline idx_t posY() const {return (O::height()-fy)+O::posY();}
+      inline idx_t posX() const {return (O::width()-fx)+O::orgX();}
+      inline idx_t posY() const {return (O::height()-fy)+O::orgY();}
       inline void useX(idx_t ux=1) {if (fx) fx-=ux; else useY();}
       inline void useY(idx_t uy=1) {
         if (!fy) {
@@ -91,19 +97,25 @@ namespace Menu {
       inline ScrollViewport(idx_t x=0,idx_t y=0):sx(x),sy(y) {}
       inline ScrollViewport(const ScrollViewport<O>& o,idx_t x=0,idx_t y=0):O(o),sx(x),sy(y) {}
       inline operator bool() const {return freeY()&&freeX();}
-      inline void vScrl(idx_t n) {sy-=n;}
+      inline void vScrl(idx_t n) {
+        // Serial<<"vScrl "<<n<<endl;
+        sy-=n;}
       inline void hScrl(idx_t n) {sx-=n;}
-      inline void vScrlTo(idx_t n) {sy=n;}
+      inline void vScrlTo(idx_t n) {
+        // Serial<<"vScrlTo "<<n<<endl;
+        sy=n;}
       inline void hScrlTo(idx_t n) {sx=n;}
       inline void scrl(idx_t x,idx_t y) {sx-=x;sy-=y;}
       inline void scrlTo(idx_t x,idx_t y) {sx=x;sy=y;}
-      inline idx_t width() const {return O::width()+sx;}
-      inline idx_t height() const {return O::height()+sy;}
-      inline idx_t freeX() const {return O::freeX()+sx;}
-      inline idx_t freeY() const {return O::freeY()+sy;}
+      inline idx_t scrlPosX() const {return sx;}
+      inline idx_t scrlPosY() const {return sy;}
+      // inline idx_t width() const {return O::width()+sx;}
+      // inline idx_t height() const {return O::height()+sy;}
+      inline idx_t freeX() const {return O::freeX()-sx;}
+      inline idx_t freeY() const {return O::freeY()-sy;}
       inline idx_t free() const {return width()*freeY()-(width()-freeX());}
-      inline idx_t posX() const {return O::posX()-sx;}
-      inline idx_t posY() const {return O::posY()-sy;}
+      // inline idx_t posX() const {return O::posX()-sx;}
+      // inline idx_t posY() const {return O::posY()-sy;}
     protected:
       idx_t sx,sy;//scroll positions
   };

@@ -6,6 +6,20 @@
 
 namespace Menu {
 
+  //can we config like this?
+  // using Config=Menu::Config<
+  //   wrapMenus::yes,
+  //   canExit::yes,
+  //   useFields::yes,
+  //   useActions::yes,
+  //   itemBase<Menu::Nil>,
+  //   outBase<Menu::Nil>,
+  //   manageIdle::no,
+  //   navStyle<Menu::FlatNav>,
+  //   titleWrapChars<'[',']'>,
+  //   textCursors<' ','>','-'>
+  // } myConfig;
+
   //not sure if i implement This
   //it will grow the vtable footprint a bit
   //or maybe not as it is only requested for containers

@@ -15,7 +15,7 @@
 #include "../fmt/textCursor.h"
 #include "../fmt/titleWrap.h"
 #include "../printers.h"
-#include "../fmt/debug.h"
+// #include "../fmt/debug.h"
 
 namespace Menu {
 
@@ -27,16 +27,23 @@ namespace Menu {
     // static inline void endl() {O::useY();}//the viewport will catch it
     template<typename T>
     inline void raw(T i) {
-      if (!O::operator bool()) return;
+      Serial<<"LCDOutDef::raw("<<i<<")"<<endl;
+      // if (!O::operator bool()) return;//TODO: this is naive, we need to measure
+      // if (O::posY()+scrlPosY()>O::height()) return;
       dev.setCursor(O::posX(),O::posY());
-      // Serial<<"lcd.setCursor("<<posX()<<","<<posY()<<") "<<i<<endl;
+      Serial<<"lcd.setCursor("<<posX()<<","<<posY()<<") "<<i<<endl;
       O::useX(dev.print(i));
     }
     template<typename H>
     inline void clear(PrintHead<H>) {dev.clear();}
     template<typename H>
     inline void clearLine(PrintHead<H> p) {
-      dev.setCursor(0,p.printer.posY());
+      int line=p.line;//O::posY();
+      // Serial<<"LCDOutDef::clearLine "<<p.pos<<(O::scrlPosY()>=0?"+":"")<<O::scrlPosY()<<"="<<line<<endl;
+      // Serial<<"height:"<<p.printer.height()<<endl;
+      if (line<0||line>=p.printer.height()) return;
+      // Serial<<"LCDOutDef::clearLine "<<line<<endl;
+      dev.setCursor(0,line);
       for(int n=0;n<p.printer.width();n++)
         dev.print(" ");
     }
@@ -55,7 +62,7 @@ namespace Menu {
 
   template<template<typename> class N=NavNode>
   using LCDFmt = Menu::Chain<//wrap inner types
-    DebugFmt,//add debug info when enabled
+    // DebugFmt,//add debug info when enabled
     // TextCursorFmt,//signal selected option on text mode
     TextFmt,//normal text format
     TitleWrap,//wrap title in []
@@ -67,10 +74,13 @@ namespace Menu {
 
 };//Menu
 
-template<LiquidCrystal& lcd,typename Panel=Menu::StaticPanel<16,2>,typename Parts=Menu::LCDParts>
-using LCDOutDev=Menu::LCDOutDef<
+template<
+  LiquidCrystal& lcd,
+  typename Panel=Menu::Viewport<Menu::StaticPanel<0,0,16,2>>,
+  typename Parts=Menu::LCDParts
+> using LCDOutDev=Menu::LCDOutDef<
   Parts,
   LiquidCrystal,
   lcd,
-  Menu::Viewport<Panel>
+  Panel
 >;
