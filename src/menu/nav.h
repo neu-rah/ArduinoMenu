@@ -8,7 +8,7 @@
 
 #include "items.h"
 
-namespace Menu {
+namespace AM5 {
 
   //hold navigation state
   //flat navigation (single node)
@@ -130,4 +130,4 @@ namespace Menu {
   };
 
 
-};//Menu namespace
+};//AM5 namespace

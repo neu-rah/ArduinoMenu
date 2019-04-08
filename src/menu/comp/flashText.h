@@ -8,7 +8,7 @@
 #include <Arduino.h>
 #include "../items.h"
 
-namespace Menu {
+namespace AM5 {
   template<typename O=Empty>
   class FlashTextDef:public O {
   protected:

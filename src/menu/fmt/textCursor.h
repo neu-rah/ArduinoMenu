@@ -6,7 +6,7 @@
 // output text cursor as either ">" or " "
 // TODO: customize at type level (as title wrap)
 
-namespace Menu {
+namespace AM5 {
 
   template<typename O>
   struct TextCursorFmt:public O {
@@ -21,4 +21,4 @@ namespace Menu {
       } else O::fmtCursor(p,io);
     }
   };
-};//Menu
+};//AM5

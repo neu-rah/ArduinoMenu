@@ -3,7 +3,7 @@
 #include <menu/IO/serialOut.h>
 #include <menu/comp/multiLang.h>
 
-using FlashText=Menu::FlashTextDef<Menu::Empty>;
+using FlashText=AM5::FlashTextDef<AM5::Empty>;
 
 //string id's
 enum LangCodes:size_t {textOk=0,textCancel,langStringsCnt};
@@ -24,17 +24,17 @@ FlashText cancel_ptOp(cancel_pt);
 FlashText const enLang[] PROGMEM {ok_enOp,cancel_enOp};
 FlashText const ptLang[] PROGMEM {ok_ptOp,cancel_ptOp};
 
-using MultiLang=Menu::Lang<FlashText>;
+using MultiLang=AM5::Lang<FlashText>;
 MultiLang langs(enLang);
 
 template<LangCodes id>
-using LangOp=Menu::Prompt<MultiLang::Text<langs,id,Menu::Empty>>;
+using LangOp=AM5::Prompt<MultiLang::Text<langs,id,AM5::Empty>>;
 
 template<typename O>
-using WrapTitle=Menu::TitleWrapFmt<O>;
+using WrapTitle=AM5::TitleWrapFmt<O>;
 
 //serial output
-MenuOut<Menu::SerialFmt<>::To<SerialOutDev<>>> serialOut;
+MenuOut<AM5::SerialFmt<>::To<SerialOutDev<>>> serialOut;
 
 //normal option
 Prompt<Text> op1("Op 1");

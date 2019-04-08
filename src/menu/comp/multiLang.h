@@ -12,7 +12,7 @@
 
 static int langSel=0;
 
-namespace Menu {
+namespace AM5 {
   template<typename T> //=const char *>
   struct Lang {
     public:

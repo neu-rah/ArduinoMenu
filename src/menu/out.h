@@ -13,7 +13,7 @@
   #include "arduino_assert.h"
 #endif
 
-namespace Menu {
+namespace AM5 {
   ///////////////////////////////////////////////////////////////////
   // output interface
   class MenuOut {
@@ -46,7 +46,7 @@ namespace Menu {
       static bool onMenu;
     };
 
-  template<typename O> using asMenu=Role<Roles::Menu,O,&MenuOut::fmtMenu>;
+  template<typename O> using asMenu=Role<Roles::AM5,O,&MenuOut::fmtMenu>;
   template<typename O> using asPanel=Role<Roles::Panel,O,&MenuOut::fmtPanel>;
   template<typename O> using asTitle=Role<Roles::Title,O,&MenuOut::fmtTitle>;
   template<typename O> using asItem=Role<Roles::Item,O,&MenuOut::fmtItem>;
@@ -160,7 +160,7 @@ namespace Menu {
         //next.setTarget(i);
       }
     protected:
-      Menu::MenuOutCap<OutList<OO...>> next;
+      AM5::MenuOutCap<OutList<OO...>> next;
   };
 
   template<typename O>
@@ -199,4 +199,4 @@ namespace Menu {
     //.. add more types here
   };
 
-};//Menu
+};//AM5

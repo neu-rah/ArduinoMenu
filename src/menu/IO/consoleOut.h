@@ -16,7 +16,7 @@ using namespace std;
 #include "../fmt/titleWrap.h"
 #include "../fmt/index.h"
 
-namespace Menu {
+namespace AM5 {
   // using ConsoleOutDef=OutDev<ostream,cout,Void>;
 template<typename P,ostream& dev=cout, typename O=Void>
   struct ConsoleOutDef:public O {
@@ -39,7 +39,7 @@ template<typename P,ostream& dev=cout, typename O=Void>
   >;
 
   template<template<typename> class N=NavNode>
-  using ConsoleFmt = Menu::Chain<//wrap inner types
+  using ConsoleFmt = AM5::Chain<//wrap inner types
     // DebugFmt,//add debug info when enabled
     IndexFmt,//print option index (1-9)
     TextCursorFmt,//signal selected option on text mode
@@ -50,7 +50,7 @@ template<typename P,ostream& dev=cout, typename O=Void>
     N//flat navigation control (no sub menus)
   >;
 
-};//Menu
+};//AM5
 
-template<ostream& dev=cout,typename Parts=Menu::ConsoleParts>
-using ConsoleOutDev=Menu::ConsoleOutDef<Parts,cout>;
+template<ostream& dev=cout,typename Parts=AM5::ConsoleParts>
+using ConsoleOutDev=AM5::ConsoleOutDef<Parts,cout>;

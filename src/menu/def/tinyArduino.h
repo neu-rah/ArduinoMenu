@@ -5,26 +5,31 @@
 // neu-rah (ruihfazevedo@gmail.com)
 // common definitions for arduino framework
 
-#include <streamFlow.h>//https://github.com/neu-rah/streamFlow
-#include "../../menu.h"
-#include "../printers.h"
-#include "../comp/flashText.h"
-#include "../comp/flashMenu.h"
+  #include <streamFlow.h>//https://github.com/neu-rah/streamFlow
+  #include "../../menu.h"
+  #include "../printers.h"
+  #include "../comp/flashText.h"
+  #include "../comp/flashMenu.h"
 
-template<typename O>
-using MenuOut=Menu::MenuOutCap<O>;
+namespace Menu {
 
-using FlashText=Menu::FlashTextDef<Menu::Empty>;
+  using namespace Menu;
 
-using Text=Menu::Text<Menu::Empty>;
+  template<typename O>
+  using MenuOut=AM5::MenuOutCap<O>;
 
-using Item=Menu::Item;
+  using FlashText=AM5::FlashTextDef<AM5::Empty>;
 
-template<typename O>
-using Prompt=Menu::Prompt<O>;
+  using Text=AM5::Text<AM5::Empty>;
 
-template<size_t n>
-using StaticMenu=Menu::StaticMenu<n,Text>;
+  using Item=AM5::Item;
 
-template<size_t n>
-using FlashMenu=Menu::StaticMenu<n,FlashText>;
+  template<typename O>
+  using Prompt=AM5::Prompt<O>;
+
+  template<size_t n>
+  using StaticMenu=AM5::StaticMenu<n,Text>;
+
+  template<size_t n>
+  using FlashMenu=AM5::StaticMenu<n,FlashText>;
+};

@@ -4,18 +4,18 @@
 #include "../menu.h"
 #include "out.h"
 
-namespace Menu {
+namespace AM5 {
 
   //can we config like this?
-  // using Config=Menu::Config<
+  // using Config=AM5::Config<
   //   wrapMenus::yes,
   //   canExit::yes,
   //   useFields::yes,
   //   useActions::yes,
-  //   itemBase<Menu::Nil>,
-  //   outBase<Menu::Nil>,
+  //   itemBase<AM5::Nil>,
+  //   outBase<AM5::Nil>,
   //   manageIdle::no,
-  //   navStyle<Menu::FlatNav>,
+  //   navStyle<AM5::FlatNav>,
   //   titleWrapChars<'[',']'>,
   //   textCursors<' ','>','-'>
   // } myConfig;
@@ -58,8 +58,27 @@ namespace Menu {
   };
 
   ///////////////////////////////////////////////////////////////
+  // config options -----------------------------------
+
+  // struct Nil {};
+  //
+  // template
+  // struct ItemNavCfg {
+  //   virtual bool canNav() const {return false;}//TODO: use flags/properties field to reuse this virtual
+  //   virtual bool up() {return false;}
+  //   virtual bool down() {return false;}
+  //   virtual bool enter() {return false;}
+  //   virtual bool esc() {return false;}
+  // };
+
+  ///////////////////////////////////////////////////////////////
   // menu items -----------------------------------
+
+  // template<typename Cfg=ItemNavCfg>
   struct Item {
+    //footprint:
+    // 4 bytes for each virtual function * #virtual tables
+    // the # of vtables is equal to the # of unique Prompt<...> compositions
     virtual void out(MenuOut& o) const {}
     #if (MENU_INJECT_PARTS==true)
       virtual void out(MenuOut& o,PrinterPart& pp) const {}
@@ -151,4 +170,4 @@ namespace Menu {
     inline Item& operator[](size_t i) {return *data[i];}
   };
 
-};//Menu
+};//AM5

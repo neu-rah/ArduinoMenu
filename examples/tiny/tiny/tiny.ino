@@ -2,7 +2,7 @@
 #include <menu/IO/serialOut.h>
 
 //or accept the defauls
-MenuOut<Menu::SerialFmt<>::To<SerialOutDev<>>> serialOut;
+MenuOut<AM5::SerialFmt<>::To<SerialOutDev<>>> serialOut;
 
 using Op=Prompt<FlashText>;
 
@@ -24,8 +24,8 @@ Op op5(op5_text);
 // Prompt<StaticMenu<5>> mainMenu("Main menu",&op1,&op2,&op3,&op4,&op5);
 const char menuTitle_text[] PROGMEM="Main menu";
 Prompt<FlashText> menuTitle(menuTitle_text);
-constexpr Menu::FlashData data[5] {&op1,&op2,&op3,&op4,&op5};
-Prompt<Menu::FlashMenuDef<data,5,FlashText>> mainMenu(menuTitle_text);
+constexpr AM5::FlashData data[5] {&op1,&op2,&op3,&op4,&op5};
+Prompt<AM5::FlashMenuDef<data,5,FlashText>> mainMenu(menuTitle_text);
 
 //footprint ----------------------
 //4 bytes of ram for each flash text option (as is)

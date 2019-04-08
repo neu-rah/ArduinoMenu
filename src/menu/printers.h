@@ -7,7 +7,7 @@
 
 #include "panels.h"
 
-namespace Menu {
+namespace AM5 {
 
   //ideal for single line menu (or full page options)
   template<typename O>
@@ -162,4 +162,4 @@ namespace Menu {
     template<typename T> using panelFmt=p<T>;
   };
 
-};//Menu namespace
+};//AM5 namespace

@@ -18,26 +18,26 @@
 LiquidCrystal lcd(RS, RW, EN, A0, A1, A2, A3);
 
 //common nav node
-using CommonNav=Menu::ItemNav<Menu::NavNode<>>;
+using CommonNav=AM5::ItemNav<AM5::NavNode<>>;
 CommonNav commonNav;
 
 //to attach the nav node to output devices
 template<typename O>
-using Nav=Menu::SharedNavNode<O,CommonNav,commonNav>;
+using Nav=AM5::SharedNavNode<O,CommonNav,commonNav>;
 
 //menu output ------------------------
 //define multiple outputs as one device
-Menu::MenuOutCap<
-  Menu::OutList<
-    // Menu::SerialFmt<Nav>::To<SerialOutDev<>>,
-    Menu::LCDFmt<Nav>::To<LCDOutDev<lcd>>
+AM5::MenuOutCap<
+  AM5::OutList<
+    AM5::SerialFmt<Nav>::To<SerialOutDev<>>,
+    AM5::LCDFmt<Nav>::To<LCDOutDev<lcd>>
   >
 > menuOut;
 
 using Op=Prompt<Text>;
 
 int myvar=50;
-Prompt<Menu::NumField<int>> fld(myvar,0,100,10,1);
+Prompt<AM5::NumField<int>> fld(myvar,0,100,10,1);
 
 // quick define menu
 Prompt<StaticMenu<4>> mainMenu(

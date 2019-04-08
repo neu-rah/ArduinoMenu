@@ -11,18 +11,18 @@
 using namespace std;
 #include <menu.h>
 
-namespace Menu {
+namespace AM5 {
 
   template<typename O=Text<Empty>>
-  struct VectorMenuDef:public O,vector<Menu::Item*> {
+  struct VectorMenuDef:public O,vector<AM5::Item*> {
     template<typename... OO>
-    inline VectorMenuDef(OO... oo):vector<Menu::Item*>{oo...} {}
+    inline VectorMenuDef(OO... oo):vector<AM5::Item*>{oo...} {}
     template<typename... OO>
-    inline VectorMenuDef(const char*title,OO... oo):O(title),vector<Menu::Item*>{oo...} {}
-    inline size_t size() const {return vector<Menu::Item*>::size();}
-    inline Menu::Item& operator[](size_t n) const {
-      return *vector<Menu::Item*>::operator[](n);
+    inline VectorMenuDef(const char*title,OO... oo):O(title),vector<AM5::Item*>{oo...} {}
+    inline size_t size() const {return vector<AM5::Item*>::size();}
+    inline AM5::Item& operator[](size_t n) const {
+      return *vector<AM5::Item*>::operator[](n);
     }
   };
 
-};//Menu
+};//AM5

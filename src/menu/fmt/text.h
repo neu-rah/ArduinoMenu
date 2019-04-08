@@ -5,7 +5,7 @@
 // neu-rah (ruihfazevedo@gmail.com)
 // output text format
 
-namespace Menu {
+namespace AM5 {
 
   template<typename O>
   struct TextFmt:public O {

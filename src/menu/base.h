@@ -5,7 +5,7 @@
 // neu-rah (ruihfazevedo@gmail.com)
 // some utilities and base definitions
 
-namespace Menu {
+namespace AM5 {
 
   //type equality
   //from: https://stackoverflow.com/a/16924234/1329075
@@ -62,7 +62,7 @@ namespace Menu {
   // roles -----------------
   // menu structure can include this tags (in the form asTitle,asItem,asMenu,...)
   // output device fmt translators hook to this tags to generate addicional content
-    enum class Roles {Self,Menu,Panel,Title,Item,Pad,Accel,Cursor,Label,Value,Unit};
+    enum class Roles {Self,AM5,Panel,Title,Item,Pad,Accel,Cursor,Label,Value,Unit};
 
   //hook out and fmt callbacks for role tags included on menu structure
   //they provide a direct access to specific output driver
@@ -87,4 +87,4 @@ namespace Menu {
   inline void Role<role,O,f>::fmt(MenuOut& o,bool io) const {
     (static_cast<MenuOut&>(o).*f)(io);
   }
-};//Menu
+};//AM5

@@ -5,12 +5,12 @@
 #include <menu/def/console.h>
 #include <menu/comp/vectorMenu.h>
 
-MenuOut<Menu::ConsoleFmt<>::To<ConsoleOutDev<>>> consoleOut;
+MenuOut<AM5::ConsoleFmt<>::To<ConsoleOutDev<>>> consoleOut;
 
 using Op=Prompt<Text>;
 
 //using std::vector
-Prompt<Menu::VectorMenuDef<Text>> mainMenu("Main menu"
+Prompt<AM5::VectorMenuDef<Text>> mainMenu("Main menu"
   ,new Op("Op 1")
   ,new Op("Op 2")
   ,new Op("Op 3")

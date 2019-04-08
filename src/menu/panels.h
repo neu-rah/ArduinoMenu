@@ -10,7 +10,7 @@
 #include "../menu.h"
 #include "out.h"
 
-namespace Menu {
+namespace AM5 {
 
   //static panel
   //describes output dimension (may not be whole device)
@@ -134,4 +134,4 @@ namespace Menu {
   //     idx_t sx,sy;//scroll positions
   // };
 
-};//Menu
+};//AM5

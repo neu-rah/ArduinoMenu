@@ -17,7 +17,7 @@
 #include "../printers.h"
 // #include "../fmt/debug.h"
 
-namespace Menu {
+namespace AM5 {
 
   template<typename P,typename Dev,Dev& dev, typename O=Void>
   struct LCDOutDef:public O {
@@ -64,7 +64,7 @@ namespace Menu {
   // using SingleLineMenu=SingleLineScrollCtrl<O,1>;
 
   template<template<typename> class N=NavNode>
-  using LCDFmt = Menu::Chain<//wrap inner types
+  using LCDFmt = AM5::Chain<//wrap inner types
     // DebugFmt,//add debug info when enabled
     TextCursorFmt,//signal selected option on text mode
     TextFmt,//normal text format
@@ -76,13 +76,13 @@ namespace Menu {
     N//flat navigation control (no sub menus)
   >;
 
-};//Menu
+};//AM5
 
 template<
   LiquidCrystal& lcd,
-  typename Panel=Menu::Viewport<Menu::StaticPanel<0,0,16,2>>,
-  typename Parts=Menu::LCDParts
-> using LCDOutDev=Menu::LCDOutDef<
+  typename Panel=AM5::Viewport<AM5::StaticPanel<0,0,16,2>>,
+  typename Parts=AM5::LCDParts
+> using LCDOutDev=AM5::LCDOutDef<
   Parts,
   LiquidCrystal,
   lcd,

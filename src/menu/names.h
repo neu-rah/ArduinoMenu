@@ -5,10 +5,10 @@
 // neu-rah (ruihfazevedo@gmail.com)
 // translate roles enum to text, this helps debug and will be used by xml and json
 
-namespace Menu {
+namespace AM5 {
   template<Roles role> constexpr char* roleName();
   template<> inline constexpr char* roleName<Roles::Self>() {return "Self";}
-  template<> inline constexpr char* roleName<Roles::Menu>() {return "Menu";}
+  template<> inline constexpr char* roleName<Roles::AM5>() {return "AM5";}
   template<> inline constexpr char* roleName<Roles::Panel>() {return "Panel";}
   template<> inline constexpr char* roleName<Roles::Title>() {return "Title";}
   template<> inline constexpr char* roleName<Roles::Item>() {return "Item";}
@@ -19,4 +19,4 @@ namespace Menu {
   template<> inline constexpr char* roleName<Roles::Mode>() {return "Mode";}
   template<> inline constexpr char* roleName<Roles::Value>() {return "Value";}
   template<> inline constexpr char* roleName<Roles::Unit>() {return "Unit";}
-};//Menu
+};//AM5

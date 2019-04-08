@@ -15,7 +15,7 @@
 #include "../fmt/index.h"
 #include "../printers.h"
 
-namespace Menu {
+namespace AM5 {
 
   template<typename P,decltype(Serial)& dev=Serial, typename O=Void>
   struct SerialOutDef:public O {
@@ -33,7 +33,7 @@ namespace Menu {
   >;
 
   template<template<typename> class N=NavNode>
-  using SerialFmt = Menu::Chain<//wrap inner types
+  using SerialFmt = AM5::Chain<//wrap inner types
     // DebugFmt,//add debug info when enabled
     TextCursorFmt,//signal selected option on text mode
     IndexFmt,//print option index (1-9)
@@ -44,7 +44,7 @@ namespace Menu {
     N//flat navigation control (no sub menus)
   >;
 
-};//Menu
+};//AM5
 
-template<decltype(Serial)& dev=Serial,typename Parts=Menu::SerialParts>
-using SerialOutDev=Menu::SerialOutDef<Parts,Serial>;
+template<decltype(Serial)& dev=Serial,typename Parts=AM5::SerialParts>
+using SerialOutDev=AM5::SerialOutDef<Parts,Serial>;

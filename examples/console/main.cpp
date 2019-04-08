@@ -5,7 +5,7 @@
 #include <menu/def/console.h>
 #include <menu/comp/multiLang.h>
 
-MenuOut<Menu::ConsoleFmt<>::To<ConsoleOutDev<>>> consoleOut;
+MenuOut<AM5::ConsoleFmt<>::To<ConsoleOutDev<>>> consoleOut;
 
 using Op=Prompt<Text>;
 Prompt<StaticMenu<3>> mainMenu("Main menu"

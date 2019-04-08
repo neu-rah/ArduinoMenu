@@ -8,7 +8,7 @@
 
 // #include "../names.h"
 
-namespace Menu {
+namespace AM5 {
 
   template<typename O>
   struct DebugFmt:public O {

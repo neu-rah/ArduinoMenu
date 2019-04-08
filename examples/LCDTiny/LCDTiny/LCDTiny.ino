@@ -1,6 +1,6 @@
 // Rui Azevedo - Apr2019
 // neu-rah (ruihfazevedo@gmail.com)
-// store text on flash (Arduino framework)
+// LCD example with flash data (Arduino framework)
 //
 // ArduinoMenu libtary 5.x code example
 // Output: LCD
@@ -10,6 +10,8 @@
 #include <menu/def/tinyArduino.h>
 #include <menu/IO/lcdOut.h>
 
+using namespace Menu;
+
 // LCD /////////////////////////////////////////
 #define RS 2
 #define RW 4
@@ -17,7 +19,7 @@
 LiquidCrystal lcd(RS, RW, EN, A0, A1, A2, A3);
 
 //menu output ------------------------
-MenuOut<Menu::LCDFmt<>::To<LCDOutDev<lcd>>> menuOut;
+MenuOut<AM5::LCDFmt<>::To<LCDOutDev<lcd>>> menuOut;
 
 using Op=Prompt<FlashText>;
 
@@ -38,9 +40,9 @@ Op op5(op5_text);
 
 // Prompt<StaticMenu<5>> mainMenu("Main menu",&op1,&op2,&op3,&op4,&op5);
 const char menuTitle_text[] PROGMEM="Main menu";
-Prompt<FlashText> menuTitle(menuTitle_text);
-constexpr Menu::FlashData data[5] {&op1,&op2,&op3,&op4,&op5};
-Prompt<Menu::FlashMenuDef<data,5,FlashText>> mainMenu(menuTitle_text);
+Op menuTitle(menuTitle_text);
+constexpr AM5::FlashData data[4] {&op1,&op2,&op3,&op4};//,&op5};
+Prompt<AM5::FlashMenuDef<data,4,FlashText>> mainMenu(menuTitle_text);
 
 void setup() {
   Serial.begin(115200);

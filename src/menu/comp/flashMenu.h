@@ -8,7 +8,7 @@
 #include "../base.h"
 #include <Arduino.h>
 
-namespace Menu {
+namespace AM5 {
   template<Item* const* data,size_t n,typename O>
   class FlashMenuDef:public O {
   protected:
@@ -23,4 +23,4 @@ namespace Menu {
 
   using FlashData=PROGMEM Item* const;
 
-};//Menu
+};//AM5

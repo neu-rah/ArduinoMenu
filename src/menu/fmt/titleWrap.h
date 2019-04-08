@@ -6,7 +6,7 @@
 // output wrap title between 2 characters
 // define used characters at type level
 
-namespace Menu {
+namespace AM5 {
 
   template<typename O,char start='[',char end=']'>
   struct TitleWrapFmt:public O {

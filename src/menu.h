@@ -6,7 +6,7 @@
 #include "menu/items.h"
 #include "menu/fmt/debug.h"
 
-namespace Menu {
+namespace AM5 {
   template<typename O>
   MenuOut& MenuOutCap<O>::operator<<(Item& i) {i.out(*this);return *this;}
 
@@ -21,4 +21,4 @@ namespace Menu {
   #endif
 
   #include "menu/out.hpp"
-};//Menu
+};//AM5

@@ -12,13 +12,13 @@ enum LangCodes:size_t {textOk,textCancel};
 Text enLang[]{"Ok","Cancel"};
 Text ptLang[]{"Vá","Esquece"};
 
-using MultiLang=Menu::Lang<Text>;
+using MultiLang=AM5::Lang<Text>;
 MultiLang langs(enLang);
 
 template<LangCodes id>
-using LangOp=Prompt<MultiLang::Text<langs,id,Menu::Empty>>;
+using LangOp=Prompt<MultiLang::Text<langs,id,AM5::Empty>>;
 
-MenuOut<Menu::ConsoleFmt<>::To<ConsoleOutDev<>>> consoleOut;
+MenuOut<AM5::ConsoleFmt<>::To<ConsoleOutDev<>>> consoleOut;
 
 Prompt<Text> op1("Op 1");
 Prompt<Text> op2("Op 2");

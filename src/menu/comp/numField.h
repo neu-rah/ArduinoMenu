@@ -8,7 +8,7 @@
 #include <Arduino.h>
 #include "../items.h"
 
-namespace Menu {
+namespace AM5 {
 
   template<typename T,typename O=Empty>
   class NumFieldDef:public O {
@@ -49,5 +49,5 @@ namespace Menu {
   };
 
   template<typename T>
-  using NumField=Menu::asValue<Menu::NumFieldDef<T>>;
+  using NumField=AM5::asValue<AM5::NumFieldDef<T>>;
 };
