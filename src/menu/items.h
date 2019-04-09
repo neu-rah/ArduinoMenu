@@ -73,35 +73,33 @@ namespace AM5 {
   ///////////////////////////////////////////////////////////////
   // menu items -----------------------------------
 
-  #if NAV_AGENT
-    class CmdAgent {
-      public:
-        virtual void named() {Serial<<"named CmdAgent"<<endl;}
-        // CmdAgent(Item& o):client(o) {}
-        CmdAgent():client(NULL) {Serial<<"new CmdAgent"<<endl;}
-        CmdAgent(const CmdAgent& o):client(o.client) {Serial<<"copy CmdAgent"<<endl;}
-        CmdAgent(CmdAgent&& o):client(o.client) {Serial<<"move CmdAgent"<<endl;}
-        CmdAgent& operator=(const CmdAgent& o) {client=o.client;Serial<<"assign CmdAgent"<<endl;}
-        inline operator bool() const {return canNav();}
-        // inline operator Item&() const {return getClient();}
-        inline virtual bool canNav() const {return false;}
-        inline virtual bool up() {return false;}
-        inline virtual bool down() {return false;}
-        inline virtual bool enter(){return false;}
-        inline virtual bool esc() {return false;}
-      protected:
-        template<typename O>
-        bool _up() {return reinterpret_cast<O*>(client)->up();}
-        CmdAgent(Item* o):client(o) {Serial<<"new CmdAgent"<<endl;}
-        void* client=NULL;
-    };
-    using NavRes=CmdAgent;
-  #else
-    #define CmdAgent() (false)
-    using NavRes=bool;
-  #endif
+  struct CmdAgent {
+    virtual bool canNav() const =0;
+    virtual bool up(void* o)=0;
+    virtual bool down(void* o)=0;
+    virtual bool enter(void* o)=0;
+    virtual bool esc(void* o)=0;
+  };
 
-  // template<typename Cfg=ItemNavCfg>
+  struct EmptyCmds:public CmdAgent {
+    bool canNav() const override {return false;}
+    bool up (void* o)  override {return false;}
+    bool down (void* o)  override {return false;}
+    bool enter (void* o)  override {return false;}
+    bool esc (void* o)  override {return false;}
+  };
+
+  template<typename O>
+  struct ItemCmd:public CmdAgent {
+    bool canNav () const override {return true;}
+    bool up(void* o) override {return ((O*)o)->up();}
+    bool down(void* o) override {return ((O*)o)->down();}
+    bool enter(void* o) override {return ((O*)o)->enter();}
+    bool esc(void* o) override {return ((O*)o)->esc();}
+  };
+
+  struct NavAgent;
+
   struct Item {
     //footprint:
     // 4 bytes for each virtual function * #virtual tables
@@ -112,58 +110,7 @@ namespace AM5 {
     #endif
     virtual size_t size() const {return 1;}
     virtual Item& operator[](size_t)=0;// const {return *this;}
-    virtual NavRes navAgent()=0;// {assert(false);return CmdAgent();};
-    #if !NAV_AGENT
-      inline virtual bool canNav() const {return false;}
-      inline virtual bool up() {return false;}
-      inline virtual bool down() {return false;}
-      inline virtual bool enter(){return false;}
-      inline virtual bool esc() {return false;}
-    #endif
-  };
-
-  #if NAV_AGENT
-    template<typename O>
-    struct ItemAgent:public CmdAgent {
-      ItemAgent():CmdAgent(NULL) {Serial<<"new ItemAgent"<<endl;}
-      ItemAgent(const CmdAgent& o):CmdAgent(o.client) {Serial<<"copy ItemAgent"<<endl;}
-      ItemAgent(CmdAgent&& o):CmdAgent(o.client) {Serial<<"move ItemAgent"<<endl;}
-      ItemAgent& operator=(const ItemAgent& o) {CmdAgent::operator=(o);Serial<<"assign ItemAgent"<<endl;}
-      // ItemAgent operator=(const CmdAgent&& o) {Serial<<"move assign ItemAgent"<<endl;}
-      void named() override {Serial<<"named ItemAgent"<<endl;}
-      ItemAgent(O& o):CmdAgent((Item*)&o) {Serial<<"new ItemAgent"<<endl;}
-      inline bool canNav() const override {return true;}
-      inline bool up() override {return ((O*)client)->up();}
-      inline bool down() override {return ((O*)client)->down();}
-      inline bool enter() override{return ((O*)client)->enter();}
-      inline bool esc() override {return ((O*)client)->esc();}
-    };
-  #else
-    #define ItemAgent(...) (true)
-  #endif
-
-  //adapt specific types as menu items
-  //provide virtual overrides for them
-  template<typename O>
-  struct Prompt:public virtual Item,public O {
-    using O::O;
-    using This=Prompt<O>;
-    inline void out(MenuOut& o) const override {O::out(o);}
-    #if (MENU_INJECT_PARTS==true)
-      void out(MenuOut& o,PrinterPart& pp) const override;
-    #endif
-    size_t size() const override {return O::size();}
-    Item& operator[](size_t n) override {return O::operator[](n);}
-    inline NavRes navAgent() override {return O::navAgent();}
-    #if !NAV_AGENT
-      inline bool canNav() const override {return true;}
-      inline bool up() override {return O::up();}
-      inline bool down() override {return O::down();}
-      inline bool enter() override{return O::enter();}
-      inline bool esc() override {return O::esc();}
-    #endif
-    template<template<typename> class T>
-    inline void stack(MenuOut& o) const {Prompt<T<O>>(*this).out(o);}
+    virtual NavAgent navAgent()=0;// {assert(false);return CmdAgent();};
   };
 
   #if (MENU_INJECT_PARTS==true)
@@ -191,13 +138,52 @@ namespace AM5 {
     static inline void out(MenuOut&) {}
     static inline size_t size() {return 1;}
     inline Item& operator[](size_t n) {return *reinterpret_cast<Item*>(this);}
-    static inline NavRes navAgent() {return CmdAgent(); }
+    static inline NavAgent navAgent();
     static inline bool up() {return false;}
     static inline bool down() {return false;}
     static inline bool enter() {return false;}
     static inline bool esc() {return false;}
+    static EmptyCmds cmds;
   };
 
+  struct NavAgent {
+    // Item& composing types are NOT Item derived
+    void* obj;
+    CmdAgent* run;//we will derive this one, it will know the void final type
+    inline NavAgent():obj(NULL),run(Empty::navAgent().run) {}
+    inline NavAgent(void* o,CmdAgent* r):obj(o),run(r) {}
+    inline NavAgent(const NavAgent& o):obj(o.obj),run(o.run) {}
+    // inline NavAgent(NavAgent&& o):obj(o.obj),run(o.run) {}
+    // inline NavAgent operator=(const NavAgent& o) {obj=o.obj;run=o.run;return *this;}
+    inline NavAgent operator=(NavAgent&& o) {obj=o.obj;run=o.run;return o;}
+    inline operator bool() const {return run->canNav();}
+    inline bool canNav() const {return run->canNav();}
+    inline bool up() {return run->up(obj);}
+    inline bool down() {return run->down(obj);}
+    inline bool enter() {return run->enter(obj);}
+    inline bool esc() {return run->esc(obj);}
+  };
+
+  inline NavAgent Empty::navAgent() {return {NULL,&cmds}; }
+
+  //adapt specific types as menu items
+  //provide virtual overrides for them
+  template<typename O>
+  struct Prompt:public virtual Item,public O {
+    using O::O;
+    using This=Prompt<O>;
+    inline void out(MenuOut& o) const override {O::out(o);}
+    #if (MENU_INJECT_PARTS==true)
+      void out(MenuOut& o,PrinterPart& pp) const override;
+    #endif
+    size_t size() const override {return O::size();}
+    Item& operator[](size_t n) override {return O::operator[](n);}
+    inline NavAgent navAgent() override {return O::navAgent();}
+    template<template<typename> class T>
+    inline void stack(MenuOut& o) const {Prompt<T<O>>(*this).out(o);}
+  };
+
+  // template<typename Cfg=ItemNavCfg>
   template<typename O>
   struct Text:public O {
     const char* text;

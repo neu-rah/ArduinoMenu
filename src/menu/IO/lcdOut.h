@@ -64,7 +64,7 @@ namespace AM5 {
   // using SingleLineMenu=SingleLineScrollCtrl<O,1>;
 
   template<template<typename> class N=NavNode>
-  using LCDFmt = AM5::Chain<//wrap inner types
+  using LCDFmt = Chain<//wrap inner types
     // DebugFmt,//add debug info when enabled
     TextCursorFmt,//signal selected option on text mode
     TextFmt,//normal text format

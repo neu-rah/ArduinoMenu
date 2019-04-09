@@ -7,6 +7,7 @@
 
 #include <Arduino.h>
 #include <streamFlow.h>
+#include "../base.h"
 #include "../out.h"
 #include "../nav.h"
 #include "../fmt/text.h"
@@ -33,7 +34,7 @@ namespace AM5 {
   >;
 
   template<template<typename> class N=NavNode>
-  using SerialFmt = AM5::Chain<//wrap inner types
+  using SerialFmt = Chain<//wrap inner types
     // DebugFmt,//add debug info when enabled
     TextCursorFmt,//signal selected option on text mode
     IndexFmt,//print option index (1-9)

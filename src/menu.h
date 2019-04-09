@@ -20,5 +20,8 @@ namespace AM5 {
     bool DebugFmt<O>::debugFmt=false;
   #endif
 
+  #include "menu/items.hpp"
   #include "menu/out.hpp"
+  #include "menu/comp/numField.hpp"
+
 };//AM5

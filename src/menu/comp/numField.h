@@ -23,14 +23,7 @@ namespace AM5 {
         ,step(s)
         ,tune(t) {}
       // constexpr static inline bool canNav() {return true;}
-      inline NavRes navAgent() {
-        Serial<<"NumFieldDef::navAgent"<<endl;
-        #if NAV_AGENT
-          return ItemAgent<This>(*this);
-        #else
-          return true;
-        #endif
-      }
+      inline NavAgent navAgent() {return {this,&cmds};}
       inline void out(MenuOut &o) const {
         //reflex=*value;can not update here!
         o<<*value;
@@ -55,8 +48,9 @@ namespace AM5 {
       T* value;
       T reflex;//to check if original value changed
       T low,high,step,tune;
+      static ItemCmd<This> cmds;
   };
 
   template<typename T>
-  using NumField=AM5::asValue<AM5::NumFieldDef<T>>;
+  using NumField=asValue<NumFieldDef<T>>;
 };

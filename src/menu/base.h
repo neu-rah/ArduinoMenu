@@ -13,22 +13,6 @@ namespace AM5 {
 
   struct Nil {};
 
-  //type equality
-  //from: https://stackoverflow.com/a/16924234/1329075
-  // template<typename T, typename U> struct is_same {
-  //   static inline constexpr bool value() {return false;}
-  // };
-  // template<typename T> struct is_same<T, T>{
-  //   static inline constexpr bool value() {return true;}
-  // };
-  // template<typename T, typename U> bool eqTypes() { return is_same<T, U>::value(); }
-  //
-  // A<X> != A<Y> (as expected and as it should)
-  // we should extend this to eqTemplates
-  // however they must be disassembled to do so
-  // then we could use eq<A,B> the we could use types A<O>,B<O>
-  // .... not easy, we have too many variants
-
   //type nexting from a list of templates+defered terminal type
   #define Expr template<typename> class
   #define Term typename
@@ -56,7 +40,6 @@ namespace AM5 {
   template<typename O>
   struct ID:public O {using O::O;};
 
-  #define NAV_AGENT true
   //big memory impact
   #define MENU_INJECT_PARTS false
   struct Item;
