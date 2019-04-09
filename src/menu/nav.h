@@ -120,11 +120,13 @@ namespace AM5 {
           Serial<<"no focus yet, checking item..."<<endl;
           #if NAV_AGENT
             focus=O::getTarget()[O::pos()].navAgent();
+            // Serial<<"canNav:"<<O::getTarget()[O::pos()].navAgent().canNav()<<endl;
+            Serial<<"we a an agent ";
+            focus.named();
           #else
             if (O::getTarget()[O::pos()].navAgent())
               focus=&O::getTarget()[O::pos()];
           #endif
-          Serial<<"focus is now:"<<O::getTarget()[O::pos()].navAgent().canNav()<<endl;
         }
         return O::enter();
       }
