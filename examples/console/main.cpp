@@ -5,6 +5,8 @@
 #include <menu/def/console.h>
 #include <menu/comp/multiLang.h>
 
+using namespace Menu;
+
 MenuOut<AM5::ConsoleFmt<>::To<ConsoleOutDev<>>> consoleOut;
 
 using Op=Prompt<Text>;

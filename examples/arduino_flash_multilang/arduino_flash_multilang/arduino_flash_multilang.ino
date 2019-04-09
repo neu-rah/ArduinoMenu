@@ -3,6 +3,8 @@
 #include <menu/IO/serialOut.h>
 #include <menu/comp/multiLang.h>
 
+using namespace Menu;
+
 using FlashText=AM5::FlashTextDef<AM5::Empty>;
 
 //string id's

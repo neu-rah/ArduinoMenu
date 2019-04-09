@@ -8,6 +8,8 @@
 #include <menu/fmt/text.h>
 #include <menu/fmt/debug.h>
 
+using namespace Menu;
+
 enum LangCodes:size_t {textOk,textCancel};
 Text enLang[]{"Ok","Cancel"};
 Text ptLang[]{"Vá","Esquece"};

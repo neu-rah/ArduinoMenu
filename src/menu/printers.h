@@ -113,22 +113,11 @@ namespace AM5 {
     using RAW_DEVICE=typename O::RAW_DEVICE;//must have a raw device!
     template<typename P>
     void printMenuRaw(MenuOut& menuOut,P p,Item& o) {
-      // MENU_DEBUG_OUT<<"TitlePrinter::printMenuRaw"<<endl;
-      #if (MENU_INJECT_PARTS==true)
-        //guess i wont need this
-        PrinterPart pp;
-        o.out(*reinterpret_cast<MenuOutCap<TitlePrinter<O>>*>(this),pp);
-        O::printMenuRaw(menuOut,p,o);
-      #else
-        //instead of sending the request thru a chain of calls (as above)
-        //we just call the fmt functions direrctly (this would be the result of the above)
-        //since we have access to th eprinter head
-        p.printer.fmtTitle(p,true);
-        o.out(menuOut);
-        p.printer.fmtTitle(p,false);
-        //this part does NOT wrap the next
-        O::printMenuRaw(menuOut,p,o);
-      #endif
+      p.printer.fmtTitle(p,true);
+      o.out(menuOut);
+      p.printer.fmtTitle(p,false);
+      //this part does NOT wrap the next
+      O::printMenuRaw(menuOut,p,o);
     }
   };
 

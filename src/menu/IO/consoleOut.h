@@ -39,7 +39,7 @@ template<typename P,ostream& dev=cout, typename O=Void>
   >;
 
   template<template<typename> class N=NavNode>
-  using ConsoleFmt = AM5::Chain<//wrap inner types
+  using ConsoleFmt = Chain<//wrap inner types
     // DebugFmt,//add debug info when enabled
     IndexFmt,//print option index (1-9)
     TextCursorFmt,//signal selected option on text mode

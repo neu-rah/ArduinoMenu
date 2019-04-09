@@ -14,14 +14,14 @@ using namespace std;
 namespace AM5 {
 
   template<typename O=Text<Empty>>
-  struct VectorMenuDef:public O,vector<AM5::Item*> {
+  struct VectorMenuDef:public O,vector<Item*> {
     template<typename... OO>
-    inline VectorMenuDef(OO... oo):vector<AM5::Item*>{oo...} {}
+    inline VectorMenuDef(OO... oo):vector<Item*>{oo...} {}
     template<typename... OO>
-    inline VectorMenuDef(const char*title,OO... oo):O(title),vector<AM5::Item*>{oo...} {}
-    inline size_t size() const {return vector<AM5::Item*>::size();}
-    inline AM5::Item& operator[](size_t n) const {
-      return *vector<AM5::Item*>::operator[](n);
+    inline VectorMenuDef(const char*title,OO... oo):O(title),vector<Item*>{oo...} {}
+    inline size_t size() const {return vector<Item*>::size();}
+    inline Item& operator[](size_t n) const {
+      return *vector<Item*>::operator[](n);
     }
   };
 

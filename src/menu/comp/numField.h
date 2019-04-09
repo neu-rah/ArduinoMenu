@@ -5,7 +5,6 @@
 // neu-rah (ruihfazevedo@gmail.com)
 // store text on flash (Arduino framework)
 
-#include <Arduino.h>
 #include "../items.h"
 
 namespace AM5 {

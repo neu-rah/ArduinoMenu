@@ -105,31 +105,10 @@ namespace AM5 {
     // 4 bytes for each virtual function * #virtual tables
     // the # of vtables is equal to the # of unique Prompt<...> compositions
     virtual void out(MenuOut& o) const {}
-    #if (MENU_INJECT_PARTS==true)
-      virtual void out(MenuOut& o,PrinterPart& pp) const {}
-    #endif
     virtual size_t size() const {return 1;}
     virtual Item& operator[](size_t)=0;// const {return *this;}
     virtual NavAgent navAgent()=0;// {assert(false);return CmdAgent();};
   };
-
-  #if (MENU_INJECT_PARTS==true)
-    struct PrinterPart {
-      template<typename O>
-      void use(MenuOut& o,Prompt<O>& i) {
-        // Serial<<"PrinterPart::use..."<<endl;
-        Prompt<O>(i).out(o);
-        // i.stack<part>(o);
-      }
-    };
-  #endif
-
-  #if (MENU_INJECT_PARTS==true)
-    template<typename O>
-    void Prompt<O>::out(MenuOut& o,PrinterPart& pp) const {
-      pp.use<O>(o,*this);
-    }
-  #endif
 
   //static composition blocks -----------------------
   struct Empty {
@@ -153,8 +132,6 @@ namespace AM5 {
     inline NavAgent():obj(NULL),run(Empty::navAgent().run) {}
     inline NavAgent(void* o,CmdAgent* r):obj(o),run(r) {}
     inline NavAgent(const NavAgent& o):obj(o.obj),run(o.run) {}
-    // inline NavAgent(NavAgent&& o):obj(o.obj),run(o.run) {}
-    // inline NavAgent operator=(const NavAgent& o) {obj=o.obj;run=o.run;return *this;}
     inline NavAgent operator=(NavAgent&& o) {obj=o.obj;run=o.run;return o;}
     inline operator bool() const {return run->canNav();}
     inline bool canNav() const {return run->canNav();}
@@ -173,9 +150,6 @@ namespace AM5 {
     using O::O;
     using This=Prompt<O>;
     inline void out(MenuOut& o) const override {O::out(o);}
-    #if (MENU_INJECT_PARTS==true)
-      void out(MenuOut& o,PrinterPart& pp) const override;
-    #endif
     size_t size() const override {return O::size();}
     Item& operator[](size_t n) override {return O::operator[](n);}
     inline NavAgent navAgent() override {return O::navAgent();}

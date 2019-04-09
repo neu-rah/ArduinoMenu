@@ -41,13 +41,9 @@ namespace AM5 {
   struct ID:public O {using O::O;};
 
   //big memory impact
-  #define MENU_INJECT_PARTS false
   struct Item;
   template<typename> struct Prompt;
   struct MenuOut;
-  #if (MENU_INJECT_PARTS==true)
-    struct PrinterPart;
-  #endif
 
   //////////////////////////////////////////////////////////
   // roles -----------------
