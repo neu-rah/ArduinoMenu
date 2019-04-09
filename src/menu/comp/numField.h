@@ -24,7 +24,7 @@ namespace AM5 {
         ,tune(t) {}
       // constexpr static inline bool canNav() {return true;}
       inline NavRes navAgent() {
-        // Serial<<"NumFieldDef::navAgent"<<endl;
+        Serial<<"NumFieldDef::navAgent"<<endl;
         #if NAV_AGENT
           return ItemAgent<This>(*this);
         #else

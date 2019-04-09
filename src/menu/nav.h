@@ -105,20 +105,27 @@ namespace AM5 {
         return O::getTarget().right();
       }
       inline bool enter() {
+        Serial<<"enter"<<endl;
         if (focus) {
+          Serial<<"focused field... passing"<<endl;
           #if NAV_AGENT
             if (focus.enter()) return true;
+            Serial<<"quiting focus"<<endl;
             focus=CmdAgent();//blur if enter return false
           #else
             if (focus->enter()) return true;
             focus=NULL;
           #endif
-        } else if (O::getTarget()[O::pos()].navAgent())
+        } else {
+          Serial<<"no focus yet, checking item..."<<endl;
           #if NAV_AGENT
             focus=O::getTarget()[O::pos()].navAgent();
           #else
-            focus=&O::getTarget()[O::pos()];
+            if (O::getTarget()[O::pos()].navAgent())
+              focus=&O::getTarget()[O::pos()];
           #endif
+          Serial<<"focus is now:"<<O::getTarget()[O::pos()].navAgent().canNav()<<endl;
+        }
         return O::enter();
       }
       inline bool esc() {

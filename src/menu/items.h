@@ -76,6 +76,7 @@ namespace AM5 {
   #if NAV_AGENT
     struct CmdAgent {
       // CmdAgent(Item& o):client(o) {}
+      // virtual CmdAgent(const CmdAgent& o) {}
       inline operator bool() const {return canNav();}
       // inline operator Item&() const {return getClient();}
       inline virtual bool canNav() const {return false;}
