@@ -23,7 +23,14 @@ namespace AM5 {
         ,step(s)
         ,tune(t) {}
       // constexpr static inline bool canNav() {return true;}
-      inline CmdAgent navAgent() {return ItemAgent<This>(*this);}
+      inline NavRes navAgent() {
+        // Serial<<"NumFieldDef::navAgent"<<endl;
+        #if NAV_AGENT
+          return ItemAgent<This>(*this);
+        #else
+          return true;
+        #endif
+      }
       inline void out(MenuOut &o) const {
         //reflex=*value;can not update here!
         o<<*value;

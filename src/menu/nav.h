@@ -67,43 +67,77 @@ namespace AM5 {
       //   return focus?focus.getClient():O::getTarget();
       // }
       inline bool down() {
-        return focus?focus.down():O::down();
+        #if NAV_AGENT
+          return focus?focus.down():O::down();
+        #else
+          return focus?focus->down():O::down();
+        #endif
       }
       inline bool up() {
-        return focus?focus.up():O::up();
+        #if NAV_AGENT
+          return focus?focus.up():O::up();
+        #else
+          return focus?focus->up():O::up();
+        #endif
       }
       inline bool left() {
         if (focus) {
-          focus.enter();
-          focus=NULL;
+          #if NAV_AGENT
+            focus.enter();
+            focus=CmdAgent();
+          #else
+            focus->enter();
+            focus=NULL;
+          #endif
         }
         return O::getTarget().left();
       }
       inline bool right() {
         if (focus) {
-          focus.enter();
-          focus=CmdAgent();
+          #if NAV_AGENT
+            focus.enter();
+            focus=CmdAgent();
+          #else
+            focus->enter();
+            focus=NULL;
+          #endif
         }
         return O::getTarget().right();
       }
       inline bool enter() {
         if (focus) {
-          if (focus.enter()) return true;
-          focus=CmdAgent();//blur if enter return false
-        }
-        else if (O::getTarget()[O::pos()].navAgent())
-          focus=O::getTarget()[O::pos()].navAgent();
+          #if NAV_AGENT
+            if (focus.enter()) return true;
+            focus=CmdAgent();//blur if enter return false
+          #else
+            if (focus->enter()) return true;
+            focus=NULL;
+          #endif
+        } else if (O::getTarget()[O::pos()].navAgent())
+          #if NAV_AGENT
+            focus=O::getTarget()[O::pos()].navAgent();
+          #else
+            focus=&O::getTarget()[O::pos()];
+          #endif
         return O::enter();
       }
       inline bool esc() {
         if (focus) {
-          if (focus.esc()) focus=CmdAgent();
+          #if NAV_AGENT
+            if (focus.esc()) focus=CmdAgent();
+          #else
+            if (focus->esc()) focus=NULL;
+          #endif
           return true;
         }
         return O::esc();
       }
     protected:
-      CmdAgent focus;
+      #if NAV_AGENT
+        CmdAgent focus;
+      #else
+        Item* focus=NULL;
+      #endif
   };
 
   //provide all nav info for the composed chain but redirects calls to a common nav object

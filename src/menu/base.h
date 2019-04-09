@@ -56,6 +56,8 @@ namespace AM5 {
   template<typename O>
   struct ID:public O {using O::O;};
 
+  #define NAV_AGENT true
+  //big memory impact
   #define MENU_INJECT_PARTS false
   struct Item;
   template<typename> struct Prompt;

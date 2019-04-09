@@ -73,16 +73,22 @@ namespace AM5 {
   ///////////////////////////////////////////////////////////////
   // menu items -----------------------------------
 
-  struct CmdAgent {
-    // CmdAgent(Item& o):client(o) {}
-    inline operator bool() const {return canNav();}
-    // inline operator Item&() const {return getClient();}
-    inline virtual bool canNav() const {return false;}
-    inline virtual bool up() {return false;}
-    inline virtual bool down() {return false;}
-    inline virtual bool enter(){return false;}
-    inline virtual bool esc() {return false;}
-  };
+  #if NAV_AGENT
+    struct CmdAgent {
+      // CmdAgent(Item& o):client(o) {}
+      inline operator bool() const {return canNav();}
+      // inline operator Item&() const {return getClient();}
+      inline virtual bool canNav() const {return false;}
+      inline virtual bool up() {return false;}
+      inline virtual bool down() {return false;}
+      inline virtual bool enter(){return false;}
+      inline virtual bool esc() {return false;}
+    };
+    using NavRes=CmdAgent;
+  #else
+    #define CmdAgent() (false)
+    using NavRes=bool;
+  #endif
 
   // template<typename Cfg=ItemNavCfg>
   struct Item {
@@ -95,23 +101,32 @@ namespace AM5 {
     #endif
     virtual size_t size() const {return 1;}
     virtual Item& operator[](size_t)=0;// const {return *this;}
-    virtual inline CmdAgent navAgent() {assert(false);return CmdAgent();};
+    virtual NavRes navAgent()=0;// {assert(false);return CmdAgent();};
+    #if !NAV_AGENT
+      inline virtual bool canNav() const {return false;}
+      inline virtual bool up() {return false;}
+      inline virtual bool down() {return false;}
+      inline virtual bool enter(){return false;}
+      inline virtual bool esc() {return false;}
+    #endif
   };
 
-  template<typename O>
-  class ItemAgent:public CmdAgent {
-    public:
-      // using CmdAgent::CmdAgent;
-      ItemAgent(O& o):client(o) {}
-      // inline Item& getClient() const override {return Item& client;}
-      inline bool canNav() const override {return true;}
-      inline bool up() override {return client.up();}
-      inline bool down() override {return client.down();}
-      inline bool enter() override{return client.enter();}
-      inline bool esc() override {return client.esc();}
-    protected:
-      O& client;
-  };
+  #if NAV_AGENT
+    template<typename O>
+    class ItemAgent:public CmdAgent {
+      public:
+        ItemAgent(O& o):client(o) {}
+        inline bool canNav() const override {return true;}
+        inline bool up() override {return client.up();}
+        inline bool down() override {return client.down();}
+        inline bool enter() override{return client.enter();}
+        inline bool esc() override {return client.esc();}
+      protected:
+        O& client;
+    };
+  #else
+    #define ItemAgent(...) (true)
+  #endif
 
   //adapt specific types as menu items
   //provide virtual overrides for them
@@ -125,7 +140,14 @@ namespace AM5 {
     #endif
     size_t size() const override {return O::size();}
     Item& operator[](size_t n) override {return O::operator[](n);}
-    inline CmdAgent navAgent() override {return O::navAgent();}
+    inline NavRes navAgent() override {return O::navAgent();}
+    #if !NAV_AGENT
+      inline bool canNav() const override {return true;}
+      inline bool up() override {return O::up();}
+      inline bool down() override {return O::down();}
+      inline bool enter() override{return O::enter();}
+      inline bool esc() override {return O::esc();}
+    #endif
     template<template<typename> class T>
     inline void stack(MenuOut& o) const {Prompt<T<O>>(*this).out(o);}
   };
@@ -134,7 +156,7 @@ namespace AM5 {
     struct PrinterPart {
       template<typename O>
       void use(MenuOut& o,Prompt<O>& i) {
-        Serial<<"PrinterPart::use..."<<endl;
+        // Serial<<"PrinterPart::use..."<<endl;
         Prompt<O>(i).out(o);
         // i.stack<part>(o);
       }
@@ -155,8 +177,7 @@ namespace AM5 {
     static inline void out(MenuOut&) {}
     static inline size_t size() {return 1;}
     inline Item& operator[](size_t n) {return *reinterpret_cast<Item*>(this);}
-    // constexpr static inline bool canNav() {return false;}
-    static inline CmdAgent navAgent() {return CmdAgent();}
+    static inline NavRes navAgent() {return CmdAgent(); }
     static inline bool up() {return false;}
     static inline bool down() {return false;}
     static inline bool enter() {return false;}

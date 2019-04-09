@@ -54,7 +54,7 @@ void setup() {
   Serial.begin(115200);
   while(!Serial);
   lcd.begin(16,2);
-  menuOut<<"AM5 example ---";
+  menuOut<<F("AM5 example ---");
   delay(1500);
   lcd.clear();
   menuOut.setTarget(mainMenu);
