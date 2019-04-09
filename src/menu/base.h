@@ -5,7 +5,13 @@
 // neu-rah (ruihfazevedo@gmail.com)
 // some utilities and base definitions
 
+#ifdef ARDUINO
+  #include "arduino_assert.h"
+#endif
+
 namespace AM5 {
+
+  struct Nil {};
 
   //type equality
   //from: https://stackoverflow.com/a/16924234/1329075

@@ -25,7 +25,7 @@ namespace AM5 {
 
       inline void setTarget(Item& i) {target=&i;}
       inline Item& getTarget() {return *target;}
-      inline Item& getFocus() {return getTarget();}
+      // inline Item& getFocus() {return getTarget();}
 
       inline void idx(size_t i) {sel=i;}
       inline bool down() {
@@ -63,47 +63,47 @@ namespace AM5 {
       constexpr inline bool canNav() {
         return focus||O::canNav();//we only have focus when it can nav
       }
-      inline Item& getFocus() {
-        return focus?*focus:O::getTarget();
-      }
+      // inline Item& getFocus() {
+      //   return focus?focus.getClient():O::getTarget();
+      // }
       inline bool down() {
-        return focus?focus->down():O::down();
+        return focus?focus.down():O::down();
       }
       inline bool up() {
-        return focus?focus->up():O::up();
+        return focus?focus.up():O::up();
       }
       inline bool left() {
         if (focus) {
-          focus->enter();
+          focus.enter();
           focus=NULL;
         }
         return O::getTarget().left();
       }
       inline bool right() {
         if (focus) {
-          focus->enter();
-          focus=NULL;
+          focus.enter();
+          focus=CmdAgent();
         }
         return O::getTarget().right();
       }
       inline bool enter() {
         if (focus) {
-          if (focus->enter()) return true;
-          focus=NULL;//blur if enter return false
+          if (focus.enter()) return true;
+          focus=CmdAgent();//blur if enter return false
         }
-        else if (O::getTarget()[O::pos()].canNav())
-          focus=&O::getTarget()[O::pos()];
+        else if (O::getTarget()[O::pos()].navAgent())
+          focus=O::getTarget()[O::pos()].navAgent();
         return O::enter();
       }
       inline bool esc() {
         if (focus) {
-          if (getFocus().esc()) focus=NULL;
+          if (focus.esc()) focus=CmdAgent();
           return true;
         }
         return O::esc();
       }
     protected:
-      Item* focus=NULL;// or a nav (item agent)
+      CmdAgent focus;
   };
 
   //provide all nav info for the composed chain but redirects calls to a common nav object
@@ -119,7 +119,7 @@ namespace AM5 {
       static inline bool selected(PrintHead<P> p) {return nav.selected(p);}
       static inline void setTarget(Item& i) {nav.setTarget(i);}
       static inline Item& getTarget() {return nav.getTarget();}
-      static inline Item& getFocus() {return nav.getFocus();}
+      // static inline Item& getFocus() {return nav.getFocus();}
       static inline void idx(size_t i) {nav.idx(i);}
       static inline bool down() {return nav.down();}
       static inline bool up() {return nav.up();}

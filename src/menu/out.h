@@ -9,10 +9,6 @@
 
 #include "menu.h"
 
-#ifdef ARDUINO
-  #include "arduino_assert.h"
-#endif
-
 namespace AM5 {
   ///////////////////////////////////////////////////////////////////
   // output interface

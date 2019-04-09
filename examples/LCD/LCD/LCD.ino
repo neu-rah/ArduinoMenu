@@ -11,6 +11,8 @@
 #include <menu/IO/lcdOut.h>
 #include <menu/comp/numField.h>
 
+using namespace Menu;
+
 // LCD /////////////////////////////////////////
 #define RS 2
 #define RW 4
