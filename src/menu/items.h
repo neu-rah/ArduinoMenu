@@ -61,8 +61,6 @@ namespace AM5 {
   ///////////////////////////////////////////////////////////////
   // config options -----------------------------------
 
-  // struct Nil {};
-  //
   // template
   // struct ItemNavCfg {
   //   virtual bool canNav() const {return false;}//TODO: use flags/properties field to reuse this virtual
@@ -97,12 +95,7 @@ namespace AM5 {
     #endif
     virtual size_t size() const {return 1;}
     virtual Item& operator[](size_t)=0;// const {return *this;}
-    virtual inline CmdAgent navAgent()=0;
-    // virtual bool canNav() const {return false;}//TODO: use flags/properties field to reuse this virtual
-    // virtual bool up() {return false;}
-    // virtual bool down() {return false;}
-    // virtual bool enter() {return false;}
-    // virtual bool esc() {return false;}
+    virtual inline CmdAgent navAgent() {assert(false);return CmdAgent();};
   };
 
   template<typename O>
@@ -133,12 +126,6 @@ namespace AM5 {
     size_t size() const override {return O::size();}
     Item& operator[](size_t n) override {return O::operator[](n);}
     inline CmdAgent navAgent() override {return O::navAgent();}
-    // bool canNav() const override {return O::canNav();}
-    // bool up() override {return O::up();}
-    // bool down() override {return O::down();}
-    // bool enter() override {return O::enter();}
-    // bool esc() override {return O::esc();}
-    //type injection, alls should have copy constructor and they must align
     template<template<typename> class T>
     inline void stack(MenuOut& o) const {Prompt<T<O>>(*this).out(o);}
   };

@@ -1,6 +1,8 @@
 #include <menu/def/tinyArduino.h>
 #include <menu/IO/serialOut.h>
 
+using namespace Menu;
+
 //or accept the defauls
 MenuOut<AM5::SerialFmt<>::To<SerialOutDev<>>> serialOut;
 

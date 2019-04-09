@@ -1,24 +1,19 @@
-// Rui Azevedo - Apr2019
-// neu-rah (ruihfazevedo@gmail.com)
-// LCD example with flash data (Arduino framework)
-//
-// ArduinoMenu libtary 5.x code example
-// Output: LCD
-// flash data
-// Input: user serial driver
-
+# 1 "/tmp/tmpp3hE8o"
+#include <Arduino.h>
+# 1 "/home/azevedo/Sketchbook/LIBDEV/ArduinoMenu/examples/LCDTiny/LCDTiny/LCDTiny.ino"
+# 10 "/home/azevedo/Sketchbook/LIBDEV/ArduinoMenu/examples/LCDTiny/LCDTiny/LCDTiny.ino"
 #include <menu/def/tinyArduino.h>
 #include <menu/IO/lcdOut.h>
 
 using namespace Menu;
 
-// LCD /////////////////////////////////////////
+
 #define RS 2
 #define RW 4
 #define EN A4
 LiquidCrystal lcd(RS, RW, EN, A0, A1, A2, A3);
 
-//menu output ------------------------
+
 MenuOut<AM5::LCDFmt<>::To<LCDOutDev<lcd>>> menuOut;
 
 using Op=Prompt<FlashText>;
@@ -38,12 +33,15 @@ Op op4(op4_text);
 const char op5_text[] PROGMEM="Op 5";
 Op op5(op5_text);
 
-// Prompt<StaticMenu<5>> mainMenu("Main menu",&op1,&op2,&op3,&op4,&op5);
+
 const char menuTitle_text[] PROGMEM="Main menu";
 Op menuTitle(menuTitle_text);
 constexpr AM5::FlashData data[5] {&op1,&op2,&op3,&op4,&op5};
 Prompt<AM5::FlashMenuDef<data,5,FlashText>> mainMenu(menuTitle_text);
-
+void setup();
+bool keys(int key);
+void loop();
+#line 47 "/home/azevedo/Sketchbook/LIBDEV/ArduinoMenu/examples/LCDTiny/LCDTiny/LCDTiny.ino"
 void setup() {
   Serial.begin(115200);
   while(!Serial);
@@ -56,7 +54,7 @@ void setup() {
   menuOut.printMenu();
 }
 
-//handle serial keys to navigate menu
+
 bool keys(int key) {
   switch(key) {
     case '+': return menuOut.up();;
