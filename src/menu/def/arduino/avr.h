@@ -3,13 +3,13 @@
 ////////////////////////////////////////////////////
 // Rui Azevedo - Apr2019
 // neu-rah (ruihfazevedo@gmail.com)
-// common definitions for arduino framework
+// common definitions for arduino framework on atmega device
 
-  #include <streamFlow.h>//https://github.com/neu-rah/streamFlow
-  #include "../../menu.h"
-  #include "../printers.h"
-  #include "../comp/flashText.h"
-  #include "../comp/flashMenu.h"
+#include <streamFlow.h>//https://github.com/neu-rah/streamFlow
+#include "../../../menu.h"
+#include "../../printers.h"
+#include "../../comp/flashText.h"
+#include "../../comp/flashMenu.h"
 
 namespace Menu {
 

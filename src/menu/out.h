@@ -21,7 +21,7 @@ namespace AM5 {
       virtual MenuOut& operator<<(unsigned char) {return *this;}
       virtual MenuOut& operator<<(int) {return *this;}
       virtual MenuOut& operator<<(unsigned int) {return *this;}
-      #ifdef ARDUINO
+      #if defined(ARDUINO) && !defined(__AVR_ATtiny13__)
         virtual MenuOut& operator<<(endlObj) {return *this;}
         virtual MenuOut& operator<<(const __FlashStringHelper *i) {return *this;}
       #endif
@@ -74,7 +74,7 @@ namespace AM5 {
     MenuOut& operator<<(unsigned char i) override {O::raw(i);return *this;}
     MenuOut& operator<<(int i) override {O::raw(i);return *this;}
     MenuOut& operator<<(unsigned int i) override {O::raw(i);return *this;}
-    #ifdef ARDUINO
+    #if defined(ARDUINO) && !defined(__AVR_ATtiny13__)
       MenuOut& operator<<(endlObj) override {O::raw("\n");return *this;}
       MenuOut& operator<<(const __FlashStringHelper * i) override {O::raw(i);return *this;}
     #endif

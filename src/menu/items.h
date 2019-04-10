@@ -169,6 +169,16 @@ namespace AM5 {
     }
   };
 
+  //this provides only a size hint for navigation
+  //or an iterator if its the case (TODO)
+  template<size_t n,typename O=Empty>
+  struct EmptyMenu:public O {
+  public:
+    using O::O;
+    // inline EmptyMenu(const char*title):O(title) {}
+    static inline size_t size() {return n;}
+  };
+
   template<size_t n,typename O>
   class StaticMenu:public O {
   protected:

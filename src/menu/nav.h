@@ -10,6 +10,39 @@
 
 namespace AM5 {
 
+  //to use on the menu structure itself
+  //THINK:this is the root of range => iterators and fields range
+  template<typename O=Void>
+  class SelfNav:public O {
+    public:
+      // using RAW_DEVICE=typename O::RAW_DEVICE;//must have a raw device!
+      using O::O;
+      constexpr static inline bool canNav() {return true;}
+      constexpr static inline bool sharedNav() {return false;}
+      inline size_t pos() const {return sel;}
+      inline void idx(size_t i) {sel=i;}
+      inline bool down() {
+        if (sel>0) {
+          sel--;
+          return true;
+        }
+        return false;
+      }
+      inline bool up() {
+        if (sel<O::size()-1) {
+          sel++;
+          return true;
+        }
+        return false;
+      }
+      static inline bool left() {return up();}
+      static inline bool right() {return down();}
+      static inline bool enter() {return false;}
+      static inline bool esc() {return false;}
+    protected:
+      size_t sel=0;
+  };
+
   //hold navigation state
   //flat navigation (single node)
   template<typename O=Void>

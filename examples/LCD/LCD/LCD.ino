@@ -6,7 +6,7 @@
 // Output: Serial+LCD
 // Input: user serial driver
 
-#include <menu/def/tinyArduino.h>
+#include <menu/def/arduino/avr.h>
 #include <menu/IO/serialOut.h>
 #include <menu/IO/lcdOut.h>
 #include <menu/comp/numField.h>

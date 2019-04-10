@@ -23,12 +23,19 @@ with composing menu items, role description tags and role tag catch on output fo
 output is also a composition, we can compose role tag format handlers and translations.
 
 ```c++
+// Rui Azevedo - Apr2019
+// neu-rah (ruihfazevedo@gmail.com)
+// LCD example with flash data (Arduino framework)
+//
+// ArduinoMenu libtary 5.x code example
+// Output: LCD
+// flash data
+// Input: user serial driver
+
 #include <menu/def/tinyArduino.h>
 #include <menu/IO/lcdOut.h>
-#include <menu/printers.h>
-#include <menu/fmt/debug.h>
-#include <menu/comp/flashMenu.h>
-#include <menu/panels.h>
+
+using namespace Menu;
 
 // LCD /////////////////////////////////////////
 #define RS 2
@@ -37,49 +44,68 @@ output is also a composition, we can compose role tag format handlers and transl
 LiquidCrystal lcd(RS, RW, EN, A0, A1, A2, A3);
 
 //menu output ------------------------
+MenuOut<AM5::LCDFmt<>::To<LCDOutDev<lcd>>> menuOut;
 
-//bind a format to the lcd
-MenuOut<Menu::LCDFmt::To<LCDOutDev<lcd>/*by default its 16x2*/>> lcdOut;
+using Op=Prompt<FlashText>;
 
-// quick define menu
-Prompt<StaticMenu<2>> mainMenu(
-  "Main menu"
-  ,new Prompt<Text>("Op 1")
-  ,new Prompt<Text>("Op 2")
-);
+const char op1_text[] PROGMEM="Op 1";
+Op op1(op1_text);
+
+const char op2_text[] PROGMEM="Op 2";
+Op op2(op2_text);
+
+const char op3_text[] PROGMEM="Op 3";
+Op op3(op3_text);
+
+const char op4_text[] PROGMEM="Op 4";
+Op op4(op4_text);
+
+const char op5_text[] PROGMEM="Op 5";
+Op op5(op5_text);
+
+// Prompt<StaticMenu<5>> mainMenu("Main menu",&op1,&op2,&op3,&op4,&op5);
+const char menuTitle_text[] PROGMEM="Main menu";
+Op menuTitle(menuTitle_text);
+constexpr AM5::FlashData data[5] {&op1,&op2,&op3,&op4,&op5};
+Prompt<AM5::FlashMenuDef<data,5,FlashText>> mainMenu(menuTitle_text);
 
 void setup() {
   Serial.begin(115200);
   while(!Serial);
-  Serial<<"AM5 example ----"<<endl;
   lcd.begin(16,2);
-  lcd.setCursor(0,0);
-  lcdOut<<"AM5 example ---";
-  delay(1);
+  menuOut<<F("AM5 example ----")<<endl;
+  menuOut<<F("<www.r-site.net>")<<endl;
+  delay(1500);
   lcd.clear();
-  lcdOut.setTarget(mainMenu);
-  lcdOut.printMenu();
+  menuOut.setTarget(mainMenu);
+  menuOut.printMenu();
 }
 
+//handle serial keys to navigate menu
 bool keys(int key) {
   switch(key) {
-    case '+': lcdOut.up();return true;
-    case '-': lcdOut.down();return true;
-    case '*': lcdOut.enter();return true;
-    case '/': lcdOut.esc();return true;
+    case '+': return menuOut.up();;
+    case '-': return menuOut.down();;
+    case '*': return menuOut.enter();;
+    case '/': return menuOut.esc();;
   }
   return false;
 }
 
 void loop() {
   if (Serial.available()) {
-    if (keys(Serial.read())) lcdOut.printMenu();
+    if (keys(Serial.read())) menuOut.printMenu();
   }
 }
 ```
 
 **footprint:**
 ```text
+current:
+ATA:    [==        ]  18.3% (used 374 bytes from 2048 bytes)
+PROGRAM: [==        ]  15.3% (used 4704 bytes from 30720 bytes)
+
+previous:
 DATA:    [==        ]  19.1% (used 392 bytes from 2048 bytes)
 PROGRAM: [==        ]  17.1% (used 5242 bytes from 30720 bytes)
 ```
@@ -88,30 +114,32 @@ _tinyArduino.h_ defines `SerialOut`, `Op` and `FlashOp` as:
 ```c++
 #include <streamFlow.h>//https://github.com/neu-rah/streamFlow
 #include "../../menu.h"
-#include "../IO/serialOut.h"
-#include "../comp/flashText.h"
 #include "../printers.h"
+#include "../comp/flashText.h"
+#include "../comp/flashMenu.h"
 
-template<typename O>
-using MenuOut=Menu::MenuOutCap<O>;
+namespace Menu {
 
-//describing an output -----------------------------------------
-template<typename P=Menu::DeviceParts<>>
-using SerialOut=Menu::SerialOutDev<P,Serial>;
+  using namespace Menu;
 
-//common element
-using Text=Menu::Text<Menu::Empty>;
+  template<typename O>
+  using MenuOut=AM5::MenuOutCap<O>;
 
-//describing an option ------------------------------------
-using FlashText=Menu::FlashTextDef<Menu::Empty>;
+  using FlashText=AM5::FlashTextDef<AM5::Empty>;
 
-using Item=Menu::Item;
+  using Text=AM5::Text<AM5::Empty>;
 
-template<typename O>
-using Prompt=Menu::Prompt<O>;
+  using Item=AM5::Item;
 
-template<size_t n>
-using StaticMenu=Menu::StaticMenu<n,Text>;
+  template<typename O>
+  using Prompt=AM5::Prompt<O>;
+
+  template<size_t n>
+  using StaticMenu=AM5::StaticMenu<n,Text>;
+
+  template<size_t n>
+  using FlashMenu=AM5::StaticMenu<n,FlashText>;
+};
 ```
 
 https://gitter.im/ArduinoMenu/Lobby

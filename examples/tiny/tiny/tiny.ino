@@ -1,59 +1,76 @@
-#include <menu/def/tinyArduino.h>
-#include <menu/IO/serialOut.h>
+/////////////////////////////////////////////////////
+// ArduinoMenu libtary 5.x code example
+// Output: none (menu in headless mode)
+// Input: user handled (arduino serial)
+//
+// this is a minimalistic menu, no texts or options lists
+// only a size and a position (zero indexed)
+//
+// Rui Azevedo - Apr2019
+// neu-rah (ruihfazevedo@gmail.com)
 
-using namespace Menu;
+/* Footprint on ATTiny13 https://github.com/MCUdude/MicroCore
+Sketch uses 456 bytes (44%) of program storage space. Maximum is 1024 bytes.
+Global variables use 11 bytes (17%) of dynamic memory, leaving 53 bytes for local variables. Maximum is 64 bytes.
+*/
 
-//or accept the defauls
-MenuOut<AM5::SerialFmt<>::To<SerialOutDev<>>> serialOut;
+#include <menu.h>
+#include <menu/nav.h>
 
-using Op=Prompt<FlashText>;
+using namespace AM5;
 
-const char op1_text[] PROGMEM="Op 1";
-Op op1(op1_text);
+SelfNav<EmptyMenu<4>> mainMenu;
 
-const char op2_text[] PROGMEM="Op 2";
-Op op2(op2_text);
-
-const char op3_text[] PROGMEM="Op 3";
-Op op3(op3_text);
-
-const char op4_text[] PROGMEM="Op 4";
-Op op4(op4_text);
-
-const char op5_text[] PROGMEM="Op 5";
-Op op5(op5_text);
-
-// Prompt<StaticMenu<5>> mainMenu("Main menu",&op1,&op2,&op3,&op4,&op5);
-const char menuTitle_text[] PROGMEM="Main menu";
-Prompt<FlashText> menuTitle(menuTitle_text);
-constexpr AM5::FlashData data[5] {&op1,&op2,&op3,&op4,&op5};
-Prompt<AM5::FlashMenuDef<data,5,FlashText>> mainMenu(menuTitle_text);
-
-//footprint ----------------------
-//4 bytes of ram for each flash text option (as is)
-//  2 - flash text pointer
-//  2 - vtable pointer
+#define ATTINY13
+#ifdef ATTINY13
+  #define BTN_UP 0// Up
+  #define BTN_DOWN 1 // Down
+#else
+  // #define BTN_SEL 8  // Select button
+  #define BTN_UP 7 // Up
+  #define BTN_DOWN A5 // Down
+#endif
 
 void setup() {
-  Serial.begin(115200);
-  while(!Serial);
-  serialOut<<F("AM5 tiny example ----")<<endl;
-  serialOut<<F("use keys +-*/")<<endl<<endl;
-  serialOut.setTarget(mainMenu);
-  serialOut.printMenu();
+  pinMode(LED_BUILTIN,OUTPUT);
+  pinMode(BTN_UP,INPUT_PULLUP);
+  pinMode(BTN_DOWN,INPUT_PULLUP);
 }
 
-bool keys(int key) {
-  switch(key) {
-    case '+': return serialOut.up();
-    case '-': return serialOut.down();
-    case '*': return serialOut.enter();
-    case '/': return serialOut.esc();
+unsigned int dutty=0;
+unsigned int cycle=0;
+
+void actions() {
+  switch(mainMenu.pos()) {
+    case 0:
+      dutty=0;
+      cycle=0;
+      break;
+    case 1:
+      dutty=10;
+      cycle=100;
+      break;
+    case 2:
+      dutty=90;
+      cycle=100;
+      break;
+    case 3:
+      dutty=100;
+      cycle=1000;
+      break;
   }
-  return false;
 }
+
+//blink a boolean without delay
+inline bool blinker(unsigned int dutty,unsigned int cycle) {return millis()%cycle<dutty;}
 
 void loop() {
-  if (Serial.available()&&keys(Serial.read()))
-    serialOut.printMenu();
+  if (!digitalRead(BTN_UP)) {
+    mainMenu.up();
+    actions();
+  } else if (!digitalRead(BTN_DOWN)) {
+    mainMenu.down();
+    actions();
+  }
+  digitalWrite(LED_BUILTIN, blinker(dutty,cycle));
 }

@@ -1,3 +1,4 @@
+#include <menu.h>
 #include "numField.h"
 
 using namespace AM5;

@@ -1,5 +1,5 @@
 #include <Dump.h>
-#include <menu/def/tinyArduino.h>
+#include <menu/def/arduino/avr.h>
 #include <menu/IO/serialOut.h>
 #include <menu/comp/multiLang.h>
 
