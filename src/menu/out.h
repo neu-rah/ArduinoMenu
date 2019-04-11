@@ -67,7 +67,7 @@ namespace AM5 {
   struct MenuOutCap:public MenuOut,public O {
     // using This=MenuOutCap<O>;
     using O::O;
-    PrintHead<O> head{/**this,*/*this,0};
+    PrintHead<O> head{*this,0};
     MenuOut& operator<<(Item& i) override;
     MenuOut& operator<<(const char* i) override {O::raw(i);return *this;}
     MenuOut& operator<<(char i) override {O::raw(i);return *this;}

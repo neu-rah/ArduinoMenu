@@ -12,7 +12,6 @@ namespace AM5 {
   template<typename T,typename O=Empty>
   class NumFieldDef:public O {
     public:
-      using This=NumFieldDef<T,O>;
       // using O::O;
       inline NumFieldDef(T& var,T l, T h,T s,T t=0)
         :value(&var)
@@ -22,7 +21,7 @@ namespace AM5 {
         ,step(s)
         ,tune(t) {}
       // constexpr static inline bool canNav() {return true;}
-      inline NavAgent navAgent() {return {this,&cmds};}
+      // inline NavAgent activate() {return {this,&cmds};}
       inline void out(MenuOut &o) const {
         //reflex=*value;can not update here!
         o<<*value;
@@ -47,9 +46,9 @@ namespace AM5 {
       T* value;
       T reflex;//to check if original value changed
       T low,high,step,tune;
-      static ItemCmd<This> cmds;
+      // static ItemCmd<This> cmds;
   };
 
   template<typename T>
-  using NumField=asValue<NumFieldDef<T>>;
+  using NumField=asValue<NavHandler<NumFieldDef<T>>>;
 };

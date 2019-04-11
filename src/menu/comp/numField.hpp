@@ -3,5 +3,5 @@
 
 using namespace AM5;
 
-template<typename T,typename O>
-ItemCmd<NumFieldDef<T,O>> NumFieldDef<T,O>::cmds;
+// template<typename T,typename O>
+// ItemCmd<NumFieldDef<T,O>> NumFieldDef<T,O>::cmds;

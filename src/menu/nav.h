@@ -122,15 +122,16 @@ namespace AM5 {
       inline bool enter() {
         if (focus) {
           if (focus.enter()) return true;
-          focus=Empty::navAgent();//blur if enter return false
+          focus=Empty::activate();//blur if enter return false
         } else {
-          focus=O::getTarget()[O::pos()].navAgent();
+          focus=O::getTarget()[O::pos()].activate();
+          if (focus.result()) return true;
         }
         return O::enter();
       }
       inline bool esc() {
         if (focus) {
-          if (focus.esc()) focus=Empty::navAgent();
+          if (focus.esc()) focus=Empty::activate();
           return true;
         }
         return O::esc();
@@ -140,6 +141,10 @@ namespace AM5 {
   };
 
   //provide all nav info for the composed chain but redirects calls to a common nav object
+  //done so they can be non virtual and even static inlines
+  //separating nav and output would either require more virtuals or a
+  //very long chain of types and extra parameters, because items need also to access the
+  //printers they would demand virtual as they can not be customized to outputs
   template<typename O,typename N,N& nav>
   class SharedNavNode:public O {
     public:

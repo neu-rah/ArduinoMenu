@@ -59,39 +59,41 @@ namespace AM5 {
   };
 
   ///////////////////////////////////////////////////////////////
-  // config options -----------------------------------
+  // navigatiojn commands -----------------------------------
+  // menu items that wish to receive navigation commands should emit
+  // the respective command pallete object
+  // and empty pallete is emited for items that do not receive
+  // commands...
+  // navigations requests `activate` from the item
+  // however any menu wished to receive enter
+  // sop we should switch this to enter instead
 
-  // template
-  // struct ItemNavCfg {
-  //   virtual bool canNav() const {return false;}//TODO: use flags/properties field to reuse this virtual
-  //   virtual bool up() {return false;}
-  //   virtual bool down() {return false;}
-  //   virtual bool enter() {return false;}
-  //   virtual bool esc() {return false;}
-  // };
-
-  ///////////////////////////////////////////////////////////////
-  // menu items -----------------------------------
-
+  //represents an item that can receive navigation commands
   struct CmdAgent {
     virtual bool canNav() const =0;
     virtual bool up(void* o)=0;
     virtual bool down(void* o)=0;
     virtual bool enter(void* o)=0;
     virtual bool esc(void* o)=0;
+    virtual bool result() const=0;
   };
 
+  //for items that do not handle nav cmds
+  template<bool res=false>
   struct EmptyCmds:public CmdAgent {
     bool canNav() const override {return false;}
+    bool result() const override {return res;};
     bool up (void* o)  override {return false;}
     bool down (void* o)  override {return false;}
     bool enter (void* o)  override {return false;}
     bool esc (void* o)  override {return false;}
   };
 
-  template<typename O>
+  //nav commands of specific item
+  template<typename O,bool res=true>
   struct ItemCmd:public CmdAgent {
     bool canNav () const override {return true;}
+    bool result() const override {return res;};
     bool up(void* o) override {return ((O*)o)->up();}
     bool down(void* o) override {return ((O*)o)->down();}
     bool enter(void* o) override {return ((O*)o)->enter();}
@@ -100,6 +102,9 @@ namespace AM5 {
 
   struct NavAgent;
 
+  ///////////////////////////////////////////////////////////////
+  // menu items -----------------------------------
+
   struct Item {
     //footprint:
     // 4 bytes for each virtual function * #virtual tables
@@ -107,7 +112,7 @@ namespace AM5 {
     virtual void out(MenuOut& o) const {}
     virtual size_t size() const {return 1;}
     virtual Item& operator[](size_t)=0;// const {return *this;}
-    virtual NavAgent navAgent()=0;// {assert(false);return CmdAgent();};
+    virtual NavAgent activate()=0;// {assert(false);return CmdAgent();};
   };
 
   //static composition blocks -----------------------
@@ -117,19 +122,18 @@ namespace AM5 {
     static inline void out(MenuOut&) {}
     static inline size_t size() {return 1;}
     inline Item& operator[](size_t n) {return *reinterpret_cast<Item*>(this);}
-    static inline NavAgent navAgent();
+    static inline NavAgent activate();
     static inline bool up() {return false;}
     static inline bool down() {return false;}
     static inline bool enter() {return false;}
     static inline bool esc() {return false;}
-    static EmptyCmds cmds;
+    static EmptyCmds<false> cmds;
   };
 
   struct NavAgent {
-    // Item& composing types are NOT Item derived
     void* obj;
     CmdAgent* run;//we will derive this one, it will know the void final type
-    inline NavAgent():obj(NULL),run(Empty::navAgent().run) {}
+    inline NavAgent():obj(NULL),run(Empty::activate().run) {}
     inline NavAgent(void* o,CmdAgent* r):obj(o),run(r) {}
     inline NavAgent(const NavAgent& o):obj(o.obj),run(o.run) {}
     inline NavAgent operator=(NavAgent&& o) {obj=o.obj;run=o.run;return o;}
@@ -139,9 +143,36 @@ namespace AM5 {
     inline bool down() {return run->down(obj);}
     inline bool enter() {return run->enter(obj);}
     inline bool esc() {return run->esc(obj);}
+    inline bool result() const {return run->result();};
   };
 
-  inline NavAgent Empty::navAgent() {return {NULL,&cmds}; }
+  inline bool doNothing() {return false;}
+
+  inline NavAgent Empty::activate() {return {NULL,&cmds}; }
+
+  template<typename O>
+  class NavHandler:public O {
+    public:
+      using O::O;
+      using This=NavHandler<O>;
+      inline NavAgent activate() {return {this,&cmds};}
+    protected:
+      static ItemCmd<This> cmds;
+  };
+
+  using ActionHandler=bool (*)();
+  template<typename O,ActionHandler act=doNothing>
+  class Action:public O {
+    public:
+      using This=Action<O,act>;
+      using O::O;
+      inline NavAgent activate() {
+        if (act()) return {this,&cmds};
+        else return Empty::activate();
+      }
+    protected:
+      static EmptyCmds<true> cmds;
+  };
 
   //adapt specific types as menu items
   //provide virtual overrides for them
@@ -152,12 +183,12 @@ namespace AM5 {
     inline void out(MenuOut& o) const override {O::out(o);}
     size_t size() const override {return O::size();}
     Item& operator[](size_t n) override {return O::operator[](n);}
-    inline NavAgent navAgent() override {return O::navAgent();}
+    inline NavAgent activate() override {return O::activate();}
+    //not used yet --
     template<template<typename> class T>
     inline void stack(MenuOut& o) const {Prompt<T<O>>(*this).out(o);}
   };
 
-  // template<typename Cfg=ItemNavCfg>
   template<typename O>
   struct Text:public O {
     const char* text;

@@ -66,6 +66,7 @@ namespace AM5 {
   template<template<typename> class N=NavNode>
   using LCDFmt = Chain<//wrap inner types
     // DebugFmt,//add debug info when enabled
+    ItemNav,
     TextCursorFmt,//signal selected option on text mode
     TextFmt,//normal text format
     TitleWrap,//wrap title in []
