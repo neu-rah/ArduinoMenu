@@ -22,6 +22,5 @@ namespace AM5 {
 
   #include "menu/items.hpp"
   #include "menu/out.hpp"
-  #include "menu/comp/numField.hpp"
 
 };//AM5

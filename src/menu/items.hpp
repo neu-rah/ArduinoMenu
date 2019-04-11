@@ -1,7 +1,5 @@
 #include "items.h"
 
-using namespace AM5;
-
 EmptyCmds<false> Empty::cmds;
 
 template<typename O,ActionHandler act>

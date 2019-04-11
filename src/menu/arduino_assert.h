@@ -2,7 +2,7 @@
 #pragma once
 
 //from: https://gist.github.com/jlesech/3089916
-#if !defined(__AVR_ATtiny13__)
+#if !defined(__AVR_ATtiny13__) && !defined(ATTINY_CORE)
   #define __ASSERT_USE_STDERR
 
   #include <assert.h>

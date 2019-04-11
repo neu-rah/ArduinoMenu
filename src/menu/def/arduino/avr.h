@@ -13,8 +13,6 @@
 
 namespace Menu {
 
-  using namespace Menu;
-
   template<typename O>
   using MenuOut=AM5::MenuOutCap<O>;
 
