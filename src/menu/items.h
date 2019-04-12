@@ -59,16 +59,14 @@ namespace AM5 {
   };
 
   ///////////////////////////////////////////////////////////////
-  // navigatiojn commands -----------------------------------
+  // navigation commands -----------------------------------
   // menu items that wish to receive navigation commands should emit
-  // the respective command pallete object
-  // and empty pallete is emited for items that do not receive
+  // the respective command pallette object
+  // an empty pallette is emited for items that do not receive
   // commands...
-  // navigations requests `activate` from the item
-  // however any menu wished to receive enter
-  // sop we should switch this to enter instead
+  // navigations requests `activate` from the item to receive them
 
-  //represents an item that can receive navigation commands
+  //represents an item that might receive navigation commands
   struct CmdAgent {
     virtual bool canNav() const =0;
     virtual bool up(void* o)=0;
@@ -79,6 +77,7 @@ namespace AM5 {
   };
 
   //for items that do not handle nav cmds
+  //they can however react to activation and return a true or false version
   template<bool res=false>
   struct EmptyCmds:public CmdAgent {
     bool canNav() const override {return false;}
@@ -90,6 +89,7 @@ namespace AM5 {
   };
 
   //nav commands of specific item
+  //system generated this types automatically and maps to object functions
   template<typename O,bool res=true>
   struct ItemCmd:public CmdAgent {
     bool canNav () const override {return true;}
@@ -221,6 +221,27 @@ namespace AM5 {
     inline StaticMenu(const char*title,OO... oo):O(title),data{oo...} {}
     static inline size_t size() {return n;}
     inline Item& operator[](size_t i) {return *data[i];}
+  };
+
+  template<typename O,typename OO>
+  struct FooNode:public O {
+    using O::O;
+    inline size_t size() {return OO::size()+1;}
+    //of course not!
+    //printing this would be out(n)
+    struct Item:public ::Item {size_t n;};
+    inline Item& operator[](size_t i) {
+      return i?this->OO::operator[](i-1):*this;
+    }
+  };
+
+  template<typename O,typename... OO>
+  struct FooMenu:public FooNode<O,FooMenu<OO...>> {};
+
+  template<typename O>
+  struct FooMenu<O>:public O {
+    static inline size_t size() {return 1;}
+    inline Item& operator[](size_t) {return *this;}
   };
 
 };//AM5

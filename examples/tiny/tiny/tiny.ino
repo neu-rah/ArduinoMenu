@@ -26,10 +26,11 @@ using namespace AM5;
 
 //this is the whole definition, just a navigation with 4 states
 //no options, no texts, no actions.
-SelfNav<EmptyMenu<4>> mainMenu;
+// SelfNav<EmptyMenu<4>> mainMenu;
 
-#define ATTINY13
-#ifdef ATTINY13
+#define ATTINY
+#ifdef ATTINY
+  #define LED_BUILTIN 5
   #define BTN_UP 0// Up
   #define BTN_DOWN 1 // Down
 #else
@@ -47,26 +48,57 @@ void setup() {
 unsigned int dutty=0;
 unsigned int cycle=0;
 
-void actions() {
-  switch(mainMenu.pos()) {
-    case 0:
-      dutty=0;
-      cycle=0;
-      break;
-    case 1:
-      dutty=10;
-      cycle=100;
-      break;
-    case 2:
-      dutty=90;
-      cycle=100;
-      break;
-    case 3:
-      dutty=100;
-      cycle=1000;
-      break;
-  }
+inline bool off() {
+  dutty=0;
+  cycle=0;
+  return false;
 }
+
+inline bool low_speed() {
+  dutty=10;
+  cycle=100;
+  return false;
+}
+
+inline bool high_speed() {
+  dutty=90;
+  cycle=100;
+  return false;
+}
+
+// void actions() {
+//   switch(mainMenu.pos()) {
+//     case 0:
+//       dutty=0;
+//       cycle=0;
+//       break;
+//     case 1:
+//       dutty=10;
+//       cycle=100;
+//       break;
+//     case 2:
+//       dutty=90;
+//       cycle=100;
+//       break;
+//     case 3:
+//       dutty=100;
+//       cycle=1000;
+//       break;
+//   }
+// }
+
+template<ActionHandler act=doNothing>
+using Op=Prompt<Action<Empty,act>>;
+
+NavNode<
+  SelfNav<
+    FooMenu<
+      Op<off>,
+      Op<low_speed>,
+      Op<high_speed>
+    >
+  >
+> mainMenu;
 
 //blink a boolean without delay
 inline bool blinker(unsigned int dutty,unsigned int cycle) {return millis()%cycle<dutty;}
@@ -74,10 +106,10 @@ inline bool blinker(unsigned int dutty,unsigned int cycle) {return millis()%cycl
 void loop() {
   if (!digitalRead(BTN_UP)) {
     mainMenu.up();
-    actions();
+    // actions();
   } else if (!digitalRead(BTN_DOWN)) {
     mainMenu.down();
-    actions();
+    // actions();
   }
   digitalWrite(LED_BUILTIN, blinker(dutty,cycle));
 }
