@@ -7,13 +7,13 @@ PROGMEM ConstText op2_text="Op 2";
 PROGMEM ConstText op3_text="Op 3";
 
 template<typename T,T text>
-using Op=StaticFlashTextDef<T,text,SerialOutDef<Serial>>;
+using Op=EnDisDef<StaticFlashTextDef<T,text,SerialOutDef<Serial>>>;
 
 PROGMEM ConstText menu_title="Main menu";
 
 using MainMenu=Cap<
-  TextFmt<
-    FullPrinterDef<
+  FullPrinterDef<
+    TextFmt<
       NavPosDef<
         StaticFlashTextDef<decltype(&menu_title),&menu_title,
           StaticMenuDataDef<
@@ -35,6 +35,7 @@ void setup() {
   Serial<<"AM5 Static demo"<<endl;
   dumpRam(Serial, op1_text, 16);
   dumpPgm(Serial, op1_text, 16);
+  mainMenu.template enable<1>(false);
   mainMenu.printMenu();
 }
 
