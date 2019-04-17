@@ -46,6 +46,22 @@ namespace AM5 {
     template<typename H,bool io> inline void fmtCursor(H& p) {}
   };
 
+  template<typename O,size_t p>
+  struct PrintHead {
+    O& printer;
+    // size_t pos;
+    // size_t line;
+    constexpr static inline size_t pos() {return p;}
+    inline bool selected() const {return printer.selected(p);}
+    inline bool enabled() const {return printer.template enabled<p>();}
+    template<typename H,bool io> inline void fmtItem() {}
+    template<typename H,bool io> inline void fmtMenu() {}
+    template<typename H,bool io> inline void fmtMenuBody() {}
+    template<typename H,bool io> inline void fmtTitle() {}
+    template<typename H,bool io> inline void fmtIndex() {}
+    template<typename H,bool io> inline void fmtCursor() {}
+  };
+
   #ifdef ARDUINO
     template<decltype(Serial)& out,typename O=Empty>
     struct SerialOutDef:public O {
@@ -80,7 +96,7 @@ namespace AM5 {
   template<typename O>
   class NavPosDef:public O {
     public:
-      inline selected(size_t n) const {return at==n;}
+      inline bool selected(size_t n) const {return at==n;}
       inline bool up() {
         if (at<O::size()-1) {at++;return true;}
         return O::up();
@@ -99,10 +115,10 @@ namespace AM5 {
     public:
       // EnDisDef(bool o=true):en(o) {}
       inline void enable(bool b=true) {
-        Serial<<"EnDis! "<<b<<endl;
+        // Serial<<"EnDis! "<<b<<endl;
         en=b;}
       inline bool enabled() const {
-        Serial<<"EnDis::enabled? "<<en<<endl;
+        // Serial<<"EnDis::enabled? "<<en<<endl;
         return en;}
     protected:
       bool en;
@@ -120,23 +136,43 @@ namespace AM5 {
   template<typename O,typename... OO>
   class StaticMenuDataDef:public O {
     public:
+      using This=StaticMenuDataDef<O>;
       using Next=StaticMenuDataDef<OO...>;
       constexpr static inline size_t size() {return Next::size()+1;}
-      template<typename H>
-      static inline void printItem(size_t n) {
-        if(n) Next::template printItem<H>(n-1);
-        else O::template out<H>();
+      template<typename H,size_t n>
+      inline void printItems(H& ph) {
+        // Serial<<"print Items"<<endl;
+        // O::template out<H>();
+        printItem<H,0>(ph);
+        next.printItems<H,n+1>(ph);
+      }
+
+      template<typename H,size_t n>
+      inline void printItem(H& ph) {
+        // Serial<<"«"<<n<<"» ";
+        if(n) next.printItem<H,n-1>(ph);
+        else {
+          // Serial<<"print Item"<<endl;
+          PrintHead<H,n> ph{ph.printer};
+          ph.template fmtItem<H,true>();
+          ph.template fmtIndex<H,true>();
+          ph.template fmtCursor<H,true>();
+          O::template out<H>();
+          ph.template fmtCursor<H,false>();
+          ph.template fmtIndex<H,false>();
+          ph.template fmtItem<H,false>();
+        }
       }
       template<size_t i>
       inline void enable(bool b=true) {
-        Serial<<"enable "<<i<<endl;
+        // Serial<<"enable "<<i<<endl;
         if (i) next.template enable<i-1>(b);
         else O::enable(b);
       }
       template<size_t i>
       inline bool enabled() const {
-        Serial<<"enabled<"<<i<<">?"<<endl;
-        if (i) return next.template enable<i-1>();
+        // Serial<<"enabled<"<<i<<">?"<<endl;
+        if (i) return next.template enabled<i-1>();
         else return O::enabled();
       }
     protected:
@@ -146,21 +182,26 @@ namespace AM5 {
   template<typename O>
   struct StaticMenuDataDef<O>:public O {
     constexpr static inline size_t size() {return 1;}
-    template<typename H>
-    static inline void printItem(size_t n) {
+    template<typename H,size_t n>
+    inline void printItems(H& ph) {
+      // Serial<<"print last Item"<<endl;
+      O::template out<H>();
+    }
+    template<typename H,size_t n>
+    inline void printItem(H& ph) {
       if (!n) O::template out<H>();
     }
     template<size_t i>
     inline void enable(bool b=true) {
-      Serial<<"enable "<<i<<endl;
+      // Serial<<"enable "<<i<<endl;
       if (!i) O::enable(b);
     }
-      template<size_t i>
-      inline bool enabled() {
-        Serial<<"enabled<"<<i<<">? ø"<<endl;
-        if (!i) return O::enabled();
-        return true;
-      }
+    template<size_t i>
+    inline bool enabled() {
+      // Serial<<"enabled<"<<i<<">? ø"<<endl;
+      if (!i) return O::enabled();
+      return true;
+    }
   };
 
   template<typename O>
@@ -178,7 +219,7 @@ namespace AM5 {
     inline void fmtIndex(H& p) {
       if (io) {
         O::raw('[');
-        O::raw(p.pos);
+        O::raw(p.pos());
         O::raw(']');
         O::template fmtItem<H,io>(p);
       } else {
@@ -204,22 +245,13 @@ namespace AM5 {
     }
   };
 
-  template<typename O,size_t pos>
-  struct PrintHead {
-    O& printer;
-    // size_t pos;
-    // size_t line;
-    inline bool selected() const {return printer.selected(pos);}
-    inline bool enabled() const {return printer.template enabled<pos>();}
-  };
-
   // the advantage of using dub-part printer is that
   // the user can either ommit (same as ommit the formats)
   // or reorder them, not using sub-printers yet
   template<typename O>
   struct FullPrinterDef:public O {
     inline void printMenu() {
-      // cout<<"full menu printer"<<endl;
+      // Serial<<"full menu printer"<<endl;
       using This=PrintHead<FullPrinterDef<O>,0>;
       This ph{*this};
       O::template fmtMenu<This,true>(ph);
@@ -227,17 +259,7 @@ namespace AM5 {
       O::template out<O>();
       O::template fmtTitle<This,true>(ph);
       O::template fmtTitle<This,false>(ph);
-      for(size_t n=0;n<O::size();n++) {
-        // PrintHead<FullPrinterDef<O>,0>;<-- damn! this needs a static cycle (type level for or map|filter|functor)
-        This ph{*this};
-        O::template fmtItem<This,true>(ph);
-        O::template fmtIndex<This,true>(ph);
-        O::template fmtCursor<This,true>(ph);
-        O::template printItem<O>(n);
-        O::template fmtCursor<This,false>(ph);
-        O::template fmtIndex<This,false>(ph);
-        O::template fmtItem<This,false>(ph);
-      }
+      O::template printItems<This,0>(ph);
       O::template fmtMenuBody<This,false>(ph);
       O::template fmtMenu<This,false>(ph);
     }

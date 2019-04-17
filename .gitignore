@@ -15,3 +15,4 @@ platformio.ini
 *.odg
 dev
 .out
+.out/*
