@@ -12,6 +12,8 @@
 //   struct To:public T<O,OO...> {};
 // };
 
+using idx_t = int;//size_t sucks for scrolling
+
 template<template<typename,typename> class T,typename O>
 struct Do {
   template<typename OO>
@@ -30,6 +32,11 @@ namespace AM5 {
     template<typename H>
     static inline void out(size_t) {}
     constexpr static inline size_t size() {return 0;}
+    constexpr static inline size_t top() {return 0;}
+    constexpr static inline idx_t orgX() {return 0;}
+    constexpr static inline idx_t orgY() {return 0;}
+    constexpr static inline idx_t width() {return 80;}
+    constexpr static inline idx_t height() {return size();}
     constexpr static inline bool up() {return false;}
     constexpr static inline bool down() {return false;}
     constexpr static inline bool left() {return down();}
@@ -132,11 +139,12 @@ namespace AM5 {
       using This=StaticMenuDataDef<O>;
       using Next=StaticMenuDataDef<OO...>;
       constexpr static inline size_t size() {return Next::size()+1;}
-      template<typename H,size_t n>
+      template<typename H,size_t n,size_t start,size_t end>
       inline void printItems(H& ph) {
         // Serial<<"print Items "<<n<<" pos:"<<ph.pos()<<endl;
-        This::template printItem<H,n>(ph);
-        next.printItems<H,n+1>(ph);
+        if (n>=end) return;
+        if (n>=start) This::template printItem<H,n>(ph);
+        next.printItems<H,n+1,start,end>(ph);
       }
 
       template<size_t i>
@@ -152,13 +160,16 @@ namespace AM5 {
         else return O::enabled();
       }
     protected:
-      Next next;
+      static Next next;//being static saves a couple of byte, can be because each item is unique
   };
+
+  template<typename O,typename... OO>
+  StaticMenuDataDef<OO...> StaticMenuDataDef<O,OO...>::next;
 
   template<typename O>
   struct StaticMenuDataDef<O>:public O {
     constexpr static inline size_t size() {return 1;}
-    template<typename H,size_t n>
+    template<typename H,size_t n,size_t start,size_t end>
     inline void printItems(H& ph) {printItem<H,n>(ph);}
     template<typename H,size_t n>
     inline void printItem(H& oph) {
@@ -198,9 +209,10 @@ namespace AM5 {
     template<typename H,bool io>
     inline void fmtIndex(H& p) {
       if (io) {
-        O::raw('[');
-        O::raw(p.pos());
-        O::raw(']');
+        // O::raw('[');
+        if (p.pos()<9) O::raw(p.pos()+1);
+        else O::raw(' ');
+        O::raw(')');
         O::template fmtItem<H,io>(p);
       } else {
         O::template fmtItem<H,io>(p);
@@ -217,18 +229,47 @@ namespace AM5 {
     template<typename H,bool io>
     inline void fmtTitle(H& p) {
       if (io) {
+        O::raw('[');
         O::template fmtTitle<H,io>(p);
       } else {
         O::template fmtTitle<H,io>(p);
+        O::raw(']');
         O::nl();
       }
     }
   };
 
+  //static panel ------------------------------------------------
+  // describes output dimension,
+  // may be whole device, but must not exceed
+  // it has origin coordinates to be displaced around
+  template<idx_t x,idx_t y,idx_t w,idx_t h,typename O=Empty>
+  struct StaticPanel:public O {
+    constexpr static inline idx_t orgX() {return x;}
+    constexpr static inline idx_t orgY() {return y;}
+    constexpr static inline idx_t width() {return w;}
+    constexpr static inline idx_t height() {return h;}
+  };
+
+    //its different than a scroll viewport
+    //as it refers to the top line of the menu structure
+    //minimize printing on line menus
+    template<typename O>
+    class RangePanel:public O {
+      public:
+        // constexpr static inline bool isRangePanel() {return true;}
+        inline size_t top() const {return topLine;}
+        inline void setTop(size_t n) {topLine=n;}
+      protected:
+        size_t topLine=0;
+    };
+
   // the advantage of using sub-part printer is that
   // the user can either ommit (same as ommit the formats)
   // or reorder them, not using sub-printers yet...
   // so we call the fmt functions directly here
+  // TODO: instead of having multiple printers
+  // make this one depend on panel size
   template<typename O>
   struct FullPrinterDef:public O {
     inline void printMenu() {
@@ -240,7 +281,7 @@ namespace AM5 {
       O::template fmtTitle<This,true>(ph);
       O::template out<O>();
       O::template fmtTitle<This,false>(ph);
-      O::template printItems<This,0>(ph);
+      O::template printItems<This,O::top(),O::top(),O::top()+O::height()>(ph);//we lost range control here
       O::template fmtMenuBody<This,false>(ph);
       O::template fmtMenu<This,false>(ph);
     }

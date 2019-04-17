@@ -1,4 +1,4 @@
-#include <Dump.h>
+// #include <Dump.h>
 #include <menu.h>
 using namespace AM5;
 
@@ -7,7 +7,7 @@ PROGMEM ConstText op2_text="Op 2";
 PROGMEM ConstText op3_text="Op 3";
 
 template<typename T,T text>
-using Op=EnDisDef<StaticFlashTextDef<T,text,SerialOutDef<Serial>>>;
+using Op=EnDisDef<StaticFlashTextDef<T,text,StaticPanel<0,0,10,8,SerialOutDef<Serial>>>>;
 
 PROGMEM ConstText menu_title="Main menu";
 
@@ -15,11 +15,24 @@ using MainMenu=Cap<
   FullPrinterDef<
     TextFmt<
       NavPosDef<
-        StaticFlashTextDef<decltype(&menu_title),&menu_title,
-          StaticMenuDataDef<
-            Op<decltype(&op1_text),&op1_text>,
-            Op<decltype(&op2_text),&op2_text>,
-            Op<decltype(&op3_text),&op3_text>
+        RangePanel<
+          StaticFlashTextDef<decltype(&menu_title),&menu_title,
+            StaticMenuDataDef<
+              Op<decltype(&op1_text),&op1_text>,
+              Op<decltype(&op2_text),&op2_text>,
+              Op<decltype(&op2_text),&op2_text>,
+              Op<decltype(&op2_text),&op2_text>,
+              Op<decltype(&op2_text),&op2_text>,
+              Op<decltype(&op2_text),&op2_text>,
+              Op<decltype(&op2_text),&op2_text>,
+              Op<decltype(&op2_text),&op2_text>,
+              Op<decltype(&op2_text),&op2_text>,
+              Op<decltype(&op2_text),&op2_text>,
+              Op<decltype(&op2_text),&op2_text>,
+              Op<decltype(&op2_text),&op2_text>,
+              Op<decltype(&op2_text),&op2_text>,
+              Op<decltype(&op3_text),&op3_text>
+            >
           >
         >
       >
@@ -33,15 +46,20 @@ void setup() {
   Serial.begin(115200);
   while(!Serial);
   Serial<<"AM5 Static demo"<<endl;
-  dumpRam(Serial, op1_text, 16);
-  dumpPgm(Serial, op1_text, 16);
+  // dumpRam(Serial, op1_text, 16);
+  // dumpPgm(Serial, op1_text, 16);
+  //disabling some options
   mainMenu.template enable<1>(false);
+  mainMenu.template enable<5>(false);
   mainMenu.printMenu();
 }
 
 //handle serial keys to navigate menu
 bool keys(int key) {
   switch(key) {
+    case '\\':
+      mainMenu.template enable<5>(!mainMenu.template enabled<5>());
+      return true;
     case '+': return mainMenu.up();;
     case '-': return mainMenu.down();;
     case '*': return mainMenu.enter();;
