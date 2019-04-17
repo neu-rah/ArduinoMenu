@@ -48,18 +48,22 @@ namespace AM5 {
 
   template<typename O,size_t p>
   struct PrintHead {
+    using This=PrintHead<O,p>;
+    using Printer=O;
     O& printer;
     // size_t pos;
     // size_t line;
     constexpr static inline size_t pos() {return p;}
     inline bool selected() const {return printer.selected(p);}
     inline bool enabled() const {return printer.template enabled<p>();}
-    template<typename H,bool io> inline void fmtItem() {}
-    template<typename H,bool io> inline void fmtMenu() {}
-    template<typename H,bool io> inline void fmtMenuBody() {}
-    template<typename H,bool io> inline void fmtTitle() {}
-    template<typename H,bool io> inline void fmtIndex() {}
-    template<typename H,bool io> inline void fmtCursor() {}
+    template<typename H,bool io> inline void fmtItem() {
+      // Serial<<"fmtItem<"<<p<<">";
+      printer.fmtItem<This,io>(*this);}
+    template<typename H,bool io> inline void fmtMenu() {printer.fmtMenu<This,io>(*this);}
+    template<typename H,bool io> inline void fmtMenuBody() {printer.fmtMenuBody<This,io>(*this);}
+    template<typename H,bool io> inline void fmtTitle() {printer.fmtTitle<This,io>(*this);}
+    template<typename H,bool io> inline void fmtIndex() {printer.fmtIndex<This,io>(*this);}
+    template<typename H,bool io> inline void fmtCursor() {printer.fmtCursor<This,io>(*this);}
   };
 
   #ifdef ARDUINO
@@ -134,44 +138,25 @@ namespace AM5 {
   };
 
   template<typename O,typename... OO>
-  class StaticMenuDataDef:public O {
+  class StaticMenuDataDef:public StaticMenuDataDef<O> {
     public:
       using This=StaticMenuDataDef<O>;
       using Next=StaticMenuDataDef<OO...>;
       constexpr static inline size_t size() {return Next::size()+1;}
       template<typename H,size_t n>
       inline void printItems(H& ph) {
-        // Serial<<"print Items"<<endl;
-        // O::template out<H>();
-        printItem<H,0>(ph);
+        // Serial<<"print Items "<<n<<" pos:"<<ph.pos()<<endl;
+        This::template printItem<H,n>(ph);
         next.printItems<H,n+1>(ph);
       }
 
-      template<typename H,size_t n>
-      inline void printItem(H& ph) {
-        // Serial<<"«"<<n<<"» ";
-        if(n) next.printItem<H,n-1>(ph);
-        else {
-          // Serial<<"print Item"<<endl;
-          PrintHead<H,n> ph{ph.printer};
-          ph.template fmtItem<H,true>();
-          ph.template fmtIndex<H,true>();
-          ph.template fmtCursor<H,true>();
-          O::template out<H>();
-          ph.template fmtCursor<H,false>();
-          ph.template fmtIndex<H,false>();
-          ph.template fmtItem<H,false>();
-        }
-      }
       template<size_t i>
       inline void enable(bool b=true) {
-        // Serial<<"enable "<<i<<endl;
         if (i) next.template enable<i-1>(b);
         else O::enable(b);
       }
       template<size_t i>
       inline bool enabled() const {
-        // Serial<<"enabled<"<<i<<">?"<<endl;
         if (i) return next.template enabled<i-1>();
         else return O::enabled();
       }
@@ -183,22 +168,25 @@ namespace AM5 {
   struct StaticMenuDataDef<O>:public O {
     constexpr static inline size_t size() {return 1;}
     template<typename H,size_t n>
-    inline void printItems(H& ph) {
-      // Serial<<"print last Item"<<endl;
-      O::template out<H>();
-    }
+    inline void printItems(H& ph) {printItem<H,n>(ph);}
     template<typename H,size_t n>
-    inline void printItem(H& ph) {
-      if (!n) O::template out<H>();
+    inline void printItem(H& oph) {
+      // Serial<<"print item "<<n<<endl;
+      PrintHead<typename H::Printer,n> ph{oph.printer};
+      ph.template fmtItem<H,true>();
+      ph.template fmtIndex<H,true>();
+      ph.template fmtCursor<H,true>();
+      O::template out<H>();
+      ph.template fmtCursor<H,false>();
+      ph.template fmtIndex<H,false>();
+      ph.template fmtItem<H,false>();
     }
     template<size_t i>
     inline void enable(bool b=true) {
-      // Serial<<"enable "<<i<<endl;
       if (!i) O::enable(b);
     }
     template<size_t i>
-    inline bool enabled() {
-      // Serial<<"enabled<"<<i<<">? ø"<<endl;
+    inline bool enabled() const {
       if (!i) return O::enabled();
       return true;
     }
@@ -209,7 +197,7 @@ namespace AM5 {
     template<typename H,bool io>
     inline void fmtCursor(H& p) {
       if (io) {
-        raw(p.selected()?(p.enabled()?'>':'-'):' ');
+        O::raw(p.selected()?(p.enabled()?'>':'-'):' ');
         O::template fmtItem<H,io>(p);
       } else {
         O::template fmtItem<H,io>(p);
@@ -256,8 +244,8 @@ namespace AM5 {
       This ph{*this};
       O::template fmtMenu<This,true>(ph);
       O::template fmtMenuBody<This,true>(ph);
-      O::template out<O>();
       O::template fmtTitle<This,true>(ph);
+      O::template out<O>();
       O::template fmtTitle<This,false>(ph);
       O::template printItems<This,0>(ph);
       O::template fmtMenuBody<This,false>(ph);
@@ -270,11 +258,6 @@ namespace AM5 {
     using This=Cap<O>;
     inline void printMenu() {O::printMenu();}
     static inline void out() {O::template out<O>();}
-    // template<typename H,bool io> static inline void fmtIndex(H& p) {O::template fmtIndex<H,io>(p);}
-    // template<> static inline void fmtIndex<true>(ph) {
-    //   O::fmtIndex<true>(ph);
-    //   O::fmtIndex<false>(ph);
-    // }
   };
 
 };
