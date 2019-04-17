@@ -51,14 +51,10 @@ namespace AM5 {
     using This=PrintHead<O,p>;
     using Printer=O;
     O& printer;
-    // size_t pos;
-    // size_t line;
     constexpr static inline size_t pos() {return p;}
     inline bool selected() const {return printer.selected(p);}
     inline bool enabled() const {return printer.template enabled<p>();}
-    template<typename H,bool io> inline void fmtItem() {
-      // Serial<<"fmtItem<"<<p<<">";
-      printer.fmtItem<This,io>(*this);}
+    template<typename H,bool io> inline void fmtItem() {printer.fmtItem<This,io>(*this);}
     template<typename H,bool io> inline void fmtMenu() {printer.fmtMenu<This,io>(*this);}
     template<typename H,bool io> inline void fmtMenuBody() {printer.fmtMenuBody<This,io>(*this);}
     template<typename H,bool io> inline void fmtTitle() {printer.fmtTitle<This,io>(*this);}
@@ -75,7 +71,6 @@ namespace AM5 {
     };
 
     using ConstText=const char[];
-    // using FlashString=const PROGMEM ConstText;
 
     template<typename T,T text,typename O=Empty>
     struct StaticFlashTextDef:public O {
@@ -117,20 +112,14 @@ namespace AM5 {
   template<typename O>
   class EnDisDef:public O {
     public:
-      // EnDisDef(bool o=true):en(o) {}
-      inline void enable(bool b=true) {
-        // Serial<<"EnDis! "<<b<<endl;
-        en=b;}
-      inline bool enabled() const {
-        // Serial<<"EnDis::enabled? "<<en<<endl;
-        return en;}
+      inline bool enabled() const {return en;}
+      inline void enable(bool b) {en=b;}
     protected:
-      bool en;
+      bool en=true;
   };
 
   template<const char** text,typename O=Empty>
   struct StaticTextDef:public O {
-    // using O::O;
     template<typename H>
     static inline void out() {
       O::raw(text[0]);
@@ -152,11 +141,13 @@ namespace AM5 {
 
       template<size_t i>
       inline void enable(bool b=true) {
+        // Serial<<"StaticMenuDataDef... "<<(b?"enable ":"disable ")<<i<<endl;
         if (i) next.template enable<i-1>(b);
         else O::enable(b);
       }
       template<size_t i>
       inline bool enabled() const {
+        // Serial<<"StaticMenuDataDef... enabled "<<i<<endl;
         if (i) return next.template enabled<i-1>();
         else return O::enabled();
       }
@@ -187,6 +178,7 @@ namespace AM5 {
     }
     template<size_t i>
     inline bool enabled() const {
+      // Serial<<"StaticMenuDataDef enabled "<<i<<endl;
       if (!i) return O::enabled();
       return true;
     }
@@ -233,9 +225,10 @@ namespace AM5 {
     }
   };
 
-  // the advantage of using dub-part printer is that
+  // the advantage of using sub-part printer is that
   // the user can either ommit (same as ommit the formats)
-  // or reorder them, not using sub-printers yet
+  // or reorder them, not using sub-printers yet...
+  // so we call the fmt functions directly here
   template<typename O>
   struct FullPrinterDef:public O {
     inline void printMenu() {
