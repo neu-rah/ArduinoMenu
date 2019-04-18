@@ -7,7 +7,15 @@ PROGMEM ConstText op2_text="Op 2";
 PROGMEM ConstText op3_text="Op 3";
 
 template<typename T,T text>
-using Op=EnDisDef<StaticFlashTextDef<T,text,StaticPanel<0,0,10,4,SerialOutDef<Serial>>>>;
+using Op=EnDisDef<
+  StaticFlashTextDef<
+    T,
+    text,
+    // StaticPanel<0,0,10,4,
+      SerialOutDef<Serial>
+    // >
+  >
+>;
 
 PROGMEM ConstText menu_title="Main menu";
 

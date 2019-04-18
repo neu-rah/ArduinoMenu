@@ -32,11 +32,14 @@ namespace AM5 {
     template<typename H>
     static inline void out(size_t) {}
     constexpr static inline size_t size() {return 0;}
+    constexpr static inline size_t pos() {return 0;}
     constexpr static inline size_t top() {return 0;}
+    static inline void setTop(size_t) {}
+    constexpr static inline bool isRange() {return false;}
     constexpr static inline idx_t orgX() {return 0;}
     constexpr static inline idx_t orgY() {return 0;}
     constexpr static inline idx_t width() {return 80;}
-    constexpr static inline idx_t height() {return size();}
+    constexpr static inline idx_t height() {return size();}//TODO: this need access to printer head again
     constexpr static inline bool up() {return false;}
     constexpr static inline bool down() {return false;}
     constexpr static inline bool left() {return down();}
@@ -257,7 +260,7 @@ namespace AM5 {
     template<typename O>
     class RangePanel:public O {
       public:
-        // constexpr static inline bool isRangePanel() {return true;}
+        constexpr static inline bool isRange() {return true;}
         inline size_t top() const {return topLine;}
         inline void setTop(size_t n) {topLine=n;}
       protected:
@@ -275,10 +278,12 @@ namespace AM5 {
     inline void printMenu() {
       // Serial<<"full menu printer"<<endl;
       using This=FullPrinterDef<O>;
-      while(This::top()>O::pos())
-        This::setTop(This::top()-1);
-      while(O::pos()>=This::top()+O::height())
-        This::setTop(This::top()+1);
+      if (O::isRange()) {
+        while(This::top()>O::pos())
+          This::setTop(This::top()-1);
+        while(O::pos()>=This::top()+O::height())
+          This::setTop(This::top()+1);
+      }
       using ThisPH=PrintHead<FullPrinterDef<O>,0>;
       ThisPH ph{*this};
       O::template fmtMenu<ThisPH,true>(ph);
