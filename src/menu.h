@@ -139,12 +139,12 @@ namespace AM5 {
       using This=StaticMenuDataDef<O>;
       using Next=StaticMenuDataDef<OO...>;
       constexpr static inline size_t size() {return Next::size()+1;}
-      template<typename H,size_t n,size_t start,size_t end>
+      template<typename H,size_t n>
       inline void printItems(H& ph) {
         // Serial<<"print Items "<<n<<" pos:"<<ph.pos()<<endl;
-        if (n>=end) return;
-        if (n>=start) This::template printItem<H,n>(ph);
-        next.printItems<H,n+1,start,end>(ph);
+        if (n>=ph.printer.top()+ph.printer.height()) return;
+        if (n>=ph.printer.top()) This::template printItem<H,n>(ph);
+        next.printItems<H,n+1>(ph);
       }
 
       template<size_t i>
@@ -169,7 +169,7 @@ namespace AM5 {
   template<typename O>
   struct StaticMenuDataDef<O>:public O {
     constexpr static inline size_t size() {return 1;}
-    template<typename H,size_t n,size_t start,size_t end>
+    template<typename H,size_t n>
     inline void printItems(H& ph) {printItem<H,n>(ph);}
     template<typename H,size_t n>
     inline void printItem(H& oph) {
@@ -274,16 +274,21 @@ namespace AM5 {
   struct FullPrinterDef:public O {
     inline void printMenu() {
       // Serial<<"full menu printer"<<endl;
-      using This=PrintHead<FullPrinterDef<O>,0>;
-      This ph{*this};
-      O::template fmtMenu<This,true>(ph);
-      O::template fmtMenuBody<This,true>(ph);
-      O::template fmtTitle<This,true>(ph);
+      using This=FullPrinterDef<O>;
+      while(This::top()>O::pos())
+        This::setTop(This::top()-1);
+      while(O::pos()>=This::top()+O::height())
+        This::setTop(This::top()+1);
+      using ThisPH=PrintHead<FullPrinterDef<O>,0>;
+      ThisPH ph{*this};
+      O::template fmtMenu<ThisPH,true>(ph);
+      O::template fmtMenuBody<ThisPH,true>(ph);
+      O::template fmtTitle<ThisPH,true>(ph);
       O::template out<O>();
-      O::template fmtTitle<This,false>(ph);
-      O::template printItems<This,O::top(),O::top(),O::top()+O::height()>(ph);//we lost range control here
-      O::template fmtMenuBody<This,false>(ph);
-      O::template fmtMenu<This,false>(ph);
+      O::template fmtTitle<ThisPH,false>(ph);
+      O::template printItems<ThisPH,0>(ph);//we lost range control here
+      O::template fmtMenuBody<ThisPH,false>(ph);
+      O::template fmtMenu<ThisPH,false>(ph);
     }
   };
 
