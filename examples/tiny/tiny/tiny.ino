@@ -6,10 +6,10 @@ PROGMEM ConstText op1_text="Op 1";
 PROGMEM ConstText op2_text="Op 2";
 PROGMEM ConstText op3_text="Op 3";
 
-template<typename T,T text>
+template<decltype(op1_text)* text>
 using Op=EnDisDef<
   StaticFlashTextDef<
-    T,
+    decltype(op1_text)*,
     text,
     StaticPanel<0,0, 10,4,
       SerialOutDef<Serial>
@@ -26,14 +26,14 @@ using MainMenu=Cap<
         RangePanel<
           StaticFlashTextDef<decltype(&menu_title),&menu_title,
             StaticMenuDataDef<
-              Op<decltype(&op1_text),&op1_text>,
-              Op<decltype(&op2_text),&op2_text>,
-              Op<decltype(&op2_text),&op2_text>,
-              Op<decltype(&op2_text),&op2_text>,
-              Op<decltype(&op2_text),&op2_text>,
-              Op<decltype(&op2_text),&op2_text>,
-              Op<decltype(&op2_text),&op2_text>,
-              Op<decltype(&op3_text),&op3_text>
+              Op<&op1_text>,
+              Op<&op2_text>,
+              Op<&op2_text>,
+              Op<&op2_text>,
+              Op<&op2_text>,
+              Op<&op2_text>,
+              Op<&op2_text>,
+              Op<&op3_text>
             >
           >
         >
