@@ -11,9 +11,9 @@ using Op=EnDisDef<
   StaticFlashTextDef<
     T,
     text,
-    // StaticPanel<0,0,10,4,
+    StaticPanel<0,0, 10,4,
       SerialOutDef<Serial>
-    // >
+    >
   >
 >;
 
