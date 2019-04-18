@@ -20,46 +20,16 @@
 #endif
 
 #include "printers.h"
+#include "nav.h"
+#include "fmt/text.h"
+#include "comp/endis.h"
+#include "comp/staticText.h"
 
 namespace AM5 {
 
   // enum class Roles {Panel,Menu,Title,Body,Item,Accel,Cursor,Label,Value,Unit};
 
   // struct Nil {};
-
-  template<typename O>
-  class NavPosDef:public O {
-    public:
-      inline bool selected(size_t n) const {return at==n;}
-      inline bool up() {
-        if (at<O::size()-1) {at++;return true;}
-        return O::up();
-      }
-      inline bool down() {
-        if (at>0) {at--;return true;}
-        return O::down();
-      }
-      inline size_t pos() const {return at;}
-    protected:
-      size_t at=0;
-  };
-
-  template<typename O>
-  class EnDisDef:public O {
-    public:
-      inline bool enabled() const {return en;}
-      inline void enable(bool b) {en=b;}
-    protected:
-      bool en=true;
-  };
-
-  // template<const char** text,typename O=Empty>
-  // struct StaticTextDef:public O {
-  //   template<typename H>
-  //   static inline void out() {
-  //     H::Printer::raw(text[0]);
-  //   }
-  // };
 
   template<typename O,typename... OO>
   class StaticMenuDataDef:public StaticMenuDataDef<O> {
@@ -72,7 +42,7 @@ namespace AM5 {
         // Serial<<"print Items "<<n<<" pos:"<<ph.pos()<<endl;
         if (n>=ph.item.top()+H::Printer::height()) return;
         if (n>=ph.item.top()) This::template printItem<H,n>(ph);
-        next.printItems<H,n+1>(ph);
+        next.template printItems<H,n+1>(ph);
       }
 
       template<size_t i>
@@ -104,11 +74,11 @@ namespace AM5 {
     template<typename H,size_t n>
     inline void printItem(H& oph) {
       // Serial<<"print item "<<n<<endl;
-      PrintHead<H::Printer,typename H::Target,n> ph{oph.item};
+      PrintHead<typename H::Printer,typename H::Target,n> ph{oph.item};
       ph.template fmtItem<H,true>();
       ph.template fmtIndex<H,true>();
       ph.template fmtCursor<H,true>();
-      O::template out<PrintHead<H::Printer,typename H::Target,n>>();
+      O::template out<PrintHead<typename H::Printer,typename H::Target,n>>();
       ph.template fmtCursor<H,false>();
       ph.template fmtIndex<H,false>();
       ph.template fmtItem<H,false>();
@@ -122,50 +92,6 @@ namespace AM5 {
       // Serial<<"StaticMenuDataDef enabled "<<i<<endl;
       if (!i) return O::enabled();
       return true;
-    }
-  };
-
-  template<typename O>
-  struct TextFmt:public O {
-    template<typename H,bool io>
-    inline void fmtCursor(H& p) {
-      if (io) {
-        H::Printer::raw(p.selected()?(p.enabled()?'>':'-'):' ');
-        O::template fmtItem<H,io>(p);
-      } else {
-        O::template fmtItem<H,io>(p);
-      }
-    }
-    template<typename H,bool io>
-    inline void fmtIndex(H& p) {
-      if (io) {
-        // H::Printer::raw('[');
-        if (p.pos()<9) H::Printer::raw(p.pos()+1);
-        else H::Printer::raw(' ');
-        H::Printer::raw(')');
-        O::template fmtItem<H,io>(p);
-      } else {
-        O::template fmtItem<H,io>(p);
-      }
-    }
-    template<typename H,bool io>
-    inline void fmtItem(H& p) {
-      if (io) O::template fmtItem<H,io>(p);
-      else {
-        O::template fmtItem<H,io>(p);
-        H::Printer::nl();
-      }
-    }
-    template<typename H,bool io>
-    inline void fmtTitle(H& p) {
-      if (io) {
-        H::Printer::raw('[');
-        O::template fmtTitle<H,io>(p);
-      } else {
-        O::template fmtTitle<H,io>(p);
-        H::Printer::raw(']');
-        H::Printer::nl();
-      }
     }
   };
 

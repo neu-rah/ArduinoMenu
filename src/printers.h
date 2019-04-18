@@ -14,12 +14,12 @@ namespace AM5 {
     constexpr static inline size_t pos() {return p;}
     inline bool selected() const {return item.selected(p);}
     inline bool enabled() const {return item.template enabled<p>();}
-    template<typename H,bool io> inline void fmtItem() {item.fmtItem<This,io>(*this);}
-    template<typename H,bool io> inline void fmtMenu() {item.fmtMenu<This,io>(*this);}
-    template<typename H,bool io> inline void fmtMenuBody() {item.fmtMenuBody<This,io>(*this);}
-    template<typename H,bool io> inline void fmtTitle() {item.fmtTitle<This,io>(*this);}
-    template<typename H,bool io> inline void fmtIndex() {item.fmtIndex<This,io>(*this);}
-    template<typename H,bool io> inline void fmtCursor() {item.fmtCursor<This,io>(*this);}
+    template<typename H,bool io> inline void fmtItem() {item.template fmtItem<This,io>(*this);}
+    template<typename H,bool io> inline void fmtMenu() {item.template fmtMenu<This,io>(*this);}
+    template<typename H,bool io> inline void fmtMenuBody() {item.template fmtMenuBody<This,io>(*this);}
+    template<typename H,bool io> inline void fmtTitle() {item.template fmtTitle<This,io>(*this);}
+    template<typename H,bool io> inline void fmtIndex() {item.template fmtIndex<This,io>(*this);}
+    template<typename H,bool io> inline void fmtCursor() {item.template fmtCursor<This,io>(*this);}
   };
 
   //static panel ------------------------------------------------

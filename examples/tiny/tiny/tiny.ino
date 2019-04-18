@@ -2,12 +2,17 @@
 #include <menu.h>
 using namespace AM5;
 
+//string data on flash
 PROGMEM ConstText op1_text="Op 1";
 PROGMEM ConstText op2_text="Op 2";
 PROGMEM ConstText op3_text="Op 3";
+PROGMEM ConstText menu_title="Main menu";
 
+//the output description
 using Out=StaticPanel<0,0, 10,4,SerialOutDef<Serial>>;
 
+//normal option description
+//using flash text
 template<decltype(op1_text)* text>
 using Op=EnDisDef<
   StaticFlashTextDef<
@@ -16,8 +21,7 @@ using Op=EnDisDef<
   >
 >;
 
-PROGMEM ConstText menu_title="Main menu";
-
+//menu description and content
 using MainMenu=Cap<
   FullPrinterDef<
     TextFmt<

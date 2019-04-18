@@ -8,7 +8,7 @@ namespace AM5 {
 
   struct Empty {
     template<typename H>
-    static inline void out() {H::Printer::raw('???');}
+    static inline void out() {}
     template<typename H>
     static inline void out(size_t) {}
     constexpr static inline size_t size() {return 0;}
