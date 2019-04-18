@@ -286,7 +286,7 @@ namespace AM5 {
       O::template fmtTitle<ThisPH,true>(ph);
       O::template out<O>();
       O::template fmtTitle<ThisPH,false>(ph);
-      O::template printItems<ThisPH,0>(ph);//we lost range control here
+      O::template printItems<ThisPH,0>(ph);
       O::template fmtMenuBody<ThisPH,false>(ph);
       O::template fmtMenu<ThisPH,false>(ph);
     }
