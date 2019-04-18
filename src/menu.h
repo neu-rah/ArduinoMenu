@@ -12,95 +12,20 @@
 //   struct To:public T<O,OO...> {};
 // };
 
-using idx_t = int;//size_t sucks for scrolling
+#ifdef ARDUINO
+  #include "IO/serialOut.h"
+  #include "comp/flashText.h"
+#else
+  #include "IO/stdOut.h"
+#endif
 
-template<template<typename,typename> class T,typename O>
-struct Do {
-  template<typename OO>
-  struct Bind:public T<O,OO> {};
-};
+#include "printers.h"
 
 namespace AM5 {
 
   // enum class Roles {Panel,Menu,Title,Body,Item,Accel,Cursor,Label,Value,Unit};
 
   // struct Nil {};
-
-  struct Empty {
-    template<typename H>
-    static inline void out() {}
-    template<typename H>
-    static inline void out(size_t) {}
-    constexpr static inline size_t size() {return 0;}
-    constexpr static inline size_t pos() {return 0;}
-    constexpr static inline size_t top() {return 0;}
-    static inline void setTop(size_t) {}
-    constexpr static inline bool isRange() {return false;}
-    constexpr static inline idx_t orgX() {return 0;}
-    constexpr static inline idx_t orgY() {return 0;}
-    constexpr static inline idx_t width() {return 80;}
-    constexpr static inline idx_t height() {return size();}//TODO: this need access to printer head again
-    constexpr static inline bool up() {return false;}
-    constexpr static inline bool down() {return false;}
-    constexpr static inline bool left() {return down();}
-    constexpr static inline bool right() {return up();}
-    constexpr static inline bool enter() {return false;}
-    constexpr static inline bool esc() {return false;}
-    static inline void enable(bool) {}
-    constexpr static inline bool enabled() {return true;}
-    template<typename H,bool io> inline void fmtItem(H& p) {}
-    template<typename H,bool io> inline void fmtMenu(H& p) {}
-    template<typename H,bool io> inline void fmtMenuBody(H& p) {}
-    template<typename H,bool io> inline void fmtTitle(H& p) {}
-    template<typename H,bool io> inline void fmtIndex(H& p) {}
-    template<typename H,bool io> inline void fmtCursor(H& p) {}
-  };
-
-  template<typename O,size_t p>
-  struct PrintHead {
-    using This=PrintHead<O,p>;
-    using Printer=O;
-    O& printer;
-    constexpr static inline size_t pos() {return p;}
-    inline bool selected() const {return printer.selected(p);}
-    inline bool enabled() const {return printer.template enabled<p>();}
-    template<typename H,bool io> inline void fmtItem() {printer.fmtItem<This,io>(*this);}
-    template<typename H,bool io> inline void fmtMenu() {printer.fmtMenu<This,io>(*this);}
-    template<typename H,bool io> inline void fmtMenuBody() {printer.fmtMenuBody<This,io>(*this);}
-    template<typename H,bool io> inline void fmtTitle() {printer.fmtTitle<This,io>(*this);}
-    template<typename H,bool io> inline void fmtIndex() {printer.fmtIndex<This,io>(*this);}
-    template<typename H,bool io> inline void fmtCursor() {printer.fmtCursor<This,io>(*this);}
-  };
-
-  #ifdef ARDUINO
-    template<decltype(Serial)& out,typename O=Empty>
-    struct SerialOutDef:public O {
-      template<typename T>
-      static inline void raw(T o) {out<<o;};
-      static inline void nl() {out<<endl;}
-    };
-
-    using ConstText=const char[];
-
-    template<typename T,T text,typename O=Empty>
-    struct StaticFlashTextDef:public O {
-      template<typename H>
-      static inline void out() {
-        O::raw(
-          reinterpret_cast<const __FlashStringHelper *>(
-            text[0]
-          )
-        );
-      }
-    };
-  #else
-    template<ostream& out,typename O=Empty>
-    struct StdOutDef:public O {
-      template<typename T>
-      static inline void raw(T o) {out<<o;};
-      static inline void nl() {out<<endl;}
-    };
-  #endif
 
   template<typename O>
   class NavPosDef:public O {
@@ -128,13 +53,13 @@ namespace AM5 {
       bool en=true;
   };
 
-  template<const char** text,typename O=Empty>
-  struct StaticTextDef:public O {
-    template<typename H>
-    static inline void out() {
-      O::raw(text[0]);
-    }
-  };
+  // template<const char** text,typename O=Empty>
+  // struct StaticTextDef:public O {
+  //   template<typename H>
+  //   static inline void out() {
+  //     H::Printer::raw(text[0]);
+  //   }
+  // };
 
   template<typename O,typename... OO>
   class StaticMenuDataDef:public StaticMenuDataDef<O> {
@@ -145,8 +70,8 @@ namespace AM5 {
       template<typename H,size_t n>
       inline void printItems(H& ph) {
         // Serial<<"print Items "<<n<<" pos:"<<ph.pos()<<endl;
-        if (n>=ph.printer.top()+ph.printer.height()) return;
-        if (n>=ph.printer.top()) This::template printItem<H,n>(ph);
+        if (n>=ph.item.top()+H::Printer::height()) return;
+        if (n>=ph.item.top()) This::template printItem<H,n>(ph);
         next.printItems<H,n+1>(ph);
       }
 
@@ -173,15 +98,17 @@ namespace AM5 {
   struct StaticMenuDataDef<O>:public O {
     constexpr static inline size_t size() {return 1;}
     template<typename H,size_t n>
-    inline void printItems(H& ph) {printItem<H,n>(ph);}
+    inline void printItems(H& ph) {
+      // Serial<<"printItems->printItem"<<endl;
+      printItem<H,n>(ph);}
     template<typename H,size_t n>
     inline void printItem(H& oph) {
       // Serial<<"print item "<<n<<endl;
-      PrintHead<typename H::Printer,n> ph{oph.printer};
+      PrintHead<H::Printer,typename H::Target,n> ph{oph.item};
       ph.template fmtItem<H,true>();
       ph.template fmtIndex<H,true>();
       ph.template fmtCursor<H,true>();
-      O::template out<H>();
+      O::template out<PrintHead<H::Printer,typename H::Target,n>>();
       ph.template fmtCursor<H,false>();
       ph.template fmtIndex<H,false>();
       ph.template fmtItem<H,false>();
@@ -203,7 +130,7 @@ namespace AM5 {
     template<typename H,bool io>
     inline void fmtCursor(H& p) {
       if (io) {
-        O::raw(p.selected()?(p.enabled()?'>':'-'):' ');
+        H::Printer::raw(p.selected()?(p.enabled()?'>':'-'):' ');
         O::template fmtItem<H,io>(p);
       } else {
         O::template fmtItem<H,io>(p);
@@ -212,10 +139,10 @@ namespace AM5 {
     template<typename H,bool io>
     inline void fmtIndex(H& p) {
       if (io) {
-        // O::raw('[');
-        if (p.pos()<9) O::raw(p.pos()+1);
-        else O::raw(' ');
-        O::raw(')');
+        // H::Printer::raw('[');
+        if (p.pos()<9) H::Printer::raw(p.pos()+1);
+        else H::Printer::raw(' ');
+        H::Printer::raw(')');
         O::template fmtItem<H,io>(p);
       } else {
         O::template fmtItem<H,io>(p);
@@ -226,82 +153,29 @@ namespace AM5 {
       if (io) O::template fmtItem<H,io>(p);
       else {
         O::template fmtItem<H,io>(p);
-        O::nl();
+        H::Printer::nl();
       }
     }
     template<typename H,bool io>
     inline void fmtTitle(H& p) {
       if (io) {
-        O::raw('[');
+        H::Printer::raw('[');
         O::template fmtTitle<H,io>(p);
       } else {
         O::template fmtTitle<H,io>(p);
-        O::raw(']');
-        O::nl();
+        H::Printer::raw(']');
+        H::Printer::nl();
       }
-    }
-  };
-
-  //static panel ------------------------------------------------
-  // describes output dimension,
-  // may be whole device, but must not exceed
-  // it has origin coordinates to be displaced around
-  template<idx_t x,idx_t y,idx_t w,idx_t h,typename O=Empty>
-  struct StaticPanel:public O {
-    constexpr static inline idx_t orgX() {return x;}
-    constexpr static inline idx_t orgY() {return y;}
-    constexpr static inline idx_t width() {return w;}
-    constexpr static inline idx_t height() {return h;}
-  };
-
-    //its different than a scroll viewport
-    //as it refers to the top line of the menu structure
-    //minimize printing on line menus
-    template<typename O>
-    class RangePanel:public O {
-      public:
-        constexpr static inline bool isRange() {return true;}
-        inline size_t top() const {return topLine;}
-        inline void setTop(size_t n) {topLine=n;}
-      protected:
-        size_t topLine=0;
-    };
-
-  // the advantage of using sub-part printer is that
-  // the user can either ommit (same as ommit the formats)
-  // or reorder them, not using sub-printers yet...
-  // so we call the fmt functions directly here
-  // TODO: instead of having multiple printers
-  // make this one depend on panel size
-  template<typename O>
-  struct FullPrinterDef:public O {
-    inline void printMenu() {
-      // Serial<<"full menu printer"<<endl;
-      using This=FullPrinterDef<O>;
-      if (O::isRange()) {
-        while(This::top()>O::pos())
-          This::setTop(This::top()-1);
-        while(O::pos()>=This::top()+O::height())
-          This::setTop(This::top()+1);
-      }
-      using ThisPH=PrintHead<FullPrinterDef<O>,0>;
-      ThisPH ph{*this};
-      O::template fmtMenu<ThisPH,true>(ph);
-      O::template fmtMenuBody<ThisPH,true>(ph);
-      O::template fmtTitle<ThisPH,true>(ph);
-      O::template out<O>();
-      O::template fmtTitle<ThisPH,false>(ph);
-      O::template printItems<ThisPH,0>(ph);
-      O::template fmtMenuBody<ThisPH,false>(ph);
-      O::template fmtMenu<ThisPH,false>(ph);
     }
   };
 
   template<typename O>
   struct Cap:public O {
     using This=Cap<O>;
-    inline void printMenu() {O::printMenu();}
-    static inline void out() {O::template out<O>();}
+    template<typename Out>
+    inline void printMenu() {O::template printMenu<Out>();}
+    template<typename Out>
+    static inline void out() {O::template out<Out>();}
   };
 
 };

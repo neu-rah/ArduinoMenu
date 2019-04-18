@@ -6,14 +6,13 @@ PROGMEM ConstText op1_text="Op 1";
 PROGMEM ConstText op2_text="Op 2";
 PROGMEM ConstText op3_text="Op 3";
 
+using Out=StaticPanel<0,0, 10,4,SerialOutDef<Serial>>;
+
 template<decltype(op1_text)* text>
 using Op=EnDisDef<
   StaticFlashTextDef<
     decltype(op1_text)*,
-    text,
-    StaticPanel<0,0, 10,4,
-      SerialOutDef<Serial>
-    >
+    text
   >
 >;
 
@@ -53,7 +52,9 @@ void setup() {
   //disabling some options
   mainMenu.template enable<1>(false);
   mainMenu.template enable<5>(false);
-  mainMenu.printMenu();
+  Out::raw(F("raw printer test!"));
+  Out::nl();
+  mainMenu.template printMenu<Out>();
 }
 
 //handle serial keys to navigate menu
@@ -72,6 +73,6 @@ bool keys(int key) {
 
 void loop() {
   if (Serial.available()) {
-    if (keys(Serial.read())) mainMenu.printMenu();
+    if (keys(Serial.read())) mainMenu.template printMenu<Out>();
   }
 }
