@@ -40,7 +40,6 @@ using MainMenu=StaticFlashTextDef<decltype(&menu_title),&menu_title,
   >
 >;
 
-// MainMenu mainMenu;
 using Nav=NavDef<Out,MainMenu>;
 Nav::Root<Nav::PosDef<>> nav;
 

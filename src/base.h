@@ -1,6 +1,12 @@
 /* -*- C++ -*- */
 #pragma once
 
+#ifndef ARDUINO
+  #include <cstddef>
+  #include <iostream>
+  using namespace std;
+#endif
+
 namespace AM5 {
 
   using ConstText=const char[];

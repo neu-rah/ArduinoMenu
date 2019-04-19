@@ -3,7 +3,6 @@
 
 #include "../base.h"
 
-
 namespace AM5 {
   static PROGMEM ConstText this_system_flash_type="";
 
@@ -18,6 +17,6 @@ namespace AM5 {
       );
     }
   };
-  
+
   using FlashText=decltype(this_system_flash_type)*;
 };
