@@ -13,6 +13,7 @@
 // };
 
 #ifdef ARDUINO
+  // #include "IO/lcdOut.h"
   #include "IO/serialOut.h"
   #include "comp/flashText.h"
 #else
@@ -21,6 +22,7 @@
 
 #include "printers.h"
 #include "nav.h"
+// #include "out.h"
 #include "fmt/text.h"
 #include "comp/endis.h"
 #include "comp/staticText.h"
@@ -74,11 +76,12 @@ namespace AM5 {
     template<typename H,size_t n>
     inline void printItem(H& oph) {
       // Serial<<"print item "<<n<<endl;
-      PrintHead<typename H::Printer,typename H::Target,n> ph{oph.item};
+      using PH=PrintHead<typename H::NavRoot,typename H::Printer,typename H::Target,n>;
+      PH ph{oph.item,oph.nav};
       ph.template fmtItem<H,true>();
       ph.template fmtIndex<H,true>();
       ph.template fmtCursor<H,true>();
-      O::template out<PrintHead<typename H::Printer,typename H::Target,n>>();
+      O::template out<PH>();
       ph.template fmtCursor<H,false>();
       ph.template fmtIndex<H,false>();
       ph.template fmtItem<H,false>();
@@ -95,13 +98,13 @@ namespace AM5 {
     }
   };
 
-  template<typename O>
-  struct Cap:public O {
-    using This=Cap<O>;
-    template<typename Out>
-    inline void printMenu() {O::template printMenu<Out>();}
-    template<typename Out>
-    static inline void out() {O::template out<Out>();}
-  };
+  // template<typename O>
+  // struct Cap:public O {
+  //   using This=Cap<O>;
+  //   template<typename Out>
+  //   inline void printMenu() {O::template printMenu<Out>();}
+  //   template<typename Out>
+  //   static inline void out() {O::template out<Out>();}
+  // };
 
 };

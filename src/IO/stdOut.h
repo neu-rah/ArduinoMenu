@@ -4,7 +4,7 @@
 #include "../base.h"
 
 namespace AM5 {
-  template<ostream& out,typename O=Empty>
+  template<ostream& out,typename O=Void>
   struct StdOutDef:public O {
     template<typename T>
     static inline void raw(T o) {out<<o;};
