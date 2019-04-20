@@ -6,15 +6,32 @@
 namespace AM5 {
   ////////////////////////////////////////////////////////////
   template<typename O=Nil>
-  struct Drift {};
+  struct Drift {
+    //navigation API ------------------------
+    constexpr static inline size_t size() {return 0;}
+    // constexpr static inline size_t pos() {return 0;}
+    template<typename> constexpr static inline bool _up() {return false;}
+    template<typename> constexpr static inline bool _down() {return false;}
+    template<typename> constexpr static inline bool _left() {return down();}
+    template<typename> constexpr static inline bool _right() {return up();}
+    template<typename> constexpr static inline bool _enter() {return false;}
+    template<typename> constexpr static inline bool _esc() {return false;}
+  };
 
-  template<typename Menu, typename Out,typename O=Drift<>>
+  template<typename Menu, typename Out,typename O>
   class Nav:public O {
     public:
       using This=Nav<Menu,Out,O>;
       // using NavBase=O;
-      static inline Menu& getMenu() {return menu;}
-      static inline Out& getRaw() {return rawOut;}
+      //navigation API ------------------------
+      static inline bool up() {return nav.template _up<This>();}
+      static inline bool down() {return nav.template _down<This>();}
+      static inline bool left() {return nav.template _left<This>();}
+      static inline bool right() {return nav.template _right<This>();}
+      static inline bool enter() {return nav.template _enter<This>();}
+      static inline bool esc() {return nav.template _esc<This>();}
+      // static inline Menu& getMenu() {return menu;}
+      // static inline Out& getRaw() {return rawOut;}
       template<size_t idx>
       static inline bool selected() {return nav.pos()==idx;}
       template<size_t idx>
@@ -59,10 +76,12 @@ namespace AM5 {
         fmtMenuBody<Menu,false>();
         fmtMenu<Menu,false>();
       }
+      // items ---------------------------
+      constexpr static inline size_t size() {return menu.size();}
     protected:
       static Menu menu;
       static Out rawOut;
-      static This nav;
+      static Nav<Menu,Out,O> nav;
   };
 
   template<typename O=Drift<>>
@@ -70,13 +89,15 @@ namespace AM5 {
     public:
       template<size_t idx>
       inline bool selected() const {return at==idx;}
-      inline bool up() {
+      template<typename Nav>
+      inline bool _up() {
         if (at<O::size()-1) {at++;return true;}
-        return O::up();
+        return O::template _up<Nav>();
       }
-      inline bool down() {
+      template<typename Nav>
+      inline bool _down() {
         if (at>0) {at--;return true;}
-        return O::down();
+        return O::template _down<Nav>();
       }
       inline size_t pos() const {return at;}
     protected:
@@ -84,3 +105,11 @@ namespace AM5 {
   };
 
 };
+
+// auto nl=out.endl;
+
+template<typename Menu, typename Out,typename O,typename T>
+AM5::Nav<Menu,Out,O>& operator<<(AM5::Nav<Menu,Out,O>& o,T x) {
+  o.raw(x);
+  return o;
+}

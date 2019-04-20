@@ -1,8 +1,6 @@
 // #include "nav.h"
 using namespace AM5;
 
-#include <Arduino.h>
-
 template<typename Menu, typename Out,typename O>
 Menu Nav<Menu,Out,O>::menu;
 
