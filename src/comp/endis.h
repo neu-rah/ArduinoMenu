@@ -5,7 +5,7 @@
 
 namespace AM5 {
   template<typename O>
-  class EnDisDef:public O {
+  class EnDis:public O {
     public:
       inline bool enabled() const {return en;}
       inline void enable(bool b) {en=b;}

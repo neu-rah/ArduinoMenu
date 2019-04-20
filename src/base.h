@@ -1,45 +1,24 @@
 /* -*- C++ -*- */
 #pragma once
 
-#ifndef ARDUINO
-  #include <cstddef>
-  #include <iostream>
-  using namespace std;
-#endif
-
 namespace AM5 {
+  using idx_t=int;
+  struct Nil {};
+  // enum class Roles {Root,Panel,Menu,Title,Item,Index,Cursor,Label,Value,Unit};
+  //
+  // template<Roles role>
+  // struct Role {};
+  //
+  // using asItem=Role<Roles::Item>;
 
-  using ConstText=const char[];
-  using idx_t = int;//size_t sucks for scrolling
+  // template<typename N,typename O,typename I>
+  // struct PrintHead {
+  //   using Nav=N;
+  //   using Printer=O;//this might be different from Nav::rawOut
+  //   using Item=I;//the current Item type
+  //   Nav& nav;
+  //   Printer& printer;
+  //   Item& item;
+  // };
 
-  //base for printers, panels and viewports
-  struct Void {
-    template<typename T>
-    static inline void raw(T) {};
-    constexpr static inline bool isRange() {return false;}
-    constexpr static inline idx_t orgX() {return 0;}
-    constexpr static inline idx_t orgY() {return 0;}
-    constexpr static inline idx_t width() {return 80;}
-    template<typename I>
-    constexpr static inline idx_t height() {return I::size();}//TODO: this need access to item head again
-    constexpr static inline size_t top() {return 0;}
-    static inline void setTop(size_t) {}
-    template<typename H,bool io> inline void fmtItem(H& p) {}
-    template<typename H,bool io> inline void fmtMenu(H& p) {}
-    template<typename H,bool io> inline void fmtMenuBody(H& p) {}
-    template<typename H,bool io> inline void fmtTitle(H& p) {}
-    template<typename H,bool io> inline void fmtIndex(H& p) {}
-    template<typename H,bool io> inline void fmtCursor(H& p) {}
-  };
-
-  //base for menu items
-  struct Empty {
-    template<typename H>
-    static inline void out() {}
-    // template<typename H>
-    // static inline void out(size_t) {}
-    constexpr static inline size_t size() {return 0;}
-    static inline void enable(bool) {}
-    constexpr static inline bool enabled() {return true;}
-  };
 };
