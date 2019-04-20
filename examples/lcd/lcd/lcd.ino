@@ -2,6 +2,8 @@
 #include <menu/fmt/text.h>
 using namespace AM5;
 
+//not working yet!!!
+
 // LCD /////////////////////////////////////////
 #define RS 2
 #define RW 4

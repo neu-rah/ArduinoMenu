@@ -62,9 +62,10 @@ namespace AM5 {
       // printer -----------------------------------------
       static inline void printMenu() {
         if (rawOut.isRange()) {
+          //ensure that selection option is withing range
           while(rawOut.top()>nav.pos())
             rawOut.setTop(rawOut.top()-1);
-          while(nav.pos()>rawOut.top()+rawOut.height())
+          while(nav.pos()>=rawOut.top()+rawOut.height())
             rawOut.setTop(rawOut.top()+1);
         }
         fmtMenu<Menu,true>();
@@ -91,7 +92,7 @@ namespace AM5 {
       inline bool selected() const {return at==idx;}
       template<typename Nav>
       inline bool _up() {
-        if (at<O::size()-1) {at++;return true;}
+        if (at<Nav::size()-1) {at++;return true;}
         return O::template _up<Nav>();
       }
       template<typename Nav>
