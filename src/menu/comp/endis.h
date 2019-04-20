@@ -1,7 +1,7 @@
 /* -*- C++ -*- */
 #pragma once
 
-#include "base.h"
+#include "../base.h"
 
 namespace AM5 {
   template<typename O>

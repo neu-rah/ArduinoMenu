@@ -2,6 +2,7 @@
 using namespace std;
 
 #include <menu.h>
+#include <menu/fmt/text.h>
 using namespace AM5;
 
 ////////////////////////////////////////////////////
@@ -33,7 +34,7 @@ template<const char** text>
 using Op=EnDis<StaticText<text>>;
 
 const char* op1_text="Op 1";
-const char* op2_text="Op 2";
+const char* op2_text="...";
 const char* op3_text="Op 3";
 const char* menu_title="Main menu";
 
@@ -41,6 +42,9 @@ const char* menu_title="Main menu";
 using Menu=StaticText<&menu_title,
   StaticMenu<
     Op<&op1_text>,
+    Op<&op2_text>,
+    Op<&op2_text>,
+    Op<&op2_text>,
     Op<&op2_text>,
     Op<&op2_text>,
     Op<&op2_text>,

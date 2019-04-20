@@ -1,10 +1,10 @@
 /* -*- C++ -*- */
 #pragma once
 
-#include "base.h"
-#include "nav.h"
-#include "out.h"
-#include "comp/endis.h"
+#include "menu/base.h"
+#include "menu/nav.h"
+#include "menu/out.h"
+#include "menu/comp/endis.h"
 
 namespace AM5 {
 
@@ -90,4 +90,4 @@ namespace AM5 {
   };
 };//AM5 namespace
 
-#include "nav.hpp"
+#include "menu/nav.hpp"
