@@ -3,6 +3,7 @@
 
 namespace AM5 {
   using idx_t=int;
+  using ConstText=const char[];
   struct Nil {};
   // enum class Roles {Root,Panel,Menu,Title,Item,Index,Cursor,Label,Value,Unit};
   //

@@ -1,0 +1,45 @@
+#include <menu.h>
+#include <menu/fmt/text.h>
+#include <menu/comp/flashText.h>
+#include <menu/IO/serialOut.h>
+using namespace AM5;
+
+using Out=RangePanel<
+  StaticPanel<0,0,10,4,Void<>>
+>;
+
+//string data on flash
+PROGMEM ConstText op1_text="Op 1";
+PROGMEM ConstText op2_text="Op ...";
+PROGMEM ConstText op3_text="Op 3";
+PROGMEM ConstText menu_title="Main menu";
+
+template<typename T,T* text>
+using Op=EnDis<FlashText<T,text>>;
+
+using Menu=FlashText<decltype(menu_title),&menu_title,
+  StaticMenu<
+    Op<decltype(op1_text),&op1_text>,
+    Op<decltype(op2_text),&op2_text>,
+    Op<decltype(op2_text),&op2_text>,
+    Op<decltype(op2_text),&op2_text>,
+    Op<decltype(op2_text),&op2_text>,
+    Op<decltype(op2_text),&op2_text>,
+    Op<decltype(op2_text),&op2_text>,
+    Op<decltype(op2_text),&op2_text>,
+    Op<decltype(op2_text),&op2_text>,
+    Op<decltype(op2_text),&op2_text>,
+    Op<decltype(op3_text),&op3_text>
+  >
+>;
+
+using NavRoot=Nav<Menu, Out, PosDef<>>;
+NavRoot nav;
+
+void setup() {
+  Serial.begin(115200);
+  while(!Serial);
+  nav.raw("Ok!");
+
+}
+void loop() {}

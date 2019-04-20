@@ -14,15 +14,7 @@ namespace AM5 {
     template<typename,typename,bool,size_t> static inline void fmtItem() {}
     template<typename,typename,bool,size_t> static inline void fmtIndex() {}
     template<typename,typename,bool,size_t> static inline void fmtCursor() {}
-  };
-
-  template<ostream& device=std::cout,typename O=Void<>>
-  struct StdOut:public O {
-    using This=StdOut<device,O>;
-    template<typename T>
-    static inline void raw(T o) {device<<o;}
-    static inline void nl() {device<<std::endl;}
-    static inline StdOut& endl(StdOut& o) {nl();return o;}
+    template<typename T> static inline void raw(T) {}
   };
 
   //static panel ------------------------------------------------

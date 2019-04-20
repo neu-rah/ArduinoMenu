@@ -12,6 +12,7 @@ namespace AM5 {
   class Nav:public O {
     public:
       using This=Nav<Menu,Out,O>;
+      // using NavBase=O;
       static inline Menu& getMenu() {return menu;}
       static inline Out& getRaw() {return rawOut;}
       template<size_t idx>

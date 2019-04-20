@@ -2,6 +2,7 @@
 using namespace std;
 
 #include <menu.h>
+#include <menu/IO/stdOut.h>
 #include <menu/fmt/text.h>
 using namespace AM5;
 
