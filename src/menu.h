@@ -23,8 +23,8 @@ namespace AM5 {
   };
 
   /////////////////////////////////////////////////////////////
-  // unlimited size "tupple" (limited by counter size_t)
-  // because of its tupple nature we can not map function over it
+  // unlimited size "tuple" (limited by counter size_t)
+  // because of its tuple nature we can not map function over it
   template<typename O,typename... OO>
   class  StaticMenu:public StaticMenu<O> {
     public:
@@ -40,10 +40,11 @@ namespace AM5 {
       inline void enable(bool o) {
         return n?next.template enable<n-1>(o):O::enable(o);
       }
-      template<typename Head,size_t idx=0>
+      template<typename Nav,typename Head,size_t idx=0>
       inline void printItems() {
-        This::template printItem<Head,idx>();
-        next.template printItems<Head,idx+1>();
+        if (idx>=Nav::top()+Nav::height()) return;
+        if (idx>=Nav::top()) This::template printItem<Nav,Head,idx>();
+        next.template printItems<Nav,Head,idx+1>();
       }
       // template<typename Head,size_t n>
       // inline void printItem() {
@@ -71,20 +72,22 @@ namespace AM5 {
     inline void enable(bool o) {
       if(!n) O::enable(o);
     }
-    template<typename Head,size_t idx=0>
-    inline void printItems() {printItem<Head,idx>();}
-    template<typename Head,size_t idx>
+    template<typename Nav,typename Head,size_t idx=0>
+    inline void printItems() {
+      if (!idx) printItem<Nav,Head,idx>();
+    }
+    template<typename Nav,typename Head,size_t idx>
     inline void printItem() {
       // cout<<"print item "<<n<<endl;
       // if (!n) {
         // Head::rawOut.template fmtItem<Head,true>();
-        Head::template fmtItem<O,true,idx>();
-        Head::template fmtIndex<O,true,idx>();
-        Head::template fmtCursor<O,true,idx>();
-        O::template out<Head>();
-        Head::template fmtIndex<O,false,idx>();
-        Head::template fmtCursor<O,false,idx>();
-        Head::template fmtItem<O,false,idx>();
+        Nav::template fmtItem<O,true,idx>();
+        Nav::template fmtIndex<O,true,idx>();
+        Nav::template fmtCursor<O,true,idx>();
+        O::template out<Nav>();
+        Nav::template fmtIndex<O,false,idx>();
+        Nav::template fmtCursor<O,false,idx>();
+        Nav::template fmtItem<O,false,idx>();
       // }
     }
   };

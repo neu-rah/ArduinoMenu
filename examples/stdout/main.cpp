@@ -35,7 +35,7 @@ using Op=EnDis<StaticText<text>>;
 
 const char* op1_text="Op 1";
 const char* op2_text="...";
-const char* op3_text="Op 3";
+const char* op3_text="Op n";
 const char* menu_title="Main menu";
 
 //menu with title
@@ -61,8 +61,9 @@ NavRoot nav;
 int main(int,const char**) {
   out<<"AM5 std::ostream output"<<nl;
   nav.enable<2>(false);
-  nav.out(nav.getMenu());
-  out<<nl;
-  nav.getMenu().template printItems<NavRoot>();
+  // nav.out(nav.getMenu());
+  // out<<nl;
+  // nav.getMenu().template printItems<NavRoot>();
+  nav.printMenu();
   return 0;
 }

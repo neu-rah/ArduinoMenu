@@ -26,13 +26,38 @@ namespace AM5 {
       template<typename I>
       static inline void out(I& i) {i.template out<This>();}
       static inline void nl() {rawOut.nl();}
+      static inline size_t top() {return rawOut.top();}
+      static inline size_t height() {return rawOut.height();}
       // formats ---------------------------
+      template<typename I,bool io,size_t idx=0>
+      static inline void fmtMenu() {rawOut.template fmtMenu<This,I,io,idx>();}
+      template<typename I,bool io,size_t idx=0>
+      static inline void fmtMenuBody() {rawOut.template fmtMenuBody<This,I,io,idx>();}
+      template<typename I,bool io,size_t idx=0>
+      static inline void fmtTitle() {rawOut.template fmtTitle<This,I,io,idx>();}
       template<typename I,bool io,size_t idx>
       static inline void fmtItem() {rawOut.template fmtItem<This,I,io,idx>();}
       template<typename I,bool io,size_t idx>
       static inline void fmtIndex() {rawOut.template fmtIndex<This,I,io,idx>();}
       template<typename I,bool io,size_t idx>
       static inline void fmtCursor() {rawOut.template fmtCursor<This,I,io,idx>();}
+      // printer -----------------------------------------
+      static inline void printMenu() {
+        if (rawOut.isRange()) {
+          while(rawOut.top()>nav.pos())
+            rawOut.setTop(rawOut.top()-1);
+          while(nav.pos()>rawOut.top()+rawOut.height())
+            rawOut.setTop(rawOut.top()+1);
+        }
+        fmtMenu<Menu,true>();
+        fmtTitle<Menu,true>();
+        out(menu);
+        fmtTitle<Menu,false>();
+        fmtMenuBody<Menu,true>();
+        menu.template printItems<This,Menu>();
+        fmtMenuBody<Menu,false>();
+        fmtMenu<Menu,false>();
+      }
     protected:
       static Menu menu;
       static Out rawOut;

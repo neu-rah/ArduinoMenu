@@ -7,6 +7,10 @@ namespace AM5 {
   // output
   template<typename O=Nil>
   struct Void:public O {
+    constexpr static inline bool isRange() {return false;}
+    template<typename,typename,bool,size_t> static inline void fmtMenu() {}
+    template<typename,typename,bool,size_t> static inline void fmtMenuBody() {}
+    template<typename,typename,bool,size_t> static inline void fmtTitle() {}
     template<typename,typename,bool,size_t> static inline void fmtItem() {}
     template<typename,typename,bool,size_t> static inline void fmtIndex() {}
     template<typename,typename,bool,size_t> static inline void fmtCursor() {}
@@ -44,39 +48,6 @@ namespace AM5 {
       inline void setTop(size_t n) {topLine=n;}
     protected:
       size_t topLine=0;
-  };
-
-  // the advantage of using sub-part item is that
-  // the user can either ommit (same as ommit the formats)
-  // or reorder them, not using sub-printers yet...
-  // so we call the fmt functions directly here
-  // TODO: instead of having multiple printers
-  // make this one depend on panel size
-  template<typename O>
-  struct FullPrinterDef:public O {
-    template<typename Head>
-    inline void printMenu() {
-      // using Out=typename Nav::NavOut;
-      // using Target=typename Nav::NavTarget;
-      cout<<"full menu printer"<<endl;
-      // using This=FullPrinterDef<O>;
-      // if (nav.isRange()) {
-      //   while(nav.top()>nav.pos())
-      //     nav.setTop(nav.top()-1);
-      //   while(nav.pos()>=nav.top()+nav.height())
-      //     nav.setTop(nav.top()+1);
-      // }
-      // using ThisPH=PrintHead<Nav,Out,FullPrinterDef<O>,0>;
-      // ThisPH ph{*this,nav,nav.getOut()};
-      // Out::template fmtMenu<ThisPH,true>(ph);
-      // Out::template fmtMenuBody<ThisPH,true>(ph);
-      // Out::template fmtTitle<ThisPH,true>(ph);
-      // Target::template out<ThisPH>(ph);
-      // Out::template fmtTitle<ThisPH,false>(ph);
-      // nav.template printItems<ThisPH,0>(ph);
-      // Out::template fmtMenuBody<ThisPH,false>(ph);
-      // Out::template fmtMenu<ThisPH,false>(ph);
-    }
   };
 
 };
