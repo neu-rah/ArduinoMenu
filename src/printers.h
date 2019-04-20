@@ -17,6 +17,7 @@ namespace AM5 {
     using This=PrintHead<Nav,Printer,Target,p>;
     Target& item;
     Nav& nav;
+    Out& menuOut;
     constexpr static inline size_t pos() {return p;}
     inline bool selected() const {return nav.selected(p);}
     inline bool enabled() const {return nav.template enabled<p>();}
@@ -53,6 +54,41 @@ namespace AM5 {
       size_t topLine=0;
   };
 
+  //track space usage
+  template<typename O>
+  class Viewport:public O {
+    public:
+      // using O::O;
+      inline Viewport() {newView();}
+      inline Viewport(const Viewport<O>& o) {fx=o.width();fy=o.height();}
+      inline operator bool() const {return fx&&fy;}
+      inline operator int() const {return free();}
+      inline void newView() {
+        fx=O::width();fy=O::height();}
+      //TODO: need font size and char measure API
+      inline void endl() {useY(1);}
+      //device coordinates ---------
+      inline idx_t posX() const {return (O::width()-fx)+O::orgX();}
+      inline idx_t posY() const {return (O::height()-fy)+O::orgY();}
+      // get free space ----
+      inline idx_t freeX() const {return fx;}
+      inline idx_t freeY() const {return fy;}
+      inline idx_t free() const {return fx+O::width()*fy;}
+      // use space ----
+      inline void useX(idx_t ux=1) {if (fx) fx-=ux; else useY();}
+      inline void useY(idx_t uy=1) {
+        if (!fy) {
+          fx=0;
+          fy=0;
+        } else {
+          fy-=uy;
+          fx=O::width();
+        }
+      }
+    protected:
+      idx_t fx,fy;
+  };
+
   // the advantage of using sub-part item is that
   // the user can either ommit (same as ommit the formats)
   // or reorder them, not using sub-printers yet...
@@ -74,11 +110,11 @@ namespace AM5 {
           nav.setTop(nav.top()+1);
       }
       using ThisPH=PrintHead<Nav,Out,FullPrinterDef<O>,0>;
-      ThisPH ph{*this,nav};
+      ThisPH ph{*this,nav,nav.getOut()};
       Out::template fmtMenu<ThisPH,true>(ph);
       Out::template fmtMenuBody<ThisPH,true>(ph);
       Out::template fmtTitle<ThisPH,true>(ph);
-      Target::template out<ThisPH>();
+      Target::template out<ThisPH>(ph);
       Out::template fmtTitle<ThisPH,false>(ph);
       nav.template printItems<ThisPH,0>(ph);
       Out::template fmtMenuBody<ThisPH,false>(ph);

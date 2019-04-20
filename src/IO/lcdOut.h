@@ -16,14 +16,16 @@ namespace AM5 {
     // using Parts=P;
     // using O::O;
     // static inline void endl() {O::useY();}//the viewport will catch it
-    template<typename T>
+    template<typename Nav,Nav& nav>
+    static inline void nl() {nav.useY();}
+    template<typename Nav,typename T,Nav& nav>
     inline void raw(T i) {
       // Serial<<"LCDOutDef::raw("<<i<<")"<<endl;
       // if (!O::operator bool()) return;//TODO: this is naive, we need to measure
       // if (O::posY()+scrlPosY()>O::height()) return;
-      dev.setCursor(O::posX(),O::posY());//TODO separate navigation function
+      dev.setCursor(nav.posX(),nav.posY());//TODO separate navigation function
       // Serial<<"lcd.setCursor("<<posX()<<","<<posY()<<") "<<i<<endl;
-      O::useX(dev.print(i));
+      nav.useX(dev.print(i));
     }
     // template<typename H>
     // inline void clear(PrintHead<H>) {dev.clear();}
@@ -40,7 +42,7 @@ namespace AM5 {
     // }
   };
 
-  template<LiquidCrystal& lcd,typename O=Empty>
+  template<LiquidCrystal& lcd,typename O=Void>
   using LCDOut=LCDOutDef<LiquidCrystal,lcd,O>;
 
 };//AM5

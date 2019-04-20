@@ -16,6 +16,7 @@
   // #include "IO/lcdOut.h"
   #include "IO/serialOut.h"
   #include "comp/flashText.h"
+  #include "IO/lcdOut.h"
 #else
   #include "IO/stdOut.h"
 #endif
@@ -77,11 +78,11 @@ namespace AM5 {
     inline void printItem(H& oph) {
       // Serial<<"print item "<<n<<endl;
       using PH=PrintHead<typename H::NavRoot,typename H::Printer,typename H::Target,n>;
-      PH ph{oph.item,oph.nav};
+      PH ph{oph.item,oph.nav,oph.nav.getOut()};
       ph.template fmtItem<H,true>();
       ph.template fmtIndex<H,true>();
       ph.template fmtCursor<H,true>();
-      O::template out<PH>();
+      O::template out<PH>(ph);
       ph.template fmtCursor<H,false>();
       ph.template fmtIndex<H,false>();
       ph.template fmtItem<H,false>();

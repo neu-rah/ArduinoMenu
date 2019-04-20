@@ -18,8 +18,11 @@ namespace AM5 {
         constexpr static inline bool right() {return up();}
         constexpr static inline bool enter() {return false;}
         constexpr static inline bool esc() {return false;}
-        // Othe APIs redirection --------------------------------
-        inline size_t size() const {return target.size();}
+        // Output API redirection --------------------------------
+        template<typename N,typename T,N& n>
+        inline void raw(T o) {menuOut.template raw<N,T,n>(o);};
+        template<typename N,N& n>
+        inline void nl() {menuOut.template nl<N,n>();};
         template<size_t i>
         inline void enable(bool b=true) {target.template enable<i>(b);}
         template<size_t i>
@@ -28,9 +31,18 @@ namespace AM5 {
         inline size_t top() const {return menuOut.top();}
         inline void setTop(size_t o) {menuOut.setTop(o);}
         inline idx_t height() const {return menuOut.height();}
-        // menu structure API
+        //output panels and viewports (part of output API)
+        inline idx_t posX() const {return menuOut.posX();}
+        inline idx_t posY() const {return menuOut.posY();}
+        inline void useX(idx_t ux=1) const {menuOut.useX(ux);}
+        inline void useY(idx_t uy=1) {menuOut.useY(uy);}
+        // menu structure API redirection
+        inline size_t size() const {return target.size();}
         template<typename H,size_t n>
         inline void printItems(H& ph) {target.template printItems<H,n>(ph);}
+        //aux functions
+        inline Target& getTarget() {return target;}
+        inline Out& getOut() {return menuOut;}
       protected:
         Out menuOut;
         Target target;

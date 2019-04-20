@@ -14,6 +14,8 @@ namespace AM5 {
 
   //base for printers, panels and viewports
   struct Void {
+    template<typename T>
+    static inline void raw(T) {};
     constexpr static inline bool isRange() {return false;}
     constexpr static inline idx_t orgX() {return 0;}
     constexpr static inline idx_t orgY() {return 0;}
@@ -34,8 +36,8 @@ namespace AM5 {
   struct Empty {
     template<typename H>
     static inline void out() {}
-    template<typename H>
-    static inline void out(size_t) {}
+    // template<typename H>
+    // static inline void out(size_t) {}
     constexpr static inline size_t size() {return 0;}
     static inline void enable(bool) {}
     constexpr static inline bool enabled() {return true;}
