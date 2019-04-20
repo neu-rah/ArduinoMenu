@@ -12,8 +12,8 @@ namespace AM5 {
     // constexpr static inline size_t pos() {return 0;}
     template<typename> constexpr static inline bool _up() {return false;}
     template<typename> constexpr static inline bool _down() {return false;}
-    template<typename> constexpr static inline bool _left() {return down();}
-    template<typename> constexpr static inline bool _right() {return up();}
+    template<typename N> constexpr static inline bool _left() {return N::down();}
+    template<typename N> constexpr static inline bool _right() {return N::up();}
     template<typename> constexpr static inline bool _enter() {return false;}
     template<typename> constexpr static inline bool _esc() {return false;}
   };
