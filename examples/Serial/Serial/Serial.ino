@@ -41,7 +41,7 @@ NavRoot nav;
 void setup() {
   Serial.begin(115200);
   while(!Serial);
-  nav<<"AM5 example"<<out.endl;
+  nav<<"AM5 example"<<nav.endl;
   nav.enable<1>(false);
   nav.enable<5>(false);
   nav.printMenu();

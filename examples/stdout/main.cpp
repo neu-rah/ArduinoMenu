@@ -19,18 +19,6 @@ using Out=TextFmt<//text format
 >;
 Out out;//defning an instance for convenience.. but not needed, just for testing
 
-template<typename T>
-inline StdOut<>& operator<<(StdOut<>& o,T x) {
-  o.raw(x);
-  return o;
-}
-
-inline StdOut<>& operator<<(StdOut<>& o,StdOut<>&(*f)(StdOut<>&)) {
-  return (*f)(o);
-}
-
-auto nl=out.endl;
-
 template<const char** text>
 using Op=EnDis<StaticText<text>>;
 
@@ -60,7 +48,7 @@ using NavRoot=Nav<Menu, Out, PosDef<>>;
 NavRoot nav;
 
 int main(int,const char**) {
-  out<<"AM5 std::ostream output"<<nl;
+  nav<<"AM5 std::ostream output"<<nav.endl;
   nav.enable<2>(false);
   // nav.out(nav.getMenu());
   // out<<nl;

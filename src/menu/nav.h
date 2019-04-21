@@ -40,6 +40,8 @@ namespace AM5 {
       template<size_t idx>
       static inline void enable(bool o=true) {menu.template enable<idx>(o);}
       //output proxy -----------------------------
+      constexpr static inline bool isRange() {return rawOut.isRange();}
+      constexpr static inline bool isViewport() {return rawOut.isViewport();}
       template<typename T>
       static inline void raw(T o) {rawOut.template raw<This>(o);}
       static inline void raw(This&(*f)(This&)) {(*f)(nav);}
@@ -129,3 +131,9 @@ AM5::Nav<Menu,Out,O>& operator<<(AM5::Nav<Menu,Out,O>& o,T x) {
   o.raw(x);
   return o;
 }
+
+// template<typename Menu, typename Out,typename O,O&(*)(O&)>
+// AM5::Nav<Menu,Out,O>& operator<<<Menu,Out,O,O&(*)(O&)>(AM5::Nav<Menu,Out,O>& o,O&(*)(O&)) {
+//   // o.raw(x);
+//   return o;
+// }
