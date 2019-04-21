@@ -12,7 +12,6 @@ namespace AM5 {
     using This=LCDOut<device,O>;
     template<typename Nav,typename T>
     static inline void raw(T o) {
-      Serial<<"lcd.setCursor("<<Nav::posX()<<","<<Nav::posY()<<") "<<o<<endl;
       device.setCursor(Nav::posX(),Nav::posY());
       Nav::useX(device.print(o));
     }

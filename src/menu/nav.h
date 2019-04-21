@@ -10,6 +10,7 @@ namespace AM5 {
     //navigation API ------------------------
     constexpr static inline size_t size() {return 0;}
     // constexpr static inline size_t pos() {return 0;}
+    template<size_t idx> constexpr static inline bool selected() {return false;}
     template<typename> constexpr static inline bool _up() {return false;}
     template<typename> constexpr static inline bool _down() {return false;}
     template<typename N> constexpr static inline bool _left() {return N::down();}
@@ -33,7 +34,7 @@ namespace AM5 {
       // static inline Menu& getMenu() {return menu;}
       // static inline Out& getRaw() {return rawOut;}
       template<size_t idx>
-      static inline bool selected() {return nav.pos()==idx;}
+      static inline bool selected() {return O::template selected<idx>();}
       template<size_t idx>
       static inline bool enabled() {return menu.template enabled<idx>();}
       template<size_t idx>
@@ -76,18 +77,18 @@ namespace AM5 {
       // printer -----------------------------------------
       static inline void printMenu() {
         rawOut.newView();
-        if (rawOut.isRange()) {
-          //ensure that selection option is withing range
-          while(rawOut.top()>nav.pos())
-            rawOut.setTop(rawOut.top()-1);
-          while(nav.pos()>=rawOut.top()+nav.freeY())
-            rawOut.setTop(rawOut.top()+1);
-        }
         fmtMenu<Menu,true>();
         fmtTitle<Menu,true>();
         out(menu);
         fmtTitle<Menu,false>();
         fmtMenuBody<Menu,true>();
+        if (rawOut.isRange()) {
+          //ensure that selection option is withing range
+          while(rawOut.top()+posY()>nav.pos())
+            rawOut.setTop(rawOut.top()-1);
+          while(nav.pos()>=rawOut.top()+nav.freeY())
+            rawOut.setTop(rawOut.top()+1);
+        }
         menu.template printItems<This,Menu>();
         fmtMenuBody<Menu,false>();
         fmtMenu<Menu,false>();
@@ -104,22 +105,21 @@ namespace AM5 {
   class PosDef:public O {
     public:
       template<size_t idx>
-      inline bool selected() const {return at==idx;}
+      static inline bool selected() {return at==idx;}
       template<typename Nav>
-      inline bool _up() {
+      static inline bool _up() {
         if (at<Nav::size()-1) {at++;return true;}
         return O::template _up<Nav>();
       }
       template<typename Nav>
-      inline bool _down() {
+      static inline bool _down() {
         if (at>0) {at--;return true;}
         return O::template _down<Nav>();
       }
-      inline size_t pos() const {return at;}
+      static inline size_t pos() {return at;}
     protected:
-      size_t at=0;
+      static size_t at;
   };
-
 };
 
 // auto nl=out.endl;

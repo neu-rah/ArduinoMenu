@@ -41,7 +41,6 @@ namespace AM5 {
       }
       template<typename Nav,typename Head,size_t idx=0>
       inline void printItems() {
-        // Serial<<"print items... "<<idx<<endl;
         if (idx>=Nav::top()+Nav::freeY()) return;
         if (idx>=Nav::top()) This::template printItem<Nav,Head,idx>();
         // StaticMenu<O>::template printItems<Nav,Head,idx>();
@@ -67,7 +66,7 @@ namespace AM5 {
     }
     template<typename Nav,typename Head,size_t idx>
     inline void printItems() {
-      if (idx>=Nav::top()+Nav::height()) return;
+      if (idx>=Nav::top()+Nav::freeY()) return;
       printItem<Nav,Head,idx>();
     }
     template<typename Nav,typename Head,size_t idx>

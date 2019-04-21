@@ -48,12 +48,11 @@ namespace AM5 {
   class Viewport:public O {
     public:
       // using O::O;
-      inline Viewport() {newView();}
+      inline Viewport() {/*newView();*/}
       inline Viewport(const Viewport<O>& o) {fx=o.width();fy=o.height();}
       inline operator bool() const {return fx&&fy;}
       inline operator int() const {return free();}
-      inline void newView() {
-        fx=O::width();fy=O::height();}
+      inline void newView() {fx=O::width();fy=O::height();}
       //TODO: need font size and char measure API
       inline void nl() {useY(1);}
       //device coordinates ---------
@@ -61,12 +60,16 @@ namespace AM5 {
       inline idx_t posY() const {return (O::height()-fy)+O::orgY();}
       // get free space ----
       inline idx_t freeX() const {return fx;}
-      inline idx_t freeY() const {return fy;}
-      inline size_t height() const {return freeY();}
+      inline idx_t freeY() const {
+        // Serial<<"Viewport::freeY "<<fy<<endl;
+        return fy;}
+      inline size_t height() const {
+        return freeY();}
       inline idx_t free() const {return fx+O::width()*fy;}
       // use space ----
       inline void useX(idx_t ux=1) {if (fx) fx-=ux; else useY();}
       inline void useY(idx_t uy=1) {
+        // Serial<<"Viewport::useY("<<uy<<")"<<endl;
         if (!fy) {
           fx=0;
           fy=0;
