@@ -38,14 +38,28 @@ namespace AM5 {
       static inline bool enabled() {return menu.template enabled<idx>();}
       template<size_t idx>
       static inline void enable(bool o=true) {menu.template enable<idx>(o);}
-      //output proxy
+      //output proxy -----------------------------
       template<typename T>
-      static inline void raw(T o) {rawOut.raw(o);}
+      static inline void raw(T o) {rawOut.template raw<This>(o);}
+      static inline void raw(This&(*f)(This&)) {(*f)(nav);}
+      static inline This& endl(This& o) {nl();return o;}
       template<typename I>
       static inline void out(I& i) {i.template out<This>();}
       static inline void nl() {rawOut.nl();}
       static inline size_t top() {return rawOut.top();}
       static inline size_t height() {return rawOut.height();}
+      //viewports
+      static inline void newView() {rawOut.newView();}
+      //device coordinates ---------
+      static inline idx_t posX() {return rawOut.posX();}
+      static inline idx_t posY() {return rawOut.posY();}
+      // get free space ----
+      static inline idx_t freeX() {return rawOut.freeX();}
+      static inline idx_t freeY() {return rawOut.freeY();}
+      static inline idx_t free() {return rawOut.free();}
+      // use space ----
+      static inline void useX(idx_t ux=1) {rawOut.useX(ux);}
+      static inline void useY(idx_t uy=1) {rawOut.useY(uy);}
       // formats ---------------------------
       template<typename I,bool io,size_t idx=0>
       static inline void fmtMenu() {rawOut.template fmtMenu<This,I,io,idx>();}
@@ -61,11 +75,12 @@ namespace AM5 {
       static inline void fmtCursor() {rawOut.template fmtCursor<This,I,io,idx>();}
       // printer -----------------------------------------
       static inline void printMenu() {
+        rawOut.newView();
         if (rawOut.isRange()) {
           //ensure that selection option is withing range
           while(rawOut.top()>nav.pos())
             rawOut.setTop(rawOut.top()-1);
-          while(nav.pos()>=rawOut.top()+rawOut.height())
+          while(nav.pos()>=rawOut.top()+nav.freeY())
             rawOut.setTop(rawOut.top()+1);
         }
         fmtMenu<Menu,true>();

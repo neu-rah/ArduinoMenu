@@ -54,10 +54,10 @@ bool keys(int key) {
       //dynamic toggle option[6] enabled state
       nav.enable<5>(!nav.enabled<5>());
       return true;
-    case '+': return nav.up();;
-    case '-': return nav.down();;
-    case '*': return nav.enter();;
-    case '/': return nav.esc();;
+    case '+': return nav.up();
+    case '-': return nav.down();
+    case '*': return nav.enter();
+    case '/': return nav.esc();
   }
   return false;
 }
