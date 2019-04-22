@@ -8,6 +8,8 @@ using namespace AM5;
 //define an output type
 using Out=TextFmt<
   RangePanel<
+    //activate this panel to limit output size on serial console
+    //unlimited by default
     // StaticPanel<0,0,10,5,
       SerialOut<>
     // >

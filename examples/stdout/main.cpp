@@ -12,9 +12,9 @@ using namespace AM5;
 //here std::cout with a scroll panel and text format
 using Out=TextFmt<//text format
   RangePanel<//provide scroll position
-    StaticPanel<0,0,10,4,//output geometry
+    // StaticPanel<0,0,10,4,//output geometry
       StdOut<>//raw output
-    >
+    // >
   >
 >;
 Out out;//defning an instance for convenience.. but not needed, just for testing
