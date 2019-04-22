@@ -5,13 +5,14 @@
 #include <menu/IO/serialOut.h>//serial output
 using namespace AM5;
 
+//define an output type
 using Out=TextFmt<
   RangePanel<
-    StaticPanel<0,0,10,5,SerialOut<>>
+    // StaticPanel<0,0,10,5,
+      SerialOut<>
+    // >
   >
 >;
-
-Out out;
 
 //string data on flash
 PROGMEM ConstText op1_text="Op 1";
@@ -19,9 +20,11 @@ PROGMEM ConstText op2_text="Op ...";
 PROGMEM ConstText op3_text="Op 3";
 PROGMEM ConstText menu_title="Main menu";
 
+//normal option... can mix others
 template<typename T,T* text>
 using Op=EnDis<FlashText<T,text>>;
 
+//menu structure type
 using Menu=FlashText<decltype(menu_title),&menu_title,
   StaticMenu<
     Op<decltype(op1_text),&op1_text>,
@@ -35,6 +38,7 @@ using Menu=FlashText<decltype(menu_title),&menu_title,
   >
 >;
 
+//navigation control
 using NavRoot=Nav<Menu, Out, PosDef<>>;
 NavRoot nav;
 

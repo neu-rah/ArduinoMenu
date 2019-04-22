@@ -1,6 +1,12 @@
 /* -*- C++ -*- */
 #pragma once
 
+#ifdef ARDUINO
+  #include <stdint.h>
+#else
+  #include <limits>
+#endif
+
 #include "base.h"
 namespace AM5 {
   //////////////////////////////////////////////////////
@@ -12,11 +18,12 @@ namespace AM5 {
     static inline void newView() {}
     constexpr static inline idx_t posX() {return 0;}
     constexpr static inline idx_t posY() {return 0;}
-    constexpr static inline idx_t freeX() {return 1;}
-    constexpr static inline idx_t freeY() {return 1;}
-    constexpr static inline idx_t free() {return 1;}
+    constexpr static inline idx_t freeX() {return INT16_MAX;}
+    constexpr static inline idx_t freeY() {return INT16_MAX;}
+    constexpr static inline idx_t free() {return INT16_MAX;}
     static inline void useX(idx_t ux=1) {}
     static inline void useY(idx_t uy=1) {}
+    template<typename,typename,bool,size_t> static inline void fmtPanel() {}
     template<typename,typename,bool,size_t> static inline void fmtMenu() {}
     template<typename,typename,bool,size_t> static inline void fmtMenuBody() {}
     template<typename,typename,bool,size_t> static inline void fmtTitle() {}

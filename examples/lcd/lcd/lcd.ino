@@ -47,7 +47,18 @@ using Menu=FlashText<decltype(menu_title),&menu_title,
   >
 >;
 
-using NavRoot=Nav<Menu, Out, PosDef<>>;
+using NavRoot=Nav<
+  Menu,
+  Out,
+  PosDef<>,
+  PrintersCfg<//omit PrintersCfg to accept default printers
+    PanelPrinter,
+    MenuPrinter,
+    Id,//TitlePrinter,//use Id if you do not want a title
+    BodyPrinter,
+    Id//no Item printer yet
+  >
+>;
 NavRoot nav;
 
 void setup() {
