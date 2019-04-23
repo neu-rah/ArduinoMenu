@@ -2,6 +2,7 @@
 #pragma once
 
 namespace AM5 {
+
   /////////////////////////////////////////////////////////////
   // unlimited size "tuple" (limited by counter size_t)
   // because of its tuple nature we can not map function over it
@@ -22,17 +23,14 @@ namespace AM5 {
       }
       template<typename Nav,typename Head,size_t idx=0>
       inline void printItems() {
-        // Serial<<"printItems... top:"<<Nav::top()<<" free:"<<Nav::freeY()<<endl;
         if (Nav::isViewport()) {
           if (!Nav::freeY()) return;//good for viewports
         } else {
           if (idx>=Nav::top()+Nav::freeY()) return;//not for viewports
         }
         if (idx>=Nav::top()) {
-          // Serial<<"printing "<<idx<<endl;
           This::template printItem<Nav,Head,idx>();
         }
-        // StaticMenu<O>::template printItems<Nav,Head,idx>();
         next.template printItems<Nav,Head,idx+1>();
       }
     protected:
@@ -52,7 +50,6 @@ namespace AM5 {
     }
     template<typename Nav,typename Head,size_t idx>
     inline void printItems() {
-      // Serial<<"printItems "<<Nav::freeY()<<endl;
       if (Nav::isViewport()) {
         if (!Nav::freeY()) return;//for viewports
       } else {
@@ -62,7 +59,6 @@ namespace AM5 {
     }
     template<typename Nav,typename Head,size_t idx>
     inline void printItem() {
-      // Serial<<"print item "<<idx<<endl;
       Nav::template fmtItem<O,true,idx>();
       Nav::template fmtIndex<O,true,idx>();
       Nav::template fmtCursor<O,true,idx>();

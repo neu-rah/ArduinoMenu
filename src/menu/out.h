@@ -16,6 +16,8 @@ namespace AM5 {
   struct Void:public O {
     constexpr static inline bool isRange() {return false;}
     constexpr static inline bool isViewport() {return false;}
+    constexpr static inline size_t top() {return 0;}
+    static inline void setTop(size_t) {}
     static inline void newView() {}
     constexpr static inline idx_t posX() {return 0;}
     constexpr static inline idx_t posY() {return 0;}
@@ -33,6 +35,9 @@ namespace AM5 {
     template<typename,typename,bool,size_t> static inline void fmtCursor() {}
     template<typename T> static inline void raw(T) {}
     static inline void nl() {}
+    // static inline bool onMenuRender() {return false;}
+    // static inline void enterMenuRender() {}
+    // static inline void exitMenuRender() {}
   };
 
   //static panel ------------------------------------------------
@@ -107,5 +112,92 @@ namespace AM5 {
     protected:
       idx_t fx,fy;
   };
+
+  template<typename O,typename... OO>
+  class OutList:public O {
+    public:
+      using This=OutList<O,OO...>;
+      using O::O;
+      //this works because printer head is never taken at this level
+      //so dont do it!
+      inline void newView() {
+        Serial<<"OutList::newView"<<endl;
+        O::newView();
+        if (!This::onMenuRender()) next.newView();
+      }
+      template<typename Nav,typename T>
+      inline void raw(T o) {
+        O::template raw<Nav,T>(o);
+        //without this global print hits only the first device
+        //with it menus will chain printing to next devices creating chaos
+        if (!This::onMenuRender()) next.template raw<Nav,T>(o);//chain printing to all devices!
+      }
+      template<typename Nav>
+      inline void printMenu() {
+        Serial<<"OutList::printMenu"<<endl;
+        assert(onMenuRender());
+        O::template printMenu<Nav>();
+        Serial<<"..."<<endl;
+        next.newView();
+        next.template printMenu<Nav>();
+      }
+      // template<typename P>
+      // inline void printMenuRaw(MenuOut& menuOut,P p,Item&i) {
+      //   assert(O::onMenuRender());
+      //   O::printMenuRaw(menuOut,p,i);
+      //   next.newView();
+      //   next.printMenuRaw(next,PrintHead<OutList<OO...>>{/*next,*/next,0},i);
+      // }
+      // inline void setTarget(Item& i) {
+      //   O::setTarget(i);
+      //   assert(O::sharedNav());
+      //   //next.setTarget(i);
+      // }
+      static inline bool onMenuRender() {return onMenu;}
+      static inline void enterMenuRender() {onMenu=true;}
+      static inline void exitMenuRender() {onMenu=false;}
+    protected:
+      static bool onMenu;
+      OutList<OO...> next;
+  };
+
+  template<typename O>
+  struct OutList<O>:public O {using O::O;};
+
+
+
+  ///////////////////////////////////////////////////////////////////
+  // output interface
+  class MenuOut {
+    // friend class Void;
+    public:
+      virtual inline void raw(const char* o) {}
+      // static inline void nl() {device<<std::endl;}
+      // virtual MenuOut& operator<<(Item&) {return *this;}
+      // virtual MenuOut& operator<<(const char*) {return *this;}
+      // virtual MenuOut& operator<<(char) {return *this;}
+      // virtual MenuOut& operator<<(unsigned char) {return *this;}
+      // virtual MenuOut& operator<<(int) {return *this;}
+      // virtual MenuOut& operator<<(unsigned int) {return *this;}
+      // #if defined(ARDUINO) && !defined(__AVR_ATtiny13__) && !defined(ATTINY_CORE)
+      //   virtual MenuOut& operator<<(endlObj) {return *this;}
+      //   virtual MenuOut& operator<<(const __FlashStringHelper *i) {return *this;}
+      // #endif
+      // virtual void fmtMenu(bool io)=0;
+      // virtual void fmtPanel(bool io)=0;
+      // virtual void fmtTitle(bool io)=0;
+      // virtual void fmtItem(bool io)=0;
+      // virtual void fmtAccel(bool io)=0;
+      // virtual void fmtCursor(bool io)=0;
+      // virtual void fmtLabel(bool io)=0;
+      // virtual void fmtMode(bool io)=0;
+      // virtual void fmtValue(bool io)=0;
+      // virtual void fmtUnit(bool io)=0;
+      // virtual void printMenuRaw()=0;
+      // virtual void setTarget(Item& i)=0;
+      // virtual Item& getTarget() {return *(Item*)NULL;}
+    protected:
+      // static bool onMenu;
+    };
 
 };

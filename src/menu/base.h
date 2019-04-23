@@ -1,12 +1,14 @@
 /* -*- C++ -*- */
 #pragma once
 
+#include "menuAssert.h"
+
 namespace AM5 {
   using idx_t=int;
   using ConstText=const char[];
   template<typename O> using Id=O;
   struct Nil {};
-  
+
   // enum class Roles {Root,Panel,Menu,Title,Item,Index,Cursor,Label,Value,Unit};
   //
   // template<Roles role>

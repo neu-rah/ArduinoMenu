@@ -3,6 +3,7 @@
 #include <menu/fmt/text.h>
 #include <menu/comp/flashText.h>//flash text components
 #include <menu/IO/lcdOut.h>//serial output
+#include <menu/IO/serialOut.h>//serial output
 using namespace AM5;
 
 //not working yet!!!
@@ -13,7 +14,7 @@ using namespace AM5;
 #define EN A4
 LiquidCrystal lcd(RS, RW, EN, A0, A1, A2, A3);
 
-using Out=TextFmt<
+using MyLcdOut=TextFmt<
   Viewport<
     RangePanel<
       StaticPanel<0,0,16,2,
@@ -23,7 +24,12 @@ using Out=TextFmt<
   >
 >;
 
-Out out;
+using MySerialOut=TextFmt<SerialOut<>>;
+
+using Out=OutList<
+  MyLcdOut,
+  MySerialOut
+>;
 
 //string data on flash
 PROGMEM ConstText op1_text="Op 1";
@@ -50,14 +56,7 @@ using Menu=FlashText<decltype(menu_title),&menu_title,
 using NavRoot=Nav<
   Menu,
   Out,
-  PosDef<>,
-  PrintersCfg<//omit PrintersCfg to accept default printers
-    PanelPrinter,
-    MenuPrinter,
-    Id,//TitlePrinter,//use Id if you do not want a title
-    BodyPrinter,
-    Id//no Item printer yet
-  >
+  PosDef<>
 >;
 NavRoot nav;
 

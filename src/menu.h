@@ -14,4 +14,5 @@
 
 //some code
 #include "menu/nav.hpp"
+#include "menu/out.hpp"
 #include "menu/data.hpp"
