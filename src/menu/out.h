@@ -35,9 +35,6 @@ namespace AM5 {
     template<typename,typename,bool,size_t> static inline void fmtCursor() {}
     template<typename T> static inline void raw(T) {}
     static inline void nl() {}
-    // static inline bool onMenuRender() {return false;}
-    // static inline void enterMenuRender() {}
-    // static inline void exitMenuRender() {}
   };
 
   //static panel ------------------------------------------------
@@ -114,32 +111,35 @@ namespace AM5 {
   };
 
   template<typename O,typename... OO>
-  class OutList:public O {
+  class OutList:public OutList<O> {
     public:
       using This=OutList<O,OO...>;
       using O::O;
       //this works because printer head is never taken at this level
       //so dont do it!
       inline void newView() {
-        Serial<<"OutList::newView"<<endl;
+        // Serial<<"OutList::newView "<<This::onMenuRender()<<endl;
         O::newView();
-        if (!This::onMenuRender()) next.newView();
+        // if (Nav::onMenuRender()) next.newView();
+      }
+      inline void nl() {
+        O::nl();
+        next.nl();
       }
       template<typename Nav,typename T>
       inline void raw(T o) {
         O::template raw<Nav,T>(o);
         //without this global print hits only the first device
         //with it menus will chain printing to next devices creating chaos
-        if (!This::onMenuRender()) next.template raw<Nav,T>(o);//chain printing to all devices!
+        if (!Nav::onMenuRender()) next.template raw<Nav,T>(o);//chain printing to all devices!
       }
-      template<typename Nav>
+      template<typename Nav,typename Raw>
       inline void printMenu() {
-        Serial<<"OutList::printMenu"<<endl;
-        assert(onMenuRender());
-        O::template printMenu<Nav>();
-        Serial<<"..."<<endl;
+        // Serial<<"..."<<This::onMenuRender()<<endl;
+        OutList<O>::template printMenu<Nav,Raw>();
         next.newView();
-        next.template printMenu<Nav>();
+        // Serial<<"..."<<endl;
+        next.template printMenu<Nav,Raw>();
       }
       // template<typename P>
       // inline void printMenuRaw(MenuOut& menuOut,P p,Item&i) {
@@ -153,16 +153,21 @@ namespace AM5 {
       //   assert(O::sharedNav());
       //   //next.setTarget(i);
       // }
-      static inline bool onMenuRender() {return onMenu;}
-      static inline void enterMenuRender() {onMenu=true;}
-      static inline void exitMenuRender() {onMenu=false;}
     protected:
-      static bool onMenu;
       OutList<OO...> next;
   };
 
   template<typename O>
-  struct OutList<O>:public O {using O::O;};
+  class OutList<O>:public O {
+    public:
+      using O::O;
+      template<typename Nav,typename Raw>
+      inline void printMenu() {
+        // Serial<<"OutList<O>::printMenu()"<<Nav::onMenuRender()<<endl;
+        // assert(onMenuRender());
+        O::template printMenu<Nav,Raw>();
+      }
+  };
 
 
 

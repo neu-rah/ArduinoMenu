@@ -21,17 +21,20 @@ namespace AM5 {
       inline void enable(bool o) {
         return n?next.template enable<n-1>(o):O::enable(o);
       }
-      template<typename Nav,typename Head,size_t idx=0>
+      template<typename Nav,typename Raw,typename Head,size_t idx=0>
       inline void printItems() {
+        // Serial<<"StaticMenu::printItems..."<<endl;
         if (Nav::isViewport()) {
           if (!Nav::freeY()) return;//good for viewports
         } else {
           if (idx>=Nav::top()+Nav::freeY()) return;//not for viewports
         }
+        // Serial<<"."<<idx<<" "<<Nav::top()<<endl;
         if (idx>=Nav::top()) {
-          This::template printItem<Nav,Head,idx>();
+          This::template printItem<Nav,Raw,Head,idx>();
         }
-        next.template printItems<Nav,Head,idx+1>();
+        // Serial<<"StaticMenu::printItems."<<endl;
+        next.template printItems<Nav,Raw,Head,idx+1>();
       }
     protected:
       static Next next;
@@ -48,24 +51,25 @@ namespace AM5 {
     inline void enable(bool o) {
       if(!n) O::enable(o);
     }
-    template<typename Nav,typename Head,size_t idx>
+    template<typename Nav,typename Raw,typename Head,size_t idx>
     inline void printItems() {
+      // Serial<<"StaticMenu::printItems"<<endl;
       if (Nav::isViewport()) {
         if (!Nav::freeY()) return;//for viewports
       } else {
         if (idx>=Nav::top()+Nav::freeY()) return;
       }
-      printItem<Nav,Head,idx>();
+      printItem<Nav,Raw,Head,idx>();
     }
-    template<typename Nav,typename Head,size_t idx>
+    template<typename Nav,typename Raw,typename Head,size_t idx>
     inline void printItem() {
-      Nav::template fmtItem<O,true,idx>();
-      Nav::template fmtIndex<O,true,idx>();
-      Nav::template fmtCursor<O,true,idx>();
-      O::template out<Nav>();
-      Nav::template fmtIndex<O,false,idx>();
-      Nav::template fmtCursor<O,false,idx>();
-      Nav::template fmtItem<O,false,idx>();
+      Nav::template fmtItem<Raw,O,true,idx>();
+      Nav::template fmtIndex<Raw,O,true,idx>();
+      Nav::template fmtCursor<Raw,O,true,idx>();
+      O::template out<Nav,Raw>();
+      Nav::template fmtIndex<Raw,O,false,idx>();
+      Nav::template fmtCursor<Raw,O,false,idx>();
+      Nav::template fmtItem<Raw,O,false,idx>();
     }
   };
 };//AM5 namespace

@@ -7,48 +7,52 @@ namespace AM5 {
 
   template<typename O>
   struct PanelPrinter:public O {
-    template<typename Nav,size_t idx,typename T>
+    template<typename Nav,typename Raw,size_t idx,typename T>
     static inline void printMenuRaw(T& menu) {
-      Nav::template fmtPanel<T,true>();
+      // Serial<<"PanelPrinter::printMenuRaw"<<endl;
+      Nav::template fmtPanel<Raw,T,true>();
 
-      using MenuPrinter=typename Nav::Printers::template Menu<O>;
-      MenuPrinter::template printMenuRaw<Nav,0>(menu);
+      using MenuPrinter=typename Raw::Printers::template Menu<O>;
+      MenuPrinter::template printMenuRaw<Nav,Raw,0>(menu);
 
-      Nav::template fmtPanel<T,false>();
+      Nav::template fmtPanel<Raw,T,false>();
     }
   };
 
   template<typename O>
   struct MenuPrinter:public O {
-    template<typename Nav,size_t idx,typename T>
+    template<typename Nav,typename Raw,size_t idx,typename T>
     static inline void printMenuRaw(T& menu) {
-      Nav::template fmtMenu<T,true>();
+      // Serial<<"MenuPrinter::printMenuRaw"<<endl;
+      Nav::template fmtMenu<Raw,T,true>();
       //plugin a printer
-      using TitlePrinter=typename Nav::Printers::template Title<O>;
-      TitlePrinter::template printMenuRaw<Nav,0>(menu);
+      using TitlePrinter=typename Raw::Printers::template Title<O>;
+      TitlePrinter::template printMenuRaw<Nav,Raw,0>(menu);
 
-      using BodyPrinter=typename Nav::Printers::template Body<O>;
-      BodyPrinter::template printMenuRaw<Nav,0>(menu);
+      using BodyPrinter=typename Raw::Printers::template Body<O>;
+      BodyPrinter::template printMenuRaw<Nav,Raw,0>(menu);
 
-      Nav::template fmtMenu<T,false>();
+      Nav::template fmtMenu<Raw,T,false>();
     }
   };
 
   template<typename O>
   struct TitlePrinter:public O {
-    template<typename Nav,size_t idx,typename T>
+    template<typename Nav,typename Raw,size_t idx,typename T>
     static inline void printMenuRaw(T& menu) {
-      Nav::template fmtTitle<T,true,idx>();
+      // Serial<<"TitlePrinter::printMenuRaw"<<endl;
+      Nav::template fmtTitle<Raw,T,true,idx>();
       Nav::out(menu);
-      Nav::template fmtTitle<T,false>();
+      Nav::template fmtTitle<Raw,T,false>();
     }
   };
 
   template<typename O>
   struct BodyPrinter:public O {
-    template<typename Nav,size_t idx,typename T>
+    template<typename Nav,typename Raw,size_t idx,typename T>
     static inline void printMenuRaw(T& menu) {
-      Nav::template fmtMenuBody<T,true>();
+      // Serial<<"BodyPrinter::printMenuRaw"<<endl;
+      Nav::template fmtMenuBody<Raw,T,true>();
       if (Nav::isRange()) {
         //ensure that selection option is withing range
         while(Nav::top()+Nav::posY()>Nav::pos())
@@ -56,8 +60,10 @@ namespace AM5 {
         while(Nav::pos()>=Nav::top()+Nav::freeY())
           Nav::setTop(Nav::top()+1);
       }
-      menu.template printItems<Nav,T>();
-      Nav::template fmtMenuBody<T,false>();
+      // template<typename Nav,typename Head,size_t idx>
+      // template<typename Nav,typename Raw,typename Head,size_t idx>
+      menu.template printItems<Nav,Raw,T>();
+      Nav::template fmtMenuBody<Raw,T,false>();
     }
   };
 

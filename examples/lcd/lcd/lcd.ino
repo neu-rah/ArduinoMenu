@@ -65,6 +65,7 @@ void setup() {
   while(!Serial);
   lcd.begin(16,2);
   nav<<"AM5 example"<<nav.endl;
+  delay(1500);
   nav.enable<1>(false);
   nav.enable<5>(false);
   nav.printMenu();

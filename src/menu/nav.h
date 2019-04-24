@@ -17,7 +17,8 @@ namespace AM5 {
     template<typename N> constexpr static inline bool _right() {return N::up();}
     template<typename> constexpr static inline bool _enter() {return false;}
     template<typename> constexpr static inline bool _esc() {return false;}
-    template<typename Nav,size_t idx,typename T> static inline void printMenuRaw(T&) {}
+    template<typename Nav,typename Raw,size_t idx,typename T>
+    static inline void printMenuRaw(T&) {}
   };
 
   template<typename Menu, typename Out,typename O>
@@ -40,6 +41,9 @@ namespace AM5 {
       static inline bool enabled() {return menu.template enabled<idx>();}
       template<size_t idx>
       static inline void enable(bool o=true) {menu.template enable<idx>(o);}
+      static inline bool onMenuRender() {return onMenu;}
+      static inline void enterMenuRender() {onMenu=true;}
+      static inline void exitMenuRender() {onMenu=false;}
       //output proxy -----------------------------
       constexpr static inline bool isRange() {return rawOut.isRange();}
       constexpr static inline bool isViewport() {return rawOut.isViewport();}
@@ -48,7 +52,7 @@ namespace AM5 {
       static inline void raw(This&(*f)(This&)) {(*f)(nav);}
       static inline This& endl(This& o) {nl();return o;}
       template<typename I>
-      static inline void out(I& i) {i.template out<This>();}
+      static inline void out(I& i) {i.template out<This,Out>();}
       static inline void nl() {rawOut.nl();}
       static inline size_t top() {return rawOut.top();}
       static inline void setTop(size_t n) {rawOut.setTop(n);}
@@ -67,30 +71,32 @@ namespace AM5 {
       static inline void useY(idx_t uy=1) {rawOut.useY(uy);}
       // formats ---------------------------
       template<typename COut,typename I,bool io,size_t idx=0>
-      static inline void fmtPanel() {COut::template fmtPanel<This,I,io,idx>();}
+      static inline void fmtPanel() {rawOut.template fmtPanel<This,I,io,idx>();}
       template<typename COut,typename I,bool io,size_t idx=0>
-      static inline void fmtMenu() {COut::template fmtMenu<This,I,io,idx>();}
+      static inline void fmtMenu() {rawOut.template fmtMenu<This,I,io,idx>();}
       template<typename COut,typename I,bool io,size_t idx=0>
-      static inline void fmtMenuBody() {COut::template fmtMenuBody<This,I,io,idx>();}
+      static inline void fmtMenuBody() {rawOut.template fmtMenuBody<This,I,io,idx>();}
       template<typename COut,typename I,bool io,size_t idx=0>
-      static inline void fmtTitle() {COut::template fmtTitle<This,I,io,idx>();}
+      static inline void fmtTitle() {rawOut.template fmtTitle<This,I,io,idx>();}
       template<typename COut,typename I,bool io,size_t idx>
-      static inline void fmtItem() {COut::template fmtItem<This,I,io,idx>();}
+      static inline void fmtItem() {
+        // Serial<<"Nav::fmtItem "<<(io?"start":"end")<<" #"<<idx<<::endl;
+        rawOut.template fmtItem<This,I,io,idx>();}
       template<typename COut,typename I,bool io,size_t idx>
-      static inline void fmtIndex() {COut::template fmtIndex<This,I,io,idx>();}
+      static inline void fmtIndex() {rawOut.template fmtIndex<This,I,io,idx>();}
       template<typename COut,typename I,bool io,size_t idx>
-      static inline void fmtCursor() {COut::template fmtCursor<This,I,io,idx>();}
+      static inline void fmtCursor() {rawOut.template fmtCursor<This,I,io,idx>();}
       // printer -----------------------------------------
       template<typename Raw>
       static inline void printMenuRaw() {
         using PanelPrinter=typename Out::Printers::template Panel<O>;
-        PanelPrinter::template printMenuRaw<Raw,0>(menu);
+        PanelPrinter::template printMenuRaw<This,Raw,0>(menu);
       }
       static inline void printMenu() {
+        enterMenuRender();
         Nav::newView();
-        rawOut.enterMenuRender();
-        rawOut.template printMenu<This>();
-        rawOut.exitMenuRender();
+        rawOut.template printMenu<This,Out>();
+        exitMenuRender();
       }
       // items ---------------------------
       constexpr static inline size_t size() {return menu.size();}
@@ -98,7 +104,8 @@ namespace AM5 {
       static Menu menu;
       static Out rawOut;
       static Nav<Menu,Out,O> nav;
-  };
+      static bool onMenu;
+};
 
   template<typename O=Drift<>>
   class PosDef:public O {

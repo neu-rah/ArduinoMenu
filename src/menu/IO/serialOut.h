@@ -17,9 +17,9 @@ namespace AM5 {
     static inline void raw(T o) {device.print(o);}
     static inline void nl() {device.println();}
     static inline void newView() {nl();}
-    template<typename Nav>
+    template<typename Nav,typename Raw>
     static inline void printMenu() {
-      Serial<<"SerialOut::printMenu<Nav>()"<<endl;
-      Nav::template printMenuRaw<This>();}
+      // Serial<<"SerialOut::printMenu<Nav>()"<<endl;
+      Nav::template printMenuRaw<Raw>();}
   };
 };//AM5 namespace

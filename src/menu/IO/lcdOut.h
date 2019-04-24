@@ -18,7 +18,9 @@ namespace AM5 {
       device.setCursor(Nav::posX(),Nav::posY());
       Nav::useX(device.print(o));
     }
-    template<typename Nav>
-    static inline void printMenu() {Nav::template printMenuRaw<This>();}
+    template<typename Nav,typename Raw>
+    static inline void printMenu() {
+      // Serial<<"lcdOut::printMenu"<<endl;
+      Nav::template printMenuRaw<Raw>();}
   };
 };//AM5 namespace
