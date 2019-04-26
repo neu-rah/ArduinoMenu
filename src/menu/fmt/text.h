@@ -2,48 +2,48 @@
 #pragma once
 
 #include "../base.h"
-namespace AM5 {
+namespace Menu {
 
   template<typename O>
   struct TextFmt:public O {
-    template<typename H,typename I,bool io,size_t idx>
-    inline void fmtCursor() {
+    template<typename NavHead,typename OutHead,typename ItemHead,bool io,idx_t idx>
+    static inline void fmtCursor() {
       if (io) {
-        H::raw(H::template selected<idx>()?(H::template enabled<idx>()?'>':'-'):' ');
-        O::template fmtItem<H,I,io,idx>();
+        NavHead::raw(NavHead::template selected<idx>()?(NavHead::template enabled<idx>()?'>':'-'):' ');
+        O::template fmtItem<NavHead,OutHead,ItemHead,io,idx>();
       } else {
-        O::template fmtItem<H,I,io,idx>();
+        O::template fmtItem<NavHead,OutHead,ItemHead,io,idx>();
       }
     }
-    template<typename H,typename I,bool io,size_t idx>
-    inline void fmtIndex() {
+    template<typename NavHead,typename OutHead,typename ItemHead,bool io,idx_t idx>
+    static inline void fmtIndex() {
       if (io) {
-        // H::Printer::raw('[');
-        if (idx<9) H::raw(idx+1);
-        else H::raw(' ');
-        H::raw(')');
-        O::template fmtItem<H,I,io,idx>();
+        // NavHead::Printer::raw('[');
+        if (idx<9) NavHead::raw(idx+1);
+        else NavHead::raw(' ');
+        NavHead::raw(')');
+        O::template fmtItem<NavHead,OutHead,ItemHead,io,idx>();
       } else {
-        O::template fmtItem<H,I,io,idx>();
+        O::template fmtItem<NavHead,OutHead,ItemHead,io,idx>();
       }
     }
-    template<typename H,typename I,bool io,size_t idx>
-    inline void fmtItem() {
-      if (io) O::template fmtItem<H,I,io,idx>();
+    template<typename NavHead,typename OutHead,typename ItemHead,bool io,idx_t idx>
+    static inline void fmtItem() {
+      if (io) O::template fmtItem<NavHead,OutHead,ItemHead,io,idx>();
       else {
-        O::template fmtItem<H,I,io,idx>();
-        H::nl();
+        O::template fmtItem<NavHead,OutHead,ItemHead,io,idx>();
+        OutHead::nl();
       }
     }
-    template<typename H,typename I,bool io,size_t idx>
-    inline void fmtTitle() {
+    template<typename NavHead,typename OutHead,typename ItemHead,bool io,idx_t idx>
+    static inline void fmtTitle() {
       if (io) {
-        H::raw('[');
-        O::template fmtTitle<H,I,io,idx>();
+        NavHead::raw('[');
+        O::template fmtTitle<NavHead,OutHead,ItemHead,io,idx>();
       } else {
-        O::template fmtTitle<H,I,io,idx>();
-        H::raw(']');
-        H::nl();
+        O::template fmtTitle<NavHead,OutHead,ItemHead,io,idx>();
+        NavHead::raw(']');
+        NavHead::nl();
       }
     }
   };

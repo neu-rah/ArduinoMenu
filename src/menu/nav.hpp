@@ -1,17 +1,12 @@
-// #include "nav.h"
-using namespace AM5;
+#include "nav.h"
 
-template<typename Menu, typename Out,typename O>
-Menu Nav<Menu,Out,O>::menu;
+using namespace Menu;
 
-template<typename Menu, typename Out,typename O>
-Out Nav<Menu,Out,O>::rawOut;
+template<typename Out,typename Data,typename O>
+NavNode<Out,Data,O> NavNode<Out,Data,O>::nav;
 
-template<typename Menu, typename Out,typename O>
-Nav<Menu,Out,O> Nav<Menu,Out,O>::nav;
+template<typename Out,typename Data,typename O>
+Out NavNode<Out,Data,O>::out;
 
-template<typename Menu, typename Out,typename O>
-bool Nav<Menu,Out,O>::onMenu;
-
-template<typename O>
-size_t PosDef<O>::at=0;
+template<typename Out,typename Data,typename O>
+Data NavNode<Out,Data,O>::menu;

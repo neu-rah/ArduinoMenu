@@ -6,12 +6,7 @@
 // ArduinoMenu main include file
 
 #include "menu/base.h"
-#include "menu/nav.h"
 #include "menu/out.h"
-#include "menu/data.h"
-#include "menu/items.h"
-#include "menu/comp/endis.h"
+#include "menu/item.h"
 
-//some code
 #include "menu/nav.hpp"
-#include "menu/data.hpp"
