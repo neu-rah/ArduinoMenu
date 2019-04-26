@@ -8,5 +8,6 @@
 #include "menu/base.h"
 #include "menu/out.h"
 #include "menu/item.h"
+#include "menu/printers.h"
 
 #include "menu/nav.hpp"

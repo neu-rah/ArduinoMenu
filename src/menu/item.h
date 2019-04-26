@@ -12,9 +12,7 @@ namespace Menu {
   template<typename O=Nil>
   struct Empty {
     template<typename NavHead,typename OutHead,typename ItemHead,idx_t idx>
-    static inline void printTo() {
-      // ItemHead::template out<NavHead,OutHead,ItemHead>();
-    }
+    static inline void printTo() {}
   };
 
   template<const char** text,typename O=Empty<>>
@@ -23,4 +21,32 @@ namespace Menu {
     template<typename NavHead,typename OutHead,typename ItemHead,idx_t idx>
     static inline void printTo() {OutHead::raw(text[0]);}
   };
+
+  template<typename O,typename... OO>
+  class StaticList:public StaticList<O> {
+    public:
+      using This=StaticList<O>;
+      using Next=StaticList<OO...>;
+      template<typename NavHead,typename OutHead,typename ItemHead,idx_t idx>
+      inline void printTo() {
+        This::template printTo<NavHead,OutHead,This,idx>();
+        next.template printTo<NavHead,OutHead,Next,idx>();
+      };
+    protected:
+      static Next next;
+  };
+
+  template<typename O,typename... OO>
+  StaticList<OO...> StaticList<O,OO...>::next;
+
+  template<typename O>
+  struct StaticList<O>:public O {
+    using This=StaticList<O>;
+    template<typename NavHead,typename OutHead,typename ItemHead,idx_t idx>
+    inline void printTo() {
+      using ItemPrinter=typename OutHead::Printers::template Item<OutHead>;
+      ItemPrinter::template printMenu<NavHead,OutHead,O,idx>(*this);
+    }
+  };
+
 };
