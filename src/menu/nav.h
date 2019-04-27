@@ -16,14 +16,17 @@ namespace Menu {
   class NavNode:public O {
     public:
       using This=NavNode<Out,Data,O>;
-      static inline void printMenu() {
+      inline NavNode() {}
+      inline NavNode(Data& item):data(&item) {}
+      inline void printMenu() {
         // cout<<"NavNode::printMenu"<<endl;
-        Out::template printMenuRaw<This,Out,Data>(menu);
+        //this should pass first by the data object!
+        data->template printMenuRaw<This,Out,Data>(*data);
       };
     protected:
       static NavNode<Out,Data,O> nav;
       static Out out;
-      static Data menu;
+      Data* data=NULL;//TODO: still test with StaticdNavNode for mem requirements
   };
 
 };

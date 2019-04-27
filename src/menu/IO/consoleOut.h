@@ -15,10 +15,9 @@ namespace Menu {
   struct Console:public O {
     using This=Console<dev,O>;
     template<typename NavHead,typename OutHead,typename ItemHead>
-    static inline void printMenuRaw(ItemHead& menu) {
+    static inline void printMenuRaw(ItemHead& item) {
       // cout<<"Console::printMenuRaw"<<endl;
-      // menu.template printItems<NavHead,OutHead,ItemHead,0>(menu);
-      OutHead::template printMenu<NavHead,OutHead,ItemHead,0>(menu);
+      OutHead::template printMenu<NavHead,OutHead,ItemHead,0>(item);
     }
     template<typename T>
     static inline void raw(T o) {dev<<o;}

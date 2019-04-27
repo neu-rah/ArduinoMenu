@@ -17,6 +17,35 @@ namespace Menu {
     static inline void printItems(ItemHead& item) {
       item.template printTo<NavHead,OutHead,ItemHead,idx>();
     }
+    template<typename NavHead,typename OutHead,typename ItemHead>
+    static inline void printMenuRaw(ItemHead& item) {
+      OutHead::template printMenu<NavHead,OutHead,ItemHead,0>(item);
+    }
+  };
+
+  //--------------------------------------------------
+  struct Item {
+    //footprint:
+    // 4 bytes for each virtual function * #virtual tables
+    // the # of vtables is equal to the # of unique Prompt<...> compositions
+    // virtual void out(MenuOut& o) const {}
+    // virtual size_t size() const {return 1;}
+    // virtual Item& operator[](size_t)=0;// const {return *this;}
+    // virtual NavAgent activate()=0;// {assert(false);return CmdAgent();};
+    virtual void printTo() {cout<<"!";}
+  };
+
+  template<typename O>
+  struct Prompt:public virtual Item,public O {
+    using O::O;
+    using This=Prompt<O>;
+    // inline void out(MenuOut& o) const override {O::out(o);}
+    // size_t size() const override {return O::size();}
+    // Item& operator[](size_t n) override {return O::operator[](n);}
+    // inline NavAgent activate() override {return O::activate();}
+    // //not used yet --
+    // template<template<typename> class T>
+    // inline void stack(MenuOut& o) const {Prompt<T<O>>(*this).out(o);}
   };
 
   template<const char** text,typename O=Empty<>>
