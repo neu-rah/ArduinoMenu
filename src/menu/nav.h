@@ -16,7 +16,7 @@ namespace Menu {
   class NavNode:public O {
     public:
       using This=NavNode<Out,Data,O>;
-      inline void printMenu() {
+      static inline void printMenu() {
         // cout<<"NavNode::printMenu"<<endl;
         Out::template printMenuRaw<This,Out,Data>(menu);
       };

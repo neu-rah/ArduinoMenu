@@ -9,7 +9,7 @@ namespace Menu {
     template<typename NavHead,typename OutHead,typename ItemHead,bool io,idx_t idx>
     static inline void fmtCursor() {
       if (io) {
-        NavHead::raw(NavHead::template selected<idx>()?(NavHead::template enabled<idx>()?'>':'-'):' ');
+        OutHead::raw(NavHead::template selected<idx>()?(NavHead::template enabled<idx>()?'>':'-'):' ');
         O::template fmtItem<NavHead,OutHead,ItemHead,io,idx>();
       } else {
         O::template fmtItem<NavHead,OutHead,ItemHead,io,idx>();
@@ -19,9 +19,9 @@ namespace Menu {
     static inline void fmtIndex() {
       if (io) {
         // NavHead::Printer::raw('[');
-        if (idx<9) NavHead::raw(idx+1);
-        else NavHead::raw(' ');
-        NavHead::raw(')');
+        if (idx<9) OutHead::raw(idx+1);
+        else OutHead::raw(' ');
+        OutHead::raw(')');
         O::template fmtItem<NavHead,OutHead,ItemHead,io,idx>();
       } else {
         O::template fmtItem<NavHead,OutHead,ItemHead,io,idx>();
@@ -38,12 +38,12 @@ namespace Menu {
     template<typename NavHead,typename OutHead,typename ItemHead,bool io,idx_t idx>
     static inline void fmtTitle() {
       if (io) {
-        NavHead::raw('[');
+        OutHead::raw('[');
         O::template fmtTitle<NavHead,OutHead,ItemHead,io,idx>();
       } else {
         O::template fmtTitle<NavHead,OutHead,ItemHead,io,idx>();
-        NavHead::raw(']');
-        NavHead::nl();
+        OutHead::raw(']');
+        OutHead::nl();
       }
     }
   };

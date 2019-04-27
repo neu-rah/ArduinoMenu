@@ -14,6 +14,14 @@ namespace Menu {
     template<typename NavHead,typename OutHead,typename ItemHead>
     static inline void printMenuRaw() {}
     template<typename NavHead,typename OutHead,typename ItemHead,bool io,idx_t idx>
+    static inline void fmtPanel() {}
+    template<typename NavHead,typename OutHead,typename ItemHead,bool io,idx_t idx>
+    static inline void fmtMenu() {}
+    template<typename NavHead,typename OutHead,typename ItemHead,bool io,idx_t idx>
+    static inline void fmtTitle() {}
+    template<typename NavHead,typename OutHead,typename ItemHead,bool io,idx_t idx>
+    static inline void fmtMenuBody() {}
+    template<typename NavHead,typename OutHead,typename ItemHead,bool io,idx_t idx>
     static inline void fmtItem() {}
   };
 };

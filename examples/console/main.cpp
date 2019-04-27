@@ -23,27 +23,37 @@ using namespace Menu;
 - raster draw (output need to be rasterized)
 */
 
-using Out=ItemPrinter<
-  TextFmt<
-    Console<cout,PrintersCfg<>>
-  >
->;
+using Out=TextFmt<Console<cout,FullPrinter<>>>;
 
 const char* op1_text="Op 1";
 const char* op2_text="Op ...";
 const char* op3_text="Op 3";
+const char* menu_title="Main menu";
 
-using MainMenu=StaticList<
-  StaticText<&op1_text>,
-  StaticText<&op2_text>,
-  StaticText<&op3_text>
+using MainMenu=StaticText<
+  &menu_title,
+  StaticList<
+    StaticText<&op1_text>,
+    StaticText<&op2_text>,
+    StaticText<&op3_text>
+  >
 >;
 
-using Nav=NavNode<Out,MainMenu>;
-Nav nav;
+NavNode<Out,MainMenu> nav;
+
+const char* single_text="Single field";
+NavNode<
+  TextFmt<
+    Console<cout,SinglePrinter<>>
+  >,
+  StaticText<&single_text>
+> singleNav;
 
 int main(int,const char**) {
   cout<<"AM5 test std::ostream"<<endl;
-  nav.printMenu();
+  cout<<endl<<"test single field"<<endl<<endl;
+  singleNav.printMenu();//single elements
+  cout<<endl<<"test static menu"<<endl<<endl;
+  nav.printMenu();//static menu
   return 0;
 }
