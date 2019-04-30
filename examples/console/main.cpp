@@ -9,10 +9,10 @@ using namespace std;
 using namespace Menu;
 
 /* TODO: test this things
-- single field menu
++ single field menu
 - multiple outputs
-- arduino and console
-- static and dynamic stuff
++ arduino and console
+! static and dynamic stuff
 + use fmt's
 + use printers (as output construct)
 - use panels, viewports and free outputs
@@ -22,6 +22,7 @@ using namespace Menu;
 - partial draw (output can draw areas)
 - full draw (output draws entire page)
 - raster draw (output need to be rasterized)
+- viewports should void the return values on print, as they track free space
 */
 
 using Out=TextFmt<Console<cout,FullPrinter<>>>;

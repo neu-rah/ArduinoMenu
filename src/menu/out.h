@@ -24,4 +24,12 @@ namespace Menu {
     template<typename NavHead,typename OutHead,typename ItemHead,bool io,idx_t idx>
     static inline void fmtItem() {}
   };
+
+  struct MenuOutBase {
+    virtual void printItem(Item&) {}
+  };
+
+  template<typename O>
+  struct MenuOut:public MenuOutBase,public O {};
+
 };

@@ -9,5 +9,6 @@ namespace Menu {
   using idx_t=int;
   template<typename O> using Id=O;
   struct Nil {};
-
+  struct Item;
+  struct MenuNavBase;
 };

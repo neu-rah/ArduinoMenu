@@ -12,10 +12,10 @@ namespace Menu {
   template<typename O=Nil>
   struct Empty {
     // template<typename NavHead,typename OutHead,typename ItemHead,idx_t idx>
-    // static inline void printTo() {}
+    // static inline void printItem() {}
     template<typename NavHead,typename OutHead,typename ItemHead,idx_t idx>
     static inline void printItems(ItemHead& item) {
-      item.template printTo<NavHead,OutHead,ItemHead,idx>();
+      item.template printItem<NavHead,OutHead,ItemHead,idx>();
     }
     template<typename NavHead,typename OutHead,typename ItemHead>
     static inline void printMenuRaw(ItemHead& item) {
@@ -32,7 +32,7 @@ namespace Menu {
     // virtual size_t size() const {return 1;}
     // virtual Item& operator[](size_t)=0;// const {return *this;}
     // virtual NavAgent activate()=0;// {assert(false);return CmdAgent();};
-    virtual void printTo() {cout<<"!";}
+    virtual void printTo(MenuNavBase& nav,MenuOutBase& out) {cout<<"!";}
   };
 
   template<typename O>
@@ -52,8 +52,8 @@ namespace Menu {
   struct StaticText:public O {
     using This=StaticText<text,O>;
     template<typename NavHead,typename OutHead,typename ItemHead,idx_t idx>
-    static inline void printTo() {
-      // cout<<"StaticText::printTo"<<endl;
+    static inline void printItem() {
+      // cout<<"StaticText::printItem"<<endl;
       OutHead::raw(text[0]);
     }
   };
@@ -68,7 +68,7 @@ namespace Menu {
         // cout<<"StaticList...::printItems"<<endl;
         using ItemPrinter=typename OutHead::Printers::template Item<This>;
         OutHead::template fmtItem<NavHead,OutHead,ItemPrinter,true,idx>();
-        ItemPrinter::template printTo<NavHead,OutHead,This,idx>();
+        ItemPrinter::template printItem<NavHead,OutHead,This,idx>();
         OutHead::template fmtItem<NavHead,OutHead,ItemPrinter,false,idx>();
         next.template printItems<NavHead,OutHead,Next,idx>(next);
       };

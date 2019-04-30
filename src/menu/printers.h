@@ -2,6 +2,7 @@
 #pragma once
 
 #include "base.h"
+#include "out.h"
 namespace Menu {
 
   template<typename O>
@@ -41,7 +42,7 @@ namespace Menu {
     static inline void printMenu(ItemHead& item) {
       // cout<<"TitlePrinter::printMenu"<<endl;
       OutHead::template fmtTitle<NavHead,OutHead,ItemHead,true,idx>();
-      item.template printTo<NavHead,OutHead,ItemHead,idx>();
+      item.template printItem<NavHead,OutHead,ItemHead,idx>();
       OutHead::template fmtTitle<NavHead,OutHead,ItemHead,false,idx>();
       using BodyPrinter=typename O::Printers::template Body<O>;
       BodyPrinter::template printMenu<NavHead,OutHead,ItemHead,idx>(item);
