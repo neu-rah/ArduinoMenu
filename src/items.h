@@ -246,7 +246,8 @@
         void clearChanged(const navNode &nav,const menuOut& out,bool sub) override;
         inline idx_t sz() const {return ((menuNodeShadow*)shadow)->_sz();}
         inline prompt* constMEM* data() const {return ((menuNodeShadow*)shadow)->_data();}
-        #ifdef MENU_USERAM
+        #if defined(MENU_USERAM) && ! defined(swap)
+          //Adafruit_GFX_AS defines swap macro (what a bad idea)
           void swap(idx_t a,idx_t b) {
             if (has(_menuData)) {//ignore on virtual data menus
               auto ops=((menuNodeShadow*)shadow)->_data();
