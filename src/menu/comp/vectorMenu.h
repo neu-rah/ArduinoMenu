@@ -24,15 +24,15 @@ namespace Menu {
       return *vector<Item*>::operator[](n);
     }
     template<typename NavHead,typename OutHead,typename ItemHead,idx_t idx>
-    static inline void printItem() {
+    static inline void printItem(OutHead& out) {
       // cout<<"VectorMenu::printItem"<<endl;
-      O::template printItem<NavHead,OutHead,ItemHead,idx>();
+      O::template printItem<NavHead,OutHead,ItemHead,idx>(out);
     }
     template<typename NavHead,typename OutHead,typename ItemHead,idx_t idx>
-    inline void printItems(ItemHead& item) {
+    inline void printItems(OutHead& out,ItemHead& item) {
       cout<<"VectorMenu::printItems"<<endl;
       for(auto i: *this)
-        i->printTo();//<NavHead,OutHead,ItemHead,idx>();
+        i->printTo(out);
     }
     // template<typename NavHead,typename OutHead,typename ItemHead,idx_t idx>
     // static inline void printMenu(ItemHead&) {

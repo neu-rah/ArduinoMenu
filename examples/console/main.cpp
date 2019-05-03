@@ -32,41 +32,42 @@ const char* op2_text="Op ...";
 const char* op3_text="Op 3";
 const char* menu_title="Main menu";
 
-// using MainMenu=StaticText<
-//   &menu_title,
-//   StaticList<
-//     StaticText<&op1_text>,
-//     StaticText<&op2_text>,
-//     StaticText<&op3_text>
-//   >
-// >;
-//
-// NavNode<Out,MainMenu> nav;
+using MainMenu=StaticText<
+  &menu_title,
+  StaticList<
+    StaticText<&op1_text>,
+    StaticText<&op2_text>,
+    StaticText<&op3_text>
+  >
+>;
 
-// const char* single_text="Single field";
-// NavNode<
-//   TextFmt<
-//     Console<cout,SinglePrinter<>>
-//   >,
-//   StaticText<&single_text>
-// > singleNav;
+StaticNavNode<Out,MainMenu> nav;
+
+const char* single_text="Single field";
+StaticNavNode<
+  TextFmt<
+    Console<cout,SinglePrinter<>>
+  >,
+  StaticText<&single_text>
+> singleNav;
 
 using DynMenu=VectorMenu<StaticText<&menu_title>>;
 
 DynMenu dynMenu(
   new Prompt<StaticText<&op1_text>>(),
-  new Prompt<StaticText<&op2_text>>()
+  new Prompt<StaticText<&op2_text>>(),
+  new Prompt<StaticText<&op3_text>>()
 );
 
-NavNode<Out,DynMenu> dynNav(dynMenu);
+NavNode<MenuOut<Out>,DynMenu> dynNav(dynMenu);
 
 int main(int,const char**) {
   cout<<"AM5 test std::ostream"<<endl;
-  // cout<<endl<<"test single field"<<endl<<endl;
-  // singleNav.printMenu();//single elements
-  // cout<<endl<<"test static menu"<<endl<<endl;
-  // nav.printMenu();//static menu
+  cout<<endl<<"test single field"<<endl<<endl;
+  singleNav.printMenu();//single elements
+  cout<<endl<<"test static menu"<<endl<<endl;
+  nav.printMenu();//static menu
   cout<<endl<<"test dynamic menu"<<endl<<endl;
-  dynNav.printMenu();//static menu
+  dynNav.printMenu();//dynamic menu
   return 0;
 }

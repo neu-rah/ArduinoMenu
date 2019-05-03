@@ -14,5 +14,4 @@ platformio.ini
 !/.gitignore
 *.odg
 dev
-.out
-.out/*
+/.out/*

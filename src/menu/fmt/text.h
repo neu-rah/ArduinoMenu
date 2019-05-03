@@ -36,14 +36,14 @@ namespace Menu {
       }
     }
     template<typename NavHead,typename OutHead,typename ItemHead,bool io,idx_t idx>
-    static inline void fmtTitle() {
+    static inline void fmtTitle(OutHead& out) {
       if (io) {
-        OutHead::raw('[');
+        out.raw('[');
         O::template fmtTitle<NavHead,OutHead,ItemHead,io,idx>();
       } else {
         O::template fmtTitle<NavHead,OutHead,ItemHead,io,idx>();
-        OutHead::raw(']');
-        OutHead::nl();
+        out.raw(']');
+        out.nl();
       }
     }
   };

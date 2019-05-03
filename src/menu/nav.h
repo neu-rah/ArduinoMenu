@@ -28,7 +28,7 @@ namespace Menu {
     public:
       using This=StaticNavNode<Out,Data,O>;
       inline void printMenu() {
-        Out::template printMenuRaw<This,Out,Data>(data);
+        Out::template printMenuRaw<This,Out,Data>(This::out,data);
       };
     protected:
       Data data;
@@ -42,7 +42,7 @@ namespace Menu {
       inline NavNode(Data& item):data(&item) {}
       inline void printMenu() {
         Out::template printMenuRaw<NavNodeBase<Out,Data,O>,Out,Data>(
-          NavNodeBase<Out,Data,O>::nav,
+          // NavNodeBase<Out,Data,O>::nav,
           NavNodeBase<Out,Data,O>::out,
           *data
         );

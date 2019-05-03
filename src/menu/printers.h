@@ -9,12 +9,12 @@ namespace Menu {
   struct PanelPrinter:public O {
     using This=PanelPrinter<O>;
     template<typename NavHead,typename OutHead,typename ItemHead,idx_t idx>
-    static inline void printMenu(ItemHead& item) {
+    static inline void printMenu(OutHead& out,ItemHead& item) {
       // cout<<"PanelPrinter::printMenu"<<endl;
       OutHead::template fmtPanel<NavHead,OutHead,ItemHead,true,idx>();
 
       using MenuPrinter=typename O::Printers::template Menu<O>;
-      MenuPrinter::template printMenu<NavHead,OutHead,ItemHead,idx>(item);
+      MenuPrinter::template printMenu<NavHead,OutHead,ItemHead,idx>(out,item);
 
       OutHead::template fmtPanel<NavHead,OutHead,ItemHead,false,idx>();
     }
@@ -24,12 +24,12 @@ namespace Menu {
   struct MenuPrinter:public O {
     using This=MenuPrinter<O>;
     template<typename NavHead,typename OutHead,typename ItemHead,idx_t idx>
-    static inline void printMenu(ItemHead& item) {
+    static inline void printMenu(OutHead& out,ItemHead& item) {
       // cout<<"MenuPrinter::printMenu"<<endl;
       OutHead::template fmtMenu<NavHead,OutHead,ItemHead,true,idx>();
 
       using TitlePrinter=typename O::Printers::template Title<O>;
-      TitlePrinter::template printMenu<NavHead,OutHead,ItemHead,idx>(item);
+      TitlePrinter::template printMenu<NavHead,OutHead,ItemHead,idx>(out,item);
 
       OutHead::template fmtMenu<NavHead,OutHead,ItemHead,false,idx>();
     }
@@ -39,13 +39,13 @@ namespace Menu {
   struct TitlePrinter:public O {
     using This=TitlePrinter<O>;
     template<typename NavHead,typename OutHead,typename ItemHead,idx_t idx>
-    static inline void printMenu(ItemHead& item) {
+    static inline void printMenu(OutHead& out,ItemHead& item) {
       // cout<<"TitlePrinter::printMenu"<<endl;
-      OutHead::template fmtTitle<NavHead,OutHead,ItemHead,true,idx>();
-      item.template printItem<NavHead,OutHead,ItemHead,idx>();
-      OutHead::template fmtTitle<NavHead,OutHead,ItemHead,false,idx>();
+      OutHead::template fmtTitle<NavHead,OutHead,ItemHead,true,idx>(out);
+      item.template printItem<NavHead,OutHead,ItemHead,idx>(out);
+      OutHead::template fmtTitle<NavHead,OutHead,ItemHead,false,idx>(out);
       using BodyPrinter=typename O::Printers::template Body<O>;
-      BodyPrinter::template printMenu<NavHead,OutHead,ItemHead,idx>(item);
+      BodyPrinter::template printMenu<NavHead,OutHead,ItemHead,idx>(out,item);
     }
   };
 
@@ -53,7 +53,7 @@ namespace Menu {
   struct BodyPrinter:public O {
     using This=BodyPrinter<O>;
     template<typename NavHead,typename OutHead,typename ItemHead,idx_t idx>
-    static inline void printMenu(ItemHead& item) {
+    static inline void printMenu(OutHead& out,ItemHead& item) {
       // cout<<"BodyPrinter::printMenu"<<endl;
       OutHead::template fmtMenuBody<NavHead,OutHead,ItemHead,true,idx>();
       // if (Nav::isRange()) {
@@ -63,7 +63,7 @@ namespace Menu {
       //   while(Nav::pos()>=Nav::top()+Nav::freeY())
       //     Nav::setTop(Nav::top()+1);
       // }
-      item.template printItems<NavHead,OutHead,ItemHead,idx>(item);
+      item.template printItems<NavHead,OutHead,ItemHead,idx>(out,item);
       OutHead::template fmtMenuBody<NavHead,OutHead,ItemHead,false,idx>();
     }
   };
@@ -72,10 +72,10 @@ namespace Menu {
   struct ItemPrinter:public O {
     using This=ItemPrinter<O>;
     template<typename NavHead,typename OutHead,typename ItemHead,idx_t idx>
-    static inline void printMenu(ItemHead& item) {
+    static inline void printMenu(OutHead& out,ItemHead& item) {
       // cout<<"ItemPrinter::printMenu"<<endl;
       OutHead::template fmtItem<NavHead,OutHead,ItemHead,true,idx>();
-      item.template printItems<NavHead,OutHead,ItemHead,idx>(item);
+      item.template printItems<NavHead,OutHead,ItemHead,idx>(out,item);
       OutHead::template fmtItem<NavHead,OutHead,ItemHead,false,idx>();
     }
   };
