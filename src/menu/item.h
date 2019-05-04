@@ -31,7 +31,7 @@ namespace Menu {
     // virtual size_t size() const {return 1;}
     // virtual Item& operator[](size_t)=0;// const {return *this;}
     // virtual NavAgent activate()=0;// {assert(false);return CmdAgent();};
-    virtual void printTo(MenuOutBase& out) {cout<<"!";}
+    virtual void printTo(MenuOutBase& out) {}
   };
 
   template<typename O>

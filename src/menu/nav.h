@@ -38,7 +38,7 @@ namespace Menu {
   class NavNode:public NavNodeBase<Out,Data,O> {
     public:
       using This=NavNode<Out,Data,O>;
-      // inline NavNode() {}
+      inline NavNode() {}
       inline NavNode(Data& item):data(&item) {}
       inline void printMenu() {
         This::out.template printMenuRaw<NavNodeBase<Out,Data,O>,Out,Data>(
