@@ -30,6 +30,7 @@ using Out=TextFmt<Console<cout,FullPrinter<>>>;
 const char* op1_text="Op 1";
 const char* op2_text="Op ...";
 const char* op3_text="Op 3";
+const char* extra_text="extra";
 const char* menu_title="Main menu";
 
 using MainMenu=StaticText<
@@ -68,6 +69,9 @@ int main(int,const char**) {
   cout<<endl<<"test static menu"<<endl<<endl;
   nav.printMenu();//static menu
   cout<<endl<<"test dynamic menu"<<endl<<endl;
+  dynNav.printMenu();//dynamic menu
+  cout<<endl<<"adding new element"<<endl<<endl;
+  dynMenu.push_back(new Prompt<StaticText<&extra_text>>());
   dynNav.printMenu();//dynamic menu
   return 0;
 }

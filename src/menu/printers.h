@@ -9,7 +9,7 @@ namespace Menu {
   struct PanelPrinter:public O {
     using This=PanelPrinter<O>;
     template<typename NavHead,typename OutHead,typename ItemHead,idx_t idx>
-    static inline void printMenu(OutHead& out,ItemHead& item) {
+    inline void printMenu(OutHead& out,ItemHead& item) {
       // cout<<"PanelPrinter::printMenu"<<endl;
       OutHead::template fmtPanel<NavHead,OutHead,ItemHead,true,idx>();
 
@@ -72,11 +72,11 @@ namespace Menu {
   struct ItemPrinter:public O {
     using This=ItemPrinter<O>;
     template<typename NavHead,typename OutHead,typename ItemHead,idx_t idx>
-    static inline void printMenu(OutHead& out,ItemHead& item) {
+    inline void printMenu(OutHead& out,ItemHead& item) {
       // cout<<"ItemPrinter::printMenu"<<endl;
-      OutHead::template fmtItem<NavHead,OutHead,ItemHead,true,idx>();
+      out.template fmtItem<NavHead,OutHead,ItemHead,true,idx>(out);
       item.template printItems<NavHead,OutHead,ItemHead,idx>(out,item);
-      OutHead::template fmtItem<NavHead,OutHead,ItemHead,false,idx>();
+      out.template fmtItem<NavHead,OutHead,ItemHead,false,idx>(out);
     }
   };
 

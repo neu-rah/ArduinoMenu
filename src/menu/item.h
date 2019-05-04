@@ -27,9 +27,6 @@ namespace Menu {
   // menu items -----------------------------------
 
   struct Item {
-    //footprint:
-    // 4 bytes for each virtual function * #virtual tables
-    // the # of vtables is equal to the # of unique Prompt<...> compositions
     // virtual void out(MenuOut& o) const {}
     // virtual size_t size() const {return 1;}
     // virtual Item& operator[](size_t)=0;// const {return *this;}
@@ -69,12 +66,12 @@ namespace Menu {
       using This=StaticList<O>;
       using Next=StaticList<OO...>;
       template<typename NavHead,typename OutHead,typename ItemHead,idx_t idx>
-      static inline void printItems(OutHead& out,ItemHead& item) {
+      inline void printItems(OutHead& out,ItemHead& item) {
         // cout<<"StaticList...::printItems"<<endl;
         using ItemPrinter=typename OutHead::Printers::template Item<This>;
-        OutHead::template fmtItem<NavHead,OutHead,ItemPrinter,true,idx>();
+        out.template fmtItem<NavHead,OutHead,ItemPrinter,true,idx>(out);
         ItemPrinter::template printItem<NavHead,OutHead,This,idx>(out);
-        OutHead::template fmtItem<NavHead,OutHead,ItemPrinter,false,idx>();
+        out.template fmtItem<NavHead,OutHead,ItemPrinter,false,idx>(out);
         next.template printItems<NavHead,OutHead,Next,idx>(out,next);
       };
     protected:

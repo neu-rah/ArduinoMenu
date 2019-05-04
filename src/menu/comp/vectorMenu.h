@@ -15,6 +15,7 @@ namespace Menu {
 
   template<typename O>
   struct VectorMenu:public O,vector<Item*> {
+    using This=VectorMenu<O>;
     template<typename... OO>
     inline VectorMenu(OO... oo):vector<Item*>{oo...} {}
     template<typename... OO>
@@ -30,14 +31,15 @@ namespace Menu {
     }
     template<typename NavHead,typename OutHead,typename ItemHead,idx_t idx>
     inline void printItems(OutHead& out,ItemHead& item) {
-      cout<<"VectorMenu::printItems"<<endl;
-      for(auto i: *this)
+      // cout<<"VectorMenu::printItems"<<endl;
+      for(auto i: *this) {
+        using ItemPrinter=typename OutHead::Printers::template Item<This>;
+        out.template fmtItem<NavHead,OutHead,ItemHead,true,idx>(out);
         i->printTo(out);
+        using ItemPrinter=typename OutHead::Printers::template Item<This>;
+        out.template fmtItem<NavHead,OutHead,ItemHead,false,idx>(out);
+      }
     }
-    // template<typename NavHead,typename OutHead,typename ItemHead,idx_t idx>
-    // static inline void printMenu(ItemHead&) {
-    //   cout<<"VectorMenu::printMenu"<<endl;
-    // }
 
     template<typename NavHead,typename OutHead,typename ItemHead>
     static inline void printMenuRaw(ItemHead& item) {
