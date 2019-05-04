@@ -74,6 +74,15 @@ namespace Menu {
         out.template fmtItem<NavHead,OutHead,ItemPrinter,false,idx>(out);
         next.template printItems<NavHead,OutHead,Next,idx>(out,next);
       };
+      // constexpr static inline size_t size() {return Next::size()+1;}
+      template<size_t n>
+      inline bool enabled() const {
+        return n?next.template enabled<n-1>():O::enabled();
+      }
+      template<size_t n>
+      inline void enable(bool o) {
+        return n?next.template enable<n-1>(o):O::enable(o);
+      }
     protected:
       static Next next;
   };
@@ -84,6 +93,14 @@ namespace Menu {
   template<typename O>
   struct StaticList<O>:public O {
     using This=StaticList<O>;
+    template<size_t n>
+    inline bool enabled() const {
+      return n?true:O::enabled();
+    }
+    template<size_t n>
+    inline void enable(bool o) {
+      if(!n) O::enable(o);
+    }
   };
 
 };

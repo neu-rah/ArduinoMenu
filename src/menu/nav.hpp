@@ -10,3 +10,6 @@ Out NavNodeBase<Out,Data,O>::out;
 
 // template<typename Out,typename Data,typename O>
 // Data* NavNode<Out,Data,O>::data;
+
+template<typename O>
+size_t PosDef<O>::at=0;

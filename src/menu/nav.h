@@ -10,13 +10,27 @@
 namespace Menu {
   //navigation base------------------------------------------------
   template<typename O=Nil>
-  struct Drift:public O {};
+  struct Drift:public O {
+    constexpr static inline size_t size() {return 0;}
+    template<typename> constexpr static inline bool _up() {return false;}
+    template<typename> constexpr static inline bool _down() {return false;}
+    template<typename N> constexpr static inline bool _left() {return N::down();}
+    template<typename N> constexpr static inline bool _right() {return N::up();}
+    template<typename> constexpr static inline bool _enter() {return false;}
+    template<typename> constexpr static inline bool _esc() {return false;}
+  };
 
   // namespace {
     template<typename Out,typename Data,typename O=Drift<>>
     class NavNodeBase:public O {
       public:
         using This=NavNodeBase<Out,Data,O>;
+        static inline bool up() {return nav.template _up<This>();}
+        static inline bool down() {return nav.template _down<This>();}
+        static inline bool left() {return nav.template _left<This>();}
+        static inline bool right() {return nav.template _right<This>();}
+        static inline bool enter() {return nav.template _enter<This>();}
+        static inline bool esc() {return nav.template _esc<This>();}
       protected:
         static NavNodeBase<Out,Data,O> nav;
         static Out out;
@@ -30,6 +44,13 @@ namespace Menu {
       inline void printMenu() {
         This::out.template printMenuRaw<This,Out,Data>(This::out,data);
       };
+      template<size_t idx>
+      inline bool enabled() {return data.template enabled<idx>();}
+      inline bool enabled(size_t idx) {return data.enabled(idx);}
+      template<size_t idx>
+      inline void enable(bool o=true) {data.template enable<idx>(o);}
+      inline void enable(size_t idx,bool o=true) {data.enable(idx,o);}
+      constexpr inline size_t size() {return data.size();}
     protected:
       Data data;
   };
@@ -46,6 +67,13 @@ namespace Menu {
           *data
         );
       };
+      template<size_t idx>
+      inline bool enabled() {return data->template enabled<idx>();}
+      inline bool enabled(size_t idx) {return data->enabled(idx);}
+      template<size_t idx>
+      inline void enable(bool o=true) {data->template enable<idx>(o);}
+      inline void enable(size_t idx,bool o=true) {data->enable(idx,o);}
+      inline size_t size() {return data->size();}
     protected:
       Data* data;
   };
@@ -56,5 +84,25 @@ namespace Menu {
   //adapt virtual interface
   template<typename O>
   struct MenuNav:public MenuNavBase {};
+
+  template<typename O=Drift<>>
+  class PosDef:public O {
+    public:
+      template<size_t idx>
+      static inline bool selected() {return at==idx;}
+      template<typename Nav>
+      static inline bool _up() {
+        if (at<Nav::size()-1) {at++;return true;}
+        return O::template _up<Nav>();
+      }
+      template<typename Nav>
+      static inline bool _down() {
+        if (at>0) {at--;return true;}
+        return O::template _down<Nav>();
+      }
+      static inline size_t pos() {return at;}
+    protected:
+      static size_t at;
+  };
 
 };
