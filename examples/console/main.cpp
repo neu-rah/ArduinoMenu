@@ -5,6 +5,7 @@ using namespace std;
 #include <menu/IO/consoleOut.h>
 #include <menu/fmt/text.h>
 #include <menu/comp/vectorMenu.h>
+#include <menu/comp/endis.h>
 
 using namespace Menu;
 
@@ -47,7 +48,7 @@ StaticNavNode<Out,MainMenu> nav;
 const char* single_text="Single field";
 StaticNavNode<
   TextFmt<
-    Console<cout,SinglePrinter<>>
+    Console<cout,FullPrinter<>>
   >,
   StaticText<&single_text>
 > singleNav;
@@ -55,9 +56,9 @@ StaticNavNode<
 using DynMenu=VectorMenu<StaticText<&menu_title>>;
 
 DynMenu dynMenu(
-  new Prompt<StaticText<&op1_text>>(),
-  new Prompt<StaticText<&op2_text>>(),
-  new Prompt<StaticText<&op3_text>>()
+  new Prompt<EnDis<StaticText<&op1_text>>>(),
+  new Prompt<EnDis<StaticText<&op2_text>>>(),
+  new Prompt<EnDis<StaticText<&op3_text>>>()
 );
 
 NavNode<MenuOut<Out>,DynMenu> dynNav(dynMenu);

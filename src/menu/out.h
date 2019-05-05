@@ -12,17 +12,17 @@ namespace Menu {
   template<typename O=Nil>
   struct Void {
     template<typename NavHead,typename OutHead,typename ItemHead>
-    static inline void printMenuRaw() {}
+    static inline void printMenuRaw(NavHead& nav,OutHead& out) {}
     template<typename NavHead,typename OutHead,typename ItemHead,bool io,idx_t idx>
-    static inline void fmtPanel() {}
+    static inline void fmtPanel(NavHead& nav,OutHead& out) {}
     template<typename NavHead,typename OutHead,typename ItemHead,bool io,idx_t idx>
-    static inline void fmtMenu() {}
+    static inline void fmtMenu(NavHead& nav,OutHead& out) {}
     template<typename NavHead,typename OutHead,typename ItemHead,bool io,idx_t idx>
-    static inline void fmtTitle() {}
+    static inline void fmtTitle(NavHead& nav,OutHead& out) {}
     template<typename NavHead,typename OutHead,typename ItemHead,bool io,idx_t idx>
-    static inline void fmtMenuBody() {}
+    static inline void fmtMenuBody(NavHead& nav,OutHead& out) {}
     template<typename NavHead,typename OutHead,typename ItemHead,bool io,idx_t idx>
-    static inline void fmtItem() {}
+    static inline void fmtItem(NavHead& nav,OutHead& out) {}
   };
 
   struct MenuOutBase {
@@ -30,6 +30,7 @@ namespace Menu {
     virtual inline void raw(const char* o) const {}
     virtual inline void raw(char o) const {}
     virtual inline void nl() const {}
+    virtual inline bool enabled(size_t i) const {return true;};
   };
 
   template<typename O>
@@ -38,5 +39,4 @@ namespace Menu {
     inline void raw(char o) const override {O::raw(o);}
     inline void nl() const override {O::nl();}
   };
-
 };

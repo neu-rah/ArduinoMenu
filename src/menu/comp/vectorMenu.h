@@ -25,26 +25,26 @@ namespace Menu {
       return *vector<Item*>::operator[](n);
     }
     template<typename NavHead,typename OutHead,typename ItemHead,idx_t idx>
-    static inline void printItem(OutHead& out) {
+    static inline void printItem(NavHead& nav,OutHead& out) {
       // cout<<"VectorMenu::printItem"<<endl;
-      O::template printItem<NavHead,OutHead,ItemHead,idx>(out);
+      O::template printItem<NavHead,OutHead,ItemHead,idx>(nav,out);
     }
     template<typename NavHead,typename OutHead,typename ItemHead,idx_t idx>
-    inline void printItems(OutHead& out,ItemHead& item) {
+    inline void printItems(NavHead& nav,OutHead& out,ItemHead& item) {
       // cout<<"VectorMenu::printItems"<<endl;
       for(auto i: *this) {
         using ItemPrinter=typename OutHead::Printers::template Item<This>;
-        out.template fmtItem<NavHead,OutHead,ItemHead,true,idx>(out);
-        i->printTo(out);
+        out.template fmtItem<NavHead,OutHead,ItemHead,true,idx>(nav,out);
+        i->printTo(nav,out);
         using ItemPrinter=typename OutHead::Printers::template Item<This>;
-        out.template fmtItem<NavHead,OutHead,ItemHead,false,idx>(out);
+        out.template fmtItem<NavHead,OutHead,ItemHead,false,idx>(nav,out);
       }
     }
 
     template<typename NavHead,typename OutHead,typename ItemHead>
-    static inline void printMenuRaw(ItemHead& item) {
+    static inline void printMenuRaw(NavHead& nav,OutHead& out,ItemHead& item) {
       cout<<"VectorMenu::printMenuRaw"<<endl;
-      OutHead::template printMenu<NavHead,OutHead,ItemHead,0>(item);
+      OutHead::template printMenu<NavHead,OutHead,ItemHead,0>(nav,out,item);
     }
 
   };

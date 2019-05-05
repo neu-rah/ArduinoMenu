@@ -31,6 +31,10 @@ namespace Menu {
         static inline bool right() {return nav.template _right<This>();}
         static inline bool enter() {return nav.template _enter<This>();}
         static inline bool esc() {return nav.template _esc<This>();}
+        template<size_t idx>
+        static inline bool enabled() {return true;}
+        static inline bool enabled(size_t) {return true;}
+        static inline bool selected(size_t) {return false;}
       protected:
         static NavNodeBase<Out,Data,O> nav;
         static Out out;
@@ -42,7 +46,7 @@ namespace Menu {
     public:
       using This=StaticNavNode<Out,Data,O>;
       inline void printMenu() {
-        This::out.template printMenuRaw<This,Out,Data>(This::out,data);
+        This::out.template printMenuRaw<This,Out,Data>(*this,This::out,data);
       };
       template<size_t idx>
       inline bool enabled() {return data.template enabled<idx>();}
@@ -63,6 +67,7 @@ namespace Menu {
       inline NavNode(Data& item):data(&item) {}
       inline void printMenu() {
         This::out.template printMenuRaw<NavNodeBase<Out,Data,O>,Out,Data>(
+          *this,
           NavNodeBase<Out,Data,O>::out,
           *data
         );
