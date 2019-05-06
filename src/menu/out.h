@@ -10,7 +10,8 @@
 namespace Menu {
   //output base-------------------------------------------------------
   template<typename O=Nil>
-  struct Void {
+  struct Void:public O {
+    using O::O;
     template<typename NavHead,typename OutHead,typename ItemHead>
     static inline void printMenuRaw(NavHead& nav,OutHead& out) {}
     template<typename NavHead,typename OutHead,typename ItemHead,bool io,idx_t idx>
@@ -35,6 +36,7 @@ namespace Menu {
 
   template<typename O>
   struct MenuOut:public MenuOutBase,public O {
+    using O::O;
     inline void raw(const char* o) const override {O::raw(o);}
     inline void raw(char o) const override {O::raw(o);}
     inline void nl() const override {O::nl();}

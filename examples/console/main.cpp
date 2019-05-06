@@ -61,7 +61,7 @@ DynMenu dynMenu(
   new Prompt<EnDis<StaticText<&op3_text>>>()
 );
 
-NavNode<MenuOut<Out>,DynMenu> dynNav(dynMenu);
+MenuNav<NavNode<MenuOut<Out>,DynMenu>> dynNav(dynMenu);
 
 int main(int,const char**) {
   cout<<"AM5 test std::ostream"<<endl;

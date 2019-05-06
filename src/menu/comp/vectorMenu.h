@@ -35,7 +35,8 @@ namespace Menu {
       for(auto i: *this) {
         using ItemPrinter=typename OutHead::Printers::template Item<This>;
         out.template fmtItem<NavHead,OutHead,ItemHead,true,idx>(nav,out);
-        i->printTo(nav,out);
+        MenuNav<NavHead> tmp(nav);
+        i->printTo(tmp,out);
         using ItemPrinter=typename OutHead::Printers::template Item<This>;
         out.template fmtItem<NavHead,OutHead,ItemHead,false,idx>(nav,out);
       }
