@@ -13,7 +13,7 @@ using namespace Menu;
 + single field menu
 - multiple outputs
 + arduino and console
-! static and dynamic stuff
++ static and dynamic stuff
 + use fmt's
 + use printers (as output construct)
 - use panels, viewports and free outputs

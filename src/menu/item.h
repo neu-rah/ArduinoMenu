@@ -95,7 +95,7 @@ namespace Menu {
       // constexpr static inline size_t size() {return Next::size()+1;}
       template<size_t n>
       inline bool enabled() const {
-        return n?next.template enabled<n-1>():O::enabled();
+        return n?next.template enabled<n-1>():true;
       }
       inline bool enabled(size_t n) const {return n?next.enabled(n):O::enabled(n);}
       template<size_t n>
@@ -113,7 +113,7 @@ namespace Menu {
   struct StaticList<O>:public O {
     using This=StaticList<O>;
     template<size_t n>
-    inline bool enabled() const {return n?true:O::enabled();}
+    inline bool enabled() const {return n?true:false/*O::template enabled<0>()*/;}
     inline bool enabled(size_t n) const {return n?true:O::enabled(n);}
     template<size_t n>
     inline void enable(bool o) {if(!n) O::enable(o);}

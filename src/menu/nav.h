@@ -26,7 +26,7 @@ namespace Menu {
     class NavNodeBase:public O {
       public:
         using O::O;
-        NavNodeBase(NavNodeBase<Out,Data,O>& o) {}
+        // NavNodeBase(NavNodeBase<Out,Data,O>& o) {}
         using This=NavNodeBase<Out,Data,O>;
         static inline bool up() {return nav.template _up<This>();}
         static inline bool down() {return nav.template _down<This>();}
@@ -54,7 +54,7 @@ namespace Menu {
         This::out.template printMenuRaw<This,Out,Data>(*this,This::out,data);
       };
       template<size_t idx>
-      inline bool enabled() {return data.template enabled<idx>();}
+      inline bool enabled() const {return data.template enabled<idx>();}
       inline bool enabled(size_t idx) {return data.enabled(idx);}
       template<size_t idx>
       inline void enable(bool o=true) {data.template enable<idx>(o);}
