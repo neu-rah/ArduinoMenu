@@ -67,14 +67,7 @@ namespace Menu {
     template<typename NavHead,typename OutHead,typename ItemHead,idx_t idx>
     static inline void printItem(NavHead& nav,OutHead& out) {
       // cout<<"StaticText::printItem"<<endl;
-      // using ItemPrinter=typename OutHead::Printers::template Item<This>;
-      // out.template fmtItem<NavHead,OutHead,ItemPrinter,true,idx>(nav,out);
-      // out.template fmtIndex<NavHead,OutHead,ItemPrinter,true,idx>(nav,out);
-      // out.template fmtCursor<NavHead,OutHead,ItemPrinter,true,idx>(nav,out);
       out.raw(text[0]);
-      // out.template fmtIndex<NavHead,OutHead,ItemPrinter,false,idx>(nav,out);
-      // out.template fmtCursor<NavHead,OutHead,ItemPrinter,false,idx>(nav,out);
-      // out.template fmtItem<NavHead,OutHead,ItemPrinter,false,idx>(nav,out);
     }
   };
 
@@ -85,7 +78,7 @@ namespace Menu {
       using Next=StaticList<OO...>;
       template<typename NavHead,typename OutHead,typename ItemHead,idx_t idx>
       inline void printItems(NavHead& nav,OutHead& out,ItemHead& item) {
-        // cout<<"StaticList...::printItems"<<endl;
+        cout<<"StaticList...::printItems"<<endl;
         using ItemPrinter=typename OutHead::Printers::template Item<This>;
         out.template fmtItem<NavHead,OutHead,ItemPrinter,true,idx>(nav,out);
         ItemPrinter::template printItem<NavHead,OutHead,This,idx>(nav,out);

@@ -47,9 +47,7 @@ StaticNavNode<Out,MainMenu> nav;
 
 const char* single_text="Single field";
 StaticNavNode<
-  TextFmt<
-    Console<cout,FullPrinter<>>
-  >,
+  TextFmt<Console<cout,FullPrinter<>>>,
   StaticText<&single_text>
 > singleNav;
 
@@ -61,7 +59,9 @@ DynMenu dynMenu(
   new Prompt<EnDis<StaticText<&op3_text>>>()
 );
 
-MenuNav<NavNode<MenuOut<Out>,DynMenu>> dynNav(dynMenu);
+MenuNav<
+  NavNode<MenuOut<Out>,DynMenu>
+> dynNav(dynMenu);
 
 int main(int,const char**) {
   cout<<"AM5 test std::ostream"<<endl;

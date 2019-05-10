@@ -13,10 +13,10 @@ MenuPrinter->Out:fmtMenu<start>
 Out-->TextFmt:fmtMenu<start>
 MenuPrinter->TitlePrinter:printMenu(out,item)
 TitlePrinter->Out:fmtTitle<start>
-Out->TextFmt:fmtTitle<start>
+Out-->TextFmt:fmtTitle<start>
 TitlePrinter->Item:printItem(out)
 TitlePrinter->Out:fmtTitle<end>
-Out->TextFmt:fmtTitle<end>
+Out-->TextFmt:fmtTitle<end>
 MenuPrinter->BodyPrinter:printMenu(out,item)
 BodyPrinter->Item:printItems(out,item)
 MenuPrinter->Out:fmtMenu<end>

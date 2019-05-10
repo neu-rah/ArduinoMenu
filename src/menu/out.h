@@ -17,13 +17,15 @@ namespace Menu {
     template<typename NavHead,typename OutHead,typename ItemHead,bool io,idx_t idx>
     static inline void fmtPanel(NavHead& nav,OutHead& out) {}
     template<typename NavHead,typename OutHead,typename ItemHead,bool io,idx_t idx>
-    static inline void fmtMenu(NavHead& nav,OutHead& out) {}
+    static inline void fmtMenu(NavHead& nav,OutHead& out) {cout<<"Void::fmtMenu"<<endl;}
     template<typename NavHead,typename OutHead,typename ItemHead,bool io,idx_t idx>
     static inline void fmtTitle(NavHead& nav,OutHead& out) {}
     template<typename NavHead,typename OutHead,typename ItemHead,bool io,idx_t idx>
     static inline void fmtMenuBody(NavHead& nav,OutHead& out) {}
     template<typename NavHead,typename OutHead,typename ItemHead,bool io,idx_t idx>
     static inline void fmtItem(NavHead& nav,OutHead& out) {}
+    template<typename NavHead,typename OutHead,typename ItemHead,bool io,idx_t idx>
+    static inline void fmtUnit(NavHead& nav,OutHead& out) {}
   };
 
   struct MenuOutBase {

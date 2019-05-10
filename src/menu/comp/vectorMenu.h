@@ -24,16 +24,17 @@ namespace Menu {
     inline Item& operator[](size_t n) const {
       return *vector<Item*>::operator[](n);
     }
-    template<typename NavHead,typename OutHead,typename ItemHead,idx_t idx>
-    static inline void printItem(NavHead& nav,OutHead& out) {
-      // cout<<"VectorMenu::printItem"<<endl;
-      O::template printItem<NavHead,OutHead,ItemHead,idx>(nav,out);
-    }
+    // template<typename NavHead,typename OutHead,typename ItemHead,idx_t idx>
+    // static inline void printItem(NavHead& nav,OutHead& out) {
+    //   cout<<"VectorMenu::printItem"<<endl;
+    //   O::template printItem<NavHead,OutHead,ItemHead,idx>(nav,out);
+    // }
     template<typename NavHead,typename OutHead,typename ItemHead,idx_t idx>
     inline void printItems(NavHead& nav,OutHead& out,ItemHead& item) {
-      // cout<<"VectorMenu::printItems"<<endl;
+      cout<<"VectorMenu::printItems"<<endl;
       for(auto i: *this) {
         using ItemPrinter=typename OutHead::Printers::template Item<This>;
+        cout<<"+";
         out.template fmtItem<NavHead,OutHead,ItemHead,true,idx>(nav,out);
         MenuNav<NavHead> tmp(nav);
         i->printTo(tmp,out);

@@ -24,8 +24,8 @@ namespace Menu {
   struct MenuPrinter:public O {
     using This=MenuPrinter<O>;
     template<typename NavHead,typename OutHead,typename ItemHead,idx_t idx>
-    static inline void printMenu(NavHead& nav,OutHead& out,ItemHead& item) {
-      // cout<<"MenuPrinter::printMenu"<<endl;
+    inline void printMenu(NavHead& nav,OutHead& out,ItemHead& item) {
+      cout<<"MenuPrinter::printMenu"<<endl;
       OutHead::template fmtMenu<NavHead,OutHead,ItemHead,true,idx>(nav,out);
 
       using TitlePrinter=typename O::Printers::template Title<O>;
@@ -39,8 +39,8 @@ namespace Menu {
   struct TitlePrinter:public O {
     using This=TitlePrinter<O>;
     template<typename NavHead,typename OutHead,typename ItemHead,idx_t idx>
-    static inline void printMenu(NavHead& nav,OutHead& out,ItemHead& item) {
-      // cout<<"TitlePrinter::printMenu"<<endl;
+    inline void printMenu(NavHead& nav,OutHead& out,ItemHead& item) {
+      cout<<"TitlePrinter::printMenu"<<endl;
       OutHead::template fmtTitle<NavHead,OutHead,ItemHead,true,idx>(nav,out);
       item.template printItem<NavHead,OutHead,ItemHead,idx>(nav,out);
       OutHead::template fmtTitle<NavHead,OutHead,ItemHead,false,idx>(nav,out);
@@ -53,8 +53,8 @@ namespace Menu {
   struct BodyPrinter:public O {
     using This=BodyPrinter<O>;
     template<typename NavHead,typename OutHead,typename ItemHead,idx_t idx>
-    static inline void printMenu(NavHead& nav,OutHead& out,ItemHead& item) {
-      // cout<<"BodyPrinter::printMenu"<<endl;
+    inline void printMenu(NavHead& nav,OutHead& out,ItemHead& item) {
+      cout<<"BodyPrinter::printMenu"<<endl;
       OutHead::template fmtMenuBody<NavHead,OutHead,ItemHead,true,idx>(nav,out);
       // if (Nav::isRange()) {
       //   //ensure that selection option is withing range
@@ -63,7 +63,11 @@ namespace Menu {
       //   while(Nav::pos()>=Nav::top()+Nav::freeY())
       //     Nav::setTop(Nav::top()+1);
       // }
-      item.template printItems<NavHead,OutHead,ItemHead,idx>(nav,out,item);
+      // item.template printItems<NavHead,OutHead,ItemHead,idx>(nav,out,item);
+
+      using ItemPrinter=typename O::Printers::template Item<O>;
+      ItemPrinter::template printMenu<NavHead,OutHead,ItemHead,idx>(nav,out,item);
+
       OutHead::template fmtMenuBody<NavHead,OutHead,ItemHead,false,idx>(nav,out);
     }
   };
@@ -73,10 +77,12 @@ namespace Menu {
     using This=ItemPrinter<O>;
     template<typename NavHead,typename OutHead,typename ItemHead,idx_t idx>
     inline void printMenu(NavHead& nav,OutHead& out,ItemHead& item) {
-      // cout<<"ItemPrinter::printMenu"<<endl;
-      out.template fmtItem<NavHead,OutHead,ItemHead,true,idx>(out);
-      item.template printItems<NavHead,OutHead,ItemHead,idx>(out,item);
-      out.template fmtItem<NavHead,OutHead,ItemHead,false,idx>(out);
+      cout<<"ItemPrinter::printMenu"<<endl;
+      // out.template fmtItem<NavHead,OutHead,ItemHead,true,idx>(out);
+      // out.template fmtItem<NavHead,OutHead,ItemHead,true,idx>(nav,out);
+      item.template printItems<NavHead,OutHead,ItemHead,idx>(nav,out,item);
+      // out.template fmtItem<NavHead,OutHead,ItemHead,false,idx>(nav,out);
+      // out.template fmtItem<NavHead,OutHead,ItemHead,false,idx>(out);
     }
   };
 
