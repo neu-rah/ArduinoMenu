@@ -1,5 +1,0 @@
-[
-  { "directory": "/home/azevedo/Sketchbook/LIBDEV/ArduinoMenu/examples/console",
-    "command": "/usr/bin/clang++ -I/home/azevedo/Sketchbook/LIBDEV/ArduinoMenu -c -o .out/am5.o main.cpp",
-    "file": "main.cpp" }
-]
