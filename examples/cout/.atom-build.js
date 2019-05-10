@@ -25,7 +25,7 @@ const ansir = require('ansi-regex');
 module.exports = {
   name: "C++ main.cpp",
   sh: true,//else not capturing output
-  cmd: "g++ main.cpp -o{PROJECT_PATH}/.out/am5 -I ~/Sketchbook/LIBDEV/ArduinoMenu/src -DNO_MENU_DEBUG -DMENU_DEBUG_OUT=cout -std=c++11 -ggdb",
+  cmd: "g++ main.cpp -o{PROJECT_PATH}/.out/am5 -I ~/Sketchbook/LIBDEV/ArduinoMenu/src -DMENU_DEBUG -DMDO=cout -std=c++11 -ggdb",
   preBuild: function () {
     console.log('This is run **before** the build command');
   },

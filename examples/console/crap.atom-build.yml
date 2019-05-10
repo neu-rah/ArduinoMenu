@@ -1,4 +1,0 @@
-cmd: "g++ main.cpp -o{PROJECT_PATH}/.out/am5 -I ~/Sketchbook/LIBDEV/ArduinoMenu/src -DNO_MENU_DEBUG -DMENU_DEBUG_OUT=cout -std=c++11 -ggdb"
-name: "C++ compile"
-errorMatch:
-  - ^.*error.*$
