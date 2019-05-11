@@ -8,6 +8,18 @@
 * @brief ArduinoMenu interfaces (API's)
 */
 
+enum class Roles {Panel,Menu,Title,Body,Item,Index,Cursor,Name,Mode,Value,Unit};
+
+//hook out and fmt callbacks for role tags included on menu structure
+//they provide a direct access to specific output driver
+// template<Roles role,typename O,void (MenuOut::*f)(bool)>
+// struct Role:public O {
+//   using O::O;
+//   Role(O& o):O(o) {}
+//   inline void out(MenuOut&) const;
+//   inline void fmt(MenuOut& o,bool io) const;
+// };
+
 template<typename O> using Id=O;
 struct Nil {};
 
@@ -25,29 +37,11 @@ struct MenuOut {
   virtual inline void raw(const char*) {};
   virtual inline void printItem(NavNode&,Item&)=0;
   //TODO: reduce vtable, use a bool parameter and demux on static side instead!
-  virtual inline void fmtPanelStart(NavNode&,MenuOut&,Item&) {}
-  virtual inline void fmtPanelEnd(NavNode&,MenuOut&,Item&) {}
-  virtual inline void fmtMenuStart(NavNode&,MenuOut&,Item&) {}
-  virtual inline void fmtMenuEnd(NavNode&,MenuOut&,Item&) {}
-  virtual inline void fmtTitleStart(NavNode&,MenuOut&,Item&) {}
-  virtual inline void fmtTitleEnd(NavNode&,MenuOut&,Item&) {}
-  virtual inline void fmtBodyStart(NavNode&,MenuOut&,Item&) {}
-  virtual inline void fmtBodyEnd(NavNode&,MenuOut&,Item&) {}
-  virtual inline void fmtItemStart(NavNode&,MenuOut&,Item&) {}
-  virtual inline void fmtItemEnd(NavNode&,MenuOut&,Item&) {}
-  virtual inline void fmtIndexStart(NavNode&,MenuOut&,Item&) {}
-  virtual inline void fmtIndexEnd(NavNode&,MenuOut&,Item&) {}
-  virtual inline void fmtCursorStart(NavNode&,MenuOut&,Item&) {}
-  virtual inline void fmtCursorEnd(NavNode&,MenuOut&,Item&) {}
-  virtual inline void fmtNameStart(NavNode&,MenuOut&,Item&) {}
-  virtual inline void fmtNameEnd(NavNode&,MenuOut&,Item&) {}
-  virtual inline void fmtModeStart(NavNode&,MenuOut&,Item&) {}
-  virtual inline void fmtModeEnd(NavNode&,MenuOut&,Item&) {}
-  virtual inline void fmtValueStart(NavNode&,MenuOut&,Item&) {}
-  virtual inline void fmtValueEnd(NavNode&,MenuOut&,Item&) {}
-  virtual inline void fmtUnitStart(NavNode&,MenuOut&,Item&) {}
-  virtual inline void fmtUnitEnd(NavNode&,MenuOut&,Item&) {}
+  virtual inline void fmt(Roles role,bool io,NavNode& nav,MenuOut&,Item& i) {}
 };
+
+// template<typename O>
+// using asMenu=Role<Roles,O,&MenuOut::fmtMenu>;
 
 //item interface
 struct Item {

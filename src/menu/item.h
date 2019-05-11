@@ -56,9 +56,9 @@ template<typename O>
 struct Prompt:public Item,public O {
   using O::O;
   inline void printItem(NavNode& nav,MenuOut& out) override {
-    out.fmtItemStart(nav,out,*this);
+    out.fmt(Roles::Item,true,nav,out,*this);
     O::print(nav,out);
-    out.fmtItemEnd(nav,out,*this);
+    out.fmt(Roles::Item,false,nav,out,*this);
   }
   inline void print(NavNode& nav,MenuOut& out) override {
     O::print(nav,out);

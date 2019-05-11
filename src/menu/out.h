@@ -10,8 +10,6 @@
 
 #include "base.h"
 
-// enum class Roles {Panel,Menu,Title,Body,Item,Index,Cursor,Name,Mode,Value,Unit};
-
 template<typename O=Nil> struct Void:public O {
   static inline void nl() {}
   template<typename T> static inline void raw(T) {}
@@ -30,29 +28,25 @@ template<typename O=Nil> struct Void:public O {
   template<bool io,typename Nav,typename Out,typename I> static inline void fmtMode(Nav&,Out&,I&) {}
   template<bool io,typename Nav,typename Out,typename I> static inline void fmtValue(Nav&,Out&,I&) {}
   template<bool io,typename Nav,typename Out,typename I> static inline void fmtUnit(Nav&,Out&,I&) {}
-
-  template<typename Nav,typename Out,typename I> static inline void fmtPanelStart(Nav& nav,Out& out,I& i) {Out::template fmtPanel<true,Nav,Out,I>(nav,out,i);}
-  template<typename Nav,typename Out,typename I> static inline void fmtPanelEnd(Nav& nav,Out& out,I& i) {Out::template fmtPanel<false,Nav,Out,I>(nav,out,i);}
-  template<typename Nav,typename Out,typename I> static inline void fmtMenuStart(Nav& nav,Out& out,I& i) {Out::template fmtMenu<true,Nav,Out,I>(nav,out,i);}
-  template<typename Nav,typename Out,typename I> static inline void fmtMenuEnd(Nav& nav,Out& out,I& i) {Out::template fmtMenu<false,Nav,Out,I>(nav,out,i);}
-  template<typename Nav,typename Out,typename I> static inline void fmtTitleStart(Nav& nav,Out& out,I& i) {Out::template fmtTitle<true,Nav,Out,I>(nav,out,i);}
-  template<typename Nav,typename Out,typename I> static inline void fmtTitleEnd(Nav& nav,Out& out,I& i) {Out::template fmtTitle<false,Nav,Out,I>(nav,out,i);}
-  template<typename Nav,typename Out,typename I> static inline void fmtBodyStart(Nav& nav,Out& out,I& i) {Out::template fmtBody<true,Nav,Out,I>(nav,out,i);}
-  template<typename Nav,typename Out,typename I> static inline void fmtBodyEnd(Nav& nav,Out& out,I& i) {Out::template fmtBody<false,Nav,Out,I>(nav,out,i);}
-  template<typename Nav,typename Out,typename I> static inline void fmtItemStart(Nav& nav,Out& out,I& i) {Out::template fmtItem<true,Nav,Out,I>(nav,out,i);}
-  template<typename Nav,typename Out,typename I> static inline void fmtItemEnd(Nav& nav,Out& out,I& i) {Out::template fmtItem<false,Nav,Out,I>(nav,out,i);}
-  template<typename Nav,typename Out,typename I> static inline void fmtIndexStart(Nav& nav,Out& out,I& i) {Out::template fmtIndex<true,Nav,Out,I>(nav,out,i);}
-  template<typename Nav,typename Out,typename I> static inline void fmtIndexEnd(Nav& nav,Out& out,I& i) {Out::template fmtIndex<false,Nav,Out,I>(nav,out,i);}
-  template<typename Nav,typename Out,typename I> static inline void fmtCursorStart(Nav& nav,Out& out,I& i) {Out::template fmtCursor<true,Nav,Out,I>(nav,out,i);}
-  template<typename Nav,typename Out,typename I> static inline void fmtCursorEnd(Nav& nav,Out& out,I& i) {Out::template fmtCursor<false,Nav,Out,I>(nav,out,i);}
-  template<typename Nav,typename Out,typename I> static inline void fmtNameStart(Nav& nav,Out& out,I& i) {Out::template fmtName<true,Nav,Out,I>(nav,out,i);}
-  template<typename Nav,typename Out,typename I> static inline void fmtNameEnd(Nav& nav,Out& out,I& i) {Out::template fmtName<false,Nav,Out,I>(nav,out,i);}
-  template<typename Nav,typename Out,typename I> static inline void fmtModeStart(Nav& nav,Out& out,I& i) {Out::template fmtMode<true,Nav,Out,I>(nav,out,i);}
-  template<typename Nav,typename Out,typename I> static inline void fmtModeEnd(Nav& nav,Out& out,I& i) {Out::template fmtMode<false,Nav,Out,I>(nav,out,i);}
-  template<typename Nav,typename Out,typename I> static inline void fmtValueStart(Nav& nav,Out& out,I& i) {Out::template fmtValue<true,Nav,Out,I>(nav,out,i);}
-  template<typename Nav,typename Out,typename I> static inline void fmtValueEnd(Nav& nav,Out& out,I& i) {Out::template fmtValue<false,Nav,Out,I>(nav,out,i);}
-  template<typename Nav,typename Out,typename I> static inline void fmtUnitStart(Nav& nav,Out& out,I& i) {Out::template fmtUnit<true,Nav,Out,I>(nav,out,i);}
-  template<typename Nav,typename Out,typename I> static inline void fmtUnitEnd(Nav& nav,Out& out,I& i) {Out::template fmtUnit<false,Nav,Out,I>(nav,out,i);}
+  // template<Roles role, bool io,typename Nav,typename Out,typename I>
+  // static inline void fmt(Nav& nav,Out& out,I& i) {}
+  template<typename Nav,typename Out,typename I>
+  static inline void fmt(Roles role,bool io,Nav& nav,Out& out,I& i) {
+    //we could do better with templates, but we need this to be compatible with virtual interface too
+    switch(role) {
+      case Roles::Panel: io?out.template fmtPanel<true>(nav,out,i):out.template fmtPanel<false>(nav,out,i);break;
+      case Roles::Menu: io?out.template fmtMenu<true>(nav,out,i):out.template fmtMenu<false>(nav,out,i);break;
+      case Roles::Title: io?out.template fmtTitle<true>(nav,out,i):out.template fmtTitle<false>(nav,out,i);break;
+      case Roles::Body: io?out.template fmtBody<true>(nav,out,i):out.template fmtBody<false>(nav,out,i);break;
+      case Roles::Item: io?out.template fmtItem<true>(nav,out,i):out.template fmtItem<false>(nav,out,i);break;
+      case Roles::Index: io?out.template fmtIndex<true>(nav,out,i):out.template fmtIndex<false>(nav,out,i);break;
+      case Roles::Cursor: io?out.template fmtCursor<true>(nav,out,i):out.template fmtCursor<false>(nav,out,i);break;
+      case Roles::Name: io?out.template fmtName<true>(nav,out,i):out.template fmtName<false>(nav,out,i);break;
+      case Roles::Mode: io?out.template fmtMode<true>(nav,out,i):out.template fmtMode<false>(nav,out,i);break;
+      case Roles::Value: io?out.template fmtValue<true>(nav,out,i):out.template fmtValue<false>(nav,out,i);break;
+      case Roles::Unit: io?out.template fmtUnit<true>(nav,out,i):out.template fmtUnit<false>(nav,out,i);break;
+    }
+  }
 };
 
 //static output -----------------------------
@@ -73,9 +67,9 @@ struct FullPrinter:public O {
   }
   template<typename Nav,typename Out,typename I>
   static inline void printItem(Nav& nav,Out& out,I& i) {
-    out.fmtItemStart(nav,out,i);
+    out.fmt(Roles::Item,true,nav,out,i);
     i.printItem(nav,out);
-    out.fmtItemEnd(nav,out,i);
+    out.fmt(Roles::Item,false,nav,out,i);
   }
 };
 
@@ -98,11 +92,11 @@ struct TextFmt:public O {
   template<bool io,typename Nav,typename Out,typename I>
   static inline void fmtTitle(Nav& nav,Out& out,I& i) {
     if (io) {
-      out.fmtItemStart(nav,out,i);
+      out.fmt(Roles::Item,true,nav,out,i);
       O::template fmtTitle<io,Nav,Out,I>(nav,out,i);
     } else {
       O::template fmtTitle<io,Nav,Out,I>(nav,out,i);
-      out.fmtItemEnd(nav,out,i);
+      out.fmt(Roles::Item,false,nav,out,i);
     }
   }
   template<bool io,typename Nav,typename Out,typename I>
@@ -128,26 +122,19 @@ struct MenuOutDef:public O,public MenuOut {
   inline void raw(char c) override {O::raw(c);}
   inline void raw(const char*text) override {O::raw(text);}
   inline void printItem(NavNode& nav,Item& i) override {i.printItem(nav,*this);}
-  inline void fmtPanelStart(NavNode& nav,MenuOut& out,Item& item) override {O::template fmtPanel<true,NavNode,MenuOut,Item>(nav,out,item);}
-  inline void fmtPanelEnd(NavNode& nav,MenuOut& out,Item& item) override {O::template fmtPanel<false,NavNode,MenuOut,Item>(nav,out,item);}
-  inline void fmtMenuStart(NavNode& nav,MenuOut& out,Item& item) override {O::template fmtMenu<true,NavNode,MenuOut,Item>(nav,out,item);}
-  inline void fmtMenuEnd(NavNode& nav,MenuOut& out,Item& item) override {O::template fmtMenu<false,NavNode,MenuOut,Item>(nav,out,item);}
-  inline void fmtTitleStart(NavNode& nav,MenuOut& out,Item& item) override {O::template fmtTitle<true,NavNode,MenuOut,Item>(nav,out,item);}
-  inline void fmtTitleEnd(NavNode& nav,MenuOut& out,Item& item) override {O::template fmtTitle<false,NavNode,MenuOut,Item>(nav,out,item);}
-  inline void fmtBodyStart(NavNode& nav,MenuOut& out,Item& item) override {O::template fmtBody<true,NavNode,MenuOut,Item>(nav,out,item);}
-  inline void fmtBodyEnd(NavNode& nav,MenuOut& out,Item& item) override {O::template fmtBody<false,NavNode,MenuOut,Item>(nav,out,item);}
-  inline void fmtItemStart(NavNode& nav,MenuOut& out,Item& item) override {O::template fmtItem<true,NavNode,MenuOut,Item>(nav,out,item);}
-  inline void fmtItemEnd(NavNode& nav,MenuOut& out,Item& item) override {O::template fmtItem<false,NavNode,MenuOut,Item>(nav,out,item);}
-  inline void fmtIndexStart(NavNode& nav,MenuOut& out,Item& item) override {O::template fmtIndex<true,NavNode,MenuOut,Item>(nav,out,item);}
-  inline void fmtIndexEnd(NavNode& nav,MenuOut& out,Item& item) override {O::template fmtIndex<false,NavNode,MenuOut,Item>(nav,out,item);}
-  inline void fmtCursorStart(NavNode& nav,MenuOut& out,Item& item) override {O::template fmtCursor<true,NavNode,MenuOut,Item>(nav,out,item);}
-  inline void fmtCursorEnd(NavNode& nav,MenuOut& out,Item& item) override {O::template fmtCursor<false,NavNode,MenuOut,Item>(nav,out,item);}
-  inline void fmtNameStart(NavNode& nav,MenuOut& out,Item& item) override {O::template fmtName<true,NavNode,MenuOut,Item>(nav,out,item);}
-  inline void fmtNameEnd(NavNode& nav,MenuOut& out,Item& item) override {O::template fmtName<false,NavNode,MenuOut,Item>(nav,out,item);}
-  inline void fmtModeStart(NavNode& nav,MenuOut& out,Item& item) override {O::template fmtMode<true,NavNode,MenuOut,Item>(nav,out,item);}
-  inline void fmtModeEnd(NavNode& nav,MenuOut& out,Item& item) override {O::template fmtMode<false,NavNode,MenuOut,Item>(nav,out,item);}
-  inline void fmtValueStart(NavNode& nav,MenuOut& out,Item& item) override {O::template fmtValue<true,NavNode,MenuOut,Item>(nav,out,item);}
-  inline void fmtValueEnd(NavNode& nav,MenuOut& out,Item& item) override {O::template fmtValue<false,NavNode,MenuOut,Item>(nav,out,item);}
-  inline void fmtUnitStart(NavNode& nav,MenuOut& out,Item& item) override {O::template fmtUnit<true,NavNode,MenuOut,Item>(nav,out,item);}
-  inline void fmtUnitEnd(NavNode& nav,MenuOut& out,Item& item) override {O::template fmtUnit<false,NavNode,MenuOut,Item>(nav,out,item);}
+  inline void fmt(Roles role,bool io,NavNode& nav,MenuOut& out,Item& i) override {
+    switch(role) {
+      case Roles::Panel: io?O::template fmtPanel<true>(nav,out,i):O::template fmtPanel<false>(nav,out,i);break;
+      case Roles::Menu: io?O::template fmtMenu<true>(nav,out,i):O::template fmtMenu<false>(nav,out,i);break;
+      case Roles::Title: io?O::template fmtTitle<true>(nav,out,i):O::template fmtTitle<false>(nav,out,i);break;
+      case Roles::Body: io?O::template fmtBody<true>(nav,out,i):O::template fmtBody<false>(nav,out,i);break;
+      case Roles::Item: io?O::template fmtItem<true>(nav,out,i):O::template fmtItem<false>(nav,out,i);break;
+      case Roles::Index: io?O::template fmtIndex<true>(nav,out,i):O::template fmtIndex<false>(nav,out,i);break;
+      case Roles::Cursor: io?O::template fmtCursor<true>(nav,out,i):O::template fmtCursor<false>(nav,out,i);break;
+      case Roles::Name: io?O::template fmtName<true>(nav,out,i):O::template fmtName<false>(nav,out,i);break;
+      case Roles::Mode: io?O::template fmtMode<true>(nav,out,i):O::template fmtMode<false>(nav,out,i);break;
+      case Roles::Value: io?O::template fmtValue<true>(nav,out,i):O::template fmtValue<false>(nav,out,i);break;
+      case Roles::Unit: io?O::template fmtUnit<true>(nav,out,i):O::template fmtUnit<false>(nav,out,i);break;
+    }
+  }
 };
