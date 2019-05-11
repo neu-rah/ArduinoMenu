@@ -1,2 +1,5 @@
 am5:
-	path: "/home/azevedo/Sketchbook/LIBDEV/ArduinoMenu/.out/am5"
+	path: "/home/azevedo/Work/AM5/ArduinoMenu/.out/am5"
+
+"am5 2":
+	path: "/home/azevedo/Work/AM5/ArduinoMenu/.out/am5"
