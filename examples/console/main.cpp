@@ -8,15 +8,16 @@ using SingleOp=StaticText<&singleOp_text>;
 const char* op1_text="Op 1";
 const char* op2_text="Op ...";
 const char* op3_text="Op 3";
+const char* extra_text="extra option";
 const char* mainMenu_title="Main menu";
 using MainMenu=
-  // StaticText<
-  //   &mainMenu_title,
+  StaticText<
+    &mainMenu_title,
     StaticMenu<
       StaticText<&op1_text>,
       StaticText<&op2_text>,
       StaticText<&op3_text>
-    // >
+    >
   >;
 
 using DynaMenu=
@@ -49,6 +50,9 @@ int main() {
   cout<<endl;
 
   cout<<"{dynamic menu test}"<<endl;
+  dyNav.printMenu();
+  cout<<"{adding option}"<<endl;
+  dynaMenu.push_back(new Prompt<StaticText<&extra_text>>());
   dyNav.printMenu();
   cout<<endl<<"-------"<<endl;
 }

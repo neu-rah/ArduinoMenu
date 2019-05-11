@@ -23,7 +23,7 @@ struct StaticText:public O {
   template<typename Nav,typename Out>
   inline void print(Nav& nav,Out& out) {
     out.raw(text[0]);
-    O::printItem(nav,out);
+    // O::printItem(nav,out);
   }
 };
 
