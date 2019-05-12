@@ -12,7 +12,7 @@
 
 template<typename O=Nil>
 struct Empty:public O {
-  constexpr static inline size_t size() {return 0;}
+  constexpr static inline idx_t size() {return 0;}
   template<typename Nav,typename Out>
   static inline void print(Nav&,Out&) {}
   template<typename Nav,typename Out>
@@ -37,7 +37,7 @@ class StaticMenu:public StaticMenu<O> {
   public:
     using This=StaticMenu<O>;
     using Next=StaticMenu<OO...>;
-    constexpr inline size_t size() {return next.size()+1;}
+    constexpr inline idx_t size() {return next.size()+1;}
     template<typename Nav,typename Out,idx_t n=0>
     inline void printItems(Nav& nav,Out& out) {
       out.template printItem<Nav,Out,This>(nav,out,*this,n);
@@ -50,7 +50,7 @@ class StaticMenu:public StaticMenu<O> {
 template<typename O>
 struct StaticMenu<O>:public O {
   using This=StaticMenu<O>;
-  constexpr static inline size_t size() {return 1;}
+  constexpr static inline idx_t size() {return 1;}
   template<typename Nav,typename Out>
   inline void print(Nav& nav,Out& out) {}
   template<typename Nav,typename Out>
@@ -81,6 +81,7 @@ struct Prompt:public Item,public O {
 template<typename O=Empty<>>
 struct VectorMenu:public O,vector<Item*> {
   using vector<Item*>::vector;
+  inline idx_t size() {return (idx_t)vector<Item*>::size();}
   template<typename Nav,typename Out>
   static inline void print(Nav& bav,Out& out) {}
   template<typename... OO>

@@ -1,6 +1,8 @@
 #include <menu.h>
+#include <menu/IO/console.h>
 
-using Out=TextFmt<TitleWrap<RawOut<ostream&,cout>>>;
+// using Out=TextFmt<TitleWrap<RawOut<ostream&,cout>>>;
+using Out=TextFmt<TitleWrap<Console<>>>;
 
 const char* singleOp_text="Just testing";
 using SingleOp=StaticText<&singleOp_text>;
@@ -55,6 +57,10 @@ int main() {
   dyNav.printMenu();
   cout<<"{adding option}"<<endl;
   dynaMenu.push_back(new Prompt<StaticText<&extra_text>>());
+  dyNav.printMenu();
+  cout<<endl<<"-------"<<endl;
+  cout<<"{navigate up (index)}"<<endl;
+  dyNav.up();
   dyNav.printMenu();
   cout<<endl<<"-------"<<endl;
 }

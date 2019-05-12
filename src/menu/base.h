@@ -23,6 +23,12 @@ struct NavNode;
 struct NavNode {
   virtual inline bool selected(idx_t) const {}
   virtual inline bool enabled(idx_t) const {}
+  virtual inline bool up()=0;
+  virtual inline bool down()=0;
+  virtual inline bool left()=0;
+  virtual inline bool right()=0;
+  virtual inline bool enter()=0;
+  virtual inline bool esc()=0;
 };
 
 //output interface
