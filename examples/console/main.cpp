@@ -35,8 +35,8 @@ DynaMenu dynaMenu(
 );
 
 Out out;//to use with single option
-StaticNav<Out,MainMenu> nav;
-DynamicNav<MenuOutDef<Out>,DynaMenu> dyNav(dynaMenu);
+StaticNav<Out,MainMenu,NavPos<>> nav;
+DynamicNav<MenuOutDef<Out>,DynaMenu,NavPos<>> dyNav(dynaMenu);
 
 StaticNav<Out,SingleOp> singleNav;
 

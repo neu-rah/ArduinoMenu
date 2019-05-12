@@ -20,7 +20,10 @@ struct MenuOut;
 struct NavNode;
 
 //navigation interface
-struct NavNode {};
+struct NavNode {
+  virtual inline bool selected(idx_t) const {}
+  virtual inline bool enabled(idx_t) const {}
+};
 
 //output interface
 struct MenuOut {
@@ -40,9 +43,6 @@ struct MenuOut {
     fmt(role,false,nav,out,i,n);
   }
 };
-
-// template<typename O>
-// using asMenu=Role<Roles,O,&MenuOut::fmtMenu>;
 
 //item interface
 struct Item {

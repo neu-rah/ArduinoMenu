@@ -17,6 +17,7 @@ struct Empty:public O {
   static inline void print(Nav&,Out&) {}
   template<typename Nav,typename Out>
   static inline void printItem(Nav& nav,Out& out) {}
+  constexpr static inline bool enabled(idx_t) {return true;}
   // template<typename Nav,typename Out> static inline void printItems(Out& out) {print(out);}
 };
 
@@ -68,6 +69,7 @@ struct Prompt:public Item,public O {
   inline void printItem(NavNode& nav,MenuOut& out,idx_t n) override {
     out.fmt(Roles::Item,true,nav,out,*this,n);
     out.fmt(Roles::Index,nav,out,*this,n);
+    out.fmt(Roles::Cursor,nav,out,*this,n);
     O::print(nav,out);
     out.fmt(Roles::Item,false,nav,out,*this,n);
   }

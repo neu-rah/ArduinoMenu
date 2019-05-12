@@ -75,6 +75,8 @@ struct FullPrinter:public O {
     out.template fmtItem<true>(nav,out,i,n);
     out.template fmtIndex<true>(nav,out,i,n);
     out.template fmtIndex<false>(nav,out,i,n);
+    out.template fmtCursor<true>(nav,out,i,n);
+    out.template fmtCursor<false>(nav,out,i,n);
     i.printItem(nav,out,n);
     out.template fmtItem<false>(nav,out,i,n);
   }
@@ -131,10 +133,20 @@ struct TextFmt:public O {
   static inline void fmtIndex(Nav& nav,Out& out,I& i,idx_t n) {
     if(io) {
       O::template fmtIndex<io,Nav,Out,I>(nav,out,i,n);
-      out.raw(n);
+      if (n<9) out.raw(n+1);
+      else out.raw(' ');
       out.raw(')');
     } else {
       O::template fmtItem<io,Nav,Out,I>(nav,out,i,n);
+    }
+  }
+  template<bool io,typename Nav,typename Out,typename I>
+  inline void fmtCursor(Nav& nav,Out& out,I& i,idx_t n) {
+    if (io) {
+      out.raw(nav.selected(n)?(nav.enabled(n)?'>':'-'):' ');
+      O::template fmtCursor<io,Nav,Out,I>(nav,out,i,n);
+    } else {
+      O::template fmtCursor<io,Nav,Out,I>(nav,out,i,n);
     }
   }
 };
