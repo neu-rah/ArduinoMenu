@@ -3,7 +3,7 @@
 
 #include <menu.h>
 
-namespace Menu {
+// namespace Menu {
   template<typename O>
   class EnDis:public O {
     public:
@@ -12,4 +12,4 @@ namespace Menu {
     protected:
       bool en=true;
   };
-};
+// };

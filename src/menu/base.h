@@ -9,6 +9,7 @@
 */
 
 using idx_t=int;
+using ConstText=const char[];
 
 enum class Roles {Panel,Menu,Title,Body,Item,Index,Cursor,Name,Mode,Value,Unit};
 
@@ -21,8 +22,8 @@ struct NavNode;
 
 //navigation interface
 struct NavNode {
-  virtual inline bool selected(idx_t) const {}
-  virtual inline bool enabled(idx_t) const {}
+  virtual inline bool selected(idx_t) const {return false;}
+  virtual inline bool enabled(idx_t) const {return true;}
   virtual inline bool up()=0;
   virtual inline bool down()=0;
   virtual inline bool left()=0;

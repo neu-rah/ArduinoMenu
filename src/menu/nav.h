@@ -42,9 +42,13 @@ class DynamicNav:public NavNode,public O {
     using This=DynamicNav<Out,Data,O>;
     DynamicNav(Data& o):data(&o) {}
     inline void setTarget(Data d) {data=d;}
+    inline void enterMenuRender() {onMenu=true;}
+    inline void exitMenuRender() {onMenu=false;}
     inline void printMenu() {
-      // data.printItems(out);
+      enterMenuRender();
+      This::newView();
       out.template printMenu<This,Out,Data>(*this,out,*data);
+      exitMenuRender();
     }
     inline idx_t size() {return data->size();}
     inline bool selected(idx_t i) const override {return O::selected(i);}
@@ -58,6 +62,7 @@ class DynamicNav:public NavNode,public O {
   protected:
     Out out;
     Data* data;
+    bool onMenu=false;
 };
 
 template<typename O=Drift<>>

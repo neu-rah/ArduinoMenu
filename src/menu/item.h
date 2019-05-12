@@ -43,6 +43,10 @@ class StaticMenu:public StaticMenu<O> {
       out.template printItem<Nav,Out,This>(nav,out,*this,n);
       next.template printItems<Nav,Out,n+1>(nav,out);
     }
+    template<size_t n>
+    inline void enable(bool o) {
+      return n?next.template enable<n-1>(o):next.enable(o);
+    }
   protected:
     Next next;
 };
@@ -59,6 +63,14 @@ struct StaticMenu<O>:public O {
   inline void printItems(Nav& nav,Out& out) {
     out.template printItem<Nav,Out,This>(nav,out,*this,n);
     // O::print(nav,out);
+  }
+  template<size_t n>
+  inline bool enabled() const {
+    return n?true:O::enabled();
+  }
+  template<size_t n>
+  inline void enable(bool o) {
+    if(!n) O::enable(o);
   }
 };
 

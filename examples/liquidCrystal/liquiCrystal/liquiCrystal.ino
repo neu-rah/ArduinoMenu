@@ -1,9 +1,27 @@
 #include <menu.h>
-#include <menu/IO/serialOut.h>
+#include <menu/IO/liquidCrystalOut.h>
 #include <menu/comp/endis.h>
 #include <menu/comp/flashText.h>
 
-using Out=TextFmt<TitleWrap<SerialOut<>>>;
+// LCD /////////////////////////////////////////
+#define RS 2
+#define RW 4
+#define EN A4
+LiquidCrystal lcd(RS, RW, EN, A0, A1, A2, A3);
+
+using Out=
+  TextFmt<
+    TitleWrap<
+      Viewport<
+        RangePanel<
+          StaticPanel<0,0,16,2,
+            LiquidCrystalOut<LiquidCrystal,lcd>
+          >
+        >
+      >
+    >
+  >;
+
 
 //string data on flash
 PROGMEM ConstText op1_text="Op 1";
@@ -30,7 +48,7 @@ NavCap<StaticNav<Out,MainMenu,NavPos<>>> nav;
 void setup() {
   Serial.begin(115200);
   while(!Serial);
-  Serial.println("AM5 serial example");
+  Serial.println("AM5 LiquidCrystal example");
   nav.printMenu();
 }
 
