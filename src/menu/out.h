@@ -153,7 +153,6 @@ struct TextFmt:public O {
 
 template<typename Dev,Dev dev,typename O=FullPrinter<>>
 struct RawOut:public O {
-  static inline void nl() {dev<<endl;}
   template<typename T> static inline void raw(T o) {dev<<o;}
 };
 

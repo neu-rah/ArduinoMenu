@@ -81,3 +81,14 @@ class NavPos:public O {
   protected:
     idx_t at;
 };
+
+template<typename O>
+struct NavCap:public O {
+  using This=NavCap<O>;
+  inline bool up() {return O::template _up<This>(*this);}
+  inline bool down() {return O::template _down<This>(*this);}
+  inline bool left() {return O::template _left<This>(*this);}
+  inline bool right() {return O::template _right<This>(*this);}
+  inline bool enter() {return O::template _enter<This>(*this);}
+  inline bool esc() {return O::template _esc<This>(*this);}
+};

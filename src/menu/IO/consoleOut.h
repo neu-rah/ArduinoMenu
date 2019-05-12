@@ -13,6 +13,6 @@ using namespace std;
 // namespace Menu {
   template<ostream& dev=cout,typename O=FullPrinter<>>
   struct Console:public RawOut<ostream&,dev,O> {
-    // using RawOut<ostream&,dev,O>::RawOut;
+    static inline void nl() {dev<<endl;}
   };
 // }
