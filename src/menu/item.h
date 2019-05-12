@@ -10,9 +10,13 @@
 
 #include "base.h"
 
-template<typename O=Nil> struct Empty:public O {
-  template<typename Nav,typename Out> static inline void print(Nav&,Out&) {}
-  template<typename Nav,typename Out> static inline void printItem(Nav& nav,Out& out) {}
+template<typename O=Nil>
+struct Empty:public O {
+  constexpr static inline size_t size() {return 0;}
+  template<typename Nav,typename Out>
+  static inline void print(Nav&,Out&) {}
+  template<typename Nav,typename Out>
+  static inline void printItem(Nav& nav,Out& out) {}
   // template<typename Nav,typename Out> static inline void printItems(Out& out) {print(out);}
 };
 
@@ -32,6 +36,7 @@ class StaticMenu:public StaticMenu<O> {
   public:
     using This=StaticMenu<O>;
     using Next=StaticMenu<OO...>;
+    constexpr inline size_t size() {return next.size()+1;}
     template<typename Nav,typename Out>
     inline void printItems(Nav& nav,Out& out) {
       out.template printItem<Nav,Out,This>(nav,out,*this);
@@ -43,12 +48,15 @@ class StaticMenu:public StaticMenu<O> {
 
 template<typename O>
 struct StaticMenu<O>:public O {
+  constexpr static inline size_t size() {return 1;}
   template<typename Nav,typename Out>
   inline void print(Nav& nav,Out& out) {}
   template<typename Nav,typename Out>
   inline void printItem(Nav& nav,Out& out) {O::print(nav,out);}
   template<typename Nav,typename Out>
-  inline void printItems(Nav& nav,Out& out) {O::print(nav,out);}
+  inline void printItems(Nav& nav,Out& out) {
+    O::print(nav,out);
+  }
 };
 
 //dynamic -----------------------------------------------------------
@@ -57,6 +65,7 @@ struct Prompt:public Item,public O {
   using O::O;
   inline void printItem(NavNode& nav,MenuOut& out) override {
     out.fmt(Roles::Item,true,nav,out,*this);
+    out.fmt(Roles::Index,nav,out,*this);
     O::print(nav,out);
     out.fmt(Roles::Item,false,nav,out,*this);
   }

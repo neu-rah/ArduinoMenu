@@ -17,6 +17,7 @@ template<typename O=Nil> struct Void:public O {
   static inline void printMenu(Nav&,Out& out,I& i) {}
   template<typename Nav,typename Out,typename I>
   static inline void printItem(Nav&,Out& out,I& i) {i.printItem(out);}
+
   template<bool io,typename Nav,typename Out,typename I> static inline void fmtPanel(Nav&,Out&,I&) {}
   template<bool io,typename Nav,typename Out,typename I> static inline void fmtMenu(Nav&,Out&,I&) {}
   template<bool io,typename Nav,typename Out,typename I> static inline void fmtTitle(Nav&,Out&,I&) {}
@@ -28,8 +29,12 @@ template<typename O=Nil> struct Void:public O {
   template<bool io,typename Nav,typename Out,typename I> static inline void fmtMode(Nav&,Out&,I&) {}
   template<bool io,typename Nav,typename Out,typename I> static inline void fmtValue(Nav&,Out&,I&) {}
   template<bool io,typename Nav,typename Out,typename I> static inline void fmtUnit(Nav&,Out&,I&) {}
-  // template<Roles role, bool io,typename Nav,typename Out,typename I>
-  // static inline void fmt(Nav& nav,Out& out,I& i) {}
+
+  template<typename Nav,typename Out,typename I>
+  static inline void fmt(Roles role,Nav& nav,Out& out,I& i) {
+    fmt(role,true,nav,out,i);
+    fmt(role,false,nav,out,i);
+  }
   template<typename Nav,typename Out,typename I>
   static inline void fmt(Roles role,bool io,Nav& nav,Out& out,I& i) {
     //we could do better with templates, but we need this to be compatible with virtual interface too
@@ -67,11 +72,25 @@ struct FullPrinter:public O {
   }
   template<typename Nav,typename Out,typename I>
   static inline void printItem(Nav& nav,Out& out,I& i) {
-    out.fmt(Roles::Item,true,nav,out,i);
+    MDO<<"printItem"<<endl;
+    out.template fmtItem<true>(nav,out,i);
+    out.template fmtIndex<true>(nav,out,i);
+    out.template fmtIndex<false>(nav,out,i);
     i.printItem(nav,out);
-    out.fmt(Roles::Item,false,nav,out,i);
+    out.template fmtItem<false>(nav,out,i);
   }
 };
+
+// template<typename O>
+// struct BodyPrinter:public O {
+//   template<typename Nav,typename Out,typename I>
+//   static inline void printMenu(Nav& nav,Out& out,I& i) {
+//     size_t sz=i.size();
+//     for(size_t n=0;n<sz;n++) {
+//       i.printItem(nav,out,n);
+//     }
+//   }
+// };
 
 template<typename O=Void<>,char open='[',char close=']'>
 struct TitleWrap:public O {
@@ -93,6 +112,8 @@ struct TextFmt:public O {
   static inline void fmtTitle(Nav& nav,Out& out,I& i) {
     if (io) {
       out.fmt(Roles::Item,true,nav,out,i);
+      //this gets called with the virtual class, cant use the templates
+      //out.template fmtItem<true>(nav,out,i);
       O::template fmtTitle<io,Nav,Out,I>(nav,out,i);
     } else {
       O::template fmtTitle<io,Nav,Out,I>(nav,out,i);
@@ -106,6 +127,10 @@ struct TextFmt:public O {
       O::template fmtItem<io,Nav,Out,I>(nav,out,i);
       out.nl();
     }
+  }
+  template<bool io,typename Nav,typename Out,typename I>
+  static inline void fmtIndex(Nav& nav,Out& out,I& i) {
+    MDO<<"{Index}";
   }
 };
 

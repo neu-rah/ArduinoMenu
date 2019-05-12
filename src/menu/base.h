@@ -38,6 +38,10 @@ struct MenuOut {
   virtual inline void printItem(NavNode&,Item&)=0;
   //TODO: reduce vtable, use a bool parameter and demux on static side instead!
   virtual inline void fmt(Roles role,bool io,NavNode& nav,MenuOut&,Item& i) {}
+  inline void fmt(Roles role,NavNode& nav,MenuOut& out,Item& i) {
+    fmt(role,true,nav,out,i);
+    fmt(role,false,nav,out,i);
+  }
 };
 
 // template<typename O>
