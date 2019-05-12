@@ -8,17 +8,9 @@
 * @brief ArduinoMenu interfaces (API's)
 */
 
-enum class Roles {Panel,Menu,Title,Body,Item,Index,Cursor,Name,Mode,Value,Unit};
+using idx_t=int;
 
-//hook out and fmt callbacks for role tags included on menu structure
-//they provide a direct access to specific output driver
-// template<Roles role,typename O,void (MenuOut::*f)(bool)>
-// struct Role:public O {
-//   using O::O;
-//   Role(O& o):O(o) {}
-//   inline void out(MenuOut&) const;
-//   inline void fmt(MenuOut& o,bool io) const;
-// };
+enum class Roles {Panel,Menu,Title,Body,Item,Index,Cursor,Name,Mode,Value,Unit};
 
 template<typename O> using Id=O;
 struct Nil {};
@@ -35,12 +27,12 @@ struct MenuOut {
   virtual inline void nl() {}
   virtual inline void raw(char) {};
   virtual inline void raw(const char*) {};
-  virtual inline void printItem(NavNode&,Item&)=0;
+  virtual inline void printItem(NavNode&,Item&,idx_t)=0;
   //TODO: reduce vtable, use a bool parameter and demux on static side instead!
-  virtual inline void fmt(Roles role,bool io,NavNode& nav,MenuOut&,Item& i) {}
-  inline void fmt(Roles role,NavNode& nav,MenuOut& out,Item& i) {
-    fmt(role,true,nav,out,i);
-    fmt(role,false,nav,out,i);
+  virtual inline void fmt(Roles role,bool io,NavNode& nav,MenuOut&,Item& i,idx_t) {}
+  inline void fmt(Roles role,NavNode& nav,MenuOut& out,Item& i,idx_t n) {
+    fmt(role,true,nav,out,i,n);
+    fmt(role,false,nav,out,i,n);
   }
 };
 
@@ -50,5 +42,5 @@ struct MenuOut {
 //item interface
 struct Item {
   virtual inline void print(NavNode&,MenuOut& out) {}
-  virtual inline void printItem(NavNode&,MenuOut& out) {}
+  virtual inline void printItem(NavNode&,MenuOut& out,idx_t n) {}
 };

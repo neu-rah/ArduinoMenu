@@ -38,12 +38,14 @@ Out out;//to use with single option
 StaticNav<Out,MainMenu> nav;
 DynamicNav<MenuOutDef<Out>,DynaMenu> dyNav(dynaMenu);
 
+StaticNav<Out,SingleOp> singleNav;
+
 int main() {
   cout<<"AM5 tests"<<endl;
 
-  // cout<<"{single option test}"<<endl;
-  // SingleOp::print(out);
-  // cout<<endl;
+  cout<<"{single option test}"<<endl;
+  SingleOp().print(singleNav,out);
+  cout<<endl;
 
   cout<<"{static menu test}"<<endl;
   nav.printMenu();

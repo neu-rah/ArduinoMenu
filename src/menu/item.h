@@ -37,10 +37,10 @@ class StaticMenu:public StaticMenu<O> {
     using This=StaticMenu<O>;
     using Next=StaticMenu<OO...>;
     constexpr inline size_t size() {return next.size()+1;}
-    template<typename Nav,typename Out>
+    template<typename Nav,typename Out,idx_t n=0>
     inline void printItems(Nav& nav,Out& out) {
-      out.template printItem<Nav,Out,This>(nav,out,*this);
-      next.template printItems<Nav,Out>(nav,out);
+      out.template printItem<Nav,Out,This>(nav,out,*this,n);
+      next.template printItems<Nav,Out,n+1>(nav,out);
     }
   protected:
     Next next;
@@ -48,14 +48,16 @@ class StaticMenu:public StaticMenu<O> {
 
 template<typename O>
 struct StaticMenu<O>:public O {
+  using This=StaticMenu<O>;
   constexpr static inline size_t size() {return 1;}
   template<typename Nav,typename Out>
   inline void print(Nav& nav,Out& out) {}
   template<typename Nav,typename Out>
-  inline void printItem(Nav& nav,Out& out) {O::print(nav,out);}
-  template<typename Nav,typename Out>
+  inline void printItem(Nav& nav,Out& out,idx_t) {O::print(nav,out);}
+  template<typename Nav,typename Out,idx_t n=0>
   inline void printItems(Nav& nav,Out& out) {
-    O::print(nav,out);
+    out.template printItem<Nav,Out,This>(nav,out,*this,n);
+    // O::print(nav,out);
   }
 };
 
@@ -63,11 +65,11 @@ struct StaticMenu<O>:public O {
 template<typename O>
 struct Prompt:public Item,public O {
   using O::O;
-  inline void printItem(NavNode& nav,MenuOut& out) override {
-    out.fmt(Roles::Item,true,nav,out,*this);
-    out.fmt(Roles::Index,nav,out,*this);
+  inline void printItem(NavNode& nav,MenuOut& out,idx_t n) override {
+    out.fmt(Roles::Item,true,nav,out,*this,n);
+    out.fmt(Roles::Index,nav,out,*this,n);
     O::print(nav,out);
-    out.fmt(Roles::Item,false,nav,out,*this);
+    out.fmt(Roles::Item,false,nav,out,*this,n);
   }
   inline void print(NavNode& nav,MenuOut& out) override {
     O::print(nav,out);
@@ -81,13 +83,15 @@ struct VectorMenu:public O,vector<Item*> {
   static inline void print(Nav& bav,Out& out) {}
   template<typename... OO>
   inline VectorMenu(OO... oo):vector<Item*>{oo...} {}
-  template<typename Nav,typename Out>
-  inline void printItem(Nav& nav,Out& out) {O::print(nav,out);}
+  // template<typename Nav,typename Out>
+  // inline void printItem(Nav& nav,Out& out) {O::print(nav,out);}
   template<typename Nav,typename Out>
   inline void printItems(Nav& nav,Out& out) {
+    idx_t n=0;
     for(auto i: *this) {
       // out.fmtItemStart(nav,out,*i);
-      out.printItem(nav,*i);
+      out.printItem(nav,*i,n);
+      n++;
       // out.fmtItemEnd(nav,out,*i);
     }
   }
