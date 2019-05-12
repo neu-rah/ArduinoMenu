@@ -27,6 +27,11 @@ struct MenuOut {
   virtual inline void nl() {}
   virtual inline void raw(char) {};
   virtual inline void raw(const char*) {};
+  virtual inline void raw(int) {};
+  virtual inline void raw(unsigned int) {};
+  virtual inline void raw(long) {};
+  virtual inline void raw(unsigned long) {};
+  virtual inline void raw(double) {};
   virtual inline void printItem(NavNode&,Item&,idx_t)=0;
   //TODO: reduce vtable, use a bool parameter and demux on static side instead!
   virtual inline void fmt(Roles role,bool io,NavNode& nav,MenuOut&,Item& i,idx_t) {}
