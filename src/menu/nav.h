@@ -24,8 +24,6 @@ class StaticNav:public O {
       // data.printItems(out);
       out.template printMenu<This,Out,Data>(*this,out,data);
     }
-    constexpr static inline bool selected(idx_t) {return false;}
-    constexpr static inline bool enabled(idx_t) {return true;}
   protected:
     Out out;
     Data data;
