@@ -20,8 +20,9 @@ template<typename O=Nil> struct Void:public O {
 
   constexpr static inline bool isRange() {return false;}
   constexpr static inline bool isViewport() {return false;}
-  constexpr static inline size_t top() {return 0;}
-  static inline void setTop(size_t) {}
+  constexpr static inline idx_t height() {return 0;}
+  constexpr static inline idx_t top() {return 0;}
+  static inline void setTop(idx_t) {}
   static inline void newView() {}
   constexpr static inline idx_t posX() {return 0;}
   constexpr static inline idx_t posY() {return 0;}
@@ -71,14 +72,26 @@ template<typename O=Nil> struct Void:public O {
 template<typename O=Void<>>
 struct FullPrinter:public O {
   template<typename Nav,typename Out,typename I>
-  static inline void printMenu(Nav& nav,Out& out,I& i) {
+  inline void printMenu(Nav& nav,Out& out,I& i) {
+    _trace(MDO<<"FullPrinter::printMenu"<<endl);
     out.template fmtPanel<true>(nav,out,i,0);
     out.template fmtMenu<true>(nav,out,i,0);
     out.template fmtTitle<true>(nav,out,i,0);
     i.print(nav,out);
     out.template fmtTitle<false>(nav,out,i,0);
     out.template fmtBody<true>(nav,out,i,0);
+
+    if (Out::isRange()) {
+      _trace(MDO<<"FullPrinter on RangePanel top:"<<out.top()<<" posY:"<<out.posY()<<endl);
+      //ensure that selection option is withing range
+      while(out.top()+out.posY()>nav.pos())
+        out.setTop(out.top()-1);
+      while(nav.pos()>=out.top()+out.freeY())
+        nav.setTop(nav.top()+1);
+    }
+
     i.template printItems<Nav,Out>(nav,out);
+
     out.template fmtBody<false>(nav,out,i,0);
     out.template fmtMenu<false>(nav,out,i,0);
     out.template fmtPanel<false>(nav,out,i,0);
@@ -118,6 +131,82 @@ struct TitleWrap:public O {
       out.raw(close);
     }
   }
+};
+
+//static panel ------------------------------------------------
+// describes output geometry,
+// may be whole device, but must not exceed
+// it has origin coordinates to be displaced around
+template<idx_t x,idx_t y,idx_t w,idx_t h,typename O>
+struct StaticPanel:public O {
+  constexpr static inline idx_t orgX() {return x;}
+  constexpr static inline idx_t orgY() {return y;}
+  constexpr static inline idx_t width() {return w;}
+  constexpr static inline idx_t height() {return h;}
+
+  constexpr static inline idx_t posX() {return x;}
+  constexpr static inline idx_t posY() {return y;}
+  constexpr static inline idx_t freeX() {return w;}
+  constexpr static inline idx_t freeY() {return h;}
+  constexpr static inline idx_t free() {return w*h;}
+  static inline void useX(idx_t ux=1) {}
+  static inline void useY(idx_t uy=1) {}
+};
+
+//its different than a scroll viewport
+//as it refers to the top line of the menu structure
+//minimize printing on line menus
+template<typename O>
+class RangePanel:public O {
+  public:
+    constexpr static inline bool isRange() {return true;}
+    inline idx_t top() const {return topLine;}
+    inline void setTop(idx_t n) {topLine=n;}
+  protected:
+    idx_t topLine=0;
+};
+
+//track space usage
+template<typename O>
+class Viewport:public O {
+  public:
+    // using O::O;
+    inline Viewport() {/*newView();*/}
+    inline Viewport(const Viewport<O>& o) {fx=o.width();fy=o.height();}
+    constexpr static inline bool isViewport() {return true;}
+    inline operator bool() const {return fx&&fy;}
+    inline operator int() const {return free();}
+    inline void newView() {
+      _trace(MDO<<"newView()"<<endl);
+      fx=O::width();fy=O::height();
+    }
+    //TODO: need font size and char measure API
+    inline void nl() {useY(1);}
+    //device coordinates ---------
+    inline idx_t posX() const {return (O::width()-fx)+O::orgX();}
+    inline idx_t posY() const {return (O::height()-fy)+O::orgY();}
+    // get free space ----
+    inline idx_t freeX() const {return fx;}
+    inline idx_t freeY() const {
+      // Serial<<"Viewport::freeY "<<fy<<endl;
+      return fy;}
+    inline idx_t height() const {
+      return freeY();}
+    inline idx_t free() const {return fx+O::width()*fy;}
+    // use space ----
+    inline void useX(idx_t ux=1) {if (fx) fx-=ux; else useY();}
+    inline void useY(idx_t uy=1) {
+      // Serial<<"Viewport::useY("<<uy<<")"<<endl;
+      if (!fy) {
+        fx=0;
+        fy=0;
+      } else {
+        fy-=uy;
+        fx=O::width();
+      }
+    }
+  protected:
+    idx_t fx,fy;
 };
 
 template<typename O>
@@ -167,82 +256,6 @@ struct TextFmt:public O {
 template<typename Dev,Dev dev,typename O=FullPrinter<>>
 struct RawOut:public O {
   template<typename T> static inline void raw(T o) {dev<<o;}
-};
-
-//static panel ------------------------------------------------
-// describes output geometry,
-// may be whole device, but must not exceed
-// it has origin coordinates to be displaced around
-template<idx_t x,idx_t y,idx_t w,idx_t h,typename O>
-struct StaticPanel:public O {
-  constexpr static inline idx_t orgX() {return x;}
-  constexpr static inline idx_t orgY() {return y;}
-  constexpr static inline idx_t width() {return w;}
-  constexpr static inline idx_t height() {return h;}
-
-  constexpr static inline idx_t posX() {return x;}
-  constexpr static inline idx_t posY() {return y;}
-  constexpr static inline idx_t freeX() {return w;}
-  constexpr static inline idx_t freeY() {return h;}
-  constexpr static inline idx_t free() {return w*h;}
-  static inline void useX(idx_t ux=1) {}
-  static inline void useY(idx_t uy=1) {}
-};
-
-//its different than a scroll viewport
-//as it refers to the top line of the menu structure
-//minimize printing on line menus
-template<typename O>
-class RangePanel:public O {
-  public:
-    constexpr static inline bool isRange() {return true;}
-    inline size_t top() const {return topLine;}
-    inline void setTop(size_t n) {topLine=n;}
-  protected:
-    size_t topLine=0;
-};
-
-//track space usage
-template<typename O>
-class Viewport:public O {
-  public:
-    // using O::O;
-    inline Viewport() {/*newView();*/}
-    inline Viewport(const Viewport<O>& o) {fx=o.width();fy=o.height();}
-    constexpr static inline bool isViewport() {return true;}
-    inline operator bool() const {return fx&&fy;}
-    inline operator int() const {return free();}
-    inline void newView() {
-      _trace(MDO<<"newView()"<<endl);
-      fx=O::width();fy=O::height();
-    }
-    //TODO: need font size and char measure API
-    inline void nl() {useY(1);}
-    //device coordinates ---------
-    inline idx_t posX() const {return (O::width()-fx)+O::orgX();}
-    inline idx_t posY() const {return (O::height()-fy)+O::orgY();}
-    // get free space ----
-    inline idx_t freeX() const {return fx;}
-    inline idx_t freeY() const {
-      // Serial<<"Viewport::freeY "<<fy<<endl;
-      return fy;}
-    inline size_t height() const {
-      return freeY();}
-    inline idx_t free() const {return fx+O::width()*fy;}
-    // use space ----
-    inline void useX(idx_t ux=1) {if (fx) fx-=ux; else useY();}
-    inline void useY(idx_t uy=1) {
-      // Serial<<"Viewport::useY("<<uy<<")"<<endl;
-      if (!fy) {
-        fx=0;
-        fy=0;
-      } else {
-        fy-=uy;
-        fx=O::width();
-      }
-    }
-  protected:
-    idx_t fx,fy;
 };
 
 template<typename O,typename... OO>

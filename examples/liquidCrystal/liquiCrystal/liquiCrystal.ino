@@ -51,6 +51,7 @@ void setup() {
   Serial.begin(115200);
   while(!Serial);
   Serial.println("AM5 LiquidCrystal example");
+  lcd.begin(16,2);
   nav.printMenu();
 }
 

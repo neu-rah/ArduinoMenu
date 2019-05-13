@@ -20,9 +20,9 @@ struct LiquidCrystalOut:public O {
   inline void raw(T i) {
     // Serial<<"LCDOutDef::raw("<<i<<")"<<endl;
     // if (!O::operator bool()) return;//TODO: this is naive, we need to measure
-    // if (O::posY()+scrlPosY()>O::height()) return;
+    if (O::posY()+O::top()>O::height()) return;
     dev.setCursor(O::posX(),O::posY());
-    Serial<<"lcd.setCursor("<<posX()<<","<<posY()<<") "<<i<<endl;
+    Serial<<"lcd.setCursor("<<O::posX()<<","<<O::posY()<<") "<<i<<endl;
     O::useX(dev.print(i));
   }
   inline void clear() {

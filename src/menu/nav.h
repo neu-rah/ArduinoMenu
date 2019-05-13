@@ -21,39 +21,48 @@ template<typename O=Nil> struct Drift:public O {
   template<typename Nav> constexpr static inline bool _esc(Nav& nav) {return false;}
 };
 
-template<typename Out,typename Data,typename O=Drift<>>
-class StaticNav:public O {
+template<typename Out,typename O=Drift<>>
+class NavBase:public O {
   public:
-    using This=StaticNav<Out,Data,O>;
-    inline void setTarget(Data d) {data=d;}
-    inline void printMenu() {
-      enterMenuRender();
-      out.newView();
-      out.template printMenu<This,Out,Data>(*this,out,data);
-      exitMenuRender();
-    }
-    inline idx_t size() {return data.size();}
     inline void enterMenuRender() {onMenu=true;}
     inline void exitMenuRender() {onMenu=false;}
+    inline idx_t top() const {return out.top();}
+    inline void setTop(idx_t n) {out.setTop(n);}
+    inline idx_t height() const {return out.height();}
   protected:
     Out out;
-    Data data;
     bool onMenu=false;
 };
 
 template<typename Out,typename Data,typename O=Drift<>>
-class DynamicNav:public NavNode,public O {
+class StaticNav:public NavBase<Out,O> {
   public:
+    using Base=NavBase<Out,O>;
+    using This=StaticNav<Out,Data,O>;
+    inline void setTarget(Data d) {data=d;}
+    inline void printMenu() {
+      Base::enterMenuRender();
+      Base::out.newView();
+      Base::out.template printMenu<This,Out,Data>(*this,Base::out,data);
+      Base::exitMenuRender();
+    }
+    inline idx_t size() {return data.size();}
+  protected:
+    Data data;
+};
+
+template<typename Out,typename Data,typename O=Drift<>>
+class DynamicNav:public NavNode,public NavBase<Out,O> {
+  public:
+    using Base=NavBase<Out,O>;
     using This=DynamicNav<Out,Data,O>;
     DynamicNav(Data& o):data(&o) {}
     inline void setTarget(Data d) {data=d;}
-    inline void enterMenuRender() {onMenu=true;}
-    inline void exitMenuRender() {onMenu=false;}
     inline void printMenu() {
-      enterMenuRender();
+      Base::enterMenuRender();
       This::newView();
-      out.template printMenu<This,Out,Data>(*this,out,*data);
-      exitMenuRender();
+      Base::out.template printMenu<This,Out,Data>(*this,Base::out,*data);
+      Base::exitMenuRender();
     }
     inline idx_t size() {return data->size();}
     inline bool selected(idx_t i) const override {return O::selected(i);}
@@ -65,9 +74,7 @@ class DynamicNav:public NavNode,public O {
     inline bool enter() override {return O::template _enter<This>(*this);}
     inline bool esc() override {return O::template _esc<This>(*this);}
   protected:
-    Out out;
     Data* data;
-    bool onMenu=false;
 };
 
 template<typename O=Drift<>>
