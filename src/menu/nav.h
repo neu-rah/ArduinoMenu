@@ -27,13 +27,18 @@ class StaticNav:public O {
     using This=StaticNav<Out,Data,O>;
     inline void setTarget(Data d) {data=d;}
     inline void printMenu() {
-      // data.printItems(out);
+      enterMenuRender();
+      out.newView();
       out.template printMenu<This,Out,Data>(*this,out,data);
+      exitMenuRender();
     }
     inline idx_t size() {return data.size();}
+    inline void enterMenuRender() {onMenu=true;}
+    inline void exitMenuRender() {onMenu=false;}
   protected:
     Out out;
     Data data;
+    bool onMenu=false;
 };
 
 template<typename Out,typename Data,typename O=Drift<>>

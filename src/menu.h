@@ -8,6 +8,7 @@
 * @brief ArduinoMenu main include file
 */
 
+#include "menu/debug.h"
 #include "menu/base.h"
 #include "menu/item.h"
 #include "menu/out.h"

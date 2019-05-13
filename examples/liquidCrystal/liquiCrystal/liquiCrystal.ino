@@ -12,16 +12,18 @@ LiquidCrystal lcd(RS, RW, EN, A0, A1, A2, A3);
 using Out=
   TextFmt<
     TitleWrap<
-      Viewport<
-        RangePanel<
-          StaticPanel<0,0,16,2,
-            LiquidCrystalOut<LiquidCrystal,lcd>
+      LiquidCrystalOut<
+        lcd,
+        Viewport<
+          RangePanel<
+            StaticPanel<0,0,16,2,
+              FullPrinter<>
+            >
           >
         >
       >
     >
   >;
-
 
 //string data on flash
 PROGMEM ConstText op1_text="Op 1";

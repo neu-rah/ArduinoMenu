@@ -1,29 +1,34 @@
 /* -*- C++ -*- */
 #pragma once
-////////////////////////////////////////////////////
-// Rui Azevedo - Apr2019
-// neu-rah (ruihfazevedo@gmail.com)
-// use arduino standard LCD library as menu output
+/**
+* @file menu.h
+* @author Rui Azevedo
+* @date 10 May 2019
+* @copyright 2019 Rui Azevedo
+* @brief use arduino standard LCD library as menu output
+*/
 
 #include <Arduino.h>
 #include <LiquidCrystal.h>
 #include <menu.h>
 
-template<typename Dev,Dev& dev, typename O=FullPrinter<>>
+template<LiquidCrystal& dev, typename O=FullPrinter<>>
 struct LiquidCrystalOut:public O {
   using O::O;
-  using This = LiquidCrystalOut<Dev,dev,O>;
+  using This = LiquidCrystalOut<dev,O>;
   template<typename T>
   inline void raw(T i) {
     // Serial<<"LCDOutDef::raw("<<i<<")"<<endl;
     // if (!O::operator bool()) return;//TODO: this is naive, we need to measure
     // if (O::posY()+scrlPosY()>O::height()) return;
     dev.setCursor(O::posX(),O::posY());
-    // Serial<<"lcd.setCursor("<<posX()<<","<<posY()<<") "<<i<<endl;
+    Serial<<"lcd.setCursor("<<posX()<<","<<posY()<<") "<<i<<endl;
     O::useX(dev.print(i));
   }
-  // template<typename H>
-  // inline void clear(PrintHead<H>) {dev.clear();}
+  inline void clear() {
+    O::newView();
+    dev.clear();
+  }
   // template<typename H>
   // inline void clearLine(PrintHead<H> p) {
   //   int line=p.line;//O::posY();
