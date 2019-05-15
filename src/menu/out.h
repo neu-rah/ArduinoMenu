@@ -103,13 +103,15 @@ struct FullPrinter:public O {
 
     if (Out::isRange()) {
       //ensure that selection option is withing range
-      while(out.top()+out.posY()>=nav.pos())
+      while(out.top()/*+out.posY()*/>nav.pos())
         out.setTop(out.top()-1);
       while(nav.pos()>=out.top()+out.freeY())
         out.setTop(out.top()+1);
     }
 
     for(idx_t n=out.top();n<i.size();n++) {
+      // if (out.posY()<0) continue;
+      if (!out.freeY()) break;
       out.template fmtItem<true>(nav,out,*this,n);
       out.template fmtIndex<true>(nav,out,*this,n);
       out.template fmtIndex<false>(nav,out,*this,n);
@@ -140,7 +142,7 @@ struct FullPrinter:public O {
 // may be whole device, but must not exceed
 // it has origin coordinates to be displaced around
 template<idx_t x,idx_t y,idx_t w,idx_t h,typename O>
-struct _StaticPanel:public O {
+struct StaticPanel:public O {
   constexpr static inline idx_t orgX() {return x;}
   constexpr static inline idx_t orgY() {return y;}
   constexpr static inline idx_t width() {return w;}
@@ -155,11 +157,11 @@ struct _StaticPanel:public O {
   static inline void useY(idx_t uy=1) {}
 };
 
-template<idx_t x,idx_t y,idx_t w,idx_t h,typename O>
-struct StaticPanel:public _StaticPanel<x,y,w,h,O> {};
-
-template<idx_t w,idx_t h,typename O>
-struct StaticPanel<0,0,w,h,O>:public _StaticPanel<0,0,w,h,O> {};
+// template<idx_t x,idx_t y,idx_t w,idx_t h,typename O>
+// struct StaticPanel:public _StaticPanel<x,y,w,h,O> {};
+//
+// template<idx_t w,idx_t h,typename O>
+// struct StaticPanel<0,0,w,h,O>:public _StaticPanel<0,0,w,h,O> {};
 
 //its different than a scroll viewport
 //as it refers to the top line of the menu structure

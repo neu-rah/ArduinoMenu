@@ -11,15 +11,15 @@ using Out=
   TextFmt<
     TitleWrap<
       SerialOut<
-        // decltype(Serial),
-        // Serial,
-        // Viewport<
-        //   RangePanel<
-        //     StaticPanel<0,0,16,2,
-        //       FullPrinter<>
-        //     >
-        //   >
-        // >
+        decltype(Serial),
+        Serial,
+        Viewport<
+          RangePanel<
+            StaticPanel<0,0,16,2,
+              FullPrinter<>
+            >
+          >
+        >
       >
     >
   >;

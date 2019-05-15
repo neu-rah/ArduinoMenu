@@ -2,11 +2,26 @@
 #include <menu/comp/vector.h>
 #include <menu/IO/consoleOut.h>
 #include <menu/fmt/titleWrap.h>
+#include <menu/fmt/textFmt.h>
 
 // using namespace Menu;
 
 // using Out=TextFmt<TitleWrap<RawOut<ostream&,cout>>>;
-using Out=TextFmt<TitleWrap<Console<>>>;
+using Out=
+TextFmt<
+  TitleWrap<
+    Console<
+      cout,
+      Viewport<
+        RangePanel<
+          StaticPanel<0,0,16,2,
+            FullPrinter<>
+          >
+        >
+      >
+    >
+  >
+>;
 
 const char* singleOp_text="Just testing";
 using SingleOp=StaticText<&singleOp_text>;

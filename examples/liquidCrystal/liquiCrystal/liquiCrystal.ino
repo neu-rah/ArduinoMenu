@@ -2,6 +2,7 @@
 #include <menu/IO/liquidCrystalOut.h>
 #include <menu/comp/endis.h>
 #include <menu/fmt/titleWrap.h>
+#include <menu/fmt/textFmt.h>
 #include <menu/comp/flashText.h>
 
 // using namespace Menu;

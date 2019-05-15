@@ -1,3 +1,8 @@
+//this is for use with an heavy (incompatible and incomplete) modification of the original atom build package
+//as the original author states the package needs to be completely rebuild to properlly integrate with atom lint 2.x
+//delete it and use command line compile as this wont work with the original build package
+//(Rui Azevedo)
+
 const ansir = require('ansi-regex');
 
 // function pack(type,em,output) {
