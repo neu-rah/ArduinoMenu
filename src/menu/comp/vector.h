@@ -20,16 +20,8 @@ struct VectorMenu:public O,vector<Item*> {
   static inline void print(Nav& bav,Out& out) {}
   template<typename... OO>
   inline VectorMenu(OO... oo):vector<Item*>{oo...} {}
-  // template<typename Nav,typename Out>
-  // inline void printItem(Nav& nav,Out& out) {O::print(nav,out);}
   template<typename Nav,typename Out>
-  inline void printItems(Nav& nav,Out& out) {
-    idx_t n=0;
-    for(auto i: *this) {
-      // out.fmtItemStart(nav,out,*i);
-      out.printItem(nav,*i,n);
-      n++;
-      // out.fmtItemEnd(nav,out,*i);
-    }
+  inline void printItem(Nav& nav,Out& out,idx_t n) {
+    operator[](n)->print(nav,out);
   }
 };

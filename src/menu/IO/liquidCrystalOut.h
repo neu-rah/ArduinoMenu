@@ -23,15 +23,10 @@ struct LiquidCrystalOut:public O {
   inline void nl() {O::useY();}
   template<typename T,OOP op=OOP::RawOut>
   inline void raw(T i) {
-    // Serial<<"LCDOutDef::raw("<<i<<")"<<endl;
-    // if (!O::operator bool()) return;//TODO: this is naive, we need to measure
-    _trace(MDO<<"{0}");
-    if (This::posY()<0) return;//O::useX(O::measure(i));//we only need to measure lines!
-    _trace(MDO<<"{1}");
+    if (This::posY()<0) return;
     if (This::posY()>This::height()) return;
-    _trace(MDO<<"{2}");
     dev.setCursor(O::posX(),O::posY());
-    Serial<<"lcd.setCursor("<<O::posX()<<","<<O::posY()<<") "<<i<<endl;
+    trace(Serial<<"lcd.setCursor("<<O::posX()<<","<<O::posY()<<") "<<i<<endl);
     if (op==OOP::RawOut) O::useX(dev.print(i));
     else O::useX(O::measure(i));
   }
@@ -39,15 +34,14 @@ struct LiquidCrystalOut:public O {
     O::newView();
     dev.clear();
   }
-  // template<typename H>
-  // inline void clearLine(PrintHead<H> p) {
-  //   int line=p.line;//O::posY();
-  //   // Serial<<"LCDOutDef::clearLine "<<p.pos<<(O::scrlPosY()>=0?"+":"")<<O::scrlPosY()<<"="<<line<<endl;
-  //   // Serial<<"height:"<<p.printer.height()<<endl;
-  //   if (line<0||line>=p.printer.height()) return;
-  //   // Serial<<"LCDOutDef::clearLine "<<line<<endl;
-  //   dev.setCursor(0,line);
-  //   for(int n=0;n<p.printer.width();n++)
-  //     dev.print(" ");
-  // }
+  template<bool io,typename Nav,typename Out,typename I>
+  static inline void fmtItem(Nav& nav,Out& out,I& i,idx_t n) {
+    if (io) {
+      if (out.posY()<0) return;//O::useX(O::measure(i));//we only need to measure lines!
+      if (out.posY()>out.height()) return;
+      dev.setCursor(0,out.posY());
+      for(int n=0;n<out.width();n++) dev.print(" ");
+    }
+    O::template fmtItem<io,Nav,Out,I>(nav,out,i,n);
+  }
 };

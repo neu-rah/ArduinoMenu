@@ -27,7 +27,7 @@ struct TM {
 };
 
 template<> idx_t TM::measure<const char>(const char o) {return 1;}
-template<> idx_t TM::measure<const char*>(const char* o) {return strlen(o);}
+// template<> idx_t TM::measure<const char*>(const char* o) {return strlen(o);}
 
 template<typename O=Nil> struct Void:public O {
   static inline void nl() {}
@@ -42,7 +42,7 @@ template<typename O=Nil> struct Void:public O {
   constexpr static inline idx_t height() {return 0;}
   constexpr static inline idx_t top() {return 0;}
   static inline void setTop(idx_t) {}
-  static inline void newView() {}
+  static inline void newView() {nl();}
   constexpr static inline idx_t posX() {return 0;}
   constexpr static inline idx_t posY() {return 0;}
   constexpr static inline idx_t freeX() {return INT16_MAX;}
@@ -93,7 +93,7 @@ template<typename O=Void<TM>>
 struct FullPrinter:public O {
   template<typename Nav,typename Out,typename I>
   inline void printMenu(Nav& nav,Out& out,I& i) {
-    _trace(MDO<<"FullPrinter::printMenu"<<endl);
+    trace(MDO<<"FullPrinter::printMenu"<<endl);
     out.template fmtPanel<true>(nav,out,i,0);
     out.template fmtMenu<true>(nav,out,i,0);
     out.template fmtTitle<true>(nav,out,i,0);
@@ -102,16 +102,23 @@ struct FullPrinter:public O {
     out.template fmtBody<true>(nav,out,i,0);
 
     if (Out::isRange()) {
-      _trace(MDO<<"FullPrinter on RangePanel top:"<<O::top()<<" posY:"<<O::posY()<<" pos:"<<nav.pos()<<endl);
       //ensure that selection option is withing range
       while(out.top()+out.posY()>=nav.pos())
         out.setTop(out.top()-1);
       while(nav.pos()>=out.top()+out.freeY())
         out.setTop(out.top()+1);
-      _trace(MDO<<"FullPrinter on RangePanel top:"<<O::top()<<" posY:"<<O::posY()<<" pos:"<<nav.pos()<<endl);
     }
 
-    i.template printItems<Nav,Out>(nav,out);
+    // i.template printItems<Nav,Out>(nav,out);
+    for(idx_t n=out.top();n<i.size();n++) {
+      out.template fmtItem<true>(nav,out,*this,n);
+      out.template fmtIndex<true>(nav,out,*this,n);
+      out.template fmtIndex<false>(nav,out,*this,n);
+      out.template fmtCursor<true>(nav,out,*this,n);
+      out.template fmtCursor<false>(nav,out,*this,n);
+      i.printItem(nav,out,n);
+      out.template fmtItem<false>(nav,out,*this,n);
+    }
 
     out.template fmtBody<false>(nav,out,i,0);
     out.template fmtMenu<false>(nav,out,i,0);
@@ -199,7 +206,7 @@ class Viewport:public O {
     inline operator bool() const {return fx&&fy;}
     inline operator int() const {return free();}
     inline void newView() {
-      _trace(MDO<<"newView()"<<endl);
+      trace(MDO<<"newView()"<<endl);
       fx=O::width();fy=O::height();//+O::top();
       //O::newView();
     }
@@ -219,7 +226,6 @@ class Viewport:public O {
     // use space ----
     inline void useX(idx_t ux=1) {if (fx) fx-=ux; else useY();}
     inline void useY(idx_t uy=1) {
-      // Serial<<"Viewport::useY("<<uy<<")"<<endl;
       if (!fy) {
         fx=0;
         fy=0;

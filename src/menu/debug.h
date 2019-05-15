@@ -15,6 +15,8 @@
       #define MDO Serial
     #endif
   #else
+    #include <iostream>
+    using namespace std;
     #ifndef MDO
       #define MDO cout
     #endif

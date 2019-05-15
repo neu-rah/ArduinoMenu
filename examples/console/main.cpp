@@ -1,4 +1,5 @@
 #include <menu.h>
+#include <menu/comp/vector.h>
 #include <menu/IO/consoleOut.h>
 
 // using Out=TextFmt<TitleWrap<RawOut<ostream&,cout>>>;

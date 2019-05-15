@@ -60,7 +60,7 @@ class DynamicNav:public NavNode,public NavBase<Out,O> {
     inline void setTarget(Data d) {data=d;}
     inline void printMenu() {
       Base::enterMenuRender();
-      This::newView();
+      Base::out.newView();
       Base::out.template printMenu<This,Out,Data>(*this,Base::out,*data);
       Base::exitMenuRender();
     }
@@ -82,7 +82,6 @@ class NavPos:public O {
   public:
     using O::O;
     using This=NavPos<O>;
-    // template<idx_t idx>
     inline bool selected(idx_t idx) const {return at==idx;}
     template<typename Nav>
     inline bool _up(Nav& nav) {

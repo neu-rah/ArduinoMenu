@@ -43,8 +43,9 @@ struct MenuOut {
   virtual inline void raw(unsigned long) {};
   virtual inline void raw(double) {};
   virtual inline void printItem(NavNode&,Item&,idx_t)=0;
-  //TODO: reduce vtable, use a bool parameter and demux on static side instead!
+  //reduce vtable, using a bool parameter and demux on static side
   virtual inline void fmt(Roles role,bool io,NavNode& nav,MenuOut&,Item& i,idx_t) {}
+  //just a comodity to inline a role (open/close)
   inline void fmt(Roles role,NavNode& nav,MenuOut& out,Item& i,idx_t n) {
     fmt(role,true,nav,out,i,n);
     fmt(role,false,nav,out,i,n);
