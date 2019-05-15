@@ -10,6 +10,25 @@
 
 #include "base.h"
 
+#ifndef ARDUINO
+  #include <string>
+  using namespace std;
+#endif
+
+struct TM {
+  template<typename T>
+  static inline idx_t measure(T o) {
+    #ifdef ARDUINO
+      return String(o).length();
+    #else
+      return string(o).length();
+    #endif
+  }
+};
+
+template<> idx_t TM::measure<const char>(const char o) {return 1;}
+template<> idx_t TM::measure<const char*>(const char* o) {return strlen(o);}
+
 template<typename O=Nil> struct Void:public O {
   static inline void nl() {}
   // template<typename T> static inline void raw(T) {}
@@ -18,7 +37,7 @@ template<typename O=Nil> struct Void:public O {
   // template<typename Nav,typename Out,typename I>
   // static inline void printItem(Nav&,Out& out,I& i) {i.printItem(out);}
 
-  constexpr static inline bool isRange() {return false;}
+  constexpr static inline bool isRange() {return false;}//TODO: do we need this here?
   constexpr static inline bool isViewport() {return false;}
   constexpr static inline idx_t height() {return 0;}
   constexpr static inline idx_t top() {return 0;}
@@ -66,10 +85,11 @@ template<typename O=Nil> struct Void:public O {
       case Roles::Unit: io?out.template fmtUnit<true>(nav,out,i,n):out.template fmtUnit<false>(nav,out,i,n);break;
     }
   }
+
 };
 
 //static output -----------------------------
-template<typename O=Void<>>
+template<typename O=Void<TM>>
 struct FullPrinter:public O {
   template<typename Nav,typename Out,typename I>
   inline void printMenu(Nav& nav,Out& out,I& i) {
@@ -82,12 +102,13 @@ struct FullPrinter:public O {
     out.template fmtBody<true>(nav,out,i,0);
 
     if (Out::isRange()) {
-      _trace(MDO<<"FullPrinter on RangePanel top:"<<out.top()<<" posY:"<<out.posY()<<endl);
+      _trace(MDO<<"FullPrinter on RangePanel top:"<<O::top()<<" posY:"<<O::posY()<<" pos:"<<nav.pos()<<endl);
       //ensure that selection option is withing range
-      while(out.top()+out.posY()>nav.pos())
+      while(out.top()+out.posY()>=nav.pos())
         out.setTop(out.top()-1);
       while(nav.pos()>=out.top()+out.freeY())
-        nav.setTop(nav.top()+1);
+        out.setTop(out.top()+1);
+      _trace(MDO<<"FullPrinter on RangePanel top:"<<O::top()<<" posY:"<<O::posY()<<" pos:"<<nav.pos()<<endl);
     }
 
     i.template printItems<Nav,Out>(nav,out);
@@ -119,7 +140,7 @@ struct FullPrinter:public O {
 //   }
 // };
 
-template<typename O=Void<>,char open='[',char close=']'>
+template<typename O=Void<TM>,char open='[',char close=']'>
 struct TitleWrap:public O {
   template<bool io,typename Nav,typename Out,typename I>
   static inline void fmtTitle(Nav& nav,Out& out,I& i,idx_t n) {
@@ -162,6 +183,7 @@ class RangePanel:public O {
     constexpr static inline bool isRange() {return true;}
     inline idx_t top() const {return topLine;}
     inline void setTop(idx_t n) {topLine=n;}
+    // inline idx_t posY() const {return O::posY()-top();}
   protected:
     idx_t topLine=0;
 };
@@ -178,7 +200,8 @@ class Viewport:public O {
     inline operator int() const {return free();}
     inline void newView() {
       _trace(MDO<<"newView()"<<endl);
-      fx=O::width();fy=O::height();
+      fx=O::width();fy=O::height();//+O::top();
+      //O::newView();
     }
     //TODO: need font size and char measure API
     inline void nl() {useY(1);}

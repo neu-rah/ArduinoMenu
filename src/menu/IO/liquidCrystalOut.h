@@ -12,18 +12,28 @@
 #include <LiquidCrystal.h>
 #include <menu.h>
 
+//Output Device Operation
+enum class OOP {RawOut,Measure};
+
 template<LiquidCrystal& dev, typename O=FullPrinter<>>
 struct LiquidCrystalOut:public O {
   using O::O;
   using This = LiquidCrystalOut<dev,O>;
-  template<typename T>
+  template<OOP op=OOP::RawOut>
+  inline void nl() {O::useY();}
+  template<typename T,OOP op=OOP::RawOut>
   inline void raw(T i) {
     // Serial<<"LCDOutDef::raw("<<i<<")"<<endl;
     // if (!O::operator bool()) return;//TODO: this is naive, we need to measure
-    if (O::posY()+O::top()>O::height()) return;
+    _trace(MDO<<"{0}");
+    if (This::posY()<0) return;//O::useX(O::measure(i));//we only need to measure lines!
+    _trace(MDO<<"{1}");
+    if (This::posY()>This::height()) return;
+    _trace(MDO<<"{2}");
     dev.setCursor(O::posX(),O::posY());
     Serial<<"lcd.setCursor("<<O::posX()<<","<<O::posY()<<") "<<i<<endl;
-    O::useX(dev.print(i));
+    if (op==OOP::RawOut) O::useX(dev.print(i));
+    else O::useX(O::measure(i));
   }
   inline void clear() {
     O::newView();

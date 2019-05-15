@@ -3,7 +3,22 @@
 #include <menu/comp/endis.h>
 #include <menu/comp/flashText.h>
 
-using Out=TextFmt<TitleWrap<SerialOut<>>>;
+using Out=
+  TextFmt<
+    TitleWrap<
+      SerialOut<
+        decltype(Serial),
+        Serial,
+        Viewport<
+          RangePanel<
+            StaticPanel<0,0,16,2,
+              FullPrinter<>
+            >
+          >
+        >
+      >
+    >
+  >;
 
 //string data on flash
 PROGMEM ConstText op1_text="Op 1";
@@ -20,6 +35,11 @@ using MainMenu=
     &mainMenu_title,
     StaticMenu<
       Op<decltype(op1_text),&op1_text>,
+      Op<decltype(op2_text),&op2_text>,
+      Op<decltype(op2_text),&op2_text>,
+      Op<decltype(op2_text),&op2_text>,
+      Op<decltype(op2_text),&op2_text>,
+      Op<decltype(op2_text),&op2_text>,
       Op<decltype(op2_text),&op2_text>,
       Op<decltype(op3_text),&op3_text>
     >

@@ -68,6 +68,6 @@ bool keys(int key) {
 
 void loop() {
   if (Serial.available()) {
-    if (keys(Serial.read())) nav.printMenu();
+    if (keys(Serial.read())||true) nav.printMenu();
   }
 }
