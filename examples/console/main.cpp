@@ -1,6 +1,9 @@
 #include <menu.h>
 #include <menu/comp/vector.h>
 #include <menu/IO/consoleOut.h>
+#include <menu/fmt/titleWrap.h>
+
+// using namespace Menu;
 
 // using Out=TextFmt<TitleWrap<RawOut<ostream&,cout>>>;
 using Out=TextFmt<TitleWrap<Console<>>>;

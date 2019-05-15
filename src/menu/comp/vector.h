@@ -12,16 +12,21 @@
 #include <iostream>
 using namespace std;
 
-template<typename O=Empty<>>
-struct VectorMenu:public O,vector<Item*> {
-  using vector<Item*>::vector;
-  inline idx_t size() {return (idx_t)vector<Item*>::size();}
-  template<typename Nav,typename Out>
-  static inline void print(Nav& bav,Out& out) {}
-  template<typename... OO>
-  inline VectorMenu(OO... oo):vector<Item*>{oo...} {}
-  template<typename Nav,typename Out>
-  inline void printItem(Nav& nav,Out& out,idx_t n) {
-    operator[](n)->print(nav,out);
-  }
-};
+#include <menu.h>
+// using namespace Menu;
+
+// namespace Menu {
+  template<typename O=Empty<>>
+  struct VectorMenu:public O,vector<Item*> {
+    using vector<Item*>::vector;
+    inline idx_t size() {return (idx_t)vector<Item*>::size();}
+    template<typename Nav,typename Out>
+    static inline void print(Nav& bav,Out& out) {}
+    template<typename... OO>
+    inline VectorMenu(OO... oo):vector<Item*>{oo...} {}
+    template<typename Nav,typename Out>
+    inline void printItem(Nav& nav,Out& out,idx_t n) {
+      operator[](n)->print(nav,out);
+    }
+  };
+// };

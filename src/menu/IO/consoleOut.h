@@ -15,4 +15,4 @@ using namespace std;
   struct Console:public RawOut<ostream&,dev,O> {
     static inline void nl() {dev<<endl;}
   };
-// }
+// };

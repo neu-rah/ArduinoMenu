@@ -2,6 +2,10 @@
 #include <menu/IO/serialOut.h>
 #include <menu/comp/endis.h>
 #include <menu/comp/flashText.h>
+#include <menu/fmt/titleWrap.h>
+#include <menu/fmt/textFmt.h>
+
+// using namespace Menu;
 
 using Out=
   TextFmt<

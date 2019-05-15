@@ -18,7 +18,6 @@ struct Empty:public O {
   template<typename Nav,typename Out>
   static inline void printItem(Nav& nav,Out& out,idx_t) {}
   constexpr static inline bool enabled(idx_t) {return true;}
-  // template<typename Nav,typename Out> static inline void printItems(Out& out) {print(out);}
 };
 
 //static ------------------------------------------------------------
@@ -28,7 +27,6 @@ struct StaticText:public O {
   template<typename Nav,typename Out>
   inline void print(Nav& nav,Out& out) {
     out.raw(text[0]);
-    // O::printItem(nav,out);
   }
 };
 
@@ -38,11 +36,6 @@ class StaticMenu:public StaticMenu<O> {
     using This=StaticMenu<O>;
     using Next=StaticMenu<OO...>;
     constexpr inline idx_t size() {return next.size()+1;}
-    // template<typename Nav,typename Out,idx_t n=0>
-    // inline void printItems(Nav& nav,Out& out) {
-    //   out.template printItem<Nav,Out,This>(nav,out,*this,n);
-    //   next.template printItems<Nav,Out,n+1>(nav,out);
-    // }
     template<typename Nav,typename Out>
     inline void printItem(Nav& nav,Out& out,idx_t n) {
       n?next.template printItem<Nav,Out>(nav,out,n-1):O::print(nav,out);
