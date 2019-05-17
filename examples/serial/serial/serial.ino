@@ -1,3 +1,8 @@
+////////////////////////////////////////////////////
+// Rui Azevedo - Apr2019
+// neu-rah (ruihfazevedo@gmail.com)
+// ArduinoMenu serial output example
+
 #include <menu.h>
 #include <menu/IO/serialOut.h>
 #include <menu/comp/endis.h>

@@ -1,3 +1,8 @@
+////////////////////////////////////////////////////
+// Rui Azevedo - Apr2019
+// neu-rah (ruihfazevedo@gmail.com)
+// ArduinoMenu lcd+serial output chain example
+
 #include <menu.h>
 #include <menu/IO/liquidCrystalOut.h>
 #include <menu/IO/serialOut.h>

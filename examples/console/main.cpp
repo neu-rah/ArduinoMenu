@@ -1,3 +1,8 @@
+////////////////////////////////////////////////////
+// Rui Azevedo - Apr2019
+// neu-rah (ruihfazevedo@gmail.com)
+// ArduinoMenu console menu example
+
 #include <menu.h>
 #include <menu/comp/vector.h>
 #include <menu/IO/consoleOut.h>
