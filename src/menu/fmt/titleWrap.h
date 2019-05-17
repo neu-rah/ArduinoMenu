@@ -12,7 +12,7 @@
 
 // namespace Menu {
   template<typename O,char open='[',char close=']'>
-  struct TitleWrap:public O {
+  struct TitleWrapFmt:public O {
     template<bool io,typename Nav,typename Out,typename I>
     static inline void fmtTitle(Nav& nav,Out& out,I& i,idx_t n) {
       if (io) {

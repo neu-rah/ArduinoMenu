@@ -11,19 +11,16 @@
 
 // using namespace Menu;
 
-// using Out=TextFmt<TitleWrap<RawOut<ostream&,cout>>>;
-using Out=
-  TextFmt<
-    TitleWrap<
-      FullPrinter<
-        Viewport<
-          RangePanel<
-            StaticPanel<0,0,20,5,Console<>>
-          >
-        >
-      >
-    >
-  >;
+template<typename O>
+using TitleWrap=TitleWrapFmt<O>;//default wrap
+
+using Out=Chain<
+  TextFmt,
+  TitleWrap,
+  FullPrinter,
+  Viewport,
+  RangePanel
+>::To<StaticPanel<0,0,20,5,Console<>>>;
 
 const char* singleOp_text="Just testing";
 using SingleOp=StaticText<&singleOp_text>;
@@ -78,10 +75,12 @@ int main() {
   cout<<endl;
 
   cout<<"{static menu test}"<<endl;
+  nav.enable(1,false);//disable second option
   nav.printMenu();
   cout<<endl;
 
   cout<<"{dynamic menu test}"<<endl;
+  dyNav.enable(1,false);//disable second option
   dyNav.printMenu();
   cout<<"{adding option}"<<endl;
   dynaMenu.push_back(new Prompt<StaticText<&extra_text>>());

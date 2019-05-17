@@ -47,7 +47,7 @@ struct TextFmt:public O {
   template<bool io,typename Nav,typename Out,typename I>
   inline void fmtCursor(Nav& nav,Out& out,I& i,idx_t n) {
     if (io) {
-      out.raw(nav.selected(n)?(nav.enabled(n)?'>':'-'):' ');
+      out.raw(nav.selected(n)?((nav.enabled(n)?'>':'-')):' ');
       O::template fmtCursor<io,Nav,Out,I>(nav,out,i,n);
     } else {
       O::template fmtCursor<io,Nav,Out,I>(nav,out,i,n);

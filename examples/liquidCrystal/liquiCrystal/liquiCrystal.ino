@@ -20,31 +20,22 @@
 #define EN A4
 LiquidCrystal lcd(RS, RW, EN, A0, A1, A2, A3);
 
+template<typename O>
+using TitleWrap=TitleWrapFmt<O>;//default wrap
+
+template<typename O>
+using TextPanel=Chain<
+  TextFmt,
+  TitleWrap,
+  FullPrinter,
+  Viewport,
+  RangePanel
+>::To<O>;
+
 //dual head output
-using Out=
-OutList<
-  TextFmt<
-    TitleWrap<
-      FullPrinter<
-        Viewport<
-          RangePanel<
-            StaticPanel<0,0,16,2,LiquidCrystalOut<lcd>>
-          >
-        >
-      >
-    >
-  >,
-  TextFmt<
-    TitleWrap<
-      FullPrinter<
-        Viewport<
-          RangePanel<
-            StaticPanel<0,0,80,5,SerialOut<>>
-          >
-        >
-      >
-    >
-  >
+using Out=OutList<
+  TextPanel<StaticPanel<0,0,16,2,LiquidCrystalOut<lcd>>>,
+  TextPanel<StaticPanel<0,0,80,5,SerialOut<>>>
 >;
 
 //string data on flash
@@ -63,6 +54,10 @@ using MainMenu=
     StaticMenu<
       Op<decltype(op1_text),&op1_text>,
       Op<decltype(op2_text),&op2_text>,
+      Op<decltype(op2_text),&op2_text>,
+      Op<decltype(op2_text),&op2_text>,
+      Op<decltype(op2_text),&op2_text>,
+      Op<decltype(op2_text),&op2_text>,
       Op<decltype(op3_text),&op3_text>
     >
   >;
@@ -74,6 +69,7 @@ void setup() {
   while(!Serial);
   Serial.println("AM5 LiquidCrystal example");
   lcd.begin(16,2);
+  nav.enable(1,false);
   nav.printMenu();
 }
 

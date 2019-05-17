@@ -28,5 +28,11 @@ using namespace std;
     inline void printItem(Nav& nav,Out& out,idx_t n) {
       operator[](n)->print(nav,out);
     }
+    inline bool enabled(idx_t n) const {
+      return operator[](n)->enabled(0);
+    }
+    inline void enable(idx_t n,bool o) {
+       operator[](n)->enable(n,o);
+    }
   };
 // };

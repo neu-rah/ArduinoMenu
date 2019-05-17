@@ -47,6 +47,8 @@ class StaticNav:public NavBase<Out,O> {
       Base::exitMenuRender();
     }
     inline idx_t size() {return data.size();}
+    inline void enable(idx_t n,bool o) {data.enable(n,o);}
+    inline bool enabled(idx_t n) {return data.enabled(n);}
   protected:
     Data data;
 };
@@ -67,6 +69,7 @@ class DynamicNav:public NavNode,public NavBase<Out,O> {
     inline idx_t size() {return data->size();}
     inline bool selected(idx_t i) const override {return O::selected(i);}
     inline bool enabled(idx_t i) const override {return O::enabled(i);}
+    inline void enable(idx_t n,bool o) {data->enable(n,o);}
     inline bool up() override {return O::template _up<This>(*this);}
     inline bool down() override {return O::template _down<This>(*this);}
     inline bool left() override {return O::template _left<This>(*this);}

@@ -18,6 +18,7 @@ struct Empty:public O {
   template<typename Nav,typename Out>
   static inline void printItem(Nav& nav,Out& out,idx_t) {}
   constexpr static inline bool enabled(idx_t) {return true;}
+  static inline bool enable(idx_t,bool) {return true;}
 };
 
 //static ------------------------------------------------------------
@@ -40,9 +41,13 @@ class StaticMenu:public StaticMenu<O> {
     inline void printItem(Nav& nav,Out& out,idx_t n) {
       n?next.template printItem<Nav,Out>(nav,out,n-1):O::print(nav,out);
     }
-    template<idx_t n>
-    inline void enable(bool o) {
-      return n?next.template enable<n-1>(o):next.enable(o);
+    inline void enable(idx_t n,bool o) {
+      if (n) next.enable(n-1,o);
+      else O::enable(n,o);
+    }
+    inline bool enabled(idx_t n) const {
+      trace(MDO<<"StaticMenu<O,OO...>::emabled"<<endl);
+      return n?next.enabled(n-1):O::enabled(0);
     }
   protected:
     Next next;
@@ -56,13 +61,12 @@ struct StaticMenu<O>:public O {
   inline void print(Nav& nav,Out& out) {}
   template<typename Nav,typename Out>
   inline void printItem(Nav& nav,Out& out,idx_t) {O::print(nav,out);}
-  template<idx_t n>
-  inline bool enabled() const {
-    return n?true:O::enabled();
+  inline bool enabled(idx_t n) const {
+    trace(MDO<<"StaticMenu<O>::emabled"<<endl);
+    return n?true:O::enabled(0);
   }
-  template<idx_t n>
-  inline void enable(bool o) {
-    if(!n) O::enable(o);
+  inline void enable(idx_t n,bool o) {
+    if(!n) O::enable(n,o);
   }
 };
 
@@ -76,4 +80,6 @@ struct Prompt:public Item,public O {
   inline void print(NavNode& nav,MenuOut& out) override {
     O::print(nav,out);
   }
+  virtual inline void enable(idx_t n,bool b) {O::enable(n,b);}
+  virtual inline bool enabled(idx_t n) const {return O::enabled(n);}
 };

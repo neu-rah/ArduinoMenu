@@ -12,18 +12,32 @@
 
 // using namespace Menu;
 
-using Out=
-  TextFmt<
-    TitleWrap<
-      FullPrinter<
-        Viewport<
-          RangePanel<
-            StaticPanel<0,0,80,5,SerialOut<>>
-          >
-        >
-      >
-    >
-  >;
+template<typename O>
+using TitleWrap=TitleWrapFmt<O>;//default wrap
+
+using Out=Chain<
+  TextFmt,
+  TitleWrap,
+  FullPrinter,
+  Viewport,
+  RangePanel
+>::To<
+  StaticPanel<0,0,80,5,SerialOut<>>
+>;
+
+//the above is equivalente to this:
+// using Out=
+//   TextFmt<
+//     TitleWrap<
+//       FullPrinter<
+//         Viewport<
+//           RangePanel<
+//             StaticPanel<0,0,80,5,SerialOut<>>
+//           >
+//         >
+//       >
+//     >
+//   >;
 
 //string data on flash
 PROGMEM ConstText op1_text="Op 1";
@@ -57,11 +71,16 @@ void setup() {
   while(!Serial);
   Serial.println("AM5 serial example");
   nav.printMenu();
+  nav.enable(1,false);
 }
 
 //handle serial keys to navigate menu
 bool keys(int key) {
   switch(key) {
+    case '\\':
+      //dynamic toggle option[6] enabled state
+      nav.enable(5,!nav.enabled(5));
+      return true;
     case '+': return nav.up();
     case '-': return nav.down();
     case '*': return nav.enter();
