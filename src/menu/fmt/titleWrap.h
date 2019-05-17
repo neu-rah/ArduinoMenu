@@ -11,7 +11,7 @@
 #include <menu.h>
 
 // namespace Menu {
-  template<typename O=Void<TM>,char open='[',char close=']'>
+  template<typename O,char open='[',char close=']'>
   struct TitleWrap:public O {
     template<bool io,typename Nav,typename Out,typename I>
     static inline void fmtTitle(Nav& nav,Out& out,I& i,idx_t n) {

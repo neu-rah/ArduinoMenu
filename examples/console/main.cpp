@@ -8,20 +8,17 @@
 
 // using Out=TextFmt<TitleWrap<RawOut<ostream&,cout>>>;
 using Out=
-TextFmt<
-  TitleWrap<
-    Console<
-      cout,
-      Viewport<
-        RangePanel<
-          StaticPanel<0,0,16,2,
-            FullPrinter<>
+  TextFmt<
+    TitleWrap<
+      FullPrinter<
+        Viewport<
+          RangePanel<
+            StaticPanel<0,0,20,5,Console<>>
           >
         >
       >
     >
-  >
->;
+  >;
 
 const char* singleOp_text="Just testing";
 using SingleOp=StaticText<&singleOp_text>;
@@ -36,6 +33,13 @@ using MainMenu=
     &mainMenu_title,
     StaticMenu<
       StaticText<&op1_text>,
+      StaticText<&op2_text>,
+      StaticText<&op2_text>,
+      StaticText<&op2_text>,
+      StaticText<&op2_text>,
+      StaticText<&op2_text>,
+      StaticText<&op2_text>,
+      StaticText<&op2_text>,
       StaticText<&op2_text>,
       StaticText<&op3_text>
     >

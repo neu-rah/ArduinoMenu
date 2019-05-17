@@ -12,6 +12,8 @@
   #include "menu/debug.h"
   #include "menu/base.h"
   #include "menu/item.h"
+  #include "menu/printers.h"
   #include "menu/out.h"
+  #include "menu/panels.h"
   #include "menu/nav.h"
 // };

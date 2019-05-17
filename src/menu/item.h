@@ -26,7 +26,7 @@ struct StaticText:public O {
   using O::O;
   template<typename Nav,typename Out>
   inline void print(Nav& nav,Out& out) {
-    out.raw(text[0]);
+    out.template raw(text[0]);
   }
 };
 
