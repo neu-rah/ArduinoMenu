@@ -54,14 +54,14 @@ class Viewport:public O {
   public:
     // using O::O;
     using This=Viewport<O>;
-    inline Viewport() {/*newView();*/}
+    inline Viewport() {}
     inline Viewport(const Viewport<O>& o) {fx=o.width();fy=o.height();}
     constexpr static inline bool isViewport() {return true;}
     inline operator bool() const {return fx&&fy;}
     inline operator int() const {return free();}
     inline void newView() {
-      _trace(MDO<<"newView()"<<endl);
-      fx=O::width();fy=O::height();//+O::top();
+      trace(MDO<<"newView()"<<endl);
+      fx=O::width();fy=O::height();
       //O::newView();
     }
     inline void nl() {O::nl();This::useY();}

@@ -1,5 +1,7 @@
 #include <menu.h>
 #include <menu/IO/liquidCrystalOut.h>
+#include <menu/IO/serialOut.h>
+#include <menu/IO/outList.h>
 #include <menu/comp/endis.h>
 #include <menu/fmt/titleWrap.h>
 #include <menu/fmt/textFmt.h>
@@ -13,7 +15,9 @@
 #define EN A4
 LiquidCrystal lcd(RS, RW, EN, A0, A1, A2, A3);
 
+//dual head output
 using Out=
+OutList<
   TextFmt<
     TitleWrap<
       FullPrinter<
@@ -24,7 +28,19 @@ using Out=
         >
       >
     >
-  >;
+  >,
+  TextFmt<
+    TitleWrap<
+      FullPrinter<
+        Viewport<
+          RangePanel<
+            StaticPanel<0,0,80,5,SerialOut<>>
+          >
+        >
+      >
+    >
+  >
+>;
 
 //string data on flash
 PROGMEM ConstText op1_text="Op 1";
