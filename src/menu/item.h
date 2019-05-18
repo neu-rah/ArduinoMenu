@@ -18,7 +18,9 @@ struct Empty:public O {
   template<typename Nav,typename Out>
   static inline void printItem(Nav& nav,Out& out,idx_t) {}
   constexpr static inline bool enabled(idx_t) {return true;}
-  static inline bool enable(idx_t,bool) {return true;}
+  static inline void enable(idx_t,bool) {}
+  constexpr static inline bool activate() {return false;}
+  constexpr static inline Item& getItem(idx_t) {return *(Item*)NULL;}
 };
 
 //static ------------------------------------------------------------
@@ -29,6 +31,15 @@ struct StaticText:public O {
   inline void print(Nav& nav,Out& out) {
     out.template raw(text[0]);
   }
+};
+
+using ActionHandler=bool (*)();
+static inline bool doNothing() {return false;}
+template<typename O,ActionHandler act=doNothing>
+struct Action:public O {
+  using This=Action<O,act>;
+  using O::O;
+  inline bool activate() {return act();}
 };
 
 template<typename O,typename... OO>
@@ -46,8 +57,11 @@ class StaticMenu:public StaticMenu<O> {
       else O::enable(n,o);
     }
     inline bool enabled(idx_t n) const {
-      trace(MDO<<"StaticMenu<O,OO...>::emabled"<<endl);
+      trace(MDO<<"StaticMenu<O,OO...>::enabled"<<endl);
       return n?next.enabled(n-1):O::enabled(0);
+    }
+    inline Item& getItem(idx_t n) {
+      return n?next.getItem(n-1):This::getItem(n);
     }
   protected:
     Next next;
@@ -68,6 +82,9 @@ struct StaticMenu<O>:public O {
   inline void enable(idx_t n,bool o) {
     if(!n) O::enable(n,o);
   }
+  inline Item& getItem(idx_t n) {
+    return *reinterpret_cast<Item*>(this);
+  }
 };
 
 //dynamic -----------------------------------------------------------
@@ -80,6 +97,7 @@ struct Prompt:public Item,public O {
   inline void print(NavNode& nav,MenuOut& out) override {
     O::print(nav,out);
   }
-  virtual inline void enable(idx_t n,bool b) {O::enable(n,b);}
-  virtual inline bool enabled(idx_t n) const {return O::enabled(n);}
+  inline void enable(idx_t n,bool b) override {O::enable(n,b);}
+  virtual inline bool enabled(idx_t n) const override {return O::enabled(n);}
+  inline bool activate() override {return O::activate();}
 };

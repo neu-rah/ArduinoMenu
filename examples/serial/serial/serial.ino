@@ -25,7 +25,7 @@ using Out=Chain<
   StaticPanel<0,0,80,5,SerialOut<>>
 >;
 
-//the above is equivalente to this:
+//the above is `Chain` equivalent to this:
 // using Out=
 //   TextFmt<
 //     TitleWrap<

@@ -34,5 +34,6 @@ using namespace std;
     inline void enable(idx_t n,bool o) {
        operator[](n)->enable(n,o);
     }
+    inline Item& getItem(idx_t n) {return *operator[](n);}
   };
 // };

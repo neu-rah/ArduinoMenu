@@ -99,6 +99,7 @@ struct Item {
   virtual inline void printItem(NavNode&,MenuOut& out,idx_t n) {}
   virtual inline void enable(idx_t,bool) {}
   virtual inline bool enabled(idx_t) const {return true;}
+  virtual inline bool activate() {};
 };
 
 //static output base

@@ -47,13 +47,23 @@ PROGMEM ConstText mainMenu_title="Main menu";
 template<typename T,T* text>
 using Op=EnDis<FlashText<T,text>>;
 
+bool hey() {
+  Serial.println(F("Hey!"));
+  return false;
+}
+
+bool grrr() {
+  Serial.println(F("This should not be called as the option is disabled"));
+  return false;
+}
+
 using MainMenu=
   FlashText<
     decltype(mainMenu_title),
     &mainMenu_title,
     StaticMenu<
-      Op<decltype(op1_text),&op1_text>,
-      Op<decltype(op2_text),&op2_text>,
+      Action<Op<decltype(op1_text),&op1_text>,hey>,
+      Action<Op<decltype(op2_text),&op2_text>,grrr>,
       Op<decltype(op2_text),&op2_text>,
       Op<decltype(op2_text),&op2_text>,
       Op<decltype(op2_text),&op2_text>,
