@@ -19,12 +19,12 @@ template<typename O=Nil> struct Drift:public O {
   template<typename Nav> constexpr static inline bool _right(Nav& nav) {return false;}
   template<typename Nav> constexpr static inline bool _enter(Nav& nav) {return false;}
   template<typename Nav> constexpr static inline bool _esc(Nav& nav) {return false;}
-  template<typename Nav> constexpr static inline bool up(Nav& nav) {return nav._up(nav);}
-  template<typename Nav> constexpr static inline bool down(Nav& nav) {return nav._down(nav);}
-  template<typename Nav> constexpr static inline bool left(Nav& nav) {return nav._left(nav);}
-  template<typename Nav> constexpr static inline bool right(Nav& nav) {return nav._right(nav);}
-  template<typename Nav> constexpr static inline bool enter(Nav& nav) {return nav._enter(nav);}
-  template<typename Nav> constexpr static inline bool esc(Nav& nav) {return nav._esc(nav);}
+  // template<typename Nav> constexpr static inline bool up(Nav& nav) {return nav._up(nav);}
+  // template<typename Nav> constexpr static inline bool down(Nav& nav) {return nav._down(nav);}
+  // template<typename Nav> constexpr static inline bool left(Nav& nav) {return nav._left(nav);}
+  // template<typename Nav> constexpr static inline bool right(Nav& nav) {return nav._right(nav);}
+  // template<typename Nav> constexpr static inline bool enter(Nav& nav) {return nav._enter(nav);}
+  // template<typename Nav> constexpr static inline bool esc(Nav& nav) {return nav._esc(nav);}
 };
 
 template<typename Out,typename O=Drift<>>
@@ -60,8 +60,9 @@ class StaticNav:public NavBase<Out,O> {
     inline idx_t size() {return data.size();}
     inline void enable(idx_t n,bool o) {data.enable(n,o);}
     inline bool enabled(idx_t n) {return data.enabled(n);}
-    inline Item& getItem(idx_t n) {return data.getItem(n);}
-    inline bool activate() {return data.getItem(This::pos()).activate();}
+    // inline Item& operator[](idx_t n) {return data.operator[](n);}
+    inline bool activate() {return data.activate();}
+    inline bool activate(idx_t n) {return data.activate(n);}
   protected:
     Data data;
 };
@@ -81,16 +82,17 @@ class DynamicNav:public NavNode,public NavBase<Out,O> {
     }
     inline idx_t size() {return data->size();}
     inline bool selected(idx_t i) const override {return O::selected(i);}
-    inline bool enabled(idx_t i) const override {return O::enabled(i);}
+    inline bool enabled(idx_t i) const override {return data->enabled(i);}
     inline void enable(idx_t n,bool o) {data->enable(n,o);}
-    inline bool up() override {return O::template up<This>(*this);}
-    inline bool down() override {return O::template down<This>(*this);}
-    inline bool left() override {return O::template left<This>(*this);}
-    inline bool right() override {return O::template right<This>(*this);}
-    inline bool enter() override {return O::template enter<This>(*this);}
+    inline bool up() override {return O::template _up<This>(*this);}
+    inline bool down() override {return O::template _down<This>(*this);}
+    inline bool left() override {return O::template _left<This>(*this);}
+    inline bool right() override {return O::template _right<This>(*this);}
+    inline bool enter() override {return O::template _enter<This>(*this);}
     inline bool esc() override {return O::template _esc<This>(*this);}
-    inline Item& getItem(idx_t n) {return data->getItem(n);}
-    inline bool activate() {return data->getItem(This::pos()).activate();}
+    // inline Item& operator[](idx_t n) {return data->operator[](n);}
+    inline bool activate() {return data->activate();}
+    inline bool activate(idx_t n) {return data->activate(n);}
   protected:
     Data* data;
 };
@@ -113,9 +115,10 @@ class NavPos:public O {
     }
     inline idx_t pos() {return at;}
     template<typename Nav>
-    inline bool enter(Nav& nav) {
+    inline bool _enter(Nav& nav) {
+      trace(MDO<<"NavPos::_enter "<<at<<endl);
       if (nav.hasFocus()) nav.clearFocus();
-      else if (nav.activate()) nav.setFocus(&nav.getItem(at));
+      else if (nav.enabled(at)&&nav.activate()) nav.setFocus(&nav.operator[](at));
       else return false;
       return true;
     }
@@ -130,7 +133,9 @@ struct NavCap:public O {
   inline bool down() {return O::template _down<This>(*this);}
   inline bool left() {return O::template _left<This>(*this);}
   inline bool right() {return O::template _right<This>(*this);}
-  inline bool enter() {return O::template _enter<This>(*this);}
+  inline bool enter() {
+    trace(MDO<<"NavCap::enter"<<endl);
+    return O::template _enter<This>(*this);}
   inline bool esc() {return O::template _esc<This>(*this);}
   // inline bool activate() {return O::activate();}
 };

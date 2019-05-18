@@ -26,14 +26,15 @@ using namespace std;
     inline VectorMenu(OO... oo):vector<Item*>{oo...} {}
     template<typename Nav,typename Out>
     inline void printItem(Nav& nav,Out& out,idx_t n) {
-      operator[](n)->print(nav,out);
+      vector<Item*>::operator[](n)->print(nav,out);
     }
     inline bool enabled(idx_t n) const {
-      return operator[](n)->enabled(0);
+      trace(MDO<<"enabled? "<<n<<endl);
+      return vector<Item*>::operator[](n)->enabled(0);
     }
     inline void enable(idx_t n,bool o) {
-       operator[](n)->enable(n,o);
+       vector<Item*>::operator[](n)->enable(0,o);
     }
-    inline Item& getItem(idx_t n) {return *operator[](n);}
+    // inline Item& operator[](idx_t n) {return *vector<Item*>::operator[](n);}
   };
 // };

@@ -17,10 +17,12 @@ struct Empty:public O {
   static inline void print(Nav&,Out&) {}
   template<typename Nav,typename Out>
   static inline void printItem(Nav& nav,Out& out,idx_t) {}
+  constexpr static inline bool enabled() {return true;}
   constexpr static inline bool enabled(idx_t) {return true;}
   static inline void enable(idx_t,bool) {}
   constexpr static inline bool activate() {return false;}
-  constexpr static inline Item& getItem(idx_t) {return *(Item*)NULL;}
+  constexpr static inline bool activate(idx_t) {return false;}
+  // inline Item& operator[](idx_t) {return *(Item*)this;}
 };
 
 //static ------------------------------------------------------------
@@ -60,9 +62,11 @@ class StaticMenu:public StaticMenu<O> {
       trace(MDO<<"StaticMenu<O,OO...>::enabled"<<endl);
       return n?next.enabled(n-1):O::enabled(0);
     }
-    inline Item& getItem(idx_t n) {
-      return n?next.getItem(n-1):This::getItem(n);
-    }
+    inline bool activate(idx_t n) {return n?next.activate(n-1):activate();}
+    // inline Item& operator[](idx_t n) {
+    //   trace(MDO<<"StaticMenu<O,OO...>::operator[] "<<n<<endl);
+    //   return n?next.operator[](n-1):*reinterpret_cast<Item*>(this);
+    // }
   protected:
     Next next;
 };
@@ -82,9 +86,11 @@ struct StaticMenu<O>:public O {
   inline void enable(idx_t n,bool o) {
     if(!n) O::enable(n,o);
   }
-  inline Item& getItem(idx_t n) {
-    return *reinterpret_cast<Item*>(this);
-  }
+  inline bool activate() {return O::act();}
+  // inline Item& operator[](idx_t n) {
+  //   trace(MDO<<"StaticMenu<O>::operator[] "<<n<<endl);
+  //   return *reinterpret_cast<Item*>(this);
+  // }
 };
 
 //dynamic -----------------------------------------------------------
@@ -100,4 +106,5 @@ struct Prompt:public Item,public O {
   inline void enable(idx_t n,bool b) override {O::enable(n,b);}
   virtual inline bool enabled(idx_t n) const override {return O::enabled(n);}
   inline bool activate() override {return O::activate();}
+  inline bool activate(idx_t n) override {return O::activate(n);}
 };

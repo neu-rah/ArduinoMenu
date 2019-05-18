@@ -105,5 +105,8 @@ int main() {
   dyNav.up();
   dyNav.printMenu();
   dyNav.enter();
+  dyNav.up();
+  dyNav.printMenu();
+  dyNav.enter();
   cout<<endl<<"-------"<<endl;
 }
