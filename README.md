@@ -28,12 +28,12 @@ using namespace Menu;
 #define LEDPIN LED_BUILTIN
 #define MAX_DEPTH 1
 
-int timeOn=10;
-int timeOff=90;
+unsigned int timeOn=10;
+unsigned int timeOff=90;
 
 MENU(mainMenu, "Blink menu", Menu::doNothing, Menu::noEvent, Menu::wrapStyle
-  ,FIELD(timeOn,"On","ms",0,100,10,1, Menu::doNothing, Menu::noEvent, Menu::noStyle)
-  ,FIELD(timeOff,"Off","ms",0,100,10,1,Menu::doNothing, Menu::noEvent, Menu::noStyle)
+  ,FIELD(timeOn,"On","ms",0,1000,10,1, Menu::doNothing, Menu::noEvent, Menu::noStyle)
+  ,FIELD(timeOff,"Off","ms",0,10000,10,1,Menu::doNothing, Menu::noEvent, Menu::noStyle)
   ,EXIT("<Back")
 );
 
@@ -56,12 +56,11 @@ void setup() {
   Serial.println("to control the menu navigation");
 }
 
+bool blink(int timeOn,int timeOff) {return millis()%(unsigned long)(timeOn+timeOff)<(unsigned long)timeOn;}
+
 void loop() {
   nav.poll();
-  digitalWrite(LEDPIN, HIGH);
-  delay(timeOn);
-  digitalWrite(LEDPIN, LOW);
-  delay(timeOff);
+  digitalWrite(LEDPIN, blink(timeOn,timeOff));
 }
 ```
 
@@ -90,7 +89,7 @@ void loop() {
 - Tested on Arduino AVR's & ARM, Teensy, ESP8266, Esp32, nRF52, STM32
 
 ## Videos
-[![IMAGE ALT TEXT](https://img.youtube.com/vi/wHv5sU-HXVI/2.jpg)](https://youtu.be/wHv5sU-HXVI "Arduino menu 2.0 fields video") [![IMAGE ALT TEXT](https://img.youtube.com/vi/W-TRCziF67g/2.jpg)](https://youtu.be/W-TRCziF67g "Arduino menu basic features video")[![IMAGE ALT TEXT](https://img.youtube.com/vi/27KEUTpCHfg/2.jpg)](https://youtu.be/27KEUTpCHfg "Arduino menu 4.x")
+[![IMAGE ALT TEXT](https://img.youtube.com/vi/wHv5sU-HXVI/2.jpg)](https://youtu.be/wHv5sU-HXVI "Arduino menu 2.0 fields video") [![IMAGE ALT TEXT](https://img.youtube.com/vi/W-TRCziF67g/2.jpg)](https://youtu.be/W-TRCziF67g "Arduino menu basic features video")[![IMAGE ALT TEXT](https://img.youtube.com/vi/27KEUTpCHfg/2.jpg)](https://youtu.be/27KEUTpCHfg "Arduino menu 4.x")[![Esc over web]https://i9.ytimg.com/vi/ebOWG0ALUWI/mq2.jpg?sqp=CLSH_-YF&rs=AOn4CLDnihpapU5Td7n70HumeFYJ3gYnKQ](https://youtu.be/ebOWG0ALUWI)
 
 ## Plugins
 
@@ -105,8 +104,11 @@ Some plugins might be platform specific or require some hardware.
 
 ## Applications
 
-Some applications using ArduinoMenu, (current and older versions).  
+Some applications/tutorials using ArduinoMenu, (current and older versions).  
 Do you have another? please let me know on gitter or email me.
+
+**mvc-interface** ArduinoMenu tutorial  
+https://zaragozamakerspace.com/index.php/courses/mvc-interface/
 
 **Arduino Automatic Copper Tape Cutter**  
 https://www.thingiverse.com/thing:3557719
