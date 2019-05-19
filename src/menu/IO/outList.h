@@ -1,9 +1,10 @@
 /* -*- C++ -*- */
 #pragma once
-////////////////////////////////////////////////////
-// Rui Azevedo - Apr2019
-// neu-rah (ruihfazevedo@gmail.com)
-// ArduinoMenu multiple outputs chain
+/**
+* @file outList.h
+* @author Rui Azevedo
+* @brief ArduinoMenu multiple outputs chain
+*/
 
 template<typename O,typename... OO>
 class OutList:public OutList<O> {

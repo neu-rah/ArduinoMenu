@@ -1,5 +1,12 @@
 /* -*- C++ -*- */
 #pragma once
+/**
+* @file endis.h
+* @author Rui Azevedo
+* @date 10 May 2019
+* @copyright 2019 Rui Azevedo
+* @brief menu item component, provides Enable/Disable functionality
+*/
 
 #include <menu.h>
 

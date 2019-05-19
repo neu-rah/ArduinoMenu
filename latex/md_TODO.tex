@@ -1,0 +1,67 @@
+\subsection*{actions and events}
+
+
+\begin{DoxyItemize}
+\item ...
+\end{DoxyItemize}
+
+\subsection*{printers}
+
+
+\begin{DoxyItemize}
+\item invert printers composition order to be ontop of viewports
+\item split \hyperlink{structFullPrinter}{Full\+Printer} into smaller printers
+\end{DoxyItemize}
+
+\subsection*{manage free/used space}
+
+
+\begin{DoxyItemize}
+\item panel-\/$>$viewport
+\end{DoxyItemize}
+
+viewport design
+
+
+\begin{DoxyItemize}
+\item viewport must sit between the printers and the raw device
+\item keep track of space usage and position cursor accordingly
+\item should allow creation of areas (new viewports) with special definitions =$>$ as a composition to be transparent
+\item new views can be based on free area, to account for usage
+\item support 2D scroll
+\item they should ignore stuff outside the free viewport area before reaching the printer
+\item measuring is taken here too
+\item independent of menu structure or size, but must collaborate to adjust scroll position
+\item use menu range to manage device panels
+\item $\ast$$\ast$=$>$$\ast$$\ast$ need font size and glyph measure A\+PI, optionally account for U\+T\+F8, already inplace a minimal measure device (text)
+\end{DoxyItemize}
+
+\subsection*{tree nav}
+
+
+\begin{DoxyItemize}
+\item separate the base nav
+\item use menu range to manage navigation levels
+\end{DoxyItemize}
+
+\subsection*{accelerators}
+
+
+\begin{DoxyItemize}
+\item optionally use a single table with actions
+\end{DoxyItemize}
+
+\subsection*{redraw need check}
+
+
+\begin{DoxyItemize}
+\item draw, calc and redraw need should have the same functional root
+\end{DoxyItemize}
+
+\subsection*{extra field types}
+
+
+\begin{DoxyItemize}
+\item redirect input commands to fields... but keep vtable small
+\item implement text options for E\+E\+P\+R\+OM based data 
+\end{DoxyItemize}

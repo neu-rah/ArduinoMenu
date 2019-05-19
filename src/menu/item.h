@@ -1,31 +1,43 @@
 /* -*- C++ -*- */
 #pragma once
 /**
-* @file menu.h
+* @file item.h
 * @author Rui Azevedo
-* @date 10 May 2019
-* @copyright 2019 Rui Azevedo
-* @brief ArduinoMenu item implementations
+* @brief Base menu item implementations
 */
 
 #include "base.h"
 
+/**
+* The Empty class is the static base for menu item elements.
+* It provides minimalist or inexistent implementations.
+*/
 template<typename O=Nil>
 struct Empty:public O {
+  /// collection size, single elements will return 0
   constexpr static inline idx_t size() {return 0;}
+  /// print this element to output, some extra info from navigation might be used, such as index
   template<typename Nav,typename Out>
   static inline void print(Nav&,Out&) {}
+  /// print an item from the collection
   template<typename Nav,typename Out>
   static inline void printItem(Nav& nav,Out& out,idx_t) {}
+  /// is this item enabled?
   constexpr static inline bool enabled() {return true;}
+  /// get enabled status of collection indexed item
   constexpr static inline bool enabled(idx_t) {return true;}
+  /// set enabled status of indexed collection member
   static inline void enable(idx_t,bool) {}
+  /// activate this item (handle enter/select)
   constexpr static inline bool activate() {return false;}
+  /// activate collection item (handle enter/select)
   constexpr static inline bool activate(idx_t) {return false;}
   // inline Item& operator[](idx_t) {return *(Item*)this;}
 };
 
-//static ------------------------------------------------------------
+/**
+* The StaticText class provides code stored constant strings.
+*/
 template<const char**text,typename O=Empty<>>
 struct StaticText:public O {
   using O::O;
@@ -44,6 +56,9 @@ struct Action:public O {
   inline bool activate() {return act();}
 };
 
+/**
+* The StaticMenu class represents a compile time menu structure.
+*/
 template<typename O,typename... OO>
 class StaticMenu:public StaticMenu<O> {
   public:
@@ -71,6 +86,10 @@ class StaticMenu:public StaticMenu<O> {
     Next next;
 };
 
+/**
+* The StaticMenu specialization class represents the last element of a compile-time
+* menu content chain.
+*/
 template<typename O>
 struct StaticMenu<O>:public O {
   using This=StaticMenu<O>;
@@ -93,7 +112,11 @@ struct StaticMenu<O>:public O {
   // }
 };
 
-//dynamic -----------------------------------------------------------
+/**
+* The Prompt class represents a generic virtual menu item.
+* This class allows Prompt pointers to be stored on a list as they all implement the same interface.
+* This will adapts a composition to the virtual interface.
+*/
 template<typename O>
 struct Prompt:public Item,public O {
   using O::O;

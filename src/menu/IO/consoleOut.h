@@ -1,9 +1,11 @@
 /* -*- C++ -*- */
 #pragma once
-////////////////////////////////////////////////////
-// Rui Azevedo - Apr2019
-// neu-rah (ruihfazevedo@gmail.com)
-// ArduinoMenu standard C++ stream output
+/**
+* @file consoleOut.h
+* @author Rui Azevedo
+* @date Apr 2019
+* @brief Use standard C++ stream as menu output
+*/
 
 #include <menu.h>
 #include <iostream>

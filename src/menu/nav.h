@@ -1,15 +1,16 @@
 /* -*- C++ -*- */
 #pragma once
 /**
-* @file menu.h
+* @file nav.h
 * @author Rui Azevedo
-* @date 10 May 2019
-* @copyright 2019 Rui Azevedo
 * @brief ArduinoMenu navigation implementations
 */
 
 #include "base.h"
 
+/*
+* The Drift class. Is the minimalist navigation element
+*/
 template<typename O=Nil> struct Drift:public O {
   constexpr static inline bool selected(idx_t) {return false;}
   constexpr static inline bool enabled(idx_t) {return true;}
@@ -27,6 +28,9 @@ template<typename O=Nil> struct Drift:public O {
   // template<typename Nav> constexpr static inline bool esc(Nav& nav) {return nav._esc(nav);}
 };
 
+/*
+* The NavBase class. Provides common navigation functionality
+*/
 template<typename Out,typename O=Drift<>>
 class NavBase:public O {
   public:
@@ -45,6 +49,9 @@ class NavBase:public O {
     Item* focus=NULL;
 };
 
+/*
+* The StaticNab class. Is bound to a specific menu data
+*/
 template<typename Out,typename Data,typename O=Drift<>>
 class StaticNav:public NavBase<Out,O> {
   public:
@@ -67,6 +74,9 @@ class StaticNav:public NavBase<Out,O> {
     Data data;
 };
 
+/**
+* The DynamicNav class. Can point o other target menu
+*/
 template<typename Out,typename Data,typename O=Drift<>>
 class DynamicNav:public NavNode,public NavBase<Out,O> {
   public:
@@ -80,6 +90,11 @@ class DynamicNav:public NavNode,public NavBase<Out,O> {
       Base::out.template printMenu<This,Out,Data>(*this,Base::out,*data);
       Base::exitMenuRender();
     }
+    /**
+    * @brief get the element size
+    * @return idx_t (number of collection members)
+    * @details non collection elements will return 0
+    */
     inline idx_t size() {return data->size();}
     inline bool selected(idx_t i) const override {return O::selected(i);}
     inline bool enabled(idx_t i) const override {return data->enabled(i);}

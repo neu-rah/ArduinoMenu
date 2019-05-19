@@ -1,0 +1,114 @@
+\hypertarget{classDynamicNav}{}\section{Dynamic\+Nav$<$ Out, Data, O $>$ Class Template Reference}
+\label{classDynamicNav}\index{Dynamic\+Nav$<$ Out, Data, O $>$@{Dynamic\+Nav$<$ Out, Data, O $>$}}
+
+
+{\ttfamily \#include $<$nav.\+h$>$}
+
+
+
+Inheritance diagram for Dynamic\+Nav$<$ Out, Data, O $>$\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=260pt]{classDynamicNav__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Dynamic\+Nav$<$ Out, Data, O $>$\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classDynamicNav__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classDynamicNav_a5ac8cf2128d1b0319f9a85e18c20faa9}\label{classDynamicNav_a5ac8cf2128d1b0319f9a85e18c20faa9}} 
+using {\bfseries Base} = \hyperlink{classNavBase}{Nav\+Base}$<$ Out, O $>$
+\item 
+\mbox{\Hypertarget{classDynamicNav_aa37a77b2e60b061ad1f53292a5797c47}\label{classDynamicNav_aa37a77b2e60b061ad1f53292a5797c47}} 
+using {\bfseries This} = \hyperlink{classDynamicNav}{Dynamic\+Nav}$<$ Out, Data, O $>$
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classDynamicNav_a8bb5a4ea4a9cefdf77b12d8f25a1b51b}\label{classDynamicNav_a8bb5a4ea4a9cefdf77b12d8f25a1b51b}} 
+{\bfseries Dynamic\+Nav} (Data \&o)
+\item 
+\mbox{\Hypertarget{classDynamicNav_a48b1cf857d2b1f34a90b8be04c0c468d}\label{classDynamicNav_a48b1cf857d2b1f34a90b8be04c0c468d}} 
+void {\bfseries set\+Target} (Data d)
+\item 
+\mbox{\Hypertarget{classDynamicNav_a64b7fcdb1064ba17bd7b18cb7fac66bd}\label{classDynamicNav_a64b7fcdb1064ba17bd7b18cb7fac66bd}} 
+void {\bfseries print\+Menu} ()
+\item 
+idx\+\_\+t \hyperlink{classDynamicNav_a889041fa079206abea35978d17267fa0}{size} ()
+\begin{DoxyCompactList}\small\item\em get the element size \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classDynamicNav_a17a2978dadba9dc26278154415cb68bf}\label{classDynamicNav_a17a2978dadba9dc26278154415cb68bf}} 
+bool {\bfseries selected} (idx\+\_\+t i) const override
+\item 
+\mbox{\Hypertarget{classDynamicNav_a7982c12b38a03c6e0f7754f64e920d2a}\label{classDynamicNav_a7982c12b38a03c6e0f7754f64e920d2a}} 
+bool {\bfseries enabled} (idx\+\_\+t i) const override
+\item 
+\mbox{\Hypertarget{classDynamicNav_a9e096813faf026e65f8ed6be93b7ccf8}\label{classDynamicNav_a9e096813faf026e65f8ed6be93b7ccf8}} 
+void {\bfseries enable} (idx\+\_\+t n, bool o)
+\item 
+\mbox{\Hypertarget{classDynamicNav_ac1ea476779657a66a3dc3ed71ec06f2c}\label{classDynamicNav_ac1ea476779657a66a3dc3ed71ec06f2c}} 
+bool {\bfseries up} () override
+\item 
+\mbox{\Hypertarget{classDynamicNav_ac738883ad62c648d6147d091a530c119}\label{classDynamicNav_ac738883ad62c648d6147d091a530c119}} 
+bool {\bfseries down} () override
+\item 
+\mbox{\Hypertarget{classDynamicNav_a981321c0198b541e2e7e79a7397b2b35}\label{classDynamicNav_a981321c0198b541e2e7e79a7397b2b35}} 
+bool {\bfseries left} () override
+\item 
+\mbox{\Hypertarget{classDynamicNav_a9e93af959a6748d6fd62fef544220939}\label{classDynamicNav_a9e93af959a6748d6fd62fef544220939}} 
+bool {\bfseries right} () override
+\item 
+\mbox{\Hypertarget{classDynamicNav_a59065bd180e14a92379566fdcad35ab1}\label{classDynamicNav_a59065bd180e14a92379566fdcad35ab1}} 
+bool {\bfseries enter} () override
+\item 
+\mbox{\Hypertarget{classDynamicNav_a1f61734c8aa2f8adec54212f83a6b7a1}\label{classDynamicNav_a1f61734c8aa2f8adec54212f83a6b7a1}} 
+bool {\bfseries esc} () override
+\item 
+\mbox{\Hypertarget{classDynamicNav_a77e8078828630a6ef946e472ebeb4130}\label{classDynamicNav_a77e8078828630a6ef946e472ebeb4130}} 
+bool {\bfseries activate} ()
+\item 
+\mbox{\Hypertarget{classDynamicNav_a70393001852492fd26b28ab9bd336175}\label{classDynamicNav_a70393001852492fd26b28ab9bd336175}} 
+bool {\bfseries activate} (idx\+\_\+t n)
+\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classDynamicNav_a51aa4aa344f698a9995e184b179cb767}\label{classDynamicNav_a51aa4aa344f698a9995e184b179cb767}} 
+Data $\ast$ {\bfseries data}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Out, typename Data, typename O = Drift$<$$>$$>$\newline
+class Dynamic\+Nav$<$ Out, Data, O $>$}
+
+The \hyperlink{classDynamicNav}{Dynamic\+Nav} class. Can point o other target menu 
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classDynamicNav_a889041fa079206abea35978d17267fa0}\label{classDynamicNav_a889041fa079206abea35978d17267fa0}} 
+\index{Dynamic\+Nav@{Dynamic\+Nav}!size@{size}}
+\index{size@{size}!Dynamic\+Nav@{Dynamic\+Nav}}
+\subsubsection{\texorpdfstring{size()}{size()}}
+{\footnotesize\ttfamily template$<$typename Out , typename Data , typename O  = Drift$<$$>$$>$ \\
+idx\+\_\+t \hyperlink{classDynamicNav}{Dynamic\+Nav}$<$ Out, Data, O $>$\+::size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+get the element size 
+
+\begin{DoxyReturn}{Returns}
+idx\+\_\+t (number of collection members)
+\end{DoxyReturn}
+non collection elements will return 0 
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/menu/\hyperlink{nav_8h}{nav.\+h}\end{DoxyCompactItemize}

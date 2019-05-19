@@ -1,7 +1,7 @@
 /* -*- C++ -*- */
 #pragma once
 /**
-* @file menu.h
+* @file textFmt.h
 * @author Rui Azevedo
 * @date 10 May 2019
 * @copyright 2019 Rui Azevedo

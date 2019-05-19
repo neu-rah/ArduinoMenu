@@ -1,9 +1,10 @@
 /* -*- C++ -*- */
 #pragma once
-////////////////////////////////////////////////////
-// Rui Azevedo - Apr2019
-// neu-rah (ruihfazevedo@gmail.com)
-// ArduinoMenu standard C++ stream output
+/**
+* @file serialOut.h
+* @author Rui Azevedo
+* @brief Use arduino serial as menu output
+*/
 
 #include <menu.h>
 

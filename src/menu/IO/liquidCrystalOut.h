@@ -1,10 +1,8 @@
 /* -*- C++ -*- */
 #pragma once
 /**
-* @file menu.h
+* @file liquidCrystalOut.h
 * @author Rui Azevedo
-* @date 10 May 2019
-* @copyright 2019 Rui Azevedo
 * @brief use arduino standard LCD library as menu output
 */
 

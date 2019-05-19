@@ -1,11 +1,9 @@
 /* -*- C++ -*- */
 #pragma once
 /**
-* @file menu.h
+* @file debug.h
 * @author Rui Azevedo
-* @date 10 May 2019
-* @copyright 2019 Rui Azevedo
-* @brief ArduinoMenu output implementations
+* @brief debug macros and utilities
 */
 
 #ifdef MENU_DEBUG

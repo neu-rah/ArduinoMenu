@@ -1,10 +1,8 @@
 /* -*- C++ -*- */
 #pragma once
 /**
-* @file menu.h
+* @file base.h
 * @author Rui Azevedo
-* @date 10 May 2019
-* @copyright 2019 Rui Azevedo
 * @brief ArduinoMenu interfaces (API's)
 */
 
@@ -17,6 +15,10 @@
 #define Expr template<typename> class
 #define Term typename
 
+/**
+* The Chain class is an utility to make composition nesting cleaner
+* and easier to maintain.
+*/
 template<Expr... OO>
 struct Chain {
   template<Term _T,Expr _O, Expr... _OO>

@@ -1,5 +1,9 @@
 /* -*- C++ -*- */
 #pragma once
+/**
+* @file flashText.h
+* @brief menu item component, provides flash stored text
+*/
 
 #include <menu.h>
 
