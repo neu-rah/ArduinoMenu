@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['activate',['activate',['../group__Agents.html#gade3cccf531dad6fe907c3a9764204e1c',1,'Empty::activate()'],['../structEmpty.html#aa8f5921ff6030b0b4eebde9f51214fd2',1,'Empty::activate(idx_t)']]]
+  ['activate',['activate',['../structEmpty.html#ade3cccf531dad6fe907c3a9764204e1c',1,'Empty']]],
+  ['activateitem',['activateItem',['../structEmpty.html#a2f4d5ca0c3193ed070ef49c4dcc9eb5c',1,'Empty']]]
 ];

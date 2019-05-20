@@ -1,9 +1,10 @@
 <map id="src/menu.h" name="src/menu.h">
 <area shape="rect" id="node2" href="$debug_8h.html" title="debug macros and utilities " alt="" coords="5,80,109,107"/>
-<area shape="rect" id="node4" href="$base_8h.html" title="ArduinoMenu interfaces (API&#39;s) " alt="" coords="309,155,406,181"/>
-<area shape="rect" id="node6" href="$item_8h.html" title="Base menu item implementations. " alt="" coords="185,80,279,107"/>
-<area shape="rect" id="node7" href="$printers_8h.html" title="ArduinoMenu part printers. " alt="" coords="304,80,416,107"/>
-<area shape="rect" id="node8" href="$out_8h.html" title="ArduinoMenu output implementations. " alt="" coords="441,80,527,107"/>
-<area shape="rect" id="node9" href="$panels_8h.html" title="ArduinoMenu output space management. " alt="" coords="552,80,659,107"/>
-<area shape="rect" id="node10" href="$nav_8h.html" title="ArduinoMenu navigation implementations. " alt="" coords="683,80,773,107"/>
+<area shape="rect" id="node4" href="$base_8h.html" title="ArduinoMenu interfaces (API&#39;s) " alt="" coords="493,229,590,256"/>
+<area shape="rect" id="node6" href="$item_8h.html" title="Base menu item implementations. " alt="" coords="419,155,514,181"/>
+<area shape="rect" id="node7" href="$printers_8h.html" title="ArduinoMenu part printers. " alt="" coords="317,80,429,107"/>
+<area shape="rect" id="node8" href="$out_8h.html" title="ArduinoMenu output implementations. " alt="" coords="213,155,299,181"/>
+<area shape="rect" id="node9" href="$panels_8h.html" title="ArduinoMenu output space management. " alt="" coords="504,80,611,107"/>
+<area shape="rect" id="node10" href="$nav_8h.html" title="ArduinoMenu navigation implementations. " alt="" coords="555,155,645,181"/>
+<area shape="rect" id="node11" href="$item_8hpp_source.html" title="menu/item.hpp" alt="" coords="185,80,293,107"/>
 </map>

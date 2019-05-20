@@ -1,10 +1,11 @@
 <map id="src/menu/IO/liquidCrystalOut.h" name="src/menu/IO/liquidCrystalOut.h">
-<area shape="rect" id="node4" href="$menu_8h.html" title="ArduinoMenu main include file. " alt="" coords="327,95,393,121"/>
+<area shape="rect" id="node4" href="$menu_8h.html" title="ArduinoMenu main include file. " alt="" coords="387,95,453,121"/>
 <area shape="rect" id="node5" href="$debug_8h.html" title="debug macros and utilities " alt="" coords="5,169,109,196"/>
-<area shape="rect" id="node7" href="$base_8h.html" title="ArduinoMenu interfaces (API&#39;s) " alt="" coords="309,244,406,271"/>
-<area shape="rect" id="node9" href="$item_8h.html" title="Base menu item implementations. " alt="" coords="185,169,279,196"/>
-<area shape="rect" id="node10" href="$printers_8h.html" title="ArduinoMenu part printers. " alt="" coords="304,169,416,196"/>
-<area shape="rect" id="node11" href="$out_8h.html" title="ArduinoMenu output implementations. " alt="" coords="441,169,527,196"/>
-<area shape="rect" id="node12" href="$panels_8h.html" title="ArduinoMenu output space management. " alt="" coords="552,169,659,196"/>
-<area shape="rect" id="node13" href="$nav_8h.html" title="ArduinoMenu navigation implementations. " alt="" coords="683,169,773,196"/>
+<area shape="rect" id="node7" href="$base_8h.html" title="ArduinoMenu interfaces (API&#39;s) " alt="" coords="493,319,590,345"/>
+<area shape="rect" id="node9" href="$item_8h.html" title="Base menu item implementations. " alt="" coords="419,244,514,271"/>
+<area shape="rect" id="node10" href="$printers_8h.html" title="ArduinoMenu part printers. " alt="" coords="317,169,429,196"/>
+<area shape="rect" id="node11" href="$out_8h.html" title="ArduinoMenu output implementations. " alt="" coords="213,244,299,271"/>
+<area shape="rect" id="node12" href="$panels_8h.html" title="ArduinoMenu output space management. " alt="" coords="504,169,611,196"/>
+<area shape="rect" id="node13" href="$nav_8h.html" title="ArduinoMenu navigation implementations. " alt="" coords="555,244,645,271"/>
+<area shape="rect" id="node14" href="$item_8hpp_source.html" title="menu/item.hpp" alt="" coords="185,169,293,196"/>
 </map>

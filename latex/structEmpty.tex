@@ -43,16 +43,16 @@ static constexpr bool \hyperlink{structEmpty_adc2d105531fb7b43f60fcd9deaaaa71c}{
 \mbox{\Hypertarget{structEmpty_af4997efbad97edae86108c77b4b0f26a}\label{structEmpty_af4997efbad97edae86108c77b4b0f26a}} 
 static void \hyperlink{structEmpty_af4997efbad97edae86108c77b4b0f26a}{enable} (idx\+\_\+t, bool)
 \begin{DoxyCompactList}\small\item\em set enabled status of indexed collection member \end{DoxyCompactList}\item 
-static \hyperlink{structNavAgent}{Nav\+Agent} \hyperlink{group__Agents_gade3cccf531dad6fe907c3a9764204e1c}{activate} ()
+static \hyperlink{structNavAgent}{Nav\+Agent} \hyperlink{structEmpty_ade3cccf531dad6fe907c3a9764204e1c}{activate} ()
 \begin{DoxyCompactList}\small\item\em activate this item (handle enter/select) \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{structEmpty_aa8f5921ff6030b0b4eebde9f51214fd2}\label{structEmpty_aa8f5921ff6030b0b4eebde9f51214fd2}} 
-static \hyperlink{structNavAgent}{Nav\+Agent} \hyperlink{structEmpty_aa8f5921ff6030b0b4eebde9f51214fd2}{activate} (idx\+\_\+t)
+\mbox{\Hypertarget{structEmpty_a2f4d5ca0c3193ed070ef49c4dcc9eb5c}\label{structEmpty_a2f4d5ca0c3193ed070ef49c4dcc9eb5c}} 
+static \hyperlink{structNavAgent}{Nav\+Agent} \hyperlink{structEmpty_a2f4d5ca0c3193ed070ef49c4dcc9eb5c}{activate\+Item} (idx\+\_\+t)
 \begin{DoxyCompactList}\small\item\em activate collection item by index \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Static Public Attributes}
 \begin{DoxyCompactItemize}
 \item 
-\mbox{\Hypertarget{structEmpty_ab68c571bf6950d7c715002f4bd2873d7}\label{structEmpty_ab68c571bf6950d7c715002f4bd2873d7}} 
-static \hyperlink{structEmptyCmds}{Empty\+Cmds}$<$ false $>$ \hyperlink{structEmpty_ab68c571bf6950d7c715002f4bd2873d7}{cmds}
+\mbox{\Hypertarget{structEmpty_a17b77b2cc02c543127f2db455344f2d3}\label{structEmpty_a17b77b2cc02c543127f2db455344f2d3}} 
+static \hyperlink{structEmptyCmds}{Empty\+Cmds}$<$ false $>$ \hyperlink{structEmpty_a17b77b2cc02c543127f2db455344f2d3}{cmds}
 \begin{DoxyCompactList}\small\item\em the dumb navigation agent, meaning this item does not handle navigation \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
@@ -62,6 +62,21 @@ struct Empty$<$ I $>$}
 
 The \hyperlink{structEmpty}{Empty} class is the static base for menu item elements. It provides minimalist or inexistent implementations. 
 
-The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{structEmpty_ade3cccf531dad6fe907c3a9764204e1c}\label{structEmpty_ade3cccf531dad6fe907c3a9764204e1c}} 
+\index{Empty@{Empty}!activate@{activate}}
+\index{activate@{activate}!Empty@{Empty}}
+\subsubsection{\texorpdfstring{activate()}{activate()}}
+{\footnotesize\ttfamily template$<$typename I $>$ \\
+\hyperlink{structNavAgent}{Nav\+Agent} \hyperlink{structEmpty}{Empty}$<$ I $>$\+::activate (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+activate this item (handle enter/select) 
+
+activate collection item (handle enter/select) returns a dumb agent to be used by navigation 
+
+The documentation for this struct was generated from the following files\+:\begin{DoxyCompactItemize}
 \item 
-src/menu/\hyperlink{item_8h}{item.\+h}\end{DoxyCompactItemize}
+src/menu/\hyperlink{item_8h}{item.\+h}\item 
+src/menu/item.\+hpp\end{DoxyCompactItemize}
