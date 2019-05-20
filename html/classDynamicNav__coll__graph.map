@@ -1,6 +1,5 @@
-<map id="DynamicNav&lt; Out, Data, O &gt;" name="DynamicNav&lt; Out, Data, O &gt;">
-<area shape="rect" id="node2" href="$structNavNode.html" title="NavNode" alt="" coords="49,124,127,151"/>
-<area shape="rect" id="node3" href="$classNavBase.html" title="NavBase\&lt; Out, O \&gt;" alt="" coords="151,124,289,151"/>
-<area shape="rect" id="node5" href="$structItem.html" title="Item" alt="" coords="196,20,244,47"/>
-<area shape="rect" id="node6" href="$structChain.html" title="Chain\&lt; TextFmt, TitleWrap,\l FullPrinter, Viewport,\l RangePanel \&gt;" alt="" coords="269,5,454,61"/>
+<map id="DynamicNav&lt; Out, Data, N &gt;" name="DynamicNav&lt; Out, Data, N &gt;">
+<area shape="rect" id="node2" href="$structNavNode.html" title="NavNode" alt="" coords="24,124,101,151"/>
+<area shape="rect" id="node3" href="$classNavBase.html" title="NavBase\&lt; Out, N \&gt;" alt="" coords="125,124,264,151"/>
+<area shape="rect" id="node5" href="$structChain.html" title="Chain\&lt; TextFmt, TitleWrap,\l FullPrinter, Viewport,\l RangePanel \&gt;" alt="" coords="170,5,355,61"/>
 </map>

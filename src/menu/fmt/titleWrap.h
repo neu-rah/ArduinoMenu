@@ -3,9 +3,7 @@
 /**
 * @file titleWrap.h
 * @author Rui Azevedo
-* @date 10 May 2019
-* @copyright 2019 Rui Azevedo
-* @brief ArduinoMenu format, wrap the between characters, default: '[]'
+* @brief ArduinoMenu format, wrap the title between characters, default: '[]'
 */
 
 #include <menu.h>

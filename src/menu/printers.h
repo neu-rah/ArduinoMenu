@@ -6,8 +6,12 @@
 * @brief ArduinoMenu part printers
 */
 
-template<typename O=TextMeasure>
-struct FullPrinter:public O {
+/** \defgroup Printers Part printing
+ *  @{
+ */
+
+template<typename P=TextMeasure>
+struct FullPrinter:public P {
   template<typename Nav,typename Out,typename I>
   inline void printMenu(Nav& nav,Out& out,I& i) {
     trace(MDO<<"FullPrinter::printMenu"<<endl);
@@ -30,7 +34,7 @@ struct FullPrinter:public O {
 
     for(idx_t n=out.top();n<i.size();n++) {
       if (!out.freeY()) break;
-      O::clrLine(out,O::posY());
+      P::clrLine(out,P::posY());
       out.template fmtItem<true>(nav,out,*this,n);
       out.template fmtIndex<true>(nav,out,*this,n);
       out.template fmtIndex<false>(nav,out,*this,n);
@@ -45,3 +49,4 @@ struct FullPrinter:public O {
     out.template fmtPanel<false>(nav,out,i,0);
   }
 };
+/** @}*/

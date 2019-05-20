@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['print',['print',['../structEmpty.html#ad8bf9e6c8a9ebee45aecedbf257bf0c4',1,'Empty']]],
-  ['printitem',['printItem',['../structEmpty.html#a7375fdf4da65d02878ee0ec34e08cead',1,'Empty']]]
+  ['enable',['enable',['../structEmpty.html#af4997efbad97edae86108c77b4b0f26a',1,'Empty']]],
+  ['enabled',['enabled',['../structEmpty.html#a4a4a935a0441e462d0d8814108bdad22',1,'Empty::enabled()'],['../structEmpty.html#adc2d105531fb7b43f60fcd9deaaaa71c',1,'Empty::enabled(idx_t)']]]
 ];

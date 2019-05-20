@@ -3,8 +3,11 @@ var indexSectionsWithContent =
   0: "abcdefilmnoprstv",
   1: "acdefilmnoprstv",
   2: "bcdefilmnopstv",
-  3: "aeps",
-  4: "at"
+  3: "adeps",
+  4: "c",
+  5: "a",
+  6: "cmnp",
+  7: "at"
 };
 
 var indexSectionNames =
@@ -13,7 +16,10 @@ var indexSectionNames =
   1: "classes",
   2: "files",
   3: "functions",
-  4: "pages"
+  4: "variables",
+  5: "typedefs",
+  6: "groups",
+  7: "pages"
 };
 
 var indexSectionLabels =
@@ -22,6 +28,9 @@ var indexSectionLabels =
   1: "Classes",
   2: "Files",
   3: "Functions",
-  4: "Pages"
+  4: "Variables",
+  5: "Typedefs",
+  6: "Modules",
+  7: "Pages"
 };
 

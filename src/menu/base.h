@@ -54,6 +54,7 @@ struct Nil {};
 struct Item;
 struct MenuOut;
 struct NavNode;
+struct NavAgent;
 
 //Output Device Operation
 enum class OutOps {RawOut,Measure};
@@ -93,15 +94,6 @@ struct MenuOut {
     fmt(role,true,nav,out,i,n);
     fmt(role,false,nav,out,i,n);
   }
-};
-
-//item interface
-struct Item {
-  virtual inline void print(NavNode&,MenuOut& out) {}
-  virtual inline void printItem(NavNode&,MenuOut& out,idx_t n) {}
-  virtual inline void enable(idx_t,bool) {}
-  virtual inline bool enabled(idx_t) const {return true;}
-  virtual inline bool activate() {return false;};
 };
 
 //static output base

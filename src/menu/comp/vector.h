@@ -14,14 +14,14 @@ using namespace std;
 // using namespace Menu;
 
 // namespace Menu {
-  template<typename O=Empty<>>
-  struct VectorMenu:public O,vector<Item*> {
+  template<typename I=Empty<>>
+  struct VectorMenu:public I,vector<Item*> {
     using vector<Item*>::vector;
     inline idx_t size() {return (idx_t)vector<Item*>::size();}
     template<typename Nav,typename Out>
     static inline void print(Nav& bav,Out& out) {}
-    template<typename... OO>
-    inline VectorMenu(OO... oo):vector<Item*>{oo...} {}
+    template<typename... II>
+    inline VectorMenu(II... oo):vector<Item*>{oo...} {}
     template<typename Nav,typename Out>
     inline void printItem(Nav& nav,Out& out,idx_t n) {
       vector<Item*>::operator[](n)->print(nav,out);

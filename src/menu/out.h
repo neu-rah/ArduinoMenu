@@ -6,6 +6,10 @@
 * @brief ArduinoMenu output implementations
 */
 
+/** \defgroup Output Menu output
+ *  @{
+ */
+
 #include "base.h"
 
 template<typename Dev,Dev dev,typename O=FullPrinter<>>
@@ -41,3 +45,4 @@ struct MenuOutDef:public O,public MenuOut {
     }
   }
 };
+/** @}*/

@@ -6,10 +6,11 @@
 * @brief ArduinoMenu output space management
 */
 
-//static panel ------------------------------------------------
-// describes output geometry,
-// may be whole device, but must not exceed
-// it has origin coordinates to be displaced around
+/**
+* The StaticPanel class describes output geometry,
+* may be whole device, but must not exceed.
+* It has origin coordinates to be displaced around
+*/
 template<idx_t x,idx_t y,idx_t w,idx_t h,typename O>
 struct StaticPanel:public O {
   constexpr static inline idx_t orgX() {return x;}
@@ -32,9 +33,11 @@ struct StaticPanel:public O {
 // template<idx_t w,idx_t h,typename O>
 // struct StaticPanel<0,0,w,h,O>:public _StaticPanel<0,0,w,h,O> {};
 
-//its different than a scroll viewport
-//as it refers to the top line of the menu structure
-//minimize printing on line menus
+/**
+* The RangePanel class is different than a scroll viewport
+* as it refers to the top line of the menu structure.
+* Minimize printing code on line menus.
+*/
 template<typename O>
 class RangePanel:public O {
   public:
@@ -46,7 +49,9 @@ class RangePanel:public O {
     idx_t topLine=0;
 };
 
-//track space usage
+/**
+* The Viewport class tracks space usage
+*/
 template<typename O>
 class Viewport:public O {
   public:

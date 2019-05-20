@@ -1,12 +1,12 @@
-\hypertarget{structPrompt}{}\section{Prompt$<$ O $>$ Struct Template Reference}
-\label{structPrompt}\index{Prompt$<$ O $>$@{Prompt$<$ O $>$}}
+\hypertarget{structPrompt}{}\section{Prompt$<$ I $>$ Struct Template Reference}
+\label{structPrompt}\index{Prompt$<$ I $>$@{Prompt$<$ I $>$}}
 
 
 {\ttfamily \#include $<$item.\+h$>$}
 
 
 
-Inheritance diagram for Prompt$<$ O $>$\+:\nopagebreak
+Inheritance diagram for Prompt$<$ I $>$\+:\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -15,7 +15,7 @@ Inheritance diagram for Prompt$<$ O $>$\+:\nopagebreak
 \end{figure}
 
 
-Collaboration diagram for Prompt$<$ O $>$\+:\nopagebreak
+Collaboration diagram for Prompt$<$ I $>$\+:\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -25,29 +25,29 @@ Collaboration diagram for Prompt$<$ O $>$\+:\nopagebreak
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\mbox{\Hypertarget{structPrompt_a00ec62ca84f509b26898137e2df772f9}\label{structPrompt_a00ec62ca84f509b26898137e2df772f9}} 
+\mbox{\Hypertarget{structPrompt_ad8624b0a82f850df31fe99362978cb85}\label{structPrompt_ad8624b0a82f850df31fe99362978cb85}} 
 void {\bfseries print\+Item} (\hyperlink{structNavNode}{Nav\+Node} \&nav, \hyperlink{structMenuOut}{Menu\+Out} \&out, idx\+\_\+t n) override
 \item 
-\mbox{\Hypertarget{structPrompt_a2ce155e8c7582809fc15802e06954fab}\label{structPrompt_a2ce155e8c7582809fc15802e06954fab}} 
+\mbox{\Hypertarget{structPrompt_a75c7b87e4cd6c54625c571469d48021f}\label{structPrompt_a75c7b87e4cd6c54625c571469d48021f}} 
 void {\bfseries print} (\hyperlink{structNavNode}{Nav\+Node} \&nav, \hyperlink{structMenuOut}{Menu\+Out} \&out) override
 \item 
-\mbox{\Hypertarget{structPrompt_a40a2fe7ed21396bedd6b65b2db5400a6}\label{structPrompt_a40a2fe7ed21396bedd6b65b2db5400a6}} 
+\mbox{\Hypertarget{structPrompt_a64dcc2b5814ba7220cf8470596300665}\label{structPrompt_a64dcc2b5814ba7220cf8470596300665}} 
 void {\bfseries enable} (idx\+\_\+t n, bool b) override
 \item 
-\mbox{\Hypertarget{structPrompt_a4f769df1e55e65f6a07d297efb15cf44}\label{structPrompt_a4f769df1e55e65f6a07d297efb15cf44}} 
+\mbox{\Hypertarget{structPrompt_ab129ad3f038faa401a3a33d6311a639b}\label{structPrompt_ab129ad3f038faa401a3a33d6311a639b}} 
 virtual bool {\bfseries enabled} (idx\+\_\+t n) const override
 \item 
-\mbox{\Hypertarget{structPrompt_aa5befa00eeae10f725e06c2c087d177d}\label{structPrompt_aa5befa00eeae10f725e06c2c087d177d}} 
-bool {\bfseries activate} () override
+\mbox{\Hypertarget{structPrompt_adf56bea32063d10f18114b7d717a6385}\label{structPrompt_adf56bea32063d10f18114b7d717a6385}} 
+\hyperlink{structNavAgent}{Nav\+Agent} {\bfseries activate} () override
 \item 
-\mbox{\Hypertarget{structPrompt_a6245d593b4c924276faeb8b5b4424e53}\label{structPrompt_a6245d593b4c924276faeb8b5b4424e53}} 
-bool {\bfseries activate} (idx\+\_\+t n) override
+\mbox{\Hypertarget{structPrompt_a18fa294421701b96e40e145c79380ad7}\label{structPrompt_a18fa294421701b96e40e145c79380ad7}} 
+\hyperlink{structNavAgent}{Nav\+Agent} {\bfseries activate} (idx\+\_\+t n) override
 \end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
-\subsubsection*{template$<$typename O$>$\newline
-struct Prompt$<$ O $>$}
+\subsubsection*{template$<$typename I$>$\newline
+struct Prompt$<$ I $>$}
 
 The \hyperlink{structPrompt}{Prompt} class represents a generic virtual menu item. This class allows \hyperlink{structPrompt}{Prompt} pointers to be stored on a list as they all implement the same interface. This will adapts a composition to the virtual interface. 
 

@@ -6,6 +6,7 @@
 #include <menu.h>
 #include <menu/comp/endis.h>
 #include <menu/comp/vector.h>
+#include <menu/comp/numField.h>
 #include <menu/IO/consoleOut.h>
 #include <menu/fmt/titleWrap.h>
 #include <menu/fmt/textFmt.h>
@@ -39,10 +40,11 @@ bool grrr() {
 const char* op1_text="Op 1";
 const char* op2_text="Op ...";
 const char* op3_text="Op 3";
+const char* year_text="Year";
 const char* extra_text="extra option";
 const char* mainMenu_title="Main menu";
-template<const char**text>
-using Op=EnDis<StaticText<text>>;
+template<const char**text,typename O=Empty<>>
+using Op=EnDis<StaticText<text,O>>;
 using MainMenu=
   StaticText<
     &mainMenu_title,
@@ -68,10 +70,18 @@ using DynaMenu=
     >
   >;
 
+int year=2019;
+
 DynaMenu dynaMenu(
   new Prompt<Action<Op<&op1_text>,hey>>(),
   new Prompt<Action<Op<&op2_text>,grrr>>(),
-  new Prompt<Op<&op3_text>>()
+  new Prompt<
+    Op<
+      &year_text,
+      NumField<int>
+    >
+  >(year,1900,2100,10,1),
+  new Prompt<Op<&year_text>>()
 );
 
 Out out;//to use with single option

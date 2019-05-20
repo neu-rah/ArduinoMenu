@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['action',['Action',['../structAction.html',1,'']]]
+  ['action',['Action',['../classAction.html',1,'']]]
 ];
