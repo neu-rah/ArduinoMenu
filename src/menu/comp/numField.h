@@ -40,13 +40,13 @@
       // }
       inline bool up() {
         T s=tunning?tune:step;
-        if (*value+s<=high) *value+=s;
+        if (value+s<=high) value+=s;
         return true;
       }
       inline bool down() {
         T s=tunning?tune:step;
-        if (*value-s>=low) {
-          *value-=s;
+        if (value-s>=low) {
+          value-=s;
           return true;
         }
         return false;

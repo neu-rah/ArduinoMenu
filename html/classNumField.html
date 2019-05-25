@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.13"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>ArduinoMenu 5: NumField&lt; T, I &gt; Class Template Reference</title>
+<title>ArduinoMenu 5: NumField&lt; T, value, low, high, step, tune, I &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -59,74 +59,68 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="classNumField-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">NumField&lt; T, I &gt; Class Template Reference</div>  </div>
+<div class="title">NumField&lt; T, value, low, high, step, tune, I &gt; Class Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
 <p><code>#include &lt;<a class="el" href="numField_8h_source.html">numField.h</a>&gt;</code></p>
 <div class="dynheader">
-Inheritance diagram for NumField&lt; T, I &gt;:</div>
+Inheritance diagram for NumField&lt; T, value, low, high, step, tune, I &gt;:</div>
 <div class="dyncontent">
-<div class="center"><img src="classNumField__inherit__graph.png" border="0" usemap="#NumField_3_01T_00_01I_01_4_inherit__map" alt="Inheritance graph"/></div>
+<div class="center"><img src="classNumField__inherit__graph.png" border="0" usemap="#NumField_3_01T_00_01value_00_01low_00_01high_00_01step_00_01tune_00_01I_01_4_inherit__map" alt="Inheritance graph"/></div>
+<map name="NumField_3_01T_00_01value_00_01low_00_01high_00_01step_00_01tune_00_01I_01_4_inherit__map" id="NumField_3_01T_00_01value_00_01low_00_01high_00_01step_00_01tune_00_01I_01_4_inherit__map">
+</map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <div class="dynheader">
-Collaboration diagram for NumField&lt; T, I &gt;:</div>
+Collaboration diagram for NumField&lt; T, value, low, high, step, tune, I &gt;:</div>
 <div class="dyncontent">
-<div class="center"><img src="classNumField__coll__graph.png" border="0" usemap="#NumField_3_01T_00_01I_01_4_coll__map" alt="Collaboration graph"/></div>
+<div class="center"><img src="classNumField__coll__graph.png" border="0" usemap="#NumField_3_01T_00_01value_00_01low_00_01high_00_01step_00_01tune_00_01I_01_4_coll__map" alt="Collaboration graph"/></div>
+<map name="NumField_3_01T_00_01value_00_01low_00_01high_00_01step_00_01tune_00_01I_01_4_coll__map" id="NumField_3_01T_00_01value_00_01low_00_01high_00_01step_00_01tune_00_01I_01_4_coll__map">
+</map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
+Public Types</h2></td></tr>
+<tr class="memitem:a2f08690bb95c68a70e2941d5cdd4b85c"><td class="memItemLeft" align="right" valign="top"><a id="a2f08690bb95c68a70e2941d5cdd4b85c"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>This</b> = <a class="el" href="classNumField.html">NumField</a>&lt; T, value, low, high, step, tune, I &gt;</td></tr>
+<tr class="separator:a2f08690bb95c68a70e2941d5cdd4b85c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ac31c0e5c4a8dfc82780e643140c608f8"><td class="memItemLeft" align="right" valign="top"><a id="ac31c0e5c4a8dfc82780e643140c608f8"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>NumField</b> (T &amp;var, T l, T h, T s, T t=0)</td></tr>
-<tr class="separator:ac31c0e5c4a8dfc82780e643140c608f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0f94b131552e24e24516ed07c3345564"><td class="memItemLeft" align="right" valign="top"><a id="a0f94b131552e24e24516ed07c3345564"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>out</b> (<a class="el" href="structMenuOut.html">MenuOut</a> &amp;o) const</td></tr>
-<tr class="separator:a0f94b131552e24e24516ed07c3345564"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1fc5409fdd22fbca9ffcfdbe90cf9929"><td class="memItemLeft" align="right" valign="top"><a id="a1fc5409fdd22fbca9ffcfdbe90cf9929"></a>
+<tr class="memitem:a59741302593e27f69c061f13572d8b73"><td class="memTemplParams" colspan="2"><a id="a59741302593e27f69c061f13572d8b73"></a>
+template&lt;typename Nav , typename Out &gt; </td></tr>
+<tr class="memitem:a59741302593e27f69c061f13572d8b73"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>print</b> (Nav &amp;nav, Out &amp;out)</td></tr>
+<tr class="separator:a59741302593e27f69c061f13572d8b73"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4f3b892335a275c356e1637c6353efa7"><td class="memItemLeft" align="right" valign="top"><a id="a4f3b892335a275c356e1637c6353efa7"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>up</b> ()</td></tr>
-<tr class="separator:a1fc5409fdd22fbca9ffcfdbe90cf9929"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae0bd47d4969d695fa7cff81e44d4dff9"><td class="memItemLeft" align="right" valign="top"><a id="ae0bd47d4969d695fa7cff81e44d4dff9"></a>
+<tr class="separator:a4f3b892335a275c356e1637c6353efa7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa8ab4efc861b39c41333a22b1089b06f"><td class="memItemLeft" align="right" valign="top"><a id="aa8ab4efc861b39c41333a22b1089b06f"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>down</b> ()</td></tr>
-<tr class="separator:ae0bd47d4969d695fa7cff81e44d4dff9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abe795198b4e2b95502933164d3cd64ec"><td class="memItemLeft" align="right" valign="top"><a id="abe795198b4e2b95502933164d3cd64ec"></a>
+<tr class="separator:aa8ab4efc861b39c41333a22b1089b06f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaa94dd7ee3cc9a75c78847bcf50cf4b1"><td class="memItemLeft" align="right" valign="top"><a id="aaa94dd7ee3cc9a75c78847bcf50cf4b1"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>enter</b> ()</td></tr>
-<tr class="separator:abe795198b4e2b95502933164d3cd64ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae7697ba53072d3eacf0a041c93140f4e"><td class="memItemLeft" align="right" valign="top"><a id="ae7697ba53072d3eacf0a041c93140f4e"></a>
+<tr class="separator:aaa94dd7ee3cc9a75c78847bcf50cf4b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3488e09f76eed5b6937516033b1af0f9"><td class="memItemLeft" align="right" valign="top"><a id="a3488e09f76eed5b6937516033b1af0f9"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>esc</b> ()</td></tr>
-<tr class="separator:ae7697ba53072d3eacf0a041c93140f4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:a3488e09f76eed5b6937516033b1af0f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
-<tr class="memitem:a1c72fd5bc1775e6cfaed2b4594ac0700"><td class="memItemLeft" align="right" valign="top"><a id="a1c72fd5bc1775e6cfaed2b4594ac0700"></a>
+<tr class="memitem:aa6214daa8e0081fc25e2e366a40be7ab"><td class="memItemLeft" align="right" valign="top"><a id="aa6214daa8e0081fc25e2e366a40be7ab"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>tunning</b> =false</td></tr>
-<tr class="separator:a1c72fd5bc1775e6cfaed2b4594ac0700"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a548ac7ac150b3b12811bfef53d9636a5"><td class="memItemLeft" align="right" valign="top"><a id="a548ac7ac150b3b12811bfef53d9636a5"></a>
-T *&#160;</td><td class="memItemRight" valign="bottom"><b>value</b></td></tr>
-<tr class="separator:a548ac7ac150b3b12811bfef53d9636a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad17a73e2250ebbd5dda7ee3a79dfb522"><td class="memItemLeft" align="right" valign="top"><a id="ad17a73e2250ebbd5dda7ee3a79dfb522"></a>
+<tr class="separator:aa6214daa8e0081fc25e2e366a40be7ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abd57d5ad6ade75a1319893111210b215"><td class="memItemLeft" align="right" valign="top"><a id="abd57d5ad6ade75a1319893111210b215"></a>
 T&#160;</td><td class="memItemRight" valign="bottom"><b>reflex</b></td></tr>
-<tr class="separator:ad17a73e2250ebbd5dda7ee3a79dfb522"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9e04257f27cf53402e8d787b6a1d561e"><td class="memItemLeft" align="right" valign="top"><a id="a9e04257f27cf53402e8d787b6a1d561e"></a>
-T&#160;</td><td class="memItemRight" valign="bottom"><b>low</b></td></tr>
-<tr class="separator:a9e04257f27cf53402e8d787b6a1d561e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab40ba1ee654bc48e827b78297b384714"><td class="memItemLeft" align="right" valign="top"><a id="ab40ba1ee654bc48e827b78297b384714"></a>
-T&#160;</td><td class="memItemRight" valign="bottom"><b>high</b></td></tr>
-<tr class="separator:ab40ba1ee654bc48e827b78297b384714"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acd99c4f2a3c0b3477535399485782827"><td class="memItemLeft" align="right" valign="top"><a id="acd99c4f2a3c0b3477535399485782827"></a>
-T&#160;</td><td class="memItemRight" valign="bottom"><b>step</b></td></tr>
-<tr class="separator:acd99c4f2a3c0b3477535399485782827"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af28a046a1c71b17e8ac7ed17abba03ff"><td class="memItemLeft" align="right" valign="top"><a id="af28a046a1c71b17e8ac7ed17abba03ff"></a>
-T&#160;</td><td class="memItemRight" valign="bottom"><b>tune</b></td></tr>
-<tr class="separator:af28a046a1c71b17e8ac7ed17abba03ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:abd57d5ad6ade75a1319893111210b215"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><h3>template&lt;typename T, typename I = Empty&lt;&gt;&gt;<br />
-class NumField&lt; T, I &gt;</h3>
+<div class="textblock"><h3>template&lt;typename T, T &amp; value, T low, T high, T step, T tune, typename I = Empty&lt;&gt;&gt;<br />
+class NumField&lt; T, value, low, high, step, tune, I &gt;</h3>
 
 <p>The <a class="el" href="classNumField.html">NumField</a> class links to any numeric type variable and allows changing it between the validation range </p>
 </div><hr/>The documentation for this class was generated from the following file:<ul>

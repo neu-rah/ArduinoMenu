@@ -10,3 +10,7 @@ EmptyCmds<false> Empty<I>::cmds;
 
 template<typename I,ActionHandler act>
 EmptyCmds<true> Action<I,act>::cmds;
+
+//handler for objects that wish to receive navigation commands
+template<typename O>
+ItemCmd<NavHandler<O>> NavHandler<O>::cmds;

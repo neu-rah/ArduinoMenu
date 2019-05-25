@@ -71,12 +71,14 @@ using MainMenu=
       Op<
         decltype(year_text),
         &year_text,
-        NumField<
-          int,
-          year,
-          1900,2100,
-          10,1,
-          AsUnit<Empty<>>
+        NavHandler<
+          NumField<
+            int,
+            year,
+            1900,2100,
+            10,1,
+            AsUnit<Empty<>>
+          >
         >
       >,
       Op<decltype(op2_text),&op2_text>,

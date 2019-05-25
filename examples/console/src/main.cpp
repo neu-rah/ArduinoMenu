@@ -58,12 +58,14 @@ using MainMenu=
         &year_text,
         AsMode<
           AsValue<
-            NumField<
-              int,
-              year,
-              1900,2100,
-              10,1,
-              AsUnit<StaticText<&zzz>>
+            NavHandler<
+              NumField<
+                int,
+                year,
+                1900,2100,
+                10,1,
+                AsUnit<StaticText<&zzz>>
+              >
             >
           >
         >
@@ -116,8 +118,12 @@ int main() {
 
   cout<<"{static menu test}"<<endl;
   nav.enable(1,false);//disable second option
+  nav.up();
+  nav.up();
   nav.printMenu();
   nav.enter();
+  nav.up();
+  nav.up();
   cout<<endl;
 
   cout<<"{dynamic menu test}"<<endl;

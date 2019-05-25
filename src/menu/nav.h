@@ -164,13 +164,6 @@ template<typename N>
 class ItemNav:public N {
   public:
     using N::N;
-    // ItemNav() {/*assert(N::canNav());*/}
-    // constexpr inline bool canNav() {
-    //   return focus/*||N::canNav()*/;//we only have focus when it can nav
-    // }
-    // inline Item& getFocus() {
-    //   return focus?focus.getClient():N::getTarget();
-    // }
     template<typename Nav>
     inline bool _down(Nav& nav) {
       return focus?focus.down():N::_down(nav);
@@ -192,7 +185,6 @@ class ItemNav:public N {
       if (focus) {
         focus.enter();
         focus=Empty<>::activate();
-        // focus=CmdAgent();
       }
       return N::_right(nav);
     }
@@ -213,7 +205,6 @@ class ItemNav:public N {
         if (focus.result()) return true;
       }
       return false;
-      // return N::_enter(nav);
     }
     template<typename Nav>
     inline bool _esc(Nav& nav) {
