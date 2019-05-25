@@ -36,7 +36,7 @@ using Out=Chain<
 PROGMEM ConstText op1_text="Op 1";
 PROGMEM ConstText op2_text="Op ...";
 PROGMEM ConstText op3_text="Op 3";
-PROGMEM ConstText year_text="Year";
+// PROGMEM ConstText year_text="Year";
 PROGMEM ConstText mainMenu_title="Main menu";
 
 template<typename T,T* text,ActionHandler act=doNothing>

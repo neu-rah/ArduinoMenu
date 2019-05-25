@@ -183,28 +183,33 @@ class ItemNav:public N {
     inline bool _left(Nav& nav) {
       if (focus) {
         focus.enter();
-        focus=CmdAgent();
+        focus=Empty<>::activate();
       }
-      return N::getTarget().left();
+      return N::_left(nav);
     }
     template<typename Nav>
     inline bool _right(Nav& nav) {
       if (focus) {
         focus.enter();
-        focus=CmdAgent();
+        focus=Empty<>::activate();
+        // focus=CmdAgent();
       }
-      return N::getTarget().right();
+      return N::_right(nav);
     }
     template<typename Nav>
     inline bool _enter(Nav& nav) {
-      trace(MDO<<"ItemNav::_enter"<<endl);
+      _trace(MDO<<"ItemNav::_enter"<<endl);
       if (focus) {
+        _trace(MDO<<"we had focus somewhere"<<endl);
         if (focus.enter()) return true;
+        _trace(MDO<<"removing it..."<<endl);
         focus=Empty<>::activate();//blur if enter return false
       } else {
-        // focus=N::getTarget()[N::pos()].activate();
+        _trace(MDO<<"checking target..."<<endl);
         if (!nav.enabled(nav.pos())) return false;
+        _trace(MDO<<"its enabled."<<endl);
         focus=nav.activate(nav.pos());
+        _trace(MDO<<"new focus:"<<(bool)focus.result()<<endl);
         if (focus.result()) return true;
       }
       return false;

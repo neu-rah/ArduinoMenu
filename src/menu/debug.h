@@ -8,7 +8,7 @@
 
 #ifdef MENU_DEBUG
   #ifdef ARDUINO
-    #include <streamFlow.h>
+    // #include <streamFlow.h>
     #ifndef MDO
       #define MDO Serial
     #endif
