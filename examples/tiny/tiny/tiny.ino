@@ -65,7 +65,7 @@ using MainMenu=
     >
   >;
 
-NavCap<
+NavRoot<
   StaticNav<Out,MainMenu,NavPos<>>
 > nav;
 

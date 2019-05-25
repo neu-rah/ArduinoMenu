@@ -11,12 +11,13 @@
 template<typename O>
 struct TextFmt:public O {
   template<bool io,typename Nav,typename Out,typename I>
-  static inline void fmtValue(Nav& nav,Out& out,I& i,idx_t n) {
-    out.raw('?');
-  }
-  template<bool io,typename Nav,typename Out,typename I>
   static inline void fmtMode(Nav& nav,Out& out,I& i,idx_t n) {
-    out.raw(io?'[':']');
+    if(io) switch(nav.mode()) {
+      case Modes::Normal: out.raw(' ');break;
+      case Modes::Edit: out.raw(':');break;
+      case Modes::Tune: out.raw('>');break;
+    }
+    O::template fmtMode<io,Nav,Out,I>(nav,out,i,n);
   }
   template<bool io,typename Nav,typename Out,typename I>
   static inline void fmtUnit(Nav& nav,Out& out,I& i,idx_t n) {

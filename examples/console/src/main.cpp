@@ -97,7 +97,7 @@ DynaMenu dynaMenu(
 
 Out out;//to use with single option
 StaticNav<Out,SingleOp> singleNav;
-NavCap<
+NavRoot<
   ItemNav<
     StaticNav<Out,MainMenu,NavPos<>>
   >

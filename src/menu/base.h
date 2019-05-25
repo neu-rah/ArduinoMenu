@@ -41,6 +41,7 @@ using idx_t=int;
 using ConstText=const char[];
 
 enum class Roles {Panel,Menu,Title,Body,Item,Index,Cursor,Name,Mode,Value,Unit};
+enum class Modes {Normal,Edit,Tune};
 
 // //turn enum into type for template specialization
 // template<Roles role> struct Role {};

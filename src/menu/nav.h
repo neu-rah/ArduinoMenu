@@ -18,6 +18,7 @@
 template<typename N=Nil> struct Drift:public N {
   constexpr static inline bool selected(idx_t) {return false;}
   constexpr static inline bool enabled(idx_t) {return true;}
+  constexpr static inline Modes mode() {return Modes::Normal;}
   template<typename Nav> constexpr static inline bool _up(Nav& nav) {return false;}
   template<typename Nav> constexpr static inline bool _down(Nav& nav) {return false;}
   template<typename Nav> constexpr static inline bool _left(Nav& nav) {return false;}
@@ -74,6 +75,7 @@ class StaticNav:public NavBase<Out,N> {
     // inline Item& operator[](idx_t n) {return data.operator[](n);}
     inline NavAgent activate() {return data.activate();}
     inline NavAgent activate(idx_t n) {return data.activateItem(n);}
+    inline Modes mode() const {return data.mode();}
   protected:
     Data data;
 };
@@ -112,6 +114,7 @@ class DynamicNav:public NavNode,public NavBase<Out,N> {
     // inline Item& operator[](idx_t n) {return data->operator[](n);}
     inline NavAgent activate() {return data->activate();}
     inline NavAgent activate(idx_t n) {return data->activateItem(n);}
+    inline Modes mode() const {return data->mode();}
   protected:
     Data* data;
 };
@@ -214,22 +217,23 @@ class ItemNav:public N {
       }
       return N::_esc(nav);
     }
+    inline Modes mode() const {return focus?focus.mode():Modes::Normal;}
   protected:
     NavAgent focus;
 };
 
 /**
-* The NavCap class encapsulates navigation components and implements navigation interface
+* The NavRoot class encapsulates navigation components and implements/redirects navigation interface
 */
 template<typename N>
-struct NavCap:public N {
-  using This=NavCap<N>;
+struct NavRoot:public N {
+  using This=NavRoot<N>;
   inline bool up() {return N::template _up<This>(*this);}
   inline bool down() {return N::template _down<This>(*this);}
   inline bool left() {return N::template _left<This>(*this);}
   inline bool right() {return N::template _right<This>(*this);}
   inline bool enter() {
-    trace(MDO<<"NavCap::enter"<<endl);
+    trace(MDO<<"NavRoot::enter"<<endl);
     return N::template _enter<This>(*this);}
   inline bool esc() {return N::template _esc<This>(*this);}
   // inline NavAgent activate() {return N::activate();}

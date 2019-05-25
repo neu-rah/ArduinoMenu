@@ -35,6 +35,7 @@ struct CmdAgent {
   virtual bool enter(void* o)=0;
   virtual bool esc(void* o)=0;
   virtual bool result() const=0;
+  virtual Modes mode() const {return Modes::Normal;};
 };
 
 /**
@@ -110,6 +111,7 @@ struct Empty:public I {
   static inline NavAgent activateItem(idx_t);
   /// the dumb navigation agent, meaning this item does not handle navigation
   static EmptyCmds<false> cmds;
+  constexpr static inline Modes mode() {return Modes::Normal;}
 };
 
 /** \defgroup Agents Command and navigation agents
@@ -134,6 +136,7 @@ struct NavAgent {
   inline bool enter() {return run->enter(obj);}
   inline bool esc() {return run->esc(obj);}
   inline bool result() const {return run->result();};
+  inline Modes mode() const {return run->mode();};
 };
 
 /**
@@ -279,6 +282,9 @@ struct Prompt:public Item,public I {
   inline NavAgent activateItem(idx_t n) override {return I::activateItem(n);}
 };
 
+/**
+* The AsUnit class signals the format system to handle inner content as an unit (normaly append text after a value)
+*/
 template<typename I>
 struct AsUnit:public I {
   using I::I;
@@ -291,6 +297,9 @@ struct AsUnit:public I {
   }
 };
 
+/**
+* The AsMode class signals the format system to handle inner content as a edit mode cursor.
+*/
 template<typename I>
 struct AsMode:public I {
   using I::I;
@@ -303,6 +312,9 @@ struct AsMode:public I {
   }
 };
 
+/**
+* The AsValue class signals the format system to handle inner content as a value.
+*/
 template<typename I>
 struct AsValue:public I {
   using I::I;

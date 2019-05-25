@@ -74,11 +74,13 @@ using MainMenu=
         &year_text,
         AsMode<
           AsValue<
-            NumField<
-              int,
-              year,
-              1900,2100,
-              10,1
+            NavHandler<
+              NumField<
+                int,
+                year,
+                1900,2100,
+                10,1
+              >
             >
           >
         >
@@ -92,7 +94,7 @@ using MainMenu=
     >
   >;
 
-NavCap<ItemNav<StaticNav<Out,MainMenu,NavPos<>>>> nav;
+NavRoot<ItemNav<StaticNav<Out,MainMenu,NavPos<>>>> nav;
 
 void setup() {
   Serial.begin(115200);

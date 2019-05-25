@@ -2,8 +2,8 @@
 <area shape="rect" id="node2" href="$structDrift.html" title="Drift\&lt; N \&gt;" alt="" coords="121,5,202,32"/>
 <area shape="rect" id="node3" href="$classItemNav.html" title="ItemNav\&lt; N \&gt;" alt="" coords="108,56,215,83"/>
 <area shape="rect" id="node4" href="$classNavBase.html" title="NavBase\&lt; Out, N \&gt;" alt="" coords="92,107,231,133"/>
-<area shape="rect" id="node7" href="$structNavCap.html" title="NavCap\&lt; N \&gt;" alt="" coords="109,157,213,184"/>
-<area shape="rect" id="node8" href="$classNavPos.html" title="NavPos\&lt; N \&gt;" alt="" coords="110,208,213,235"/>
+<area shape="rect" id="node7" href="$classNavPos.html" title="NavPos\&lt; N \&gt;" alt="" coords="110,157,213,184"/>
+<area shape="rect" id="node8" href="$structNavRoot.html" title="NavRoot\&lt; N \&gt;" alt="" coords="107,208,215,235"/>
 <area shape="rect" id="node5" href="$classDynamicNav.html" title="DynamicNav\&lt; Out, Data, N \&gt;" alt="" coords="279,208,476,235"/>
 <area shape="rect" id="node6" href="$classStaticNav.html" title="StaticNav\&lt; Out, Data, N \&gt;" alt="" coords="288,107,467,133"/>
 <area shape="rect" id="node9" href="$structNavNode.html" title="NavNode" alt="" coords="123,259,200,285"/>
