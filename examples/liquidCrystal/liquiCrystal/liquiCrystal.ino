@@ -66,8 +66,8 @@ using MainMenu=
     decltype(mainMenu_title),
     &mainMenu_title,
     StaticMenu<
-      // Action<Op<decltype(op1_text),&op1_text>,hey>,
-      // Action<Op<decltype(op2_text),&op2_text>,grrr>,
+      Action<Op<decltype(op1_text),&op1_text>,hey>,
+      Action<Op<decltype(op2_text),&op2_text>,grrr>,
       Op<
         decltype(year_text),
         &year_text,
@@ -78,16 +78,16 @@ using MainMenu=
           10,1,
           AsUnit<Empty<>>
         >
-      >
-      // Op<decltype(op2_text),&op2_text>,
-      // Op<decltype(op2_text),&op2_text>,
-      // Op<decltype(op2_text),&op2_text>,
-      // Op<decltype(op2_text),&op2_text>,
-      // Op<decltype(op3_text),&op3_text>
+      >,
+      Op<decltype(op2_text),&op2_text>,
+      Op<decltype(op2_text),&op2_text>,
+      Op<decltype(op2_text),&op2_text>,
+      Op<decltype(op2_text),&op2_text>,
+      Op<decltype(op3_text),&op3_text>
     >
   >;
 
-NavCap<StaticNav<Out,MainMenu,NavPos<>>> nav;
+NavCap<ItemNav<StaticNav<Out,MainMenu,NavPos<>>>> nav;
 
 void setup() {
   Serial.begin(115200);

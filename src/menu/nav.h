@@ -111,7 +111,7 @@ class DynamicNav:public NavNode,public NavBase<Out,N> {
     inline bool esc() override {return N::template _esc<This>(*this);}
     // inline Item& operator[](idx_t n) {return data->operator[](n);}
     inline NavAgent activate() {return data->activate();}
-    inline NavAgent activate(idx_t n) {return data->activate(n);}
+    inline NavAgent activate(idx_t n) {return data->activateItem(n);}
   protected:
     Data* data;
 };

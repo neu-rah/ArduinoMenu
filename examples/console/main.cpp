@@ -100,7 +100,11 @@ NavCap<
     StaticNav<Out,MainMenu,NavPos<>>
   >
 > nav;
-DynamicNav<MenuOutDef<Out>,DynaMenu,NavPos<>> dyNav(dynaMenu);
+DynamicNav<
+  MenuOutDef<Out>,
+  DynaMenu,
+  ItemNav<NavPos<>>
+> dyNav(dynaMenu);
 
 int main() {
   cout<<"AM5 tests"<<endl;
