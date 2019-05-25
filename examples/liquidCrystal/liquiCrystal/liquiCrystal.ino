@@ -8,6 +8,7 @@
 #include <menu/IO/serialOut.h>
 #include <menu/IO/outList.h>
 #include <menu/comp/endis.h>
+#include <menu/comp/numField.h>
 #include <menu/fmt/titleWrap.h>
 #include <menu/fmt/textFmt.h>
 #include <menu/comp/flashText.h>
@@ -42,10 +43,11 @@ using Out=OutList<
 PROGMEM ConstText op1_text="Op 1";
 PROGMEM ConstText op2_text="Op ...";
 PROGMEM ConstText op3_text="Op 3";
+PROGMEM ConstText year_text="Year";
 PROGMEM ConstText mainMenu_title="Main menu";
 
-template<typename T,T* text>
-using Op=EnDis<FlashText<T,text>>;
+template<typename T,T* text,typename O=Empty<>>
+using Op=EnDis<FlashText<T,text,O>>;
 
 bool hey() {
   Serial.println(F("Hey!"));
@@ -57,18 +59,31 @@ bool grrr() {
   return false;
 }
 
+int year=2019;
+
 using MainMenu=
   FlashText<
     decltype(mainMenu_title),
     &mainMenu_title,
     StaticMenu<
-      Action<Op<decltype(op1_text),&op1_text>,hey>,
-      Action<Op<decltype(op2_text),&op2_text>,grrr>,
-      Op<decltype(op2_text),&op2_text>,
-      Op<decltype(op2_text),&op2_text>,
-      Op<decltype(op2_text),&op2_text>,
-      Op<decltype(op2_text),&op2_text>,
-      Op<decltype(op3_text),&op3_text>
+      // Action<Op<decltype(op1_text),&op1_text>,hey>,
+      // Action<Op<decltype(op2_text),&op2_text>,grrr>,
+      Op<
+        decltype(year_text),
+        &year_text,
+        NumField<
+          int,
+          year,
+          1900,2100,
+          10,1,
+          AsUnit<Empty<>>
+        >
+      >
+      // Op<decltype(op2_text),&op2_text>,
+      // Op<decltype(op2_text),&op2_text>,
+      // Op<decltype(op2_text),&op2_text>,
+      // Op<decltype(op2_text),&op2_text>,
+      // Op<decltype(op3_text),&op3_text>
     >
   >;
 

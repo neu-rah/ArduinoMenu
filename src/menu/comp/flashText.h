@@ -10,9 +10,11 @@
 // namespace Menu {
   template<typename T,T* text,typename I=Empty<>>
   struct FlashText:public I {
+    using I::I;
     template<typename Nav,typename Out>
     inline void print(Nav& nav,Out& out) {
       out.raw(reinterpret_cast<const __FlashStringHelper *>(text[0]));
+      I::print(nav,out);
     }
   };
 // };

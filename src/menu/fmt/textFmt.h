@@ -11,6 +11,18 @@
 template<typename O>
 struct TextFmt:public O {
   template<bool io,typename Nav,typename Out,typename I>
+  static inline void fmtValue(Nav& nav,Out& out,I& i,idx_t n) {
+    out.raw('?');
+  }
+  template<bool io,typename Nav,typename Out,typename I>
+  static inline void fmtMode(Nav& nav,Out& out,I& i,idx_t n) {
+    out.raw(io?'[':']');
+  }
+  template<bool io,typename Nav,typename Out,typename I>
+  static inline void fmtUnit(Nav& nav,Out& out,I& i,idx_t n) {
+    out.raw('!');
+  }
+  template<bool io,typename Nav,typename Out,typename I>
   static inline void fmtTitle(Nav& nav,Out& out,I& i,idx_t n) {
     if (io) {
       out.fmt(Roles::Item,true,nav,out,i,n);//TODO:this will repeat the switch case many times!

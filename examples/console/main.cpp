@@ -37,10 +37,13 @@ bool grrr() {
   return false;
 }
 
+int year=2019;
+
 const char* op1_text="Op 1";
 const char* op2_text="Op ...";
 const char* op3_text="Op 3";
 const char* year_text="Year";
+const char* zzz="zZz";
 const char* extra_text="extra option";
 const char* mainMenu_title="Main menu";
 template<const char**text,typename O=Empty<>>
@@ -51,6 +54,20 @@ using MainMenu=
     StaticMenu<
       Action<Op<&op1_text>,hey>,
       Action<Op<&op2_text>,grrr>,
+      Op<
+        &year_text,
+        AsMode<
+          AsValue<
+            NumField<
+              int,
+              year,
+              1900,2100,
+              10,1,
+              AsUnit<StaticText<&zzz>>
+            >
+          >
+        >
+      >,
       Op<&op2_text>,
       Op<&op2_text>,
       Op<&op2_text>,
@@ -70,25 +87,20 @@ using DynaMenu=
     >
   >;
 
-int year=2019;
-
 DynaMenu dynaMenu(
   new Prompt<Action<Op<&op1_text>,hey>>(),
   new Prompt<Action<Op<&op2_text>,grrr>>(),
-  new Prompt<
-    Op<
-      &year_text,
-      NumField<int>
-    >
-  >(year,1900,2100,10,1),
   new Prompt<Op<&year_text>>()
 );
 
 Out out;//to use with single option
-StaticNav<Out,MainMenu,NavPos<>> nav;
-DynamicNav<MenuOutDef<Out>,DynaMenu,NavPos<>> dyNav(dynaMenu);
-
 StaticNav<Out,SingleOp> singleNav;
+NavCap<
+  ItemNav<
+    StaticNav<Out,MainMenu,NavPos<>>
+  >
+> nav;
+DynamicNav<MenuOutDef<Out>,DynaMenu,NavPos<>> dyNav(dynaMenu);
 
 int main() {
   cout<<"AM5 tests"<<endl;
@@ -101,6 +113,7 @@ int main() {
   cout<<"{static menu test}"<<endl;
   nav.enable(1,false);//disable second option
   nav.printMenu();
+  nav.enter();
   cout<<endl;
 
   cout<<"{dynamic menu test}"<<endl;

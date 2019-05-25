@@ -7,6 +7,7 @@
 #include <menu/IO/serialOut.h>
 #include <menu/comp/endis.h>
 #include <menu/comp/flashText.h>
+#include <menu/comp/numField.h>
 #include <menu/fmt/titleWrap.h>
 #include <menu/fmt/textFmt.h>
 
@@ -43,18 +44,45 @@ using Out=Chain<
 PROGMEM ConstText op1_text="Op 1";
 PROGMEM ConstText op2_text="Op ...";
 PROGMEM ConstText op3_text="Op 3";
+PROGMEM ConstText year_text="Year";
 PROGMEM ConstText mainMenu_title="Main menu";
 
-template<typename T,T* text>
+template<typename T,T* text,typename O=Empty<>>
 using Op=EnDis<FlashText<T,text>>;
+
+bool hey() {
+  Serial.println(F("Hey!"));
+  return false;
+}
+
+bool grrr() {
+  Serial.println(F("This should not be called as the option is disabled"));
+  return false;
+}
+
+int year=2019;
 
 using MainMenu=
   FlashText<
     decltype(mainMenu_title),
     &mainMenu_title,
     StaticMenu<
-      Op<decltype(op1_text),&op1_text>,
-      Op<decltype(op2_text),&op2_text>,
+      Action<Op<decltype(op1_text),&op1_text>,hey>,
+      Action<Op<decltype(op2_text),&op2_text>,grrr>,
+      Op<
+        decltype(year_text),
+        &year_text,
+        AsMode<
+          AsValue<
+            NumField<
+              int,
+              year,
+              1900,2100,
+              10,1
+            >
+          >
+        >
+      >,
       Op<decltype(op2_text),&op2_text>,
       Op<decltype(op2_text),&op2_text>,
       Op<decltype(op2_text),&op2_text>,
@@ -64,7 +92,7 @@ using MainMenu=
     >
   >;
 
-NavCap<StaticNav<Out,MainMenu,NavPos<>>> nav;
+NavCap<ItemNav<StaticNav<Out,MainMenu,NavPos<>>>> nav;
 
 void setup() {
   Serial.begin(115200);

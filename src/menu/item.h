@@ -187,6 +187,7 @@ struct StaticText:public I {
   template<typename Nav,typename Out>
   inline void print(Nav& nav,Out& out) {
     out.template raw(text[0]);
+    I::print(nav,out);
   }
 };
 
@@ -206,6 +207,7 @@ struct StaticText:public I {
 template<typename I,typename... II>
 class StaticMenu:public StaticMenu<I> {
   public:
+    using StaticMenu<I>::StaticMenu;
     using This=StaticMenu<I>;
     using Next=StaticMenu<II...>;
     constexpr inline idx_t size() {return next.size()+1;}
@@ -236,6 +238,7 @@ class StaticMenu:public StaticMenu<I> {
 */
 template<typename I>
 struct StaticMenu<I>:public I {
+  using I::I;
   using This=StaticMenu<I>;
   constexpr static inline idx_t size() {return 1;}
   template<typename Nav,typename Out>
@@ -243,7 +246,7 @@ struct StaticMenu<I>:public I {
   template<typename Nav,typename Out>
   inline void printItem(Nav& nav,Out& out,idx_t) {I::print(nav,out);}
   inline bool enabled(idx_t n) const {
-    trace(MDO<<"StaticMenu<I>::emabled"<<endl);
+    trace(MDO<<"StaticMenu<I>::enabled"<<endl);
     return n?true:I::enabled(0);
   }
   inline void enable(idx_t n,bool o) {
@@ -274,6 +277,42 @@ struct Prompt:public Item,public I {
   virtual inline bool enabled(idx_t n) const override {return I::enabled(n);}
   inline NavAgent activate() override {return I::activate();}
   inline NavAgent activateItem(idx_t n) override {return I::activateItem(n);}
+};
+
+template<typename I>
+struct AsUnit:public I {
+  using I::I;
+  using This=AsUnit<I>;
+  template<typename Nav,typename Out>
+  inline void print(Nav& nav,Out& out) {
+    out.template fmtUnit<true,Nav,Out,This>(nav,out,*this,0);
+    I::print(nav,out);
+    out.template fmtUnit<false,Nav,Out,This>(nav,out,*this,0);
+  }
+};
+
+template<typename I>
+struct AsMode:public I {
+  using I::I;
+  using This=AsMode<I>;
+  template<typename Nav,typename Out>
+  inline void print(Nav& nav,Out& out) {
+    out.template fmtMode<true,Nav,Out,This>(nav,out,*this,0);
+    I::print(nav,out);
+    out.template fmtMode<false,Nav,Out,This>(nav,out,*this,0);
+  }
+};
+
+template<typename I>
+struct AsValue:public I {
+  using I::I;
+  using This=AsValue<I>;
+  template<typename Nav,typename Out>
+  inline void print(Nav& nav,Out& out) {
+    out.template fmtValue<true,Nav,Out,This>(nav,out,*this,0);
+    I::print(nav,out);
+    out.template fmtValue<false,Nav,Out,This>(nav,out,*this,0);
+  }
 };
 
 /** @}*/

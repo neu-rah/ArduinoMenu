@@ -73,7 +73,7 @@ class StaticNav:public NavBase<Out,N> {
     inline bool enabled(idx_t n) {return data.enabled(n);}
     // inline Item& operator[](idx_t n) {return data.operator[](n);}
     inline NavAgent activate() {return data.activate();}
-    inline NavAgent activate(idx_t n) {return data.activate(n);}
+    inline NavAgent activate(idx_t n) {return data.activateItem(n);}
   protected:
     Data data;
 };
@@ -138,13 +138,18 @@ class NavPos:public N {
     inline idx_t pos() {return at;}
     template<typename Nav>
     inline bool _enter(Nav& nav) {
-      trace(MDO<<"NavPos::_enter "<<at<<endl);
-      // if (nav.hasFocus()) nav.clearFocus();
-      // else if (nav.enabled(at)&&nav.activate()) nav.setFocus(&nav.operator[](at));
-      // else return false;
-      // return true;
-      return false;
+      trace(MDO<<"ItemNav::_enter"<<endl);
+      return (!nav.enabled(nav.pos()))&&(nav.activate(at)||N::_enter(nav));
     }
+    // template<typename Nav>
+    // inline bool _enter(Nav& nav) {
+    //   _trace(MDO<<"NavPos::_enter "<<at<<endl);
+    //   // if (nav.hasFocus()) nav.clearFocus();
+    //   // else if (nav.enabled(at)&&nav.activate()) nav.setFocus(&nav.operator[](at));
+    //   // else return false;
+    //   // return true;
+    //   // return false;
+    // }
   protected:
     idx_t at;
 };
@@ -159,49 +164,59 @@ template<typename N>
 class ItemNav:public N {
   public:
     using N::N;
-    ItemNav() {assert(N::canNav());}
-    constexpr inline bool canNav() {
-      return focus||N::canNav();//we only have focus when it can nav
-    }
+    // ItemNav() {/*assert(N::canNav());*/}
+    // constexpr inline bool canNav() {
+    //   return focus/*||N::canNav()*/;//we only have focus when it can nav
+    // }
     // inline Item& getFocus() {
     //   return focus?focus.getClient():N::getTarget();
     // }
-    inline bool down() {
-      return focus?focus.down():N::down();
+    template<typename Nav>
+    inline bool _down(Nav& nav) {
+      return focus?focus.down():N::_down(nav);
     }
-    inline bool up() {
-      return focus?focus.up():N::up();
+    template<typename Nav>
+    inline bool _up(Nav& nav) {
+      return focus?focus.up():N::_up(nav);
     }
-    inline bool left() {
+    template<typename Nav>
+    inline bool _left(Nav& nav) {
       if (focus) {
         focus.enter();
         focus=CmdAgent();
       }
       return N::getTarget().left();
     }
-    inline bool right() {
+    template<typename Nav>
+    inline bool _right(Nav& nav) {
       if (focus) {
         focus.enter();
         focus=CmdAgent();
       }
       return N::getTarget().right();
     }
-    inline bool enter() {
+    template<typename Nav>
+    inline bool _enter(Nav& nav) {
+      trace(MDO<<"ItemNav::_enter"<<endl);
       if (focus) {
         if (focus.enter()) return true;
         focus=Empty<>::activate();//blur if enter return false
       } else {
-        focus=N::getTarget()[N::pos()].activate();
+        // focus=N::getTarget()[N::pos()].activate();
+        if (!nav.enabled(nav.pos())) return false;
+        focus=nav.activate(nav.pos());
         if (focus.result()) return true;
       }
-      return N::enter();
+      return false;
+      // return N::_enter(nav);
     }
-    inline bool esc() {
+    template<typename Nav>
+    inline bool _esc(Nav& nav) {
       if (focus) {
         if (focus.esc()) focus=Empty<>::activate();
         return true;
       }
-      return N::esc();
+      return N::_esc(nav);
     }
   protected:
     NavAgent focus;

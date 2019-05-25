@@ -1,5 +1,5 @@
 [
   { "directory": "/home/azevedo/Work/AM5/ArduinoMenu/examples/console",
-    "command": "/usr/bin/clang++ -I/home/azevedo/Work/AM5/ArduinoMenu -c -o .out/am5.o main.cpp",
+    "command": "/usr/bin/clang++ -I/home/azevedo/Work/AM5/ArduinoMenu -c -o .out/am5.o main.cpp -DMENU_DEBUG -DMDO=cout",
     "file": "main.cpp" }
 ]
