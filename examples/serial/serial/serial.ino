@@ -26,7 +26,7 @@ using Out=Chain<
   StaticPanel<0,0,80,5,SerialOut<>>
 >;
 
-//the above is `Chain` equivalent to this:
+//the above `Chain` is equivalent to this:
 // using Out=
 //   TextFmt<
 //     TitleWrap<
@@ -75,12 +75,7 @@ using MainMenu=
         AsMode<
           AsValue<
             NavHandler<
-              NumField<
-                int,
-                year,
-                1900,2100,
-                10,1
-              >
+              NumField<int,year,1900,2100,10,1>
             >
           >
         >

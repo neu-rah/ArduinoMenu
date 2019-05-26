@@ -8,6 +8,6 @@
     "url": "https://github.com/neu-rah/ArduinoMenu",
     "branch": "master"
   },
-  "frameworks": "arduino",
+  "frameworks": "*",
   "platforms": "*"
 }

@@ -66,7 +66,9 @@ using MainMenu=
   >;
 
 NavRoot<
-  StaticNav<Out,MainMenu,NavPos<>>
+  ItemNav<
+    StaticNav<Out,MainMenu,NavPos<>>
+  >
 > nav;
 
 void setup() {

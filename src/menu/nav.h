@@ -19,6 +19,8 @@ template<typename N=Nil> struct Drift:public N {
   constexpr static inline bool selected(idx_t) {return false;}
   constexpr static inline bool enabled(idx_t) {return true;}
   constexpr static inline Modes mode() {return Modes::Normal;}
+  template<typename Nav> constexpr static inline Modes _mode(Nav&) {return Modes::Normal;}
+  template<typename Nav> constexpr static inline Modes mode(Nav& nav) {return nav._mode();}
   template<typename Nav> constexpr static inline bool _up(Nav& nav) {return false;}
   template<typename Nav> constexpr static inline bool _down(Nav& nav) {return false;}
   template<typename Nav> constexpr static inline bool _left(Nav& nav) {return false;}
@@ -63,11 +65,12 @@ class StaticNav:public NavBase<Out,N> {
     using Base=NavBase<Out,N>;
     using This=StaticNav<Out,Data,N>;
     inline void setTarget(Data d) {data=d;}
-    inline void printMenu() {
-      Base::enterMenuRender();
-      Base::out.newView();
-      Base::out.template printMenu<This,Out,Data>(*this,Base::out,data);
-      Base::exitMenuRender();
+    template<typename Nav>
+    inline void printMenu(Nav& nav) {
+      // Base::enterMenuRender();
+      // Base::out.newView();
+      Base::out.template printMenu<Nav,Out,Data>(nav,Base::out,data);
+      // Base::exitMenuRender();
     }
     inline idx_t size() {return data.size();}
     inline void enable(idx_t n,bool o) {data.enable(n,o);}
@@ -75,9 +78,35 @@ class StaticNav:public NavBase<Out,N> {
     // inline Item& operator[](idx_t n) {return data.operator[](n);}
     inline NavAgent activate() {return data.activate();}
     inline NavAgent activate(idx_t n) {return data.activateItem(n);}
-    inline Modes mode() const {return data.mode();}
+    inline Modes _mode() const {return data.mode();}
   protected:
     Data data;
+};
+
+/**
+* The NavRoot class encapsulates navigation components and implements/redirects navigation interface
+*/
+template<typename N>
+struct NavRoot:public N {
+  using This=NavRoot<N>;
+  inline bool up() {return N::template _up<This>(*this);}
+  inline bool down() {return N::template _down<This>(*this);}
+  inline bool left() {return N::template _left<This>(*this);}
+  inline bool right() {return N::template _right<This>(*this);}
+  inline bool enter() {
+    trace(MDO<<"NavRoot::enter"<<endl);
+    return N::template _enter<This>(*this);}
+  inline bool esc() {return N::template _esc<This>(*this);}
+  inline Modes mode() {
+    _trace(MDO<<"NavRoot::mode"<<endl);
+    return N::template _mode<This>(*this);}
+  // inline NavAgent activate() {return N::activate();}
+  inline void printMenu() {
+    N::enterMenuRender();
+    N::out.newView();
+    N::template printMenu<This>(*this);
+    N::exitMenuRender();
+  }
 };
 
 /**
@@ -90,11 +119,13 @@ class DynamicNav:public NavNode,public NavBase<Out,N> {
     using This=DynamicNav<Out,Data,N>;
     DynamicNav(Data& o):data(&o) {}
     inline void setTarget(Data d) {data=d;}
-    inline void printMenu() {
-      Base::enterMenuRender();
-      Base::out.newView();
-      Base::out.template printMenu<This,Out,Data>(*this,Base::out,*data);
-      Base::exitMenuRender();
+    inline void printMenu() {This::printMenu(*this);}
+    template<typename Nav>
+    inline void printMenu(Nav& nav) {
+      // Base::enterMenuRender();
+      // Base::out.newView();
+      Base::out.template printMenu<Nav,Out,Data>(nav,Base::out,*data);
+      // Base::exitMenuRender();
     }
     /**
     * @brief get the element size
@@ -114,7 +145,7 @@ class DynamicNav:public NavNode,public NavBase<Out,N> {
     // inline Item& operator[](idx_t n) {return data->operator[](n);}
     inline NavAgent activate() {return data->activate();}
     inline NavAgent activate(idx_t n) {return data->activateItem(n);}
-    inline Modes mode() const {return data->mode();}
+    inline Modes mode() const override {return N::mode();}
   protected:
     Data* data;
 };
@@ -193,18 +224,12 @@ class ItemNav:public N {
     }
     template<typename Nav>
     inline bool _enter(Nav& nav) {
-      _trace(MDO<<"ItemNav::_enter"<<endl);
       if (focus) {
-        _trace(MDO<<"we had focus somewhere"<<endl);
         if (focus.enter()) return true;
-        _trace(MDO<<"removing it..."<<endl);
         focus=Empty<>::activate();//blur if enter return false
       } else {
-        _trace(MDO<<"checking target..."<<endl);
         if (!nav.enabled(nav.pos())) return false;
-        _trace(MDO<<"its enabled."<<endl);
         focus=nav.activate(nav.pos());
-        _trace(MDO<<"new focus:"<<(bool)focus.result()<<endl);
         if (focus.result()) return true;
       }
       return false;
@@ -217,26 +242,12 @@ class ItemNav:public N {
       }
       return N::_esc(nav);
     }
-    inline Modes mode() const {return focus?focus.mode():Modes::Normal;}
+    template<typename Nav>
+    inline Modes _mode(Nav& nav) const {
+      _trace(MDO<<"ItemNav::_mode"<<endl);
+      return focus.result()?focus.mode():Modes::Normal;}
   protected:
     NavAgent focus;
-};
-
-/**
-* The NavRoot class encapsulates navigation components and implements/redirects navigation interface
-*/
-template<typename N>
-struct NavRoot:public N {
-  using This=NavRoot<N>;
-  inline bool up() {return N::template _up<This>(*this);}
-  inline bool down() {return N::template _down<This>(*this);}
-  inline bool left() {return N::template _left<This>(*this);}
-  inline bool right() {return N::template _right<This>(*this);}
-  inline bool enter() {
-    trace(MDO<<"NavRoot::enter"<<endl);
-    return N::template _enter<This>(*this);}
-  inline bool esc() {return N::template _esc<This>(*this);}
-  // inline NavAgent activate() {return N::activate();}
 };
 
 /** @}*/

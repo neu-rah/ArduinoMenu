@@ -35,7 +35,7 @@ struct CmdAgent {
   virtual bool enter(void* o)=0;
   virtual bool esc(void* o)=0;
   virtual bool result() const=0;
-  virtual Modes mode() const {return Modes::Normal;};
+  virtual Modes mode(void *) const {return Modes::Normal;};
 };
 
 /**
@@ -64,6 +64,7 @@ struct ItemCmd:public CmdAgent {
   bool down(void* o) override {return ((I*)o)->down();}
   bool enter(void* o) override {return ((I*)o)->enter();}
   bool esc(void* o) override {return ((I*)o)->esc();}
+  Modes mode(void* o) const override {return ((I*)o)->mode();};
 };
 
 /** @}*/
@@ -136,7 +137,7 @@ struct NavAgent {
   inline bool enter() {return run->enter(obj);}
   inline bool esc() {return run->esc(obj);}
   inline bool result() const {return run->result();};
-  inline Modes mode() const {return run->mode();};
+  inline Modes mode() const {return run->mode(obj);};
 };
 
 /**

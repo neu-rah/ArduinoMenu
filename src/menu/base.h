@@ -69,6 +69,7 @@ using MeasureOp=OutOp<OutOps::Measure>;
 struct NavNode {
   virtual inline bool selected(idx_t) const {return false;}
   virtual inline bool enabled(idx_t) const {return true;}
+  virtual inline Modes mode() const {return Modes::Normal;}
   virtual inline bool up()=0;
   virtual inline bool down()=0;
   virtual inline bool left()=0;

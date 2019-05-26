@@ -122,6 +122,7 @@ int main() {
   nav.up();
   nav.printMenu();
   nav.enter();
+  nav.printMenu();
   nav.up();
   nav.up();
   cout<<endl;
