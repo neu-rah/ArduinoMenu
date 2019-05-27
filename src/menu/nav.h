@@ -13,9 +13,10 @@
  #include "base.h"
 
 /*
-* The Drift class. Is the minimalist navigation element
+* The Drift class is the terminal navigation element
 */
-template<typename N=Nil> struct Drift:public N {
+template<typename N=Nil>
+struct Drift:public N {
   constexpr static inline bool selected(idx_t) {return false;}
   constexpr static inline bool enabled(idx_t) {return true;}
   constexpr static inline Modes mode() {return Modes::Normal;}

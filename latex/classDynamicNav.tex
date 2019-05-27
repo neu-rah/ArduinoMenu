@@ -10,7 +10,7 @@ Inheritance diagram for Dynamic\+Nav$<$ Out, Data, N $>$\+:\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[width=260pt]{classDynamicNav__inherit__graph}
+\includegraphics[width=290pt]{classDynamicNav__inherit__graph}
 \end{center}
 \end{figure}
 
@@ -19,40 +19,20 @@ Collaboration diagram for Dynamic\+Nav$<$ Out, Data, N $>$\+:\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[width=343pt]{classDynamicNav__coll__graph}
+\includegraphics[width=350pt]{classDynamicNav__coll__graph}
 \end{center}
 \end{figure}
 \subsection*{Public Types}
 \begin{DoxyCompactItemize}
 \item 
-\mbox{\Hypertarget{classDynamicNav_a388b8132b1dab02f954448917eec121e}\label{classDynamicNav_a388b8132b1dab02f954448917eec121e}} 
-using {\bfseries Base} = \hyperlink{classNavBase}{Nav\+Base}$<$ Out, N $>$
+\mbox{\Hypertarget{classDynamicNav_a07643e4956c551dd6e73113bb64b907c}\label{classDynamicNav_a07643e4956c551dd6e73113bb64b907c}} 
+using {\bfseries Base} = \hyperlink{structNavRoot}{Nav\+Root}$<$ \hyperlink{classNavBase}{Nav\+Base}$<$ Out, Data, N $>$ $>$
 \item 
 \mbox{\Hypertarget{classDynamicNav_a87dc6c1f5969829af5e073e6d102c443}\label{classDynamicNav_a87dc6c1f5969829af5e073e6d102c443}} 
 using {\bfseries This} = \hyperlink{classDynamicNav}{Dynamic\+Nav}$<$ Out, Data, N $>$
 \end{DoxyCompactItemize}
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
-\item 
-\mbox{\Hypertarget{classDynamicNav_a9de2fd4f00412b89edb25c7bb25f81b6}\label{classDynamicNav_a9de2fd4f00412b89edb25c7bb25f81b6}} 
-{\bfseries Dynamic\+Nav} (Data \&o)
-\item 
-\mbox{\Hypertarget{classDynamicNav_aa948cf92536376bea437b587a1ab6bed}\label{classDynamicNav_aa948cf92536376bea437b587a1ab6bed}} 
-void {\bfseries set\+Target} (Data d)
-\item 
-\mbox{\Hypertarget{classDynamicNav_a25fc31774efe41488da85911226dedba}\label{classDynamicNav_a25fc31774efe41488da85911226dedba}} 
-void {\bfseries print\+Menu} ()
-\item 
-idx\+\_\+t \hyperlink{classDynamicNav_a13aab7546c1a57cd7d999b22be2f2364}{size} ()
-\begin{DoxyCompactList}\small\item\em get the element size \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{classDynamicNav_ab83b1dcee3497f8ac1dcf79645d5eda6}\label{classDynamicNav_ab83b1dcee3497f8ac1dcf79645d5eda6}} 
-bool {\bfseries selected} (idx\+\_\+t i) const override
-\item 
-\mbox{\Hypertarget{classDynamicNav_a936bedd336e917789c666b6a8dbda6e2}\label{classDynamicNav_a936bedd336e917789c666b6a8dbda6e2}} 
-bool {\bfseries enabled} (idx\+\_\+t i) const override
-\item 
-\mbox{\Hypertarget{classDynamicNav_a0691923e63586a0a8f40d35a9f60215c}\label{classDynamicNav_a0691923e63586a0a8f40d35a9f60215c}} 
-void {\bfseries enable} (idx\+\_\+t n, bool o)
 \item 
 \mbox{\Hypertarget{classDynamicNav_a311f6301899fe8022d1188a41b6d3a3d}\label{classDynamicNav_a311f6301899fe8022d1188a41b6d3a3d}} 
 bool {\bfseries up} () override
@@ -71,22 +51,8 @@ bool {\bfseries enter} () override
 \item 
 \mbox{\Hypertarget{classDynamicNav_abfa730037c5dd6f8902d5f76bba9121b}\label{classDynamicNav_abfa730037c5dd6f8902d5f76bba9121b}} 
 bool {\bfseries esc} () override
-\item 
-\mbox{\Hypertarget{classDynamicNav_a4c4a040f3705bf54d65514a3003733c8}\label{classDynamicNav_a4c4a040f3705bf54d65514a3003733c8}} 
-\hyperlink{structNavAgent}{Nav\+Agent} {\bfseries activate} ()
-\item 
-\mbox{\Hypertarget{classDynamicNav_aac04efedd7e923981ac964878aff069f}\label{classDynamicNav_aac04efedd7e923981ac964878aff069f}} 
-\hyperlink{structNavAgent}{Nav\+Agent} {\bfseries activate} (idx\+\_\+t n)
-\item 
-\mbox{\Hypertarget{classDynamicNav_a9bd7bdc2c18c33656b37a607e9f89717}\label{classDynamicNav_a9bd7bdc2c18c33656b37a607e9f89717}} 
-Modes {\bfseries mode} () const
 \end{DoxyCompactItemize}
-\subsection*{Protected Attributes}
-\begin{DoxyCompactItemize}
-\item 
-\mbox{\Hypertarget{classDynamicNav_ae8525b309283d508cd2e36f78bd113f2}\label{classDynamicNav_ae8525b309283d508cd2e36f78bd113f2}} 
-Data $\ast$ {\bfseries data}
-\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
 
 
 \subsection{Detailed Description}
@@ -94,23 +60,6 @@ Data $\ast$ {\bfseries data}
 class Dynamic\+Nav$<$ Out, Data, N $>$}
 
 The \hyperlink{classDynamicNav}{Dynamic\+Nav} class. Can point o other target menu 
-
-\subsection{Member Function Documentation}
-\mbox{\Hypertarget{classDynamicNav_a13aab7546c1a57cd7d999b22be2f2364}\label{classDynamicNav_a13aab7546c1a57cd7d999b22be2f2364}} 
-\index{Dynamic\+Nav@{Dynamic\+Nav}!size@{size}}
-\index{size@{size}!Dynamic\+Nav@{Dynamic\+Nav}}
-\subsubsection{\texorpdfstring{size()}{size()}}
-{\footnotesize\ttfamily template$<$typename Out , typename Data , typename N  = Drift$<$$>$$>$ \\
-idx\+\_\+t \hyperlink{classDynamicNav}{Dynamic\+Nav}$<$ Out, Data, N $>$\+::size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
-
-
-
-get the element size 
-
-\begin{DoxyReturn}{Returns}
-idx\+\_\+t (number of collection members)
-\end{DoxyReturn}
-non collection elements will return 0 
 
 The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
 \item 

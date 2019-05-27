@@ -61,7 +61,6 @@ $(function() {
   <div class="summary">
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="classDynamicNav-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">DynamicNav&lt; Out, Data, N &gt; Class Template Reference<div class="ingroups"><a class="el" href="group__Navigation.html">Navigation system</a></div></div>  </div>
@@ -74,8 +73,9 @@ Inheritance diagram for DynamicNav&lt; Out, Data, N &gt;:</div>
 <div class="dyncontent">
 <div class="center"><img src="classDynamicNav__inherit__graph.png" border="0" usemap="#DynamicNav_3_01Out_00_01Data_00_01N_01_4_inherit__map" alt="Inheritance graph"/></div>
 <map name="DynamicNav_3_01Out_00_01Data_00_01N_01_4_inherit__map" id="DynamicNav_3_01Out_00_01Data_00_01N_01_4_inherit__map">
-<area shape="rect" id="node2" href="structNavNode.html" title="NavNode" alt="" coords="5,80,83,107"/>
-<area shape="rect" id="node3" href="classNavBase.html" title="NavBase\&lt; Out, N \&gt;" alt="" coords="107,80,245,107"/>
+<area shape="rect" id="node2" href="structNavNode.html" title="NavNode" alt="" coords="5,162,83,189"/>
+<area shape="rect" id="node3" href="structNavRoot.html" title="NavRoot\&lt; NavBase\&lt; Out,\l Data, N \&gt; \&gt;" alt="" coords="107,155,285,196"/>
+<area shape="rect" id="node4" href="classNavBase.html" title="this is a brief " alt="" coords="109,80,283,107"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <div class="dynheader">
@@ -83,44 +83,38 @@ Collaboration diagram for DynamicNav&lt; Out, Data, N &gt;:</div>
 <div class="dyncontent">
 <div class="center"><img src="classDynamicNav__coll__graph.png" border="0" usemap="#DynamicNav_3_01Out_00_01Data_00_01N_01_4_coll__map" alt="Collaboration graph"/></div>
 <map name="DynamicNav_3_01Out_00_01Data_00_01N_01_4_coll__map" id="DynamicNav_3_01Out_00_01Data_00_01N_01_4_coll__map">
-<area shape="rect" id="node2" href="structNavNode.html" title="NavNode" alt="" coords="24,124,101,151"/>
-<area shape="rect" id="node3" href="classNavBase.html" title="NavBase\&lt; Out, N \&gt;" alt="" coords="125,124,264,151"/>
-<area shape="rect" id="node5" href="structChain.html" title="Chain\&lt; TextFmt, TitleWrap,\l FullPrinter, Viewport,\l RangePanel \&gt;" alt="" coords="170,5,355,61"/>
+<area shape="rect" id="node2" href="structNavNode.html" title="NavNode" alt="" coords="49,207,127,234"/>
+<area shape="rect" id="node3" href="structNavRoot.html" title="NavRoot\&lt; NavBase\&lt; Out,\l Data, N \&gt; \&gt;" alt="" coords="151,200,329,241"/>
+<area shape="rect" id="node4" href="classNavBase.html" title="this is a brief " alt="" coords="153,124,327,151"/>
+<area shape="rect" id="node6" href="structChain.html" title="Chain\&lt; TextFmt, TitleWrap,\l FullPrinter, Viewport,\l RangePanel \&gt;" alt="" coords="215,5,401,61"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:a388b8132b1dab02f954448917eec121e"><td class="memItemLeft" align="right" valign="top"><a id="a388b8132b1dab02f954448917eec121e"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>Base</b> = <a class="el" href="classNavBase.html">NavBase</a>&lt; Out, N &gt;</td></tr>
-<tr class="separator:a388b8132b1dab02f954448917eec121e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a07643e4956c551dd6e73113bb64b907c"><td class="memItemLeft" align="right" valign="top"><a id="a07643e4956c551dd6e73113bb64b907c"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>Base</b> = <a class="el" href="structNavRoot.html">NavRoot</a>&lt; <a class="el" href="classNavBase.html">NavBase</a>&lt; Out, Data, N &gt; &gt;</td></tr>
+<tr class="separator:a07643e4956c551dd6e73113bb64b907c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a87dc6c1f5969829af5e073e6d102c443"><td class="memItemLeft" align="right" valign="top"><a id="a87dc6c1f5969829af5e073e6d102c443"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>This</b> = <a class="el" href="classDynamicNav.html">DynamicNav</a>&lt; Out, Data, N &gt;</td></tr>
 <tr class="separator:a87dc6c1f5969829af5e073e6d102c443"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_types_structNavRoot"><td colspan="2" onclick="javascript:toggleInherit('pub_types_structNavRoot')"><img src="closed.png" alt="-"/>&#160;Public Types inherited from <a class="el" href="structNavRoot.html">NavRoot&lt; NavBase&lt; Out, Data, N &gt; &gt;</a></td></tr>
+<tr class="memitem:a7a80cda58fc1952053328b4c52451f50 inherit pub_types_structNavRoot"><td class="memItemLeft" align="right" valign="top"><a id="a7a80cda58fc1952053328b4c52451f50"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>This</b> = <a class="el" href="structNavRoot.html">NavRoot</a>&lt; <a class="el" href="classNavBase.html">NavBase</a>&lt; Out, Data, N &gt; &gt;</td></tr>
+<tr class="separator:a7a80cda58fc1952053328b4c52451f50 inherit pub_types_structNavRoot"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_types_classNavBase"><td colspan="2" onclick="javascript:toggleInherit('pub_types_classNavBase')"><img src="closed.png" alt="-"/>&#160;Public Types inherited from <a class="el" href="classNavBase.html">NavBase&lt; Out, Data, N &gt;</a></td></tr>
+<tr class="memitem:a27cf431707047e81070935913b681ad5 inherit pub_types_classNavBase"><td class="memItemLeft" align="right" valign="top"><a id="a27cf431707047e81070935913b681ad5"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>This</b> = <a class="el" href="classNavBase.html">NavBase</a>&lt; Out, Data, N &gt;</td></tr>
+<tr class="separator:a27cf431707047e81070935913b681ad5 inherit pub_types_classNavBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a704ee2d1cc84a819d9d0a3874546c430 inherit pub_types_classNavBase"><td class="memItemLeft" align="right" valign="top"><a id="a704ee2d1cc84a819d9d0a3874546c430"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>OutType</b> = Out</td></tr>
+<tr class="separator:a704ee2d1cc84a819d9d0a3874546c430 inherit pub_types_classNavBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af91267dbc52cb50da22a2c1e21991216 inherit pub_types_classNavBase"><td class="memItemLeft" align="right" valign="top"><a id="af91267dbc52cb50da22a2c1e21991216"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>DataType</b> = Data</td></tr>
+<tr class="separator:af91267dbc52cb50da22a2c1e21991216 inherit pub_types_classNavBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a9de2fd4f00412b89edb25c7bb25f81b6"><td class="memItemLeft" align="right" valign="top"><a id="a9de2fd4f00412b89edb25c7bb25f81b6"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>DynamicNav</b> (Data &amp;o)</td></tr>
-<tr class="separator:a9de2fd4f00412b89edb25c7bb25f81b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa948cf92536376bea437b587a1ab6bed"><td class="memItemLeft" align="right" valign="top"><a id="aa948cf92536376bea437b587a1ab6bed"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setTarget</b> (Data d)</td></tr>
-<tr class="separator:aa948cf92536376bea437b587a1ab6bed"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a25fc31774efe41488da85911226dedba"><td class="memItemLeft" align="right" valign="top"><a id="a25fc31774efe41488da85911226dedba"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>printMenu</b> ()</td></tr>
-<tr class="separator:a25fc31774efe41488da85911226dedba"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a13aab7546c1a57cd7d999b22be2f2364"><td class="memItemLeft" align="right" valign="top">idx_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDynamicNav.html#a13aab7546c1a57cd7d999b22be2f2364">size</a> ()</td></tr>
-<tr class="memdesc:a13aab7546c1a57cd7d999b22be2f2364"><td class="mdescLeft">&#160;</td><td class="mdescRight">get the element size  <a href="#a13aab7546c1a57cd7d999b22be2f2364">More...</a><br /></td></tr>
-<tr class="separator:a13aab7546c1a57cd7d999b22be2f2364"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab83b1dcee3497f8ac1dcf79645d5eda6"><td class="memItemLeft" align="right" valign="top"><a id="ab83b1dcee3497f8ac1dcf79645d5eda6"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>selected</b> (idx_t i) const override</td></tr>
-<tr class="separator:ab83b1dcee3497f8ac1dcf79645d5eda6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a936bedd336e917789c666b6a8dbda6e2"><td class="memItemLeft" align="right" valign="top"><a id="a936bedd336e917789c666b6a8dbda6e2"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>enabled</b> (idx_t i) const override</td></tr>
-<tr class="separator:a936bedd336e917789c666b6a8dbda6e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0691923e63586a0a8f40d35a9f60215c"><td class="memItemLeft" align="right" valign="top"><a id="a0691923e63586a0a8f40d35a9f60215c"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>enable</b> (idx_t n, bool o)</td></tr>
-<tr class="separator:a0691923e63586a0a8f40d35a9f60215c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a311f6301899fe8022d1188a41b6d3a3d"><td class="memItemLeft" align="right" valign="top"><a id="a311f6301899fe8022d1188a41b6d3a3d"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>up</b> () override</td></tr>
 <tr class="separator:a311f6301899fe8022d1188a41b6d3a3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -139,83 +133,109 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>enter</b> () override
 <tr class="memitem:abfa730037c5dd6f8902d5f76bba9121b"><td class="memItemLeft" align="right" valign="top"><a id="abfa730037c5dd6f8902d5f76bba9121b"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>esc</b> () override</td></tr>
 <tr class="separator:abfa730037c5dd6f8902d5f76bba9121b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4c4a040f3705bf54d65514a3003733c8"><td class="memItemLeft" align="right" valign="top"><a id="a4c4a040f3705bf54d65514a3003733c8"></a>
-<a class="el" href="structNavAgent.html">NavAgent</a>&#160;</td><td class="memItemRight" valign="bottom"><b>activate</b> ()</td></tr>
-<tr class="separator:a4c4a040f3705bf54d65514a3003733c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aac04efedd7e923981ac964878aff069f"><td class="memItemLeft" align="right" valign="top"><a id="aac04efedd7e923981ac964878aff069f"></a>
-<a class="el" href="structNavAgent.html">NavAgent</a>&#160;</td><td class="memItemRight" valign="bottom"><b>activate</b> (idx_t n)</td></tr>
-<tr class="separator:aac04efedd7e923981ac964878aff069f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9bd7bdc2c18c33656b37a607e9f89717"><td class="memItemLeft" align="right" valign="top"><a id="a9bd7bdc2c18c33656b37a607e9f89717"></a>
-Modes&#160;</td><td class="memItemRight" valign="bottom"><b>mode</b> () const</td></tr>
-<tr class="separator:a9bd7bdc2c18c33656b37a607e9f89717"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pub_methods_classNavBase"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classNavBase')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classNavBase.html">NavBase&lt; Out, N &gt;</a></td></tr>
-<tr class="memitem:ab58aa10c55c447b1042ce8205bafa022 inherit pub_methods_classNavBase"><td class="memItemLeft" align="right" valign="top"><a id="ab58aa10c55c447b1042ce8205bafa022"></a>
+<tr class="inherit_header pub_methods_structNavNode"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_structNavNode')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="structNavNode.html">NavNode</a></td></tr>
+<tr class="memitem:acfd2cf12d4252148f39f2281923207fd inherit pub_methods_structNavNode"><td class="memItemLeft" align="right" valign="top"><a id="acfd2cf12d4252148f39f2281923207fd"></a>
+virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>selected</b> (idx_t) const</td></tr>
+<tr class="separator:acfd2cf12d4252148f39f2281923207fd inherit pub_methods_structNavNode"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9865c81d79b6afb724bf2305745af4a8 inherit pub_methods_structNavNode"><td class="memItemLeft" align="right" valign="top"><a id="a9865c81d79b6afb724bf2305745af4a8"></a>
+virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>enabled</b> (idx_t) const</td></tr>
+<tr class="separator:a9865c81d79b6afb724bf2305745af4a8 inherit pub_methods_structNavNode"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5cd2a37ba693f1674f1be559832b81e7 inherit pub_methods_structNavNode"><td class="memItemLeft" align="right" valign="top"><a id="a5cd2a37ba693f1674f1be559832b81e7"></a>
+virtual Modes&#160;</td><td class="memItemRight" valign="bottom"><b>mode</b> () const</td></tr>
+<tr class="separator:a5cd2a37ba693f1674f1be559832b81e7 inherit pub_methods_structNavNode"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_structNavRoot"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_structNavRoot')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="structNavRoot.html">NavRoot&lt; NavBase&lt; Out, Data, N &gt; &gt;</a></td></tr>
+<tr class="memitem:a9561689a3b3e22e2bd2b7d2e81d4f60e inherit pub_methods_structNavRoot"><td class="memItemLeft" align="right" valign="top"><a id="a9561689a3b3e22e2bd2b7d2e81d4f60e"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>up</b> ()</td></tr>
+<tr class="separator:a9561689a3b3e22e2bd2b7d2e81d4f60e inherit pub_methods_structNavRoot"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a49465832033d1ca3d67d4185cd5064d0 inherit pub_methods_structNavRoot"><td class="memItemLeft" align="right" valign="top"><a id="a49465832033d1ca3d67d4185cd5064d0"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>down</b> ()</td></tr>
+<tr class="separator:a49465832033d1ca3d67d4185cd5064d0 inherit pub_methods_structNavRoot"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a030d817943c956afa8f1465b8f085d0d inherit pub_methods_structNavRoot"><td class="memItemLeft" align="right" valign="top"><a id="a030d817943c956afa8f1465b8f085d0d"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>left</b> ()</td></tr>
+<tr class="separator:a030d817943c956afa8f1465b8f085d0d inherit pub_methods_structNavRoot"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abdf3abf63db594400824b56a9eed2c03 inherit pub_methods_structNavRoot"><td class="memItemLeft" align="right" valign="top"><a id="abdf3abf63db594400824b56a9eed2c03"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>right</b> ()</td></tr>
+<tr class="separator:abdf3abf63db594400824b56a9eed2c03 inherit pub_methods_structNavRoot"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3e808af28e2f4d43710309e20a4ca3ee inherit pub_methods_structNavRoot"><td class="memItemLeft" align="right" valign="top"><a id="a3e808af28e2f4d43710309e20a4ca3ee"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>enter</b> ()</td></tr>
+<tr class="separator:a3e808af28e2f4d43710309e20a4ca3ee inherit pub_methods_structNavRoot"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1c713f594a04d9159dd317bbb8c76e43 inherit pub_methods_structNavRoot"><td class="memItemLeft" align="right" valign="top"><a id="a1c713f594a04d9159dd317bbb8c76e43"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>esc</b> ()</td></tr>
+<tr class="separator:a1c713f594a04d9159dd317bbb8c76e43 inherit pub_methods_structNavRoot"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aad1657e2e5ae406e5dfe9602bdbc3bb4 inherit pub_methods_structNavRoot"><td class="memItemLeft" align="right" valign="top"><a id="aad1657e2e5ae406e5dfe9602bdbc3bb4"></a>
+Modes&#160;</td><td class="memItemRight" valign="bottom"><b>mode</b> ()</td></tr>
+<tr class="separator:aad1657e2e5ae406e5dfe9602bdbc3bb4 inherit pub_methods_structNavRoot"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad684ebca9af961c99cb1cbfe32c5ee4a inherit pub_methods_structNavRoot"><td class="memItemLeft" align="right" valign="top"><a id="ad684ebca9af961c99cb1cbfe32c5ee4a"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>printMenu</b> ()</td></tr>
+<tr class="separator:ad684ebca9af961c99cb1cbfe32c5ee4a inherit pub_methods_structNavRoot"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_classNavBase"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classNavBase')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classNavBase.html">NavBase&lt; Out, Data, N &gt;</a></td></tr>
+<tr class="memitem:a1132b13df31a45d5063f6885ff744a8d inherit pub_methods_classNavBase"><td class="memItemLeft" align="right" valign="top"><a id="a1132b13df31a45d5063f6885ff744a8d"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>NavBase</b> (Data &amp;o)</td></tr>
+<tr class="separator:a1132b13df31a45d5063f6885ff744a8d inherit pub_methods_classNavBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aff80f3745f21963614f4b39cb5cddbfb inherit pub_methods_classNavBase"><td class="memItemLeft" align="right" valign="top"><a id="aff80f3745f21963614f4b39cb5cddbfb"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>enterMenuRender</b> ()</td></tr>
-<tr class="separator:ab58aa10c55c447b1042ce8205bafa022 inherit pub_methods_classNavBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af888087e8a6ffeb27b26b2c3a193a336 inherit pub_methods_classNavBase"><td class="memItemLeft" align="right" valign="top"><a id="af888087e8a6ffeb27b26b2c3a193a336"></a>
+<tr class="separator:aff80f3745f21963614f4b39cb5cddbfb inherit pub_methods_classNavBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad61f33f38293e66e9a6dc5d3f885ff9b inherit pub_methods_classNavBase"><td class="memItemLeft" align="right" valign="top"><a id="ad61f33f38293e66e9a6dc5d3f885ff9b"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>exitMenuRender</b> ()</td></tr>
-<tr class="separator:af888087e8a6ffeb27b26b2c3a193a336 inherit pub_methods_classNavBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af6c2f27234f2263b952cca4ced1cacbb inherit pub_methods_classNavBase"><td class="memItemLeft" align="right" valign="top"><a id="af6c2f27234f2263b952cca4ced1cacbb"></a>
+<tr class="separator:ad61f33f38293e66e9a6dc5d3f885ff9b inherit pub_methods_classNavBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a62d8e856e7a4a3c7847c423c72f04b90 inherit pub_methods_classNavBase"><td class="memItemLeft" align="right" valign="top"><a id="a62d8e856e7a4a3c7847c423c72f04b90"></a>
 idx_t&#160;</td><td class="memItemRight" valign="bottom"><b>top</b> () const</td></tr>
-<tr class="separator:af6c2f27234f2263b952cca4ced1cacbb inherit pub_methods_classNavBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9218d451601bf374c40700cbd5a0a6eb inherit pub_methods_classNavBase"><td class="memItemLeft" align="right" valign="top"><a id="a9218d451601bf374c40700cbd5a0a6eb"></a>
+<tr class="separator:a62d8e856e7a4a3c7847c423c72f04b90 inherit pub_methods_classNavBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae97b2cc72048f8476003fc8fc20bf7cc inherit pub_methods_classNavBase"><td class="memItemLeft" align="right" valign="top"><a id="ae97b2cc72048f8476003fc8fc20bf7cc"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>setTop</b> (idx_t n)</td></tr>
-<tr class="separator:a9218d451601bf374c40700cbd5a0a6eb inherit pub_methods_classNavBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a012d79c482771a3b6180f1e45bdcae4f inherit pub_methods_classNavBase"><td class="memItemLeft" align="right" valign="top"><a id="a012d79c482771a3b6180f1e45bdcae4f"></a>
+<tr class="separator:ae97b2cc72048f8476003fc8fc20bf7cc inherit pub_methods_classNavBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac73c8b41f88ecdc61c08aab68ecdb0ec inherit pub_methods_classNavBase"><td class="memItemLeft" align="right" valign="top"><a id="ac73c8b41f88ecdc61c08aab68ecdb0ec"></a>
 idx_t&#160;</td><td class="memItemRight" valign="bottom"><b>height</b> () const</td></tr>
-<tr class="separator:a012d79c482771a3b6180f1e45bdcae4f inherit pub_methods_classNavBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:ac73c8b41f88ecdc61c08aab68ecdb0ec inherit pub_methods_classNavBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1da54d7ac040ae97c8990087f449208a inherit pub_methods_classNavBase"><td class="memItemLeft" align="right" valign="top"><a id="a1da54d7ac040ae97c8990087f449208a"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>setTarget</b> (Data &amp;d)</td></tr>
+<tr class="separator:a1da54d7ac040ae97c8990087f449208a inherit pub_methods_classNavBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa6815bc1e6e2e4a03758e175e4582d46 inherit pub_methods_classNavBase"><td class="memTemplParams" colspan="2"><a id="aa6815bc1e6e2e4a03758e175e4582d46"></a>
+template&lt;typename Nav &gt; </td></tr>
+<tr class="memitem:aa6815bc1e6e2e4a03758e175e4582d46 inherit pub_methods_classNavBase"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>printMenu</b> (Nav &amp;nav)</td></tr>
+<tr class="separator:aa6815bc1e6e2e4a03758e175e4582d46 inherit pub_methods_classNavBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8a1b4fb519b387433658f11a46eb1fe9 inherit pub_methods_classNavBase"><td class="memItemLeft" align="right" valign="top"><a id="a8a1b4fb519b387433658f11a46eb1fe9"></a>
+idx_t&#160;</td><td class="memItemRight" valign="bottom"><b>size</b> ()</td></tr>
+<tr class="separator:a8a1b4fb519b387433658f11a46eb1fe9 inherit pub_methods_classNavBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6be3780547660bc64df57285ced2a60e inherit pub_methods_classNavBase"><td class="memItemLeft" align="right" valign="top"><a id="a6be3780547660bc64df57285ced2a60e"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>enable</b> (idx_t n, bool o)</td></tr>
+<tr class="separator:a6be3780547660bc64df57285ced2a60e inherit pub_methods_classNavBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a12216027029e4fe1b7d1d3e8b4e8169a inherit pub_methods_classNavBase"><td class="memItemLeft" align="right" valign="top"><a id="a12216027029e4fe1b7d1d3e8b4e8169a"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>enabled</b> (idx_t n)</td></tr>
+<tr class="separator:a12216027029e4fe1b7d1d3e8b4e8169a inherit pub_methods_classNavBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afb2043d9a01f2eaf2e63b141ef274ac8 inherit pub_methods_classNavBase"><td class="memItemLeft" align="right" valign="top"><a id="afb2043d9a01f2eaf2e63b141ef274ac8"></a>
+<a class="el" href="structNavAgent.html">NavAgent</a>&#160;</td><td class="memItemRight" valign="bottom"><b>activate</b> ()</td></tr>
+<tr class="separator:afb2043d9a01f2eaf2e63b141ef274ac8 inherit pub_methods_classNavBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a002c7684845c794af4a658038cac82a8 inherit pub_methods_classNavBase"><td class="memItemLeft" align="right" valign="top"><a id="a002c7684845c794af4a658038cac82a8"></a>
+<a class="el" href="structNavAgent.html">NavAgent</a>&#160;</td><td class="memItemRight" valign="bottom"><b>activate</b> (idx_t n)</td></tr>
+<tr class="separator:a002c7684845c794af4a658038cac82a8 inherit pub_methods_classNavBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a78ee58dfb40948b707b46f08356673b3 inherit pub_methods_classNavBase"><td class="memTemplParams" colspan="2"><a id="a78ee58dfb40948b707b46f08356673b3"></a>
+template&lt;typename Nav &gt; </td></tr>
+<tr class="memitem:a78ee58dfb40948b707b46f08356673b3 inherit pub_methods_classNavBase"><td class="memTemplItemLeft" align="right" valign="top">Modes&#160;</td><td class="memTemplItemRight" valign="bottom"><b>_mode</b> (Nav &amp;) const</td></tr>
+<tr class="separator:a78ee58dfb40948b707b46f08356673b3 inherit pub_methods_classNavBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac4099dc2d5b669a76e39f34262cb94e4 inherit pub_methods_classNavBase"><td class="memItemLeft" align="right" valign="top"><a id="ac4099dc2d5b669a76e39f34262cb94e4"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>newView</b> ()</td></tr>
+<tr class="separator:ac4099dc2d5b669a76e39f34262cb94e4 inherit pub_methods_classNavBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
-Protected Attributes</h2></td></tr>
-<tr class="memitem:ae8525b309283d508cd2e36f78bd113f2"><td class="memItemLeft" align="right" valign="top"><a id="ae8525b309283d508cd2e36f78bd113f2"></a>
-Data *&#160;</td><td class="memItemRight" valign="bottom"><b>data</b></td></tr>
-<tr class="separator:ae8525b309283d508cd2e36f78bd113f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pro_attribs_classNavBase"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_classNavBase')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="classNavBase.html">NavBase&lt; Out, N &gt;</a></td></tr>
-<tr class="memitem:a09481cdd6aa1e7765d94096851792f40 inherit pro_attribs_classNavBase"><td class="memItemLeft" align="right" valign="top"><a id="a09481cdd6aa1e7765d94096851792f40"></a>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
+Additional Inherited Members</h2></td></tr>
+<tr class="inherit_header pro_attribs_classNavBase"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_classNavBase')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="classNavBase.html">NavBase&lt; Out, Data, N &gt;</a></td></tr>
+<tr class="memitem:a3a207a77e441e240990f62aa516ed24b inherit pro_attribs_classNavBase"><td class="memItemLeft" align="right" valign="top"><a id="a3a207a77e441e240990f62aa516ed24b"></a>
 Out&#160;</td><td class="memItemRight" valign="bottom"><b>out</b></td></tr>
-<tr class="separator:a09481cdd6aa1e7765d94096851792f40 inherit pro_attribs_classNavBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a36c9a55bbcf72b3bedfdf02220b65b43 inherit pro_attribs_classNavBase"><td class="memItemLeft" align="right" valign="top"><a id="a36c9a55bbcf72b3bedfdf02220b65b43"></a>
+<tr class="separator:a3a207a77e441e240990f62aa516ed24b inherit pro_attribs_classNavBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab3dccc3921900db56caa93a4c4324e36 inherit pro_attribs_classNavBase"><td class="memItemLeft" align="right" valign="top"><a id="ab3dccc3921900db56caa93a4c4324e36"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>onMenu</b> =false</td></tr>
-<tr class="separator:a36c9a55bbcf72b3bedfdf02220b65b43 inherit pro_attribs_classNavBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:ab3dccc3921900db56caa93a4c4324e36 inherit pro_attribs_classNavBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6964003e5456d613172ed362d6c4a632 inherit pro_attribs_classNavBase"><td class="memItemLeft" align="right" valign="top"><a id="a6964003e5456d613172ed362d6c4a632"></a>
+Data *&#160;</td><td class="memItemRight" valign="bottom"><b>data</b></td></tr>
+<tr class="separator:a6964003e5456d613172ed362d6c4a632 inherit pro_attribs_classNavBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;typename Out, typename Data, typename N = Drift&lt;&gt;&gt;<br />
 class DynamicNav&lt; Out, Data, N &gt;</h3>
 
 <p>The <a class="el" href="classDynamicNav.html">DynamicNav</a> class. Can point o other target menu </p>
-</div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a13aab7546c1a57cd7d999b22be2f2364"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a13aab7546c1a57cd7d999b22be2f2364">&#9670;&nbsp;</a></span>size()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Out , typename Data , typename N  = Drift&lt;&gt;&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">idx_t <a class="el" href="classDynamicNav.html">DynamicNav</a>&lt; Out, Data, N &gt;::size </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>get the element size </p>
-<dl class="section return"><dt>Returns</dt><dd>idx_t (number of collection members)</dd></dl>
-<p>non collection elements will return 0 </p>
-
-</div>
-</div>
-<hr/>The documentation for this class was generated from the following file:<ul>
+</div><hr/>The documentation for this class was generated from the following file:<ul>
 <li>src/menu/<a class="el" href="nav_8h_source.html">nav.h</a></li>
 </ul>
 </div><!-- contents -->

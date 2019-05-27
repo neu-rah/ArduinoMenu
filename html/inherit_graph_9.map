@@ -1,3 +1,5 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classOutList.html" title="OutList\&lt; O, OO \&gt;" alt="" coords="5,5,132,32"/>
+<area shape="rect" id="node1" href="$structNil.html" title="Nil" alt="" coords="5,5,44,32"/>
+<area shape="rect" id="node2" href="$structVoid.html" title="Void\&lt;\&gt;" alt="" coords="92,5,156,32"/>
+<area shape="rect" id="node3" href="$structTextMeasure.html" title="TextMeasure" alt="" coords="204,5,303,32"/>
 </map>
