@@ -113,6 +113,7 @@ struct Empty:public I {
   /// the dumb navigation agent, meaning this item does not handle navigation
   static EmptyCmds<false> cmds;
   constexpr static inline Modes mode() {return Modes::Normal;}
+  constexpr static inline bool parentDraw() {return false;}
 };
 
 /** \defgroup Agents Command and navigation agents

@@ -35,7 +35,7 @@ template<typename N=Nil> struct Drift:public N {
   // template<typename Nav> constexpr static inline bool esc(Nav& nav) {return nav._esc(nav);}
 };
 
-/*
+/**
 * The NavBase class. Provides common navigation functionality
 * @brief this is a brief
 */
@@ -57,7 +57,9 @@ class NavBase:public N {
 };
 
 /*
-* The StaticNab class. Is bound to a specific menu data
+* The StaticNav class. Is bound to a specific menu data
+* this class does not offer much saving in relation to DynamicNav
+* except for not using virtuals
 */
 template<typename Out,typename Data,typename N=Drift<>>
 class StaticNav:public NavBase<Out,N> {
@@ -67,10 +69,7 @@ class StaticNav:public NavBase<Out,N> {
     inline void setTarget(Data d) {data=d;}
     template<typename Nav>
     inline void printMenu(Nav& nav) {
-      // Base::enterMenuRender();
-      // Base::out.newView();
       Base::out.template printMenu<Nav,Out,Data>(nav,Base::out,data);
-      // Base::exitMenuRender();
     }
     inline idx_t size() {return data.size();}
     inline void enable(idx_t n,bool o) {data.enable(n,o);}
@@ -83,10 +82,11 @@ class StaticNav:public NavBase<Out,N> {
     Data data;
 };
 
-/**
+/*
 * The NavRoot class encapsulates navigation components and implements/redirects navigation interface
+* use dynamic nav instead
 */
-template<typename N>
+/*template<typename N>
 struct NavRoot:public N {
   using This=NavRoot<N>;
   inline bool up() {return N::template _up<This>(*this);}
@@ -107,13 +107,13 @@ struct NavRoot:public N {
     N::template printMenu<This>(*this);
     N::exitMenuRender();
   }
-};
+};*/
 
 /**
 * The DynamicNav class. Can point o other target menu
 */
 template<typename Out,typename Data,typename N=Drift<>>
-class DynamicNav:public NavNode,public NavBase<Out,N> {
+class Nav:public NavNode,public NavBase<Out,N> {
   public:
     using Base=NavBase<Out,N>;
     using This=DynamicNav<Out,Data,N>;
@@ -248,6 +248,48 @@ class ItemNav:public N {
       return focus.result()?focus.mode():Modes::Normal;}
   protected:
     NavAgent focus;
+};
+
+//static nav tree fails here because the same navnode should be re-used for multiple target!
+template<typename N,idx_t max_depth=1>
+class NavTree:public N {
+  public:
+    using This=NavTree<N,max_depth>;
+
+    inline bool selected(idx_t n) {return path[level].selected(n);}
+    inline Modes mode() {return path[level].mode();}
+    template<typename Data>
+    inline void setTarget(Data d) {path[level].setTarget(d);}
+    inline idx_t size() {return path[level].size();}
+    inline void enable(idx_t n,bool o) {path[level].enable(n,o);}
+    inline bool enabled(idx_t n) {return path[level].enabled(n);}
+    inline NavAgent activate() {return path[level].activate();}
+    inline NavAgent activate(idx_t n) {return path[level].activate(n);}
+    // inline Modes _mode() const {return path[level].mode();}
+    template<typename Nav>
+    inline Modes _mode(Nav& nav) {return path[level]._mode(nav);}
+
+    template<typename Nav>
+    inline void printMenu(Nav& nav) {path[level].printMenu(nav);}
+
+    //TODO: remove member access!
+    template<typename Nav> inline bool _enter(Nav& nav) {
+      bool r=path[level]._enter(nav);
+      if (r&&!N::focus) level++;
+      return r;
+    }
+    template<typename Nav> inline bool _esc(Nav& nav) {
+      bool r=path[level]._esc(nav);
+      if (!N::focus) level--;
+      return r;
+    }
+    template<typename Nav> inline bool _up(Nav& nav) {return path[level]._up(nav);}
+    template<typename Nav> inline bool _down(Nav& nav) {return path[level]._down(nav);}
+    template<typename Nav> inline bool _left(Nav& nav) {return path[level]._left(nav);}
+    template<typename Nav> inline bool _right(Nav& nav) {return path[level]._right(nav);}
+  protected:
+    idx_t level=0;
+    N path[max_depth];
 };
 
 /** @}*/
