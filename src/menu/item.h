@@ -114,6 +114,7 @@ struct Empty:public I {
   static EmptyCmds<false> cmds;
   constexpr static inline Modes mode() {return Modes::Normal;}
   constexpr static inline bool parentDraw() {return false;}
+  constexpr static inline bool isNode() {return false;}
 };
 
 /** \defgroup Agents Command and navigation agents
@@ -245,6 +246,7 @@ template<typename I>
 struct StaticMenu<I>:public I {
   using I::I;
   using This=StaticMenu<I>;
+  static inline bool isNode() {return true;}
   constexpr static inline idx_t size() {return 1;}
   template<typename Nav,typename Out>
   inline void print(Nav& nav,Out& out) {}

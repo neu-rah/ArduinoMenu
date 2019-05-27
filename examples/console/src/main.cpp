@@ -96,10 +96,10 @@ DynaMenu dynaMenu(
 );
 
 Out out;//to use with single option
-StaticNav<Out,SingleOp> singleNav;
+DynamicNav<Out,SingleOp> singleNav;
 NavRoot<
   ItemNav<
-    StaticNav<Out,MainMenu,NavPos<>>
+    DynamicNav<Out,MainMenu,NavPos<>>
   >
 > nav;
 DynamicNav<

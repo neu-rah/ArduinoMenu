@@ -55,12 +55,46 @@ class NavBase:public N {
     }
     inline idx_t size() {return data->size();}
     inline void enable(idx_t n,bool o) {data->enable(n,o);}
-    inline bool enabled(idx_t n) {return data->enabled(n);}
+    inline bool enabled(idx_t n) const {return data->enabled(n);}
     inline NavAgent activate() {return data->activate();}
     inline NavAgent activate(idx_t n) {return data->activateItem(n);}
     template<typename Nav>
     inline Modes _mode(Nav&) const {return data->mode();}
     inline void newView() {out.newView();}
+    // inline void chkNode(nav,idx_t n) {
+    //   if(data->isNode()) nav.treeNode(...);//we dont want to request the item...
+    //   //this implies data has to be the same type
+    //   //and fk StaticMenu has not
+    //
+    //   /*use index
+    //     +index goes well with static type menu, access is compile time
+    //     + dynamic menus have fast index access
+    //     - index would require full depth travel because only base address could be stored
+    //   */
+    //
+    //   /*use a nested nav list
+    //     - messy
+    //     + direct access
+    //     - need to know the full type in advance... we can not write a full type because it diverges (its a tree)
+    //     - not possible to write the type at runtime, it requires the very base to change to yet unspecifyed types
+    //   */
+    //
+    //   /* use static only for flat nav
+    //     - no worries
+    //   */
+    //
+    //   /*use index for static and list for dynamic
+    //     - code diverges (as all)
+    //     - static traverse is compile time! NOT, using static index is same as using types!
+    //     + dynamic is pointer based, no traverse
+    //   */
+    //
+    //   /* use a wrapper class with virtual base as we do for all
+    //     + we already have the virtual base
+    //   */
+    //
+    //
+    // }
   protected:
     Out out;
     bool onMenu=false;
@@ -87,12 +121,14 @@ struct NavRoot:public N {
     // _trace(MDO<<"NavRoot::mode"<<endl);
     // return N::template _mode<This>(*this);}
   // inline NavAgent activate() {return N::activate();}
-  inline void printMenu() {
+  template<typename T>
+  inline void printMenu(T& t) {
     N::enterMenuRender();
     N::newView();
-    N::template printMenu<This>(*this);
+    N::template printMenu<T>(t);
     N::exitMenuRender();
   }
+  inline void printMenu() {printMenu(*this);}
 };
 
 /**
@@ -103,14 +139,17 @@ class DynamicNav:public NavNode,public NavRoot<NavBase<Out,Data,N>> {
   public:
     using Base=NavRoot<NavBase<Out,Data,N>>;
     using This=DynamicNav<Out,Data,N>;
+    using NavRoot<NavBase<Out,Data,N>>::NavRoot;
     // DynamicNav(Data& o):data(&o) {}
+    // inline void printMenu() {Base::template Base::printMenu<Base>((Base&)*this);}
     // inline void printMenu() {This::printMenu(*this);}
+    inline void printMenu() {Base::printMenu();}
     // template<typename Nav>
     // inline void printMenu(Nav& nav) {
     //   Base::out.template printMenu<Nav,Out,Data>(nav,Base::out,*Base::data);
     // }
-    // inline bool selected(idx_t i) const override {return N::selected(i);}
-    // inline bool enabled(idx_t i) const override {return data->enabled(i);}
+    inline bool selected(idx_t i) const override {return Base::selected(i);}
+    inline bool enabled(idx_t i) const override {return Base::enabled(i);}
     // inline void enable(idx_t n,bool o) {data->enable(n,o);}
     inline bool up() override {return N::template _up<This>(*this);}
     inline bool down() override {return N::template _down<This>(*this);}
@@ -238,11 +277,10 @@ class NavTree {
     inline void enterMenuRender() {path[level].enterMenuRender();}
     inline void exitMenuRender() {path[level].exitMenuRender();}
     inline void newView() {path[level].newView();}
-    template<typename Data>
-    inline void setTarget(Data d) {path[level].setTarget(d);}
+    inline void setTarget(typename N::DataType& d) {path[level].setTarget(d);}
     inline idx_t size() {return path[level].size();}
     inline void enable(idx_t n,bool o) {path[level].enable(n,o);}
-    inline bool enabled(idx_t n) {return path[level].enabled(n);}
+    inline bool enabled(idx_t n) const {return path[level].enabled(n);}
     inline NavAgent activate() {return path[level].activate();}
     inline NavAgent activate(idx_t n) {return path[level].activate(n);}
     inline bool hasFocus() const {return path[level].hasFocus();}
@@ -254,9 +292,12 @@ class NavTree {
     inline void printMenu(Nav& nav) {path[level].printMenu(nav);}
 
     //TODO: remove member access!
-    template<typename Nav> inline bool _enter(Nav& nav) {
+    template<typename Nav>
+    inline bool _enter(Nav& nav) {
       bool r=path[level]._enter(nav);
-      if (r&&!hasFocus()) level++;
+      //check ItemNav::data @ NapPos::at for node type
+      //upgrade level if so
+      N::chkNode(nav);
       return r;
     }
     template<typename Nav>
@@ -270,6 +311,15 @@ class NavTree {
     template<typename Nav> inline bool _left(Nav& nav) {return path[level]._left(nav);}
     template<typename Nav> inline bool _right(Nav& nav) {return path[level]._right(nav);}
     inline idx_t pos() {return path[level].pos();}
+    inline void treeNode(typename N::DataType& nt) {
+      if (level>=max_depth) {
+        //TODO: make this generic
+        // Serial.println("max depth reached! increase max_depth on tree navigation object");
+        return;
+      }
+      level++;
+      setTarget(nt);
+    }
   protected:
     idx_t level=0;
     N path[max_depth];

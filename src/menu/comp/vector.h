@@ -6,17 +6,21 @@
 * @brief ArduinoMenu std::vector based menu
 */
 
+#include <menu.h>
 #include <vector>
 #include <iostream>
 using namespace std;
 
-#include <menu.h>
 // using namespace Menu;
 
 // namespace Menu {
+  /**
+  * The VectorMenu class extends std::vector as a menu
+  */
   template<typename I=Empty<>>
   struct VectorMenu:public I,vector<Item*> {
     using vector<Item*>::vector;
+    static inline bool isNode() {return true;}
     inline idx_t size() {return (idx_t)vector<Item*>::size();}
     template<typename Nav,typename Out>
     static inline void print(Nav& bav,Out& out) {}
