@@ -73,6 +73,12 @@ Public Types</h2></td></tr>
 <tr class="memitem:ad7f054678bae8142d1a9017c8a0944f4"><td class="memItemLeft" align="right" valign="top"><a id="ad7f054678bae8142d1a9017c8a0944f4"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>This</b> = <a class="el" href="classNavTree.html">NavTree</a>&lt; N, max_depth &gt;</td></tr>
 <tr class="separator:ad7f054678bae8142d1a9017c8a0944f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae6871d35b70a2ad14366a90460c3044f"><td class="memItemLeft" align="right" valign="top"><a id="ae6871d35b70a2ad14366a90460c3044f"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>OutType</b> = typename N::OutType</td></tr>
+<tr class="separator:ae6871d35b70a2ad14366a90460c3044f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afeaf6e97cf3a1587f1ca848b9d1480ed"><td class="memItemLeft" align="right" valign="top"><a id="afeaf6e97cf3a1587f1ca848b9d1480ed"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>DataType</b> = typename N::DataType</td></tr>
+<tr class="separator:afeaf6e97cf3a1587f1ca848b9d1480ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -94,19 +100,18 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>exitMenuRender</b> ()
 <tr class="memitem:a76175fb2ee608101070059cbcbf64cae"><td class="memItemLeft" align="right" valign="top"><a id="a76175fb2ee608101070059cbcbf64cae"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>newView</b> ()</td></tr>
 <tr class="separator:a76175fb2ee608101070059cbcbf64cae"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a30054c028d86d65e65fa0c987fb15bd9"><td class="memTemplParams" colspan="2"><a id="a30054c028d86d65e65fa0c987fb15bd9"></a>
-template&lt;typename Data &gt; </td></tr>
-<tr class="memitem:a30054c028d86d65e65fa0c987fb15bd9"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>setTarget</b> (Data d)</td></tr>
-<tr class="separator:a30054c028d86d65e65fa0c987fb15bd9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a66d20c73fdb688e79cdc3b1109e5deb2"><td class="memItemLeft" align="right" valign="top"><a id="a66d20c73fdb688e79cdc3b1109e5deb2"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>setTarget</b> (typename N::DataType &amp;d)</td></tr>
+<tr class="separator:a66d20c73fdb688e79cdc3b1109e5deb2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1cd4f55c3bb50895c8830632f04117d1"><td class="memItemLeft" align="right" valign="top"><a id="a1cd4f55c3bb50895c8830632f04117d1"></a>
 idx_t&#160;</td><td class="memItemRight" valign="bottom"><b>size</b> ()</td></tr>
 <tr class="separator:a1cd4f55c3bb50895c8830632f04117d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7e4c8184eae898e217f6a3a2e3fbf792"><td class="memItemLeft" align="right" valign="top"><a id="a7e4c8184eae898e217f6a3a2e3fbf792"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>enable</b> (idx_t n, bool o)</td></tr>
 <tr class="separator:a7e4c8184eae898e217f6a3a2e3fbf792"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab97c57437a90b83fe40a6b4de88d7642"><td class="memItemLeft" align="right" valign="top"><a id="ab97c57437a90b83fe40a6b4de88d7642"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>enabled</b> (idx_t n)</td></tr>
-<tr class="separator:ab97c57437a90b83fe40a6b4de88d7642"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a31ae4b2cb9f8eaf73f878c0fe9c0c953"><td class="memItemLeft" align="right" valign="top"><a id="a31ae4b2cb9f8eaf73f878c0fe9c0c953"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>enabled</b> (idx_t n) const</td></tr>
+<tr class="separator:a31ae4b2cb9f8eaf73f878c0fe9c0c953"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aac8b96a359ec9f8f0952e74b67ef48fd"><td class="memItemLeft" align="right" valign="top"><a id="aac8b96a359ec9f8f0952e74b67ef48fd"></a>
 <a class="el" href="structNavAgent.html">NavAgent</a>&#160;</td><td class="memItemRight" valign="bottom"><b>activate</b> ()</td></tr>
 <tr class="separator:aac8b96a359ec9f8f0952e74b67ef48fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -120,6 +125,9 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>hasFocus</b> () const
 template&lt;typename Nav &gt; </td></tr>
 <tr class="memitem:a923a6e291404bbc936a862747881ceb4"><td class="memTemplItemLeft" align="right" valign="top">Modes&#160;</td><td class="memTemplItemRight" valign="bottom"><b>_mode</b> (Nav &amp;nav)</td></tr>
 <tr class="separator:a923a6e291404bbc936a862747881ceb4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2f3c9425b8eb4d7fb2713132cb6158af"><td class="memItemLeft" align="right" valign="top"><a id="a2f3c9425b8eb4d7fb2713132cb6158af"></a>
+<a class="el" href="structItem.html">Item</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getItem</b> (idx_t n) const</td></tr>
+<tr class="separator:a2f3c9425b8eb4d7fb2713132cb6158af"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa14842fbd1afb94d92287607f64eed37"><td class="memTemplParams" colspan="2"><a id="aa14842fbd1afb94d92287607f64eed37"></a>
 template&lt;typename Nav &gt; </td></tr>
 <tr class="memitem:aa14842fbd1afb94d92287607f64eed37"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>printMenu</b> (Nav &amp;nav)</td></tr>
@@ -151,6 +159,9 @@ template&lt;typename Nav &gt; </td></tr>
 <tr class="memitem:ab00a434221b19a4351e946c4759d3e7e"><td class="memItemLeft" align="right" valign="top"><a id="ab00a434221b19a4351e946c4759d3e7e"></a>
 idx_t&#160;</td><td class="memItemRight" valign="bottom"><b>pos</b> ()</td></tr>
 <tr class="separator:ab00a434221b19a4351e946c4759d3e7e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a66670128132d5c1bc9f93b403b2ea9ac"><td class="memItemLeft" align="right" valign="top"><a id="a66670128132d5c1bc9f93b403b2ea9ac"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>treeNode</b> (typename N::DataType &amp;nt)</td></tr>
+<tr class="separator:a66670128132d5c1bc9f93b403b2ea9ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>

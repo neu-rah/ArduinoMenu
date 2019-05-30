@@ -8,8 +8,8 @@
 
 #ifdef MENU_DEBUG
   #ifdef ARDUINO
-    #pragma warning COMPILE FOR ARDUINO FRAMEWORK!
-    // #include <streamFlow.h>
+    // #pragma message "COMPILE FOR ARDUINO FRAMEWORK!"
+    #include <streamFlow.h>
     // #include <Streaming.h>
     #ifndef MDO
       #define MDO Serial

@@ -67,7 +67,7 @@ using MainMenu=
 
 NavRoot<
   ItemNav<
-    StaticNav<Out,MainMenu,NavPos<>>
+    DynamicNav<Out,MainMenu,NavPos<>>
   >
 > nav;
 

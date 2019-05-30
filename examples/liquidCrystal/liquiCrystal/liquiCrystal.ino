@@ -87,7 +87,7 @@ using MainMenu=
     >
   >;
 
-NavRoot<ItemNav<StaticNav<Out,MainMenu,NavPos<>>>> nav;
+NavRoot<ItemNav<DynamicNav<Out,MainMenu,NavPos<>>>> nav;
 
 void setup() {
   Serial.begin(115200);

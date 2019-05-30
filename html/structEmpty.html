@@ -59,6 +59,7 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#pub-static-attribs">Static Public Attributes</a> &#124;
 <a href="structEmpty-members.html">List of all members</a>  </div>
@@ -83,6 +84,12 @@ Collaboration diagram for Empty&lt; I &gt;:</div>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
+Public Member Functions</h2></td></tr>
+<tr class="memitem:a773bc9093a9594a8227141c9f4f0618f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structItem.html">Item</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structEmpty.html#a773bc9093a9594a8227141c9f4f0618f">operator[]</a> (idx_t)</td></tr>
+<tr class="memdesc:a773bc9093a9594a8227141c9f4f0618f"><td class="mdescLeft">&#160;</td><td class="mdescRight">activate this item (handle enter/select)  <a href="#a773bc9093a9594a8227141c9f4f0618f">More...</a><br /></td></tr>
+<tr class="separator:a773bc9093a9594a8227141c9f4f0618f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
 <tr class="memitem:afaea8ad71a5e27dbc56c6b6a5a7dc31f"><td class="memItemLeft" align="right" valign="top"><a id="afaea8ad71a5e27dbc56c6b6a5a7dc31f"></a>
@@ -111,8 +118,9 @@ static constexpr bool&#160;</td><td class="memItemRight" valign="bottom"><a clas
 static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structEmpty.html#af4997efbad97edae86108c77b4b0f26a">enable</a> (idx_t, bool)</td></tr>
 <tr class="memdesc:af4997efbad97edae86108c77b4b0f26a"><td class="mdescLeft">&#160;</td><td class="mdescRight">set enabled status of indexed collection member <br /></td></tr>
 <tr class="separator:af4997efbad97edae86108c77b4b0f26a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ade3cccf531dad6fe907c3a9764204e1c"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="structNavAgent.html">NavAgent</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structEmpty.html#ade3cccf531dad6fe907c3a9764204e1c">activate</a> ()</td></tr>
-<tr class="memdesc:ade3cccf531dad6fe907c3a9764204e1c"><td class="mdescLeft">&#160;</td><td class="mdescRight">activate this item (handle enter/select)  <a href="#ade3cccf531dad6fe907c3a9764204e1c">More...</a><br /></td></tr>
+<tr class="memitem:ade3cccf531dad6fe907c3a9764204e1c"><td class="memItemLeft" align="right" valign="top"><a id="ade3cccf531dad6fe907c3a9764204e1c"></a>
+static <a class="el" href="structNavAgent.html">NavAgent</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structEmpty.html#ade3cccf531dad6fe907c3a9764204e1c">activate</a> ()</td></tr>
+<tr class="memdesc:ade3cccf531dad6fe907c3a9764204e1c"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns a dumb agent to be used by navigation <br /></td></tr>
 <tr class="separator:ade3cccf531dad6fe907c3a9764204e1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2f4d5ca0c3193ed070ef49c4dcc9eb5c"><td class="memItemLeft" align="right" valign="top"><a id="a2f4d5ca0c3193ed070ef49c4dcc9eb5c"></a>
 static <a class="el" href="structNavAgent.html">NavAgent</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structEmpty.html#a2f4d5ca0c3193ed070ef49c4dcc9eb5c">activateItem</a> (idx_t)</td></tr>
@@ -124,6 +132,9 @@ static constexpr Modes&#160;</td><td class="memItemRight" valign="bottom"><b>mod
 <tr class="memitem:a5d08fca8ef6cedbd25eb086222e8216d"><td class="memItemLeft" align="right" valign="top"><a id="a5d08fca8ef6cedbd25eb086222e8216d"></a>
 static constexpr bool&#160;</td><td class="memItemRight" valign="bottom"><b>parentDraw</b> ()</td></tr>
 <tr class="separator:a5d08fca8ef6cedbd25eb086222e8216d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac8835019af0108474e5efe926c008d71"><td class="memItemLeft" align="right" valign="top"><a id="ac8835019af0108474e5efe926c008d71"></a>
+static constexpr bool&#160;</td><td class="memItemRight" valign="bottom"><b>isNode</b> ()</td></tr>
+<tr class="separator:ac8835019af0108474e5efe926c008d71"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
@@ -138,33 +149,34 @@ struct Empty&lt; I &gt;</h3>
 
 <p>The <a class="el" href="structEmpty.html">Empty</a> class is the static base for menu item elements. It provides minimalist or inexistent implementations. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="ade3cccf531dad6fe907c3a9764204e1c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ade3cccf531dad6fe907c3a9764204e1c">&#9670;&nbsp;</a></span>activate()</h2>
+<a id="a773bc9093a9594a8227141c9f4f0618f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a773bc9093a9594a8227141c9f4f0618f">&#9670;&nbsp;</a></span>operator[]()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename I &gt; </div>
+template&lt;typename I  = Nil&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structNavAgent.html">NavAgent</a> <a class="el" href="structEmpty.html">Empty</a>&lt; I &gt;::activate </td>
+          <td class="memname"><a class="el" href="structItem.html">Item</a>&amp; <a class="el" href="structEmpty.html">Empty</a>&lt; I &gt;::operator[] </td>
           <td>(</td>
+          <td class="paramtype">idx_t&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 <p>activate this item (handle enter/select) </p>
-<p>activate collection item (handle enter/select) returns a dumb agent to be used by navigation </p>
+<p>activate collection item (handle enter/select) </p>
 
 </div>
 </div>

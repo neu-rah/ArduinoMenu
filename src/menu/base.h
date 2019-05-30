@@ -88,6 +88,9 @@ struct MenuOut {
   virtual inline void raw(long) {};
   virtual inline void raw(unsigned long) {};
   virtual inline void raw(double) {};
+  #ifdef ARDUINO
+    virtual inline void raw(const __FlashStringHelper*) {};
+  #endif
   virtual inline void printItem(NavNode&,Item&,idx_t)=0;
   //reduce vtable, using a bool parameter and demux on static side
   virtual inline void fmt(Roles role,bool io,NavNode& nav,MenuOut&,Item& i,idx_t) {}

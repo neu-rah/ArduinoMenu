@@ -5,6 +5,12 @@
 \item 
 \mbox{\Hypertarget{classNavTree_ad7f054678bae8142d1a9017c8a0944f4}\label{classNavTree_ad7f054678bae8142d1a9017c8a0944f4}} 
 using {\bfseries This} = \hyperlink{classNavTree}{Nav\+Tree}$<$ N, max\+\_\+depth $>$
+\item 
+\mbox{\Hypertarget{classNavTree_ae6871d35b70a2ad14366a90460c3044f}\label{classNavTree_ae6871d35b70a2ad14366a90460c3044f}} 
+using {\bfseries Out\+Type} = typename N\+::\+Out\+Type
+\item 
+\mbox{\Hypertarget{classNavTree_afeaf6e97cf3a1587f1ca848b9d1480ed}\label{classNavTree_afeaf6e97cf3a1587f1ca848b9d1480ed}} 
+using {\bfseries Data\+Type} = typename N\+::\+Data\+Type
 \end{DoxyCompactItemize}
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
@@ -27,8 +33,8 @@ void {\bfseries exit\+Menu\+Render} ()
 \mbox{\Hypertarget{classNavTree_a76175fb2ee608101070059cbcbf64cae}\label{classNavTree_a76175fb2ee608101070059cbcbf64cae}} 
 void {\bfseries new\+View} ()
 \item 
-\mbox{\Hypertarget{classNavTree_a30054c028d86d65e65fa0c987fb15bd9}\label{classNavTree_a30054c028d86d65e65fa0c987fb15bd9}} 
-{\footnotesize template$<$typename Data $>$ }\\void {\bfseries set\+Target} (Data d)
+\mbox{\Hypertarget{classNavTree_a66d20c73fdb688e79cdc3b1109e5deb2}\label{classNavTree_a66d20c73fdb688e79cdc3b1109e5deb2}} 
+void {\bfseries set\+Target} (typename N\+::\+Data\+Type \&d)
 \item 
 \mbox{\Hypertarget{classNavTree_a1cd4f55c3bb50895c8830632f04117d1}\label{classNavTree_a1cd4f55c3bb50895c8830632f04117d1}} 
 idx\+\_\+t {\bfseries size} ()
@@ -36,8 +42,8 @@ idx\+\_\+t {\bfseries size} ()
 \mbox{\Hypertarget{classNavTree_a7e4c8184eae898e217f6a3a2e3fbf792}\label{classNavTree_a7e4c8184eae898e217f6a3a2e3fbf792}} 
 void {\bfseries enable} (idx\+\_\+t n, bool o)
 \item 
-\mbox{\Hypertarget{classNavTree_ab97c57437a90b83fe40a6b4de88d7642}\label{classNavTree_ab97c57437a90b83fe40a6b4de88d7642}} 
-bool {\bfseries enabled} (idx\+\_\+t n)
+\mbox{\Hypertarget{classNavTree_a31ae4b2cb9f8eaf73f878c0fe9c0c953}\label{classNavTree_a31ae4b2cb9f8eaf73f878c0fe9c0c953}} 
+bool {\bfseries enabled} (idx\+\_\+t n) const
 \item 
 \mbox{\Hypertarget{classNavTree_aac8b96a359ec9f8f0952e74b67ef48fd}\label{classNavTree_aac8b96a359ec9f8f0952e74b67ef48fd}} 
 \hyperlink{structNavAgent}{Nav\+Agent} {\bfseries activate} ()
@@ -50,6 +56,9 @@ bool {\bfseries has\+Focus} () const
 \item 
 \mbox{\Hypertarget{classNavTree_a923a6e291404bbc936a862747881ceb4}\label{classNavTree_a923a6e291404bbc936a862747881ceb4}} 
 {\footnotesize template$<$typename Nav $>$ }\\Modes {\bfseries \+\_\+mode} (Nav \&nav)
+\item 
+\mbox{\Hypertarget{classNavTree_a2f3c9425b8eb4d7fb2713132cb6158af}\label{classNavTree_a2f3c9425b8eb4d7fb2713132cb6158af}} 
+\hyperlink{structItem}{Item} \& {\bfseries get\+Item} (idx\+\_\+t n) const
 \item 
 \mbox{\Hypertarget{classNavTree_aa14842fbd1afb94d92287607f64eed37}\label{classNavTree_aa14842fbd1afb94d92287607f64eed37}} 
 {\footnotesize template$<$typename Nav $>$ }\\void {\bfseries print\+Menu} (Nav \&nav)
@@ -74,6 +83,9 @@ bool {\bfseries has\+Focus} () const
 \item 
 \mbox{\Hypertarget{classNavTree_ab00a434221b19a4351e946c4759d3e7e}\label{classNavTree_ab00a434221b19a4351e946c4759d3e7e}} 
 idx\+\_\+t {\bfseries pos} ()
+\item 
+\mbox{\Hypertarget{classNavTree_a66670128132d5c1bc9f93b403b2ea9ac}\label{classNavTree_a66670128132d5c1bc9f93b403b2ea9ac}} 
+void {\bfseries tree\+Node} (typename N\+::\+Data\+Type \&nt)
 \end{DoxyCompactItemize}
 \subsection*{Protected Attributes}
 \begin{DoxyCompactItemize}

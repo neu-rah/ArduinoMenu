@@ -34,4 +34,5 @@
   #include "menu/nav.h"
 
   #include "menu/item.hpp"
+  #include "menu/nav.hpp"
 // };

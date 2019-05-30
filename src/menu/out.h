@@ -24,10 +24,13 @@ struct MenuOutDef:public O,public MenuOut {
   inline void raw(char c) override {O::raw(c);}
   inline void raw(const char*text) override {O::raw(text);}
   inline void raw(int n) override {O::raw(n);}
-  virtual inline void raw(unsigned int n) {O::raw(n);}
-  virtual inline void raw(long n) {O::raw(n);}
-  virtual inline void raw(unsigned long n) {O::raw(n);}
-  virtual inline void raw(double n) {O::raw(n);}
+  inline void raw(unsigned int n) override {O::raw(n);}
+  inline void raw(long n) override {O::raw(n);}
+  inline void raw(unsigned long n) override {O::raw(n);}
+  inline void raw(double n) override {O::raw(n);}
+  #ifdef ARDUINO
+    inline void raw(const __FlashStringHelper* n) override {O::raw(n);};
+  #endif
   inline void printItem(NavNode& nav,Item& i,idx_t n) override {i.printItem(nav,*this,n);}
   inline void fmt(Roles role,bool io,NavNode& nav,MenuOut& out,Item& i,idx_t n) override {
     switch(role) {

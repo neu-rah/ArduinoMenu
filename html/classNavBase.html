@@ -95,12 +95,6 @@ Public Types</h2></td></tr>
 <tr class="memitem:a27cf431707047e81070935913b681ad5"><td class="memItemLeft" align="right" valign="top"><a id="a27cf431707047e81070935913b681ad5"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>This</b> = <a class="el" href="classNavBase.html">NavBase</a>&lt; Out, Data, N &gt;</td></tr>
 <tr class="separator:a27cf431707047e81070935913b681ad5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a704ee2d1cc84a819d9d0a3874546c430"><td class="memItemLeft" align="right" valign="top"><a id="a704ee2d1cc84a819d9d0a3874546c430"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>OutType</b> = Out</td></tr>
-<tr class="separator:a704ee2d1cc84a819d9d0a3874546c430"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af91267dbc52cb50da22a2c1e21991216"><td class="memItemLeft" align="right" valign="top"><a id="af91267dbc52cb50da22a2c1e21991216"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>DataType</b> = Data</td></tr>
-<tr class="separator:af91267dbc52cb50da22a2c1e21991216"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -125,9 +119,9 @@ idx_t&#160;</td><td class="memItemRight" valign="bottom"><b>height</b> () const<
 <tr class="memitem:a1da54d7ac040ae97c8990087f449208a"><td class="memItemLeft" align="right" valign="top"><a id="a1da54d7ac040ae97c8990087f449208a"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>setTarget</b> (Data &amp;d)</td></tr>
 <tr class="separator:a1da54d7ac040ae97c8990087f449208a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa6815bc1e6e2e4a03758e175e4582d46"><td class="memTemplParams" colspan="2"><a id="aa6815bc1e6e2e4a03758e175e4582d46"></a>
-template&lt;typename Nav &gt; </td></tr>
-<tr class="memitem:aa6815bc1e6e2e4a03758e175e4582d46"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>printMenu</b> (Nav &amp;nav)</td></tr>
+<tr class="memitem:aa6815bc1e6e2e4a03758e175e4582d46"><td class="memTemplParams" colspan="2">template&lt;typename Nav &gt; </td></tr>
+<tr class="memitem:aa6815bc1e6e2e4a03758e175e4582d46"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classNavBase.html#aa6815bc1e6e2e4a03758e175e4582d46">printMenu</a> (Nav &amp;nav)</td></tr>
+<tr class="memdesc:aa6815bc1e6e2e4a03758e175e4582d46"><td class="mdescLeft">&#160;</td><td class="mdescRight">print assigned menu  <a href="#aa6815bc1e6e2e4a03758e175e4582d46">More...</a><br /></td></tr>
 <tr class="separator:aa6815bc1e6e2e4a03758e175e4582d46"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8a1b4fb519b387433658f11a46eb1fe9"><td class="memItemLeft" align="right" valign="top"><a id="a8a1b4fb519b387433658f11a46eb1fe9"></a>
 idx_t&#160;</td><td class="memItemRight" valign="bottom"><b>size</b> ()</td></tr>
@@ -135,9 +129,9 @@ idx_t&#160;</td><td class="memItemRight" valign="bottom"><b>size</b> ()</td></tr
 <tr class="memitem:a6be3780547660bc64df57285ced2a60e"><td class="memItemLeft" align="right" valign="top"><a id="a6be3780547660bc64df57285ced2a60e"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>enable</b> (idx_t n, bool o)</td></tr>
 <tr class="separator:a6be3780547660bc64df57285ced2a60e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a12216027029e4fe1b7d1d3e8b4e8169a"><td class="memItemLeft" align="right" valign="top"><a id="a12216027029e4fe1b7d1d3e8b4e8169a"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>enabled</b> (idx_t n)</td></tr>
-<tr class="separator:a12216027029e4fe1b7d1d3e8b4e8169a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af4933e590d105f0332fbc8fec1ae7947"><td class="memItemLeft" align="right" valign="top"><a id="af4933e590d105f0332fbc8fec1ae7947"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>enabled</b> (idx_t n) const</td></tr>
+<tr class="separator:af4933e590d105f0332fbc8fec1ae7947"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afb2043d9a01f2eaf2e63b141ef274ac8"><td class="memItemLeft" align="right" valign="top"><a id="afb2043d9a01f2eaf2e63b141ef274ac8"></a>
 <a class="el" href="structNavAgent.html">NavAgent</a>&#160;</td><td class="memItemRight" valign="bottom"><b>activate</b> ()</td></tr>
 <tr class="separator:afb2043d9a01f2eaf2e63b141ef274ac8"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -151,6 +145,12 @@ template&lt;typename Nav &gt; </td></tr>
 <tr class="memitem:ac4099dc2d5b669a76e39f34262cb94e4"><td class="memItemLeft" align="right" valign="top"><a id="ac4099dc2d5b669a76e39f34262cb94e4"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>newView</b> ()</td></tr>
 <tr class="separator:ac4099dc2d5b669a76e39f34262cb94e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a001789f9ce2d72323837ee9c239efa86"><td class="memItemLeft" align="right" valign="top"><a id="a001789f9ce2d72323837ee9c239efa86"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>operator Data &amp;</b> ()</td></tr>
+<tr class="separator:a001789f9ce2d72323837ee9c239efa86"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a264b9756bd3ec98af54533d764cbbdb0"><td class="memItemLeft" align="right" valign="top"><a id="a264b9756bd3ec98af54533d764cbbdb0"></a>
+<a class="el" href="structItem.html">Item</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getItem</b> (idx_t n) const</td></tr>
+<tr class="separator:a264b9756bd3ec98af54533d764cbbdb0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
@@ -170,7 +170,48 @@ class NavBase&lt; Out, Data, N &gt;</h3>
 
 <p>this is a brief </p>
 <p>The <a class="el" href="classNavBase.html" title="this is a brief ">NavBase</a> class. Provides common navigation functionality </p>
-</div><hr/>The documentation for this class was generated from the following file:<ul>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="aa6815bc1e6e2e4a03758e175e4582d46"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa6815bc1e6e2e4a03758e175e4582d46">&#9670;&nbsp;</a></span>printMenu()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Out , typename Data , typename N  = Drift&lt;&gt;&gt; </div>
+<div class="memtemplate">
+template&lt;typename Nav &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classNavBase.html">NavBase</a>&lt; Out, Data, N &gt;::printMenu </td>
+          <td>(</td>
+          <td class="paramtype">Nav &amp;&#160;</td>
+          <td class="paramname"><em>nav</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>print assigned menu </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">nav</td><td>the head of navigation node </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>void</dd></dl>
+<p>the base for navigation system menu printing, will ask output device to print the menu </p>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following file:<ul>
 <li>src/menu/<a class="el" href="nav_8h_source.html">nav.h</a></li>
 </ul>
 </div><!-- contents -->

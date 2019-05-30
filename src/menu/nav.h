@@ -39,8 +39,8 @@ template<typename Out,typename Data,typename N=Drift<>>
 class NavBase:public N {
   public:
     using This=NavBase<Out,Data,N>;
-    using OutType=Out;
-    using DataType=Data;
+    // using OutType=Out;
+    // using DataType=Data;
     NavBase():data(NULL) {}
     NavBase(Data& o):data(&o) {}
     inline void enterMenuRender() {onMenu=true;}
@@ -49,6 +49,12 @@ class NavBase:public N {
     inline void setTop(idx_t n) {out.setTop(n);}
     inline idx_t height() const {return out.height();}
     inline void setTarget(Data& d) {data=&d;}
+    /**
+    * @brief print assigned menu
+    * @param [in] nav the head of navigation node
+    * @return void
+    * @details the base for navigation system menu printing, will ask output device to print the menu
+    */
     template<typename Nav>
     inline void printMenu(Nav& nav) {
       out.template printMenu<Nav,Out,Data>(nav,out,*data);
@@ -61,6 +67,8 @@ class NavBase:public N {
     template<typename Nav>
     inline Modes _mode(Nav&) const {return data->mode();}
     inline void newView() {out.newView();}
+    inline operator Data&() {return *data;}
+    inline Item& getItem(idx_t n) const {return data->operator[](n);}
     // inline void chkNode(nav,idx_t n) {
     //   if(data->isNode()) nav.treeNode(...);//we dont want to request the item...
     //   //this implies data has to be the same type
@@ -109,18 +117,26 @@ template<typename N>
 struct NavRoot:public N {
   using N::N;
   using This=NavRoot<N>;
+  // using OutType=typename N::OutType;
+  // using DataType=typename N::DataType;
   inline bool up() {return N::template _up<This>(*this);}
   inline bool down() {return N::template _down<This>(*this);}
   inline bool left() {return N::template _left<This>(*this);}
   inline bool right() {return N::template _right<This>(*this);}
   inline bool enter() {
-    trace(MDO<<"NavRoot::enter"<<endl);
+    _trace(MDO<<"NavRoot::enter"<<endl);
     return N::template _enter<This>(*this);}
   inline bool esc() {return N::template _esc<This>(*this);}
   inline Modes mode() {return N::_mode(*this);}
     // _trace(MDO<<"NavRoot::mode"<<endl);
     // return N::template _mode<This>(*this);}
   // inline NavAgent activate() {return N::activate();}
+  /**
+  * @brief bavigation to level menu printing
+  * @param [in] t the navigation system
+  * @return void
+  * @details provides top level static navigation entry for the printing system
+  */
   template<typename T>
   inline void printMenu(T& t) {
     N::enterMenuRender();
@@ -128,7 +144,7 @@ struct NavRoot:public N {
     N::template printMenu<T>(t);
     N::exitMenuRender();
   }
-  inline void printMenu() {printMenu(*this);}
+  inline void printMenu();
 };
 
 /**
@@ -140,14 +156,17 @@ class DynamicNav:public NavNode,public NavRoot<NavBase<Out,Data,N>> {
     using Base=NavRoot<NavBase<Out,Data,N>>;
     using This=DynamicNav<Out,Data,N>;
     using NavRoot<NavBase<Out,Data,N>>::NavRoot;
+    // using Base::Base;
+    using OutType=Out;
+    using DataType=Data;
     // DynamicNav(Data& o):data(&o) {}
     // inline void printMenu() {Base::template Base::printMenu<Base>((Base&)*this);}
     // inline void printMenu() {This::printMenu(*this);}
     inline void printMenu() {Base::printMenu();}
-    // template<typename Nav>
-    // inline void printMenu(Nav& nav) {
-    //   Base::out.template printMenu<Nav,Out,Data>(nav,Base::out,*Base::data);
-    // }
+    template<typename Nav>
+    inline void printMenu(Nav& nav) {
+      Base::out.template printMenu<Nav,Out,Data>(nav,Base::out,*Base::data);
+    }
     inline bool selected(idx_t i) const override {return Base::selected(i);}
     inline bool enabled(idx_t i) const override {return Base::enabled(i);}
     // inline void enable(idx_t n,bool o) {data->enable(n,o);}
@@ -173,6 +192,8 @@ class NavPos:public N {
   public:
     using N::N;
     using This=NavPos<N>;
+    // using OutType=typename N::OutType;
+    // using DataType=typename N::DataType;
     inline bool selected(idx_t idx) const {return at==idx;}
     template<typename Nav>
     inline bool _up(Nav& nav) {
@@ -213,6 +234,8 @@ template<typename N>
 class ItemNav:public N {
   public:
     using N::N;
+    using OutType=typename N::OutType;
+    using DataType=typename N::DataType;
     template<typename Nav>
     inline bool _down(Nav& nav) {
       return focus?focus.down():N::_down(nav);
@@ -239,12 +262,14 @@ class ItemNav:public N {
     }
     template<typename Nav>
     inline bool _enter(Nav& nav) {
+      _trace(MDO<<"ItemNav::_enter"<<endl);
       if (focus) {
         if (focus.enter()) return true;
         focus=Empty<>::activate();//blur if enter return false
       } else {
         if (!nav.enabled(nav.pos())) return false;
         focus=nav.activate(nav.pos());
+        N::_enter(nav);
         if (focus.result()) return true;
       }
       return false;
@@ -271,6 +296,8 @@ template<typename N,idx_t max_depth=1>
 class NavTree {
   public:
     using This=NavTree<N,max_depth>;
+    using OutType=typename N::OutType;
+    using DataType=typename N::DataType;
     NavTree(typename N::DataType& data) {path[0].setTarget(data);}
     inline bool selected(idx_t n) {return path[level].selected(n);}
     inline Modes mode() {return path[level].mode();}
@@ -287,18 +314,25 @@ class NavTree {
     // inline Modes _mode() const {return path[level].mode();}
     template<typename Nav>
     inline Modes _mode(Nav& nav) {return path[level]._mode(nav);}
+    inline Item& getItem(idx_t n) const {return path[level].getItem(n);}
 
     template<typename Nav>
-    inline void printMenu(Nav& nav) {path[level].printMenu(nav);}
+    inline void printMenu(Nav& nav) {path[level].printMenu();}
 
     //TODO: remove member access!
     template<typename Nav>
     inline bool _enter(Nav& nav) {
-      bool r=path[level]._enter(nav);
+      _trace(MDO<<"NavTree::_enter"<<endl);
+      // bool r=path[level]._enter(nav);//this has been done by ItemNav
       //check ItemNav::data @ NapPos::at for node type
       //upgrade level if so
-      N::chkNode(nav);
-      return r;
+      // N::chkNode(nav);
+      if(level>=max_depth-1) return false;
+      Item& i=nav.getItem(nav.pos());
+      // Item& i=nav.operator[](nav.pos());
+      level++;
+      nav.setTarget((N&)i);
+      return true;
     }
     template<typename Nav>
     inline bool _esc(Nav& nav) {

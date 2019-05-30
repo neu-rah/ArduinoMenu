@@ -105,7 +105,7 @@ struct Empty:public I {
   // constexpr static inline NavAgent activate() {return false;}
   /// activate collection item (handle enter/select)
   // constexpr static inline NavAgent activateItem(idx_t) {return false;}
-  // inline Item& operator[](idx_t) {return *(Item*)this;}
+  inline Item& operator[](idx_t) {return *(Item*)this;}
   /// returns a dumb agent to be used by navigation
   static inline NavAgent activate();
   /// activate collection item by index
@@ -230,10 +230,10 @@ class StaticMenu:public StaticMenu<I> {
       return n?next.enabled(n-1):I::enabled(0);
     }
     inline NavAgent activateItem(idx_t n) {return n?next.activateItem(n-1):This::activate();}
-    // inline Item& operator[](idx_t n) {
-    //   trace(MDO<<"StaticMenu<I,II...>::operator[] "<<n<<endl);
-    //   return n?next.operator[](n-1):*reinterpret_cast<Item*>(this);
-    // }
+    inline Item& operator[](idx_t n) {
+      trace(MDO<<"StaticMenu<I,II...>::operator[] "<<n<<endl);
+      return n?next.operator[](n-1):*reinterpret_cast<Item*>(this);
+    }
   protected:
     Next next;
 };
@@ -260,10 +260,10 @@ struct StaticMenu<I>:public I {
     if(!n) I::enable(n,o);
   }
   // inline NavAgent activate() {return I::act();}
-  // inline Item& operator[](idx_t n) {
-  //   trace(MDO<<"StaticMenu<I>::operator[] "<<n<<endl);
-  //   return *reinterpret_cast<Item*>(this);
-  // }
+  inline Item& operator[](idx_t n) {
+    trace(MDO<<"StaticMenu<I>::operator[] "<<n<<endl);
+    return *reinterpret_cast<Item*>(this);
+  }
 };
 
 /**
