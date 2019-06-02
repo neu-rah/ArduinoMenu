@@ -54,6 +54,15 @@ bool grrr() {
 
 int year=2019;
 
+using SubMenu=FlashText<
+  decltype(subMenu_title),
+  &subMenu_title,
+  StaticMenu<
+    Op<decltype(op2_text),&op2_text>,
+    Op<decltype(op2_text),&op2_text>
+  >
+>;
+
 using MainMenu=
   FlashText<
     decltype(mainMenu_title),
@@ -62,14 +71,17 @@ using MainMenu=
       Op<decltype(op1_text),&op1_text,hey>,
       Op<decltype(op2_text),&op2_text,grrr>,
       Op<decltype(op3_text),&op3_text>
-    >
+    >,
+    SubMenu
   >;
+
+MainMenu mainMenu;
 
 NavRoot<
   ItemNav<
     DynamicNav<Out,MainMenu,NavPos<>>
   >
-> nav;
+> nav(mainMenu);
 
 void setup() {
   Serial.begin(115200);

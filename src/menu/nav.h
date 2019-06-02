@@ -21,6 +21,19 @@ struct Drift:public N {
   constexpr static inline bool enabled(idx_t) {return true;}
   constexpr static inline Modes mode() {return Modes::Normal;}
   constexpr static inline bool hasFocus() {return false;}
+  /**
+  * @brief Check if current item is a menu node
+  * @return ...
+  * @details This one is the navigation terminal, always returning false
+  */
+  constexpr static inline bool isNode() {return false;}
+  /**
+  * @brief check if indexed item is a menu node
+  * @param [in] idx_t the item index
+  * @return ...
+  * @details This one is the navigation terminal always retur false
+  */
+  constexpr static inline bool isNode(idx_t) {return false;}
   template<typename Nav> constexpr static inline Modes _mode(Nav&) {return Modes::Normal;}
   template<typename Nav> constexpr static inline Modes mode(Nav& nav) {return nav._mode();}
   template<typename Nav> constexpr static inline bool _up(Nav& nav) {return false;}
@@ -48,18 +61,26 @@ class NavBase:public N {
     inline idx_t top() const {return out.top();}
     inline void setTop(idx_t n) {out.setTop(n);}
     inline idx_t height() const {return out.height();}
-    inline void setTarget(Data& d) {data=&d;}
-    /**
-    * @brief print assigned menu
-    * @param [in] nav the head of navigation node
-    * @return void
-    * @details the base for navigation system menu printing, will ask output device to print the menu
-    */
+    inline void setTarget(Data& d) {
+      _trace(
+        MDO<<"NavBase::setTarget 0x"<<hex((int)&d)<<" [";
+        d.print(*this,out);
+        MDO<<"]"<<endl);
+      data=&d;}
     template<typename Nav>
     inline void printMenu(Nav& nav) {
+      _trace(MDO<<"this:0x"<<hex((int)this)<<" NavBase::printMenu(nav) nav:0x"<<hex((int)&nav)<<" data:0x"<<hex((int)data)<<endl);
       out.template printMenu<Nav,Out,Data>(nav,out,*data);
     }
     inline idx_t size() {return data->size();}
+    /**
+    * @brief check if indexed item is a menu node
+    * @param [in] n the item index
+    * @return the result of data query
+    * @details query data if the indexed item is a menu node
+    */
+    inline bool isNode(idx_t n) const {return data->isNode(n);}
+    inline bool isNode() const {return data->isNode(0);}
     inline void enable(idx_t n,bool o) {data->enable(n,o);}
     inline bool enabled(idx_t n) const {return data->enabled(n);}
     inline NavAgent activate() {return data->activate();}
@@ -68,7 +89,9 @@ class NavBase:public N {
     inline Modes _mode(Nav&) const {return data->mode();}
     inline void newView() {out.newView();}
     inline operator Data&() {return *data;}
-    inline Item& getItem(idx_t n) const {return data->operator[](n);}
+    inline Item& getItem(idx_t n) const {
+      _trace(MDO<<"NavBase::getItem "<<n<<endl);
+      return data->operator[](n);}
     // inline void chkNode(nav,idx_t n) {
     //   if(data->isNode()) nav.treeNode(...);//we dont want to request the item...
     //   //this implies data has to be the same type
@@ -119,6 +142,7 @@ struct NavRoot:public N {
   using This=NavRoot<N>;
   // using OutType=typename N::OutType;
   // using DataType=typename N::DataType;
+  // inline bool isNode() const {return N::isNode();}
   inline bool up() {return N::template _up<This>(*this);}
   inline bool down() {return N::template _down<This>(*this);}
   inline bool left() {return N::template _left<This>(*this);}
@@ -139,6 +163,7 @@ struct NavRoot:public N {
   */
   template<typename T>
   inline void printMenu(T& t) {
+    _trace(MDO<<"NavRoot::printMenu(t) t:0x"<<hex((int)&t)<<endl);
     N::enterMenuRender();
     N::newView();
     N::template printMenu<T>(t);
@@ -155,7 +180,8 @@ class DynamicNav:public NavNode,public NavRoot<NavBase<Out,Data,N>> {
   public:
     using Base=NavRoot<NavBase<Out,Data,N>>;
     using This=DynamicNav<Out,Data,N>;
-    using NavRoot<NavBase<Out,Data,N>>::NavRoot;
+    // using NavRoot<NavBase<Out,Data,N>>::NavRoot;
+    using N::N;
     // using Base::Base;
     using OutType=Out;
     using DataType=Data;
@@ -165,7 +191,9 @@ class DynamicNav:public NavNode,public NavRoot<NavBase<Out,Data,N>> {
     inline void printMenu() {Base::printMenu();}
     template<typename Nav>
     inline void printMenu(Nav& nav) {
-      Base::out.template printMenu<Nav,Out,Data>(nav,Base::out,*Base::data);
+      _trace(MDO<<"DynamicNav::printMenu(nav) nav:0x"<<hex((int)&nav)<<endl);
+      Base::printMenu(nav);
+      // Base::out.template printMenu<Nav,Out,Data>(nav,Base::out,*Base::data);
     }
     inline bool selected(idx_t i) const override {return Base::selected(i);}
     inline bool enabled(idx_t i) const override {return Base::enabled(i);}
@@ -205,10 +233,11 @@ class NavPos:public N {
       if (at>0) {at--;return true;}
       return N::template _down<Nav>(nav);
     }
+    inline bool isNode() const {return isNode(at);}
     inline idx_t pos() {return at;}
     template<typename Nav>
     inline bool _enter(Nav& nav) {
-      trace(MDO<<"ItemNav::_enter"<<endl);
+      trace(MDO<<"NavPos::_enter"<<endl);
       return (!nav.enabled(nav.pos()))&&(nav.activate(at)||N::_enter(nav));
     }
     // template<typename Nav>
@@ -304,7 +333,10 @@ class NavTree {
     inline void enterMenuRender() {path[level].enterMenuRender();}
     inline void exitMenuRender() {path[level].exitMenuRender();}
     inline void newView() {path[level].newView();}
-    inline void setTarget(typename N::DataType& d) {path[level].setTarget(d);}
+    inline void setTarget(typename N::DataType& d) {
+      _trace(MDO<<"NavTree::setTarget "<<level<<" d:0x"<<hex((int)&d)<<endl);
+      _trace(if(!&d) while(true););
+      path[level].setTarget(d);}
     inline idx_t size() {return path[level].size();}
     inline void enable(idx_t n,bool o) {path[level].enable(n,o);}
     inline bool enabled(idx_t n) const {return path[level].enabled(n);}
@@ -312,12 +344,21 @@ class NavTree {
     inline NavAgent activate(idx_t n) {return path[level].activate(n);}
     inline bool hasFocus() const {return path[level].hasFocus();}
     // inline Modes _mode() const {return path[level].mode();}
+    inline bool isNode() const {return path[level].isNode();}
     template<typename Nav>
     inline Modes _mode(Nav& nav) {return path[level]._mode(nav);}
-    inline Item& getItem(idx_t n) const {return path[level].getItem(n);}
+    inline Item& getItem(idx_t n) const {
+      _trace(MDO<<"getItem "<<n<<endl);
+      return path[level].getItem(n);}
 
     template<typename Nav>
-    inline void printMenu(Nav& nav) {path[level].printMenu();}
+    inline void printMenu(Nav& nav) {
+      _trace(MDO<<"NavTree::printMenu(nav)");
+      path[level].printMenu();}
+
+    inline void printMenu() {
+      _trace(MDO<<"NavTree::printMenu() level:"<<level<<endl);
+      path[level].printMenu();}
 
     //TODO: remove member access!
     template<typename Nav>
@@ -327,15 +368,24 @@ class NavTree {
       //check ItemNav::data @ NapPos::at for node type
       //upgrade level if so
       // N::chkNode(nav);
-      if(level>=max_depth-1) return false;
+      if (!isNode()) return false;
+      if(level>=max_depth-1) {
+        MDO<<"increase depth level (max_depth)"<<endl;
+        return false;
+      }
+      _trace(MDO<<"enough depth"<<endl);
       Item& i=nav.getItem(nav.pos());
       // Item& i=nav.operator[](nav.pos());
       level++;
+      _trace(MDO<<"level:"<<level<<endl);
       nav.setTarget((N&)i);
       return true;
     }
     template<typename Nav>
     inline bool _esc(Nav& nav) {
+      _trace(MDO<<"moving back..."<<endl);
+      //TODO: insert idling here
+      if (!level) return false;
       bool r=path[level]._esc(nav);
       if (!path[level].hasFocus()) level--;
       return r;
@@ -345,15 +395,21 @@ class NavTree {
     template<typename Nav> inline bool _left(Nav& nav) {return path[level]._left(nav);}
     template<typename Nav> inline bool _right(Nav& nav) {return path[level]._right(nav);}
     inline idx_t pos() {return path[level].pos();}
-    inline void treeNode(typename N::DataType& nt) {
-      if (level>=max_depth) {
-        //TODO: make this generic
-        // Serial.println("max depth reached! increase max_depth on tree navigation object");
-        return;
-      }
-      level++;
-      setTarget(nt);
-    }
+    inline bool up() {return This::template _up<This>(*this);}
+    inline bool down() {return This::template _down<This>(*this);}
+    inline bool left() {return This::template _left<This>(*this);}
+    inline bool right() {return This::template _right<This>(*this);}
+    inline bool enter() {return This::template _enter<This>(*this);}
+    inline bool esc() {return This::template _esc<This>(*this);}
+    // inline void treeNode(typename N::DataType& nt) {
+    //   if (level>=max_depth) {
+    //     //TODO: make this generic
+    //     // Serial.println("max depth reached! increase max_depth on tree navigation object");
+    //     return;
+    //   }
+    //   level++;
+    //   setTarget(nt);
+    // }
   protected:
     idx_t level=0;
     N path[max_depth];

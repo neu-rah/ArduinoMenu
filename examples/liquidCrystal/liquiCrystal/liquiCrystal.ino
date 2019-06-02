@@ -36,7 +36,7 @@ using TextPanel=Chain<
 //dual head output
 using Out=OutList<
   TextPanel<StaticPanel<0,0,16,2,LiquidCrystalOut<lcd>>>,
-  TextPanel<StaticPanel<0,0,80,5,SerialOut<>>>
+  TextPanel<StaticPanel<0,0,80,10,SerialOut<>>>
 >;
 
 //string data on flash
@@ -45,9 +45,10 @@ PROGMEM ConstText op2_text="Op ...";
 PROGMEM ConstText op3_text="Op 3";
 PROGMEM ConstText year_text="Year";
 PROGMEM ConstText mainMenu_title="Main menu";
+PROGMEM ConstText subMenu_title="Sub-menu";
 
 template<typename T,T* text,typename O=Empty<>>
-using Op=EnDis<FlashText<T,text,O>>;
+using Op=Prompt<EnDis<FlashText<T,text,O>>>;
 
 bool hey() {
   Serial.println(F("Hey!"));
@@ -61,7 +62,18 @@ bool grrr() {
 
 int year=2019;
 
-using MainMenu=
+using SubMenu=Prompt<
+  FlashText<
+    decltype(subMenu_title),
+    &subMenu_title,
+    StaticMenu<
+      Op<decltype(op2_text),&op2_text>,
+      Op<decltype(op2_text),&op2_text>
+    >
+  >
+>;
+
+using MainMenu=Prompt<
   FlashText<
     decltype(mainMenu_title),
     &mainMenu_title,
@@ -79,15 +91,26 @@ using MainMenu=
           >
         >
       >,
-      Op<decltype(op2_text),&op2_text>,
-      Op<decltype(op2_text),&op2_text>,
-      Op<decltype(op2_text),&op2_text>,
-      Op<decltype(op2_text),&op2_text>,
+      // Op<decltype(op2_text),&op2_text>,
+      // Op<decltype(op2_text),&op2_text>,
+      // Op<decltype(op2_text),&op2_text>,
+      // Op<decltype(op2_text),&op2_text>,
+      SubMenu,
       Op<decltype(op3_text),&op3_text>
     >
-  >;
+  >
+>;
 
-NavRoot<ItemNav<DynamicNav<Out,MainMenu,NavPos<>>>> nav;
+MainMenu mainMenu;
+
+//problem here Data should be uniform but not tied
+NavTree<
+  NavRoot<
+    ItemNav<
+      DynamicNav<Out,MainMenu,NavPos<>>
+    >
+  >,2
+> nav(mainMenu);
 
 void setup() {
   Serial.begin(115200);

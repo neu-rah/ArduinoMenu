@@ -105,7 +105,9 @@ struct Empty:public I {
   // constexpr static inline NavAgent activate() {return false;}
   /// activate collection item (handle enter/select)
   // constexpr static inline NavAgent activateItem(idx_t) {return false;}
-  inline Item& operator[](idx_t) {return *(Item*)this;}
+  inline Item& operator[](idx_t) {
+    _trace(MDO<<"Empty::operator[]"<<endl);
+    return *(Item*)this;}
   /// returns a dumb agent to be used by navigation
   static inline NavAgent activate();
   /// activate collection item by index
@@ -115,6 +117,7 @@ struct Empty:public I {
   constexpr static inline Modes mode() {return Modes::Normal;}
   constexpr static inline bool parentDraw() {return false;}
   constexpr static inline bool isNode() {return false;}
+  constexpr static inline bool isNode(idx_t) {return false;}
 };
 
 /** \defgroup Agents Command and navigation agents
@@ -197,6 +200,30 @@ struct StaticText:public I {
   }
 };
 
+/**
+* The Prompt class represents a generic virtual menu item.
+* This class allows Prompt pointers to be stored on a list as they all implement the same interface.
+* This will adapts a composition to the virtual interface.
+*/
+template<typename I>
+struct Prompt:public virtual Item,public I {
+  using I::I;
+  inline void printItem(NavNode& nav,MenuOut& out,idx_t n) override {
+    I::template printItem<NavNode,MenuOut>(nav,out,n);
+  }
+  inline void print(NavNode& nav,MenuOut& out) override {
+    I::print(nav,out);
+  }
+  template<typename Nav,typename Out>
+  inline void print(Nav& nav,Out& out) {
+    I::print(nav,out);
+  }
+  inline void enable(idx_t n,bool b) override {I::enable(n,b);}
+  virtual inline bool enabled(idx_t n) const override {return I::enabled(n);}
+  inline NavAgent activate() override {return I::activate();}
+  inline NavAgent activateItem(idx_t n) override {return I::activateItem(n);}
+};
+
 // old Action object
 // using ActionHandler=bool (*)();
 // static inline bool doNothing() {return false;}
@@ -231,9 +258,10 @@ class StaticMenu:public StaticMenu<I> {
     }
     inline NavAgent activateItem(idx_t n) {return n?next.activateItem(n-1):This::activate();}
     inline Item& operator[](idx_t n) {
-      trace(MDO<<"StaticMenu<I,II...>::operator[] "<<n<<endl);
-      return n?next.operator[](n-1):*reinterpret_cast<Item*>(this);
+      _trace(MDO<<"StaticMenu<I,II...>::operator[] "<<n<<" this:0x"<<hex((int)this)<<endl);
+      return n?next.operator[](n-1):*reinterpret_cast<Prompt<This>*>(this);
     }
+    inline bool isNode(idx_t n) const {return n?next.isNode(n-1):This::isNode();}
   protected:
     Next next;
 };
@@ -246,7 +274,8 @@ template<typename I>
 struct StaticMenu<I>:public I {
   using I::I;
   using This=StaticMenu<I>;
-  static inline bool isNode() {return true;}
+  constexpr static inline bool isNode() {return true;}
+  constexpr static inline bool isNode(idx_t) {return isNode();}
   constexpr static inline idx_t size() {return 1;}
   template<typename Nav,typename Out>
   inline void print(Nav& nav,Out& out) {}
@@ -261,29 +290,10 @@ struct StaticMenu<I>:public I {
   }
   // inline NavAgent activate() {return I::act();}
   inline Item& operator[](idx_t n) {
-    trace(MDO<<"StaticMenu<I>::operator[] "<<n<<endl);
-    return *reinterpret_cast<Item*>(this);
+    _trace(MDO<<"StaticMenu<I>::operator[] "<<n<<" this:"<<hex((int)this)<<endl);
+    // return *reinterpret_cast<Item*>(this);
+    return This::operator[](0);
   }
-};
-
-/**
-* The Prompt class represents a generic virtual menu item.
-* This class allows Prompt pointers to be stored on a list as they all implement the same interface.
-* This will adapts a composition to the virtual interface.
-*/
-template<typename I>
-struct Prompt:public Item,public I {
-  using I::I;
-  inline void printItem(NavNode& nav,MenuOut& out,idx_t n) override {
-    I::template printItem<NavNode,MenuOut>(nav,out,n);
-  }
-  inline void print(NavNode& nav,MenuOut& out) override {
-    I::print(nav,out);
-  }
-  inline void enable(idx_t n,bool b) override {I::enable(n,b);}
-  virtual inline bool enabled(idx_t n) const override {return I::enabled(n);}
-  inline NavAgent activate() override {return I::activate();}
-  inline NavAgent activateItem(idx_t n) override {return I::activateItem(n);}
 };
 
 /**

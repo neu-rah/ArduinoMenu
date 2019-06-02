@@ -20,7 +20,7 @@ using namespace std;
   template<typename I=Empty<>>
   struct VectorMenu:public I,vector<Item*> {
     using vector<Item*>::vector;
-    static inline bool isNode() {return true;}
+    constexpr static inline bool isNode(idx_t) const {return true;}
     inline idx_t size() {return (idx_t)vector<Item*>::size();}
     template<typename Nav,typename Out>
     static inline void print(Nav& bav,Out& out) {}
