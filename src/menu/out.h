@@ -1,51 +1,36 @@
 /* -*- C++ -*- */
 #pragma once
-/**
-* @file out.h
-* @author Rui Azevedo
-* @brief ArduinoMenu output implementations
-*/
-
-/** \defgroup Output Menu output
- *  @{
- */
 
 #include "base.h"
 
-template<typename Dev,Dev dev,typename O=FullPrinter<>>
-struct RawOut:public O {
-  template<typename T> static inline void raw(T o) {dev<<o;}
+/////////////////////////////////////////////////////////////////////
+template<typename O=Nil>
+struct Void:public O {};
+
+template<typename Dev,Dev& dev,typename O=Nil>
+struct OutDevice:public O {
+  template<typename T>
+  static inline void raw(T data) {dev<<data;}
+};
+template<ostream& dev=cout,typename O=Nil>
+struct Console:public OutDevice<ostream,dev,O> {};
+using StdOut=Console<>;
+
+struct MenuOut {
+  virtual inline void raw(char o)=0;
+  virtual inline void raw(const char* o)=0;
 };
 
-//dynamic output --------------------------------
 template<typename O>
-struct MenuOutDef:public O,public MenuOut {
-  inline void nl() override {O::nl();}
-  inline void raw(char c) override {O::raw(c);}
-  inline void raw(const char*text) override {O::raw(text);}
-  inline void raw(int n) override {O::raw(n);}
-  inline void raw(unsigned int n) override {O::raw(n);}
-  inline void raw(long n) override {O::raw(n);}
-  inline void raw(unsigned long n) override {O::raw(n);}
-  inline void raw(double n) override {O::raw(n);}
-  #ifdef ARDUINO
-    inline void raw(const __FlashStringHelper* n) override {O::raw(n);};
-  #endif
-  inline void printItem(NavNode& nav,Item& i,idx_t n) override {i.printItem(nav,*this,n);}
-  inline void fmt(Roles role,bool io,NavNode& nav,MenuOut& out,Item& i,idx_t n) override {
-    switch(role) {
-      case Roles::Panel: io?O::template fmtPanel<true>(nav,out,i,n):O::template fmtPanel<false>(nav,out,i,n);break;
-      case Roles::Menu: io?O::template fmtMenu<true>(nav,out,i,n):O::template fmtMenu<false>(nav,out,i,n);break;
-      case Roles::Title: io?O::template fmtTitle<true>(nav,out,i,n):O::template fmtTitle<false>(nav,out,i,n);break;
-      case Roles::Body: io?O::template fmtBody<true>(nav,out,i,n):O::template fmtBody<false>(nav,out,i,n);break;
-      case Roles::Item: io?O::template fmtItem<true>(nav,out,i,n):O::template fmtItem<false>(nav,out,i,n);break;
-      case Roles::Index: io?O::template fmtIndex<true>(nav,out,i,n):O::template fmtIndex<false>(nav,out,i,n);break;
-      case Roles::Cursor: io?O::template fmtCursor<true>(nav,out,i,n):O::template fmtCursor<false>(nav,out,i,n);break;
-      case Roles::Name: io?O::template fmtName<true>(nav,out,i,n):O::template fmtName<false>(nav,out,i,n);break;
-      case Roles::Mode: io?O::template fmtMode<true>(nav,out,i,n):O::template fmtMode<false>(nav,out,i,n);break;
-      case Roles::Value: io?O::template fmtValue<true>(nav,out,i,n):O::template fmtValue<false>(nav,out,i,n);break;
-      case Roles::Unit: io?O::template fmtUnit<true>(nav,out,i,n):O::template fmtUnit<false>(nav,out,i,n);break;
-    }
-  }
+struct Output:public MenuOut, public O {
+  virtual inline void raw(char o) override {O::raw(o);}
+  inline void raw(const char* o) override {O::raw(o);}
 };
-/** @}*/
+
+// basic_ostream<charT,traits>& operator<<(basic_ostream<charT,traits>& (*pf)(basic_ostream<charT,traits>&))
+//
+// template<typename T,typename O>
+// inline O& p(O& o,T d) {d.print(o);return o;}
+//
+// template<typename O>
+// inline O& p <O,StreamFunction<O>> (O& o,StreamFunction<O> f) {return f(o);}

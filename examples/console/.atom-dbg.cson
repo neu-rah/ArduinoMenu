@@ -1,2 +1,2 @@
 console:
-	path: "/home/azevedo/Work/AM5/ArduinoMenu/examples/console/.pioenvs/native/program"
+	path: "/home/azevedo/Work/AM5/ArduinoMenu/examples/console/.pio/build/native/program"

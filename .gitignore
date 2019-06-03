@@ -5,6 +5,7 @@
 src/main.cpp
 /debug
 lib
+test
 .travis.yml
 !/.travis.yml
 platformio.ini
