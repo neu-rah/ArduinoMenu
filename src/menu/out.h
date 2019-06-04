@@ -11,6 +11,7 @@ template<typename Dev,Dev& dev,typename O=Nil>
 struct OutDevice:public O {
   template<typename T>
   static inline void raw(T data) {dev<<data;}
+  static inline void nl() {dev<<endl;}
 };
 template<ostream& dev=cout,typename O=Nil>
 struct Console:public OutDevice<ostream,dev,O> {};
@@ -19,12 +20,14 @@ using StdOut=Console<>;
 struct MenuOut {
   virtual inline void raw(char o)=0;
   virtual inline void raw(const char* o)=0;
+  virtual void nl()=0;
 };
 
 template<typename O>
 struct Output:public MenuOut, public O {
-  virtual inline void raw(char o) override {O::raw(o);}
+  inline void raw(char o) override {O::raw(o);}
   inline void raw(const char* o) override {O::raw(o);}
+  inline void nl() override {O::nl();}
 };
 
 // basic_ostream<charT,traits>& operator<<(basic_ostream<charT,traits>& (*pf)(basic_ostream<charT,traits>&))
