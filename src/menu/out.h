@@ -3,37 +3,36 @@
 
 #include "base.h"
 
-/////////////////////////////////////////////////////////////////////
-template<typename O=Nil>
-struct Void:public O {};
-
-template<typename Dev,Dev& dev,typename O=Nil>
-struct OutDevice:public O {
+//////////////////////////////////////////////
+template<typename O>
+struct Void:public O {
   template<typename T>
-  static inline void raw(T data) {dev<<data;}
-  static inline void nl() {dev<<endl;}
+  static inline void raw(T o) {}
+  template<typename N,typename H,typename I>
+  static void print(N,H,I) {}
 };
-template<ostream& dev=cout,typename O=Nil>
-struct Console:public OutDevice<ostream,dev,O> {};
-using StdOut=Console<>;
 
-struct MenuOut {
-  virtual inline void raw(char o)=0;
-  virtual inline void raw(const char* o)=0;
-  virtual void nl()=0;
+template<typename Dev,Dev& dev,typename O=Void<>>
+struct StaticOut:public O {
+  template<typename T>
+  inline void raw(T o) {dev<<o;}
+  template<typename N,typename H,typename I>
+  inline void print(N n,H o,I i) {i.print(n,o);}
+};
+
+template<ostream& dev,typename O=Void<>>
+using Console=StaticOut<ostream,dev,O>;
+
+template<typename O=Void<>>
+using StdOut=Console<cout,O>;
+
+struct IMenuOut {
+  virtual void raw(const char* o)=0;
+  virtual inline void print(INavNode& n,IItem& i)=0;
 };
 
 template<typename O>
-struct Output:public MenuOut, public O {
-  inline void raw(char o) override {O::raw(o);}
-  inline void raw(const char* o) override {O::raw(o);}
-  inline void nl() override {O::nl();}
+struct MenuOut:public O {
+  void raw(const char* o) override {O::raw(o);}
+  void print(INavNode& n,IItem& i) override {i.print(n,*this,i);}
 };
-
-// basic_ostream<charT,traits>& operator<<(basic_ostream<charT,traits>& (*pf)(basic_ostream<charT,traits>&))
-//
-// template<typename T,typename O>
-// inline O& p(O& o,T d) {d.print(o);return o;}
-//
-// template<typename O>
-// inline O& p <O,StreamFunction<O>> (O& o,StreamFunction<O> f) {return f(o);}
