@@ -36,3 +36,23 @@ struct MenuOut:public O {
   void raw(const char* o) override {O::raw(o);}
   void print(INavNode& n,IItem& i) override {i.print(n,*this,i);}
 };
+
+//text output measure
+struct TextMeasure:public Void<> {
+  template<typename T>
+  static inline idx_t measure(T o) {
+    #ifdef ARDUINO
+      return String(o).length();
+    #else
+      return _str(o);
+    #endif
+  }
+  protected:
+    #ifndef ARDUINO
+    static inline idx_t _str(const char*o){return std::string(o).length();}
+    template<typename T>
+    static inline idx_t _str(T i){return std::string(std::to_string(i)).length();}
+    #endif
+};
+
+template<> idx_t TextMeasure::measure<const char>(const char o) {return 1;}

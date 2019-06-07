@@ -21,7 +21,7 @@ using Op1=ItemNav<
 
 Op1 op1;
 StaticNav<Op1> nav;
-StdOut<> out;
+FullPrinter<StdOut<>> out;
 
 StaticText<
   &mainMenu_title,
