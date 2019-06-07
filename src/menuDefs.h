@@ -33,20 +33,24 @@ using namespace Menu;
 #endif
 
 
-#if defined(MENU_DEBUG) && defined(TRACE)
+#if defined(MENU_DEBUG) && defined(TRACE) && !defined(trace)
   #define trace(x) x
 #else
   #define trace(x)
 #endif
-#ifdef MENU_DEBUG
+#if defined(MENU_DEBUG) && !defined(_trace)
   #define _trace(x) x
 #else
-  #define _trace(x)
+  #ifndef _trace
+    #define _trace(x)
+  #endif
 #endif
-#ifndef MENU_RELEASE
+#if defined(MENU_RELEASE) && !defined(__trace)
   #define __trace(x) x
 #else
-  #define __trace(x)
+  #ifndef __trace
+    #define __trace(x)
+  #endif
 #endif
 
 namespace Menu {
