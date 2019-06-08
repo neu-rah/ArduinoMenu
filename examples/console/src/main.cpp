@@ -20,22 +20,25 @@ using Op1=ItemNav<
 >;
 
 Op1 op1;
-StaticNav<Op1> nav;
 FullPrinter<StdOut<>> out;
 
-StaticText<
+using MainMenu=StaticText<
   &mainMenu_title,
   StaticMenu<
-    Item<StaticText<&op1_text>>,
-    Item<StaticText<&op2_text>>,
-    Item<StaticText<&op3_text>>
+    StaticText<&op1_text>,
+    StaticText<&op2_text>,
+    StaticText<&op3_text>
   >
-> mainMenu;
+>;
+
+MainMenu mainMenu;
+
+StaticNav<MainMenu> nav;
 
 //-----------------------
 int main() {
   cout<<"PIO Native program"<<endl;
-  op1.printMenu(out);
+  // op1.printMenu(out);
   nav.printMenu(out);
   return 0;
 }

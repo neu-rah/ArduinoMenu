@@ -8,12 +8,38 @@ template<typename O>
 struct Void:public O {
   template<typename T>
   static inline void raw(T o) {}
+  static inline void nl() {}
+  static inline void clrLine(idx_t) {}
   template<typename N,typename H,typename I>
   static void print(N,H,I) {}
+  constexpr static inline bool isRange() {return true;}
+  constexpr static inline bool isViewport() {return false;}
+  constexpr static inline idx_t height() {return 0;}
+  constexpr static inline idx_t top() {return 0;}
+  static inline void setTop(idx_t) {}
+  constexpr static inline idx_t posX() {return 0;}
+  constexpr static inline idx_t posY() {return 0;}
+  constexpr static inline idx_t freeX() {return INT16_MAX;}
+  constexpr static inline idx_t freeY() {return INT16_MAX;}
+  constexpr static inline idx_t free() {return INT16_MAX;}
+  static inline void useX(idx_t ux=1) {}
+  static inline void useY(idx_t uy=1) {}
+  template<bool io,typename Nav,typename Out,typename I> static inline void fmtPanel(Nav&,Out&,I&,idx_t) {}
+  template<bool io,typename Nav,typename Out,typename I> static inline void fmtMenu(Nav&,Out&,I&,idx_t) {}
+  template<bool io,typename Nav,typename Out,typename I> static inline void fmtTitle(Nav&,Out&,I&,idx_t) {}
+  template<bool io,typename Nav,typename Out,typename I> static inline void fmtBody(Nav&,Out&,I&,idx_t) {}
+  template<bool io,typename Nav,typename Out,typename I> static inline void fmtItem(Nav&,Out&,I&,idx_t) {}
+  template<bool io,typename Nav,typename Out,typename I> static inline void fmtIndex(Nav&,Out&,I&,idx_t) {}
+  template<bool io,typename Nav,typename Out,typename I> static inline void fmtCursor(Nav&,Out&,I&,idx_t) {}
+  template<bool io,typename Nav,typename Out,typename I> static inline void fmtName(Nav&,Out&,I&,idx_t) {}
+  template<bool io,typename Nav,typename Out,typename I> static inline void fmtMode(Nav&,Out&,I&,idx_t) {}
+  template<bool io,typename Nav,typename Out,typename I> static inline void fmtValue(Nav&,Out&,I&,idx_t) {}
+  template<bool io,typename Nav,typename Out,typename I> static inline void fmtUnit(Nav&,Out&,I&,idx_t) {}
 };
 
 template<typename Dev,Dev& dev,typename O=Void<>>
 struct StaticOut:public O {
+  static inline void nl() {dev<<endl;}
   template<typename T>
   inline void raw(T o) {dev<<o;}
   template<typename N,typename H,typename I>

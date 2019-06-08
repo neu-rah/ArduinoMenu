@@ -8,6 +8,10 @@ template<typename I>
 struct Empty:public I {
   template<typename N,typename O,typename H>
   static inline void print(N&,O&,H&) {}
+  template<typename N,typename O,typename H>
+  static inline void printItem(N&,O&,H&,idx_t) {}
+  // constexpr static inline bool isRange() {return false;}
+  constexpr static inline idx_t size() {return 0;}
 };
 
 template<const char**text,typename I=Empty<>>
@@ -24,22 +28,21 @@ class StaticMenu:public StaticMenu<I> {
   public:
     using This=StaticMenu<I>;
     using Next=StaticMenu<II...>;
+    friend Next;
     template<typename Item>
     static inline bool enabled(Item& i,idx_t n) {return n?i.next.enabled(i,n-1):enabled(i);}
     template<typename Item>
     static inline idx_t selIdx(Item& i,idx_t n) {return n?i.next.selIdx(i,n-1):selIdx(i);}
-    template<typename Item>
-    static inline idx_t size(Item& i) {return i.next.size()+1;}
-    template<typename Item>
-    static inline idx_t size(Item& i,idx_t n) {return n?i.next.size(n-1):size(i);}
+    constexpr static inline idx_t size() {return Next::size()+1;}
+    // template<typename N,typename O,typename H>
+    // inline void print(N& n,O& o,H& i) {
+    //   This::printItem(n,o,i,0);
+    //   next.print(n,o,next);
+    // }
     template<typename N,typename O,typename H>
-    inline void print(N& n,O& o,H& i) {
-      This::printItem(n,o,i,0);
-      next.print(n,o,next);
-    }
-    template<typename N,typename O,typename H>
-    static inline void printItem(N& n,O& o,H& i,idx_t c) {
-      n?i.next.printItem(n,o,i,c-1):print(n,o,i);
+    inline void printItem(N& n,O& o,H& i,idx_t c) {
+      // _trace(MDO<<"StaticMenu<...>::printItem "<<c<<endl);
+      c>0?i.next.printItem(n,o,next,c-1):I::print(n,o,i);
     }
   protected:
     Next next;
@@ -48,12 +51,14 @@ class StaticMenu:public StaticMenu<I> {
 template<typename I>
 struct StaticMenu<I>:public I {
   using This=StaticMenu<I>;
-  template<typename Item>
-  static inline idx_t size(Item&) {return 1;}
+  constexpr static inline idx_t size() {return 1;}
   template<typename N,typename O,typename H>
-  static inline void print(N& n,O& o,I& i) {I::print(n,o,i);}
+  inline void print(N& n,O& o,H& i) {/*I::print(n,o,i);*/}
   template<typename N,typename O,typename H>
-  static inline void printItem(N& n,O& o,H& i,idx_t) {i.I::print(n,o);}
+  static inline void printItem(N& n,O& o,H& i,idx_t c) {
+    // _trace(MDO<<"StaticMenu::printItem "<<c<<endl);
+    i.I::print(n,o,i);
+  }
 };
 
 
@@ -66,9 +71,9 @@ struct ItemNav:public I,public N {
 template<typename I>
 struct StaticItem:public I {
   using This=StaticItem<I>;
-  template<typename N,typename O>
-  inline void print(N& n,O& o) {
-    I::template print<N,O,This>(n,o,*this);
+  template<typename N,typename O,typename H>
+  inline void print(N& n,O& o,H& i) {
+    I::template print<N,O,This>(n,o,i);
   }
 };
 
@@ -79,4 +84,6 @@ struct IItem {
 template<typename I>
 struct Item:public IItem, public I {
   inline void print(INavNode& nav,IMenuOut& out) override {I::print(nav,out,*this);}
+  template<typename N,typename O,typename H>
+  static inline void print(N& nav,O& out,H& i) {I::print(nav,out,i);}
 };
