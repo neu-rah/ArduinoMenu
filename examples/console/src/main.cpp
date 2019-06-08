@@ -1,13 +1,11 @@
 /*
-simple console
+simple std console
 */
-
-#include <iostream>
-using namespace std;
 
 #include <menu.h>
 #include <menu/fmt/textFmt.h>
 #include <menu/fmt/titleWrap.h>
+#include <menu/IO/consoleOut.h>
 
 /////////////////////////////////////////////////////////
 const char* op1_text="Op 1";

@@ -28,10 +28,14 @@ class StaticNav:public N {
     template<typename Out>
     inline void printMenu(Out& out) {out.printMenu(*this,out,data);}
     inline idx_t size() {return data.size();}
+    inline void enable(idx_t n,bool o) {data.enable(n,o);}
+    inline bool enabled(idx_t n) const {return data.enabled(n);}
     inline bool up() {return N::template _up<This>(*this);}
     inline bool down() {return N::template _down<This>(*this);}
     inline bool left() {return N::template _left<This>(*this);}
     inline bool right() {return N::template _right<This>(*this);}
+    inline bool enter() {return N::template _enter<This>(*this);}
+    inline bool esc() {return N::template _esc<This>(*this);}
   protected:
     Data data;
 };
