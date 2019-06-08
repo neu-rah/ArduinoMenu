@@ -3,6 +3,9 @@
 
 using idx_t=int;
 
+enum class Roles {Panel,Menu,Title,Body,Item,Index,Cursor,Name,Mode,Value,Unit};
+enum class Modes {Normal,Edit,Tune};
+
 struct Nil {};
 
 template<typename I=Nil> struct Empty;

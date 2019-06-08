@@ -6,12 +6,14 @@ simple console
 using namespace std;
 
 #include <menu.h>
+#include <menu/fmt/textFmt.h>
+#include <menu/fmt/titleWrap.h>
 
 /////////////////////////////////////////////////////////
-const char* op1_text="Op 1\n";
-const char* op2_text="Op ...\n";
-const char* op3_text="Op 3\n";
-const char* mainMenu_title="Main menu\n";
+const char* op1_text="Op 1";
+const char* op2_text="Op ...";
+const char* op3_text="Op 3";
+const char* mainMenu_title="Main menu";
 
 using Op1=ItemNav<
   StaticItem<
@@ -20,7 +22,13 @@ using Op1=ItemNav<
 >;
 
 Op1 op1;
-FullPrinter<StdOut<>> out;
+TextFmt<
+  TitleWrapFmt<
+    FullPrinter<
+      StdOut<>
+    >
+  >
+> out;
 
 using MainMenu=StaticText<
   &mainMenu_title,
@@ -33,12 +41,15 @@ using MainMenu=StaticText<
 
 MainMenu mainMenu;
 
-StaticNav<MainMenu> nav;
+StaticNav<
+  MainMenu,
+  NavPos<>
+> nav;
 
 //-----------------------
 int main() {
   cout<<"PIO Native program"<<endl;
-  // op1.printMenu(out);
+  // op1.printMenu(out);//TODO: fic this, sigle element printing
   nav.printMenu(out);
   return 0;
 }

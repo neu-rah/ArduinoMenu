@@ -10,6 +10,9 @@ struct Drift:public N {
   template<typename Out> static inline void newView() {Out::nl();}
   constexpr static inline idx_t pos() {return 0;}
   constexpr static inline idx_t size() {return 0;}
+  constexpr static inline bool selected(idx_t) {return false;}
+  constexpr static inline bool enabled(idx_t) {return true;}
+  constexpr static inline Modes mode() {return Modes::Normal;}
 };
 
 template<typename Data,typename N>
@@ -26,6 +29,7 @@ template<typename N>
 class NavPos:public N {
   public:
     inline idx_t pos() {return at;}
+    inline bool selected(idx_t idx) const {return at==idx;}
   protected:
     idx_t at;
 };

@@ -35,6 +35,29 @@ struct Void:public O {
   template<bool io,typename Nav,typename Out,typename I> static inline void fmtMode(Nav&,Out&,I&,idx_t) {}
   template<bool io,typename Nav,typename Out,typename I> static inline void fmtValue(Nav&,Out&,I&,idx_t) {}
   template<bool io,typename Nav,typename Out,typename I> static inline void fmtUnit(Nav&,Out&,I&,idx_t) {}
+  template<typename N,typename H,typename I>
+  inline void fmt(Roles role,N& nav,O& out,I& i,idx_t n) {
+    fmt(role,true,nav,out,i,n);
+    fmt(role,false,nav,out,i,n);
+  }
+  template<typename Nav,typename Out,typename I>
+  static inline void fmt(Roles role,bool io,Nav& nav,Out& out,I& i,idx_t n) {
+    //we could do better with templates, but we need this to be compatible
+    //with virtual interface too without expanding the vtable too much
+    switch(role) {
+      case Roles::Panel:  io?out.template fmtPanel <true>(nav,out,i,n):out.template fmtPanel <false>(nav,out,i,n);break;
+      case Roles::Menu:   io?out.template fmtMenu  <true>(nav,out,i,n):out.template fmtMenu  <false>(nav,out,i,n);break;
+      case Roles::Title:  io?out.template fmtTitle <true>(nav,out,i,n):out.template fmtTitle <false>(nav,out,i,n);break;
+      case Roles::Body:   io?out.template fmtBody  <true>(nav,out,i,n):out.template fmtBody  <false>(nav,out,i,n);break;
+      case Roles::Item:   io?out.template fmtItem  <true>(nav,out,i,n):out.template fmtItem  <false>(nav,out,i,n);break;
+      case Roles::Index:  io?out.template fmtIndex <true>(nav,out,i,n):out.template fmtIndex <false>(nav,out,i,n);break;
+      case Roles::Cursor: io?out.template fmtCursor<true>(nav,out,i,n):out.template fmtCursor<false>(nav,out,i,n);break;
+      case Roles::Name:   io?out.template fmtName  <true>(nav,out,i,n):out.template fmtName  <false>(nav,out,i,n);break;
+      case Roles::Mode:   io?out.template fmtMode  <true>(nav,out,i,n):out.template fmtMode  <false>(nav,out,i,n);break;
+      case Roles::Value:  io?out.template fmtValue <true>(nav,out,i,n):out.template fmtValue <false>(nav,out,i,n);break;
+      case Roles::Unit:   io?out.template fmtUnit  <true>(nav,out,i,n):out.template fmtUnit  <false>(nav,out,i,n);break;
+    }
+  }
 };
 
 template<typename Dev,Dev& dev,typename O=Void<>>
