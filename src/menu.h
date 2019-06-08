@@ -7,3 +7,4 @@
 #include "menu/out.h"
 #include "menu/nav.h"
 #include "menu/printers.h"
+#include "menu/panels.h"

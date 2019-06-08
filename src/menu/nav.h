@@ -1,9 +1,28 @@
 /* -*- C++ -*- */
 #pragma once
+/**
+* @file nav.h
+* @author Rui Azevedo
+* @brief ArduinoMenu navigation implementations
+*/
 
+/** \defgroup Navigation Navigation system
+ *  @{
+ */
 #include "base.h"
 
+//Output Device Operation
+enum class OutOps {RawOut,Measure};
+template<OutOps>
+struct OutOp {};
+
+using RawOutOp=OutOp<OutOps::RawOut>;
+using MeasureOp=OutOp<OutOps::Measure>;
+
 ////////////////////////////////////
+/*
+* The Drift class is the terminal navigation element
+*/
 template<typename N>
 struct Drift:public N {
   template<typename Out> static inline void printMenu(Out& out) {}
@@ -21,6 +40,10 @@ struct Drift:public N {
   template<typename Nav> constexpr static inline bool _esc  (Nav& nav) {return false;}
 };
 
+/**
+* The NavBase class. Provides common navigation functionality
+* @brief Navigates an inner data structure
+*/
 template<typename Data,typename N>
 class StaticNav:public N {
   public:
@@ -71,3 +94,4 @@ template<typename N=Nil>
 struct NavNode:public INavNode,public N {
   inline void printMenu(IMenuOut& out) override {N::print(out);}
 };
+/** @}*/
