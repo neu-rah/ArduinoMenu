@@ -52,6 +52,8 @@ int main() {
   // op1.printMenu(out);//TODO: fic this, sigle element printing
   nav.printMenu(out);
   nav.up();
+  nav.down();
+  nav.up();
   nav.printMenu(out);
   return 0;
 }
