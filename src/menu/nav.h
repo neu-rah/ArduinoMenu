@@ -49,7 +49,12 @@ class StaticNav:public N {
   public:
     using This=StaticNav<Data,N>;
     template<typename Out>
-    inline void printMenu(Out& out) {out.printMenu(*this,out,data);}
+    inline void printMenu(Out& out) {
+      enterMenuRender();
+      out.newView();
+      out.printMenu(*this,out,data);
+      exitMenuRender();
+    }
     inline idx_t size() {return data.size();}
     inline void enable(idx_t n,bool o) {data.enable(n,o);}
     inline bool enabled(idx_t n) const {return data.enabled(n);}
@@ -61,7 +66,10 @@ class StaticNav:public N {
     inline bool esc() {return N::template _esc<This>(*this);}
     inline NavAgent activate() {return data->activate();}
     inline NavAgent activate(idx_t n) {return data->activateItem(n);}
+    inline void enterMenuRender() {onMenu=true;}
+    inline void exitMenuRender() {onMenu=false;}
   protected:
+    bool onMenu=false;
     Data data;
 };
 

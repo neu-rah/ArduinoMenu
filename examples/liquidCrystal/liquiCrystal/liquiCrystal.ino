@@ -80,24 +80,24 @@ using MainMenu=Prompt<
     decltype(mainMenu_title),
     &mainMenu_title,
     StaticMenu<
-      // Action<Op<decltype(op1_text),&op1_text>,hey>,
-      // Action<Op<decltype(op2_text),&op2_text>,grrr>,
-      // Op<
-      //   decltype(year_text),
-      //   &year_text,
-      //   AsMode<
-      //     AsValue<
-      //       NavHandler<
-      //         NumField<int,year,1900,2100,10,1>
-      //       >
-      //     >
-      //   >
-      // >,
-      // Op<decltype(op2_text),&op2_text>,
-      // Op<decltype(op2_text),&op2_text>,
-      // Op<decltype(op2_text),&op2_text>,
-      // Op<decltype(op2_text),&op2_text>,
-      // SubMenu,
+      Action<Op<decltype(op1_text),&op1_text>,hey>,
+      Action<Op<decltype(op2_text),&op2_text>,grrr>,
+      Op<
+        decltype(year_text),
+        &year_text,
+        AsMode<
+          AsValue<
+            NavHandler<
+              NumField<int,year,1900,2100,10,1>
+            >
+          >
+        >
+      >,
+      Op<decltype(op2_text),&op2_text>,
+      Op<decltype(op2_text),&op2_text>,
+      Op<decltype(op2_text),&op2_text>,
+      Op<decltype(op2_text),&op2_text>,
+      SubMenu,
       Op<decltype(op3_text),&op3_text>
     >
   >
