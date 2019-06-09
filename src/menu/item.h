@@ -195,9 +195,12 @@ struct StaticMenu<I>:public I {
   }
 };
 
-
+/**
+* SelfNav class allows item to also be a navigation system
+* needed fot static tree navigation? will see
+*/
 template<typename I,typename N=NavPos<>>
-struct ItemNav:public I,public N {
+struct SelfNav:public I,public N {
   template<typename O>
   inline void printMenu(O& out) {out.print(*this,out,*this);}
 };

@@ -9,6 +9,7 @@ struct Void:public O {
   template<typename T>
   static inline void raw(T o) {}
   static inline void nl() {}
+  static inline void newView() {nl();}
   static inline void setCursor(idx_t x,idx_t y) {}
   template<typename Out>
   static inline void clrLine(Out& out,idx_t n) {}

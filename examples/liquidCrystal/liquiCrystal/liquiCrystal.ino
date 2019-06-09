@@ -108,7 +108,7 @@ MainMenu mainMenu;
 //problem here Data should be uniform but not tied
 // StaticNavTree<
 //   StaticNav<
-//     ItemNav<
+//     SelfNav<
 //       DynamicNav<Out,MainMenu,NavPos<>>
 //     >
 //   >,2

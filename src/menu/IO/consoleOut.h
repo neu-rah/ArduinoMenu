@@ -14,7 +14,7 @@ using namespace std;
 
 template<ostream& dev=cout,typename O=TextMeasure>
 struct Console:public RawOut<ostream&,dev,O> {
-  static inline void nl() {dev<<endl;}
+  static inline void nl() {dev<<'\r'<<endl;}
   template<typename T>
   inline void raw(T i) {
     dev<<i;
