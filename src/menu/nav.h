@@ -59,6 +59,8 @@ class StaticNav:public N {
     inline bool right() {return N::template _right<This>(*this);}
     inline bool enter() {return N::template _enter<This>(*this);}
     inline bool esc() {return N::template _esc<This>(*this);}
+    inline NavAgent activate() {return data->activate();}
+    inline NavAgent activate(idx_t n) {return data->activateItem(n);}
   protected:
     Data data;
 };

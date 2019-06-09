@@ -27,12 +27,12 @@
         {}
       // constexpr static inline bool canNav() {return true;}
       // inline NavAgent activate() {return {this,&cmds};}
-      template<typename Nav,typename Out>
-      inline void print(Nav& nav,Out& out) {
+      template<typename N,typename O,typename H>
+      inline void print(N& nav,O& out,H& i) {
         // out.template fmtValue<true,Nav,Out,This>(nav,out,*this,0);
         out.template raw(value);
         // out.template fmtValue<false,Nav,Out,This>(nav,out,*this,0);
-        I::print(nav,out);
+        I::print(nav,out,i);
       }
       // inline void out(MenuOut &o) const {
       //   //reflex=*value;can not update here!

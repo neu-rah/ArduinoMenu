@@ -36,8 +36,10 @@ using TextPanel=Chain<
 //dual head output
 using Out=OutList<
   TextPanel<StaticPanel<0,0,16,2,LiquidCrystalOut<lcd>>>,
-  TextPanel<StaticPanel<0,0,80,10,SerialOut<>>>
+  TextPanel<StaticPanel<0,0,80,6,SerialOut<>>>
 >;
+
+Out out;
 
 //string data on flash
 PROGMEM ConstText op1_text="Op 1";
@@ -48,7 +50,7 @@ PROGMEM ConstText mainMenu_title="Main menu";
 PROGMEM ConstText subMenu_title="Sub-menu";
 
 template<typename T,T* text,typename O=Empty<>>
-using Op=Prompt<EnDis<FlashText<T,text,O>>>;
+using Op=EnDis<FlashText<T,text,O>>;
 
 bool hey() {
   Serial.println(F("Hey!"));
@@ -78,24 +80,24 @@ using MainMenu=Prompt<
     decltype(mainMenu_title),
     &mainMenu_title,
     StaticMenu<
-      Action<Op<decltype(op1_text),&op1_text>,hey>,
-      Action<Op<decltype(op2_text),&op2_text>,grrr>,
-      Op<
-        decltype(year_text),
-        &year_text,
-        AsMode<
-          AsValue<
-            NavHandler<
-              NumField<int,year,1900,2100,10,1>
-            >
-          >
-        >
-      >,
+      // Action<Op<decltype(op1_text),&op1_text>,hey>,
+      // Action<Op<decltype(op2_text),&op2_text>,grrr>,
+      // Op<
+      //   decltype(year_text),
+      //   &year_text,
+      //   AsMode<
+      //     AsValue<
+      //       NavHandler<
+      //         NumField<int,year,1900,2100,10,1>
+      //       >
+      //     >
+      //   >
+      // >,
       // Op<decltype(op2_text),&op2_text>,
       // Op<decltype(op2_text),&op2_text>,
       // Op<decltype(op2_text),&op2_text>,
       // Op<decltype(op2_text),&op2_text>,
-      SubMenu,
+      // SubMenu,
       Op<decltype(op3_text),&op3_text>
     >
   >
@@ -104,21 +106,26 @@ using MainMenu=Prompt<
 MainMenu mainMenu;
 
 //problem here Data should be uniform but not tied
-NavTree<
-  NavRoot<
-    ItemNav<
-      DynamicNav<Out,MainMenu,NavPos<>>
-    >
-  >,2
-> nav(mainMenu);
+// StaticNavTree<
+//   StaticNav<
+//     ItemNav<
+//       DynamicNav<Out,MainMenu,NavPos<>>
+//     >
+//   >,2
+// > nav(mainMenu);
+
+StaticNav<
+  MainMenu,
+  NavPos<>
+> nav;
 
 void setup() {
   Serial.begin(115200);
   while(!Serial);
-  Serial.println("AM5 LiquidCrystal example");
+  Serial.println(F("AM5 LiquidCrystal example"));
   lcd.begin(16,2);
   nav.enable(1,false);
-  nav.printMenu();
+  nav.printMenu(out);
 }
 
 //handle serial keys to navigate menu
@@ -134,6 +141,6 @@ bool keys(int key) {
 
 void loop() {
   if (Serial.available()) {
-    if (keys(Serial.read())||true) nav.printMenu();
+    if (keys(Serial.read())||true) nav.printMenu(out);
   }
 }

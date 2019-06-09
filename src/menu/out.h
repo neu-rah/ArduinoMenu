@@ -1,7 +1,7 @@
 /* -*- C++ -*- */
 #pragma once
 
-#include "base.h"
+#include "nav.h"
 
 //////////////////////////////////////////////
 template<typename O>
@@ -9,7 +9,9 @@ struct Void:public O {
   template<typename T>
   static inline void raw(T o) {}
   static inline void nl() {}
-  static inline void clrLine(idx_t) {}
+  static inline void setCursor(idx_t x,idx_t y) {}
+  template<typename Out>
+  static inline void clrLine(Out& out,idx_t n) {}
   template<typename N,typename H,typename I>
   static void print(N,H,I) {}
   constexpr static inline bool isRange() {return true;}
@@ -49,7 +51,7 @@ struct Void:public O {
       case Roles::Menu:   io?out.template fmtMenu  <true>(nav,out,i,n):out.template fmtMenu  <false>(nav,out,i,n);break;
       case Roles::Title:  io?out.template fmtTitle <true>(nav,out,i,n):out.template fmtTitle <false>(nav,out,i,n);break;
       case Roles::Body:   io?out.template fmtBody  <true>(nav,out,i,n):out.template fmtBody  <false>(nav,out,i,n);break;
-      case Roles::Item:   io?out.template fmtItem  <true>(nav,out,i,n):out.template fmtItem  <false>(nav,out,i,n);break;
+      case Roles::Prompt:   io?out.template fmtItem  <true>(nav,out,i,n):out.template fmtItem  <false>(nav,out,i,n);break;
       case Roles::Index:  io?out.template fmtIndex <true>(nav,out,i,n):out.template fmtIndex <false>(nav,out,i,n);break;
       case Roles::Cursor: io?out.template fmtCursor<true>(nav,out,i,n):out.template fmtCursor<false>(nav,out,i,n);break;
       case Roles::Name:   io?out.template fmtName  <true>(nav,out,i,n):out.template fmtName  <false>(nav,out,i,n);break;
@@ -68,11 +70,23 @@ struct RawOut:public O {
 
 struct IMenuOut {
   virtual void raw(const char* o)=0;
+  #ifdef ARDUINO
+    virtual inline void raw(const __FlashStringHelper* n) {}
+  #endif
+  virtual inline void fmt(Roles role,bool io,INavNode& nav,IMenuOut&,Item& i,idx_t) {}
+  //just a comodity to inline a role (open/close)
+  inline void fmt(Roles role,INavNode& nav,IMenuOut& out,Item& i,idx_t n) {
+    fmt(role,true,nav,out,i,n);
+    fmt(role,false,nav,out,i,n);
+  }
 };
 
 template<typename O>
 struct MenuOut:public O {
   void raw(const char* o) override {O::raw(o);}
+  #ifdef ARDUINO
+    inline void raw(const __FlashStringHelper* n) override {O::raw(n);};
+  #endif
 };
 
 //text output measure

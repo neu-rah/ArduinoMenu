@@ -3,10 +3,14 @@
 
 using idx_t=int;
 
-enum class Roles {Panel,Menu,Title,Body,Item,Index,Cursor,Name,Mode,Value,Unit};
+enum class Roles {Panel,Menu,Title,Body,Prompt,Index,Cursor,Name,Mode,Value,Unit};
 enum class Modes {Normal,Edit,Tune};
 
 struct Nil {};
+
+#if defined(ARDUINO) && (defined(__AVR_ATtiny13__) || defined(ATTINY_CORE))
+using __FlashStringHelper=const char*;
+#endif
 
 template<typename I=Nil> struct Empty;
 template<typename I=Nil> struct Void;
@@ -14,9 +18,10 @@ template<typename I=Nil> struct Drift;
 template<typename Data,typename N=Drift<>> struct StaticNav;
 template<typename N=Drift<>> class NavPos;
 
-struct IItem;
+struct Item;
 struct IMenuOut;
 struct INavNode;
+struct NavAgent;
 
 template<typename O,typename... OO>
 struct Node:public Node<O> {

@@ -8,3 +8,5 @@
 #include "menu/nav.h"
 #include "menu/printers.h"
 #include "menu/panels.h"
+
+#include "menu/item.hpp"

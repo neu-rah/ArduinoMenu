@@ -35,7 +35,7 @@ struct FullPrinter:public P {
     // _trace(MDO<<"size:"<<i.size()<<endl);
     for(idx_t n=out.top();n<i.size();n++) {
       if (!out.freeY()) break;
-      P::clrLine(P::posY());
+      P::clrLine(out,P::posY());
       out.template fmtItem<true>(nav,out,*this,n);
       out.template fmtIndex<true>(nav,out,*this,n);
       out.template fmtIndex<false>(nav,out,*this,n);

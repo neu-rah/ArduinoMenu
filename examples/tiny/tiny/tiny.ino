@@ -13,8 +13,8 @@ template<typename O>
 using TitleWrap=TitleWrapFmt<O>;//default wrap
 
 using Out=Chain<
-  TextFmt,
-  TitleWrap,
+  // TextFmt,
+  // TitleWrap,
   FullPrinter
 >::To<SerialOut<>>;
 
@@ -22,13 +22,12 @@ Out out;
 
 //string data on flash
 PROGMEM ConstText op1_text="Op 1";
-PROGMEM ConstText op2_text="Op ...";
+PROGMEM ConstText op2_text="Op 2";
 PROGMEM ConstText op3_text="Op 3";
-PROGMEM ConstText year_text="Year";
 PROGMEM ConstText mainMenu_title="Main menu";
 
 template<typename T,T* text,typename O=Empty<>>
-using Op=EnDis<FlashText<T,text>>;
+using Op=FlashText<T,text>;
 
 using MainMenu=
   FlashText<
@@ -36,11 +35,6 @@ using MainMenu=
     &mainMenu_title,
     StaticMenu<
       Op<decltype(op1_text),&op1_text>,
-      Op<decltype(op2_text),&op2_text>,
-      Op<decltype(op2_text),&op2_text>,
-      Op<decltype(op2_text),&op2_text>,
-      Op<decltype(op2_text),&op2_text>,
-      Op<decltype(op2_text),&op2_text>,
       Op<decltype(op2_text),&op2_text>,
       Op<decltype(op3_text),&op3_text>
     >

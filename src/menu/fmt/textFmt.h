@@ -26,7 +26,7 @@ struct TextFmt:public O {
   template<bool io,typename Nav,typename Out,typename I>
   static inline void fmtTitle(Nav& nav,Out& out,I& i,idx_t n) {
     if (io) {
-      out.fmt(Roles::Item,true,nav,out,i,n);//TODO:this will repeat the switch case many times!
+      out.fmt(Roles::Prompt,true,nav,out,i,n);//TODO:this will repeat the switch case many times!
       //alternative is to add many virtual functions to the interface...
       //or => do demux on virtual and never call the switch version again!
       //Cap should always call template version
@@ -35,7 +35,7 @@ struct TextFmt:public O {
       O::template fmtTitle<io,Nav,Out,I>(nav,out,i,n);
     } else {
       O::template fmtTitle<io,Nav,Out,I>(nav,out,i,n);
-      out.fmt(Roles::Item,false,nav,out,i,n);
+      out.fmt(Roles::Prompt,false,nav,out,i,n);
     }
   }
   template<bool io,typename Nav,typename Out,typename I>
