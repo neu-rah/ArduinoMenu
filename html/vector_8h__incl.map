@@ -1,0 +1,11 @@
+<map id="src/menu/comp/vector.h" name="src/menu/comp/vector.h">
+<area shape="rect" id="node2" href="$menu_8h.html" title="ArduinoMenu main include file. " alt="" coords="302,80,367,107"/>
+<area shape="rect" id="node3" href="$debug_8h.html" title="debug macros and utilities " alt="" coords="5,155,109,181"/>
+<area shape="rect" id="node5" href="$base_8h.html" title="generic definitions and aux. stuff " alt="" coords="195,304,293,331"/>
+<area shape="rect" id="node6" href="$item_8h.html" title="ArduinoMenu data/structure representation and base components. " alt="" coords="313,229,407,256"/>
+<area shape="rect" id="node7" href="$out_8h.html" title="ArduinoMenu output components. " alt="" coords="185,155,271,181"/>
+<area shape="rect" id="node8" href="$nav_8h.html" title="ArduinoMenu navigation implementations. " alt="" coords="217,229,271,256"/>
+<area shape="rect" id="node9" href="$printers_8h.html" title="ArduinoMenu part printers. " alt="" coords="397,155,509,181"/>
+<area shape="rect" id="node10" href="$panels_8h.html" title="ArduinoMenu output space management. " alt="" coords="533,155,640,181"/>
+<area shape="rect" id="node11" href="$item_8hpp.html" title="menu item members that have to be implemented outside the class body " alt="" coords="665,155,773,181"/>
+</map>

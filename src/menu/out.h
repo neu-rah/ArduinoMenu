@@ -1,9 +1,17 @@
 /* -*- C++ -*- */
 #pragma once
+/**
+* @file out.h
+* @author Rui Azevedo
+* @brief ArduinoMenu output components
+*/
 
 #include "nav.h"
 
 //////////////////////////////////////////////
+/**
+* The Void class is output system terminal
+*/
 template<typename O>
 struct Void:public O {
   template<typename T>
@@ -63,12 +71,18 @@ struct Void:public O {
   }
 };
 
+/**
+* The RawOut class is the base for system's output devices encapsulation
+*/
 template<typename Dev,Dev& dev,typename O=Void<>>
 struct RawOut:public O {
   template<typename T>
   inline void raw(T o) {dev<<o;}
 };
 
+/**
+* The IMenuOut is the virtual output interface definition
+*/
 struct IMenuOut {
   virtual void raw(const char* o)=0;
   #ifdef ARDUINO
@@ -82,6 +96,9 @@ struct IMenuOut {
   }
 };
 
+/**
+* The MenuOut class is the top level static component for the menu output system
+*/
 template<typename O>
 struct MenuOut:public O {
   void raw(const char* o) override {O::raw(o);}
@@ -90,7 +107,9 @@ struct MenuOut:public O {
   #endif
 };
 
-//text output measure
+/**
+* The TextMeasure class is an output component that helps output devices to measure the output data
+*/
 struct TextMeasure:public Void<> {
   template<typename T>
   static inline idx_t measure(T o) {
@@ -108,4 +127,5 @@ struct TextMeasure:public Void<> {
     #endif
 };
 
+/// a specialization for char measure... we might have to change this for UTF8 and surrogate character systems
 template<> idx_t TextMeasure::measure<const char>(const char o) {return 1;}

@@ -8,7 +8,7 @@ simple std console
 #include <menu.h>
 //menu output devices
 #include <menu/IO/consoleOut.h>
-//extra menu ciomponents
+//extra menu components
 #include <menu/comp/endis.h>
 #include <menu/comp/numField.h>
 //output format

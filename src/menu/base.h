@@ -1,5 +1,11 @@
 /* -*- C++ -*- */
 #pragma once
+/**
+* @file base.h
+* @author Rui Azevedo
+* @brief generic definitions and aux. stuff
+*/
+
 
 using idx_t=int;
 
@@ -23,22 +29,22 @@ struct IMenuOut;
 struct INavNode;
 struct NavAgent;
 
-template<typename O,typename... OO>
-struct Node:public Node<O> {
-  using This=O;
-  using Next=Node<OO...>;
-  void map(void(*f)(O)) {
-    f(*this);
-    next.map(f);
-  }
-  Next next;
-};
-
-template<typename O>
-struct Node<O>:public O {
-  using This=O;
-  void map(void(*f)(O)) {f(this);}
-};
+// template<typename O,typename... OO>
+// struct Node:public Node<O> {
+//   using This=O;
+//   using Next=Node<OO...>;
+//   void map(void(*f)(O)) {
+//     f(*this);
+//     next.map(f);
+//   }
+//   Next next;
+// };
+//
+// template<typename O>
+// struct Node<O>:public O {
+//   using This=O;
+//   void map(void(*f)(O)) {f(this);}
+// };
 
 /**
 * The Chain class is an utility to make composition nesting cleaner

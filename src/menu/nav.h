@@ -81,6 +81,11 @@ class StaticNav:public N {
     Data data;
 };
 
+/**
+* NapPos class keeps navigation selectd index track
+* and handles navigation functions for the navigation system.
+* this is a navigation component
+*/
 template<typename N>
 class NavPos:public N {
   public:
@@ -170,6 +175,7 @@ class ItemNav:public N {
       return focus?focus.mode():N::_mode();}
     inline bool hasFocus() const {return focus;}
   protected:
+    //we need a special case for sub-menus, no need to use the vtables of focus NavAgent
     NavAgent focus;
 };
 
@@ -178,14 +184,21 @@ class ItemNav:public N {
 //   inline Modes mode() {return N::mode(*this);}
 // };
 
-template<typename Data,typename N>
-class StaticNavTree:public StaticNav<N> {
-};
+// template<typename Data,typename N>
+// class StaticNavTree:public StaticNav<N> {
+// };
 
+/**
+* The INavNode class is the navigation interface definition
+*/
 struct INavNode {
   virtual inline void printMenu(IMenuOut& out)=0;
 };
 
+/**
+* The NavNode class is the final virtual navigation interface
+* it encapsulates the navigation static composition and abides to the virtual interface
+*/
 template<typename N=Nil>
 struct NavNode:public INavNode,public N {
   inline void printMenu(IMenuOut& out) override {N::print(out);}

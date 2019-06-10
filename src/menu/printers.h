@@ -10,6 +10,10 @@
  *  @{
  */
 
+/**
+* The FullPrinter component allows output devices to print data and formats
+* TODO: subdivide into smaller printers...
+*/
 template<typename P=TextMeasure>
 struct FullPrinter:public P {
   template<typename Nav,typename Out,typename I>

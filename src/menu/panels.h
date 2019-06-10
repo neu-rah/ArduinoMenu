@@ -50,7 +50,7 @@ class RangePanel:public O {
 };
 
 /**
-* The Viewport class tracks space usage
+* The Viewport class tracks space usage for output devices
 */
 template<typename O>
 class Viewport:public O {

@@ -1,5 +1,11 @@
 /* -*- C++ -*- */
 #pragma once
+/**
+* @file item.h
+* @author Rui Azevedo
+* @brief ArduinoMenu data/structure representation and base components
+*/
+
 
 #include "base.h"
 
@@ -52,6 +58,9 @@ struct ItemCmd:public CmdAgent {
 /** @}*/
 
 //////////////////////////////////////////////
+/**
+* The Empty class is the data terminal
+*/
 template<typename I>
 struct Empty:public I {
   template<typename N,typename O,typename H>
@@ -140,6 +149,9 @@ class Action:public I {
 };
 /** @}*/
 
+/**
+* The StaticText class is a data composition to hold simple text data (const char*)
+*/
 template<const char**text,typename I=Empty<>>
 struct StaticText:public I {
   template<typename N,typename O,typename H>
@@ -149,6 +161,12 @@ struct StaticText:public I {
   }
 };
 
+/**
+* The StaticMenu class is a data composition to hold a set of data items
+* this data enumeration can't be changed either in order or in size
+* as its structure will NOT be stored on the final program (compile time structure)
+* data items can however be dynamic or of mixed types
+*/
 template<typename I,typename... II>
 class StaticMenu:public StaticMenu<I> {
   public:
@@ -179,6 +197,9 @@ class StaticMenu:public StaticMenu<I> {
     Next next;
 };
 
+/*
+* this is the StaticMenu terminal specialization (last item)
+*/
 template<typename I>
 struct StaticMenu<I>:public I {
   using This=StaticMenu<I>;
@@ -213,6 +234,10 @@ struct SelfNav:public I,public N {
   inline void printMenu(O& out) {out.print(*this,out,*this);}
 };
 
+/**
+* The StaticItem is the top level static composition that encapsulates data structures compositions
+* it should be compatible with the virtual interface
+*/
 template<typename I>
 struct StaticItem:public I {
   using This=StaticItem<I>;
@@ -222,10 +247,17 @@ struct StaticItem:public I {
   }
 };
 
+/**
+* The Item class is the virtual data interface definition
+*/
 struct Item {
   virtual inline void print(INavNode&,IMenuOut&) {}
 };
 
+/**
+* The Prompt class is the top level virtual data implementation
+* it should encapsulate a data compsition and abide to the virtual interface
+*/
 template<typename I>
 struct Prompt:public Item, public I {
   inline void print(INavNode& nav,IMenuOut& out) override {I::print(nav,out,(I&)*this);}

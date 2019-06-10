@@ -1,0 +1,12 @@
+<map id="src/menu/nav.h" name="src/menu/nav.h">
+<area shape="rect" id="node2" href="$out_8h.html" title="ArduinoMenu output components. " alt="" coords="675,80,785,107"/>
+<area shape="rect" id="node3" href="$menu_8h.html" title="ArduinoMenu main include file. " alt="" coords="732,155,819,181"/>
+<area shape="rect" id="node4" href="$endis_8h.html" title="menu item component, provides Enable/Disable functionality " alt="" coords="5,237,164,263"/>
+<area shape="rect" id="node5" href="$flashText_8h.html" title="menu item component, provides flash stored text " alt="" coords="189,237,370,263"/>
+<area shape="rect" id="node6" href="$numField_8h.html" title="range validated numeric field " alt="" coords="395,237,575,263"/>
+<area shape="rect" id="node7" href="$vector_8h.html" title="ArduinoMenu std::vector based menu. " alt="" coords="599,237,762,263"/>
+<area shape="rect" id="node8" href="$titleWrap_8h.html" title="ArduinoMenu format, wrap the title between characters, default: &#39;[&#39; &#39;]&#39;. " alt="" coords="787,237,953,263"/>
+<area shape="rect" id="node9" href="$consoleOut_8h.html" title="Use standard C++ stream as menu output. " alt="" coords="977,237,1152,263"/>
+<area shape="rect" id="node10" href="$liquidCrystalOut_8h.html" title="use arduino standard LCD library as menu output " alt="" coords="1177,229,1347,271"/>
+<area shape="rect" id="node11" href="$serialOut_8h.html" title="Use arduino serial as menu output. " alt="" coords="1372,237,1533,263"/>
+</map>

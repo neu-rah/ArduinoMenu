@@ -1,4 +1,9 @@
 #include "item.h"
+/**
+* @file item.hpp
+* @author Rui Azevedo
+* @brief menu item members that have to be implemented outside the class body
+*/
 
 template<typename I>
 NavAgent Empty<I>::activate() {return {NULL,&cmds}; }
