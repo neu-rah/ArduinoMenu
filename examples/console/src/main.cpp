@@ -116,7 +116,8 @@ int main() {
       if (k==27) {
         if (kbhit()) k=getch();
         else break;
-      } else if (keys(k)) nav.printMenu(out);
+      } else if (keys(k))
+        nav.printMenu(out);
     }
   } while(true);
   while(kbhit()) cout<<(int)getch()<<endl;

@@ -17,7 +17,7 @@ struct CmdAgent {
   virtual bool enter(void* o)=0;
   virtual bool esc(void* o)=0;
   virtual bool result() const=0;
-  virtual Modes mode(void *) const {return Modes::Normal;};
+  virtual Modes mode(void*) const {return Modes::Normal;}
 };
 
 /**
@@ -28,10 +28,10 @@ template<bool res=false>
 struct EmptyCmds:public CmdAgent {
   bool canNav() const override {return false;}
   bool result() const override {return res;};
-  bool up (void* o)  override {return false;}
-  bool down (void* o)  override {return false;}
-  bool enter (void* o)  override {return false;}
-  bool esc (void* o)  override {return false;}
+  bool up (void*)  override {return false;}
+  bool down (void*)  override {return false;}
+  bool enter (void*)  override {return false;}
+  bool esc (void*)  override {return false;}
 };
 
 /**
@@ -168,11 +168,11 @@ class StaticMenu:public StaticMenu<I> {
     }
     template<typename N,typename O,typename H>
     inline void printItem(N& n,O& o,H& i,idx_t c) {
-      // _trace(MDO<<"StaticMenu<...>::printItem "<<c<<endl);
+      trace(MDO<<"StaticMenu<...>::printItem "<<c<<endl);
       c>0?i.next.printItem(n,o,next,c-1):I::print(n,o,i);
     }
     inline NavAgent activateItem(idx_t n) {
-      _trace(MDO<<"StaticMenu<I,II...>::activateItem "<<n<<endl);
+      trace(MDO<<"StaticMenu<I,II...>::activateItem "<<n<<endl);
       return n?next.activateItem(n-1):This::activate();
     }
   protected:
@@ -194,11 +194,11 @@ struct StaticMenu<I>:public I {
   inline void print(N& n,O& o,H& i) {/*I::print(n,o,i);*/}
   template<typename N,typename O,typename H>
   static inline void printItem(N& n,O& o,H& i,idx_t c) {
-    // _trace(MDO<<"StaticMenu::printItem "<<c<<endl);
+    trace(MDO<<"StaticMenu::printItem "<<c<<endl);
     i.I::print(n,o,i);
   }
   inline NavAgent activateItem(idx_t n) {
-    _trace(MDO<<"StaticMenu<I>::activateItem "<<n<<endl);
+    trace(MDO<<"StaticMenu<I>::activateItem "<<n<<endl);
     return This::activate();
   }
 };

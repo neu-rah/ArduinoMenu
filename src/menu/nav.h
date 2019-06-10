@@ -31,7 +31,8 @@ struct Drift:public N {
   constexpr static inline idx_t size() {return 0;}
   constexpr static inline bool selected(idx_t) {return false;}
   constexpr static inline bool enabled(idx_t) {return true;}
-  constexpr static inline Modes mode() {return Modes::Normal;}
+  constexpr static inline Modes _mode() {return Modes::Normal;}
+  // template<typename Nav> constexpr static inline Modes mode(Nav& nav) {return nav._mode(nav);}
   template<typename Nav> constexpr static inline bool _up   (Nav& nav) {return false;}
   template<typename Nav> constexpr static inline bool _down (Nav& nav) {return false;}
   template<typename Nav> constexpr static inline bool _left (Nav& nav) {return false;}
@@ -58,19 +59,20 @@ class StaticNav:public N {
     inline idx_t size() {return data.size();}
     inline void enable(idx_t n,bool o) {data.enable(n,o);}
     inline bool enabled(idx_t n) const {return data.enabled(n);}
+    inline Modes mode() const {return N::_mode();}
     inline bool up() {return N::template _up<This>(*this);}
     inline bool down() {return N::template _down<This>(*this);}
     inline bool left() {return N::template _left<This>(*this);}
     inline bool right() {return N::template _right<This>(*this);}
     inline bool enter() {
-      _trace(MDO<<"StaticNav::enter"<<endl);
+      trace(MDO<<"StaticNav::enter"<<endl);
       return N::template _enter<This>(*this);}
     inline bool esc() {return N::template _esc<This>(*this);}
     inline NavAgent activate() {
-      _trace(MDO<<"StaticNav::activate."<<endl);
+      trace(MDO<<"StaticNav::activate."<<endl);
       return data->activate();}
     inline NavAgent activate(idx_t n) {
-      _trace(MDO<<"StaticNav::activate "<<n<<endl);
+      trace(MDO<<"StaticNav::activate "<<n<<endl);
       return data.activateItem(n);}
     inline void enterMenuRender() {onMenu=true;}
     inline void exitMenuRender() {onMenu=false;}
@@ -96,7 +98,7 @@ class NavPos:public N {
     }
     template<typename Nav>
     inline bool _enter(Nav& nav) {
-      _trace(MDO<<"NavPos::_enter"<<endl);
+      trace(MDO<<"NavPos::_enter"<<endl);
       return (!nav.enabled(nav.pos()))&&(nav.activate(at)||N::_enter(nav));
     }
   protected:
@@ -141,7 +143,7 @@ class ItemNav:public N {
     }
     template<typename Nav>
     inline bool _enter(Nav& nav) {
-      _trace(MDO<<"ItemNav::_enter"<<endl);
+      trace(MDO<<"ItemNav::_enter"<<endl);
       if (focus) {
         if (focus.enter()) return true;
         focus=Empty<>::activate();//blur if enter return false
@@ -161,14 +163,18 @@ class ItemNav:public N {
       }
       return N::_esc(nav);
     }
-    template<typename Nav>
-    inline Modes _mode(Nav& nav) const {
-      _trace(MDO<<"ItemNav::_mode"<<endl);
-      return focus.result()?focus.mode():Modes::Normal;}
+    inline Modes _mode() const {
+      trace(MDO<<"ItemNav::_mode"<<endl);
+      return focus?focus.mode():N::_mode();}
     inline bool hasFocus() const {return focus;}
   protected:
     NavAgent focus;
 };
+
+// template<typename N>
+// struct StaticNavNode:public N {
+//   inline Modes mode() {return N::mode(*this);}
+// };
 
 template<typename Data,typename N>
 class StaticNavTree:public StaticNav<N> {
