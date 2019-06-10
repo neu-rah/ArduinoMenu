@@ -158,6 +158,7 @@ class ItemNav:public N {
     }
     template<typename Nav>
     inline bool _esc(Nav& nav) {
+      _trace(MDO<<"ItemNav::_esc!!!!"<<endl);
       if (focus) {
         if (focus.esc()) focus=Empty<>::activate();
         return true;

@@ -52,7 +52,7 @@
         return false;
       }
       inline bool enter() {return tunning^=true;}
-      inline bool esc() {return false;}
+      inline bool esc() {return true;}//true=>allow unfocus
       inline Modes mode() {return tunning?Modes::Tune:Modes::Edit;}
     protected:
       bool tunning=false;//TODO: this state should be stored on navigation! (or field agent)
