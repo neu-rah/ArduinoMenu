@@ -171,6 +171,10 @@ class StaticMenu:public StaticMenu<I> {
       // _trace(MDO<<"StaticMenu<...>::printItem "<<c<<endl);
       c>0?i.next.printItem(n,o,next,c-1):I::print(n,o,i);
     }
+    inline NavAgent activateItem(idx_t n) {
+      _trace(MDO<<"StaticMenu<I,II...>::activateItem "<<n<<endl);
+      return n?next.activateItem(n-1):This::activate();
+    }
   protected:
     Next next;
 };
@@ -192,6 +196,10 @@ struct StaticMenu<I>:public I {
   static inline void printItem(N& n,O& o,H& i,idx_t c) {
     // _trace(MDO<<"StaticMenu::printItem "<<c<<endl);
     i.I::print(n,o,i);
+  }
+  inline NavAgent activateItem(idx_t n) {
+    _trace(MDO<<"StaticMenu<I>::activateItem "<<n<<endl);
+    return This::activate();
   }
 };
 

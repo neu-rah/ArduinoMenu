@@ -116,7 +116,7 @@ MainMenu mainMenu;
 
 StaticNav<
   MainMenu,
-  NavPos<>
+  ItemNav<NavPos<>>
 > nav;
 
 void setup() {

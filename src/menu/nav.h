@@ -62,10 +62,16 @@ class StaticNav:public N {
     inline bool down() {return N::template _down<This>(*this);}
     inline bool left() {return N::template _left<This>(*this);}
     inline bool right() {return N::template _right<This>(*this);}
-    inline bool enter() {return N::template _enter<This>(*this);}
+    inline bool enter() {
+      _trace(MDO<<"StaticNav::enter"<<endl);
+      return N::template _enter<This>(*this);}
     inline bool esc() {return N::template _esc<This>(*this);}
-    inline NavAgent activate() {return data->activate();}
-    inline NavAgent activate(idx_t n) {return data->activateItem(n);}
+    inline NavAgent activate() {
+      _trace(MDO<<"StaticNav::activate."<<endl);
+      return data->activate();}
+    inline NavAgent activate(idx_t n) {
+      _trace(MDO<<"StaticNav::activate "<<n<<endl);
+      return data.activateItem(n);}
     inline void enterMenuRender() {onMenu=true;}
     inline void exitMenuRender() {onMenu=false;}
   protected:
@@ -88,8 +94,80 @@ class NavPos:public N {
       if (at>0) {at--;return true;}
       return N::template _down<Nav>(nav);
     }
+    template<typename Nav>
+    inline bool _enter(Nav& nav) {
+      _trace(MDO<<"NavPos::_enter"<<endl);
+      return (!nav.enabled(nav.pos()))&&(nav.activate(at)||N::_enter(nav));
+    }
   protected:
     idx_t at;
+};
+
+/**
+* The ItemNav class allow items to handle navigation (needed for fields)
+* items can handle up|down|enter|esc
+* left|right are a thing of the navigation system that can steal
+* focus from the field, an enter is sent to the field instead, to validate the entry
+*/
+template<typename N>
+class ItemNav:public N {
+  public:
+    using N::N;
+    // using OutType=typename N::OutType;
+    // using DataType=typename N::DataType;
+    template<typename Nav>
+    inline bool _down(Nav& nav) {
+      return focus?focus.down():N::_down(nav);
+    }
+    template<typename Nav>
+    inline bool _up(Nav& nav) {
+      return focus?focus.up():N::_up(nav);
+    }
+    template<typename Nav>
+    inline bool _left(Nav& nav) {
+      if (focus) {
+        focus.enter();
+        focus=Empty<>::activate();
+      }
+      return N::_left(nav);
+    }
+    template<typename Nav>
+    inline bool _right(Nav& nav) {
+      if (focus) {
+        focus.enter();
+        focus=Empty<>::activate();
+      }
+      return N::_right(nav);
+    }
+    template<typename Nav>
+    inline bool _enter(Nav& nav) {
+      _trace(MDO<<"ItemNav::_enter"<<endl);
+      if (focus) {
+        if (focus.enter()) return true;
+        focus=Empty<>::activate();//blur if enter return false
+      } else {
+        if (!nav.enabled(nav.pos())) return false;
+        focus=nav.activate(nav.pos());
+        N::_enter(nav);
+        if (focus.result()) return true;
+      }
+      return false;
+    }
+    template<typename Nav>
+    inline bool _esc(Nav& nav) {
+      if (focus) {
+        if (focus.esc()) focus=Empty<>::activate();
+        return true;
+      }
+      return N::_esc(nav);
+    }
+    template<typename Nav>
+    inline Modes _mode(Nav& nav) const {
+      _trace(MDO<<"ItemNav::_mode"<<endl);
+      return focus.result()?focus.mode():Modes::Normal;}
+    inline bool hasFocus() const {return focus;}
+  protected:
+    NavAgent focus;
 };
 
 template<typename Data,typename N>

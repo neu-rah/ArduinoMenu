@@ -14,7 +14,7 @@ class OutList:public OutList<O> {
     using O::O;
     template<typename Nav,typename Out,typename I>
     inline void printMenu(Nav& nav,Out& out,I& i) {
-      _trace(MDO<<"OutList::printMenu<O,OO...> "<<(int)&out<<endl);
+      trace(MDO<<"OutList::printMenu<O,OO...> "<<(int)&out<<endl);
       OutList<O>::template printMenu<Nav,Out,I>(nav,out,i);
       next.newView();
       next.template printMenu<Nav,Next,I>(nav,next,i);
@@ -29,7 +29,7 @@ class OutList<O>:public O {
     using O::O;
     template<typename Nav,typename Out,typename I>
     inline void printMenu(Nav& nav,Out& out,I& i) {
-      _trace(MDO<<"OutList::printMenu<O> "<<(int)&out<<endl);
+      trace(MDO<<"OutList::printMenu<O> "<<(int)&out<<endl);
       O::template printMenu<Nav,Out,I>(nav,out,i);
     }
 };

@@ -51,7 +51,7 @@ int getch()
 // int main(int argc, char *argv[])
 // {
 //     set_conio_terminal_mode();
-// 
+//
 //     while (!kbhit()) {
 //         /* do some work */
 //     }

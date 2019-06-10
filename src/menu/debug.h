@@ -17,6 +17,7 @@
   #else
     #include <iostream>
     using namespace std;
+    #define endl "\r\n"
     #ifndef MDO
       #define MDO cout
     #endif
