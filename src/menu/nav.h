@@ -147,6 +147,7 @@ class ItemNav:public N {
       if (focus) {
         if (focus.enter()) return true;
         focus=Empty<>::activate();//blur if enter return false
+        return true;//redraw anyway
       } else {
         if (!nav.enabled(nav.pos())) return false;
         focus=nav.activate(nav.pos());

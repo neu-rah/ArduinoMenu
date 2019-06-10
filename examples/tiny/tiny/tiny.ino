@@ -1,3 +1,9 @@
+/*
+This was just compiled.. not uploaded it to an attiny 13 yet...
+the purpose was just to check memory contraints
+upload at own risk ;)
+*/
+
 #include <menu.h>
 
 #include <menu/IO/serialOut.h>

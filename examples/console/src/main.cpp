@@ -19,7 +19,8 @@ simple std console
 const char* op1_text="Op 1";
 const char* op2_text="Op ...";
 const char* op3_text="Op 3";
-const char* year_text="Year";
+const char* tpt_text="Temperature";
+const char* tpt_unit_text="ºC";
 const char* mainMenu_title="Main menu";
 const char* subMenu_title="Sub-menu";
 
@@ -51,7 +52,7 @@ bool grrr() {
 template<const char** text,typename O=Empty<>>
 using Op=EnDis<StaticText<text,O>>;
 
-int year=2019;
+int tpt=25;
 
 using SubMenu=Prompt<
   StaticText<
@@ -69,11 +70,11 @@ using MainMenu=StaticText<
     Action<Op<&op1_text>,hey>,
     Action<Op<&op2_text>,grrr>,
     Op<
-      &year_text,
+      &tpt_text,
       AsMode<
         AsValue<
           NavHandler<
-            NumField<int,year,1900,2100,10,1>
+            NumField<int,tpt,-100,100,10,1,AsUnit<StaticText<&tpt_unit_text>>>
           >
         >
       >

@@ -19,10 +19,8 @@ struct TextFmt:public O {
     }
     O::template fmtMode<io,Nav,Out,I>(nav,out,i,n);
   }
-  template<bool io,typename Nav,typename Out,typename I>
-  static inline void fmtUnit(Nav& nav,Out& out,I& i,idx_t n) {
-    out.raw('!');
-  }
+  // template<bool io,typename Nav,typename Out,typename I>
+  // static inline void fmtUnit(Nav& nav,Out& out,I& i,idx_t n) {}
   template<bool io,typename Nav,typename Out,typename I>
   static inline void fmtTitle(Nav& nav,Out& out,I& i,idx_t n) {
     if (io) {
