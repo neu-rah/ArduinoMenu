@@ -217,7 +217,7 @@ result idle(menuOut& o,idleEvent e) {
 }
 
 template<typename T>//some utill to help us calculate array sizes (known at compile time)
-constexpr inline size_t len(T& o) {return sizeof(o)/sizeof(decltype(o[0]));}
+constexpr inline size_t menuData_len(T& o) {return sizeof(o)/sizeof(decltype(o[0]));}
 
 //serial menu navigation
 MENU_OUTLIST(out,&serverOut);
@@ -227,19 +227,19 @@ NAVROOT(nav,mainMenu,MAX_DEPTH,serial,out);
 //xml+http navigation control
 noInput none;//web uses its own API
 menuOut* web_outputs[]={&serverOut};
-outputsList web_out(web_outputs,len(web_outputs));
+outputsList web_out(web_outputs,menuData_len(web_outputs));
 navNode web_cursors[MAX_DEPTH];
 navRoot webNav(mainMenu, web_cursors, MAX_DEPTH, none, web_out);
 
 //json+http navigation control
 menuOut* json_outputs[]={&jsonOut};
-outputsList json_out(json_outputs,len(json_outputs));
+outputsList json_out(json_outputs,menuData_len(json_outputs));
 navNode json_cursors[MAX_DEPTH];
 navRoot jsonNav(mainMenu, json_cursors, MAX_DEPTH, none, json_out);
 
 //websockets navigation control
 menuOut* ws_outputs[]={&wsOut};
-outputsList ws_out(ws_outputs,len(ws_outputs));
+outputsList ws_out(ws_outputs,menuData_len(ws_outputs));
 navNode ws_cursors[MAX_DEPTH];
 navRoot wsNav(mainMenu, ws_cursors, MAX_DEPTH, none, ws_out);
 
