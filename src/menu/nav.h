@@ -28,10 +28,10 @@ struct Drift:public N {
   template<typename Out> static inline void printMenu(Out& out) {}
   template<typename Out> static inline void newView() {Out::nl();}
   constexpr static inline idx_t pos() {return 0;}
-  constexpr static inline idx_t size() {return 0;}
-  constexpr static inline bool selected(idx_t) {return false;}
-  constexpr static inline bool enabled(idx_t) {return true;}
-  constexpr static inline Modes _mode() {return Modes::Normal;}
+  // constexpr static inline idx_t size() {return 0;}
+  // constexpr static inline bool selected(idx_t) {return false;}
+  // constexpr static inline bool enabled(idx_t) {return true;}
+  // constexpr static inline Modes _mode() {return Modes::Normal;}
   // template<typename Nav> constexpr static inline Modes mode(Nav& nav) {return nav._mode(nav);}
   template<typename Nav> constexpr static inline bool _up   (Nav& nav) {return false;}
   template<typename Nav> constexpr static inline bool _down (Nav& nav) {return false;}
@@ -54,41 +54,41 @@ class NavBase:public N {
 };
 
 /**
-* The StaticNav class
+* The StaticNav class is the static navigation top object
 * @brief Navigates an inner data structure
 */
-template<typename Data,typename N>
-class StaticNav:public NavBase<N> {
+template<typename N>
+class StaticNav:public N {
   public:
-    using This=StaticNav<Data,N>;
-    using Base=NavBase<N>;
+    using This=StaticNav<N>;
+    using Base=N;
     template<typename Out>
     inline void printMenu(Out& out) {
       Base::enterMenuRender();
       out.newView();
-      out.printMenu(*this,out,data);
+      out.printMenu(*this,out,*this);
       Base::exitMenuRender();
     }
-    inline idx_t size() {return data.size();}
-    inline void enable(idx_t n,bool o) {data.enable(n,o);}
-    inline bool enabled(idx_t n) const {return data.enabled(n);}
-    inline Modes mode() const {return N::_mode();}
-    inline bool up() {return N::template _up<This>(*this);}
-    inline bool down() {return N::template _down<This>(*this);}
-    inline bool left() {return N::template _left<This>(*this);}
-    inline bool right() {return N::template _right<This>(*this);}
+    // inline idx_t size() {return data.size();}
+    // inline void enable(idx_t n,bool o) {data.enable(n,o);}
+    // inline bool enabled(idx_t n) const {return data.enabled(n);}
+    // inline Modes mode() const {return Base::_mode();}
+    inline bool up() {return Base::template _up<This>(*this);}
+    inline bool down() {return Base::template _down<This>(*this);}
+    inline bool left() {return Base::template _left<This>(*this);}
+    inline bool right() {return Base::template _right<This>(*this);}
     inline bool enter() {
       trace(MDO<<"StaticNav::enter"<<endl);
-      return N::template _enter<This>(*this);}
-    inline bool esc() {return N::template _esc<This>(*this);}
-    inline NavAgent activate() {
-      trace(MDO<<"StaticNav::activate."<<endl);
-      return data->activate();}
+      return Base::template _enter<This>(*this);}
+    inline bool esc() {return Base::template _esc<This>(*this);}
+    // inline NavAgent activate() {
+    //   trace(MDO<<"StaticNav::activate."<<endl);
+    //   return data->activate();}
     inline NavAgent activate(idx_t n) {
       trace(MDO<<"StaticNav::activate "<<n<<endl);
-      return data.activateItem(n);}
-  protected:
-    Data data;
+      return Base::activateItem(n);}
+  // protected:
+  //   Data data;
 };
 
 /**
@@ -180,9 +180,11 @@ class ItemNav:public N {
       }
       return N::_esc(nav);
     }
-    inline Modes _mode() const {
-      trace(MDO<<"ItemNav::_mode"<<endl);
-      return focus?focus.mode():N::_mode();}
+    inline Modes mode() const {
+      trace(MDO<<"ItemNav::mode"<<endl);
+      return focus.mode();
+      // return focus?focus.mode():N::mode();
+    }
     inline bool hasFocus() const {return focus;}
   protected:
     //we need a special case for sub-menus, no need to use the vtables of focus NavAgent

@@ -21,7 +21,7 @@ using __FlashStringHelper=const char*;
 template<typename I=Nil> struct Empty;
 template<typename I=Nil> struct Void;
 template<typename I=Nil> struct Drift;
-template<typename Data,typename N=Drift<>> struct StaticNav;
+template<typename N> class StaticNav;
 template<typename N=Drift<>> class NavPos;
 
 struct Item;

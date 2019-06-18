@@ -36,7 +36,7 @@ struct FullPrinter:public P {
         out.setTop(out.top()+1);
     }
 
-    // _trace(MDO<<"size:"<<i.size()<<endl);
+    trace(MDO<<"size:"<<i.size()<<endl);
     for(idx_t n=out.top();n<i.size();n++) {
       if (!out.freeY()) break;
       P::clrLine(out,P::posY());
