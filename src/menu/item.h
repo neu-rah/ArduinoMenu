@@ -81,6 +81,13 @@ struct Empty:public I {
   static inline NavAgent activateItem(idx_t);
   /// the dumb navigation agent, meaning this item does not handle navigation
   static EmptyCmds<false> cmds;
+  template<typename Nav> constexpr static inline bool up   (Nav& nav,idx_t at=0) {return false;}
+  template<typename Nav> constexpr static inline bool down (Nav& nav,idx_t at=0) {return false;}
+  template<typename Nav> constexpr static inline bool left (Nav& nav,idx_t at=0) {return false;}
+  template<typename Nav> constexpr static inline bool right(Nav& nav,idx_t at=0) {return false;}
+  template<typename Nav> constexpr static inline bool enter(Nav& nav,idx_t at=0) {return false;}
+  template<typename Nav> constexpr static inline bool esc  (Nav& nav,idx_t at=0) {return false;}
+  constexpr static inline Modes mode() {return Modes::Normal;}
 };
 
 /** \defgroup Agents Command and navigation agents
@@ -140,6 +147,7 @@ class Action:public I {
   public:
     using I::I;
     using This=Action<I,act>;
+    template<typename Nav> inline bool enter(Nav& nav) {return act();}
     inline NavAgent activate() {
       if (act()) return {this,&cmds};
       else return Empty<>::activate();
@@ -192,6 +200,10 @@ class StaticMenu:public StaticMenu<I> {
     inline NavAgent activateItem(idx_t n) {
       trace(MDO<<"StaticMenu<I,II...>::activateItem "<<n<<endl);
       return n?next.activateItem(n-1):This::activate();
+    }
+    template<typename Nav>
+    inline bool enter(Nav& nav,idx_t at=0) {
+      return at?next.enter(nav,at-1):I::enter(nav);
     }
   protected:
     Next next;

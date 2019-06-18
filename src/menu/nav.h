@@ -25,6 +25,7 @@ using MeasureOp=OutOp<OutOps::Measure>;
 */
 template<typename N>
 struct Drift:public N {
+  //TODO: eliminate this functions and this class
   template<typename Out> static inline void printMenu(Out& out) {}
   template<typename Out> static inline void newView() {Out::nl();}
   constexpr static inline idx_t pos() {return 0;}
@@ -33,12 +34,12 @@ struct Drift:public N {
   // constexpr static inline bool enabled(idx_t) {return true;}
   // constexpr static inline Modes _mode() {return Modes::Normal;}
   // template<typename Nav> constexpr static inline Modes mode(Nav& nav) {return nav._mode(nav);}
-  template<typename Nav> constexpr static inline bool _up   (Nav& nav) {return false;}
-  template<typename Nav> constexpr static inline bool _down (Nav& nav) {return false;}
-  template<typename Nav> constexpr static inline bool _left (Nav& nav) {return false;}
-  template<typename Nav> constexpr static inline bool _right(Nav& nav) {return false;}
-  template<typename Nav> constexpr static inline bool _enter(Nav& nav) {return false;}
-  template<typename Nav> constexpr static inline bool _esc  (Nav& nav) {return false;}
+  // template<typename Nav> constexpr static inline bool up   (Nav& nav) {return false;}
+  // template<typename Nav> constexpr static inline bool down (Nav& nav) {return false;}
+  // template<typename Nav> constexpr static inline bool left (Nav& nav) {return false;}
+  // template<typename Nav> constexpr static inline bool right(Nav& nav) {return false;}
+  // template<typename Nav> constexpr static inline bool enter(Nav& nav) {return false;}
+  // template<typename Nav> constexpr static inline bool esc  (Nav& nav) {return false;}
 };
 
 /**
@@ -73,14 +74,14 @@ class StaticNav:public N {
     // inline void enable(idx_t n,bool o) {data.enable(n,o);}
     // inline bool enabled(idx_t n) const {return data.enabled(n);}
     // inline Modes mode() const {return Base::_mode();}
-    inline bool up() {return Base::template _up<This>(*this);}
-    inline bool down() {return Base::template _down<This>(*this);}
-    inline bool left() {return Base::template _left<This>(*this);}
-    inline bool right() {return Base::template _right<This>(*this);}
+    inline bool up() {return Base::template up<This>(*this);}
+    inline bool down() {return Base::template down<This>(*this);}
+    inline bool left() {return Base::template left<This>(*this);}
+    inline bool right() {return Base::template right<This>(*this);}
     inline bool enter() {
       trace(MDO<<"StaticNav::enter"<<endl);
-      return Base::template _enter<This>(*this);}
-    inline bool esc() {return Base::template _esc<This>(*this);}
+      return Base::template enter<This>(*this);}
+    inline bool esc() {return Base::template esc<This>(*this);}
     // inline NavAgent activate() {
     //   trace(MDO<<"StaticNav::activate."<<endl);
     //   return data->activate();}
@@ -102,19 +103,20 @@ class NavPos:public N {
     inline idx_t pos() {return at;}
     inline bool selected(idx_t idx) const {return at==idx;}
     template<typename Nav>
-    inline bool _up(Nav& nav) {
+    inline bool up(Nav& nav) {
       if (at<nav.size()-1) {at++;return true;}
-      return N::template _up<Nav>(nav);
+      return N::template up<Nav>(nav);
     }
     template<typename Nav>
-    inline bool _down(Nav& nav) {
+    inline bool down(Nav& nav) {
       if (at>0) {at--;return true;}
-      return N::template _down<Nav>(nav);
+      return N::template down<Nav>(nav);
     }
     template<typename Nav>
-    inline bool _enter(Nav& nav) {
-      trace(MDO<<"NavPos::_enter"<<endl);
-      return (!nav.enabled(nav.pos()))&&(nav.activate(at)||N::_enter(nav));
+    inline bool enter(Nav& nav) {
+      trace(MDO<<"NavPos::enter"<<endl);
+      return nav.enabled(nav.pos())&&N::enter(nav,at);
+      // return (!nav.enabled(nav.pos()))&&(nav.activate(at)||N::enter(nav));
     }
   protected:
     idx_t at;
@@ -133,31 +135,31 @@ class ItemNav:public N {
     // using OutType=typename N::OutType;
     // using DataType=typename N::DataType;
     template<typename Nav>
-    inline bool _down(Nav& nav) {
-      return focus?focus.down():N::_down(nav);
+    inline bool down(Nav& nav) {
+      return focus?focus.down():N::down(nav);
     }
     template<typename Nav>
-    inline bool _up(Nav& nav) {
-      return focus?focus.up():N::_up(nav);
+    inline bool up(Nav& nav) {
+      return focus?focus.up():N::up(nav);
     }
     template<typename Nav>
-    inline bool _left(Nav& nav) {
+    inline bool left(Nav& nav) {
       if (focus) {
         focus.enter();
         focus=Empty<>::activate();
       }
-      return N::_left(nav);
+      return N::left(nav);
     }
     template<typename Nav>
-    inline bool _right(Nav& nav) {
+    inline bool right(Nav& nav) {
       if (focus) {
         focus.enter();
         focus=Empty<>::activate();
       }
-      return N::_right(nav);
+      return N::right(nav);
     }
     template<typename Nav>
-    inline bool _enter(Nav& nav) {
+    inline bool enter(Nav& nav) {
       trace(MDO<<"ItemNav::_enter"<<endl);
       if (focus) {
         if (focus.enter()) return true;
@@ -166,19 +168,19 @@ class ItemNav:public N {
       } else {
         if (!nav.enabled(nav.pos())) return false;
         focus=nav.activate(nav.pos());
-        N::_enter(nav);
+        N::enter(nav);
         if (focus.result()) return true;
       }
       return false;
     }
     template<typename Nav>
-    inline bool _esc(Nav& nav) {
+    inline bool esc(Nav& nav) {
       _trace(MDO<<"ItemNav::_esc!!!!"<<endl);
       if (focus) {
         if (focus.esc()) focus=Empty<>::activate();
         return true;
       }
-      return N::_esc(nav);
+      return N::esc(nav);
     }
     inline Modes mode() const {
       trace(MDO<<"ItemNav::mode"<<endl);
@@ -194,16 +196,16 @@ class ItemNav:public N {
 /**
 * The StaticNavNode class is the top level static navigation object
 */
-template<typename N>
-struct StaticNavNode:public N {
-  inline Modes mode() {return N::mode(*this);}
-  inline bool up() {return N::template _up<N>(*this);}
-  inline bool down() {return N::template _down<N>(*this);}
-  inline bool left() {return N::template _left<N>(*this);}
-  inline bool right() {return N::template _right<N>(*this);}
-  inline bool enter() {return N::template _enter<N>(*this);}
-  inline bool esc() {return N::template _esc<N>(*this);}
-};
+// template<typename N>
+// struct StaticNavNode:public N {
+//   inline Modes mode() {return N::mode(*this);}
+//   inline bool up() {return N::template up<N>(*this);}
+//   inline bool down() {return N::template _down<N>(*this);}
+//   inline bool left() {return N::template _left<N>(*this);}
+//   inline bool right() {return N::template _right<N>(*this);}
+//   inline bool enter() {return N::template _enter<N>(*this);}
+//   inline bool esc() {return N::template _esc<N>(*this);}
+// };
 
 // template<typename Data,typename N>
 // class StaticNavTree:public StaticNav<N> {

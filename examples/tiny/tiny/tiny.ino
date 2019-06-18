@@ -46,10 +46,13 @@ using MainMenu=
     >
   >;
 
-StaticNav<
-  MainMenu,
-  NavPos<>
-> nav;
+Chain<
+  StaticNav,
+  NavPos,
+  NavBase,
+  Drift
+>::To<MainMenu> nav;
+
 
 //handle serial keys to navigate menu
 bool keys(int key) {
