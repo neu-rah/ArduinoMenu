@@ -43,18 +43,31 @@ struct Drift:public N {
 
 /**
 * The NavBase class. Provides common navigation functionality
+*/
+template <typename N>
+class NavBase:public N {
+  public:
+    inline void enterMenuRender() {onMenu=true;}
+    inline void exitMenuRender() {onMenu=false;}
+  protected:
+    bool onMenu=false;
+};
+
+/**
+* The StaticNav class
 * @brief Navigates an inner data structure
 */
 template<typename Data,typename N>
-class StaticNav:public N {
+class StaticNav:public NavBase<N> {
   public:
     using This=StaticNav<Data,N>;
+    using Base=NavBase<N>;
     template<typename Out>
     inline void printMenu(Out& out) {
-      enterMenuRender();
+      Base::enterMenuRender();
       out.newView();
       out.printMenu(*this,out,data);
-      exitMenuRender();
+      Base::exitMenuRender();
     }
     inline idx_t size() {return data.size();}
     inline void enable(idx_t n,bool o) {data.enable(n,o);}
@@ -74,10 +87,7 @@ class StaticNav:public N {
     inline NavAgent activate(idx_t n) {
       trace(MDO<<"StaticNav::activate "<<n<<endl);
       return data.activateItem(n);}
-    inline void enterMenuRender() {onMenu=true;}
-    inline void exitMenuRender() {onMenu=false;}
   protected:
-    bool onMenu=false;
     Data data;
 };
 
@@ -179,10 +189,19 @@ class ItemNav:public N {
     NavAgent focus;
 };
 
-// template<typename N>
-// struct StaticNavNode:public N {
-//   inline Modes mode() {return N::mode(*this);}
-// };
+/**
+* The StaticNavNode class is the top level static navigation object
+*/
+template<typename N>
+struct StaticNavNode:public N {
+  inline Modes mode() {return N::mode(*this);}
+  inline bool up() {return N::template _up<N>(*this);}
+  inline bool down() {return N::template _down<N>(*this);}
+  inline bool left() {return N::template _left<N>(*this);}
+  inline bool right() {return N::template _right<N>(*this);}
+  inline bool enter() {return N::template _enter<N>(*this);}
+  inline bool esc() {return N::template _esc<N>(*this);}
+};
 
 // template<typename Data,typename N>
 // class StaticNavTree:public StaticNav<N> {
