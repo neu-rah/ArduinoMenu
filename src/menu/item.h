@@ -240,11 +240,11 @@ struct StaticMenu<I>:public I {
 * SelfNav class allows item to also be a navigation system
 * needed fot static tree navigation? will see
 */
-template<typename I,typename N=NavPos<>>
-struct SelfNav:public I,public N {
-  template<typename O>
-  inline void printMenu(O& out) {out.print(*this,out,*this);}
-};
+// template<typename I,typename N=NavPosBase<>>
+// struct SelfNav:public I,public N {
+//   template<typename O>
+//   inline void printMenu(O& out) {out.print(*this,out,*this);}
+// };
 
 /**
 * The StaticItem is the top level static composition that encapsulates data structures compositions

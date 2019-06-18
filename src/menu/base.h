@@ -7,7 +7,7 @@
 */
 
 
-using idx_t=int8_t;
+using idx_t=int;
 
 enum class Roles {Panel,Menu,Title,Body,Prompt,Index,Cursor,Name,Mode,Value,Unit};
 enum class Modes {Normal,Edit,Tune};
@@ -22,7 +22,7 @@ template<typename I=Nil> struct Empty;
 template<typename I=Nil> struct Void;
 template<typename I=Nil> struct Drift;
 template<typename N> class StaticNav;
-template<typename N=Drift<>> class NavPos;
+template<typename N=Drift<>,typename Idx=idx_t> class NavPosBase;
 
 struct Item;
 struct IMenuOut;

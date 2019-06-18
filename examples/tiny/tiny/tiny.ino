@@ -4,6 +4,21 @@ the purpose was just to check memory contraints
 upload at own risk ;)
 */
 
+/* memory footprints
+
+with idx_t=int8_t
+DATA:    [=======   ]  65.6% (used 42 bytes from 64 bytes)
+PROGRAM: [======    ]  57.8% (used 592 bytes from 1024 bytes)
+
+with idx_t=int
+DATA:    [========= ]  89.1% (used 57 bytes from 64 bytes)
+PROGRAM: [=======   ]  68.6% (used 702 bytes from 1024 bytes)
+
+with idx_t=int and using TinyNavPos (insignificant, 2 bytes per menu)
+DATA:    [========= ]  85.9% (used 55 bytes from 64 bytes)
+PROGRAM: [======    ]  64.5% (used 660 bytes from 1024 bytes)
+*/
+
 #include <menu.h>
 
 #include <menu/IO/serialOut.h>
@@ -48,7 +63,7 @@ using MainMenu=
 
 Chain<
   StaticNav,
-  NavPos,
+  TinyNavPos,
   NavBase,
   Drift
 >::To<MainMenu> nav;

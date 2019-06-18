@@ -48,10 +48,10 @@ struct Drift:public N {
 template <typename N>
 class NavBase:public N {
   public:
-    inline void enterMenuRender() {onMenu=true;}
-    inline void exitMenuRender() {onMenu=false;}
+    // inline void enterMenuRender() {onMenu=true;}
+    // inline void exitMenuRender() {onMenu=false;}
   protected:
-    bool onMenu=false;
+    // bool onMenu=false;
 };
 
 /**
@@ -65,10 +65,10 @@ class StaticNav:public N {
     using Base=N;
     template<typename Out>
     inline void printMenu(Out& out) {
-      Base::enterMenuRender();
+      // Base::enterMenuRender();
       out.newView();
       out.printMenu(*this,out,*this);
-      Base::exitMenuRender();
+      // Base::exitMenuRender();
     }
     // inline idx_t size() {return data.size();}
     // inline void enable(idx_t n,bool o) {data.enable(n,o);}
@@ -97,8 +97,8 @@ class StaticNav:public N {
 * and handles navigation functions for the navigation system.
 * this is a navigation component
 */
-template<typename N>
-class NavPos:public N {
+template<typename N,typename Idx>
+class NavPosBase:public N {
   public:
     inline idx_t pos() {return at;}
     inline bool selected(idx_t idx) const {return at==idx;}
@@ -119,8 +119,15 @@ class NavPos:public N {
       // return (!nav.enabled(nav.pos()))&&(nav.activate(at)||N::enter(nav));
     }
   protected:
-    idx_t at;
+    Idx at;
 };
+
+template<typename N=Drift<>>
+using NavPos=NavPosBase<N>;
+
+template<typename N=Drift<>>
+using TinyNavPos=NavPosBase<N,int8_t>;
+
 
 /**
 * The ItemNav class allow items to handle navigation (needed for fields)
