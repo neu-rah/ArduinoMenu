@@ -44,7 +44,7 @@
 #ifdef ARDUINO
 
   //from: https://gist.github.com/jlesech/3089916
-  #if !defined(__AVR_ATtiny13__) && !defined(ATTINY_CORE)
+  #if !defined(__AVR_ATtiny13__) && !defined(ARDUINO_attiny)
     #define __ASSERT_USE_STDERR
 
     // handle diagnostic informations given by assertion and abort program execution:

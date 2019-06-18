@@ -6,15 +6,18 @@
 * @brief generic definitions and aux. stuff
 */
 
-
-using idx_t=int;
+#if core==tiny
+  using idx_t=int8_t;
+#else
+  using idx_t=int;
+#endif
 
 enum class Roles {Panel,Menu,Title,Body,Prompt,Index,Cursor,Name,Mode,Value,Unit};
 enum class Modes {Normal,Edit,Tune};
 
 struct Nil {};
 
-#if defined(ARDUINO) && (defined(__AVR_ATtiny13__) || defined(ATTINY_CORE))
+#if defined(ARDUINO) && (defined(__AVR_ATtiny13__))
 using __FlashStringHelper=const char*;
 #endif
 

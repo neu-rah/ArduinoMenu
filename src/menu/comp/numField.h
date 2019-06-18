@@ -51,7 +51,8 @@
         }
         return false;
       }
-      inline bool enter() {return tunning^=true;}
+      template<typename Nav> inline bool enter(Nav& nav,idx_t at=0) {return tunning^=true;}
+      // inline bool enter() {return tunning^=true;}
       inline bool esc() {return true;}//true=>allow unfocus
       inline Modes mode() {return tunning?Modes::Tune:Modes::Edit;}
     protected:

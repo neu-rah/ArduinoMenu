@@ -17,6 +17,7 @@ PROGRAM: [=======   ]  68.6% (used 702 bytes from 1024 bytes)
 with idx_t=int and using TinyNavPos (insignificant, 2 bytes per menu)
 DATA:    [========= ]  85.9% (used 55 bytes from 64 bytes)
 PROGRAM: [======    ]  64.5% (used 660 bytes from 1024 bytes)
+
 */
 
 #include <menu.h>

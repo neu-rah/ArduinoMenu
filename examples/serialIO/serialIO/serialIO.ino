@@ -86,10 +86,12 @@ using MainMenu=FlashText<
   >
 >;
 
-StaticNav<
-  MainMenu,
-  ItemNav<NavPos<>>
-> nav;
+Chain<
+  StaticNav,
+  TinyNavPos,
+  NavBase,
+  Drift
+>::To<MainMenu> nav;
 
 void setup() {
   Serial.begin(115200);
