@@ -7,7 +7,7 @@
 */
 
 
-using idx_t=int;
+using idx_t=int8_t;
 
 enum class Roles {Panel,Menu,Title,Body,Prompt,Index,Cursor,Name,Mode,Value,Unit};
 enum class Modes {Normal,Edit,Tune};
