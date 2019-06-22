@@ -1,6 +1,8 @@
-#include "../menuDefs.h"
-#ifdef MENU_FMT_WRAPS
-#include "esp8266Out.h"
+#pragma once
+#ifdef ESP8266
+  #include "../menuDefs.h"
+  //MENU_FMT_WRAPS
+  #include "esp8266Out.h"
 
   menuOut& operator<<(menuOut&o,classes c) {
     switch(c) {

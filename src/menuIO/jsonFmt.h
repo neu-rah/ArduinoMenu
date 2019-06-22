@@ -6,7 +6,7 @@
   #ifdef MENU_FMT_WRAPS
     #include "../menuDefs.h"
     #include "../items.h"
-    #include "esp8266Out.h"
+    // #include "esp8266Out.h"
 
     namespace Menu {
 
@@ -165,5 +165,6 @@
           }
       };
     }//namespace
+    #include "jsonFmt.hpp"
   #endif
 #endif

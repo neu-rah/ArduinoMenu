@@ -47,7 +47,9 @@ void setup() {
   Serial.println("to control the menu navigation");
 }
 
-bool blink(int timeOn,int timeOff) {return millis()%(unsigned long)(timeOn+timeOff)<(unsigned long)timeOn;}
+bool blink(int timeOn,int timeOff) {
+  return millis()%(unsigned long)(timeOn+timeOff)<(unsigned long)timeOn;
+}
 
 void loop() {
   nav.poll();

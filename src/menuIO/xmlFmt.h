@@ -6,7 +6,7 @@
   #ifdef MENU_FMT_WRAPS
   #include "../menuDefs.h"
   #include "../items.h"
-  #include "esp8266Out.h"
+  // #include "esp8266Out.h"
 
     namespace Menu {
 
@@ -160,5 +160,6 @@
           result fmtEnd(prompt& target,menuOut::fmtParts part,navNode &nav,idx_t idx=-1) override {return fmt(false,target,part,nav,idx);}
       };
     }//namespace
+    #include "xmlFmt.hpp"
   #endif
 #endif
