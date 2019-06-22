@@ -8,6 +8,9 @@
 
 #include "nav.h"
 
+//INT16_MAX this oes not work well with variable type
+constexpr idx_t idx_max=((idx_t)~0)>>1;//assuming signed
+
 //////////////////////////////////////////////
 /**
 * The Void class is output system terminal
@@ -30,9 +33,9 @@ struct Void:public O {
   static inline void setTop(idx_t) {}
   constexpr static inline idx_t posX() {return 0;}
   constexpr static inline idx_t posY() {return 0;}
-  constexpr static inline idx_t freeX() {return INT16_MAX;}
-  constexpr static inline idx_t freeY() {return INT16_MAX;}
-  constexpr static inline idx_t free() {return INT16_MAX;}
+  constexpr static inline idx_t freeX() {return idx_max;}
+  constexpr static inline idx_t freeY() {return idx_max;}
+  constexpr static inline idx_t free() {return idx_max;}
   static inline void useX(idx_t ux=1) {}
   static inline void useY(idx_t uy=1) {}
   template<bool io,typename Nav,typename Out,typename I> static inline void fmtPanel(Nav&,Out&,I&,idx_t) {}
