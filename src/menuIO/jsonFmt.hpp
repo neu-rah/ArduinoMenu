@@ -34,11 +34,20 @@
     #endif
     int cursorCtrl=0;
     void jsonOptions(menuOut& o,navNode &nav,menuNode& node,idx_t idx) {
-      o<<",\"options\":[";
+      // o<<",\"options\":[";
+      o.print(",\"options\":[");
       // o<<node.sz();
-      for(idx_t n=0;n<node.sz();n++)
-        o<<(n?",":"")<<"\""<<node[n]<<"\"";
-      o<<"],\"sel\":\""<<((menuVariantBase*)&node)->sync()<<"\"";
+      for(idx_t n=0;n<node.sz();n++) {
+        o.print(n?",":"");
+        o.print("\"");
+        o.print(node[n].getText());
+        o.print("\"");
+        // o<<(n?",":"")<<"\""<<node[n]<<"\"";
+      }
+      // o<<"],\"sel\":\""<<((menuVariantBase*)&node)->sync()<<"\"";
+      o.print("],\"sel\":\"");
+      o.print(((menuVariantBase*)&node)->sync());
+      o.print("\"");
     }
   };
 #endif

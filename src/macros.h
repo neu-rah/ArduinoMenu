@@ -6,7 +6,9 @@
 //////////////////////////////////////////////////////////////////////////////
 // memory macros ------------------------------------------------------------
 #ifndef __AVR_ARCH__
-  #define MENU_USERAM
+  #ifndef USE_PGM
+    #define MENU_USERAM
+  #endif
 #endif
 #if defined(ESP8266)
   #define MENU_ASYNC

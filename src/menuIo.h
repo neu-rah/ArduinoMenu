@@ -18,6 +18,7 @@
         virtual bool fieldMode() const;
         inline void fieldOn() {setFieldMode(true);}
         inline void fieldOff() {setFieldMode(false);}
+        void flush() {}
     };
 
     class noInput:public menuIn {
