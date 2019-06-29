@@ -8,8 +8,11 @@
 
 #include "nav.h"
 
+template<typename T>
+constexpr T T_MAX=(1<<((sizeof(T)<<3)-1))-1;
+
 //INT16_MAX this oes not work well with variable type
-constexpr idx_t idx_max=((idx_t)~0)>>1;//assuming signed
+constexpr idx_t idx_max=T_MAX<idx_t>;//(1<<((sizeof(idx_t)<<3)-1))-1;//((idx_t)~0)>>1;//assuming signed
 
 //////////////////////////////////////////////
 /**
