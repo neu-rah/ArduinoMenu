@@ -27,6 +27,10 @@
   #define MEMMODE PROGMEM
   #define constMEM const
   #define constText const char
+  #ifdef NRF5
+    #undef pgm_read_ptr
+    #define pgm_read_ptr(addr) ((const void *)(addr))
+  #endif
   #define memPtr(src) pgm_read_ptr(&(src))
   #define memByte(addr) (pgm_read_byte(addr))
   #define memWord(addr) (pgm_read_word(addr))
