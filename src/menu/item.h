@@ -81,12 +81,15 @@ struct Empty:public I {
   static inline NavAgent activateItem(idx_t);
   /// the dumb navigation agent, meaning this item does not handle navigation
   static EmptyCmds<false> cmds;
+  constexpr static inline bool up() {return false;}
   template<typename Nav> constexpr static inline bool up   (Nav& nav,idx_t at=0) {return false;}
+  constexpr static inline bool down() {return false;}
   template<typename Nav> constexpr static inline bool down (Nav& nav,idx_t at=0) {return false;}
   template<typename Nav> constexpr static inline bool left (Nav& nav,idx_t at=0) {return false;}
   template<typename Nav> constexpr static inline bool right(Nav& nav,idx_t at=0) {return false;}
   constexpr static inline bool enter() {return false;}
   template<typename Nav> constexpr static inline bool enter(Nav& nav,idx_t at=0) {return false;}
+  constexpr static inline bool esc() {return false;}
   template<typename Nav> constexpr static inline bool esc  (Nav& nav,idx_t at=0) {return false;}
   constexpr static inline Modes mode() {return Modes::Normal;}
   template<typename Out> static inline void printMenu(Out& out) {}
@@ -216,6 +219,14 @@ class StaticMenu:public StaticMenu<I> {
     inline bool enter_node(Nav& nav,idx_t n) {
       return n?next.enter_node(nav,n-1):This::enter_node(nav,0);
     }
+    template<typename Nav>
+    inline bool up_node(Nav& nav,idx_t n) {
+      return n?next.up_node(nav,n-1):This::up_node(nav,0);
+    }
+    template<typename Nav>
+    inline bool down_node(Nav& nav,idx_t n) {
+      return n?next.down_node(nav,n-1):This::down_node(nav,0);
+    }
   protected:
     Next next;
 };
@@ -250,10 +261,9 @@ struct StaticMenu<I>:public I {
     _trace(MDO<<"StaticMenu<I>::printMenu_node"<<endl);
     I::printMenu(out);
   }
-  template<typename Nav>
-  inline bool enter_node(Nav& nav,idx_t n) {
-    I::enter();
-  }
+  template<typename Nav> inline bool enter_node(Nav& nav,idx_t n) {I::enter(*this);}
+  template<typename Nav> inline bool up_node(Nav& nav,idx_t n) {I::up();}
+  template<typename Nav> inline bool down_node(Nav& nav,idx_t n) {I::down();}
 };
 
 /**
@@ -278,6 +288,9 @@ struct StaticItem:public I {
     I::template print<N,O,This>(n,o,i);
   }
   static inline constexpr bool enter() {return false;}//no, we do not accept navigation
+  static inline constexpr bool esc() {return false;}
+  static inline constexpr bool up() {return false;}
+  static inline constexpr bool down() {return false;}
 };
 
 /**

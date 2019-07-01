@@ -223,6 +223,16 @@ class StaticTreeNode:public N {
       _trace(MDO<<"StaticNav::esc"<<endl);
       return open=!N::esc(nav);
     }
+    template<typename Nav>
+    inline bool up(Nav& nav) {
+      _trace(MDO<<"StaticNav::up"<<endl);
+      return open?N::up_node(nav,N::pos()):open=N::up(nav);
+    }
+    template<typename Nav>
+    inline bool down(Nav& nav) {
+      _trace(MDO<<"StaticNav::down"<<endl);
+      return open?N::down_node(nav,N::pos()):open=N::down(nav);
+    }
   protected:
     bool open=false;
 };
