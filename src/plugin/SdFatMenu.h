@@ -235,7 +235,8 @@ public:
   Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t pn) {
     if(root.navFocus!=this) {//show given title or filename if selected
       return selectedFile==""?
-        menuNode::printTo(root,sel,out,idx,len,pn):
+        /*menuNode::printTo(root,sel,out,idx,len,pn)*/
+        out.printRaw(shadow->text,len):
         out.printRaw(selectedFile.c_str(),len);
     } else if(idx==-1) {//when menu open (show folder name)
       ((menuNodeShadow*)shadow)->sz=SDMenuT<FS>::count()+USE_BACKDOTS;
