@@ -143,7 +143,7 @@ uint16_t mins=0;
 
 //define a pad style menu (single line menu)
 //here with a set of fields to enter a date in YYYY/MM/DD format
-altMENU(menu,time,"Time",doNothing,noEvent,noStyle,(systemStyles)(_asPad|Menu::_menuData|Menu::_canNav|_parentDraw)
+altMENU(menu,timeMenu,"Time",doNothing,noEvent,noStyle,(systemStyles)(_asPad|Menu::_menuData|Menu::_canNav|_parentDraw)
   ,FIELD(hrs,"",":",0,11,1,0,doNothing,noEvent,noStyle)
   ,FIELD(mins,"","",0,59,10,1,doNothing,noEvent,wrapStyle)
 );
@@ -156,7 +156,7 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,OP("Op1",doNothing,noEvent)
   ,OP("Op2",doNothing,noEvent)
   //,FIELD(test,"Test","%",0,100,10,1,doNothing,noEvent,wrapStyle)
-  ,SUBMENU(time)
+  ,SUBMENU(timeMenu)
   ,SUBMENU(subMenu)
   ,SUBMENU(setLed)
   ,OP("LED On",myLedOn,enterEvent)
