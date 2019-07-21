@@ -236,6 +236,7 @@ public:
       // return out.printRaw(SDMenuT<FS>::dir.name(),len);
     }
     //drawing options
+    out.setColor(fgColor, sel);
     idx_t i=out.tops[root.level]+idx;
     if (i<USE_BACKDOTS) len-=out.printRaw("[..]",len);
     else len-=out.printRaw(SDMenuT<FS>::entry(out.tops[root.level]+idx-USE_BACKDOTS).c_str(),len);
