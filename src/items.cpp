@@ -460,7 +460,7 @@ idx_t menuVariantBase::togglePrintTo(navRoot &root,bool sel,menuOut& out, idx_t 
     l+=operator[](at).printRaw(out,len-l);
     #ifdef MENU_FMT_WRAPS
   out.fmtEnd(*this,menuOut::fmtToggle,root.node(),idx);
-    #endif-
+    #endif
   }
   return l;
 }

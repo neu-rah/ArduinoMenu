@@ -14,4 +14,4 @@ warranty, express or implied, as to its usefulness for any purpose.
 
 #include "menuDefs.h"
 
-#include "itemsTemplates.cpp"
+#include "itemsTemplates.hpp"
