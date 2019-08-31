@@ -15,7 +15,7 @@
 enum class Roles {Panel,Menu,Title,Body,Prompt,Index,Cursor,Name,Mode,Value,Unit};
 enum class Modes {Normal,Edit,Tune};
 
-struct Nil {};
+using Nil=lambda::Nil;
 
 #if defined(ARDUINO) && (defined(__AVR_ATtiny13__))
 using __FlashStringHelper=const char*;

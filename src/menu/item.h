@@ -181,11 +181,11 @@ struct StaticText:public I {
 * data items can however be dynamic or of mixed types
 */
 template<typename I,typename... II>
-class StaticMenu:public StaticMenu<I> {
+class StaticMenu:lpp::List<I,II...> {
   public:
-    using This=StaticMenu<I>;
-    using Next=StaticMenu<II...>;
-    friend Next;
+    // using This=StaticMenu<I,II...>;
+    // using Next=StaticMenu<II...>;
+    // friend Next;
     template<typename Prompt>
     static inline idx_t selIdx(Prompt& i,idx_t n) {return n?i.next.selIdx(i,n-1):selIdx(i);}
     constexpr static inline idx_t size() {return Next::size()+1;}
@@ -234,37 +234,37 @@ class StaticMenu:public StaticMenu<I> {
 /*
 * this is the StaticMenu terminal specialization (last item)
 */
-template<typename I>
-struct StaticMenu<I>:public I {
-  using This=StaticMenu<I>;
-  constexpr static inline idx_t size() {return 1;}
-  inline void enable(idx_t n,bool o) {
-    if(!n) I::enable(n,o);
-  }
-  inline bool enabled(idx_t n) const {
-    trace(MDO<<"StaticMenu<I>::enabled"<<endl);
-    return n?true:I::enabled(0);
-  }
-  template<typename N,typename O,typename H>
-  inline void print(N& n,O& o,H& i) {/*I::print(n,o,i);*/}
-  template<typename N,typename O,typename H>
-  static inline void printItem(N& n,O& o,H& i,idx_t c) {
-    trace(MDO<<"StaticMenu::printItem "<<c<<endl);
-    i.I::print(n,o,i);
-  }
-  inline NavAgent activateItem(idx_t n) {
-    trace(MDO<<"StaticMenu<I>::activateItem "<<n<<endl);
-    return This::activate();
-  }
-  template<typename Out>
-  inline void printMenu_node(Out& out,idx_t n) {
-    _trace(MDO<<"StaticMenu<I>::printMenu_node"<<endl);
-    I::printMenu(out);
-  }
-  template<typename Nav> inline bool enter_node(Nav& nav,idx_t n) {I::enter(*this);}
-  template<typename Nav> inline bool up_node(Nav& nav,idx_t n) {I::up();}
-  template<typename Nav> inline bool down_node(Nav& nav,idx_t n) {I::down();}
-};
+// template<typename I>
+// struct StaticMenu<I>:public I {
+//   using This=StaticMenu<I>;
+//   constexpr static inline idx_t size() {return 1;}
+//   inline void enable(idx_t n,bool o) {
+//     if(!n) I::enable(n,o);
+//   }
+//   inline bool enabled(idx_t n) const {
+//     trace(MDO<<"StaticMenu<I>::enabled"<<endl);
+//     return n?true:I::enabled(0);
+//   }
+//   template<typename N,typename O,typename H>
+//   inline void print(N& n,O& o,H& i) {/*I::print(n,o,i);*/}
+//   template<typename N,typename O,typename H>
+//   static inline void printItem(N& n,O& o,H& i,idx_t c) {
+//     trace(MDO<<"StaticMenu::printItem "<<c<<endl);
+//     i.I::print(n,o,i);
+//   }
+//   inline NavAgent activateItem(idx_t n) {
+//     trace(MDO<<"StaticMenu<I>::activateItem "<<n<<endl);
+//     return This::activate();
+//   }
+//   template<typename Out>
+//   inline void printMenu_node(Out& out,idx_t n) {
+//     _trace(MDO<<"StaticMenu<I>::printMenu_node"<<endl);
+//     I::printMenu(out);
+//   }
+//   template<typename Nav> inline bool enter_node(Nav& nav,idx_t n) {I::enter(*this);}
+//   template<typename Nav> inline bool up_node(Nav& nav,idx_t n) {I::up();}
+//   template<typename Nav> inline bool down_node(Nav& nav,idx_t n) {I::down();}
+// };
 
 /**
 * SelfNav class allows item to also be a navigation system

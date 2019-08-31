@@ -24,13 +24,13 @@ const char* tpt_unit_text="ºC";
 const char* mainMenu_title="Main menu";
 const char* subMenu_title="Sub-menu";
 
-using Op1=SelfNav<
-  StaticItem<
-    StaticText<&op1_text>
-  >
->;
+// using Op1=SelfNav<
+//   StaticItem<
+//     StaticText<&op1_text>
+//   >
+// >;
+// Op1 op1;
 
-Op1 op1;
 TextFmt<
   TitleWrapFmt<
     FullPrinter<
@@ -87,7 +87,7 @@ using MainMenu=StaticText<
 MainMenu mainMenu;
 
 StaticNav<
-  MainMenu,
+  // MainMenu,
   ItemNav<NavPos<>>
 > nav;
 

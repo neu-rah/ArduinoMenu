@@ -26,6 +26,7 @@
  *
  */
 
+#include <lpp.h>
 #include "menu/debug.h"
 #include "menu/base.h"
 #include "menu/item.h"
