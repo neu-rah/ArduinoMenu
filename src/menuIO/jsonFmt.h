@@ -28,122 +28,129 @@
           result fmt(bool start,prompt& target,menuOut::fmtParts part,navNode &nav,idx_t idx=-1) {
             switch(part) {
               case menuOut::fmtPanel:
-                if (start) *this<<"{";
-                else T::operator<<("}");
+                if (start) T::print("{");
+                else T::print("}");
                 break;
               case menuOut::fmtTitle:
-                if (start) T::operator<<("\"title\":{");
-                else T::operator<<("}\n");
+                if (start) T::print("\"title\":{");
+                else T::print("}\n");
                 break;
               case menuOut::fmtBody:
                 if (start) {
-                  *this<<",\"path\":\"";
+                  T::print(",\"path\":\"");
                   nav.root->printPath(*this,(menuNode*)&target);
-                  *this<<"\",\"sel\":\""<<nav.sel<<"\"";
-                  *this<<",\"items\":[\n";
-                } else T::operator<<("\n]\n");
+                  T::print("\",\"sel\":\"");
+                  T::print(nav.sel);
+                  T::print("\"");
+                  T::print(",\"items\":[\n");
+                } else T::print("\n]\n");
                 break;
               case menuOut::fmtUnit:
-                *this<<(start?",\"unit\":\"":"\"");
+                if (start) T::print(",\"unit\":\"");
+                else T::print("\"");
                 break;
               case menuOut::fmtOp:
                 if (start) {
-                  if (idx>0) *this<<",\n";
-                  *this<<"{\"idx\":\""<<idx<<"\""
-                    <<",\"enabled\":\""<<target.enabled<<"\"";
-                } else *this<<("}");
+                  if (idx>0) T::print(",\n");
+                  T::print("{\"idx\":\"");
+                  T::print(idx);
+                  T::print("\"");
+                  T::print(",\"enabled\":\"");
+                  T::print(target.enabled);
+                  T::print("\"");
+                } else T::print("}");
                 break;
               case menuOut::fmtToggle:
                 if (start) {
-                  *this<<",\"value\":\"";
+                  T::print(",\"value\":\"");
                 } else {
-                  *this<<"\"";
+                  T::print("\"");
                   jsonOptions(*this,nav,*(menuNode*)&target,idx);
                   // *this<<",";
                 }
                 break;
               case menuOut::fmtPrompt:
                 if (start) {
-                  if (idx>=0) *this<<",";
-                  *this<<"\"prompt\":\"";
+                  if (idx>=0) T::print(",");
+                  T::print("\"prompt\":\"");
                 } else {
-                  *this<<"\"";
+                  T::print("\"");
                   if (target.has(_asPad))
-                    *this<<",\"pad\":[";
+                    T::print(",\"pad\":[");
                 };
                 break;
               case menuOut::fmtValue:
-                if (start) *this<<",\"value\":\"";
-                else *this<<"\"";
+                if (start) T::print(",\"value\":\"");
+                else T::print("\"");
                 break;
               case menuOut::fmtSelect:
                 if (start) {
-                  *this<<",\"select\":\"";
+                  T::print(",\"select\":\"");
                 } else {
-                  *this<<"\"";
+                  T::print("\"");
                   jsonOptions(*this,nav,*(menuNode*)&target,idx);
                 }
                 break;
               case menuOut::fmtChoose:
                 if (start) {
-                  *this<<",\"choose\":\"";
+                  T::print(",\"choose\":\"");
                 } else {
-                  *this<<"\"";
+                  T::print("\"");
                   jsonOptions(*this,nav,*(menuNode*)&target,idx);
                 }
                 break;
                 break;
               case menuOut::fmtField:
                 if (start) {
-                  *this<<",\"field\":\"";
+                  T::print(",\"field\":\"");
                 } else {
-                  *this<<"\",\"range\":{\"low\":\"";
+                  T::print("\",\"range\":{\"low\":\"");
                   target.printLow(*this);
-                  *this<<"\",\"high\":\"";
+                  T::print("\",\"high\":\"");
                   target.printHigh(*this);
-                  *this<<"\",\"step\":\"";
+                  T::print("\",\"step\":\"");
                   target.printStep(*this);
-                  *this<<"\",\"tune\":\"";
+                  T::print("\",\"tune\":\"");
                   target.printTune(*this);
-                  *this<<"\"}";
+                  T::print("\"}");
                 }
                 break;
               case menuOut::fmtEditCursor:
-                if (start) *this<<",\"editCursor\":\"";
-                else *this<<"\"";
+                if (start) T::print(",\"editCursor\":\"");
+                else T::print("\"");
                 break;
               case menuOut::fmtTextField:
-                if (start) *this<<",\"text\":\"";
-                else *this<<"\"";
+                if (start) T::print(",\"text\":\"");
+                else T::print("\"");
                 break;
               case menuOut::fmtIdx:
                 // if (start) *this<<"\"idx\":";
                 // else *this<<",";
                 break;
               case menuOut::fmtCursor:
-                if (start) *this<<",\"cursor\":\"";
-                else *this<<"\"";
+                if (start) T::print(",\"cursor\":\"");
+                else T::print("\"");
                 break;
               case menuOut::fmtCursorOpen:
-                if (start) *this<<",\"selStart\":\"";
-                else *this<<"\"";
+                if (start) T::print(",\"selStart\":\"");
+                else T::print("\"");
                 break;
               case menuOut::fmtCursorClose:
-                if (start) *this<<",\"selEnd\":\"";
-                else *this<<"\"";
+                if (start) T::print(",\"selEnd\":\"");
+                else T::print("\"");
                 break;
               case menuOut::fmtOpBody:
                 if (start) {
                   // *this<<"\"body\":{";
                   // if (target.has(_asPad)) *this<<"\"pad\":[";
                 } else {
-                  if (target.has(_asPad)) *this<<"]";
+                  if (target.has(_asPad)) T::print("]");
                   // *this<<"}";
                 }
                 break;
               case menuOut::fmtPreview:
-                if (start) *this<<",\"preview\":\"";
-                else *this<<"\"\n";
+                if (start) T::print(",\"preview\":\"");
+                else T::print("\"\n");
                 break;
               default:break;
             }
