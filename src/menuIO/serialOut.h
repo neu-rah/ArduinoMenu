@@ -12,8 +12,8 @@
       public:
         Print& device;
         idx_t lastLine=-1;
-        inline serialOut(Print& o,idx_t* t,panelsList &p=default_serial_panel_list,menuOut::styles st=menuOut::none)
-          :menuOut(t,p,(menuOut::styles)(st|menuOut::drawNumIndex)),device(o) {}
+        inline serialOut(Print& o,idx_t* t,panelsList &p=default_serial_panel_list,menuOut::styles st=menuOut::drawNumIndex)
+          :menuOut(t,p,st),device(o) {}
         size_t write(uint8_t ch) override {
           //trace(MENU_DEBUG_OUT.write('|'));
           return device.write(ch);
