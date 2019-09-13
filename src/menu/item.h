@@ -1,35 +1,50 @@
 /* -*- C++ -*- */
 #pragma once
-/**
-* @file item.h
-* @author Rui Azevedo
-* @brief ArduinoMenu data/structure representation and base components
-*/
 
+#include "api.h"
 
-#include "base.h"
-
-/** \defgroup base menu items
-*  @{
-*/
-//////////////////////////////////////////////////////////////////
-template<typename... OO>
-struct StaticMenu:List<OO...> {};
-
-/**
-* The Item class is the virtual data interface definition
-*/
-struct Item {
- virtual inline void print(INavNode&,IMenuOut&) {}
+template<const char** text,typename I=Empty<>>
+struct StaticText:I,lambda::StaticText<text> {
+  using This=StaticText<text,I>;
+  template<typename O,typename N=Drift<>>
+  inline static void printTo() {
+    O::raw(text[0]);
+    I::template printTo<O,N>();
+  }
+  template<typename It,typename Out,typename Nav=Drift<>>
+  inline static void printMenu() {
+    It::template printTo<Out,Nav>();
+    I::template printMenu<It,Out,Nav>();
+  }
 };
 
-/**
-* The Prompt class is the top level virtual data implementation
-* it should encapsulate a data compsition and abide to the virtual interface
-*/
+template<typename I,typename... II>
+struct StaticMenu:StaticMenu<I> {
+  using This=StaticMenu<I,II...>;
+  using Head=I;
+  using Tail=StaticMenu<II...>;
+  template<typename O,typename N=Drift<>>
+  inline static void printItem(size_t i) {i?Tail::template printItem<O,N>(i-1):I::template printTo<O,N>();}
+  template<typename It,typename Out,typename Nav=Drift<>>
+  inline static void printMenu() {Out::template printMenu<This,Out,Nav>(This());}
+  inline static constexpr idx_t size() {return Tail::size()+1;}
+};
+
 template<typename I>
-struct Prompt:public Item, public I {
- inline void print(INavNode& nav,IMenuOut& out) override {I::print(nav,out,(I&)*this);}
- template<typename N,typename O,typename H>
- inline void print(N& nav,O& out,H& i) {I::print(nav,out,i);}
+struct StaticMenu<I>:I {
+  using This=StaticMenu<I>;
+  template<typename O,typename N=Drift<>>
+  inline static void printTo() {}
+  template<typename O,typename N=Drift<>>
+  inline static void printItem(size_t i) {I::template printTo<O,N>();}
+  template<typename It,typename Out,typename Nav=Drift<>>
+  inline static void printMenu() {Out::template printMenu<This,Out,Nav>(This());}
+  inline static constexpr idx_t size() {return 1;}
+};
+
+//this is the top level of static items
+template<typename I>
+struct Item:I {
+  template<typename Out,typename Nav=Drift<>>
+  inline static void printMenu() {I::template printMenu<I,Out,Nav>();}
 };
