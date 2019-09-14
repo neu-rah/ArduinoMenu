@@ -11,15 +11,17 @@ struct StaticText:I,lambda::StaticText<text> {
     O::raw(text[0]);
     I::template printTo<O,N>();
   }
+  // template<typename It,typename Out,typename Nav=Drift<>>
+  // inline static void printMenu() {
+  //   // It::template printTo<Out,Nav>();
+  //   I::template printMenu<It,Out,Nav>();
+  // }
   template<typename It,typename Out,typename Nav=Drift<>>
-  inline static void printMenu() {
-    It::template printTo<Out,Nav>();
-    I::template printMenu<It,Out,Nav>();
-  }
+  inline static void printMenu() {Out::template printMenu<This,Out,Nav>(This());}
 };
 
 template<typename I,typename... II>
-struct StaticMenu:StaticMenu<I> {
+struct StaticMenu:I {
   using This=StaticMenu<I,II...>;
   using Head=I;
   using Tail=StaticMenu<II...>;
