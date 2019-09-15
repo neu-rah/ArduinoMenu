@@ -23,7 +23,7 @@ struct StaticText:I,lambda::StaticText<text> {
 // using StaticText=lambda::Curry<_StaticText,2>;//using this invalidates the default argument!
 
 template<typename I,typename... II>
-struct StaticMenuData:I {
+struct StaticMenuData:StaticMenuData<I> {
   using This=StaticMenuData<I,II...>;
   using Head=I;
   using Tail=StaticMenuData<II...>;
@@ -50,8 +50,12 @@ struct StaticMenuData<I>:I {
 
 template<typename Title,typename Data>
 struct StaticMenu:Title, Data {
+  using This=StaticMenu<Title,Data>;
   using Title::printTo;
-  using Data::printMenu;
+  using Data::printItem;
+  using Data::size;
+  template<typename It,typename Out,typename Nav=Drift<>>
+  inline static void printMenu() {Out::template printMenu<It,Out,Nav>(This());}
 };
 
 //this is the top level of static items
