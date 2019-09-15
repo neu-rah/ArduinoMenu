@@ -6,10 +6,10 @@
 template<const char** text,typename I=Empty<>>
 struct StaticText:I,lambda::StaticText<text> {
   using This=StaticText<text,I>;
-  template<typename O,typename N=Drift<>>
+  template<typename O,Roles P=Roles::Raw,typename N=Drift<>>
   inline static void printTo() {
     O::raw(text[0]);
-    I::template printTo<O,N>();
+    I::template printTo<O,P,N>();
   }
   // template<typename It,typename Out,typename Nav=Drift<>>
   // inline static void printMenu() {
@@ -27,8 +27,10 @@ struct StaticMenuData:I {
   using This=StaticMenuData<I,II...>;
   using Head=I;
   using Tail=StaticMenuData<II...>;
-  template<typename O,typename N=Drift<>>
-  inline static void printItem(size_t i) {i?Tail::template printItem<O,N>(i-1):I::template printTo<O,N>();}
+  template<typename O,Roles P=Roles::Raw,typename N=Drift<>>
+  inline static void printItem(size_t i) {
+    i?Tail::template printItem<O,P,N>(i-1):I::template printTo<O,P,N>();
+  }
   template<typename It,typename Out,typename Nav=Drift<>>
   inline static void printMenu() {Out::template printMenu<This,Out,Nav>(This());}
   inline static constexpr idx_t size() {return Tail::size()+1;}
@@ -37,10 +39,10 @@ struct StaticMenuData:I {
 template<typename I>
 struct StaticMenuData<I>:I {
   using This=StaticMenuData<I>;
-  template<typename O,typename N=Drift<>>
+  template<typename O,Roles P,typename N=Drift<>>
   inline static void printTo() {}
-  template<typename O,typename N=Drift<>>
-  inline static void printItem(size_t i) {I::template printTo<O,N>();}
+  template<typename O,Roles P,typename N=Drift<>>
+  inline static void printItem(size_t i) {I::template printTo<O,P,N>();}
   template<typename It,typename Out,typename Nav=Drift<>>
   inline static void printMenu() {Out::template printMenu<This,Out,Nav>(This());}
   inline static constexpr idx_t size() {return 1;}

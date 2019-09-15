@@ -42,14 +42,14 @@ struct Void:O {
 //menu structure terminal
 template<typename I>
 struct Empty:I {
-  template<typename O,typename N=Drift<>>
+  template<typename O,Roles P=Roles::Raw,typename N=Drift<>>
   inline static void printTo() {}//print full item
-  template<typename O,typename N=Drift<>>
+  template<typename O,Roles P=Roles::Raw,typename N=Drift<>>
   inline static void printItem(size_t i) {}//print a sub-item by index
   template<typename It,typename Out,typename Nav=Drift<>>
   inline static void printMenu() {
     _trace(MDO<<"Empty::printMenu");
-    It::template printTo<Out,Nav>();
+    It::template printTo<Out,Roles::Panel,Nav>();
     It::template printMenu<Out,Nav>();
   }//print full menu
   inline static idx_t size() {return 0;}

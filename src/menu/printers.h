@@ -31,7 +31,7 @@ struct FullPrinter:public P {
     Out::template fmtPanel<true,Out,Nav,I>(0);
     Out::template fmtMenu<true,Out,Nav,I>(0);
     Out::template fmtTitle<true,Out,Nav,I>(0);
-    i.template printTo<Out,Nav>();
+    i.template printTo<Out,Roles::Title,Nav>();
     Out::template fmtTitle<false,Out,Nav,I>(0);
     Out::template fmtBody<true,Out,Nav,I>(0);
 
@@ -53,7 +53,7 @@ struct FullPrinter:public P {
       Out::template fmtIndex <false,Out,Nav,I>(n);
       Out::template fmtCursor<true ,Out,Nav,I>(n);
       Out::template fmtCursor<false,Out,Nav,I>(n);
-      i.template printItem<Out,Nav>(n);
+      i.template printItem<Out,Roles::Prompt,Nav>(n);
       Out::template fmtItem<false,Out,Nav,I>(n);
     }
     Out::template fmtBody <false,Out,Nav,I>(0);
