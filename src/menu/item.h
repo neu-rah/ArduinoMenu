@@ -20,11 +20,13 @@ struct StaticText:I,lambda::StaticText<text> {
   inline static void printMenu() {Out::template printMenu<This,Out,Nav>(This());}
 };
 
+// using StaticText=lambda::Curry<_StaticText,2>;//using this invalidates the default argument!
+
 template<typename I,typename... II>
-struct StaticMenu:I {
-  using This=StaticMenu<I,II...>;
+struct StaticMenuData:I {
+  using This=StaticMenuData<I,II...>;
   using Head=I;
-  using Tail=StaticMenu<II...>;
+  using Tail=StaticMenuData<II...>;
   template<typename O,typename N=Drift<>>
   inline static void printItem(size_t i) {i?Tail::template printItem<O,N>(i-1):I::template printTo<O,N>();}
   template<typename It,typename Out,typename Nav=Drift<>>
@@ -33,8 +35,8 @@ struct StaticMenu:I {
 };
 
 template<typename I>
-struct StaticMenu<I>:I {
-  using This=StaticMenu<I>;
+struct StaticMenuData<I>:I {
+  using This=StaticMenuData<I>;
   template<typename O,typename N=Drift<>>
   inline static void printTo() {}
   template<typename O,typename N=Drift<>>
@@ -42,6 +44,12 @@ struct StaticMenu<I>:I {
   template<typename It,typename Out,typename Nav=Drift<>>
   inline static void printMenu() {Out::template printMenu<This,Out,Nav>(This());}
   inline static constexpr idx_t size() {return 1;}
+};
+
+template<typename Title,typename Data>
+struct StaticMenu:Title, Data {
+  using Title::printTo;
+  using Data::printMenu;
 };
 
 //this is the top level of static items
