@@ -7,6 +7,7 @@
 //config
 using TinyCore=lambda::False;
 #define MDO cout
+constexpr bool useItemFmt=true;
 
 //aux stuff
 using Nil=lambda::Nil;
@@ -28,28 +29,40 @@ template<typename N=Nil> struct Drift;
 template<typename N=Nil> struct Void;
 template<typename N=Nil> struct Empty;
 
-template<Roles Part,typename I> struct Role:I {
+template<Roles Part>
+struct AllowRole {
+  template<Roles P> inline static constexpr bool allowed() {return Part==P;}
+};
+
+template<Roles Part>
+struct DenyRole {
+  template<Roles P> inline static constexpr bool allowed() {return Part!=P;}
+};
+
+template<typename Part,typename I> struct RoleChk:I {
+  template<Roles P,bool io,typename It,typename Out,typename Nav>
+  static inline void fmt(idx_t n) {
+    if (Part::template allowed<P>()||P==Roles::Raw) I::template fmt<P,io,It,Out,Nav>(n);
+  }
   template<typename O,Roles P=Roles::Raw,typename N=Drift<>>
   inline static void printTo() {
-    _trace(MDO<<"printTo filter match "<<Part<<" == "<<P<<endl);
-    if (Part==P||P==Roles::Raw) I::template printTo<O,P,N>();
+    if (Part::template allowed<P>()||P==Roles::Raw) I::template printTo<O,P,N>();
   }
 };
 
-template<Roles Part,typename I> struct NoRole:I {
-  template<typename O,Roles P=Roles::Raw,typename N=Drift<>>
-  inline static void printTo() {
-    _trace(MDO<<"printTo filter exclude "<<Part<<" != "<<P<<endl);
-    if (Part!=P||P==Roles::Raw) I::template printTo<O,P,N>();
-  }
-};
+template<Roles Part,typename I>
+using Role=RoleChk<AllowRole<Part>,I>;
+
+template<Roles Part,typename I>
+using NoRole=RoleChk<DenyRole<Part>,I>;
 
 //plug filters---------------------------------------------------------
 //compose them on top of menu items to filter printing by role
 //allows disabling menu title print,
 // however title will be used as prompt
 // this can also allow to differentiate prompt and menu title texts...
-//only print on role
+
+//only print as role...
 template<typename I> using AsPanel =Role<Roles::Panel ,I>;
 template<typename I> using AsMenu  =Role<Roles::Menu  ,I>;
 template<typename I> using AsTitle =Role<Roles::Title ,I>;
@@ -61,7 +74,8 @@ template<typename I> using AsName  =Role<Roles::Name  ,I>;
 template<typename I> using AsMode  =Role<Roles::Mode  ,I>;
 template<typename I> using AsValue =Role<Roles::Value ,I>;
 template<typename I> using AsUnit  =Role<Roles::Unit  ,I>;
-//print all roles except
+
+//print on all roles except...
 template<typename I> using NoMenu  =NoRole<Roles::Menu  ,I>;
 template<typename I> using NoTitle =NoRole<Roles::Title ,I>;
 template<typename I> using NoBody  =NoRole<Roles::Body  ,I>;

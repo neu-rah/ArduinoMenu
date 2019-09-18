@@ -29,10 +29,12 @@ struct FullPrinter:public P {
   inline static void printMenu(const I& i) {
     _trace(MDO<<"+=====================+"<<endl);
     Out::template fmtPanel<true,Out,Nav,I>(0);
+    // i.template fmt<Panel,true,Out,Nav,I>(0);
     Out::template fmtMenu<true,Out,Nav,I>(0);
-    Out::template fmtTitle<true,Out,Nav,I>(0);
+    // Out::template fmtTitle<true,Out,Nav,I>(0);
+    i.template fmt<Roles::Title,true,I,Out,Nav>(0);
     i.template printTo<Out,Roles::Title,Nav>();
-    Out::template fmtTitle<false,Out,Nav,I>(0);
+    i.template fmt<Roles::Title,false,I,Out,Nav>(0);
     Out::template fmtBody<true,Out,Nav,I>(0);
 
     // if (Out::isRange()) {
@@ -48,13 +50,22 @@ struct FullPrinter:public P {
     for(idx_t n=Out::top();n<i.size();n++) {
       if (!Out::freeY()) break;
       P::template clrLine<Out>(P::posY());
-      Out::template fmtItem  <true ,Out,Nav,I>(n);
-      Out::template fmtIndex <true ,Out,Nav,I>(n);
-      Out::template fmtIndex <false,Out,Nav,I>(n);
-      Out::template fmtCursor<true ,Out,Nav,I>(n);
-      Out::template fmtCursor<false,Out,Nav,I>(n);
+      if (useItemFmt) {
+        i.template fmt<Roles::Prompt,true ,I,Out,Nav>(n);
+        i.template fmt<Roles::Index, true ,I,Out,Nav>(n);
+        i.template fmt<Roles::Index, false,I,Out,Nav>(n);
+        i.template fmt<Roles::Cursor,true ,I,Out,Nav>(n);
+        i.template fmt<Roles::Cursor,false,I,Out,Nav>(n);
+      } else {
+        Out::template fmtItem  <true ,Out,Nav,I>(n);
+        Out::template fmtIndex <true ,Out,Nav,I>(n);
+        Out::template fmtIndex <false,Out,Nav,I>(n);
+        Out::template fmtCursor<true ,Out,Nav,I>(n);
+        Out::template fmtCursor<false,Out,Nav,I>(n);
+      }
       i.template printItem<Out,Roles::Prompt,Nav>(n);
-      Out::template fmtItem<false,Out,Nav,I>(n);
+      if (useItemFmt) i.template fmt<Roles::Prompt,false,I,Out,Nav>(n);
+      else Out::template fmtItem<false,Out,Nav,I>(n);
     }
     Out::template fmtBody <false,Out,Nav,I>(0);
     Out::template fmtMenu <false,Out,Nav,I>(0);

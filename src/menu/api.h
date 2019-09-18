@@ -53,4 +53,6 @@ struct Empty:I {
     It::template printMenu<Out,Nav>();
   }//print full menu
   inline static idx_t size() {return 0;}
+  template<Roles r,bool io,typename It,typename Out,typename Nav>
+  inline static void fmt(idx_t n) {Out::template fmt<r,io,It,Out,Nav>(n);}
 };
