@@ -1,20 +1,44 @@
-#include <iostream>
-using namespace std;
 
-template<auto o> struct StaticData {};
-template<auto o> inline auto id() {return o;}
-template<auto o> inline auto pure() {return o;}
-template<auto o> auto pure<StaticData<o>>() {return StaticData<o>();}
+template<typename O,typename... OO>
+struct Map {
 
-auto add(auto a){return [a](auto b){return pure<a+b>();};}
+  using Next=Map<OO...>;
 
-auto fmap(auto f){
-  return [f](auto o){return f();};
-}
+  template<typename It,Roles P=Roles::Raw,typename N=Drift<>>
+  inline static void printTo() {
+    O::template printTo<It,P,N>();
+    Next::template printTo<It,P,N>();
+  }
 
-StaticData<2> a;
+  template<Roles P=Roles::Raw,typename N=Drift<>>
+  inline static void printTo<O,P,N>() {printTo<O,P,N>();}
+
+  // template<typename O,Roles P=Roles::Raw,typename N=Drift<>>
+  // inline static void printItem(size_t i) {}//print a sub-item by index
+  // template<typename It,typename Out,typename Nav=Drift<>>
+  // inline static void printMenu() {
+  //   _trace(MDO<<"Empty::printMenu");
+  //   It::template printTo<Out,Roles::Panel,Nav>();
+  //   It::template printMenu<Out,Nav>();
+  // }//print full menu
+  // inline static idx_t size() {return 0;}
+  // template<Roles r,bool io,typename It,typename Out,typename Nav>
+  // inline static void fmt(idx_t n) {Out::template fmt<r,io,It,Out,Nav>(n);}
+};
+
+template<typename O>
+struct Map<O> {
+
+  template<typename It,Roles P=Roles::Raw,typename N=Drift<>>
+  inline static void printTo() {
+    O::template printTo<It,P,N>();
+  }
+
+  template<Roles P=Roles::Raw,typename N=Drift<>>
+  inline static void printTo<O,P,N>() {printTo<O,P,N>();}
+
+};
 
 int main() {
-  cout<<add(2)(3);
   return 0;
 }

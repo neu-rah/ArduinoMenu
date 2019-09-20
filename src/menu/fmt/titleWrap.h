@@ -11,13 +11,13 @@
 // namespace Menu {
   template<typename O,char open='[',char close=']'>
   struct TitleWrapFmt:public O {
-    template<bool io,typename Nav,typename Out,typename I>
-    static inline void fmtTitle(idx_t n) {
+    template<bool io,typename Out,typename Nav,typename I>
+    static inline void fmtTitle(idx_t n,const Nav& nav) {
       if (io) {
         Out::raw(open);
-        O::template fmtTitle<io,Nav,Out,I>(n);
+        O::template fmtTitle<io,Out,Nav,I>(n,nav);
       } else {
-        O::template fmtTitle<io,Nav,Out,I>(n);
+        O::template fmtTitle<io,Out,Nav,I>(n,nav);
         Out::raw(close);
       }
     }

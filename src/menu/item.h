@@ -35,9 +35,9 @@ struct StaticMenuData:StaticMenuData<I> {
   inline static void printMenu() {Out::template printMenu<This,Out,Nav>(This());}
   inline static constexpr idx_t size() {return Tail::size()+1;}
   template<Roles r,bool io,typename It,typename Out,typename Nav>
-  inline static void fmtItem(idx_t at,idx_t n) {
-    if (at) Tail::template fmtItem<r,io,It,Out,Nav>(at-1,n);
-    else Out::template fmt<r,io,It,Out,Nav>(n);
+  inline static void fmtItem(idx_t at,idx_t n,const Nav& nav) {
+    if (at) Tail::template fmtItem<r,io,It,Out,Nav>(at-1,n,nav);
+    else Out::template fmt<r,io,It,Out,Nav>(n,nav);
   }
 };
 
@@ -49,10 +49,10 @@ struct StaticMenuData<I>:I {
   template<typename O,Roles P,typename N=Drift<>>
   inline static void printItem(size_t i) {I::template printTo<O,P,N>();}
   template<typename It,typename Out,typename Nav=Drift<>>
-  inline static void printMenu() {Out::template printMenu<This,Out,Nav>(This());}
+  inline static void printMenu(Nav& nav) {Out::template printMenu<This,Out,Nav>(nav);}
   inline static constexpr idx_t size() {return 1;}
   template<Roles r,bool io,typename It,typename Out,typename Nav>
-  inline static void fmtItem(idx_t at,idx_t n) {Out::template fmt<r,io,It,Out,Nav>(n);}
+  inline static void fmtItem(idx_t at,idx_t n,const Nav& nav) {Out::template fmt<r,io,It,Out,Nav>(n,nav);}
 };
 
 template<typename Title,typename Data>
@@ -63,14 +63,14 @@ struct StaticMenu:Title, Data {
   using Data::size;
   using Title::fmt;
   template<typename It,typename Out,typename Nav=Drift<>>
-  inline static void printMenu() {Out::template printMenu<It,Out,Nav>(This());}
+  inline static void printMenu(Nav& nav) {Out::template printMenu<It,Out,Nav>(This(),nav);}
   template<Roles r,bool io,typename It,typename Out,typename Nav>
-  inline static void fmt(idx_t n) {Data::template fmtItem<r,io,It,Out,Nav>(n,n);}
+  inline static void fmt(idx_t n,const Nav& nav) {Data::template fmtItem<r,io,It,Out,Nav>(n,n,nav);}
 };
 
 //this is the top level of static items
 template<typename I>
 struct Item:I {
   template<typename Out,typename Nav=Drift<>>
-  inline static void printMenu() {I::template printMenu<I,Out,Nav>();}
+  inline static void printMenu(Nav& nav) {I::template printMenu<I,Out,Nav>(nav);}
 };

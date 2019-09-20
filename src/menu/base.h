@@ -10,8 +10,16 @@ using TinyCore=lambda::False;
 constexpr bool useItemFmt=true;
 
 //aux stuff
-using Nil=lambda::Nil;
+// using Nil=lambda::Nil;
+struct Nil{};
 using idx_t=lambda::Expr<TinyCore,lambda::As<uint8_t>,lambda::Int>::App::Type;
+
+template<typename T>
+constexpr T T_MAX=(((long long)1)<<((sizeof(T)<<3)-1))-1;
+
+//INT16_MAX this oes not work well with variable type
+constexpr idx_t idx_max=T_MAX<idx_t>;//(1<<((sizeof(idx_t)<<3)-1))-1;//((idx_t)~0)>>1;//assuming signed
+
 
 enum class Modes {Normal,Edit,Tune};
 enum class Roles:idx_t {Panel,Menu,Title,Body,Prompt,Index,Cursor,Name,Mode,Value,Unit,Raw};
@@ -41,7 +49,7 @@ struct DenyRole {
 
 template<typename Part,typename I> struct RoleChk:I {
   template<Roles P,bool io,typename It,typename Out,typename Nav>
-  static inline void fmt(idx_t n) {
+  static inline void fmt(idx_t n,const Nav& nav) {
     if (Part::template allowed<P>()||P==Roles::Raw) I::template fmt<P,io,It,Out,Nav>(n);
   }
   template<typename O,Roles P=Roles::Raw,typename N=Drift<>>
@@ -87,3 +95,36 @@ template<typename I> using NoMode  =NoRole<Roles::Mode  ,I>;
 template<typename I> using NoValue =NoRole<Roles::Value ,I>;
 template<typename I> using NoUnit  =NoRole<Roles::Unit  ,I>;
 template<typename I> using NoPanel =NoRole<Roles::Panel ,I>;
+
+//map Item API calls over an agregate of items
+template<typename O,typename... OO>
+struct Map:O {
+  using This=Map<O,OO...>;
+  using Tail=Map<OO...>;
+
+  template<typename It,Roles P=Roles::Raw,typename N=Drift<>>
+  inline static void printTo() {
+    O::template printTo<It,P,N>();
+    Tail::template printTo<It,P,N>();
+  }
+
+  template<typename It,Roles P=Roles::Raw,typename N=Drift<>>
+  inline static void printItem(size_t i) {
+    O::template printItem<It,P,N>(i);
+    Tail::template printItem<It,P,N>(i);
+  }
+
+  template<typename It,typename Out,typename Nav=Drift<>>
+  inline static void printMenu() {
+    It::template printMenu<It,Out,Nav>();
+    Tail::template printMenu<It,Out,Nav>();
+  }
+
+  template<Roles r,bool io,typename It,typename Out,typename Nav>
+  inline static void fmt(idx_t n,const Nav& nav) {
+    It::template fmt<r,io,It,Out,Nav>(n,nav);
+    Tail::template fmt<r,io,It,Out,Nav>(n,nav);
+  }
+};
+
+template<typename O> struct Map<O>:O {};
