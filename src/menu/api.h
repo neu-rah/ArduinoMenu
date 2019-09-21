@@ -8,7 +8,6 @@
 template<typename O> struct Data:O {using O::O;static O data;};
 template<typename O> O Data<O>::data;
 
-
 ////////////////////////////////////////////////////////////////////////////////
 //navigation terminal
 template<typename N>
@@ -33,6 +32,7 @@ struct Void:O {
   template<typename Out>
   static inline void clrLine(idx_t n) {}
   constexpr static inline bool isRange() {return false;}
+  constexpr static inline bool inRange(idx_t) {return true;}
   constexpr static inline bool isViewport() {return false;}
   constexpr static inline idx_t height() {return 0;}
   constexpr static inline idx_t top() {return 0;}

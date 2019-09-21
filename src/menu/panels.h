@@ -25,9 +25,11 @@ template<typename O>
 class RangePanel:public O {
   public:
     constexpr static inline bool isRange() {return true;}
+    inline bool inRange(idx_t n) {
+      return n-topLine<O::height();
+    }
     inline idx_t top() const {return topLine;}
     inline void setTop(idx_t n) {topLine=n;}
-    // inline idx_t posY() const {return O::posY()-top();}
   protected:
     idx_t topLine=0;
 };

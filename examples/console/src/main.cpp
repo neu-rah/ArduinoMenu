@@ -34,7 +34,7 @@ const char* altTitle_text="Alt. title for aux. menu!";
 const char*auxMenu_title="Aux. menu";
 using AuxMenu=Item<
   StaticMenu<
-    Map<
+    Map<//agregate multiple elements to be processed in order
       NoTitle<StaticText<&auxMenu_title>>,//use this except for menu title
       AsTitle<StaticText<&altTitle_text>>//the alternative title
     >,
