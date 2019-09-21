@@ -20,3 +20,14 @@ struct StaticPanel:public O {
   static inline void useX(idx_t ux=1) {}
   static inline void useY(idx_t uy=1) {}
 };
+
+template<typename O>
+class RangePanel:public O {
+  public:
+    constexpr static inline bool isRange() {return true;}
+    inline idx_t top() const {return topLine;}
+    inline void setTop(idx_t n) {topLine=n;}
+    // inline idx_t posY() const {return O::posY()-top();}
+  protected:
+    idx_t topLine=0;
+};

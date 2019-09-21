@@ -3,6 +3,12 @@
 
 #include "base.h"
 
+
+//provide some static data to static functions
+template<typename O> struct Data:O {using O::O;static O data;};
+template<typename O> O Data<O>::data;
+
+
 ////////////////////////////////////////////////////////////////////////////////
 //navigation terminal
 template<typename N>
@@ -26,11 +32,11 @@ struct Void:O {
   inline static void nl() {}
   template<typename Out>
   static inline void clrLine(idx_t n) {}
-  constexpr static inline bool isRange() {return true;}
+  constexpr static inline bool isRange() {return false;}
   constexpr static inline bool isViewport() {return false;}
   constexpr static inline idx_t height() {return 0;}
   constexpr static inline idx_t top() {return 0;}
-  static inline void setTop(idx_t) {}
+  // static inline void setTop(idx_t) {}
   constexpr static inline idx_t posX() {return 0;}
   constexpr static inline idx_t posY() {return 0;}
   constexpr static inline idx_t freeX() {return idx_max;}

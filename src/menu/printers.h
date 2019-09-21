@@ -26,7 +26,7 @@ template<typename P=TextMeasure>
 struct FullPrinter:public P {
   using This=FullPrinter<P>;
   template<typename I,typename Out=This,typename Nav=Drift<>>
-  inline static void printMenu(const I& i,const Nav& nav) {
+  inline static void printMenu(const I& i,const Nav& nav,Out& out) {
     _trace(MDO<<"nav pos:"<<nav.pos()<<endl);
     _trace(MDO<<"+=====================+"<<endl);
     Out::template fmtPanel<true,Out,Nav,I>(0,nav);

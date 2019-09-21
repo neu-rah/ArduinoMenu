@@ -63,7 +63,7 @@ struct StaticMenu:Title, Data {
   using Data::size;
   using Title::fmt;
   template<typename It,typename Out,typename Nav=Drift<>>
-  inline static void printMenu(Nav& nav) {Out::template printMenu<It,Out,Nav>(This(),nav);}
+  inline static void printMenu(Nav& nav) {Out::template printMenu<It,Nav>(This(),nav);}
   template<Roles r,bool io,typename It,typename Out,typename Nav>
   inline static void fmt(idx_t n,const Nav& nav) {Data::template fmtItem<r,io,It,Out,Nav>(n,n,nav);}
 };
