@@ -36,8 +36,8 @@ struct StaticMenuData:StaticMenuData<I> {
   inline static constexpr idx_t size() {return Tail::size()+1;}
   template<Roles r,bool io,typename It,typename Out,typename Nav>
   inline static void fmtItem(idx_t at,idx_t n,const Nav& nav,Out& out) {
-    if (at) Tail::template fmtItem<r,io,It,Out,Nav>(at-1,n,nav);
-    else Out::template fmt<r,io,It,Out,Nav>(n,nav);
+    if (at) Tail::template fmtItem<r,io,It,Out,Nav>(at-1,n,nav,out);
+    else Out::template fmt<r,io,It,Out,Nav>(n,nav,out);
   }
 };
 
@@ -52,7 +52,7 @@ struct StaticMenuData<I>:I {
   inline static void printMenu(Nav& nav) {Out::template printMenu<This,Out,Nav>(nav);}
   inline static constexpr idx_t size() {return 1;}
   template<Roles r,bool io,typename It,typename Out,typename Nav>
-  inline static void fmtItem(idx_t at,idx_t n,const Nav& nav) {Out::template fmt<r,io,It,Out,Nav>(n,nav);}
+  inline static void fmtItem(idx_t at,idx_t n,const Nav& nav,Out& out) {Out::template fmt<r,io,It,Out,Nav>(n,nav,out);}
 };
 
 template<typename Title,typename Data>
@@ -65,7 +65,7 @@ struct StaticMenu:Title, Data {
   template<typename It,typename Out,typename Nav=Drift<>>
   inline static void printMenu(Nav& nav) {Out::template printMenu<It,Nav>(This(),nav);}
   template<Roles r,bool io,typename It,typename Out,typename Nav>
-  inline static void fmt(idx_t n,const Nav& nav) {Data::template fmtItem<r,io,It,Out,Nav>(n,n,nav);}
+  inline static void fmt(idx_t n,const Nav& nav,Out& out) {Data::template fmtItem<r,io,It,Out,Nav>(n,n,nav,out);}
 };
 
 //this is the top level of static items

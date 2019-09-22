@@ -44,17 +44,17 @@ struct Void:O {
   constexpr static inline idx_t free() {return idx_max;}
   static inline void useX(idx_t ux=1) {}
   static inline void useY(idx_t uy=1) {}
-  template<bool io,typename Out,typename Nav,typename I> static inline void fmtPanel (idx_t,const Nav&) {}
-  template<bool io,typename Out,typename Nav,typename I> static inline void fmtMenu  (idx_t,const Nav&) {}
-  template<bool io,typename Out,typename Nav,typename I> static inline void fmtTitle (idx_t,const Nav&) {}
-  template<bool io,typename Out,typename Nav,typename I> static inline void fmtBody  (idx_t,const Nav&) {}
-  template<bool io,typename Out,typename Nav,typename I> static inline void fmtItem  (idx_t,const Nav&) {}
-  template<bool io,typename Out,typename Nav,typename I> static inline void fmtIndex (idx_t,const Nav&) {}
-  template<bool io,typename Out,typename Nav,typename I> static inline void fmtCursor(idx_t,const Nav&) {}
-  template<bool io,typename Out,typename Nav,typename I> static inline void fmtName  (idx_t,const Nav&) {}
-  template<bool io,typename Out,typename Nav,typename I> static inline void fmtMode  (idx_t,const Nav&) {}
-  template<bool io,typename Out,typename Nav,typename I> static inline void fmtValue (idx_t,const Nav&) {}
-  template<bool io,typename Out,typename Nav,typename I> static inline void fmtUnit  (idx_t,const Nav&) {}
+  template<bool io,typename I,typename Out,typename Nav> static inline void fmtPanel (idx_t,const Nav&,const Out&) {}
+  template<bool io,typename I,typename Out,typename Nav> static inline void fmtMenu  (idx_t,const Nav&,const Out&) {}
+  template<bool io,typename I,typename Out,typename Nav> static inline void fmtTitle (idx_t,const Nav&,const Out&) {}
+  template<bool io,typename I,typename Out,typename Nav> static inline void fmtBody  (idx_t,const Nav&,const Out&) {}
+  template<bool io,typename I,typename Out,typename Nav> static inline void fmtItem  (idx_t,const Nav&,const Out&) {}
+  template<bool io,typename I,typename Out,typename Nav> static inline void fmtIndex (idx_t,const Nav&,const Out&) {}
+  template<bool io,typename I,typename Out,typename Nav> static inline void fmtCursor(idx_t,const Nav&,const Out&) {}
+  template<bool io,typename I,typename Out,typename Nav> static inline void fmtName  (idx_t,const Nav&,const Out&) {}
+  template<bool io,typename I,typename Out,typename Nav> static inline void fmtMode  (idx_t,const Nav&,const Out&) {}
+  template<bool io,typename I,typename Out,typename Nav> static inline void fmtValue (idx_t,const Nav&,const Out&) {}
+  template<bool io,typename I,typename Out,typename Nav> static inline void fmtUnit  (idx_t,const Nav&,const Out&) {}
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -72,5 +72,5 @@ struct Empty:I {
     It::template printMenu<Out,Nav>(nav);
   }//print full menu
   template<Roles r,bool io,typename It,typename Out,typename Nav>
-  inline static void fmt(idx_t n,const Nav& nav) {Out::template fmt<r,io,It,Out,Nav>(n,nav);}
+  inline static void fmt(idx_t n,const Nav& nav,Out& out) {Out::template fmt<r,io,It,Out,Nav>(n,nav,out);}
 };

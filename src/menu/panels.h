@@ -42,6 +42,7 @@ class RangePanel:public O {
     }
     inline void useY(idx_t uy=1) {freeLines-=uy;}
     inline void nl() {O::nl();This::useY();}
+    inline idx_t freeY() const {return freeLines;}
   protected:
     idx_t topLine=0;
     idx_t freeLines;
@@ -63,7 +64,6 @@ class Viewport:public O {
       //O::newView();
     }
     inline void nl() {O::nl();This::useY();}
-    inline idx_t freeY() const {return freeLines;}
     template<typename T>
     inline void raw(T i) {
       O::setCursor(This::posX(),This::posY());

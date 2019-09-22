@@ -29,49 +29,49 @@ struct FullPrinter:public P {
   inline static void printMenu(const I& i,const Nav& nav,Out& out) {
     _trace(MDO<<"nav pos:"<<nav.pos()<<endl);
     _trace(MDO<<"+=====================+"<<endl);
-    Out::template fmtPanel<true,Out,Nav,I>(0,nav);
+    out.template fmtPanel<true,I,Out,Nav>(0,nav,out);
     // i.template fmt<Panel,true,Out,Nav,I>(0);
-    Out::template fmtMenu<true,Out,Nav,I>(0,nav);
-    // Out::template fmtTitle<true,Out,Nav,I>(0);
-    i.template fmt<Roles::Title,true,I,Out,Nav>(0,nav);
+    out.template fmtMenu<true,I,Out,Nav>(0,nav,out);
+    // out.template fmtTitle<true,Out,Nav,I>(0);
+    i.template fmt<Roles::Title,true,I,Out,Nav>(0,nav,out);
     i.template printTo<Out,Roles::Title,Nav>();
-    i.template fmt<Roles::Title,false,I,Out,Nav>(0,nav);
-    Out::template fmtBody<true,Out,Nav,I>(0,nav);
+    i.template fmt<Roles::Title,false,I,Out,Nav>(0,nav,out);
+    out.template fmtBody<true,I,Out,Nav>(0,nav,out);
 
-    if (Out::isRange()) {
+    if (out.isRange()) {
       //ensure that selection option is withing range
       //TODO: option can have variable height...
       //this is NOT taking it into account => rework
-      while(Out::top()>nav.pos())
-        Out::setTop(Out::top()-1);
-      while(nav.pos()>=Out::top()+Out::freeY())
-        Out::setTop(Out::top()+1);
+      while(out.top()>nav.pos())
+        out.setTop(out.top()-1);
+      while(nav.pos()>=out.top()+out.freeY())
+        out.setTop(out.top()+1);
     }
 
-    for(idx_t n=Out::top();n<i.size();n++) {
-      if (!Out::freeY()) break;
-      // if (!(Out::inRange(n)&&Out::freeY())) break;
+    for(idx_t n=out.top();n<i.size();n++) {
+      if (!out.freeY()) break;
+      // if (!(out.inRange(n)&&out.freeY())) break;
       P::template clrLine<Out>(P::posY());
       if (useItemFmt) {
-        i.template fmt<Roles::Prompt,true ,I,Out,Nav>(n,nav);
-        i.template fmt<Roles::Index, true ,I,Out,Nav>(n,nav);
-        i.template fmt<Roles::Index, false,I,Out,Nav>(n,nav);
-        i.template fmt<Roles::Cursor,true ,I,Out,Nav>(n,nav);
-        i.template fmt<Roles::Cursor,false,I,Out,Nav>(n,nav);
+        i.template fmt<Roles::Prompt,true ,I,Out,Nav>(n,nav,out);
+        i.template fmt<Roles::Index, true ,I,Out,Nav>(n,nav,out);
+        i.template fmt<Roles::Index, false,I,Out,Nav>(n,nav,out);
+        i.template fmt<Roles::Cursor,true ,I,Out,Nav>(n,nav,out);
+        i.template fmt<Roles::Cursor,false,I,Out,Nav>(n,nav,out);
       } else {
-        Out::template fmtItem  <true ,Out,Nav,I>(n,nav);
-        Out::template fmtIndex <true ,Out,Nav,I>(n,nav);
-        Out::template fmtIndex <false,Out,Nav,I>(n,nav);
-        Out::template fmtCursor<true ,Out,Nav,I>(n,nav);
-        Out::template fmtCursor<false,Out,Nav,I>(n,nav);
+        out.template fmtItem  <true ,I,Out,Nav>(n,nav,out);
+        out.template fmtIndex <true ,I,Out,Nav>(n,nav,out);
+        out.template fmtIndex <false,I,Out,Nav>(n,nav,out);
+        out.template fmtCursor<true ,I,Out,Nav>(n,nav,out);
+        out.template fmtCursor<false,I,Out,Nav>(n,nav,out);
       }
       i.template printItem<Out,Roles::Prompt,Nav>(n);
-      if (useItemFmt) i.template fmt<Roles::Prompt,false,I,Out,Nav>(n,nav);
-      else Out::template fmtItem<false,Out,Nav,I>(n,nav);
+      if (useItemFmt) i.template fmt<Roles::Prompt,false,I,Out,Nav>(n,nav,out);
+      else out.template fmtItem<false,I,Out,Nav>(n,nav,out);
     }
-    Out::template fmtBody <false,Out,Nav,I>(0,nav);
-    Out::template fmtMenu <false,Out,Nav,I>(0,nav);
-    Out::template fmtPanel<false,Out,Nav,I>(0,nav);
+    out.template fmtBody <false,I,Out,Nav>(0,nav,out);
+    out.template fmtMenu <false,I,Out,Nav>(0,nav,out);
+    out.template fmtPanel<false,I,Out,Nav>(0,nav,out);
     _trace(MDO<<"+---------------------+"<<endl);
   }
   template<typename I,typename Out=This,typename Nav=Drift<>>
