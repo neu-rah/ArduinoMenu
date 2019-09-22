@@ -71,12 +71,15 @@ using MainMenu=Item<
 
 MainMenu mainMenu;
 
-NavNode<
-  NavPos<
-    StaticNavNode<
-      MainMenu
+NavRoot<
+  NavNode<
+    NavPos<
+      StaticNavNode<
+        MainMenu
+      >
     >
-  >
+  >,
+  2
 > nav(mainMenu);
 
 //handle serial keys to navigate menu

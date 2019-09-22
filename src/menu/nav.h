@@ -27,28 +27,6 @@ struct StaticFlatNavNode:N {
   }
 };
 
-template<typename Data,typename N=Drift<>>
-class StaticNavNode:public N {
-  public:
-    StaticNavNode(const Data& o):target(&o) {}
-    inline idx_t size() {return target->size();}
-    using This=StaticFlatNavNode<Data,N>;
-    template<typename O,Roles P=Roles::Raw>
-    inline void printTo() {target->template printTo<O,P,This>();}//print full item
-
-    template<typename O,Roles P=Roles::Raw>
-    inline void printItem(size_t i) {
-      target->template printItem<O,P,This>(i);
-    }
-
-    template<typename Out,typename Nav=This>
-    inline void printMenu(Nav& nav) {
-      target->template printMenu<Out,Nav>(nav);
-    }
-  protected:
-    const Data* target;
-};
-
 template<typename N,typename Idx=int>
 class NavPosBase:public N {
   public:
@@ -75,6 +53,32 @@ class NavPosBase:public N {
     Idx at=0;
 };
 
+template<typename D,typename N=Drift<>>
+class StaticNavNode:public N {
+  public:
+    using Data=D;
+    StaticNavNode():target(NULL) {}
+    StaticNavNode(const Data& o):target(&o) {}
+    inline idx_t size() {return target->size();}
+    using This=StaticFlatNavNode<Data,N>;
+    template<typename O,Roles P=Roles::Raw>
+    inline void printTo() {target->template printTo<O,P,This>();}//print full item
+
+    template<typename O,Roles P=Roles::Raw>
+    inline void printItem(size_t i) {
+      target->template printItem<O,P,This>(i);
+    }
+
+    template<typename Out,typename Nav=This>
+    inline void printMenu(Nav& nav) {
+      target->template printMenu<Out,Nav>(nav);
+    }
+    inline void setTarget(Data* t) {target=t;}
+    inline Data& getTarget(Data* t) const {return *target;}
+  protected:
+    const Data* target;
+};
+
 // this is the top of static navigation
 template<typename N=Drift<>>
 struct NavNode:N {
@@ -98,3 +102,23 @@ struct NavNode:N {
 
 template<typename N=Drift<>>
 using NavPos=NavPosBase<N>;
+
+template<typename Path,int n,typename R=Nil>
+class NavRoot:public R {
+  public:
+    using Data=typename Path::Data;
+    NavRoot(const Data& o) {path[0]=Path(o);}
+    inline bool up() {return path[level].up();}
+    inline bool down() {return path[level].down();}
+    inline bool enter() {return path[level].enter();}
+    inline bool esc() {return path[level].esc();}
+    template<typename O,Roles P=Roles::Raw>
+    inline void printTo() {path[level].template printTo<O,P>();}
+    template<typename Out>
+    inline void printMenu() {
+      path[level].template printMenu<Out>();
+    }
+  protected:
+    idx_t level=0;
+    Path path[n]{};
+};
