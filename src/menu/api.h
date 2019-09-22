@@ -61,6 +61,12 @@ struct Void:O {
 //menu structure terminal
 template<typename I>
 struct Empty:I {
+  /// is this item enabled?
+  constexpr static inline bool enabled() {return true;}
+  /// get enabled status of collection indexed item
+  constexpr static inline bool enabled(idx_t) {return true;}
+  /// set enabled status of indexed collection member
+  inline static void enable(idx_t,bool) {}
   inline static idx_t size() {return 0;}
   template<typename O,Roles P=Roles::Raw,typename N=Drift<>>
   inline static void printTo() {}//print full item

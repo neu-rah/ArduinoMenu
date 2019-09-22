@@ -9,6 +9,7 @@ using namespace std;
 #include <menu.h>
 #include <menu/fmt/textFmt.h>
 #include <menu/fmt/titleWrap.h>
+#include <menu/comp/endis.h>
 #include "linuxkb.h"
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -58,7 +59,7 @@ using MainMenu=Item<
     StaticText<&mainMenu_text>,
     StaticMenuData<
       StaticText<&op1_text>,
-      StaticText<&op2_text>,
+      EnDis<StaticText<&op2_text>>,
       StaticText<&opn_text>,
       StaticText<&opn_text>,
       StaticText<&opn_text>,
@@ -68,13 +69,15 @@ using MainMenu=Item<
   >
 >;
 
+MainMenu mainMenu;
+
 NavNode<
   NavPos<
-    StaticFlatNavNode<
+    StaticNavNode<
       MainMenu
     >
   >
-> nav;
+> nav(mainMenu);
 
 //handle serial keys to navigate menu
 bool keys(int key) {
@@ -92,6 +95,7 @@ int main() {
   set_conio_terminal_mode();
   Out::raw("AM5 development.===================================================");
   Out::nl();
+  mainMenu.enable(1,false);
   nav.printMenu<Out>();
 
   do {

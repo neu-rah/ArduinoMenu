@@ -27,6 +27,14 @@ struct StaticMenuData:StaticMenuData<I> {
   using This=StaticMenuData<I,II...>;
   using Head=I;
   using Tail=StaticMenuData<II...>;
+  inline void enable(idx_t n,bool o) {
+    if (n) enable(n-1,o);
+    else I::enable(n,o);
+  }
+  inline bool enabled(idx_t n) const {
+    trace(MDO<<"StaticMenu<I,II...>::enabled"<<endl);
+    return n?Tail::enabled(n-1):I::enabled(0);
+  }
   template<typename O,Roles P=Roles::Raw,typename N=Drift<>>
   inline static void printItem(size_t i) {
     i?Tail::template printItem<O,P,N>(i-1):I::template printTo<O,P,N>();
@@ -58,10 +66,12 @@ struct StaticMenuData<I>:I {
 template<typename Title,typename Data>
 struct StaticMenu:Title, Data {
   using This=StaticMenu<Title,Data>;
+  using Title::fmt;
   using Title::printTo;
   using Data::printItem;
   using Data::size;
-  using Title::fmt;
+  using Data::enable;
+  using Data::enabled;
   template<typename It,typename Out,typename Nav=Drift<>>
   inline static void printMenu(Nav& nav) {Out::template printMenu<It,Nav>(This(),nav);}
   template<Roles r,bool io,typename It,typename Out,typename Nav>

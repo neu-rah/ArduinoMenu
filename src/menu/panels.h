@@ -36,10 +36,7 @@ class RangePanel:public O {
     // inline bool inRange(idx_t n) {return n-topLine<O::height();}
     inline idx_t top() const {return topLine;}
     inline void setTop(idx_t n) {topLine=n;}
-    inline void newView() {
-      _trace(MDO<<"RangePanel::newView()"<<endl);
-      freeLines=O::height();
-    }
+    inline void newView() {freeLines=O::height();}
     inline void useY(idx_t uy=1) {freeLines-=uy;}
     inline void nl() {O::nl();This::useY();}
     inline idx_t freeY() const {return freeLines;}
@@ -59,7 +56,6 @@ class Viewport:public O {
     inline operator bool() const {return fx&&fy;}
     inline operator int() const {return free();}
     inline void newView() {
-      trace(MDO<<"newView()"<<endl);
       fx=O::width();fy=O::height();
       //O::newView();
     }

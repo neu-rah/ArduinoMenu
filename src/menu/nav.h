@@ -27,9 +27,32 @@ struct StaticFlatNavNode:N {
   }
 };
 
+template<typename Data,typename N=Drift<>>
+class StaticNavNode:public N {
+  public:
+    StaticNavNode(const Data& o):target(&o) {}
+    inline idx_t size() {return target->size();}
+    using This=StaticFlatNavNode<Data,N>;
+    template<typename O,Roles P=Roles::Raw>
+    inline void printTo() {target->template printTo<O,P,This>();}//print full item
+
+    template<typename O,Roles P=Roles::Raw>
+    inline void printItem(size_t i) {
+      target->template printItem<O,P,This>(i);
+    }
+
+    template<typename Out,typename Nav=This>
+    inline void printMenu(Nav& nav) {
+      target->template printMenu<Out,Nav>(nav);
+    }
+  protected:
+    const Data* target;
+};
+
 template<typename N,typename Idx=int>
 class NavPosBase:public N {
   public:
+    using N::N;
     inline Idx pos() const {return at;}
     inline bool selected(idx_t idx) const {return at==idx;}
     // template<typename Nav>
@@ -55,6 +78,7 @@ class NavPosBase:public N {
 // this is the top of static navigation
 template<typename N=Drift<>>
 struct NavNode:N {
+  using N::N;
   using This=NavNode<N>;
   // inline static idx_t size() {return Data::size();}
 
