@@ -49,7 +49,8 @@ struct FullPrinter:public P {
     }
 
     for(idx_t n=Out::top();n<i.size();n++) {
-      if (!(Out::inRange(n)&&Out::freeY())) break;
+      if (!Out::freeY()) break;
+      // if (!(Out::inRange(n)&&Out::freeY())) break;
       P::template clrLine<Out>(P::posY());
       if (useItemFmt) {
         i.template fmt<Roles::Prompt,true ,I,Out,Nav>(n,nav);

@@ -35,7 +35,7 @@ struct StaticMenuData:StaticMenuData<I> {
   inline static void printMenu() {Out::template printMenu<This,Out,Nav>(This());}
   inline static constexpr idx_t size() {return Tail::size()+1;}
   template<Roles r,bool io,typename It,typename Out,typename Nav>
-  inline static void fmtItem(idx_t at,idx_t n,const Nav& nav) {
+  inline static void fmtItem(idx_t at,idx_t n,const Nav& nav,Out& out) {
     if (at) Tail::template fmtItem<r,io,It,Out,Nav>(at-1,n,nav);
     else Out::template fmt<r,io,It,Out,Nav>(n,nav);
   }

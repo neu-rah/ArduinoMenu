@@ -15,7 +15,11 @@ using Console=OutStream<decltype(cout),cout,TextMeasure>;
 template<typename Out>
 struct MenuOut:public Data<Out> {
   using This=MenuOut<Out>;
-  static inline bool inRange(idx_t n) {return n-Data<Out>::data.top()<This::height();}
+  //this is limitative
+  // - cant hide options
+  // - does not account for title presence
+  // - options are monometric!
+  // static inline bool inRange(idx_t n) {return n-Data<Out>::data.top()<This::height();}
   static inline void setTop(idx_t n) {Data<Out>::data.setTop(n);}
   static inline idx_t top() {return This::data.top();}
   template<typename I,typename Nav=Drift<>>

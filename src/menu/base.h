@@ -96,7 +96,9 @@ template<typename I> using NoValue =NoRole<Roles::Value ,I>;
 template<typename I> using NoUnit  =NoRole<Roles::Unit  ,I>;
 template<typename I> using NoPanel =NoRole<Roles::Panel ,I>;
 
-//map Item API calls over an agregate of items
+//map Item API (void returning) calls over an agregate of items
+//void returning because this is not a reduce or fold and not even a map to something
+//so this is all about side-effects :D
 template<typename O,typename... OO>
 struct Map:O {
   using This=Map<O,OO...>;

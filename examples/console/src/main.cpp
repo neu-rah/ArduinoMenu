@@ -1,3 +1,9 @@
+/*
+AM5 linux console menu
+Rui Azevedo - Sep.2019
+(neu-rah) ruihfazevedo@gmail.com
+*/
+
 #include <iostream>
 using namespace std;
 #include <menu.h>
