@@ -24,8 +24,12 @@ struct StaticText:I,lambda::StaticText<text> {
 
 template<typename O>
 struct SubMenu:O {
-  template<typename Nav> inline static bool enter(idx_t,Nav& nav) {
+  template<typename Nav> inline static bool enter(Nav& nav) {
     _trace(MDO<<"SubMenu::enter"<<endl);
+    return nav._enter();
+  }
+  template<typename Nav> inline static bool enter(idx_t,Nav& nav) {
+    _trace(MDO<<"SubMenu::enter?"<<endl);
     return nav._enter();
   }
 };
@@ -57,7 +61,7 @@ struct StaticMenuData:StaticMenuData<I> {
   }
   template<typename Nav> inline static bool enter(idx_t n,Nav& nav) {
     _trace(MDO<<"StaticMenuData<I,II>::enter "<<n<<endl);
-    return n?Tail::template enter<Nav>(n-1,nav):Head::template enter<Nav>(0,nav);
+    return n?Tail::template enter<Nav>(n-1,nav):I::template enter<Nav>(nav);
   }
 };
 
@@ -75,7 +79,7 @@ struct StaticMenuData<I>:I {
   inline static void fmtItem(idx_t at,idx_t n,const Nav& nav,Out& out) {Out::template fmt<r,io,It,Out,Nav>(n,nav,out);}
   template<typename Nav> inline static bool enter(idx_t n,Nav& nav) {
     _trace(MDO<<"StaticMenuData<I>::enter "<<n<<endl);
-    return n?false:I::template enter<Nav>(0,nav);
+    return n?false:I::template enter<Nav>(nav);
   }
 };
 

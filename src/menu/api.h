@@ -68,11 +68,16 @@ struct Void:O {
 //menu structure terminal
 template<typename I>
 struct Empty:I {
+  template<typename Nav> inline static bool enter(Nav& nav) {
+    _trace(MDO<<"Empty::enter(nav)"<<endl);
+    return nav._enter();}
+  template<typename Nav> inline static bool esc(Nav& nav) {return nav._esc();}
+  template<typename Nav> inline static bool up(Nav& nav) {return nav._up();}
+  template<typename Nav> inline static bool down(Nav& nav) {return nav._down();}
+
   template<typename Nav> inline static bool up(idx_t,Nav& nav) {return nav._up();}
   template<typename Nav> inline static bool down(idx_t,Nav& nav) {return nav._down();}
-  template<typename Nav> inline static bool enter(idx_t,Nav& nav) {
-    _trace(MDO<<"Empty::enter"<<endl);
-    return nav._enter();}
+  template<typename Nav> inline static bool enter(idx_t,Nav& nav) {return nav._enter();}
   template<typename Nav> inline static bool esc(idx_t,Nav& nav) {return nav._esc();}
   /// is this item enabled?
   constexpr static inline bool enabled() {return true;}
