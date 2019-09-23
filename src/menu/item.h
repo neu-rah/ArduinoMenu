@@ -22,6 +22,14 @@ struct StaticText:I,lambda::StaticText<text> {
 
 // using StaticText=lambda::Curry<_StaticText,2>;//using this invalidates the default argument!
 
+template<typename O>
+struct SubMenu:O {
+  template<typename Nav> inline static bool enter(idx_t,Nav& nav) {
+    _trace(MDO<<"SubMenu::enter"<<endl);
+    return nav._enter();
+  }
+};
+
 template<typename I,typename... II>
 struct StaticMenuData:StaticMenuData<I> {
   using This=StaticMenuData<I,II...>;
@@ -47,6 +55,10 @@ struct StaticMenuData:StaticMenuData<I> {
     if (at) Tail::template fmtItem<r,io,It,Out,Nav>(at-1,n,nav,out);
     else Out::template fmt<r,io,It,Out,Nav>(n,nav,out);
   }
+  template<typename Nav> inline static bool enter(idx_t n,Nav& nav) {
+    _trace(MDO<<"StaticMenuData<I,II>::enter "<<n<<endl);
+    return n?Tail::template enter<Nav>(n-1,nav):Head::template enter<Nav>(0,nav);
+  }
 };
 
 template<typename I>
@@ -61,21 +73,19 @@ struct StaticMenuData<I>:I {
   inline static constexpr idx_t size() {return 1;}
   template<Roles r,bool io,typename It,typename Out,typename Nav>
   inline static void fmtItem(idx_t at,idx_t n,const Nav& nav,Out& out) {Out::template fmt<r,io,It,Out,Nav>(n,nav,out);}
+  template<typename Nav> inline static bool enter(idx_t n,Nav& nav) {
+    _trace(MDO<<"StaticMenuData<I>::enter "<<n<<endl);
+    return n?false:I::template enter<Nav>(0,nav);
+  }
 };
 
 template<typename Title,typename Data>
-struct StaticMenu:Title, Data {
+struct StaticMenu: Data {
   using This=StaticMenu<Title,Data>;
-  using Title::fmt;
-  using Title::printTo;
-  using Data::printItem;
-  using Data::size;
-  using Data::enable;
-  using Data::enabled;
+  template<typename O,Roles P,typename N=Drift<>>
+  inline static void printTo() {Title::template printTo<O,P,N>();}
   template<typename It,typename Out,typename Nav=Drift<>>
   inline static void printMenu(Nav& nav) {Out::template printMenu<It,Nav>(This(),nav);}
-  template<Roles r,bool io,typename It,typename Out,typename Nav>
-  inline static void fmt(idx_t n,const Nav& nav,Out& out) {Data::template fmtItem<r,io,It,Out,Nav>(n,n,nav,out);}
 };
 
 //this is the top level of static items

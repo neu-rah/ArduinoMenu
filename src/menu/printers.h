@@ -27,8 +27,8 @@ struct FullPrinter:public P {
   using This=FullPrinter<P>;
   template<typename I,typename Out=This,typename Nav=Drift<>>
   inline static void printMenu(const I& i,const Nav& nav,Out& out) {
-    _trace(MDO<<"nav pos:"<<nav.pos()<<endl);
-    _trace(MDO<<"+=====================+"<<endl);
+    trace(MDO<<"nav pos:"<<nav.pos()<<endl);
+    trace(MDO<<"+=====================+"<<endl);
     out.template fmtPanel<true,I,Out,Nav>(0,nav,out);
     // i.template fmt<Panel,true,Out,Nav,I>(0);
     out.template fmtMenu<true,I,Out,Nav>(0,nav,out);
@@ -72,7 +72,7 @@ struct FullPrinter:public P {
     out.template fmtBody <false,I,Out,Nav>(0,nav,out);
     out.template fmtMenu <false,I,Out,Nav>(0,nav,out);
     out.template fmtPanel<false,I,Out,Nav>(0,nav,out);
-    _trace(MDO<<"+---------------------+"<<endl);
+    trace(MDO<<"+---------------------+"<<endl);
   }
   template<typename I,typename Out=This,typename Nav=Drift<>>
   inline static void printMenu() {printMenu<I,Out,Nav>(I());}

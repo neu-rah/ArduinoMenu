@@ -64,7 +64,7 @@ using MainMenu=Item<
       StaticText<&opn_text>,
       StaticText<&opn_text>,
       StaticText<&opn_text>,
-      AuxMenu
+      SubMenu<AuxMenu>
     >
   >
 >;
@@ -74,7 +74,7 @@ MainMenu mainMenu;
 NavRoot<
   NavNode<
     NavPos<
-      StaticNavNode<
+      TreeNavNode<
         MainMenu
       >
     >

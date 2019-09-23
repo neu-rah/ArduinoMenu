@@ -19,7 +19,7 @@
       inline bool enabled() const {return en;}
       inline bool enabled(idx_t i) const {return i?I::enabled(i):en;}
       inline void enable(idx_t,bool b) {
-        trace(MDO<<(b?"enable":"disable")<<endl);
+        _trace(MDO<<(b?"enable":"disable")<<endl);
         en=b;
       }
     protected:

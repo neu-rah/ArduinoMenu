@@ -12,10 +12,17 @@ template<typename O> O Data<O>::data;
 //navigation terminal
 template<typename N>
 struct Drift:N {
-  static inline bool up() {return false;}
-  static inline bool down() {return false;}
-  static inline bool enter() {return false;}
-  static inline bool esc() {return false;}
+  template<typename Nav> static inline bool up(Nav&) {return false;}
+  template<typename Nav> static inline bool down(Nav&) {return false;}
+  template<typename Nav> static inline bool enter(Nav&) {return false;}
+  template<typename Nav> static inline bool esc(Nav&) {return false;}
+
+  //system default actions
+  static inline bool _up() {return false;}
+  static inline bool _down() {return false;}
+  static inline bool _enter() {return false;}
+  static inline bool _esc() {return false;}
+
   constexpr static inline Modes mode() {return Modes::Normal;}
   constexpr static inline bool selected(idx_t) {return false;}
   constexpr static inline bool enabled(idx_t) {return true;}
@@ -61,6 +68,12 @@ struct Void:O {
 //menu structure terminal
 template<typename I>
 struct Empty:I {
+  template<typename Nav> inline static bool up(idx_t,Nav& nav) {return nav._up();}
+  template<typename Nav> inline static bool down(idx_t,Nav& nav) {return nav._down();}
+  template<typename Nav> inline static bool enter(idx_t,Nav& nav) {
+    _trace(MDO<<"Empty::enter"<<endl);
+    return nav._enter();}
+  template<typename Nav> inline static bool esc(idx_t,Nav& nav) {return nav._esc();}
   /// is this item enabled?
   constexpr static inline bool enabled() {return true;}
   /// get enabled status of collection indexed item
