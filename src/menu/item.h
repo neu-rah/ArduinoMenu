@@ -24,14 +24,8 @@ struct StaticText:I,lambda::StaticText<text> {
 
 template<typename O>
 struct SubMenu:O {
-  template<typename Nav> inline static bool enter(Nav& nav) {
-    _trace(MDO<<"SubMenu::enter"<<endl);
-    return nav._enter();
-  }
-  template<typename Nav> inline static bool enter(idx_t,Nav& nav) {
-    _trace(MDO<<"SubMenu::enter?"<<endl);
-    return nav._enter();
-  }
+  template<typename Nav> inline static bool enter(Nav& nav) {return nav._enter();}
+  template<typename Nav> inline static bool enter(idx_t,Nav& nav) {return nav._enter();}
 };
 
 template<typename I,typename... II>
@@ -44,7 +38,6 @@ struct StaticMenuData:StaticMenuData<I> {
     else I::enable(n,o);
   }
   inline bool enabled(idx_t n) const {
-    trace(MDO<<"StaticMenu<I,II...>::enabled"<<endl);
     return n?Tail::enabled(n-1):I::enabled(0);
   }
   template<typename O,Roles P=Roles::Raw,typename N=Drift<>>
@@ -60,7 +53,6 @@ struct StaticMenuData:StaticMenuData<I> {
     else Out::template fmt<r,io,It,Out,Nav>(n,nav,out);
   }
   template<typename Nav> inline static bool enter(Nav& nav,idx_t n) {
-    _trace(MDO<<"StaticMenuData<I,II>::enter "<<n<<endl);
     return n?Tail::template enter<Nav>(nav,n-1):I::template enter<Nav>(nav);
   }
 };
@@ -76,9 +68,10 @@ struct StaticMenuData<I>:I {
   inline static void printMenu(Nav& nav) {Out::template printMenu<This,Out,Nav>(nav);}
   inline static constexpr idx_t size() {return 1;}
   template<Roles r,bool io,typename It,typename Out,typename Nav>
-  inline static void fmtItem(idx_t at,idx_t n,const Nav& nav,Out& out) {Out::template fmt<r,io,It,Out,Nav>(n,nav,out);}
+  inline static void fmtItem(idx_t at,idx_t n,const Nav& nav,Out& out) {
+    Out::template fmt<r,io,It,Out,Nav>(n,nav,out);
+  }
   template<typename Nav> inline static bool enter(Nav& nav,idx_t n) {
-    _trace(MDO<<"StaticMenuData<I>::enter "<<n<<endl);
     return n?false:I::template enter<Nav>(nav);
   }
 };

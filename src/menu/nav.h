@@ -135,5 +135,5 @@ class NavRoot:public R {
     }
   protected:
     idx_t level=0;
-    Path path[n]{};
+    Path path[n]{};//<---- problem here, can not be homogeneous!
 };
