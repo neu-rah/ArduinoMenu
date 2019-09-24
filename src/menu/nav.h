@@ -75,13 +75,13 @@ class TreeNavNode:public N {
     inline void setTarget(Data* t) {target=t;}
     inline Data& getTarget(Data* t) const {return *target;}
     template<typename Nav>
-    inline bool up(Nav& nav) {return target->template up<Nav>(nav.pos(),nav);}
+    inline bool up(Nav& nav) {return target->template up<Nav>(nav,nav.pos());}
     template<typename Nav>
-    inline bool down(Nav& nav) {return target->template down<Nav>(nav.pos(),nav);}
+    inline bool down(Nav& nav) {return target->template down<Nav>(nav,nav.pos());}
     template<typename Nav>
-    inline bool enter(Nav& nav) {return target->template enter<Nav>(nav.pos(),nav);}
+    inline bool enter(Nav& nav) {return target->template enter<Nav>(nav,nav.pos());}
     template<typename Nav>
-    inline bool esc(Nav& nav) {return target->template esc<Nav>(nav.pos(),nav);}
+    inline bool esc(Nav& nav) {return target->template esc<Nav>(nav,nav.pos());}
   protected:
     Data* target;
 };

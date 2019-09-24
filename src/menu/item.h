@@ -59,9 +59,9 @@ struct StaticMenuData:StaticMenuData<I> {
     if (at) Tail::template fmtItem<r,io,It,Out,Nav>(at-1,n,nav,out);
     else Out::template fmt<r,io,It,Out,Nav>(n,nav,out);
   }
-  template<typename Nav> inline static bool enter(idx_t n,Nav& nav) {
+  template<typename Nav> inline static bool enter(Nav& nav,idx_t n) {
     _trace(MDO<<"StaticMenuData<I,II>::enter "<<n<<endl);
-    return n?Tail::template enter<Nav>(n-1,nav):I::template enter<Nav>(nav);
+    return n?Tail::template enter<Nav>(nav,n-1):I::template enter<Nav>(nav);
   }
 };
 
@@ -77,7 +77,7 @@ struct StaticMenuData<I>:I {
   inline static constexpr idx_t size() {return 1;}
   template<Roles r,bool io,typename It,typename Out,typename Nav>
   inline static void fmtItem(idx_t at,idx_t n,const Nav& nav,Out& out) {Out::template fmt<r,io,It,Out,Nav>(n,nav,out);}
-  template<typename Nav> inline static bool enter(idx_t n,Nav& nav) {
+  template<typename Nav> inline static bool enter(Nav& nav,idx_t n) {
     _trace(MDO<<"StaticMenuData<I>::enter "<<n<<endl);
     return n?false:I::template enter<Nav>(nav);
   }
