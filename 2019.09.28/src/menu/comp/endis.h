@@ -17,8 +17,8 @@
     public:
       using I::I;
       inline bool enabled() const {return en;}
-      inline bool enabled(Idx i) const {return i?I::enabled(i):en;}
-      inline void enable(Idx,bool b) {
+      inline bool enabled(idx_t i) const {return i?I::enabled(i):en;}
+      inline void enable(idx_t,bool b) {
         _trace(MDO<<(b?"enable":"disable")<<endl);
         en=b;
       }

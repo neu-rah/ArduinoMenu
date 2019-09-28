@@ -1,21 +1,11 @@
-/*
-AM5 linux console menu
-Rui Azevedo - Sep.2019
-(neu-rah) ruihfazevedo@gmail.com
-*/
-
-#include <iostream>
-using namespace std;
 #include <menu.h>
-#include <menu/fmt/textFmt.h>
+#include <menu/IO/consoleOut.h>
+#include <menu/fmt/text.h>
 #include <menu/fmt/titleWrap.h>
 #include <menu/comp/endis.h>
 #include "linuxkb.h"
 
-////////////////////////////////////////////////////////////////////////////////
-// testing stuff
-using Out=
-MenuOut<
+using Out=MenuOut<
   TextFmt<
     TitleWrapFmt<
       FullPrinter<
@@ -27,71 +17,41 @@ MenuOut<
   >
 >;
 
-const char* singleOp_text="Standalone item";
-using SingleOp=StaticText<&singleOp_text>;
+const char* text1_txt="standalone text";
+StaticText<&text1_txt> text1;
 
-const char* combinedContent_text="This is a combined ";
-using CombinedContent=StaticText<&combinedContent_text,SingleOp>;
+const char* op1_txt="Option 1";
+const char* op2_txt="Option 2";
+const char* op3_txt="...";
+const char* main_txt="Main menu";
+const char* sub_txt="Sub-menu";
+using Op1=StaticText<&op1_txt>;
+using Op2=StaticText<&op2_txt>;
+using Op3=StaticText<&op3_txt>;
 
-const char* op1_text="Option A";
-const char* op2_text="Option B";
-const char* opn_text="...";
-const char* altTitle_text="Alt. title for aux. menu!";
-
-const char*lastMenu_title="Aux. menu";
-using LastMenu=Item<
-  StaticMenu<
-    StaticText<&lastMenu_title>,
-    StaticMenuData<
-      StaticText<&op1_text>,
-      StaticText<&op2_text>,
-      StaticText<&opn_text>
-    >
-  >
->;
-
-
-const char*auxMenu_title="Aux. menu";
-using AuxMenu=Item<
-  StaticMenu<
-    Map<//agregate multiple elements to be processed in order
-      NoTitle<StaticText<&auxMenu_title>>,//use this except for menu title
-      AsTitle<StaticText<&altTitle_text>>//the alternative title
-    >,
-    StaticMenuData<
-      StaticText<&op1_text>,
-      StaticText<&op2_text>,
-      SubMenu<LastMenu>,
-      SingleOp
-    >
-  >
->;
-
-const char* mainMenu_text="Main menu";
-using MainMenu=Item<
-  StaticMenu<
-    StaticText<&mainMenu_text>,
-    StaticMenuData<
-      StaticText<&op1_text>,
-      EnDis<StaticText<&op2_text>>,
-      StaticText<&opn_text>,
-      StaticText<&opn_text>,
-      StaticText<&opn_text>,
-      StaticText<&opn_text>,
-      SubMenu<AuxMenu>
+using MainMenu=StaticMenu<
+  StaticText<&main_txt>,
+  StaticData<
+    StaticText<&op1_txt>,//or use Op1
+    Op2,
+    Op3,
+    Op3,
+    Op3,
+    Op3,
+    StaticMenu<
+      StaticText<&sub_txt>,
+      StaticData<Op1,Op2>
     >
   >
 >;
 
 MainMenu mainMenu;
 
-// NavRoot<NavNode<NavPos<TreeNavNode<MainMenu>>>,2> nav(mainMenu);
-StaticNavRoot<
-  MainMenu,
-  2,
-  NavNode<NavPos<MainMenu>>
+StaticRoot<
+  StaticNavTree<MainMenu,2,NavPos<>>
 > nav(mainMenu);
 
+//----------------------------------------------------------------
 //handle serial keys to navigate menu
 bool keys(int key) {
   switch(key) {
@@ -106,18 +66,19 @@ bool keys(int key) {
 
 int main() {
   set_conio_terminal_mode();
-  Out::raw("AM5 development.===================================================");
-  Out::nl();
-  mainMenu.enable(1,false);
-  nav.printMenu<Out>();
+  //static print
+  text1.print<Console>();
+  Console::nl();
 
+  //menu------------------------
+  nav.print<Out>();
   do {
     if (kbhit()) {
       int k=getch();
       if (k==27) {
         if (kbhit()) k=getch();else break;
-      } else if (keys(k))nav.printMenu<Out>();
+      } else if (keys(k)) nav.print<Out>();
     }
   } while(true);
-  while(kbhit()) cout<<(int)getch()<<endl;
+  return 0;
 }

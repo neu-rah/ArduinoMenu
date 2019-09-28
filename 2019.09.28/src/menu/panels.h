@@ -12,20 +12,20 @@ using MeasureOp=OutOp<OutOps::Measure>;
 
 ////////////////////////////////////////////////////////////////////////////////
 // panels and viewports
-template<Idx x,Idx y,Idx w,Idx h,typename O>
+template<idx_t x,idx_t y,idx_t w,idx_t h,typename O>
 struct StaticPanel:public O {
-  constexpr static inline Idx orgX() {return x;}
-  constexpr static inline Idx orgY() {return y;}
-  constexpr static inline Idx width() {return w;}
-  constexpr static inline Idx height() {return h;}
+  constexpr static inline idx_t orgX() {return x;}
+  constexpr static inline idx_t orgY() {return y;}
+  constexpr static inline idx_t width() {return w;}
+  constexpr static inline idx_t height() {return h;}
 
-  constexpr static inline Idx posX() {return x;}
-  constexpr static inline Idx posY() {return y;}
-  constexpr static inline Idx freeX() {return w;}
-  constexpr static inline Idx freeY() {return h;}
-  constexpr static inline Idx free() {return w*h;}
-  static inline void useX(Idx ux=1) {}
-  static inline void useY(Idx uy=1) {}
+  constexpr static inline idx_t posX() {return x;}
+  constexpr static inline idx_t posY() {return y;}
+  constexpr static inline idx_t freeX() {return w;}
+  constexpr static inline idx_t freeY() {return h;}
+  constexpr static inline idx_t free() {return w*h;}
+  static inline void useX(idx_t ux=1) {}
+  static inline void useY(idx_t uy=1) {}
 };
 
 template<typename O>
@@ -33,16 +33,16 @@ class RangePanel:public O {
   public:
     using This=RangePanel<O>;
     constexpr static inline bool isRange() {return true;}
-    // inline bool inRange(Idx n) {return n-topLine<O::height();}
-    inline Idx top() const {return topLine;}
-    inline void setTop(Idx n) {topLine=n;}
+    // inline bool inRange(idx_t n) {return n-topLine<O::height();}
+    inline idx_t top() const {return topLine;}
+    inline void setTop(idx_t n) {topLine=n;}
     inline void newView() {freeLines=O::height();}
-    inline void useY(Idx uy=1) {freeLines-=uy;}
+    inline void useY(idx_t uy=1) {freeLines-=uy;}
     inline void nl() {O::nl();This::useY();}
-    inline Idx freeY() const {return freeLines;}
+    inline idx_t freeY() const {return freeLines;}
   protected:
-    Idx topLine=0;
-    Idx freeLines;
+    idx_t topLine=0;
+    idx_t freeLines;
 };
 
 template<typename O>
@@ -68,19 +68,19 @@ class Viewport:public O {
     }
 
     //device coordinates ---------
-    inline Idx posX() const {return (O::width()-fx)+O::orgX();}
-    inline Idx posY() const {return (O::height()-fy)+O::orgY();}
+    inline idx_t posX() const {return (O::width()-fx)+O::orgX();}
+    inline idx_t posY() const {return (O::height()-fy)+O::orgY();}
     // get free space ----
-    inline Idx freeX() const {return fx;}
-    inline Idx freeY() const {
+    inline idx_t freeX() const {return fx;}
+    inline idx_t freeY() const {
       // Serial<<"Viewport::freeY "<<fy<<endl;
       return fy;}
-    inline Idx height() const {
+    inline idx_t height() const {
       return freeY();}
-    inline Idx free() const {return fx+O::width()*fy;}
+    inline idx_t free() const {return fx+O::width()*fy;}
     // use space ----
-    inline void useX(Idx ux=1) {if (fx) fx-=ux; else useY();}
-    inline void useY(Idx uy=1) {
+    inline void useX(idx_t ux=1) {if (fx) fx-=ux; else useY();}
+    inline void useY(idx_t uy=1) {
       if (!fy) {
         fx=0;
         // fy=0;
@@ -96,5 +96,5 @@ class Viewport:public O {
     inline void _raw(T i,RawOutOp) {O::raw(i);}
     template<typename T>
     inline void _raw(T i,MeasureOp) {O::measure(i);}
-    Idx fx,fy;
+    idx_t fx,fy;
 };

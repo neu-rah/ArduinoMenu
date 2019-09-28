@@ -7,7 +7,7 @@
 // printers
 struct TextMeasure:public Void<> {
   template<typename T>
-  static inline Idx measure(T o) {
+  static inline idx_t measure(T o) {
     #ifdef ARDUINO
       return String(o).length();
     #else
@@ -16,9 +16,9 @@ struct TextMeasure:public Void<> {
   }
   protected:
     #ifndef ARDUINO
-    static inline Idx _str(const char*o){return std::string(o).length();}
+    static inline idx_t _str(const char*o){return std::string(o).length();}
     template<typename T>
-    static inline Idx _str(T i){return std::string(std::to_string(i)).length();}
+    static inline idx_t _str(T i){return std::string(std::to_string(i)).length();}
     #endif
 };
 
@@ -48,7 +48,7 @@ struct FullPrinter:public P {
   //       out.setTop(out.top()+1);
   //   }
   //
-  //   for(Idx n=out.top();n<i.size();n++) {
+  //   for(idx_t n=out.top();n<i.size();n++) {
   //     if (!out.freeY()) break;
   //     // if (!(out.inRange(n)&&out.freeY())) break;
   //     P::template clrLine<Out>(P::posY());
