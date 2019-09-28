@@ -30,6 +30,15 @@ struct Drift:N {
   constexpr static inline idx_t size() {return 0;}
 };
 
+//reference to static structure
+struct Ref {
+  idx_t len;
+  idx_t* path;
+  inline idx_t head() const {return path[0];}
+  inline Ref tail() {return {len-1,&path[1]};}
+};
+
+
 ////////////////////////////////////////////////////////////////////////////////
 //output terminal
 template<typename O>
@@ -68,7 +77,10 @@ struct Void:O {
 //menu structure terminal
 template<typename I>
 struct Empty:I {
-  template<typename Nav> inline static bool enter(Nav& nav) {return nav._enter();}
+  template<typename Nav>
+  inline static bool enter(Nav& nav) {
+    _trace(MDO<<"Empty::enter(nav)"<<endl);
+    return nav._enter();}
   template<typename Nav> inline static bool esc(Nav& nav) {return nav._esc();}
   template<typename Nav> inline static bool up(Nav& nav) {return nav._up();}
   template<typename Nav> inline static bool down(Nav& nav) {return nav._down();}
@@ -89,10 +101,10 @@ struct Empty:I {
   template<typename O,Roles P=Roles::Raw,typename N=Drift<>>
   inline static void printItem(size_t i) {}//print a sub-item by index
   template<typename It,typename Out,typename Nav=Drift<>>
-  inline static void printMenu(Nav& nav) {
-    It::template printTo<Out,Roles::Panel,Nav>();
-    It::template printMenu<Out,Nav>(nav);
-  }//print full menu
+  // inline static void printMenu(Nav& nav) {
+  //   It::template printTo<Out,Roles::Panel,Nav>();
+  //   It::template printMenu<Out,Nav>(nav);
+  // }//print full menu
   template<Roles r,bool io,typename It,typename Out,typename Nav>
   inline static void fmt(idx_t n,const Nav& nav,Out& out) {Out::template fmt<r,io,It,Out,Nav>(n,nav,out);}
 };

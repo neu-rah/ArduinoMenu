@@ -38,6 +38,19 @@ const char* op2_text="Option B";
 const char* opn_text="...";
 const char* altTitle_text="Alt. title for aux. menu!";
 
+const char*lastMenu_title="Aux. menu";
+using LastMenu=Item<
+  StaticMenu<
+    StaticText<&lastMenu_title>,
+    StaticMenuData<
+      StaticText<&op1_text>,
+      StaticText<&op2_text>,
+      StaticText<&opn_text>
+    >
+  >
+>;
+
+
 const char*auxMenu_title="Aux. menu";
 using AuxMenu=Item<
   StaticMenu<
@@ -48,6 +61,7 @@ using AuxMenu=Item<
     StaticMenuData<
       StaticText<&op1_text>,
       StaticText<&op2_text>,
+      SubMenu<LastMenu>,
       SingleOp
     >
   >
@@ -71,15 +85,11 @@ using MainMenu=Item<
 
 MainMenu mainMenu;
 
-NavRoot<
-  NavNode<
-    NavPos<
-      TreeNavNode<
-        MainMenu
-      >
-    >
-  >,
-  2
+// NavRoot<NavNode<NavPos<TreeNavNode<MainMenu>>>,2> nav(mainMenu);
+StaticNavRoot<
+  MainMenu,
+  2,
+  NavNode<NavPos<MainMenu>>
 > nav(mainMenu);
 
 //handle serial keys to navigate menu
@@ -89,7 +99,7 @@ bool keys(int key) {
     case 65:case '-': return nav.down();
     case 13:case 67:case '*': return nav.enter();
     case 27:case 68:case '/': return nav.esc();
-    default: cout<<"key:"<<key<<"["<<(key>32?(char)key:'?')<<"]"<<endl;
+    default: _trace(MDO<<"key:"<<key<<"["<<(key>32?(char)key:'?')<<"]"<<endl);
   }
   return false;
 }

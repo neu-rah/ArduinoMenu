@@ -116,11 +116,11 @@ struct Map:O {
     Tail::template printItem<It,P,N>(i);
   }
 
-  template<typename It,typename Out,typename Nav=Drift<>>
-  inline static void printMenu() {
-    It::template printMenu<It,Out,Nav>();
-    Tail::template printMenu<It,Out,Nav>();
-  }
+  // template<typename It,typename Out,typename Nav=Drift<>>
+  // inline static void printMenu() {
+  //   It::template printMenu<It,Out,Nav>();
+  //   Tail::template printMenu<It,Out,Nav>();
+  // }
 
   template<Roles r,bool io,typename It,typename Out,typename Nav>
   inline static void fmt(idx_t n,const Nav& nav) {

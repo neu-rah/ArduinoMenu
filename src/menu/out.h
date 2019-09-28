@@ -9,6 +9,14 @@ struct OutStream:O {
   inline static void nl() {dev<<endl;}
 };
 
+#ifdef MENU_DEBUG
+  #ifdef ARDUINO
+    using MDD=OutStream<decltype(Serial),Serial,TextMeasure>;
+  #else
+    using MDD=OutStream<decltype(cout),cout,TextMeasure>;
+  #endif
+#endif
+
 using Console=OutStream<decltype(cout),cout,TextMeasure>;
 
 //top level printer
