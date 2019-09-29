@@ -6,9 +6,9 @@
 #include "linuxkb.h"
 
 using Out=MenuOut<
-  TextFmt<
-    TitleWrapFmt<
-      FullPrinter<
+  FullPrinter<
+    TextFmt<
+      TitleWrapFmt<
         RangePanel<
           StaticPanel<0,0,20,4,Console>
         >
@@ -17,8 +17,10 @@ using Out=MenuOut<
   >
 >;
 
-const char* text1_txt="standalone text";
-StaticText<&text1_txt> text1;
+Out out;
+
+// const char* text1_txt="standalone text";
+// StaticText<&text1_txt> text1;
 
 const char* op1_txt="Option 1";
 const char* op2_txt="Option 2";
@@ -67,18 +69,20 @@ bool keys(int key) {
 int main() {
   set_conio_terminal_mode();
   //static print
-  text1.print<Console>();
+  // text1.print<Console>();
+  Console::raw("AM5 Tests ----------------------");
   Console::nl();
 
   //menu------------------------
-  nav.print<Out>();
-  do {
-    if (kbhit()) {
-      int k=getch();
-      if (k==27) {
-        if (kbhit()) k=getch();else break;
-      } else if (keys(k)) nav.print<Out>();
-    }
-  } while(true);
+  nav.print(out);
+  // do {
+  //   if (kbhit()) {
+  //     int k=getch();
+  //     if (k==27) {
+  //       if (kbhit()) k=getch();else break;
+  //     } else if (keys(k)) nav.print<Out>();
+  //   }
+  // } while(true);
+  Console::nl();
   return 0;
 }

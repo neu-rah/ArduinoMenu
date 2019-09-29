@@ -1,10 +1,13 @@
 /* -*- C++ -*- */
 #pragma once
 
-// #include <lpp.h>
+#include <limits>
 #include "debug.h"
 
 using Idx=std::size_t;
+constexpr Idx idx_max=std::numeric_limits<Idx>::max();
+
+#define endl "\r\n"
 
 enum class Modes {Normal,Edit,Tune};
 enum class Roles:Idx {Panel,Menu,Title,Body,Prompt,Index,Cursor,Name,Mode,Value,Unit,Raw};

@@ -21,8 +21,8 @@ template<Roles Part,typename I>
 using NoRole=RoleChk<DenyRole<Part>,I>;
 
 template<typename Dev, Dev& dev,typename O=Void<>>
-struct StreamOut {
-  inline static void nl() {dev<<std::endl;}
+struct StreamOut:O {
+  inline static void nl() {dev<<"\n\r";}
   template<typename T> inline static void raw(T o) {dev<<o;}
 };
 

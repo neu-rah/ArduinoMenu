@@ -9,6 +9,7 @@ struct NavPos:N {
     it.template print<It,Nav,Out>(it,nav,out,ref,n);
   }
   inline Idx pos() const {return at;}
+  inline bool selected(Idx idx) const {return at==idx;}
   Idx at=0;
 };
 
@@ -21,7 +22,7 @@ struct StaticNavTree:N {
   template<typename Nav,typename Out>
   inline void print(Nav& nav,Out& out) {
     Ref ref=*this;
-    data.template print<Data,Nav,Out>(data,nav,out,ref,cur());
+    data.template printMenu<Data,Nav,Out>(data,nav,out,ref,cur());
   }
 
   template<typename Nav>
