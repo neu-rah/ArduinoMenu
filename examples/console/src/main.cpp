@@ -36,10 +36,10 @@ using MainMenu=StaticMenu<
   StaticData<
     StaticText<&op1_txt>,//or use Op1
     Op2,
-    Op3,
-    Op3,
-    Op3,
-    Op3,
+    // Op3,
+    // Op3,
+    // Op3,
+    // Op3,
     StaticMenu<
       StaticText<&sub_txt>,
       StaticData<Op1,Op2>

@@ -23,7 +23,7 @@ struct StaticData:I {
 
   template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
   inline static void printItem(It& it,Nav& nav,Out& out,Ref ref,Idx n) {
-    trace(
+    _trace(
       MDO<<"StaticData::printItem<I,II>"
         <<" ref.len:"<<ref.len
         <<" n:"<<n<<endl
@@ -32,27 +32,16 @@ struct StaticData:I {
     else I::template print<It,Nav,Out,P>(it,nav,out,ref,n);
   }
 
-  // template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
-  // inline static void print(It& it,Nav& nav,Out& out,Ref ref,Idx n) {
-  //   _trace(
-  //     MDO<<"StaticData::print<I,II>"
-  //       <<" ref.len:"<<ref.len
-  //       <<" n:"<<n<<endl
-  //   );
-  //   if (n) Tail::template print<It,Nav,Out,P>(it,nav,out,ref,n-1);
-  //   else I::template print<It,Nav,Out,P>(it,nav,out,ref,n);
-  // }
-  //
   template<typename It,typename Nav,typename Out>
   inline static void printMenu(It& it,Nav& nav,Out& out,Ref ref,Idx n) {
-    trace(
+    _trace(
       MDO<<"StaticData::printMenu<I,II>"
         <<" ref.len:"<<ref.len
         <<" n:"<<n<<endl
     );
     if (n) Tail::template printMenu<It,Nav,Out>(it,nav,out,ref,n-1);
     else if (ref.len) I::template printMenu<It,Nav,Out>(it,nav,out,ref.tail(),ref.head());
-    else out.printMenu(it,nav,out,ref,n);;//It::template print<It,Nav,Out>(it,nav,out,ref,n);
+    else out.printMenu(it,nav,out,ref,n);
   }
 };
 
@@ -62,34 +51,15 @@ struct StaticData<I>:I {
   inline static constexpr Idx size() {return 1;}
   template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
   inline static void printItem(It& it,Nav& nav,Out& out,Ref ref,Idx n) {
-    trace(
+    _trace(
       MDO<<"StaticData::printItem<I>"
         <<" ref.len:"<<ref.len
         <<" n:"<<n<<endl
     );
+    // if (n) return;
+    // else if (ref.len) I::template printMenu<It,Nav,Out>(it,nav,out,ref.tail(),ref.head());
+    // else it.print(it,nav,out,ref,n);
   }
-  // template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
-  // inline static void print(It& it,Nav& nav,Out& out,Ref ref,Idx n) {
-  //   _trace(
-  //     MDO<<"StaticData::print<I>"
-  //       <<" ref.len:"<<ref.len
-  //       <<" n:"<<n<<endl
-  //   );
-  //   if (n) return;
-  //   else if (ref.len) I::template printMenu<It,Nav,Out>(it,nav,out,ref.tail(),ref.head());
-  //   else I::template print<It,Nav,Out,P>(it,nav,out,ref,n);
-  // }
-  // template<typename It,typename Nav,typename Out>
-  // inline static void printMenu(It& it,Nav& nav,Out& out,Ref ref,Idx n) {
-  //   _trace(
-  //     MDO<<"StaticData::printMenu<I>"
-  //       <<" ref.len:"<<ref.len
-  //       <<" n:"<<n<<endl
-  //   );
-  //   if (n) return;
-  //   else if (ref.len) I::template printMenu<It,Nav,Out>(it,nav,out,ref.tail(),ref.head());
-  //   else print(it,nav,out,ref,n);//It::template print<It,Nav,Out>(it,nav,out,ref,n);
-  // }
 };
 
 template<typename T,typename B>
@@ -98,15 +68,13 @@ struct StaticMenu:B {
   using Body=B;
   template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
   inline static void print(It& it,Nav& nav,Out& out,Ref ref,Idx n) {
-    trace(
+    _trace(
       MDO<<"StaticMenu::print"
         <<" ref.len:"<<ref.len
         <<" n:"<<n<<endl
     );
     if (P==Roles::Title) Title::print(out);
     else Body::template print<It,Nav,Out>(it,nav,out,ref,n);
-    // if (ref.len) Body::template print<It,Nav,Out>(it,nav,out,ref,n);
-    // else Title::print(out);
   }
   template<typename It,typename Nav,typename Out>
   inline static void printMenu(It& it,Nav& nav,Out& out,Ref ref,Idx n) {
@@ -116,8 +84,6 @@ struct StaticMenu:B {
         <<" n:"<<n<<endl
     );
     Body::template printMenu<It,Nav,Out>(it,nav,out,ref,n);
-    // if (ref.len)
-    // else out.printMenu(it,nav,out,ref,n);
   }
   template<typename It,typename Nav,typename Out>
   inline static void printMenu(It& it,Nav& nav,Out& out) {
