@@ -139,7 +139,7 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
 //each color is in the format:
 //  {{disabled normal,disabled selected},{enabled normal,enabled selected, enabled editing}}
 // this is a monochromatic color table
-const colorDef<uint8_t> colors[] MEMMODE={
+const colorDef<uint8_t> colors[6] MEMMODE={
   {{0,0},{0,1,1}},//bgColor
   {{1,1},{1,0,0}},//fgColor
   {{1,1},{1,0,0}},//valColor

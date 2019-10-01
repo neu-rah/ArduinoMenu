@@ -35,7 +35,7 @@ SoftwareSerial ss(11, 10);
 #define C_GREEN 2
 //each color is in the format:
 //  {{disabled normal,disabled selected},{enabled normal,enabled selected, enabled editing}}
-const colorDef<uint8_t> colors[] MEMMODE={
+const colorDef<uint8_t> colors[6] MEMMODE={
   {{C_BLACK,C_BLACK}, {C_BLACK,C_BLUE,C_BLUE}},//bgColor
   {{C_GRAY,C_GRAY},   {C_WHITE,C_WHITE,C_WHITE}},//fgColor
   {{C_WHITE,C_BLACK}, {C_YELLOW,C_YELLOW,C_RED}},//valColor

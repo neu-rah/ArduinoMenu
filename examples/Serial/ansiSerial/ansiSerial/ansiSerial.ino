@@ -38,7 +38,7 @@ Print& operator<<(Print&o, Menu::prompt&p) {
 // define menu colors --------------------------------------------------------
 //each color is in the format:
 //  {{disabled normal,disabled selected},{enabled normal,enabled selected, enabled editing}}
-const colorDef<uint8_t> colors[] MEMMODE={
+const colorDef<uint8_t> colors[6] MEMMODE={
   {{BLUE,WHITE}  ,{BLUE,WHITE,WHITE}},//bgColor
   {{BLACK,BLACK} ,{WHITE,BLUE,BLUE}},//fgColor
   {{BLACK,BLACK} ,{YELLOW,YELLOW,RED}},//valColor

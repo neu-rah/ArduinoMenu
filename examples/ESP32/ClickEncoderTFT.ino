@@ -113,7 +113,7 @@ MENU(mainMenu, "COPPER TAPE CUTTER", doNothing, noEvent, wrapStyle, FIELD(length
 #define DarkerOrange RGB565(255,140,0)
 
 // TFT color table
-const colorDef<uint16_t> colors[] MEMMODE = {
+const colorDef<uint16_t> colors[6] MEMMODE = {
   //{{disabled normal,disabled selected},{enabled normal,enabled selected, enabled editing}}
   {{(uint16_t)Black, (uint16_t)Black}, {(uint16_t)Black, (uint16_t)Red,   (uint16_t)Red}}, //bgColor
   {{(uint16_t)White, (uint16_t)White},  {(uint16_t)White, (uint16_t)White, (uint16_t)White}},//fgColor

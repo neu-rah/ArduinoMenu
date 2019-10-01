@@ -119,7 +119,7 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,noStyle
 //  {{disabled normal,disabled selected},{enabled normal,enabled selected, enabled editing}}
 //monochromatic color table
 
-const colorDef<uint16_t> colors[] MEMMODE={
+const colorDef<uint16_t> colors[6] MEMMODE={
   {{VGA_BLACK,VGA_BLACK},{VGA_BLACK,VGA_BLUE,VGA_BLUE}},//bgColor
   {{VGA_GRAY,VGA_GRAY},{VGA_WHITE,VGA_WHITE,VGA_WHITE}},//fgColor
   {{VGA_WHITE,VGA_BLACK},{VGA_YELLOW,VGA_YELLOW,VGA_RED}},//valColor

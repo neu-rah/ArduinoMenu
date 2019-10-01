@@ -112,7 +112,7 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
 #define Yellow RGB565(255,255,0)
 #define White RGB565(255,255,255)
 
-const colorDef<uint16_t> colors[] MEMMODE={
+const colorDef<uint16_t> colors[6] MEMMODE={
   {{(uint16_t)Black,(uint16_t)Black}, {(uint16_t)Black, (uint16_t)Blue,  (uint16_t)Blue}},//bgColor
   {{(uint16_t)Gray, (uint16_t)Gray},  {(uint16_t)White, (uint16_t)White, (uint16_t)White}},//fgColor
   {{(uint16_t)White,(uint16_t)Black}, {(uint16_t)Yellow,(uint16_t)Yellow,(uint16_t)Red}},//valColor

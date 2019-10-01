@@ -80,7 +80,7 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
 // define menu colors --------------------------------------------------------
 //  {{disabled normal,disabled selected},{enabled normal,enabled selected, enabled editing}}
 //monochromatic color table
-const colorDef<uint16_t> colors[] MEMMODE={
+const colorDef<uint16_t> colors[6] MEMMODE={
   {{WHITE,BLACK},{WHITE,BLACK,BLACK}},//bgColor
   {{BLACK,WHITE},{BLACK,WHITE,WHITE}},//fgColor
   {{BLACK,WHITE},{BLACK,WHITE,WHITE}},//valColor

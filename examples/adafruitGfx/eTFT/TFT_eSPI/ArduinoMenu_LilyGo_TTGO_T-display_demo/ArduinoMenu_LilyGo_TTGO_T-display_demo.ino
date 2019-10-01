@@ -166,7 +166,7 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
 #define Yellow RGB565(255,255,0)
 #define White RGB565(255,255,255)
 
-const colorDef<uint16_t> colors[] MEMMODE={
+const colorDef<uint16_t> colors[6] MEMMODE={
   {
     {
       (uint16_t)Black,
@@ -268,7 +268,7 @@ result idle(menuOut& o,idleEvent e) {
       // Show the idle message once
       int xpos = gfx.width() / 2; // Half the screen width
       gfx.fillScreen(Black);
-      
+
       gfx.setTextSize(5);
       gfx.setTextColor(Yellow,Black);
       gfx.setTextWrap(false);
@@ -296,7 +296,7 @@ void button_init()
           nav.doNav(enterCmd);
         }
     });
-    
+
     btnUp.setClickHandler([](Button2 & b) {
        // Up
        nav.doNav(downCmd); // It's called downCmd because it decreases the index of an array. Visually that would mean the selector goes upwards.
@@ -309,7 +309,7 @@ void button_init()
           nav.doNav(escCmd);
         }
     });
-    
+
     btnDwn.setClickHandler([](Button2 & b) {
         // Down
         nav.doNav(upCmd); // It's called upCmd because it increases the index of an array. Visually that would mean the selector goes downwards.
@@ -332,7 +332,7 @@ void setup() {
   Serial.print("ARDUINOMENU DEMO V");
   Serial.print(PROG_VERSION);
   Serial.println(" FOR LILYGO TTGO T-DISPLAY");
-  
+
   nav.idleTask=idle;//point a function to be used when menu is suspended
   mainMenu[1].disable();
   //outGfx.usePreview=true;//reserve one panel for preview?
@@ -351,17 +351,17 @@ void setup() {
   Serial.println("DONE");
 
   gfx.setRotation(1); // Rotate display a quarter clockwise
-  
+
   gfx.setTextSize(2);
   gfx.setTextWrap(false);
   gfx.fillScreen(Black);
-  
+
   Serial.print("Showing bootlogo... ");
   gfx.setSwapBytes(true);
   gfx.pushImage(0, 0,  240, 135, bootlogo);
   delay(1000);
   Serial.println("DONE");
-  
+
   Serial.print("Initialize buttons... ");
   button_init();
   delay(1000);
@@ -380,9 +380,9 @@ void setup() {
   }
 
   delay(2000); // A little bit more delay so that you will be able to see the bootlogo.
-  
+
   Serial.println("- READY -");
-  
+
   gfx.fillScreen(Black); // Clear the screen to be ready to draw the menu
 }
 
@@ -394,7 +394,7 @@ void loop() {
   if(LED_CTRL > 0){ // Only set led state when a pinnumber for the external led has been provided.
     digitalWrite(LED_CTRL,ledCtrl);
   }
-  
+
   // Set blacklight intenisty of screen
   ledcWrite(pwmLedChannelTFT, ledBacklight);
 }

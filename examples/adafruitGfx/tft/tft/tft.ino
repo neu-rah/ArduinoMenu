@@ -125,7 +125,7 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
 
 #define ST7735_GRAY RGB565(128,128,128)
 
-const colorDef<uint16_t> colors[] MEMMODE={
+const colorDef<uint16_t> colors[6] MEMMODE={
   {{(uint16_t)ST7735_BLACK,(uint16_t)ST7735_BLACK}, {(uint16_t)ST7735_BLACK, (uint16_t)ST7735_BLUE,  (uint16_t)ST7735_BLUE}},//bgColor
   {{(uint16_t)ST7735_GRAY, (uint16_t)ST7735_GRAY},  {(uint16_t)ST7735_WHITE, (uint16_t)ST7735_WHITE, (uint16_t)ST7735_WHITE}},//fgColor
   {{(uint16_t)ST7735_WHITE,(uint16_t)ST7735_BLACK}, {(uint16_t)ST7735_YELLOW,(uint16_t)ST7735_YELLOW,(uint16_t)ST7735_RED}},//valColor

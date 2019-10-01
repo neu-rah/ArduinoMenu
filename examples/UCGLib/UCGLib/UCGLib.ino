@@ -68,7 +68,7 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
 #define YELLOW {255,255,0}
 #define RED {255,0,0}
 
-const colorDef<rgb> colors[] MEMMODE={
+const colorDef<rgb> colors[6] MEMMODE={
   {{BLACK,BLACK},{BLACK,BLUE,BLUE}},//bgColor
   {{GRAY,GRAY},{WHITE,WHITE,WHITE}},//fgColor
   {{WHITE,BLACK},{YELLOW,YELLOW,RED}},//valColor

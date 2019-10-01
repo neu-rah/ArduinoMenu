@@ -122,7 +122,7 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
 
 #define TFT_GREY 0x5AEB
 
-const colorDef<uint16_t> colors[] MEMMODE={
+const colorDef<uint16_t> colors[6] MEMMODE={
   {{TFT_BLACK,TFT_BLACK},{TFT_BLACK,TFT_BLUE,TFT_BLUE}},//bgColor
   {{TFT_GREY,TFT_GREY},{TFT_WHITE,TFT_WHITE,TFT_WHITE}},//fgColor
   {{TFT_WHITE,TFT_BLACK},{TFT_YELLOW,TFT_YELLOW,TFT_RED}},//valColor
