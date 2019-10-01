@@ -14,7 +14,7 @@ The user function can be operated as a single action called on click/enter or as
 The system is designed as a non blocking polling system, allowing concurrent task to run.
 Optionally the system can be operated in semi-automated mode, issuing navigation command from user code.
 
-See the [wiki](https://github.com/neu-rah/ArduinoMenu/wiki)
+See the [wiki](https://github.com/neu-rah/ArduinoMenu/wiki) or join the [gitter](https://gitter.im/ArduinoMenu/Lobby) chat room.
 
 ## Simple Example
 ```c++
