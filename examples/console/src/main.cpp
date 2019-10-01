@@ -1,88 +1,50 @@
-#include <menu.h>
-#include <menu/IO/consoleOut.h>
-#include <menu/fmt/text.h>
-#include <menu/fmt/titleWrap.h>
-#include <menu/comp/endis.h>
-#include "linuxkb.h"
+#include <iostream>
+using namespace std;
+#include <lpp.h>
+// using namespace lpp;
 
-using Out=MenuOut<
-  FullPrinter<
-    TextFmt<
-      TitleWrapFmt<
-        RangePanel<
-          StaticPanel<0,0,20,4,Console>
-        >
-      >
-    >
-  >
->;
+template<typename ... OO>
+using StaticMenu=lpp::List<OO...>;
 
-Out out;
+struct Nil:lpp::Nil<> {};
+template<typename I=Nil> struct Empty:I {};
+template<typename I=Nil> struct Void:I {};
 
-// const char* text1_txt="standalone text";
-// StaticText<&text1_txt> text1;
+// template<const char** text,typename I=Empty<>>
+// struct _StaticText:lambda::StaticText<text>,I {
+//   template<typename Out> inline static void print() {Out::raw(text[0]);}
+//   // template<typename Out> inline static void print(Out& out) {out.raw(text[0]);}
+//   //
+//   // template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
+//   // inline static void print(It&,Nav&,Out& out,Ref,Idx) {print(out);}
+// };
+
+// using StaticText=lambda::Curry<_StaticText,2>;
 
 const char* op1_txt="Option 1";
 const char* op2_txt="Option 2";
-const char* op3_txt="...";
-const char* main_txt="Main menu";
-const char* sub_txt="Sub-menu";
-using Op1=StaticText<&op1_txt>;
-using Op2=StaticText<&op2_txt>;
-using Op3=StaticText<&op3_txt>;
 
 using MainMenu=StaticMenu<
-  StaticText<&main_txt>,
-  StaticData<
-    StaticText<&op1_txt>,//or use Op1
-    Op2,
-    // Op3,
-    // Op3,
-    // Op3,
-    // Op3,
-    StaticMenu<
-      StaticText<&sub_txt>,
-      StaticData<Op1,Op2>
-    >
-  >
+  lambda::StaticText<&op1_txt>,
+  lambda::StaticText<&op2_txt>
 >;
 
-MainMenu mainMenu;
+template<typename Dev, Dev& dev,typename O=Void<>>
+struct StreamOut:O {
+  inline static void nl() {dev<<"\n\r";}
+  template<typename T> inline static void raw(T o) {dev<<o;}
+};
 
-StaticRoot<
-  StaticNavTree<MainMenu,2,NavPos<>>
-> nav(mainMenu);
+using Console=StreamOut<decltype(std::cout),std::cout>;
 
-//----------------------------------------------------------------
-//handle serial keys to navigate menu
-bool keys(int key) {
-  switch(key) {
-    case 66:case '+': return nav.up();
-    case 65:case '-': return nav.down();
-    case 13:case 67:case '*': return nav.enter();
-    case 27:case 68:case '/': return nav.esc();
-    default: _trace(MDO<<"key:"<<key<<"["<<(key>32?(char)key:'?')<<"]"<<endl);
-  }
-  return false;
-}
+inline void _test() {cout<<"X";}
+using test=lpp::curry<void,decltype(_test),_test,0>;
+//problem, this is similar to a member function as we have template arguments
+//so instead of an object we need a concrete type
 
 int main() {
-  set_conio_terminal_mode();
-  //static print
-  // text1.print<Console>();
-  Console::raw("AM5 Tests ----------------------");
+  Console::raw("AM5 tests");
   Console::nl();
-
-  //menu------------------------
-  nav.print(out);
-  // do {
-  //   if (kbhit()) {
-  //     int k=getch();
-  //     if (k==27) {
-  //       if (kbhit()) k=getch();else break;
-  //     } else if (keys(k)) nav.print<Out>();
-  //   }
-  // } while(true);
-  Console::nl();
+  lpp::Map<lpp::StaticValue<decltype(test),test>,MainMenu>::App;
   return 0;
 }
