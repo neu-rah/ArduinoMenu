@@ -32,7 +32,7 @@ template<typename O>
 class RangePanel:public O {
   public:
     using This=RangePanel<O>;
-    constexpr static inline bool isRange() {return true;}
+    // constexpr static inline bool isRange() {return true;}
     // inline bool inRange(Idx n) {return n-topLine<O::height();}
     inline Idx top() const {return topLine;}
     inline void setTop(Idx n) {topLine=n;}
@@ -40,6 +40,13 @@ class RangePanel:public O {
     inline void useY(Idx uy=1) {freeLines-=uy;}
     inline void nl() {O::nl();This::useY();}
     inline Idx freeY() const {return freeLines;}
+    template<typename Nav>
+    inline void posTop(Nav& nav) {
+      //ensure that selected option is withing visible range
+      while(top()>nav.pos()) setTop(top()-1);
+      //TODO: this is NOT correct for multiline options!!!!
+      while(nav.pos()>=top()+freeY()) setTop(top()+1);
+    }
   protected:
     Idx topLine=0;
     Idx freeLines;

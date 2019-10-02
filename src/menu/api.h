@@ -25,7 +25,7 @@ template<typename O=Nil> struct Void:O {
   template<Roles r,bool io,typename I,typename Out,typename Nav>
   static inline void fmt(Idx n,Nav& nav,Out& out) {}
   static inline void clrLine(Idx) {}
-  constexpr static inline bool isRange() {return false;}
+  // constexpr static inline bool isRange() {return false;}
   constexpr static inline bool isViewport() {return false;}
   constexpr static inline Idx height() {return 0;}
   constexpr static inline Idx top() {return 0;}
@@ -44,7 +44,10 @@ template<typename I=Nil> struct Empty:I {
   inline static void enable(Idx,bool) {}
   inline static Idx size() {return 0;}
   template<Roles r,bool io,typename It,typename Out,typename Nav>
-  static inline void fmt(Idx n,Nav& nav,Out& out) {}
+  static inline void fmt(Idx n,Nav& nav,Out& out) {
+    // _trace(MDO<<"<"<<(io?"":"\\")<<r<<">");
+    out.template fmt<r,io,It,Out,Nav>(n,nav,out);
+  }
   template<typename It,typename Nav,typename Out>
   inline static void printMenu(It& it,Nav& nav,Out& out,Ref ref,Idx n) {
     it.template print<It,Nav,Out>(it,nav,out,ref,n);

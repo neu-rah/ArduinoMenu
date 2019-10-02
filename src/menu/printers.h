@@ -33,31 +33,11 @@ struct FullPrinter:public P {
 
       //title
       it.template fmt<Roles::Title,true,It,Out,Nav>(0,nav,out);
-      it.template print<It,Nav,Out,Roles::Title>(it,nav,out,ref,n);
+      it.template print<It,Nav,Out,Roles::Title>(it,nav,out,/*ref,*/n);
       it.template fmt<Roles::Title,false,It,Out,Nav>(0,nav,out);
 
-      if (out.isRange()) {
-        //ensure that selected option is withing visible range
-        while(out.top()>nav.pos())
-          out.setTop(out.top()-1);
-        while(nav.pos()>=out.top()+out.freeY())
-          out.setTop(out.top()+1);
-      }
+      it.template printItems<It,Nav,Out,Roles::Body>(it,nav,out);
 
-      for(Idx n=out.top();n<it.size();n++) {
-        if (!out.freeY()) break;
-        out.clrLine(out.posY());
-        it.template fmt<Roles::Prompt,true ,It,Out,Nav>(n,nav,out);
-        it.template fmt<Roles::Index, true ,It,Out,Nav>(n,nav,out);
-        it.template fmt<Roles::Index, false,It,Out,Nav>(n,nav,out);
-        it.template fmt<Roles::Cursor,true ,It,Out,Nav>(n,nav,out);
-        it.template fmt<Roles::Prompt,false,It,Out,Nav>(n,nav,out);
-        it.template printItem<It,Nav,Out,Roles::Prompt>(it,nav,out,ref,n);
-        out.template fmt<Roles::Prompt,false,It,Out,Nav>(n,nav,out);
-      }
-
-      out.template fmt<Roles::Body,true,It,Out,Nav>(0,nav,out);
-      out.template fmt<Roles::Body,false,It,Out,Nav>(0,nav,out);
       out.template fmt<Roles::Menu,false,It,Out,Nav>(0,nav,out);
       out.template fmt<Roles::Panel,false,It,Out,Nav>(0,nav,out);
   }
