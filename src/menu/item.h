@@ -8,9 +8,6 @@ struct StaticText:I {
   template<typename Out> inline static void print(Out& out) {out.raw(text[0]);}
   template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
   inline static void print(It& it,Nav& nav,Out& out,Idx n) {print(out);}
-
-  // template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
-  // inline static void print(It&,Nav&,Out& out,Ref,Idx) {print(out);}
 };
 
 template<typename I,typename... II>
@@ -76,12 +73,6 @@ struct StaticMenu:B {
   inline static void print(It& it,Nav& nav,Out& out,Idx n) {
     Title::print(out);
   }
-  // template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
-  // inline static void print(It& it,Nav& nav,Out& out,Idx n) {
-  //   trace(MDO<<"StaticMenu::print"<<endl);
-  //   if (P==Roles::Title) Title::print(out);
-  //   else Body::template print<It,Nav,Out>(it,nav,out,n);
-  // }
   template<typename It,typename Nav,typename Out>
   inline void printMenu(It& it,Nav& nav,Out& out,Ref ref,Idx n) {
     trace(MDO<<"StaticMenu::printMenu"<<endl);
@@ -89,6 +80,15 @@ struct StaticMenu:B {
     else if (ref.len) printMenu<It,Nav,Out>(it,nav,out,ref.tail(),ref.head());
     else out.template printMenu<This,Nav,Out>(*this,nav,out,ref,n);
   }
-  template<typename It,typename Nav>
-  inline bool enter(It&,Nav&,Ref ref,Idx n) {}
+  template<Cmds c,typename It,typename Nav>
+  inline bool cmd(It& it,Nav& nav,Ref ref,Idx n) {
+    trace(MDO<<"StaticMenu::"<<c<<endl);
+    if (n) cmd<c,It,Nav>(it,nav,ref,n-1);
+    else if (ref.len) cmd<c,It,Nav>(it,nav,ref.tail(),ref.head());
+    else {
+      _trace(MDO<<"StaticMenu::"<<c<<"!"<<endl);
+      B::template cmd<c,It,Nav>(it,nav);
+      return true;
+    }
+  }
 };

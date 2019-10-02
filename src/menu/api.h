@@ -18,6 +18,10 @@ template<typename N=Nil> struct Drift:N {
   // inline static void print(It&,Nav&,Out&,Ref,Idx) {}
   constexpr static inline Modes mode() {return Modes::Normal;}
   constexpr static inline bool enabled(Idx) {return true;}
+  template<Cmds c,typename It,typename Nav>
+  inline bool _cmd(It& it,Nav& nav) {
+    _trace(MDO<<"Drift::cmd:"<<c<<endl);
+  }
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -51,5 +55,14 @@ template<typename I=Nil> struct Empty:I {
   template<typename It,typename Nav,typename Out>
   inline static void printMenu(It& it,Nav& nav,Out& out,Ref ref,Idx n) {
     it.template print<It,Nav,Out>(it,nav,out,ref,n);
+  }
+  // template<typename It,typename Nav>
+  // inline static void enter(It& it,Nav& nav) {
+  //   _trace(MDO<<"Empty::enter");
+  // }
+  template<Cmds c,typename It,typename Nav>
+  inline static bool cmd(It& it,Nav& nav) {
+    _trace(MDO<<"Empty::cmd"<<endl);
+    nav.template _cmd<c,It,Nav>(it,nav);
   }
 };

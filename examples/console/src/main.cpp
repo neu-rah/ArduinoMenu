@@ -72,6 +72,7 @@ int main() {
   // text1.print<Console>();
   Console::raw("AM5 Tests ----------------------");
   Console::nl();
+  nav.up();
 
   //menu------------------------
   nav.print(out);

@@ -11,14 +11,22 @@ constexpr Idx idx_max=std::numeric_limits<Idx>::max();
 
 enum class Modes {Normal,Edit,Tune};
 enum class Roles:Idx {Panel,Menu,Title,Body,Prompt,Index,Cursor,Name,Mode,Value,Unit,Raw};
+enum class Cmds:Idx {None,Enter,Esc,Up,Down,Left,Right};
 
-constexpr char* roleNames[]{
-  "Panel","Menu","Title","Body","Prompt","Index",
-  "Cursor","Name","Mode","Value","Unit","Raw"
-};
+#ifdef MENU_DEBUG
+  constexpr char* roleNames[]{
+    "Panel","Menu","Title","Body","Prompt","Index",
+    "Cursor","Name","Mode","Value","Unit","Raw"
+  };
+  constexpr char* cmdNames[]{"None","Enter","Esc","Up","Down","Left","Right"};
 
-template<typename O>
-constexpr inline O& operator<<(O& o,Roles r) {return o<<roleNames[(Idx)r];}
+  template<typename O>
+  constexpr inline O& operator<<(O& o,Roles r) {return o<<roleNames[(Idx)r];}
+
+  template<typename O>
+  constexpr inline O& operator<<(O& o,Cmds r) {return o<<cmdNames[(Idx)r];}
+
+#endif
 
 // struct TextMeasure;
 
