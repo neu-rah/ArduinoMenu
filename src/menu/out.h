@@ -5,7 +5,7 @@
 
 template<typename Part,typename I> struct RoleChk:I {
   template<Roles P,bool io,typename It,typename Out,typename Nav>
-  static inline void fmt(Idx n,const Nav& nav) {
+  inline static void fmt(Idx n,const Nav& nav) {
     if (Part::template allowed<P>()||P==Roles::Raw) I::template fmt<P,io,It,Out,Nav>(n);
   }
   template<typename O,Roles P=Roles::Raw,typename N=Drift<>>
@@ -22,10 +22,23 @@ using NoRole=RoleChk<DenyRole<Part>,I>;
 
 template<typename Dev, Dev& dev,typename O=Void<>>
 struct StreamOut:O {
-  inline static void nl() {dev<<"\n\r";}
+  inline static void nl() {dev<<"\n\r";dev.flush();}
   template<typename T> inline static void raw(T o) {dev<<o;}
 };
 
 //top level printer
-template<typename O>
-struct MenuOut:O {};
+// template<typename O>
+// struct MenuOut:O {};
+
+//top level printer, using static data
+template<typename O=Void<>>
+struct MenuOut:Data<O> {
+  inline static Idx top() {return Data<O>::obj.top();}
+  inline static void setTop(Idx n) {Data<O>::obj.setTop(n);}
+  inline static void newView() {Data<O>::obj.newView();}
+  inline static void useY(Idx uy=1) {Data<O>::obj.useY(uy);}
+  inline static void nl() {Data<O>::obj.nl();Data<O>::obj.useY();}
+  inline static Idx freeY() {return Data<O>::obj.freeY();}
+  template<typename Nav>
+  inline static void posTop(Nav& nav) {}
+};

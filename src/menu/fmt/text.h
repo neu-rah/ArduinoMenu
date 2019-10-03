@@ -11,78 +11,78 @@ template<typename O>
 struct TextFmt:public O {
   public:
     template<bool io,typename I,typename Out,typename Nav>
-    static inline void fmtPanel(Idx n,Nav& nav,Out& out) {
-      if (io) out.nl();
-      out.raw("*--------*");
-      out.nl();
+    static inline void fmtPanel(Idx n,Nav& nav) {
+      if (io) Out::nl();
+      Out::raw("*--------*");
+      Out::nl();
     }
     template<bool io,typename I,typename Out,typename Nav>
-    static inline void fmtMenu(Idx n,Nav& nav,Out& out) {
-      // out.raw("----------");
-      // out.nl();
+    static inline void fmtMenu(Idx n,Nav& nav) {
+      // Out::raw("----------");
+      // Out::nl();
     }
     template<bool io,typename I,typename Out,typename Nav>
-    static inline void fmtBody(Idx n,Nav& nav,Out& out) {
-      // out.raw(io?"| ":" |");
-      // out.nl();
+    static inline void fmtBody(Idx n,Nav& nav) {
+      // Out::raw(io?"| ":" |");
+      // Out::nl();
     }
     template<bool io,typename I,typename Out,typename Nav>
-    static inline void fmtName(Idx n,Nav& nav,Out& out) {
-      out.raw(io?"«":"»");
+    static inline void fmtName(Idx n,Nav& nav) {
+      Out::raw(io?"«":"»");
     }
     template<bool io,typename I,typename Out,typename Nav>
-    static inline void fmtValue(Idx n,Nav& nav,Out& out) {
-      // out.raw(io?"{":"}");
+    static inline void fmtValue(Idx n,Nav& nav) {
+      // Out::raw(io?"{":"}");
     }
     template<bool io,typename I,typename Out,typename Nav>
-    static inline void fmtUnit(Idx n,Nav& nav,Out& out) {
-      // out.raw(io?"(":")");
+    static inline void fmtUnit(Idx n,Nav& nav) {
+      // Out::raw(io?"(":")");
     }
     template<bool io,typename I,typename Out,typename Nav>
-    static inline void fmtMode(Idx n,Nav& nav,Out& out) {
+    static inline void fmtMode(Idx n,Nav& nav) {
       if(io) switch(Nav::mode()) {
-        case Modes::Normal: out.raw(' ');break;
-        case Modes::Edit: out.raw(':');break;
-        case Modes::Tune: out.raw('>');break;
+        case Modes::Normal: Out::raw(' ');break;
+        case Modes::Edit: Out::raw(':');break;
+        case Modes::Tune: Out::raw('>');break;
       }
     }
     template<bool io,typename I,typename Out,typename Nav>
-    static inline void fmtTitle(Idx n,Nav& nav,Out& out) {
-      if (!io) out.nl();
+    static inline void fmtTitle(Idx n,Nav& nav) {
+      if (!io) Out::nl();
     }
     template<bool io,typename I,typename Out,typename Nav>
-    static inline void fmtItem(Idx n,Nav& nav,Out& out) {
-      if (!io) out.nl();
+    static inline void fmtItem(Idx n,Nav& nav) {
+      if (!io) Out::nl();
     }
     template<bool io,typename I,typename Out,typename Nav>
-    static inline void fmtIndex(Idx n,Nav& nav,Out& out) {
+    static inline void fmtIndex(Idx n,Nav& nav) {
       if(io) {
-        if (n<9) out.raw(n+1);
-        else out.raw(' ');
+        if (n<9) Out::raw(n+1);
+        else Out::raw(' ');
       }
     }
     template<bool io,typename I,typename Out,typename Nav>
-    static inline void fmtCursor(Idx n,Nav& nav,Out& out) {
-      if (io) out.raw(nav.selected(n)?((nav.enabled(n)?'>':'-')):' ');
+    static inline void fmtCursor(Idx n,Nav& nav) {
+      if (io) Out::raw(nav.selected(n)?((nav.enabled(n)?'>':'-')):' ');
     }
   public:
     template<Roles r,bool io,typename I,typename Out,typename Nav>
-    static inline void fmt(Idx n,Nav& nav,Out& out) {
-      if (!io) O::template fmt<r,io,I,Out,Nav>(n,nav,out);
+    static inline void fmt(Idx n,Nav& nav) {
+      if (!io) O::template fmt<r,io,I,Out,Nav>(n,nav);
       switch(r) {
-        case Roles::Panel:  out.template fmtPanel <io,I,Out,Nav>(n,nav,out);break;
-        case Roles::Menu:   out.template fmtMenu  <io,I,Out,Nav>(n,nav,out);break;
-        case Roles::Title:  out.template fmtTitle <io,I,Out,Nav>(n,nav,out);break;
-        case Roles::Body:   out.template fmtBody  <io,I,Out,Nav>(n,nav,out);break;
-        case Roles::Prompt: out.template fmtItem  <io,I,Out,Nav>(n,nav,out);break;
-        case Roles::Index:  out.template fmtIndex <io,I,Out,Nav>(n,nav,out);break;
-        case Roles::Cursor: out.template fmtCursor<io,I,Out,Nav>(n,nav,out);break;
-        case Roles::Name:   out.template fmtName  <io,I,Out,Nav>(n,nav,out);break;
-        case Roles::Mode:   out.template fmtMode  <io,I,Out,Nav>(n,nav,out);break;
-        case Roles::Value:  out.template fmtValue <io,I,Out,Nav>(n,nav,out);break;
-        case Roles::Unit:   out.template fmtUnit  <io,I,Out,Nav>(n,nav,out);break;
+        case Roles::Panel:  Out::template fmtPanel <io,I,Out,Nav>(n,nav);break;
+        case Roles::Menu:   Out::template fmtMenu  <io,I,Out,Nav>(n,nav);break;
+        case Roles::Title:  Out::template fmtTitle <io,I,Out,Nav>(n,nav);break;
+        case Roles::Body:   Out::template fmtBody  <io,I,Out,Nav>(n,nav);break;
+        case Roles::Prompt: Out::template fmtItem  <io,I,Out,Nav>(n,nav);break;
+        case Roles::Index:  Out::template fmtIndex <io,I,Out,Nav>(n,nav);break;
+        case Roles::Cursor: Out::template fmtCursor<io,I,Out,Nav>(n,nav);break;
+        case Roles::Name:   Out::template fmtName  <io,I,Out,Nav>(n,nav);break;
+        case Roles::Mode:   Out::template fmtMode  <io,I,Out,Nav>(n,nav);break;
+        case Roles::Value:  Out::template fmtValue <io,I,Out,Nav>(n,nav);break;
+        case Roles::Unit:   Out::template fmtUnit  <io,I,Out,Nav>(n,nav);break;
         default:break;
       }
-      if (io) O::template fmt<r,io,I,Out,Nav>(n,nav,out);
+      if (io) O::template fmt<r,io,I,Out,Nav>(n,nav);
     }
 };

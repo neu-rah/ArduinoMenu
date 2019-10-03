@@ -72,19 +72,19 @@ int main() {
   // text1.print<Console>();
   Console::raw("AM5 Tests ----------------------");
   Console::nl();
-  nav.path[0]=4;
-  nav.level=1;
+  // nav.path[0]=5;
+  // nav.level=1;
 
   //menu------------------------
-  nav.print(out);
-  // do {
-  //   if (kbhit()) {
-  //     int k=getch();
-  //     if (k==27) {
-  //       if (kbhit()) k=getch();else break;
-  //     } else if (keys(k)) nav.print<Out>();
-  //   }
-  // } while(true);
+  nav.print<Out>();
+  do {
+    if (kbhit()) {
+      int k=getch();
+      if (k==27) {
+        if (kbhit()) k=getch();else break;
+      } else if (keys(k)) nav.print<Out>();
+    }
+  } while(true);
   Console::nl();
   return 0;
 }

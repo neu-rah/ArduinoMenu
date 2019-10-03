@@ -13,6 +13,10 @@ struct Ref {
 struct Nil {};
 
 ////////////////////////////////////////////////////////////////////////////////
+//provide some static data to static functions
+template<typename O> struct Data:O {using O::O;static O obj;};
+
+////////////////////////////////////////////////////////////////////////////////
 template<typename N=Nil> struct Drift:N {
   // template<typename It,typename Nav,typename Out>
   // inline static void print(It&,Nav&,Out&,Ref,Idx) {}
@@ -27,7 +31,7 @@ template<typename N=Nil> struct Drift:N {
 ////////////////////////////////////////////////////////////////////////////////
 template<typename O=Nil> struct Void:O {
   template<Roles r,bool io,typename I,typename Out,typename Nav>
-  static inline void fmt(Idx n,Nav& nav,Out& out) {}
+  static inline void fmt(Idx n,Nav& nav) {}
   static inline void clrLine(Idx) {}
   // constexpr static inline bool isRange() {return false;}
   constexpr static inline bool isViewport() {return false;}
@@ -48,17 +52,17 @@ template<typename I=Nil> struct Empty:I {
   inline static void enable(Idx,bool) {}
   inline static Idx size() {return 0;}
   template<Roles r,bool io,typename It,typename Out,typename Nav>
-  static inline void fmt(Idx n,Nav& nav,Out& out) {
+  static inline void fmt(Idx n,Nav& nav) {
     // _trace(MDO<<"<"<<(io?"":"\\")<<r<<">");
-    out.template fmt<r,io,It,Out,Nav>(n,nav,out);
+    Out::template fmt<r,io,It,Out,Nav>(n,nav);
   }
   template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
-  inline void printItems(It& it,Nav& nav,Out& out) {
+  inline void printItems(It& it,Nav& nav) {
     trace(MDO<<"Empty::printMenu"<<endl);
-    it.template print<Out>(out);
+    it.template print<Out>();
   }
   template<typename It,typename Nav,typename Out>
-  inline static void printMenu(It& it,Nav& nav,Out& out,Ref ref,Idx n) {
+  inline static void printMenu(It& it,Nav& nav,Ref ref,Idx n) {
     _trace(MDO<<"Empty::printMenu"<<endl);
     // it.template print<Out>(out);
     // it.template print<It,Nav,Out>(it,nav,out,ref,n);
