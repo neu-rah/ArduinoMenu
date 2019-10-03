@@ -12,7 +12,7 @@ struct NavPos:N {
   inline bool selected(Idx idx) const {return at==idx;}
   template<Cmds c,typename It,typename Nav>
   inline bool _cmd(It& it,Nav& nav) {
-    _trace(MDO<<"NavPos::cmd"<<endl);
+    trace(MDO<<"NavPos::cmd"<<endl);
     switch(c) {
       case Cmds::Up:
         if (at<it.size()-1) at++;
@@ -21,6 +21,7 @@ struct NavPos:N {
         if (at>0) at--;
         break;
     }
+    N::template _cmd<c,It,Nav>(it,nav);
   }
   Idx at=0;
 };
@@ -33,13 +34,23 @@ struct StaticNavTree:N {
 
   template<typename Nav,typename Out>
   inline void print(Nav& nav,Out& out) {
+    _trace(MDO<<"StaticNavTree::print level:"<<level<<endl);
     Ref ref=*this;
+    // data.template printMenu<Data,Nav,Out>(data,nav,out);
     data.template printMenu<Data,Nav,Out>(data,nav,out,ref,cur());
   }
 
   template<Cmds c,typename Nav>
   inline bool cmd(Nav& nav) {
     data.template cmd<c,Data,Nav>(data,nav,*this,cur());
+  }
+
+  inline void open() {
+    if (level>=max_depth-1) return;
+    trace(MDO<<"level:"<<level<<" max:"<<max_depth<<endl);
+    assert(level<max_depth-1);
+    path[++level]=0;
+    trace(MDO<<"level:"<<level<<" max:"<<max_depth<<endl);
   }
 
   Idx level=0;
@@ -52,15 +63,17 @@ struct StaticRoot:N {
   using N::N;
   using This=StaticRoot<N>;
 
-  template<typename Out> inline void print(Out& o) {N::template print<This,Out>(*this,o);}
+  template<typename Out> inline void print(Out& o) {
+    N::template print<This,Out>(*this,o);
+  }
   template<typename Out> inline void print() {
     Out out;
     This::template print<Out>(out);
   }
 
-  inline bool enter()  {return N::template cmd<Cmds::Enter,This>(*this);}
-  inline bool esc()  {return N::template cmd<Cmds::Esc,This>(*this);}
-  inline bool up()  {return N::template cmd<Cmds::Up,This>(*this);}
+  inline bool enter() {return N::template cmd<Cmds::Enter,This>(*this);}
+  inline bool esc() {return N::template cmd<Cmds::Esc,This>(*this);}
+  inline bool up() {return N::template cmd<Cmds::Up,This>(*this);}
   inline bool down() {return N::template cmd<Cmds::Down,This>(*this);}
   inline bool left() {return N::template cmd<Cmds::Left,This>(*this);}
   inline bool right() {return N::template cmd<Cmds::Right,This>(*this);}

@@ -26,17 +26,17 @@ template<typename P=TextMeasure>
 struct FullPrinter:public P {
   using This=FullPrinter<P>;
   template<typename It,typename Nav,typename Out>
-  inline static void printMenu(It& it,Nav& nav,Out& out,Ref ref,Idx n) {
+  inline static void printMenu(It& it,Nav& nav,Out& out/*,Ref ref*/,Idx n) {
     _trace(MDO<<"FullPrinter::printMenu");
       out.template fmt<Roles::Panel,true,It,Out,Nav>(0,nav,out);
       out.template fmt<Roles::Menu,true,It,Out,Nav>(0,nav,out);
 
       //title
       it.template fmt<Roles::Title,true,It,Out,Nav>(0,nav,out);
-      it.template print<It,Nav,Out,Roles::Title>(it,nav,out,/*ref,*/n);
+      it.template print<It,Nav,Out,Roles::Title>(it,nav,out/*,ref,n*/);
       it.template fmt<Roles::Title,false,It,Out,Nav>(0,nav,out);
 
-      it.template printItems<It,Nav,Out,Roles::Body>(it,nav,out);
+      it.template printItems<It,Nav,Out,Roles::Body>(it,nav,out/*,n*/);
 
       out.template fmt<Roles::Menu,false,It,Out,Nav>(0,nav,out);
       out.template fmt<Roles::Panel,false,It,Out,Nav>(0,nav,out);

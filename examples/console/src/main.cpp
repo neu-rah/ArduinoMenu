@@ -41,7 +41,7 @@ using MainMenu=StaticMenu<
     Op3,
     StaticMenu<
       StaticText<&sub_txt>,
-      StaticData<Op1,Op2>
+      StaticData<Op1,Op2,Op3>
     >,
     Op3
   >
@@ -72,18 +72,19 @@ int main() {
   // text1.print<Console>();
   Console::raw("AM5 Tests ----------------------");
   Console::nl();
-  nav.up();
+  nav.path[0]=4;
+  nav.level=1;
 
   //menu------------------------
   nav.print(out);
-  do {
-    if (kbhit()) {
-      int k=getch();
-      if (k==27) {
-        if (kbhit()) k=getch();else break;
-      } else if (keys(k)) nav.print<Out>();
-    }
-  } while(true);
+  // do {
+  //   if (kbhit()) {
+  //     int k=getch();
+  //     if (k==27) {
+  //       if (kbhit()) k=getch();else break;
+  //     } else if (keys(k)) nav.print<Out>();
+  //   }
+  // } while(true);
   Console::nl();
   return 0;
 }
