@@ -113,12 +113,21 @@ struct StaticMenu:B {
   }
   template<Cmds c,typename It,typename Nav>
   inline bool cmd(It& it,Nav& nav,Ref ref,Idx n) {
-    trace(MDO<<"StaticMenu::"<<c<<endl);
-    if (n) cmd<c,It,Nav>(it,nav,ref,n-1);
-    else if (ref.len) cmd<c,It,Nav>(it,nav,ref.tail(),ref.head());
+    _trace(MDO<<"StaticMenu::"<<c<<endl);
+    if (n) {
+      cmd<c,It,Nav>(it,nav,ref,n-1);
+    } else if (ref.len) cmd<c,This,Nav>(*this,nav,ref.tail(),ref.head());
     else {
-      trace(MDO<<"StaticMenu::"<<c<<"!!!"<<endl);
-      if (c==Cmds::Enter) nav.open();
+      _trace(MDO<<"StaticMenu::"<<c<<"!!!"<<endl);
+      if (c==Cmds::Enter) {
+        _trace(
+          MDO<<"open()..."
+            <<"head:"<<ref.head()
+            <<" len:"<<ref.len
+            <<" n:"<<n
+            <<endl);
+        nav.open();
+      }
       B::template cmd<c,It,Nav>(it,nav);
       return true;
     }

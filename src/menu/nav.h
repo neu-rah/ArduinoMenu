@@ -9,6 +9,7 @@ struct NavPos:N {
     it.template print<It,Nav,Out>(it,nav,out,ref,n);
   }
   inline Idx pos() const {return at;}
+  inline void setPos(Idx n) {at=n;}
   inline bool selected(Idx idx) const {return at==idx;}
   template<Cmds c,typename It,typename Nav>
   inline bool _cmd(It& it,Nav& nav) {
@@ -47,10 +48,12 @@ struct StaticNavTree:N {
 
   inline void open() {
     if (level>=max_depth-1) return;
-    trace(MDO<<"level:"<<level<<" max:"<<max_depth<<endl);
+    _trace(MDO<<"level:"<<level<<" max:"<<max_depth<<endl);
     assert(level<max_depth-1);
-    path[++level]=0;
-    trace(MDO<<"level:"<<level<<" max:"<<max_depth<<endl);
+    path[level++]=N::pos();
+    // path[level]=0;
+    N::setPos(0);
+    _trace(MDO<<"level:"<<level<<" at:"<<path[level]<<" max:"<<max_depth<<endl);
   }
 
   Idx level=0;
