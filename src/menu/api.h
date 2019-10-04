@@ -51,6 +51,8 @@ template<typename I=Nil> struct Empty:I {
   constexpr static inline bool enabled() {return true;}
   inline static void enable(Idx,bool) {}
   inline static Idx size() {return 0;}
+  inline static constexpr Idx size(Ref ref) {return 0;}
+  inline static constexpr Idx size(Ref ref,Idx n) {return 0;}
   template<Roles r,bool io,typename It,typename Out,typename Nav>
   static inline void fmt(Idx n,Nav& nav) {
     // _trace(MDO<<"<"<<(io?"":"\\")<<r<<">");
@@ -68,8 +70,12 @@ template<typename I=Nil> struct Empty:I {
     // it.template print<It,Nav,Out>(it,nav,out,ref,n);
   }
   template<Cmds c,typename It,typename Nav>
+  inline static bool cmd(It& it,Nav& nav,Ref,Idx) {
+    return false;//cmd<c,It,Nav>(it,nav);
+  }
+  template<Cmds c,typename It,typename Nav>
   inline static bool cmd(It& it,Nav& nav) {
     trace(MDO<<"Empty::cmd"<<endl);
-    nav.template _cmd<c,It,Nav>(it,nav);
+    return nav.template _cmd<c,It,Nav>(it,nav);
   }
 };

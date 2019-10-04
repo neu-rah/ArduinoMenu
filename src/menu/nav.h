@@ -13,10 +13,11 @@ struct NavPos:N {
   inline bool selected(Idx idx) const {return at==idx;}
   template<Cmds c,typename It,typename Nav>
   inline bool _cmd(It& it,Nav& nav) {
-    trace(MDO<<"NavPos::cmd"<<endl);
+    _trace(MDO<<"NavPos::cmd "<<c<<endl);
     switch(c) {
       case Cmds::Up:
-        if (at<it.size()-1) at++;
+        _trace(MDO<<"at:"<<at<<" size:"<<it.size((Ref)nav)<<endl);
+        if (at<(it.size((Ref)nav)-1)) at++;
         break;
       case Cmds::Down:
         if (at>0) at--;
@@ -32,6 +33,8 @@ struct StaticNavTree:N {
   inline StaticNavTree(Data& o):data(o) {}
   operator Ref() {return {level,path};}
   inline Idx cur() const {return level?path[level]:N::pos();}
+  inline Idx size() {return size(operator Ref());}
+  inline Idx size(Ref ref) {return data.size(ref)/*,ref.len?ref.head():cur())*/;}
 
   template<typename Nav,typename Out>
   inline void print(Nav& nav) {

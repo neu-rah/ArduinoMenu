@@ -74,6 +74,10 @@ int main() {
   Console::nl();
   // nav.path[0]=5;
   // nav.level=1;
+  MDO<<nav.size()<<endl;
+  nav.up();
+  nav.up();
+  MDO<<nav.size()<<endl;
 
   //menu------------------------
   nav.print<Out>();

@@ -1,3 +1,19 @@
+# API
+
+## static printing chain
+
+```c++
+main
+  StaticRoot::print<Out>()
+    StaticNavTree::print<Nav,Out>(nav)
+      StaticMenu::printMenu<It,Nav,Out>(it,nav,ref,n) <----\
+        StaticData::printMenu<It,Nav,Out>(it,nav,ref,n) ---/
+          FullPrinter::printMenu<It,Nav,Out>(it,nav)
+            StaticData::printItems<It,Nav,Out>(it,nav)
+              StaticData::printItem<It,Nav,Out>(it,nav)
+                StaticText::print<It,Nav,Out>(it,nav)
+```
+
 # TO DO:
 
 ## actions and events
