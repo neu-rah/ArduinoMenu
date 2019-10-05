@@ -84,6 +84,11 @@ namespace Menu {
 					// gfxOut::drawCursor(ln,selected,stat);
 					gfx.drawRect(p.x*resX,(p.y+ln)*resY,maxX()*resX,resY,getColor(cursorColor,selected,enabledStatus,false));
 				}
+				idx_t printRaw(const char* at,idx_t len) override {
+					trace(Serial<<"TFT_eSPIOut::printRaw"<<endl);
+					trace(Serial<<"["<<at<<"]");
+					return print((__FlashStringHelper*)at);
+				}
 	  };
 
 };
