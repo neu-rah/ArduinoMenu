@@ -11,8 +11,4 @@
 #include "menu/panels.h"
 #include "menu/printers.h"
 
-// #include <cstddef>
-// #include <iostream>
-// #include "menu/debug.h"
-
 #include <menu/api.hpp>

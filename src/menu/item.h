@@ -6,7 +6,6 @@ template<const char** text,typename I=Empty<>>
 struct StaticText:I {
   using I::size;
   template<typename Out> inline static void print() {Out::raw(text[0]);}
-  // template<typename Out> inline static void print(Out& out) {Out::raw(text[0]);}
   template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
   inline static void print(It& it,Nav& nav) {print<Out>();}
 };
@@ -36,7 +35,6 @@ struct StaticData:StaticData<I> {
     if (!Out::freeY()) return;
     StaticData<I>::template printItem<I,Nav,Out>(*this,nav,n);
     reinterpret_cast<Tail*>(this)->Tail::template printItem<It,Nav,Out>(it,nav,n+1);
-    // Tail::template printItem<Tail,Nav,Out>(it,nav,out,n+1);
   }
   template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
   inline void printItems(It& it,Nav& nav) {
@@ -51,7 +49,6 @@ struct StaticData:StaticData<I> {
   inline void printMenu(It& it,Nav& nav,Ref ref,Idx n) {
     trace(MDO<<"StaticData::printMenu<I,II...> "<<n<<endl);
     if (n)
-      // reinterpret_cast<Tail*>(this)->Tail::template printMenu<Tail,Nav,Out>(*reinterpret_cast<Tail*>(this),nav,ref,n-1);
       reinterpret_cast<Tail*>(this)->Tail::template printMenu<It,Nav,Out>(it,nav,ref,n-1);
     else if (ref.len) {
       trace(
@@ -72,7 +69,6 @@ struct StaticData:StaticData<I> {
     _trace(MDO<<"StaticData<I,II...>::"<<c<<" #"<<n<<" ref.len:"<<ref.len<<endl);
     if (n) {
       _trace(MDO<<"StaticData<I,II...>::"<<c<<" walk..."<<n<<endl);
-      // return reinterpret_cast<Tail*>(this)->Tail::template cmd<c,Tail,Nav>(*reinterpret_cast<Tail*>(this),nav,ref,n-1);
       return reinterpret_cast<Tail*>(this)->Tail::template cmd<c,It,Nav>(it,nav,ref,n-1);
     } else if (ref.len) {
       _trace(MDO<<"StaticData<I,II...>::"<<c<<" step... "<<ref.head()<<endl);
@@ -121,7 +117,6 @@ struct StaticData<I>:I {
     it.template fmt<Roles::Cursor,true ,It,Out,Nav>(n,nav);
     it.template fmt<Roles::Cursor,false ,It,Out,Nav>(n,nav);
     reinterpret_cast<I*>(this)->template print<I,Nav,Out,Roles::Prompt>(*reinterpret_cast<I*>(this),nav);
-    // reinterpret_cast<I*>(this)->template print<Out>(out);
     it.template fmt<Roles::Prompt,false,It,Out,Nav>(n,nav);
   }
   template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
@@ -137,7 +132,7 @@ struct StaticData<I>:I {
   template<typename It,typename Nav,typename Out>
   inline void printMenu(It& it,Nav& nav,Ref ref,Idx n) {
     trace(MDO<<"StaticData::printMenu<I>"<<endl);
-    if (n) return;//printMenu<It,Nav,Out>(it,nav,out,ref,n-1);
+    if (n) return;
     else if (ref.len) {
       trace(MDO<<"path walk..."<<endl);
       reinterpret_cast<I*>(this)->I::template printMenu<I,Nav,Out>(*reinterpret_cast<I*>(this),nav,ref.tail(),ref.head());
@@ -150,10 +145,6 @@ struct StaticData<I>:I {
   inline bool cmd(It& it,Nav& nav,Ref ref,Idx n) {
     _trace(MDO<<"StaticData<I>::"<<c<<" #"<<n<<endl);
     if (n) return false;
-    // if (ref.len)
-    //   return reinterpret_cast<I*>(this)->I::template cmd<c,I,Nav>(*reinterpret_cast<I*>(this),nav,ref.tail(),ref.head());
-    // else
-      // return reinterpret_cast<I*>(this)->I::template cmd<c,I,Nav>(*reinterpret_cast<I*>(this),nav);
     I::template cmd<c,It,Nav>(it,nav);
   }
 };
@@ -175,25 +166,4 @@ struct StaticMenu:B {
     if (ref.len) B::template printMenu<It,Nav,Out>(it,nav,ref,n);
     else Out::template printMenu<This,Nav,Out>(*this,nav);
   }
-  // template<Cmds c,typename It,typename Nav>
-  // inline bool cmd(It& it,Nav& nav,Ref ref,Idx n) {
-  //   _trace(MDO<<"StaticMenu::"<<c<<" #"<<n<<endl);
-  //   if (n) {
-  //     cmd<c,It,Nav>(it,nav,ref,n-1);
-  //   } else if (ref.len) cmd<c,This,Nav>(*this,nav,ref.tail(),ref.head());
-  //   else {
-  //     _trace(MDO<<"StaticMenu::"<<c<<"!!!"<<endl);
-  //     if (c==Cmds::Enter) {
-  //       _trace(
-  //         MDO<<"open()..."
-  //           <<"head:"<<ref.head()
-  //           <<" len:"<<ref.len
-  //           <<" n:"<<n
-  //           <<endl);
-  //       nav.open();
-  //     }
-  //     reinterpret_cast<B*>(this)->B::template cmd<c,B,Nav>(*reinterpret_cast<B*>(this),nav);
-  //     return true;
-  //   }
-  // }
 };

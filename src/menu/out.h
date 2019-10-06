@@ -26,10 +26,6 @@ struct StreamOut:O {
   template<typename T> inline static void raw(T o) {dev<<o;}
 };
 
-//top level printer
-// template<typename O>
-// struct MenuOut:O {};
-
 //top level printer, using static data
 template<typename O=Void<>>
 struct MenuOut:Data<O> {

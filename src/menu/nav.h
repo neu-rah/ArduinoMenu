@@ -34,13 +34,12 @@ struct StaticNavTree:N {
   operator Ref() {return {level,path};}
   inline Idx cur() const {return level?path[level]:N::pos();}
   inline Idx size() {return size(operator Ref());}
-  inline Idx size(Ref ref) {return data.size(ref)/*,ref.len?ref.head():cur())*/;}
+  inline Idx size(Ref ref) {return data.size(ref);}
 
   template<typename Nav,typename Out>
   inline void print(Nav& nav) {
     _trace(MDO<<"StaticNavTree::print level:"<<level<<endl);
     Ref ref=*this;
-    // data.template printMenu<Data,Nav,Out>(data,nav,out);
     data.template printMenu<Data,Nav,Out>(data,nav,ref,ref.len?ref.head():cur());
   }
 
@@ -71,7 +70,6 @@ struct StaticRoot:N {
 
   using N::print;
   template<typename Out> inline void print() {
-    // reinterpret_cast<N*>(this)->N::template print<This,Out>(*reinterpret_cast<N*>(this));
     print<This,Out>(*this);
   }
 

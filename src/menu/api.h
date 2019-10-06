@@ -18,8 +18,6 @@ template<typename O> struct Data:O {using O::O;static O obj;};
 
 ////////////////////////////////////////////////////////////////////////////////
 template<typename N=Nil> struct Drift:N {
-  // template<typename It,typename Nav,typename Out>
-  // inline static void print(It&,Nav&,Out&,Ref,Idx) {}
   constexpr static inline Modes mode() {return Modes::Normal;}
   constexpr static inline bool enabled(Idx) {return true;}
   template<Cmds c,typename It,typename Nav>
@@ -33,7 +31,6 @@ template<typename O=Nil> struct Void:O {
   template<Roles r,bool io,typename I,typename Out,typename Nav>
   static inline void fmt(Idx n,Nav& nav) {}
   static inline void clrLine(Idx) {}
-  // constexpr static inline bool isRange() {return false;}
   constexpr static inline bool isViewport() {return false;}
   constexpr static inline Idx height() {return 0;}
   constexpr static inline Idx top() {return 0;}
@@ -55,7 +52,6 @@ template<typename I=Nil> struct Empty:I {
   inline static constexpr Idx size(Ref ref,Idx n) {return 0;}
   template<Roles r,bool io,typename It,typename Out,typename Nav>
   static inline void fmt(Idx n,Nav& nav) {
-    // _trace(MDO<<"<"<<(io?"":"\\")<<r<<">");
     Out::template fmt<r,io,It,Out,Nav>(n,nav);
   }
   template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
@@ -66,8 +62,6 @@ template<typename I=Nil> struct Empty:I {
   template<typename It,typename Nav,typename Out>
   inline static void printMenu(It& it,Nav& nav,Ref ref,Idx n) {
     _trace(MDO<<"Empty::printMenu"<<endl);
-    // it.template print<Out>(out);
-    // it.template print<It,Nav,Out>(it,nav,out,ref,n);
   }
   template<Cmds c,typename It,typename Nav>
   inline static bool cmd(It& it,Nav& nav,Ref,Idx) {

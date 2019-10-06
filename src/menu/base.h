@@ -28,8 +28,6 @@ enum class Cmds:Idx {None,Enter,Esc,Up,Down,Left,Right};
 
 #endif
 
-// struct TextMeasure;
-
 template<Roles Part>
 struct AllowRole {
   template<Roles P> inline static constexpr bool allowed() {return Part==P;}
