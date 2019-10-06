@@ -27,7 +27,7 @@ struct FullPrinter:public P {
   using This=FullPrinter<P>;
   template<typename It,typename Nav,typename Out>
   inline static void printMenu(It& it,Nav& nav) {
-    _trace(MDO<<"FullPrinter::printMenu");
+    trace(MDO<<"FullPrinter::printMenu");
       Out::template fmt<Roles::Panel,true,It,Out,Nav>(0,nav);
       Out::template fmt<Roles::Menu,true,It,Out,Nav>(0,nav);
 

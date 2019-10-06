@@ -66,27 +66,26 @@ struct StaticData:StaticData<I> {
   using I::cmd;
   template<Cmds c,typename It,typename Nav>
   inline bool cmd(It& it,Nav& nav,Ref ref,Idx n) {
-    _trace(MDO<<"StaticData<I,II...>::"<<c<<" #"<<n<<" ref.len:"<<ref.len<<endl);
+    trace(MDO<<"StaticData<I,II...>::"<<c<<" #"<<n<<" ref.len:"<<ref.len<<endl);
+    assert(c!=Cmds::Esc);
     if (n) {
-      _trace(MDO<<"StaticData<I,II...>::"<<c<<" walk..."<<n<<endl);
+      trace(MDO<<"StaticData<I,II...>::"<<c<<" walk..."<<n<<endl);
       return reinterpret_cast<Tail*>(this)->Tail::template cmd<c,It,Nav>(it,nav,ref,n-1);
     } else if (ref.len) {
-      _trace(MDO<<"StaticData<I,II...>::"<<c<<" step... "<<ref.head()<<endl);
+      trace(MDO<<"StaticData<I,II...>::"<<c<<" step... "<<ref.head()<<endl);
       return
         reinterpret_cast<I*>(this)->I::template cmd<c,It,Nav>
           (it,nav,ref.tail(),ref.head());
     } else {
-      _trace(MDO<<"StaticData<I,II...>::"<<c<<" run..."<<n<<endl);
+      trace(MDO<<"StaticData<I,II...>::"<<c<<" run..."<<n<<endl);
+      assert(c!=Cmds::Esc);
       if (c==Cmds::Enter) {
-        _trace(
-          MDO<<"open()..."
-            <<"head:"<<ref.head()
-            <<" len:"<<ref.len
-            <<" n:"<<n
-            <<endl);
-        nav.open();
-      }
-      I::template cmd<c,It,Nav>(it,nav);
+        //TODO: check enabled!
+        I::template cmd<c,It,Nav>(it,nav);//inform target of enter, it will know what to do
+      }/* else if(c==Cmds::Esc) {
+        nav.close();//preemptive close, target has no right to retain focus (not informed)
+      }*/
+      Empty<>::template cmd<c,It,Nav>(it,nav);
       return true;
     }
   }
@@ -143,7 +142,8 @@ struct StaticData<I>:I {
   }
   template<Cmds c,typename It,typename Nav>
   inline bool cmd(It& it,Nav& nav,Ref ref,Idx n) {
-    _trace(MDO<<"StaticData<I>::"<<c<<" #"<<n<<endl);
+    trace(MDO<<"StaticData<I>::"<<c<<" #"<<n<<endl);
+    assert(c!=Cmds::Esc);
     if (n) return false;
     I::template cmd<c,It,Nav>(it,nav);
   }
@@ -159,6 +159,23 @@ struct StaticMenu:B {
     Title::template print<Out>();
   }
   using B::cmd;
+  template<Cmds c,typename It,typename Nav>
+  inline bool cmd(It& it,Nav& nav) {
+    trace(MDO<<"StaticMenu::cmd "<<c<<endl);
+    assert(c!=Cmds::Esc);
+    // assert(c==Cmds::Enter);
+    // if (c==Cmds::Enter) {//only enter reaches here
+      trace(MDO<<"open()..."<<endl);
+      nav.open();
+      return true;
+    // }
+    // return B::template cmd<c,It,Nav>(it,nav);
+  }
+  // template<Cmds c,typename It,typename Nav>
+  // inline bool cmd(It& it,Nav& nav,Ref ref,Idx n) {
+  //   if (c==Cmds::Esc&&ref.len==1) nav.close();//This::template cmd<c,It,Nav>(it,nav);
+  //   return B::template cmd<c,It,Nav>(it,nav,ref,n);
+  // }
   using B::printMenu;
   template<typename It,typename Nav,typename Out>
   inline void printMenu(It& it,Nav& nav,Ref ref,Idx n) {

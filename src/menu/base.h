@@ -1,11 +1,16 @@
 /* -*- C++ -*- */
 #pragma once
 
-#include <limits>
 #include "debug.h"
 
-using Idx=std::size_t;
-constexpr Idx idx_max=std::numeric_limits<Idx>::max();
+#ifdef ARDUINO
+  using Idx=uint8_t;
+  constexpr Idx idx_max=(1ul<<(sizeof(Idx)<<3))-1;
+#else
+  #include <limits>
+  using Idx=std::size_t;
+  constexpr Idx idx_max=std::numeric_limits<Idx>::max();
+#endif
 
 #define endl "\r\n"
 

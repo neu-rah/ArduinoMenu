@@ -61,11 +61,11 @@ template<typename I=Nil> struct Empty:I {
   }
   template<typename It,typename Nav,typename Out>
   inline static void printMenu(It& it,Nav& nav,Ref ref,Idx n) {
-    _trace(MDO<<"Empty::printMenu"<<endl);
+    trace(MDO<<"Empty::printMenu"<<endl);
   }
   template<Cmds c,typename It,typename Nav>
   inline static bool cmd(It& it,Nav& nav,Ref,Idx) {
-    _trace(MDO<<"Empty::cmd "<<c<<endl);
+    trace(MDO<<"Empty::cmd "<<c<<endl);
     return nav.template _cmd<c,It,Nav>(it,nav);
   }
   template<Cmds c,typename It,typename Nav>
