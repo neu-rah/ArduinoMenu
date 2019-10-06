@@ -71,7 +71,8 @@ template<typename I=Nil> struct Empty:I {
   }
   template<Cmds c,typename It,typename Nav>
   inline static bool cmd(It& it,Nav& nav,Ref,Idx) {
-    return false;//cmd<c,It,Nav>(it,nav);
+    _trace(MDO<<"Empty::cmd "<<c<<endl);
+    return nav.template _cmd<c,It,Nav>(it,nav);
   }
   template<Cmds c,typename It,typename Nav>
   inline static bool cmd(It& it,Nav& nav) {

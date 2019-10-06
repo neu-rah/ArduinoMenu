@@ -53,6 +53,8 @@ StaticRoot<
   StaticNavTree<MainMenu,2,NavPos<>>
 > nav(mainMenu);
 
+bool running=true;
+
 //----------------------------------------------------------------
 //handle serial keys to navigate menu
 bool keys(int key) {
@@ -61,6 +63,7 @@ bool keys(int key) {
     case 65:case '-': return nav.down();
     case 13:case 67:case '*': return nav.enter();
     case 27:case 68:case '/': return nav.esc();
+    case 3:running=false;break;
     default: _trace(MDO<<"key:"<<key<<"["<<(key>32?(char)key:'?')<<"]"<<endl);
   }
   return false;
@@ -74,21 +77,19 @@ int main() {
   Console::nl();
   // nav.path[0]=5;
   // nav.level=1;
-  MDO<<nav.size()<<endl;
-  nav.up();
-  nav.up();
-  MDO<<nav.size()<<endl;
+  // MDO<<"size:"<<nav.size()<<endl;
+  // nav.up();
 
   //menu------------------------
   nav.print<Out>();
   do {
     if (kbhit()) {
       int k=getch();
-      if (k==27) {
+      /*if (k==27) {
         if (kbhit()) k=getch();else break;
-      } else if (keys(k)) nav.print<Out>();
+      } else*/ if (keys(k)) nav.print<Out>();
     }
-  } while(true);
+  } while(running);
   Console::nl();
   return 0;
 }

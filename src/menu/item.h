@@ -24,9 +24,9 @@ struct StaticData:StaticData<I> {
   }
   inline static constexpr Idx size(Ref ref,Idx n) {
     return
-      n?Tail::size(ref,n-1)+1:
+      n?Tail::size(ref,n-1):
         ref.len?
-          I::size(ref.tail(),ref.head()):
+          I::size(ref.tail(),ref.tail().head()):
           size();
   }
 
@@ -35,7 +35,7 @@ struct StaticData:StaticData<I> {
     trace(MDO<<"StaticData::printItem<I,II...> "<<n<<endl);
     if (!Out::freeY()) return;
     StaticData<I>::template printItem<I,Nav,Out>(*this,nav,n);
-    reinterpret_cast<Tail*>(this)->Tail::template printItem<Tail,Nav,Out>(*reinterpret_cast<Tail*>(this),nav,n+1);
+    reinterpret_cast<Tail*>(this)->Tail::template printItem<It,Nav,Out>(it,nav,n+1);
     // Tail::template printItem<Tail,Nav,Out>(it,nav,out,n+1);
   }
   template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
@@ -49,11 +49,12 @@ struct StaticData:StaticData<I> {
   }
   template<typename It,typename Nav,typename Out>
   inline void printMenu(It& it,Nav& nav,Ref ref,Idx n) {
-    _trace(MDO<<"StaticData::printMenu<I,II...> "<<n<<endl);
+    trace(MDO<<"StaticData::printMenu<I,II...> "<<n<<endl);
     if (n)
-      reinterpret_cast<Tail*>(this)->Tail::template printMenu<Tail,Nav,Out>(*reinterpret_cast<Tail*>(this),nav,ref,n-1);
+      // reinterpret_cast<Tail*>(this)->Tail::template printMenu<Tail,Nav,Out>(*reinterpret_cast<Tail*>(this),nav,ref,n-1);
+      reinterpret_cast<Tail*>(this)->Tail::template printMenu<It,Nav,Out>(it,nav,ref,n-1);
     else if (ref.len) {
-      _trace(
+      trace(
         MDO<<"path walk... head:"
           <<ref.head()
           <<" len:"<<ref.len
@@ -61,23 +62,23 @@ struct StaticData:StaticData<I> {
           <<endl);
       reinterpret_cast<I*>(this)->I::template printMenu<I,Nav,Out>(*reinterpret_cast<I*>(this),nav,ref.tail(),ref.head());
     } else {
-      _trace(MDO<<"self printMenu<I,II...> out"<<endl);
+      trace(MDO<<"self printMenu<I,II...> out"<<endl);
       Out::template printMenu<I,Nav,Out>(*reinterpret_cast<I*>(this),nav);
     }
   }
   using I::cmd;
   template<Cmds c,typename It,typename Nav>
   inline bool cmd(It& it,Nav& nav,Ref ref,Idx n) {
-    _trace(MDO<<"StaticData<I,II...>::"<<c<<" #"<<n<<endl);
+    _trace(MDO<<"StaticData<I,II...>::"<<c<<" #"<<n<<" ref.len:"<<ref.len<<endl);
     if (n) {
       _trace(MDO<<"StaticData<I,II...>::"<<c<<" walk..."<<n<<endl);
       // return reinterpret_cast<Tail*>(this)->Tail::template cmd<c,Tail,Nav>(*reinterpret_cast<Tail*>(this),nav,ref,n-1);
       return reinterpret_cast<Tail*>(this)->Tail::template cmd<c,It,Nav>(it,nav,ref,n-1);
     } else if (ref.len) {
-      _trace(MDO<<"StaticData<I,II...>::"<<c<<" step..."<<n<<endl);
+      _trace(MDO<<"StaticData<I,II...>::"<<c<<" step... "<<ref.head()<<endl);
       return
-        reinterpret_cast<I*>(this)->I::template cmd<c,I,Nav>
-          (*reinterpret_cast<I*>(this),nav,ref.tail(),ref.head());
+        reinterpret_cast<I*>(this)->I::template cmd<c,It,Nav>
+          (it,nav,ref.tail(),ref.head());
     } else {
       _trace(MDO<<"StaticData<I,II...>::"<<c<<" run..."<<n<<endl);
       if (c==Cmds::Enter) {
@@ -147,7 +148,7 @@ struct StaticData<I>:I {
   }
   template<Cmds c,typename It,typename Nav>
   inline bool cmd(It& it,Nav& nav,Ref ref,Idx n) {
-    trace(MDO<<"StaticData<I>::"<<c<<" #"<<n<<endl);
+    _trace(MDO<<"StaticData<I>::"<<c<<" #"<<n<<endl);
     if (n) return false;
     // if (ref.len)
     //   return reinterpret_cast<I*>(this)->I::template cmd<c,I,Nav>(*reinterpret_cast<I*>(this),nav,ref.tail(),ref.head());
@@ -170,7 +171,7 @@ struct StaticMenu:B {
   using B::printMenu;
   template<typename It,typename Nav,typename Out>
   inline void printMenu(It& it,Nav& nav,Ref ref,Idx n) {
-    _trace(MDO<<"StaticMenu::printMenu "<<B::size()<<endl);
+    trace(MDO<<"StaticMenu::printMenu "<<B::size()<<endl);
     if (ref.len) B::template printMenu<It,Nav,Out>(it,nav,ref,n);
     else Out::template printMenu<This,Nav,Out>(*this,nav);
   }
