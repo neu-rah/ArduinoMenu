@@ -14,135 +14,114 @@ Things I wish were available/standard:
 - C++14 or +
 - AVR stl
 
-## Current state
+### Whats new
 
-_tiny.ino_ example is using a single option print-out chain
+_**how we manage to solve size issue**_
 
-with composing menu items, role description tags and role tag catch on output format
+In a word, **composition**
 
-output is also a composition, we can compose role tag format handlers and translations.
+We made menu definitions static composable, this way small systems can use simpler versions and still have menu functionality.
+
+**Composition instead of settings**
+
+Settings require code to support the functionalities to be always present and settings values to be checked at runtime to finetune a feature.
+
+Composition allows features to be added as needed, code will be presente only if needed, and we need not check at runtime for the functionality, eventually a feature might choose to use runtime settings, its allowed.
+
+Composition also allows mixing of components, previous menus versions had a global setting to use ram or flash memory. Now we can mix data from either origin and even add extra origins such as file systems and eeproms.
+
+TODO: this code base has only static structure menus, dynamic structures still missing.
+
+## Example
+
+**ATTiny85 menu**
 
 ```c++
-// Rui Azevedo - Apr2019
-// neu-rah (ruihfazevedo@gmail.com)
-// LCD example with flash data (Arduino framework)
-//
-// ArduinoMenu libtary 5.x code example
-// Output: LCD
-// flash data
-// Input: user serial driver
+#include <menu.h>
+#include <menu/IO/arduino/printOut.h>
+#include <menu/IO/arduino/streamIn.h>
+#include <menu/comp/arduino/flashText.h>
+#include <menu/fmt/text.h>
+#include "fpsTicks.h"
 
-#include <menu/def/tinyArduino.h>
-#include <menu/IO/lcdOut.h>
+using Out=MenuOut<//define oue menu output
+  FullPrinter<//we want full printing (for the moment its the only printer)
+    TextFmt<//we want text format, this text formats prints accel index, text cursor and ends items wirh text newline
+      RangePanel<//we want the navigation to be retrained verticaly, scrolling if needed
+        StaticPanel<0,0,20,4,ArduinoPrintOut<>>//will be using arduino default `Serial` port on a panel of 20x4 characters, so that we can test scroll
+      >
+    >
+  >
+>;
 
-using namespace Menu;
+Out out;
 
-// LCD /////////////////////////////////////////
-#define RS 2
-#define RW 4
-#define EN A4
-LiquidCrystal lcd(RS, RW, EN, A0, A1, A2, A3);
+const char op1_txt[] PROGMEM="Option 1";
+const char op2_txt[] PROGMEM="Option 2";
+const char op3_txt[] PROGMEM="...";
+const char main_txt[] PROGMEM="Main menu";
+const char sub_txt[] PROGMEM="Sub-menu";
+using Op1=FlashText<decltype(op1_txt),&op1_txt>;
+using Op2=FlashText<decltype(op2_txt),&op2_txt>;
+using Op3=FlashText<decltype(op3_txt),&op3_txt>;
 
-//menu output ------------------------
-MenuOut<AM5::LCDFmt<>::To<LCDOutDev<lcd>>> menuOut;
+using MainMenu=StaticMenu<
+  FlashText<decltype(main_txt),&main_txt>,
+  StaticData<
+    Op1,
+    Op2,
+    Op3,
+    Op3,
+    Op3,
+    StaticMenu<
+      FlashText<decltype(sub_txt),&sub_txt>,
+      StaticData<Op1,Op2,Op3>
+    >,
+    Op3
+  >
+>;
 
-using Op=Prompt<FlashText>;
+MainMenu mainMenu;
 
-const char op1_text[] PROGMEM="Op 1";
-Op op1(op1_text);
+StaticRoot<
+  StaticNavTree<MainMenu,2,NavPos<>>
+> nav(mainMenu);
 
-const char op2_text[] PROGMEM="Op 2";
-Op op2(op2_text);
+using SerialIn=ArduinoStreamIn<>;
 
-const char op3_text[] PROGMEM="Op 3";
-Op op3(op3_text);
-
-const char op4_text[] PROGMEM="Op 4";
-Op op4(op4_text);
-
-const char op5_text[] PROGMEM="Op 5";
-Op op5(op5_text);
-
-// Prompt<StaticMenu<5>> mainMenu("Main menu",&op1,&op2,&op3,&op4,&op5);
-const char menuTitle_text[] PROGMEM="Main menu";
-Op menuTitle(menuTitle_text);
-constexpr AM5::FlashData data[5] {&op1,&op2,&op3,&op4,&op5};
-Prompt<AM5::FlashMenuDef<data,5,FlashText>> mainMenu(menuTitle_text);
+FPS<25> menuFps;
 
 void setup() {
   Serial.begin(115200);
   while(!Serial);
-  lcd.begin(16,2);
-  menuOut<<F("AM5 example ----")<<endl;
-  menuOut<<F("<www.r-site.net>")<<endl;
-  delay(1500);
-  lcd.clear();
-  menuOut.setTarget(mainMenu);
-  menuOut.printMenu();
-}
-
-//handle serial keys to navigate menu
-bool keys(int key) {
-  switch(key) {
-    case '+': return menuOut.up();;
-    case '-': return menuOut.down();;
-    case '*': return menuOut.enter();;
-    case '/': return menuOut.esc();;
-  }
-  return false;
+  Serial.println(F("AM5 AVR Test."));
+  Serial.println(F("This is a test for size, expect minimalist menu"));
+  nav.print<Out>();
 }
 
 void loop() {
-  if (Serial.available()) {
-    if (keys(Serial.read())) menuOut.printMenu();
-  }
+  if (menuFps&&nav.doInput<SerialIn>()) nav.print<Out>();
 }
 ```
 
-**footprint:**
+**footprints**
 ```text
-current:
+current: Oct 2019
+ATMega328, static tree menu with some associated actions
+DATA:    [=         ]  10.2% (used 209 bytes from 2048 bytes)
+PROGRAM: [=         ]  13.4% (used 4118 bytes from 30720 bytes)
+
+ATTiny85 simpler static tree menu with some associated actions
+DATA:    [==        ]  19.5% (used 100 bytes from 512 bytes)
+PROGRAM: [====      ]  36.7% (used 3010 bytes from 8192 bytes)
+
+previous:
 ATA:    [==        ]  18.3% (used 374 bytes from 2048 bytes)
 PROGRAM: [==        ]  15.3% (used 4704 bytes from 30720 bytes)
 
-previous:
 DATA:    [==        ]  19.1% (used 392 bytes from 2048 bytes)
 PROGRAM: [==        ]  17.1% (used 5242 bytes from 30720 bytes)
 ```
-
-_tinyArduino.h_ defines `SerialOut`, `Op` and `FlashOp` as:
-```c++
-#include <streamFlow.h>//https://github.com/neu-rah/streamFlow
-#include "../../menu.h"
-#include "../printers.h"
-#include "../comp/flashText.h"
-#include "../comp/flashMenu.h"
-
-namespace Menu {
-
-  using namespace Menu;
-
-  template<typename O>
-  using MenuOut=AM5::MenuOutCap<O>;
-
-  using FlashText=AM5::FlashTextDef<AM5::Empty>;
-
-  using Text=AM5::Text<AM5::Empty>;
-
-  using Item=AM5::Item;
-
-  template<typename O>
-  using Prompt=AM5::Prompt<O>;
-
-  template<size_t n>
-  using StaticMenu=AM5::StaticMenu<n,Text>;
-
-  template<size_t n>
-  using FlashMenu=AM5::StaticMenu<n,FlashText>;
-};
-```
-
-https://gitter.im/ArduinoMenu/Lobby
 
 ### Embedded systems
 
@@ -152,15 +131,6 @@ So we need to seek modularity even further.
 After some research and experimentation here are some considerations about various aspects of menu systems with focus on embedding.
 
 This can also be achieved with C style defines and code exclusion, both approaches are hard. Hopefully this one can be more succinct.
-
-### Is it possible?
-
-You might be using a single line display, therefore printing a menu title is useless and inconvenient.  
-instead of having a run-time config and code checking if title enabled and skipping title prints on single line devices even if active make a menu system easy to use but also makes it heavier. Examples like this are behind all assumptions we make about a menu system.  
-So instead of having extra runtime check/config we opt instead on having compile-time compositions, think it like, if you want the title on your menus you can simply include that part on the construct.  
-Shifting the burden to compile time reduces the run-time checking, code size and increases speed.
-
-_**technical:** using type to guide the composition decision, not used code vanish at compile time._
 
 #### Mixed content
 
@@ -181,82 +151,13 @@ We make type level compositions that define a menu system type. That can be adeq
 
 Composition is done at type level using templates and open derivation chain, this is quite loose but this level is not intended for the final user, still it allow a great customization.
 
+_(waiting for c++ `concept`'s, we migh reinforce this on C++11 when api is stable)_
+
 It would be useless if we could not escape the type level. We want this different options of different type to co-exist on the same list. Therefor the interface usage. It defines a base menu item and its behavior.
-
-Even not being enforced by C++ we adopted an interface description with a middle composing stage comprised of multiple classes/functionalities with inline static members, this kind of members tend to vanish if not used.
-
-The composed types then are used to construct a specific version for the interface, virtual functions will ensure that the correct type is used covering the composition as a monolith type.
-
-Some compositions are weight-less and therefor should be included always. That is the case of role description tags, all members should have one, they are transparent and no trace of them would be left, but they can influenciate the code generated for certain print devices or output formats if they, the format or device, choose to do so.
-
-**generic pattern**
-
-Adapt(Interface)<Comp1<Comp2<Comp3<Terminal>>>>
-
-```c++
-//define common functionalities
-struct Interface {
-  //some virtual functions here
-};
-
-//make static composition adhere to the interface (as a top level cap)
-template<typename O>
-struct Adapt:public Interface,public O {
-  //redirect virtual call to the correct type (because we know it)
-};
-
-// composition parts ----------------------
-
-//this is the minimal composition part and acts as an interface for the composing parts
-// however nothing requires you to derive from it as the members are `inline static`
-// consider it just a guide, deriving from it is a discipline
-struct Empty {
-  //add base functionality to derived items, not enforced but handy
-};
-
-template<typename O=Empty>
-class Text:public O {
-protected:
-  const char* text;
-public:
-  Text(const char* t):text(t) {}
-  //... add specific implementations
-};
-
-//composing thing for user
-using Op=Prompt<Text>;
-//using Op=Prompt<FlashText>;//with this def we can put all Op's into flash (because they share constructor parameter format)
-
-Op op1("Op 1");//now we can simply build an option like this
-
-```
-we can implement other building blocks _a la carte_  
-they contain the functionality and its code is vacuous if not used
-
-we might add some sugar on top of this construction methods and build more elaborated blocks for each system.
-
-**extending**
-
-on a separate file, meaning the library can be extended without changing library files
-
-```c++
-  template<typename O>
-  class FlashTextDef:public O {
-  protected:
-    const char *text PROGMEM;
-  public:
-    FlashTextDef(PGM_P t):text(t) {}
-    template<typename Out>
-    inline size_t out(Out& o) {
-      o.raw(reinterpret_cast<const __FlashStringHelper *>(text));
-      return O::out(o);//chain the call
-    }
-  };
-```
 
 ### Lessons learned
 
-From previous version we have been adding functionalities and adapting the system design, however always over the same assumptions... Instead keep everything functional and interface contained.
+From previous version we have been adding functionalities and adapting the system design, however always over the same assumptions... keep everything functional and interface contained instead.
 
 Input manipulation should be independent, the system should only respond to navigation commands.
 
@@ -264,11 +165,11 @@ Output should be single device, multiple device should be implemented as a speci
 
 Finally found a decent initialization schema so that we can drop the macros (maybe keep them for compatibility/porting)
 
-Target framework should not be limited to Arduino (essay on Linux went well)
+Target framework ~should not be~ _is not_ limited to Arduino (essay on Linux went well)
 
 Keep menu definitions platform agnostic as was on AM4, make them also framework agnostic.
 
-On version 4 we shifted the complexity to a central core, this makes IO drivers easier to implement an is more efficient when using multiple outputs, but makes an extremely heavy core with many if's and considering too many cases, we need to break this down. Type level composition was the way.
+On version 4 we shifted the complexity to a central core, this makes IO drivers easier to implement and more efficient when using multiple outputs, but makes an extremely heavy core with many if's and considering too many cases, we need to break this down. Type level composition was the way.
 
 Avoid castings, macros and other bad style c++
 
