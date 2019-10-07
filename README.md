@@ -10,7 +10,7 @@ This is an experimental area, please contribute with ideas, experience or code. 
 
 In a word, **size**.
 
-Things I wish were available:
+Things I wish were available/standard:
 - C++14 or +
 - AVR stl
 

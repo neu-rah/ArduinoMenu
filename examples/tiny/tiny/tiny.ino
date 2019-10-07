@@ -37,7 +37,7 @@ bool action1() {
 }
 
 bool action2() {
-  Serial.println(F("action 1!"));
+  Serial.println(F("action 2!"));
   return true;
 }
 

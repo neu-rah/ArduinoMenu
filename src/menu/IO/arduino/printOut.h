@@ -12,5 +12,5 @@ struct ArduinoPrintOut:O {
 
 #ifdef MENU_DEBUG
   template<typename O>
-  using Debug=DebugOut<ArduinoPrintOut<>,O> {};
+  using Debug=DebugOut<ArduinoPrintOut<>,O>;
 #endif

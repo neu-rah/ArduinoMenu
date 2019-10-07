@@ -19,11 +19,6 @@ using Out=MenuOut<
   >
 >;
 
-// Out out;
-
-// const char* text1_txt="standalone text";
-// StaticText<&text1_txt> text1;
-
 const char* op1_txt="Option 1";
 const char* op2_txt="Option 2";
 const char* op3_txt="...";
@@ -111,10 +106,6 @@ int main() {
   set_conio_terminal_mode();
   Console::raw("AM5 Tests ----------------------");
   Console::nl();
-  // nav.path[0]=5;
-  // nav.level=1;
-  // nav.at=7;
-  // nav.up();
 
   //menu------------------------
   nav.print<Out>();
