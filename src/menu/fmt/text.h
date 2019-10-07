@@ -12,9 +12,9 @@ struct TextFmt:public O {
   public:
     template<bool io,typename I,typename Out,typename Nav>
     static inline void fmtPanel(Idx n,Nav& nav) {
-      if (io) Out::nl();
-      Out::raw("*--------*");
-      Out::nl();
+      // if (io) Out::nl();
+      // Out::raw("*--------*");
+      // Out::nl();
     }
     template<bool io,typename I,typename Out,typename Nav>
     static inline void fmtMenu(Idx n,Nav& nav) {

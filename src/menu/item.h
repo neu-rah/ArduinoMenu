@@ -45,7 +45,8 @@ struct StaticData:StaticData<I> {
   }
 
   template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
-  inline void printItem(It& it,Nav& nav,Idx n) {
+  inline void printItem(It& it,Nav& nav,Idx n,Idx p=0) {
+    if (p) reinterpret_cast<Tail*>(this)->Tail::template printItem<It,Nav,Out,P>(it,nav,n,p-1);
     if (!Out::freeY()) return;
     StaticData<I>::template printItem<I,Nav,Out>(*this,nav,n);
     reinterpret_cast<Tail*>(this)->Tail::template printItem<It,Nav,Out>(it,nav,n+1);
@@ -54,8 +55,10 @@ struct StaticData:StaticData<I> {
   template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
   inline void printItems(It& it,Nav& nav) {
     Out::posTop(nav);
+    if (!Out::freeY()) return;
+    Out::clrLine(Out::posY());
     Out::template fmt<P,true,It,Out,Nav>(0,nav);
-    printItem<This,Nav,Out>(*this,nav,Out::top());
+    printItem<This,Nav,Out>(*this,nav,Out::top(),Out::top());
     Out::template fmt<P,false,It,Out,Nav>(0,nav);
   }
 
@@ -103,7 +106,8 @@ struct StaticData<I>:I {
   }
 
   template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
-  inline void printItem(It& it,Nav& nav,Idx n) {
+  inline void printItem(It& it,Nav& nav,Idx n,Idx p=0) {
+    if (!Out::freeY()) return;
     Out::clrLine(Out::posY());
     it.template fmt<Roles::Prompt,true ,It,Out,Nav>(n,nav);
     it.template fmt<Roles::Index, true ,It,Out,Nav>(n,nav);
@@ -117,7 +121,7 @@ struct StaticData<I>:I {
   inline void printItems(It& it,Nav& nav) {
     Out::posTop(nav);
     it.template fmt<P,true,It,Out,Nav>(0,nav);
-    printItem<This,Nav,Out>(*this,nav,Out::top());
+    printItem<This,Nav,Out>(*this,nav,Out::top(),Out::top());
     it.template fmt<P,false,It,Out,Nav>(0,nav);
   }
 

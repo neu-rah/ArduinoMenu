@@ -71,14 +71,16 @@ using MainMenu=StaticMenu<
     Op3,
     Op3,
     Op3,
-    Debug<StaticMenu<
-      StaticText<&sub_txt>,
-      StaticData<
-        MyAction<Op1>,
-        Action<Op2,test>,
-        Op3
+    Debug<//will print event info if on debug mode
+      StaticMenu<
+        StaticText<&sub_txt>,
+        StaticData<
+          MyAction<Op1>,
+          Action<Op2,test>,
+          Op3
+        >
       >
-    >>,
+    >,
     Op3,
     Action<StaticText<&quit_txt>,quit>
   >

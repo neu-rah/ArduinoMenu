@@ -33,8 +33,8 @@ struct MenuOut:Data<O> {
   inline static void setTop(Idx n) {Data<O>::obj.setTop(n);}
   inline static void newView() {Data<O>::obj.newView();}
   inline static void useY(Idx uy=1) {Data<O>::obj.useY(uy);}
-  inline static void nl() {Data<O>::obj.nl();Data<O>::obj.useY();}
+  inline static void nl() {Data<O>::obj.nl();}
   inline static Idx freeY() {return Data<O>::obj.freeY();}
   template<typename Nav>
-  inline static void posTop(Nav& nav) {}
+  inline static void posTop(Nav& nav) {Data<O>::obj.posTop(nav);}
 };

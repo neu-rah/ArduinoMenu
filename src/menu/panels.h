@@ -34,9 +34,22 @@ class RangePanel:public O {
     using This=RangePanel<O>;
     inline Idx top() const {return topLine;}
     inline void setTop(Idx n) {topLine=n;}
-    inline void newView() {freeLines=O::height();}
-    inline void useY(Idx uy=1) {freeLines-=uy;}
-    inline void nl() {O::nl();This::useY();}
+    inline void newView() {
+      freeLines=O::height();
+    }
+    inline void useY(Idx uy=1) {
+      //devices should stop printing if no free lines,
+      //otherwise we should ignore somewhere, but not here
+      // if (!freeLines) {
+      //   _trace(MDO<<"WTF!"<<endl);
+      // }
+      // assert(freeLines);
+      if (freeLines) freeLines-=uy;
+    }
+    inline void nl() {
+      O::nl();
+      This::useY();
+    }
     inline Idx freeY() const {return freeLines;}
     template<typename Nav>
     inline void posTop(Nav& nav) {

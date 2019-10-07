@@ -27,7 +27,7 @@ using namespace std;
     template<typename... II>
     inline VectorMenu(II... oo):vector<Prompt*>{oo...} {}
     template<typename Nav,typename Out>
-    inline void printItem(Nav& nav,Out& out,Idx n) {
+    inline void printItem(Nav& nav,Out& out,Idx n,Idx p=0) {
       vector<Prompt*>::operator[](n)->print(nav,out);
     }
     inline bool enabled(Idx n) const {
