@@ -27,7 +27,7 @@ using Out=MenuOut<
 const char* op1_txt="Option 1";
 const char* op2_txt="Option 2";
 const char* op3_txt="...";
-const char* exit_txt="<Quit";
+const char* quit_txt="<Quit";
 const char* main_txt="Main menu";
 const char* sub_txt="Sub-menu";
 using Op1=StaticText<&op1_txt>;
@@ -80,7 +80,7 @@ using MainMenu=StaticMenu<
       >
     >>,
     Op3,
-    Action<StaticText<&exit_txt>,quit>
+    Action<StaticText<&quit_txt>,quit>
   >
 >;
 
@@ -111,8 +111,8 @@ int main() {
   Console::nl();
   // nav.path[0]=5;
   // nav.level=1;
-  nav.at=7;
-  nav.up();
+  // nav.at=7;
+  // nav.up();
 
   //menu------------------------
   nav.print<Out>();
