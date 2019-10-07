@@ -5,7 +5,6 @@ template<typename Dev=decltype(Serial), Dev& dev=Serial,typename O=Void<>>
 struct ArduinoStreamIn:O {
   template<typename Nav,bool invY=false>
   inline static bool cmd(Nav& nav) {
-    // _trace(MDO<<"StreamIn"<<endl);
     if (dev.available()) {
       switch(dev.read()) {
         case '+': return invY?nav.down():nav.up();

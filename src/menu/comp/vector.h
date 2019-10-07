@@ -31,7 +31,6 @@ using namespace std;
       vector<Prompt*>::operator[](n)->print(nav,out);
     }
     inline bool enabled(Idx n) const {
-      trace(MDO<<"enabled? "<<n<<endl);
       return vector<Prompt*>::operator[](n)->enabled(0);
     }
     inline void enable(Idx n,bool o) {

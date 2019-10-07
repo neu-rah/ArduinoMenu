@@ -21,9 +21,7 @@ template<typename N=Nil> struct Drift:N {
   constexpr static inline Modes mode() {return Modes::Normal;}
   constexpr static inline bool enabled(Idx) {return true;}
   template<Cmds c,typename It,typename Nav>
-  inline bool _cmd(It& it,Nav& nav) {
-    trace(MDO<<"Drift::cmd:"<<c<<endl);
-  }
+  inline bool _cmd(It& it,Nav& nav) {}
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -55,22 +53,11 @@ template<typename I=Nil> struct Empty:I {
     Out::template fmt<r,io,It,Out,Nav>(n,nav);
   }
   template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
-  inline void printItems(It& it,Nav& nav) {
-    trace(MDO<<"Empty::printMenu"<<endl);
-    it.template print<Out>();
-  }
+  inline void printItems(It& it,Nav& nav) {it.template print<Out>();}
   template<typename It,typename Nav,typename Out>
-  inline static void printMenu(It& it,Nav& nav,Ref ref,Idx n) {
-    trace(MDO<<"Empty::printMenu"<<endl);
-  }
+  inline static void printMenu(It& it,Nav& nav,Ref ref,Idx n) {}
   template<Cmds c,typename It,typename Nav>
-  inline static bool cmd(It& it,Nav& nav,Ref,Idx) {
-    trace(MDO<<"Empty::cmd "<<c<<endl);
-    return nav.template _cmd<c,It,Nav>(it,nav);
-  }
+  inline static bool cmd(It& it,Nav& nav,Ref,Idx) {return nav.template _cmd<c,It,Nav>(it,nav);}
   template<Cmds c,typename It,typename Nav>
-  inline static bool cmd(It& it,Nav& nav) {
-    trace(MDO<<"Empty::cmd"<<endl);
-    return nav.template _cmd<c,It,Nav>(it,nav);
-  }
+  inline static bool cmd(It& it,Nav& nav) {return nav.template _cmd<c,It,Nav>(it,nav);}
 };

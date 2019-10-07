@@ -13,10 +13,8 @@ struct NavPos:N {
   inline bool selected(Idx idx) const {return at==idx;}
   template<Cmds c,typename It,typename Nav>
   inline bool _cmd(It& it,Nav& nav) {
-    trace(MDO<<"NavPos::_cmd "<<c<<endl);
     switch(c) {
       case Cmds::Up:
-        trace(MDO<<"at:"<<at<<" size:"<<it.size((Ref)nav)<<endl);
         if (at<(it.size((Ref)nav)-1)) at++;
         else return false;
         return true;
@@ -40,36 +38,27 @@ struct StaticNavTree:N {
 
   template<typename Nav,typename Out>
   inline void print(Nav& nav) {
-    trace(MDO<<"StaticNavTree::print level:"<<level<<endl);
     Ref ref=*this;
     data.template printMenu<Data,Nav,Out>(data,nav,ref,ref.len?ref.head():cur());
   }
 
   template<Cmds c,typename Nav>
   inline bool cmd(Nav& nav) {
-    trace(MDO<<"NavPos::cmd "<<c<<endl);
     if (c==Cmds::Esc) {
-      trace(MDO<<"NavPos closing!!! "<<c<<endl);
       close();
       return true;
     }
-    // Ref ref=*this;
-    // return data.template cmd<c,Data,Nav>(data,nav,ref,ref.len?ref.head():N::pos());
     return data.template cmd<c,Data,Nav>(data,nav,*this,cur());
   }
 
   inline void open() {
     if (level>=max_depth-1) return;
-    trace(MDO<<"level:"<<level<<" max:"<<max_depth<<endl);
     assert(level<max_depth-1);
     path[level++]=N::pos();
-    // path[level]=0;
     N::setPos(0);
-    trace(MDO<<"level:"<<level<<" at:"<<path[level]<<" max:"<<max_depth<<endl);
   }
 
   inline void close() {
-    trace(MDO<<"exit from level:"<<level<<endl);
     if (level>0) {
       level--;
       N::setPos(path[level]);
@@ -100,7 +89,6 @@ struct StaticRoot:N {
 
   template<typename In>
   inline bool doInput() {
-    trace(MDO<<"NavRoot::doInput()"<<endl);
     return In::cmd(*this);
   }
 };
