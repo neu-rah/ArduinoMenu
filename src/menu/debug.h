@@ -40,6 +40,23 @@
   #define __trace(x)
 #endif
 
+template<typename Out,typename O>
+struct DebugOut:O {
+  using O::O;
+  using O::cmd;
+  using O::print;
+  template<Cmds c,typename It,typename Nav>
+  inline bool cmd(It& it,Nav& nav,Ref ref,Idx n) {
+    O::template print<Out>();
+    _trace(
+      MDO<<" cmd:"<<c
+        <<" ref.len:"<<ref.len
+        <<" n:"<<n<<"\r\n"
+    );
+    O::template cmd<c,It,Nav>(it,nav,ref,n);
+  }
+};
+
 #include <assert.h>
 #ifdef ARDUINO
 
@@ -59,5 +76,4 @@
         abort();
     }
   #endif
-
 #endif

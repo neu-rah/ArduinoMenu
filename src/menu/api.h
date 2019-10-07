@@ -2,14 +2,6 @@
 #pragma once
 #include "base.h"
 
-//a reference to menu item that works also for static structures
-struct Ref {
-  Idx len;
-  Idx* path;
-  inline Idx head() const {return path[0];}
-  inline Ref tail() const {return {len-1,&path[1]};}
-};
-
 struct Nil {};
 
 ////////////////////////////////////////////////////////////////////////////////

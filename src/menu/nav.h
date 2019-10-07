@@ -48,7 +48,9 @@ struct StaticNavTree:N {
       close();
       return true;
     }
-    return data.template cmd<c,Data,Nav>(data,nav,*this,cur());
+    path[level]=cur();
+    Ref ref=*this;
+    return data.template cmd<c,Data,Nav>(data,nav,ref,ref.len?ref.head():cur());
   }
 
   inline void open() {

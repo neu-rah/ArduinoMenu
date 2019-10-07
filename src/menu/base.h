@@ -1,8 +1,6 @@
 /* -*- C++ -*- */
 #pragma once
 
-#include "debug.h"
-
 #ifdef ARDUINO
   using Idx=uint8_t;
   constexpr Idx idx_max=(1ul<<(sizeof(Idx)<<3))-1;
@@ -12,11 +10,18 @@
   constexpr Idx idx_max=std::numeric_limits<Idx>::max();
 #endif
 
-#define endl "\r\n"
 
 enum class Modes {Normal,Edit,Tune};
 enum class Roles:Idx {Panel,Menu,Title,Body,Prompt,Index,Cursor,Name,Mode,Value,Unit,Raw};
 enum class Cmds:Idx {None,Enter,Esc,Up,Down,Left,Right};
+
+//a reference to menu item that works also for static structures
+struct Ref {
+  Idx len;
+  Idx* path;
+  inline Idx head() const {return path[0];}
+  inline Ref tail() const {return {len-1,&path[1]};}
+};
 
 #ifdef MENU_DEBUG
   constexpr char* roleNames[]{
@@ -32,6 +37,9 @@ enum class Cmds:Idx {None,Enter,Esc,Up,Down,Left,Right};
   constexpr inline O& operator<<(O& o,Cmds r) {return o<<cmdNames[(Idx)r];}
 
 #endif
+
+#include "debug.h"
+#define endl "\r\n"
 
 template<Roles Part>
 struct AllowRole {

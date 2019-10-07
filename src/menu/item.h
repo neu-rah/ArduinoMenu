@@ -50,6 +50,7 @@ struct StaticData:StaticData<I> {
     StaticData<I>::template printItem<I,Nav,Out>(*this,nav,n);
     reinterpret_cast<Tail*>(this)->Tail::template printItem<It,Nav,Out>(it,nav,n+1);
   }
+
   template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
   inline void printItems(It& it,Nav& nav) {
     Out::posTop(nav);
@@ -57,6 +58,7 @@ struct StaticData:StaticData<I> {
     printItem<This,Nav,Out>(*this,nav,Out::top());
     Out::template fmt<P,false,It,Out,Nav>(0,nav);
   }
+
   template<typename It,typename Nav,typename Out>
   inline void printMenu(It& it,Nav& nav,Ref ref,Idx n) {
     if (n)
@@ -64,6 +66,7 @@ struct StaticData:StaticData<I> {
     else if (ref.len) reinterpret_cast<I*>(this)->I::template printMenu<I,Nav,Out>(*reinterpret_cast<I*>(this),nav,ref.tail(),ref.head());
     else Out::template printMenu<I,Nav,Out>(*reinterpret_cast<I*>(this),nav);
   }
+
   using I::cmd;
   template<Cmds c,typename It,typename Nav>
   inline bool cmd(It& it,Nav& nav,Ref ref,Idx n) {
@@ -71,8 +74,7 @@ struct StaticData:StaticData<I> {
     if (n) {
       return reinterpret_cast<Tail*>(this)->Tail::template cmd<c,It,Nav>(it,nav,ref,n-1);
     } else if (ref.len) {
-      // return reinterpret_cast<I*>(this)->I::template cmd<c,I,Nav>(*reinterpret_cast<I*>(this),nav,ref.tail(),ref.head());
-      return reinterpret_cast<I*>(this)->I::template cmd<c,It,Nav>(it,nav,ref.tail(),ref.head());
+      return reinterpret_cast<I*>(this)->I::template cmd<c,It,Nav>(it,nav,ref.tail(),nav.pos());
     } else {
       assert(c!=Cmds::Esc);
       if (c==Cmds::Enter) {
@@ -128,8 +130,15 @@ struct StaticData<I>:I {
   template<Cmds c,typename It,typename Nav>
   inline bool cmd(It& it,Nav& nav,Ref ref,Idx n) {
     assert(c!=Cmds::Esc);
-    if (n) return false;
-    I::template cmd<c,It,Nav>(it,nav);
+    if (c==Cmds::Enter) {
+      //TODO: check enabled!
+      return I::template cmd<c,It,Nav>(it,nav);
+    }
+    Empty<>::template cmd<c,It,Nav>(it,nav);
+    return true;
+    // assert(c!=Cmds::Esc);
+    // if (n) return false;
+    // return I::template cmd<c,It,Nav>(it,nav);
   }
 };
 
@@ -138,6 +147,7 @@ struct StaticMenu:B {
   using This=StaticMenu<T,B>;
   using Title=T;
   using Body=B;
+  template<typename Out> inline static void print() {T::template print<Out>();}
   template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
   inline static void print(It& it,Nav& nav) {
     Title::template print<Out>();

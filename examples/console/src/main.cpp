@@ -5,6 +5,8 @@
 #include <menu/comp/endis.h>
 #include "linuxkb.h"
 
+bool running=true;
+
 using Out=MenuOut<
   FullPrinter<
     TextFmt<
@@ -25,13 +27,24 @@ using Out=MenuOut<
 const char* op1_txt="Option 1";
 const char* op2_txt="Option 2";
 const char* op3_txt="...";
+const char* exit_txt="<Quit";
 const char* main_txt="Main menu";
 const char* sub_txt="Sub-menu";
 using Op1=StaticText<&op1_txt>;
 using Op2=StaticText<&op2_txt>;
 using Op3=StaticText<&op3_txt>;
 
-bool test() {_trace(MDO<<"this is a test action");return false;}
+bool test() {
+  _trace(MDO<<"this is a test action"<<endl);
+  _trace(MDO<<"no context provided but we can have it"<<endl);
+  _trace(MDO<<"by accessing the navigation root object"<<endl);
+  _trace(MDO<<"assuming only one assigned to this action"<<endl);
+  return true;
+}
+bool quit() {
+  //just signal program exit
+  return running=false;
+}
 
 template<typename I>
 struct MyAction:I {
@@ -58,15 +71,16 @@ using MainMenu=StaticMenu<
     Op3,
     Op3,
     Op3,
-    StaticMenu<
+    Debug<StaticMenu<
       StaticText<&sub_txt>,
       StaticData<
-        Action<Op1,test>,
-        MyAction<Op2>,
+        MyAction<Op1>,
+        Action<Op2,test>,
         Op3
       >
-    >,
-    Op3
+    >>,
+    Op3,
+    Action<StaticText<&exit_txt>,quit>
   >
 >;
 
@@ -75,8 +89,6 @@ MainMenu mainMenu;
 StaticRoot<
   StaticNavTree<MainMenu,2,NavPos<>>
 > nav(mainMenu);
-
-bool running=true;
 
 //----------------------------------------------------------------
 //handle serial keys to navigate menu
@@ -97,11 +109,10 @@ int main() {
   set_conio_terminal_mode();
   Console::raw("AM5 Tests ----------------------");
   Console::nl();
-  nav.path[0]=5;
-  nav.level=1;
-  nav.at=1;
-  nav.enter();
-
+  // nav.path[0]=5;
+  // nav.level=1;
+  nav.at=7;
+  nav.up();
 
   //menu------------------------
   nav.print<Out>();

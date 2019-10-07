@@ -9,3 +9,8 @@ struct ArduinoPrintOut:O {
   inline static void nl() {dev.println();}
   template<typename T> inline static void raw(T o) {dev.print(o);}
 };
+
+#ifdef MENU_DEBUG
+  template<typename O>
+  using Debug=DebugOut<ArduinoPrintOut<>,O> {};
+#endif
