@@ -53,6 +53,8 @@ struct StaticNavTree:N {
       close();
       return true;
     }
+    // Ref ref=*this;
+    // return data.template cmd<c,Data,Nav>(data,nav,ref,ref.len?ref.head():N::pos());
     return data.template cmd<c,Data,Nav>(data,nav,*this,cur());
   }
 

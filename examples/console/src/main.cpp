@@ -17,7 +17,7 @@ using Out=MenuOut<
   >
 >;
 
-Out out;
+// Out out;
 
 // const char* text1_txt="standalone text";
 // StaticText<&text1_txt> text1;
@@ -33,17 +33,38 @@ using Op3=StaticText<&op3_txt>;
 
 bool test() {_trace(MDO<<"this is a test action");return false;}
 
+template<typename I>
+struct MyAction:I {
+  using I::cmd;
+  template<Cmds c,typename It,typename Nav>
+  inline bool cmd(It& it,Nav& nav) {
+    cout<<"custom action with context"<<endl;
+    cout<<"we received target and nav objects"<<endl;
+    cout<<"Nav at:"<<nav.at<<endl;
+    cout<<"level:"<<nav.level<<endl;
+    Ref ref=nav;
+    cout<<"path:";
+    for(int n=0;n<ref.len;n++)
+      cout<<"/"<<nav.path[n];
+    cout<<"/"<<nav.at;
+  }
+};
+
 using MainMenu=StaticMenu<
   StaticText<&main_txt>,
   StaticData<
     Action<Op1,test>,
-    Op2,
+    MyAction<Op2>,
     Op3,
     Op3,
     Op3,
     StaticMenu<
       StaticText<&sub_txt>,
-      StaticData<Op1,Op2,Op3>
+      StaticData<
+        Action<Op1,test>,
+        MyAction<Op2>,
+        Op3
+      >
     >,
     Op3
   >
@@ -74,18 +95,13 @@ bool keys(int key) {
 
 int main() {
   set_conio_terminal_mode();
-  //static print
-  // text1.print<Console>();
   Console::raw("AM5 Tests ----------------------");
   Console::nl();
   nav.path[0]=5;
   nav.level=1;
-  // MDO<<"size:"<<nav.size()<<endl;
-  // nav.up();
-  // nav.up();
-  // nav.esc();
-  // keys('+');
-  // keys('+');
+  nav.at=1;
+  nav.enter();
+
 
   //menu------------------------
   nav.print<Out>();
