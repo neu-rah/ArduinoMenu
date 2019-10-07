@@ -2,6 +2,24 @@
 #pragma once
 #include "api.h"
 
+/// ActionHanlder, type of action functions to associate with items
+using ActionHandler=bool (*)();
+
+/**
+* The Action class associates an actikon function with a menu item.
+*/
+template<typename I,ActionHandler act>
+struct Action:I {
+  using I::I;
+  using This=Action<I,act>;
+
+  using I::cmd;
+  template<Cmds c,typename It,typename Nav>
+  inline bool cmd(It& it,Nav& nav) {
+    return act();
+  }
+};
+
 template<const char** text,typename I=Empty<>>
 struct StaticText:I {
   using I::size;

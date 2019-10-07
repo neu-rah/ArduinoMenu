@@ -32,8 +32,6 @@ using MainMenu=StaticMenu<
     Op1,
     Op2,
     Op3,
-    Op3,
-    Op3,
     StaticMenu<
       FlashText<decltype(sub_txt),&sub_txt>,
       StaticData<Op1,Op2,Op3>

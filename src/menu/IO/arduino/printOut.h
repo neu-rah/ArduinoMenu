@@ -1,11 +1,11 @@
 /* -*- C++ -*- */
 #pragma once
 
-#include "../out.h"
+#include "../../out.h"
 using SerialOut=StreamOut<decltype(Serial),Serial>;
 
 template<typename Dev=decltype(Serial), Dev& dev=Serial,typename O=Void<>>
-struct ArduinoSerialOut:O {
+struct ArduinoPrintOut:O {
   inline static void nl() {dev.println();}
   template<typename T> inline static void raw(T o) {dev.print(o);}
 };

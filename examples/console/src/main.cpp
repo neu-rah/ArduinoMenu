@@ -31,10 +31,12 @@ using Op1=StaticText<&op1_txt>;
 using Op2=StaticText<&op2_txt>;
 using Op3=StaticText<&op3_txt>;
 
+bool test() {_trace(MDO<<"this is a test action");return false;}
+
 using MainMenu=StaticMenu<
   StaticText<&main_txt>,
   StaticData<
-    Op1,
+    Action<Op1,test>,
     Op2,
     Op3,
     Op3,
@@ -59,6 +61,7 @@ bool running=true;
 //handle serial keys to navigate menu
 bool keys(int key) {
   switch(key) {
+    case 91:return false;
     case 66:case '+': return nav.up();
     case 65:case '-': return nav.down();
     case 13:case 67:case '*': return nav.enter();
