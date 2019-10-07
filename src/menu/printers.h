@@ -31,9 +31,11 @@ struct FullPrinter:public P {
       Out::template fmt<Roles::Menu,true,It,Out,Nav>(0,nav);
 
       //title
+      it.template fmt<Roles::Prompt,true,It,Out,Nav>(0,nav);
       it.template fmt<Roles::Title,true,It,Out,Nav>(0,nav);
       it.template print<It,Nav,Out,Roles::Title>(it,nav);
       it.template fmt<Roles::Title,false,It,Out,Nav>(0,nav);
+      it.template fmt<Roles::Prompt,false,It,Out,Nav>(0,nav);
 
       it.template printItems<It,Nav,Out,Roles::Body>(it,nav);
 

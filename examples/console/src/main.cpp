@@ -9,8 +9,8 @@ bool running=true;
 
 using Out=MenuOut<
   FullPrinter<
-    TextFmt<
-      TitleWrapFmt<
+    TitleWrapFmt<
+      TextFmt<
         RangePanel<
           StaticPanel<0,0,20,4,Console>
         >

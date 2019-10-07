@@ -11,12 +11,12 @@
   template<typename O,char open='[',char close=']'>
   struct TitleWrapFmt:public O {
     template<bool io,typename I,typename Out,typename Nav>
-    static inline void fmtTitle(Idx n,Nav& nav,Out& out) {
+    static inline void fmtTitle(Idx n,Nav& nav) {
       if (io) {
         Out::raw(open);
-        O::template fmtTitle<io,I,Out,Nav>(n,nav,out);
+        O::template fmtTitle<io,I,Out,Nav>(n,nav);
       } else {
-        O::template fmtTitle<io,I,Out,Nav>(n,nav,out);
+        O::template fmtTitle<io,I,Out,Nav>(n,nav);
         Out::raw(close);
       }
     }

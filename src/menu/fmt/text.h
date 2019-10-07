@@ -48,7 +48,7 @@ struct TextFmt:public O {
     }
     template<bool io,typename I,typename Out,typename Nav>
     static inline void fmtTitle(Idx n,Nav& nav) {
-      if (!io) Out::nl();
+      // if (!io) Out::nl();
     }
     template<bool io,typename I,typename Out,typename Nav>
     static inline void fmtItem(Idx n,Nav& nav) {
