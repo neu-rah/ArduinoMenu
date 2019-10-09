@@ -61,8 +61,8 @@ struct MyAction:I {
 using MainMenu=StaticMenu<
   StaticText<&main_txt>,
   StaticData<
-    Action<Op1,test>,
-    MyAction<Op2>,
+    Action<EnDis<Op1>,test>,
+    EnDis<MyAction<Op2>>,
     Op3,
     Op3,
     Op3,
@@ -83,39 +83,60 @@ using MainMenu=StaticMenu<
 
 MainMenu mainMenu;
 
-StaticRoot<
+using Nav=StaticRoot<
   StaticNavTree<MainMenu,2,NavPos<>>
-> nav(mainMenu);
+>;
+
+Nav nav(mainMenu);
+
+// template<typename It,It& it>
+// struct Agent {
+//   template<Idx i,Idx... ii>
+//   struct Sel {
+//     using Type=typename It::template TypeOf<i,ii...>;
+//     // template<typename... OO> bool enabled(OO... oo) {return it.enabled(oo...);}
+//     // template<typename... OO> bool enabled(O& o,OO... oo) {return o.enabled(oo...);}
+//   };
+// };
+
+using A1=StaticData<Op1,EnDis<Op2>>;
+
+A1 a1;
 
 //----------------------------------------------------------------
-//handle serial keys to navigate menu
-bool keys(int key) {
-  switch(key) {
-    case 91:return false;
-    case 66:case '+': return nav.up();
-    case 65:case '-': return nav.down();
-    case 13:case 67:case '*': return nav.enter();
-    case 27:case 68:case '/': return nav.esc();
-    case 3:running=false;break;
-    default: _trace(MDO<<"key:"<<key<<"["<<(key>32?(char)key:'?')<<"]"<<endl);
-  }
-  return false;
-}
+  //handle serial keys to navigate menu
+  // bool keys(int key) {
+  //   // A1::enabled();
+  //   switch(key) {
+  //     case 91:return false;
+  //     case 66:case '+': return nav.up();
+  //     case 65:case '-': return nav.down();
+  //     case 13:case 67:case '*': return nav.enter();
+  //     case 27:case 68:case '/': return nav.esc();
+  //     case 3:running=false;break;
+  //     default: _trace(MDO<<"key:"<<key<<"["<<(key>32?(char)key:'?')<<"]"<<endl);
+  //   }
+  //   return false;
+// }
 
 int main() {
   set_conio_terminal_mode();
   Console::raw("AM5 Tests ----------------------");
   Console::nl();
 
+  // a1.item<0>()->print<Out>();
+  a1.agent<1>().print<Out>();
+  Out::nl();
+
   //menu------------------------
-  nav.print<Out>();
-  do {
-    if (kbhit()) {
-      int k=getch();
-      if (k==27) if (kbhit()) k=getch();
-      if (keys(k)) nav.print<Out>();
-    }
-  } while(running);
-  Console::nl();
+  // nav.print<Out>();
+  // do {
+  //   if (kbhit()) {
+  //     int k=getch();
+  //     if (k==27) if (kbhit()) k=getch();
+  //     if (keys(k)) nav.print<Out>();
+  //   }
+  // } while(running);
+  // Console::nl();
   return 0;
 }
