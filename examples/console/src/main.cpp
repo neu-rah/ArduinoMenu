@@ -23,6 +23,7 @@ const char* op1_txt="Option 1";
 const char* op2_txt="Option 2";
 const char* op3_txt="...";
 const char* quit_txt="<Quit";
+const char* exit_txt="<Exit";
 const char* main_txt="Main menu";
 const char* sub_txt="Sub-menu";
 using Op1=StaticText<&op1_txt>;
@@ -72,7 +73,8 @@ using MainMenu=StaticMenu<
         StaticData<
           MyAction<Op1>,
           Action<Op2,test>,
-          Op3
+          Op3,
+          StaticText<&exit_txt>
         >
       >
     >,
@@ -89,54 +91,45 @@ using Nav=StaticRoot<
 
 Nav nav(mainMenu);
 
-// template<typename It,It& it>
-// struct Agent {
-//   template<Idx i,Idx... ii>
-//   struct Sel {
-//     using Type=typename It::template TypeOf<i,ii...>;
-//     // template<typename... OO> bool enabled(OO... oo) {return it.enabled(oo...);}
-//     // template<typename... OO> bool enabled(O& o,OO... oo) {return o.enabled(oo...);}
-//   };
-// };
+inline int _f(int n) {cout<<"This is a side effect!";return n;}
+using f=lambda::curry<int,decltype(&_f),_f,1>;
 
 using A1=StaticData<Op1,EnDis<Op2>>;
-
 A1 a1;
 
-//----------------------------------------------------------------
-  //handle serial keys to navigate menu
-  // bool keys(int key) {
-  //   // A1::enabled();
-  //   switch(key) {
-  //     case 91:return false;
-  //     case 66:case '+': return nav.up();
-  //     case 65:case '-': return nav.down();
-  //     case 13:case 67:case '*': return nav.enter();
-  //     case 27:case 68:case '/': return nav.esc();
-  //     case 3:running=false;break;
-  //     default: _trace(MDO<<"key:"<<key<<"["<<(key>32?(char)key:'?')<<"]"<<endl);
-  //   }
-  //   return false;
-// }
+//handle serial keys to navigate menu
+bool keys(int key) {
+  switch(key) {
+    case 91:return false;
+    case 66:case '+': return nav.up();
+    case 65:case '-': return nav.down();
+    case 13:case 67:case '*': return nav.enter();
+    case 27:case 68:case '/': return nav.esc();
+    case 3:running=false;break;
+    default: _trace(MDO<<"key:"<<key<<"["<<(key>32?(char)key:'?')<<"]"<<endl);
+  }
+  return false;
+}
 
 int main() {
+  // A1::enabled();
   set_conio_terminal_mode();
   Console::raw("AM5 Tests ----------------------");
   Console::nl();
 
-  // a1.item<0>()->print<Out>();
-  a1.agent<1>().print<Out>();
-  Out::nl();
-
-  //menu------------------------
-  // nav.print<Out>();
-  // do {
-  //   if (kbhit()) {
-  //     int k=getch();
-  //     if (k==27) if (kbhit()) k=getch();
-  //     if (keys(k)) nav.print<Out>();
-  //   }
-  // } while(running);
+  // nav.up();
+  // mainMenu.item<5>().printMenu<MainMenu,Nav,Out>(mainMenu,nav,nav,nav);
   // Console::nl();
+
+  // menu------------------------
+  nav.print<Out>();
+  do {
+    if (kbhit()) {
+      int k=getch();
+      if (k==27) if (kbhit()) k=getch();
+      if (keys(k)) nav.print<Out>();
+    }
+  } while(running);
+  Console::nl();
   return 0;
 }

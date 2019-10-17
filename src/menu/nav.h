@@ -11,6 +11,7 @@ struct NavPos:N {
   inline Idx pos() const {return at;}
   inline void setPos(Idx n) {at=n;}
   inline bool selected(Idx idx) const {return at==idx;}
+  operator Idx() const {return pos();}
   template<Cmds c,typename It,typename Nav>
   inline bool _cmd(It& it,Nav& nav) {
     switch(c) {
