@@ -46,114 +46,6 @@ struct Func:Value<F> {
   using Res=R;
 };
 
-// template<typename... Items>
-// struct StaticData:lpp::List<lpp::As<Items>...> {
-//   using This=StaticData<Items...>;
-//   using Tail=StaticData<lpp::Tail<This>>;
-//   using I=typename lpp::Head<This>;
-//
-//   template<typename n>
-//   using Item=typename lpp::Index<This,n>::App::Type;
-//
-//   template<typename n>
-//   inline Item<n> _item() {return *reinterpret_cast<Item<n>*>(this);}
-//
-//   template<Idx n>
-//   inline Item<lpp::N<n>> item() {return _item<lpp::N<n>>();};
-//
-//   // template<typename n>
-//   // using Test=lambda::curry<Item<n>, Item<n>(*)(), This::template _item<n>, 0>;
-//
-//   // template<Idx n,Idx... nn>
-//   // using Sel=lpp::FoldL<Test<Idx>,lpp::List<lpp::N<n>,lpp::N<nn>...>>;
-//
-//   // template<Idx n,Idx... nn>
-//   // Sel<n,nn...> get()->int {return *reinterpret_cast<Sel<n,nn...>>(this);}
-//
-//   template<typename Out>
-//   inline static void print() {I::template print<Out>();}
-//
-//   template<typename It,typename Nav,typename Out>
-//   inline void printMenu(It& it,Nav& nav,Ref ref,Idx n) {
-//     if (lambda::Eq<lpp::Length<This>,lpp::N<1>
-//     if (n) reinterpret_cast<Tail*>(this)->Tail::template printMenu<It,Nav,Out>(it,nav,ref,n-1);
-//     else if (ref.len) reinterpret_cast<I*>(this)->I::template printMenu<I,Nav,Out>(*reinterpret_cast<I*>(this),nav,ref.tail(),ref.head());
-//     else Out::template printMenu<I,Nav,Out>(*reinterpret_cast<I*>(this),nav);
-//   }
-//
-//   template<typename It,typename Nav,typename Out>
-//   inline void printMenu(It& it,Nav& nav,Ref ref,Idx n) {
-//     if (n) return;
-//     else if (ref.len) reinterpret_cast<I*>(this)->I::template printMenu<I,Nav,Out>(*reinterpret_cast<I*>(this),nav,ref.tail(),ref.head());
-//     else Out::template printMenu<I,Nav,Out>(*reinterpret_cast<I*>(this),nav);
-//   }
-//   // template<Idx n,Idx... nn>
-//   // struct Agent:lambda::Expr<lambda::Index,This,lpp::N<n>>::App::Type::template Agent<nn...> {};
-//   //
-//   // template<Idx n>
-//   // struct Agent<n>:lambda::Expr<lambda::Index,This,lpp::N<n>>::App::Type {
-//   //   using This=Agent<n>;
-//   //   using Base=typename lambda::Expr<lambda::Index,This,lpp::N<n>>::App::Type;
-//   //   template<typename Out>
-//   //   inline void print() {Base::template print<Out>();}
-//   //   template<FName f,typename It,typename Nav,typename Out>
-//   //   void agent() {
-//   //     switch(f) {
-//   //       case StaticPrint: print<Out>();break;
-//   //     }
-//   //   }
-//   // };
-//   //
-//   // template<FName f,typename It,typename Nav,typename Out>
-//   // void agent(Idx n,It& it,Nav& nav) {
-//   //   switch(n) {
-//   //     case 0:Agent<0>().template agent<f,It,Nav,Out>(it,nav);break;
-//   //     case 1:Agent<1>().template agent<f,It,Nav,Out>(it,nav);break;
-//   //     default:assert(false);
-//   //   }
-//   // }
-//
-//
-//
-// //   inline void idx(Idx n) {
-// //     return lambda
-// //   }
-// //
-// //   // template<Idx n,Idx... nn>
-// //   // struct Agent {
-// //   //   using Type=typename lambda::Expr<lambda::Index,This,lpp::N<n>>::App::Type::template Agent<nn...>;
-// //   // };
-// //   // template<Idx n> struct Agent {
-// //   //   using Type=typename lambda::Expr<lambda::Index,This,lpp::N<n>>::App::Type;
-// //   //
-// //   //   template<typename Out>
-// //   //   inline void print() {I::template print<Out>();}
-// //   //   inline void agent(Idx i) {
-// //   //     switch(i) {
-// //   //       case 0:return Agent<0>().template print<Out>();
-// //   //       case 1:return Agent<1>().template print<Out>();
-// //   //       //this sucks as limiting the size...
-// //   //       //virtuals would defeat all the effort
-// //   //       //cycles are closed api, no composition allowed
-// //   //       //what now?
-// //   //     }
-// //   //   }
-// //   // };
-// //
-// //   // // template<Idx n>
-// //   // // inline Agent<n> _agent() {return Agent<n>();}
-// //   // template<Idx n>
-// //   // inline Agent<n> agent(lpp::N<n>) {return Agent<n>();}
-// //   // template<typename Out>
-// //   // inline void printNode(int n) {
-// //   // }
-// //   // template<Idx... ii>
-// //   // using TypeOf=typename Agent<ii...>::Type;
-// //   // template<size_t n>
-// //   // constexpr This::TypeOf<n>* item() const {return this;}
-// //   // constexpr static auto item()->This::TypeOf<n>* {return this;}
-// };
-
 template<typename I,typename... II>
 struct StaticData:StaticData<I> {
   using This=StaticData<I,II...>;
@@ -171,13 +63,6 @@ struct StaticData:StaticData<I> {
   template<Idx n>
   inline Item<lpp::N<n>> item() {return _item<lpp::N<n>>();};
 
-  // template<Idx n,Idx... nn>
-  // struct TypeOf {
-  //   using App=typename lpp::Index<lpp::List<I,II...>,lpp::N<n>>;//::Type::template TypeOf<nn...>::Type;
-  // };
-  // template<Idx n> struct TypeOf<n> {
-  //   using App=typename lpp::Index<lpp::List<I,II...>,lpp::N<n>>;
-  // };
   inline static constexpr Idx size() {return Tail::size()+1;}
   inline static constexpr Idx size(Ref ref) {
     return ref.len?size(ref,ref.head()):size();
@@ -239,10 +124,6 @@ struct StaticData:StaticData<I> {
 template<typename I>
 struct StaticData<I>:I {
   using This=StaticData<I>;
-  // template<Idx n,Idx... nn>
-  // struct TypeOf {
-  //   using Type=typename lpp::Index<lpp::List<I>,lpp::N<n>>;//::Type::template TypeOf<nn...>::Type;
-  // };
   inline static constexpr Idx size() {return 1;}
   inline static constexpr Idx size(Ref ref) {
     return ref.len?size(ref,ref.head()):size();
@@ -290,9 +171,6 @@ struct StaticData<I>:I {
     }
     Empty<>::template cmd<c,It,Nav>(it,nav);
     return true;
-    // assert(c!=Cmds::Esc);
-    // if (n) return false;
-    // return I::template cmd<c,It,Nav>(it,nav);
   }
 };
 

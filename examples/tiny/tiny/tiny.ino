@@ -26,17 +26,17 @@ using Op1=FlashText<decltype(op1_txt),&op1_txt>;
 using Op2=FlashText<decltype(op2_txt),&op2_txt>;
 using Op3=FlashText<decltype(op3_txt),&op3_txt>;
 
-bool test() {
+inline bool test() {
   Serial.println(F("Test action called!"));
   return true;
 }
 
-bool action1() {
+inline bool action1() {
   Serial.println(F("action 1!"));
   return true;
 }
 
-bool action2() {
+inline bool action2() {
   Serial.println(F("action 2!"));
   return true;
 }
@@ -48,7 +48,11 @@ using MainMenu=StaticMenu<
     Action<Op2,action2>,
     StaticMenu<
       FlashText<decltype(sub_txt),&sub_txt>,
-      StaticData<Action<Op1,test>,Action<Op2,test>,Op3>
+      StaticData<
+        Action<Op1,test>,
+        Action<Op2,test>,
+        Op3
+      >
     >,
     Action<Op3,test>
   >

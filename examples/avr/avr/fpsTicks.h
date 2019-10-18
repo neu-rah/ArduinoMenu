@@ -18,8 +18,9 @@ protected:
 template<int fps>
 struct FPS:public Tick<(1000/fps)> {};
 
-//blink without delay at a fixed rate
+//static blink without delay at a fixed rate
 //just set the led state to this function output.
+//this rate is static and can not be changed
 template<int timeOn,int timeOff>
 inline bool sblink() {
   return millis()%(unsigned long)(timeOn+timeOff)<(unsigned long)timeOn;

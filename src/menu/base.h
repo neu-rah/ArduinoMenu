@@ -20,7 +20,7 @@ struct Ref {
   Idx len;
   Idx* path;
   inline Idx head() const {return path[0];}
-  inline Ref tail() const {return {len-1,&path[1]};}
+  inline Ref tail() const {return {(Idx)len-1,&path[1]};}
 };
 
 #ifdef MENU_DEBUG

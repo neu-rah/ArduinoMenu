@@ -37,6 +37,10 @@ bool test() {
   _trace(MDO<<"assuming only one assigned to this action"<<endl);
   return true;
 }
+
+//returning false from an action will exit the current level
+inline constexpr bool exit() {return false;}
+
 bool quit() {
   //just signal program exit
   return running=false;
@@ -74,7 +78,7 @@ using MainMenu=StaticMenu<
           MyAction<Op1>,
           Action<Op2,test>,
           Op3,
-          StaticText<&exit_txt>
+          Action<StaticText<&exit_txt>,exit>
         >
       >
     >,
@@ -116,6 +120,10 @@ int main() {
   set_conio_terminal_mode();
   Console::raw("AM5 Tests ----------------------");
   Console::nl();
+
+  nav.path[0]=5;
+  nav.level=1;
+  nav.setPos(3);
 
   // nav.up();
   // mainMenu.item<5>().printMenu<MainMenu,Nav,Out>(mainMenu,nav,nav,nav);
