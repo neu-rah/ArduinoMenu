@@ -57,11 +57,8 @@ struct StaticData:StaticData<I> {
   template<typename n>
   using Item=typename lpp::Index<lpp::List<lpp::As<I>,lpp::As<II>...>,n>::App::Type;
 
-  template<typename n>
-  inline Item<n> _item() {return *reinterpret_cast<Item<n>*>(this);}
-
   template<Idx n>
-  inline Item<lpp::N<n>> item() {return _item<lpp::N<n>>();};
+  inline Item<lpp::N<n>> item() {return *reinterpret_cast<Item<lpp::N<n>>*>(this);};
 
   inline static constexpr Idx size() {return Tail::size()+1;}
   inline static constexpr Idx size(Ref ref) {
@@ -74,6 +71,10 @@ struct StaticData:StaticData<I> {
           I::size(ref.tail(),ref.tail().head()):
           size();
   }
+  using I::enabled;
+  inline bool enabled(Idx n) {return n?reinterpret_cast<Tail*>(this)->Tail::enabled(n-1):this->I::enabled();}
+  using I::enable;
+  inline void enable(Idx n,bool b) {return n?reinterpret_cast<Tail*>(this)->Tail::enable(n-1,b):this->I::enable(b);}
 
   template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
   inline void printItem(It& it,Nav& nav,Idx n,Idx p=0) {
@@ -135,6 +136,10 @@ struct StaticData<I>:I {
           I::size(ref.tail(),ref.head()):
           I::size()+1;
   }
+  using I::enabled;
+  inline bool enabled(Idx n) {return n?true:enabled();}
+  using I::enable;
+  inline void enable(Idx n,bool b) {if(!n) I::enable(b);}
 
   template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
   inline void printItem(It& it,Nav& nav,Idx n,Idx p=0) {

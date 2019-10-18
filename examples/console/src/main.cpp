@@ -21,6 +21,7 @@ using Out=MenuOut<
 
 const char* op1_txt="Option 1";
 const char* op2_txt="Option 2";
+const char* tog_txt="Tog 1/2";
 const char* op3_txt="...";
 const char* quit_txt="<Quit";
 const char* exit_txt="<Exit";
@@ -63,11 +64,14 @@ struct MyAction:I {
   }
 };
 
+bool tog12();
+
 using MainMenu=StaticMenu<
   StaticText<&main_txt>,
   StaticData<
     Action<EnDis<Op1>,test>,
     EnDis<MyAction<Op2>>,
+    Action<StaticText<&tog_txt>,tog12>,
     Op3,
     Op3,
     Op3,
@@ -95,11 +99,14 @@ using Nav=StaticRoot<
 
 Nav nav(mainMenu);
 
-inline int _f(int n) {cout<<"This is a side effect!";return n;}
-using f=lambda::curry<int,decltype(&_f),_f,1>;
+bool tog12() {
+  mainMenu.item<0>().enable(!mainMenu.item<0>().enabled());
+  mainMenu.enable(1,!mainMenu.enabled(1));
+  return true;
+}
 
-using A1=StaticData<Op1,EnDis<Op2>>;
-A1 a1;
+// using A1=StaticData<Op1,EnDis<Op2>>;
+// A1 a1;
 
 //handle serial keys to navigate menu
 bool keys(int key) {
@@ -121,13 +128,22 @@ int main() {
   Console::raw("AM5 Tests ----------------------");
   Console::nl();
 
-  nav.path[0]=5;
-  nav.level=1;
-  nav.setPos(3);
+  // nav.path[0]=5;
+  // nav.level=1;
+  // nav.setPos(3);
 
   // nav.up();
   // mainMenu.item<5>().printMenu<MainMenu,Nav,Out>(mainMenu,nav,nav,nav);
   // Console::nl();
+
+  //disabling option by static index over static structure
+  // mainMenu.item<0>().enable(false);
+  // mainMenu.item<1>().enable(true);
+  // cout<<mainMenu.item<0>().enabled()<<"="<<mainMenu.item<1>().enabled()<<endl;
+  //enabling option by dynamic index over static structure
+  // mainMenu.enable(0,false);
+  mainMenu.enable(1,false);
+  cout<<mainMenu.enabled(0)<<"="<<mainMenu.enabled(1)<<endl;
 
   // menu------------------------
   nav.print<Out>();

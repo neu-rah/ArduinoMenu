@@ -17,8 +17,7 @@
     public:
       using I::I;
       inline bool enabled() const {return en;}
-      inline bool enabled(Idx i) const {return i?I::enabled(i):en;}
-      inline void enable(Idx,bool b) {en=b;}
+      inline void enable(bool b) {en=b;}
     protected:
       bool en=true;
   };
