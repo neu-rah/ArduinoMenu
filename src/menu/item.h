@@ -98,9 +98,9 @@ struct StaticData:StaticData<I> {
     Out::posTop(nav);
     if (!Out::freeY()) return;
     Out::clrLine(Out::posY());
-    Out::template fmt<P,true,It,Out,Nav>(0,nav);
+    Out::template fmt<P,true,It,Out,Nav>(nav);
     printItem<This,Nav,Out>(*this,nav,Out::top(),Out::top());
-    Out::template fmt<P,false,It,Out,Nav>(0,nav);
+    Out::template fmt<P,false,It,Out,Nav>(nav);
   }
 
   template<typename It,typename Nav,typename Out>
@@ -151,13 +151,13 @@ struct StaticData<I>:I {
   inline void printItem(It& it,Nav& nav,Idx n,Idx p=0) {
     if (!Out::freeY()) return;
     Out::clrLine(Out::posY());
-    it.template fmt<Roles::Prompt,true ,It,Out,Nav>(n,nav);
-    it.template fmt<Roles::Index, true ,It,Out,Nav>(n,nav);
-    it.template fmt<Roles::Index, false,It,Out,Nav>(n,nav);
-    it.template fmt<Roles::Cursor,true ,It,Out,Nav>(n,nav);
-    it.template fmt<Roles::Cursor,false ,It,Out,Nav>(n,nav);
+    it.template fmt<Roles::Prompt,true ,It,Out,Nav>(nav,n);
+    it.template fmt<Roles::Index, true ,It,Out,Nav>(nav,n);
+    it.template fmt<Roles::Index, false,It,Out,Nav>(nav,n);
+    it.template fmt<Roles::Cursor,true ,It,Out,Nav>(nav,n);
+    it.template fmt<Roles::Cursor,false ,It,Out,Nav>(nav,n);
     reinterpret_cast<I*>(this)->template print<I,Nav,Out,Roles::Prompt>(*reinterpret_cast<I*>(this),nav);
-    it.template fmt<Roles::Prompt,false,It,Out,Nav>(n,nav);
+    it.template fmt<Roles::Prompt,false,It,Out,Nav>(nav,n);
   }
   template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
   inline void printItems(It& it,Nav& nav) {

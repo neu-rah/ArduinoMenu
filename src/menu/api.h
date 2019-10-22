@@ -19,7 +19,7 @@ template<typename N=Nil> struct Drift:N {
 ////////////////////////////////////////////////////////////////////////////////
 template<typename O=Nil> struct Void:O {
   template<Roles r,bool io,typename I,typename Out,typename Nav>
-  static inline void fmt(Idx n,Nav& nav) {}
+  static inline void fmt(Nav& nav,Idx n=0) {}
   static inline void clrLine(Idx) {}
   constexpr static inline bool isViewport() {return false;}
   constexpr static inline Idx height() {return 0;}
@@ -44,19 +44,18 @@ template<typename I=Nil> struct Empty:I {
   inline static constexpr Idx size(Ref ref) {return 0;}
   inline static constexpr Idx size(Ref ref,Idx n) {return 0;}
   template<Roles r,bool io,typename It,typename Out,typename Nav>
-  static inline void fmt(Idx n,Nav& nav) {
-    Out::template fmt<r,io,It,Out,Nav>(n,nav);
+  static inline void fmt(Nav& nav,Idx n=0) {
+    Out::template fmt<r,io,It,Out,Nav>(nav,n);
   }
   template<typename Out> inline static void print() {}
   template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
-  inline static void print(It& it,Nav& nav) {}
+  inline static void print(It& it,Nav& nav) {it.template print<It,Nav>(it,nav);}
   template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
   inline void printItems(It& it,Nav& nav) {it.template print<Out>();}
   template<typename It,typename Nav,typename Out>
   inline static void printMenu(It& it,Nav& nav,Ref ref,Idx n) {}
   template<Cmds c,typename It,typename Nav>
   inline static bool cmd(It& it,Nav& nav,Ref,Idx) {return it.template cmd<c,It,Nav>(it,nav);}
-  // inline static bool cmd(It& it,Nav& nav,Ref,Idx) {return nav.template _cmd<c,It,Nav>(it,nav);}
   template<Cmds c,typename It,typename Nav>
   inline static bool cmd(It& it,Nav& nav) {return nav.template _cmd<c,It,Nav>(it,nav);}
 };
