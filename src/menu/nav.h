@@ -36,7 +36,8 @@ struct StaticNavTree:N {
   inline Idx cur() const {return level?path[level]:N::pos();}
   inline Idx size() {return size(operator Ref());}
   inline Idx size(Ref ref) {return data.size(ref);}
-  inline bool enabled(Idx n) {return data.enabled(n);}
+  inline bool enabled(Idx n) {return data.enabled(*this,n);}
+  inline bool enabled() {return data.enabled(*this,level?path[level]:N::pos());}
 
   template<typename Nav,typename Out>
   inline void print(Nav& nav) {

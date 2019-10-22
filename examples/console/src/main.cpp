@@ -22,6 +22,7 @@ using Out=MenuOut<
 const char* op1_txt="Option 1";
 const char* op2_txt="Option 2";
 const char* tog_txt="Tog 1/2";
+const char* subop_txt="submenu option!";
 const char* op3_txt="...";
 const char* quit_txt="<Quit";
 const char* exit_txt="<Exit";
@@ -64,13 +65,14 @@ struct MyAction:I {
   }
 };
 
+//will togle enable/disable state of the first 2 options
 bool tog12();
 
 using MainMenu=StaticMenu<
   StaticText<&main_txt>,
   StaticData<
-    Action<StaticEnDis<Op1>,test>,
-    StaticEnDis<MyAction<Op2>>,
+    Action<EnDis<Op1>,test>,
+    EnDis<MyAction<Op2>>,
     Action<StaticText<&tog_txt>,tog12>,
     Op3,
     Op3,
@@ -79,6 +81,7 @@ using MainMenu=StaticMenu<
       StaticMenu<
         StaticText<&sub_txt>,
         StaticData<
+          StaticText<&subop_txt>,
           MyAction<Op1>,
           Action<Op2,test>,
           Op3,
@@ -100,7 +103,7 @@ using Nav=StaticRoot<
 Nav nav(mainMenu);
 
 bool tog12() {
-  mainMenu.item<0>().enable(!mainMenu.item<0>().enabled());
+  mainMenu.enable(0,!mainMenu.enabled(0));
   mainMenu.enable(1,!mainMenu.enabled(1));
   return true;
 }
@@ -138,9 +141,9 @@ int main() {
   // mainMenu.item<1>().enable(true);
   // cout<<mainMenu.item<0>().enabled()<<"="<<mainMenu.item<1>().enabled()<<endl;
   //enabling option by dynamic index over static structure
-  // mainMenu.enable(0,false);
-  mainMenu.enable(1,false);
-  cout<<mainMenu.enabled(0)<<"="<<mainMenu.enabled(1)<<endl;
+  mainMenu.enable(0,true);//enable first option
+  mainMenu.enable(1,false);//disable second option
+  // cout<<mainMenu.enabled(0)<<"="<<mainMenu.enabled(1)<<endl;
 
   // menu------------------------
   nav.print<Out>();

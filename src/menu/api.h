@@ -36,8 +36,10 @@ template<typename O=Nil> struct Void:O {
 ////////////////////////////////////////////////////////////////////////////////
 template<typename I=Nil> struct Empty:I {
   constexpr static inline bool enabled() {return true;}
+  constexpr static inline bool enabled(Ref,Idx) {return true;}
   inline static void enable(Idx,bool) {}
   inline static void enable(bool) {}
+  inline void enable(Ref,Idx,bool) {}
   inline static Idx size() {return 0;}
   inline static constexpr Idx size(Ref ref) {return 0;}
   inline static constexpr Idx size(Ref ref,Idx n) {return 0;}

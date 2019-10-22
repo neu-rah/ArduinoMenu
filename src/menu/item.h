@@ -1,6 +1,6 @@
 /* -*- C++ -*- */
 #pragma once
-#include <lpp.h>
+// #include <lpp.h>
 #include "api.h"
 
 /// ActionHanlder, type of action functions to associate with items
@@ -26,9 +26,9 @@ struct StaticText:I {
   inline static void print(It& it,Nav& nav) {print<Out>();}
 };
 
-enum FName {StaticPrint};
-template<FName f>
-using FuncId=lambda::StaticValue<FName,f>;
+// enum FName {StaticPrint};
+// template<FName f>
+// using FuncId=lambda::StaticValue<FName,f>;
 
 template<typename T>
 struct Value {
@@ -53,12 +53,11 @@ struct StaticData:StaticData<I> {
   using Base=StaticData<I>;
   using Tail=StaticData<II...>;
   using Base::size;
+  Tail next;
 
-  template<typename n>
-  using Item=typename lpp::Index<lpp::List<lpp::As<I>,lpp::As<II>...>,n>::App::Type;
-
-  template<Idx n>
-  inline Item<lpp::N<n>> item() {return *reinterpret_cast<Item<lpp::N<n>>*>(this);};
+  // template<typename n>
+  // using Item=typename lpp::Index<lpp::List<lpp::As<I>,lpp::As<II>...>,n>::App::Type;
+  // template<Idx n> inline Item<lpp::N<n>> item() {return n?next.template item<n-1>():*this;};
 
   inline static constexpr Idx size() {return Tail::size()+1;}
   inline static constexpr Idx size(Ref ref) {
@@ -72,16 +71,26 @@ struct StaticData:StaticData<I> {
           size();
   }
   using I::enabled;
-  inline bool enabled(Idx n) {return n?reinterpret_cast<Tail*>(this)->Tail::enabled(n-1):this->I::enabled();}
+  inline bool enabled(Idx n) {return n?next.enabled(n-1):enabled();}
+  inline bool enabled(Ref ref,Idx n) {
+    return n?next.enabled(ref,n-1):
+      ref.len? enabled(ref.tail(),ref.head()):enabled();
+  }
+
   using I::enable;
-  inline void enable(Idx n,bool b) {return n?reinterpret_cast<Tail*>(this)->Tail::enable(n-1,b):this->I::enable(b);}
+  inline void enable(Idx n,bool b) {return n?next.enable(n-1,b):enable(b);}
+  inline void enable(Ref ref,Idx n,bool e) {
+    if (n) next.enable(ref,n-1,e);
+    else if(ref.len) enable(ref.tail(),ref.head(),e);
+    else enable(e);
+  }
 
   template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
   inline void printItem(It& it,Nav& nav,Idx n,Idx p=0) {
-    if (p) reinterpret_cast<Tail*>(this)->Tail::template printItem<It,Nav,Out,P>(it,nav,n,p-1);
+    if (p) next.template printItem<It,Nav,Out,P>(it,nav,n,p-1);
     if (!Out::freeY()) return;
     StaticData<I>::template printItem<I,Nav,Out>(*this,nav,n);
-    reinterpret_cast<Tail*>(this)->Tail::template printItem<It,Nav,Out>(it,nav,n+1);
+    next.Tail::template printItem<It,Nav,Out>(it,nav,n+1);
   }
 
   template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
@@ -96,8 +105,7 @@ struct StaticData:StaticData<I> {
 
   template<typename It,typename Nav,typename Out>
   inline void printMenu(It& it,Nav& nav,Ref ref,Idx n) {
-    if (n)
-      reinterpret_cast<Tail*>(this)->Tail::template printMenu<It,Nav,Out>(it,nav,ref,n-1);
+    if (n) next.template printMenu<It,Nav,Out>(it,nav,ref,n-1);
     else if (ref.len) reinterpret_cast<I*>(this)->I::template printMenu<I,Nav,Out>(*reinterpret_cast<I*>(this),nav,ref.tail(),ref.head());
     else Out::template printMenu<I,Nav,Out>(*reinterpret_cast<I*>(this),nav);
   }
@@ -107,7 +115,7 @@ struct StaticData:StaticData<I> {
   inline bool cmd(It& it,Nav& nav,Ref ref,Idx n) {
     assert(c!=Cmds::Esc);
     if (n) {
-      return reinterpret_cast<Tail*>(this)->Tail::template cmd<c,It,Nav>(it,nav,ref,n-1);
+      return next.Tail::template cmd<c,It,Nav>(it,nav,ref,n-1);
     } else if (ref.len) {
       return reinterpret_cast<I*>(this)->I::template cmd<c,It,Nav>(it,nav,ref.tail(),nav.pos());
     } else {
@@ -130,16 +138,14 @@ struct StaticData<I>:I {
     return ref.len?size(ref,ref.head()):size();
   }
   inline static constexpr Idx size(Ref ref,Idx n) {
-    return
-      n?0:
-        ref.len?
-          I::size(ref.tail(),ref.head()):
-          I::size()+1;
+    return n?0:ref.len?I::size(ref.tail(),ref.head()):I::size()+1;
   }
   using I::enabled;
   inline bool enabled(Idx n) {return n?true:enabled();}
+
   using I::enable;
   inline void enable(Idx n,bool b) {if(!n) I::enable(b);}
+
 
   template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
   inline void printItem(It& it,Nav& nav,Idx n,Idx p=0) {
