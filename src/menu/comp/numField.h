@@ -20,24 +20,17 @@
       using This=NumField<T,value,low,high,step,tune,I>;
       inline NumField()
         :reflex(value)
-        // ,low(l)
-        // ,high(h)
-        // ,step(s)
-        // ,tune(t)
         {}
-      // constexpr static inline bool canNav() {return true;}
-      // inline NavAgent activate() {return {this,&cmds};}
-      template<typename N,typename O,typename H>
-      inline void print(N& nav,O& out,H& i) {
-        // out.template fmtValue<true,Nav,Out,This>(nav,out,*this,0);
-        out.template raw(value);
-        // out.template fmtValue<false,Nav,Out,This>(nav,out,*this,0);
-        I::print(nav,out,i);
+      template<typename Out> inline void print() {
+        Out::raw(value);
+        I::template print<Out>();
       }
-      // inline void out(MenuOut &o) const {
-      //   //reflex=*value;can not update here!
-      //   o<<*value;
-      // }
+      template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
+      inline void print(It& it,Nav& nav) {
+        // out.template fmtValue<true,Nav,Out,This>(nav,out,*this,0);
+        print<Out>();
+        // out.template fmtValue<false,Nav,Out,This>(nav,out,*this,0);
+      }
       inline bool up() {
         T s=tunning?tune:step;
         if (value+s<=high) value+=s;

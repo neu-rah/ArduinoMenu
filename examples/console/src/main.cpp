@@ -3,6 +3,7 @@
 #include <menu/fmt/text.h>
 #include <menu/fmt/titleWrap.h>
 #include <menu/comp/endis.h>
+#include <menu/comp/numField.h>
 #include "linuxkb.h"
 
 bool running=true;
@@ -68,12 +69,15 @@ struct MyAction:I {
 //will togle enable/disable state of the first 2 options
 bool tog12();
 
+int ano=1967;
+
 using MainMenu=StaticMenu<
   StaticText<&main_txt>,
   StaticData<
     Action<EnDis<Op1>,test>,
     EnDis<MyAction<Op2>>,
     Action<StaticText<&tog_txt>,tog12>,
+    NumField<int,ano,1900,2100,10,1>,
     Op3,
     Op3,
     Op3,
@@ -132,7 +136,7 @@ int main() {
   // nav.level=1;
   // nav.setPos(3);
 
-  // nav.up();
+  nav.down();
   // mainMenu.item<5>().printMenu<MainMenu,Nav,Out>(mainMenu,nav,nav,nav);
   // Console::nl();
 
