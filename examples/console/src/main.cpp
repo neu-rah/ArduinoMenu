@@ -69,8 +69,8 @@ bool tog12();
 using MainMenu=StaticMenu<
   StaticText<&main_txt>,
   StaticData<
-    Action<EnDis<Op1>,test>,
-    EnDis<MyAction<Op2>>,
+    Action<StaticEnDis<Op1>,test>,
+    StaticEnDis<MyAction<Op2>>,
     Action<StaticText<&tog_txt>,tog12>,
     Op3,
     Op3,
@@ -104,9 +104,6 @@ bool tog12() {
   mainMenu.enable(1,!mainMenu.enabled(1));
   return true;
 }
-
-// using A1=StaticData<Op1,EnDis<Op2>>;
-// A1 a1;
 
 //handle serial keys to navigate menu
 bool keys(int key) {

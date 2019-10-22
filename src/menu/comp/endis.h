@@ -21,4 +21,17 @@
     protected:
       bool en=true;
   };
+
+  //because static menu item have unique types
+  template<typename I>
+  class StaticEnDis:public I {
+    public:
+      using I::I;
+      inline bool enabled() const {return en;}
+      inline void enable(bool b) {en=b;}
+    protected:
+      static bool en;
+  };
+
+  #include "endis.hpp"
 // };
