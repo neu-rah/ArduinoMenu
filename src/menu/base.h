@@ -13,7 +13,8 @@
 
 enum class Modes {Normal,Edit,Tune};
 enum class Roles:Idx {Panel,Menu,Title,Body,Prompt,Index,Cursor,Name,Mode,Value,Unit,Raw};
-enum class Cmds:Idx {None=0,Enter=1,Esc=2,Up,Down=4,Left=8,Right=16};
+// enum class Cmds:Idx {None=0,Enter=1,Esc=2,Up,Down=4,Left=8,Right=16};
+enum class Cmds:Idx {None=0,Activate=1,Enter=2,Esc=4,Up,Down=8,Left=16,Right=32};
 
 //a reference to menu item that works also for static structures
 struct Ref {
@@ -28,13 +29,17 @@ struct Ref {
     "Panel","Menu","Title","Body","Prompt","Index",
     "Cursor","Name","Mode","Value","Unit","Raw"
   };
-  constexpr char* cmdNames[]{"None","Enter","Esc","Up","Down","Left","Right"};
+  constexpr char* cmdNames[]{"None","Activate","Enter","Esc","Up","Down","Left","Right"};
 
   template<typename O>
   constexpr inline O& operator<<(O& o,Roles r) {return o<<roleNames[(Idx)r];}
 
   template<typename O>
-  constexpr inline O& operator<<(O& o,Cmds r) {return o<<cmdNames[(Idx)r];}
+  inline O& operator<<(O& o,Cmds r) {
+    Idx rr=0;
+    while(!(((Idx)r)&&1)) rr++;
+    return o<<cmdNames[rr];
+  }
 
 #endif
 

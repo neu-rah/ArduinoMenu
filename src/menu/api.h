@@ -47,12 +47,16 @@ template<typename I=Nil> struct Empty:I {
   static inline void fmt(Idx n,Nav& nav) {
     Out::template fmt<r,io,It,Out,Nav>(n,nav);
   }
+  template<typename Out> inline static void print() {}
+  template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
+  inline static void print(It& it,Nav& nav) {}
   template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
   inline void printItems(It& it,Nav& nav) {it.template print<Out>();}
   template<typename It,typename Nav,typename Out>
   inline static void printMenu(It& it,Nav& nav,Ref ref,Idx n) {}
   template<Cmds c,typename It,typename Nav>
-  inline static bool cmd(It& it,Nav& nav,Ref,Idx) {return nav.template _cmd<c,It,Nav>(it,nav);}
+  inline static bool cmd(It& it,Nav& nav,Ref,Idx) {return it.template cmd<c,It,Nav>(it,nav);}
+  // inline static bool cmd(It& it,Nav& nav,Ref,Idx) {return nav.template _cmd<c,It,Nav>(it,nav);}
   template<Cmds c,typename It,typename Nav>
   inline static bool cmd(It& it,Nav& nav) {return nav.template _cmd<c,It,Nav>(it,nav);}
 };
