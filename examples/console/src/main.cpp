@@ -134,9 +134,9 @@ int main() {
 
   // nav.path[0]=5;
   // nav.level=1;
-  // nav.setPos(3);
+  // nav.setPos(7);
 
-  nav.down();
+  // nav.up();
   // mainMenu.item<5>().printMenu<MainMenu,Nav,Out>(mainMenu,nav,nav,nav);
   // Console::nl();
 
@@ -148,6 +148,8 @@ int main() {
   mainMenu.enable(0,true);//enable first option
   mainMenu.enable(1,false);//disable second option
   // cout<<mainMenu.enabled(0)<<"="<<mainMenu.enabled(1)<<endl;
+
+  // nav.enter();
 
   // menu------------------------
   nav.print<Out>();

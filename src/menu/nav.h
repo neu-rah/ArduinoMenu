@@ -54,7 +54,10 @@ struct StaticNavTree:N {
     path[level]=cur();
     Ref ref=*this;
     _trace(MDO<<"Data->cmd:"<<c<<endl);
-    return data.template cmd<c,Data,Nav>(data,nav,ref,ref.len?ref.head():cur())||(close(),true);
+    bool res=data.template cmd<c,Data,Nav>(data,nav,ref,ref.len?ref.head():cur());
+    if (c==Cmds::Activate&&!res)
+      close();
+    return true;
   }
 
   inline void open() {

@@ -28,16 +28,22 @@ struct Ref {
     "Panel","Menu","Title","Body","Prompt","Index",
     "Cursor","Name","Mode","Value","Unit","Raw"
   };
-  constexpr char* cmdNames[]{"None","Activate","Enter","Esc","Up","Down","Left","Right"};
 
   template<typename O>
   constexpr inline O& operator<<(O& o,Roles r) {return o<<roleNames[(Idx)r];}
 
   template<typename O>
   inline O& operator<<(O& o,Cmds r) {
-    Idx rr=0;
-    while(!(((Idx)r)&&1)) rr++;
-    return o<<cmdNames[rr];
+    switch(r){
+      case Cmds::None:return o<<"None";
+      case Cmds::Activate:return o<<"Activate";
+      case Cmds::Enter:return o<<"Enter";
+      case Cmds::Esc:return o<<"Esc";
+      case Cmds::Up:return o<<"Up";
+      case Cmds::Down:return o<<"Down";
+      case Cmds::Left:return o<<"Left";
+      case Cmds::Right:return o<<"Right";
+    }
   }
 
 #endif

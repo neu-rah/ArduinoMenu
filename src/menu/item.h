@@ -120,10 +120,7 @@ struct StaticData:StaticData<I> {
       return reinterpret_cast<I*>(this)->I::template cmd<c,It,Nav>(it,nav,ref.tail(),nav.pos());
     } else {
       assert(c!=Cmds::Esc);
-      if (c==Cmds::Enter) {
-        //TODO: check enabled!
-        return I::template cmd<c,It,Nav>(it,nav);
-      }
+      if (c==Cmds::Enter) return enabled()?I::template cmd<Cmds::Activate,It,Nav>(it,nav):false;
       Empty<>::template cmd<c,It,Nav>(it,nav);
       return true;
     }
@@ -176,11 +173,12 @@ struct StaticData<I>:I {
   template<Cmds c,typename It,typename Nav>
   inline bool cmd(It& it,Nav& nav,Ref ref,Idx n) {
     assert(c!=Cmds::Esc);
-    if (c==Cmds::Enter) {
-      //TODO: check enabled!
-      return I::template cmd<c,It,Nav>(it,nav);
-    }
-    Empty<>::template cmd<c,It,Nav>(it,nav);
+    if (n||!enabled()) return false;
+    if (ref.len) return I::template cmd<c,It,Nav>(it,nav,ref,n);
+    // if (c==Cmds::Enter&&I::template cmd<Cmds::Activate,It,Nav>(it,nav))
+    //   nav.open();
+    if (c==Cmds::Enter) I::template cmd<Cmds::Activate,It,Nav>(it,nav)?nav.open():nav.close();
+    Empty<>::template cmd<c,It,Nav>(it,nav);//will pass cmd back to navigation
     return true;
   }
 };
