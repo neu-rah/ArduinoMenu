@@ -21,6 +21,7 @@
       inline NumField()
         :reflex(value)
         {}
+      inline static constexpr bool canNav() {return true;}
       template<typename Out> inline void print() {
         Out::raw(value);
         I::template print<Out>();
@@ -36,9 +37,9 @@
       inline bool cmd(It& it,Nav& nav) {
         _trace(MDO<<"numField::cmd:"<<c<<endl);
         switch(c) {
-          case Cmds::Activate:return true;//yes we can receive keys
+          case Cmds::Activate:return true;//yes we can process commands
           case Cmds::Enter:return tunning^=true;//assuming true => proceed
-          case Cmds::Esc:return true;
+          case Cmds::Esc:assert(false);return true;
           case Cmds::Up: {
               T s=tunning?tune:step;
               if (value+s<=high) value+=s;

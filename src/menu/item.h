@@ -118,7 +118,7 @@ struct StaticData:StaticData<I> {
     if (n) {
       return next.Tail::template cmd<c,It,Nav>(it,nav,ref,n-1);
     } else if (ref.len) {
-      return reinterpret_cast<I*>(this)->I::template cmd<c,It,Nav>(it,nav,ref.tail(),nav.pos());
+      return reinterpret_cast<I*>(this)->I::template cmd<c,I,Nav>(*reinterpret_cast<I*>(this),nav,ref.tail(),nav.pos());
     } else {
       return Base::template doNav<c,It,Nav>(it,nav);
       // assert(c!=Cmds::Esc);
@@ -129,12 +129,19 @@ struct StaticData:StaticData<I> {
       // return true;
     }
   }
+  using StaticData<I>::canNav;
+  inline static bool canNav(Ref ref,Idx n) {
+    if (n) return Tail::canNav(ref,n-1);
+    else if (ref.len) return Tail::canNav(ref.tail(),ref.head());
+    else return StaticData<I>::canNav();
+  }
 };
 
 template<typename I>
 struct StaticData<I>:I {
   using This=StaticData<I>;
-  inline static bool canNav() {return true;}
+  inline static constexpr bool canNav() {return true;}
+  inline static constexpr bool canNav(Ref ref,Idx n) {return n?false:canNav();}
   inline static constexpr Idx size() {return 1;}
   inline static constexpr Idx size(Ref ref) {
     return ref.len?size(ref,ref.head()):size();
@@ -179,7 +186,7 @@ struct StaticData<I>:I {
   inline bool cmd(It& it,Nav& nav,Ref ref,Idx n) {
     assert(c!=Cmds::Esc);
     if (n||!enabled()) return false;
-    if (ref.len) return I::template cmd<c,It,Nav>(it,nav,ref,n);
+    if (ref.len) return I::template cmd<c,I,Nav>(*reinterpret_cast<I*>(this),nav,ref,n);
     return doNav<c,It,Nav>(it,nav);
   }
   template<Cmds c,typename It,typename Nav>

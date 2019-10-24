@@ -55,8 +55,11 @@ template<typename I=Nil> struct Empty:I {
   template<typename It,typename Nav,typename Out>
   inline static void printMenu(It& it,Nav& nav,Ref ref,Idx n) {}
   template<Cmds c,typename It,typename Nav>
-  inline static bool cmd(It& it,Nav& nav,Ref,Idx) {return it.template cmd<c,It,Nav>(it,nav);}
+  inline static bool cmd(It& it,Nav& nav,Ref,Idx) {
+    _trace(MDO<<"cmd convertion!"<<endl);
+    return it.template cmd<c,It,Nav>(it,nav);}
   template<Cmds c,typename It,typename Nav>
   inline static bool cmd(It& it,Nav& nav) {return c==Cmds::Activate?false:nav.template _cmd<c,It,Nav>(it,nav);}
   inline static constexpr bool canNav() {return false;}
+  inline static constexpr bool canNav(Ref ref,Idx n) {return canNav();}
 };

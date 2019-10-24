@@ -53,9 +53,9 @@ struct StaticNavTree:N {
     }
     path[level]=cur();
     Ref ref=*this;
-    _trace(MDO<<"Data->cmd:"<<c<<endl);
+    _trace(MDO<<"Data->cmd:"<<c<<" to level:"<<level<<" idx:"<<path[level-1]<<endl);
     bool res=data.template cmd<c,Data,Nav>(data,nav,ref,ref.len?ref.head():cur());
-    if (c==Cmds::Activate&&!res) {
+    if (c==Cmds::Enter&&!res) {
       close();
     }
     return true;
@@ -63,10 +63,17 @@ struct StaticNavTree:N {
 
   inline void open() {
     _trace(MDO<<"StaticNavTree::open"<<endl);
+    _trace({
+      Ref ref=*this;
+      assert(data.canNav(*this,ref.len?ref.head():cur()));
+      MDO<<"yeah it handle cmds"<<endl;
+      assert(level<max_depth-1);
+      MDO<<"and we have depth level to focus"<<endl;
+    })
     if (level>=max_depth-1) return;
-    assert(level<max_depth-1);
     path[level++]=N::pos();
     N::setPos(0);
+    MDO<<"focus done, depth:"<<level<<" index:"<<path[level-1]<<" pos:"<<0<<endl;
   }
 
   inline void close() {
