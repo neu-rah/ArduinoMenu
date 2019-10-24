@@ -111,6 +111,7 @@ struct StaticData:StaticData<I> {
   }
 
   using I::cmd;
+  using StaticData<I>::doNav;
   template<Cmds c,typename It,typename Nav>
   inline bool cmd(It& it,Nav& nav,Ref ref,Idx n) {
     assert(c!=Cmds::Esc);
@@ -119,10 +120,13 @@ struct StaticData:StaticData<I> {
     } else if (ref.len) {
       return reinterpret_cast<I*>(this)->I::template cmd<c,It,Nav>(it,nav,ref.tail(),nav.pos());
     } else {
-      assert(c!=Cmds::Esc);
-      if (c==Cmds::Enter) return enabled()?I::template cmd<Cmds::Activate,It,Nav>(it,nav):false;
-      Empty<>::template cmd<c,It,Nav>(it,nav);
-      return true;
+      return Base::template doNav<c,It,Nav>(it,nav);
+      // assert(c!=Cmds::Esc);
+      // // if (c==Cmds::Enter) return enabled()?I::template cmd<Cmds::Activate,It,Nav>(it,nav):false;
+      // if (c==Cmds::Enter&&I::template cmd<Cmds::Activate,It,Nav>(it,nav)) nav.open();
+      // else nav.close();
+      // Empty<>::template cmd<c,It,Nav>(it,nav);
+      // return true;
     }
   }
 };
@@ -130,6 +134,7 @@ struct StaticData:StaticData<I> {
 template<typename I>
 struct StaticData<I>:I {
   using This=StaticData<I>;
+  inline static bool canNav() {return true;}
   inline static constexpr Idx size() {return 1;}
   inline static constexpr Idx size(Ref ref) {
     return ref.len?size(ref,ref.head()):size();
@@ -175,11 +180,22 @@ struct StaticData<I>:I {
     assert(c!=Cmds::Esc);
     if (n||!enabled()) return false;
     if (ref.len) return I::template cmd<c,It,Nav>(it,nav,ref,n);
-    // if (c==Cmds::Enter&&I::template cmd<Cmds::Activate,It,Nav>(it,nav))
-    //   nav.open();
-    if (c==Cmds::Enter) I::template cmd<Cmds::Activate,It,Nav>(it,nav)?nav.open():nav.close();
+    return doNav<c,It,Nav>(it,nav);
+  }
+  template<Cmds c,typename It,typename Nav>
+  inline bool doNav(It& it,Nav& nav) {
+    trace(MDO<<"doNav "<<c<<endl);
+    if(c==Cmds::Enter){
+      if(I::template cmd<Cmds::Activate,It,Nav>(it,nav)) {
+        trace(MDO<<"open by enter->true"<<endl);
+        if (I::canNav()) {nav.open();return true;}
+      } else {
+        trace(MDO<<"close by enter->false"<<endl);
+        if (!I::canNav()) {nav.close();;return true;}
+      }
+    }
     Empty<>::template cmd<c,It,Nav>(it,nav);//will pass cmd back to navigation
-    return true;
+    return false;
   }
 };
 
@@ -197,7 +213,7 @@ struct StaticMenu:B {
   template<Cmds c,typename It,typename Nav>
   inline bool cmd(It& it,Nav& nav) {
     assert(c!=Cmds::Esc);
-    nav.open();
+    // nav.open();
     return true;
   }
 

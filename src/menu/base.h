@@ -13,7 +13,7 @@
 
 enum class Modes {Normal,Edit,Tune};
 enum class Roles:Idx {Panel,Menu,Title,Body,Prompt,Index,Cursor,Name,Mode,Value,Unit,Raw};
-enum class Cmds:Idx {None=0,Activate=1,Enter=2,Esc=4,Up,Down=8,Left=16,Right=32};
+enum class Cmds:Idx {None=0,Activate=1,Enter=2,Esc=4,Up=8,Down=16,Left=32,Right=64};
 
 //a reference to menu item that works also for static structures
 struct Ref {

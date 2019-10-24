@@ -13,7 +13,7 @@ template<typename N=Nil> struct Drift:N {
   constexpr static inline Modes mode() {return Modes::Normal;}
   constexpr static inline bool enabled(Idx) {return true;}
   template<Cmds c,typename It,typename Nav>
-  inline bool _cmd(It& it,Nav& nav) {}
+  inline bool _cmd(It& it,Nav& nav) {return true;}
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -57,5 +57,6 @@ template<typename I=Nil> struct Empty:I {
   template<Cmds c,typename It,typename Nav>
   inline static bool cmd(It& it,Nav& nav,Ref,Idx) {return it.template cmd<c,It,Nav>(it,nav);}
   template<Cmds c,typename It,typename Nav>
-  inline static bool cmd(It& it,Nav& nav) {return nav.template _cmd<c,It,Nav>(it,nav);}
+  inline static bool cmd(It& it,Nav& nav) {return c==Cmds::Activate?false:nav.template _cmd<c,It,Nav>(it,nav);}
+  inline static constexpr bool canNav() {return false;}
 };

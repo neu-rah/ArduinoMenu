@@ -132,19 +132,12 @@ int main() {
   Console::raw("AM5 Tests ----------------------");
   Console::nl();
 
-  // nav.path[0]=5;
-  // nav.level=1;
+  // nav.path[0]=7;
+  // nav.level=0;
   // nav.setPos(7);
-
+  // nav.enter();
   // nav.up();
-  // mainMenu.item<5>().printMenu<MainMenu,Nav,Out>(mainMenu,nav,nav,nav);
-  // Console::nl();
 
-  //disabling option by static index over static structure
-  // mainMenu.item<0>().enable(false);
-  // mainMenu.item<1>().enable(true);
-  // cout<<mainMenu.item<0>().enabled()<<"="<<mainMenu.item<1>().enabled()<<endl;
-  //enabling option by dynamic index over static structure
   mainMenu.enable(0,true);//enable first option
   mainMenu.enable(1,false);//disable second option
   // cout<<mainMenu.enabled(0)<<"="<<mainMenu.enabled(1)<<endl;

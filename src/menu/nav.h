@@ -17,12 +17,12 @@ struct NavPos:N {
     switch(c) {
       case Cmds::Up:
         if (at<(it.size((Ref)nav)-1)) at++;
-        else return false;
-        return true;
+        // else return false;
+        return false;
       case Cmds::Down:
         if (at>0) at--;
-        else return false;
-        return true;
+        // else return false;
+        return false;
     }
     return N::template _cmd<c,It,Nav>(it,nav);
   }
@@ -55,12 +55,14 @@ struct StaticNavTree:N {
     Ref ref=*this;
     _trace(MDO<<"Data->cmd:"<<c<<endl);
     bool res=data.template cmd<c,Data,Nav>(data,nav,ref,ref.len?ref.head():cur());
-    if (c==Cmds::Activate&&!res)
+    if (c==Cmds::Activate&&!res) {
       close();
+    }
     return true;
   }
 
   inline void open() {
+    _trace(MDO<<"StaticNavTree::open"<<endl);
     if (level>=max_depth-1) return;
     assert(level<max_depth-1);
     path[level++]=N::pos();
@@ -68,6 +70,7 @@ struct StaticNavTree:N {
   }
 
   inline void close() {
+    _trace(MDO<<"StaticNavTree::open"<<endl);
     if (level>0) {
       level--;
       N::setPos(path[level]);
