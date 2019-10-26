@@ -20,15 +20,10 @@ struct Action:I {
 
 template<const char** text,typename I=Empty<>>
 struct StaticText:I {
-  using I::size;
   template<typename Out> inline static void print() {Out::raw(text[0]);}
   template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
   inline static void print(It& it,Nav& nav) {print<Out>();}
 };
-
-// enum FName {StaticPrint};
-// template<FName f>
-// using FuncId=lambda::StaticValue<FName,f>;
 
 template<typename T>
 struct Value {
@@ -59,7 +54,9 @@ struct StaticData:StaticData<I> {
   // using Item=typename lpp::Index<lpp::List<lpp::As<I>,lpp::As<II>...>,n>::App::Type;
   // template<Idx n> inline Item<lpp::N<n>> item() {return n?next.template item<n-1>():*this;};
 
-  inline static constexpr Idx size() {return Tail::size()+1;}
+  inline static constexpr Idx size() {
+    return Tail::size()+1;
+  }
   inline static constexpr Idx size(Ref ref) {
     return ref.len?size(ref,ref.head()):size();
   }
@@ -106,7 +103,7 @@ struct StaticData:StaticData<I> {
   template<typename It,typename Nav,typename Out>
   inline void printMenu(It& it,Nav& nav,Ref ref,Idx n) {
     if (n) next.template printMenu<It,Nav,Out>(it,nav,ref,n-1);
-    else if (ref.len) reinterpret_cast<I*>(this)->I::template printMenu<I,Nav,Out>(*reinterpret_cast<I*>(this),nav,ref.tail(),ref.head());
+    else if (ref.len) I::template printMenu<I,Nav,Out>(*reinterpret_cast<I*>(this),nav,ref.tail(),ref.tail().head());
     else Out::template printMenu<I,Nav,Out>(*reinterpret_cast<I*>(this),nav);
   }
 
@@ -118,21 +115,13 @@ struct StaticData:StaticData<I> {
     if (n) {
       return next.Tail::template cmd<c,It,Nav>(it,nav,ref,n-1);
     } else if (ref.len) {
-      return reinterpret_cast<I*>(this)->I::template cmd<c,I,Nav>(*reinterpret_cast<I*>(this),nav,ref.tail(),nav.pos());
-    } else {
-      return Base::template doNav<c,It,Nav>(it,nav);
-      // assert(c!=Cmds::Esc);
-      // // if (c==Cmds::Enter) return enabled()?I::template cmd<Cmds::Activate,It,Nav>(it,nav):false;
-      // if (c==Cmds::Enter&&I::template cmd<Cmds::Activate,It,Nav>(it,nav)) nav.open();
-      // else nav.close();
-      // Empty<>::template cmd<c,It,Nav>(it,nav);
-      // return true;
-    }
+      return I::template cmd<c,I,Nav>(*reinterpret_cast<I*>(this),nav,ref.tail(),ref.tail().head());
+    } else return Base::template doNav<c,It,Nav>(it,nav);
   }
   using StaticData<I>::canNav;
   inline static bool canNav(Ref ref,Idx n) {
     if (n) return Tail::canNav(ref,n-1);
-    else if (ref.len) return Tail::canNav(ref.tail(),ref.head());
+    else if (ref.len) return I::canNav(ref.tail(),ref.head());
     else return StaticData<I>::canNav();
   }
 };
@@ -147,7 +136,7 @@ struct StaticData<I>:I {
     return ref.len?size(ref,ref.head()):size();
   }
   inline static constexpr Idx size(Ref ref,Idx n) {
-    return n?0:ref.len?I::size(ref.tail(),ref.head()):I::size()+1;
+    return n?1:ref.len?I::size(ref.tail(),ref.tail().head()):I::size()+1;
   }
   using I::enabled;
   inline bool enabled(Idx n) {return n?true:enabled();}
@@ -159,6 +148,7 @@ struct StaticData<I>:I {
   template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
   inline void printItem(It& it,Nav& nav,Idx n,Idx p=0) {
     if (!Out::freeY()) return;
+    trace(MDO<<"printItem #"<<n<<" role:"<<p<<"=>");
     Out::clrLine(Out::posY());
     it.template fmt<Roles::Prompt,true ,It,Out,Nav>(nav,n);
     it.template fmt<Roles::Index, true ,It,Out,Nav>(nav,n);
@@ -171,13 +161,14 @@ struct StaticData<I>:I {
   template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
   inline void printItems(It& it,Nav& nav) {
     Out::posTop(nav);
-    it.template fmt<P,true,It,Out,Nav>(0,nav);
+    it.template fmt<P,true,It,Out,Nav>(nav,0);
     printItem<This,Nav,Out>(*this,nav,Out::top(),Out::top());
-    it.template fmt<P,false,It,Out,Nav>(0,nav);
+    it.template fmt<P,false,It,Out,Nav>(nav,0);
   }
 
   template<typename It,typename Nav,typename Out>
   inline void printMenu(It& it,Nav& nav,Ref ref,Idx n) {
+    assert(!n);
     if (n) return;
     else if (ref.len) reinterpret_cast<I*>(this)->I::template printMenu<I,Nav,Out>(*reinterpret_cast<I*>(this),nav,ref.tail(),ref.head());
     else Out::template printMenu<I,Nav,Out>(*reinterpret_cast<I*>(this),nav);
@@ -185,24 +176,20 @@ struct StaticData<I>:I {
   template<Cmds c,typename It,typename Nav>
   inline bool cmd(It& it,Nav& nav,Ref ref,Idx n) {
     assert(c!=Cmds::Esc);
+    if (n)
+      assert(!n);
     if (n||!enabled()) return false;
     if (ref.len) return I::template cmd<c,I,Nav>(*reinterpret_cast<I*>(this),nav,ref,n);
     return doNav<c,It,Nav>(it,nav);
   }
   template<Cmds c,typename It,typename Nav>
   inline bool doNav(It& it,Nav& nav) {
-    trace(MDO<<"doNav "<<c<<endl);
     if(c==Cmds::Enter){
       if(I::template cmd<Cmds::Activate,It,Nav>(it,nav)) {
-        trace(MDO<<"open by enter->true"<<endl);
         if (I::canNav()) {nav.open();return true;}
-      } else {
-        trace(MDO<<"close by enter->false"<<endl);
-        if (!I::canNav()) {nav.close();;return true;}
-      }
+      } else if (!I::canNav()) {nav.close();return true;}
     }
-    Empty<>::template cmd<c,It,Nav>(it,nav);//will pass cmd back to navigation
-    return false;
+    return Empty<>::template cmd<c,It,Nav>(it,nav);//will pass cmd back to navigation
   }
 };
 
@@ -218,15 +205,15 @@ struct StaticMenu:B {
   }
   using B::cmd;
   template<Cmds c,typename It,typename Nav>
-  inline bool cmd(It& it,Nav& nav) {
-    assert(c!=Cmds::Esc);
-    // nav.open();
-    return true;
-  }
+  inline constexpr bool cmd(It& it,Nav& nav) {return true;}
 
   using B::printMenu;
   template<typename It,typename Nav,typename Out>
   inline void printMenu(It& it,Nav& nav,Ref ref,Idx n) {
+    trace(
+      MDO<<"StaticMenu::printMenu Idx:"<<n<<endl;
+      nav.debug_path();
+    );
     if (ref.len) B::template printMenu<It,Nav,Out>(it,nav,ref,n);
     else Out::template printMenu<This,Nav,Out>(*this,nav);
   }

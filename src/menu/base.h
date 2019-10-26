@@ -21,6 +21,8 @@ struct Ref {
   Idx* path;
   inline Idx head() const {return path[0];}
   inline Ref tail() const {return {(Idx)len-1,&path[1]};}
+  inline operator Idx() {return len;}
+  inline operator bool() {return len;}
 };
 
 #ifdef MENU_DEBUG

@@ -22,6 +22,7 @@
         :reflex(value)
         {}
       inline static constexpr bool canNav() {return true;}
+      inline static constexpr bool parentDraw() {return true;}
       template<typename Out> inline void print() {
         Out::raw(value);
         I::template print<Out>();
@@ -42,12 +43,18 @@
           case Cmds::Esc:assert(false);return true;
           case Cmds::Up: {
               T s=tunning?tune:step;
-              if (value+s<=high) value+=s;
-            } return true;
+              if (value+s<=high) {
+                value+=s;
+                return true;
+              }
+            } return false;
           case Cmds::Down: {
               T s=tunning?tune:step;
-              if (value-s>=low) value-=s;
-            } return true;
+              if (value-s>=low) {
+                value-=s;
+                return true;
+              }
+            } return false;
           default:break;
         }
         return I::template cmd<c,It,Nav>(it,nav);

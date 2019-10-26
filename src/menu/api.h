@@ -53,7 +53,9 @@ template<typename I=Nil> struct Empty:I {
   template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
   inline void printItems(It& it,Nav& nav) {it.template print<Out>();}
   template<typename It,typename Nav,typename Out>
-  inline static void printMenu(It& it,Nav& nav,Ref ref,Idx n) {}
+  inline static void printMenu(It& it,Nav& nav,Ref ref,Idx n) {
+    it.template print<It,Nav,Out>(it,nav);
+  }
   template<Cmds c,typename It,typename Nav>
   inline static bool cmd(It& it,Nav& nav,Ref,Idx) {
     _trace(MDO<<"cmd convertion!"<<endl);
@@ -62,4 +64,6 @@ template<typename I=Nil> struct Empty:I {
   inline static bool cmd(It& it,Nav& nav) {return c==Cmds::Activate?false:nav.template _cmd<c,It,Nav>(it,nav);}
   inline static constexpr bool canNav() {return false;}
   inline static constexpr bool canNav(Ref ref,Idx n) {return canNav();}
+  inline static constexpr bool parentDraw() {return false;}
+  inline static constexpr bool parentDraw(Ref ref,Idx n) {return parentDraw();}
 };

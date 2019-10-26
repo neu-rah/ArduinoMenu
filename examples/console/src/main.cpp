@@ -56,13 +56,13 @@ struct MyAction:I {
   inline bool cmd(It& it,Nav& nav) {
     cout<<"custom action with context"<<endl;
     cout<<"we received target and nav objects"<<endl;
-    cout<<"Nav at:"<<nav.at<<endl;
+    cout<<"Nav pos:"<<nav.pos()<<endl;
     cout<<"level:"<<nav.level<<endl;
     Ref ref=nav;
     cout<<"path:";
     for(int n=0;n<ref.len;n++)
       cout<<"/"<<nav.path[n];
-    cout<<"/"<<nav.at;
+    cout<<"/"<<nav.pos();
   }
 };
 
@@ -81,7 +81,7 @@ using MainMenu=StaticMenu<
     Op3,
     Op3,
     Op3,
-    Debug<//will print event info if on debug mode
+    // Debug<//will print event info if on debug mode
       StaticMenu<
         StaticText<&sub_txt>,
         StaticData<
@@ -91,8 +91,8 @@ using MainMenu=StaticMenu<
           Op3,
           Action<StaticText<&exit_txt>,exit>
         >
-      >
-    >,
+      >,
+    // >,
     Op3,
     Action<StaticText<&quit_txt>,quit>
   >
@@ -101,7 +101,7 @@ using MainMenu=StaticMenu<
 MainMenu mainMenu;
 
 using Nav=StaticRoot<
-  StaticNavTree<MainMenu,2,NavPos<>>
+  StaticNavTree<MainMenu,2>
 >;
 
 Nav nav(mainMenu);
@@ -133,18 +133,21 @@ int main() {
   Console::nl();
 
   // nav.path[0]=7;
-  // nav.level=0;
-  // nav.setPos(7);
+  // nav.path[1]=4;
+  // nav.level=1;
+  // cout<<"size:"<<nav.size()<<endl;
+  // // nav.setPos(3);
   // nav.enter();
   // nav.up();
+  // cout<<"size:"<<nav.size()<<endl;
 
   mainMenu.enable(0,true);//enable first option
   mainMenu.enable(1,false);//disable second option
-  // cout<<mainMenu.enabled(0)<<"="<<mainMenu.enabled(1)<<endl;
-
-  // nav.enter();
-
-  // menu------------------------
+  // // cout<<mainMenu.enabled(0)<<"="<<mainMenu.enabled(1)<<endl;
+  //
+  // // nav.enter();
+  //
+  // // menu------------------------
   nav.print<Out>();
   do {
     if (kbhit()) {

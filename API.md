@@ -40,11 +40,11 @@ Items that rerurn `true` and can process commands will be put on focus and will 
 
 ### Return meaning
 
-This is some expectable behavior, however system elements are free to implement otherwise.
+The commands are sent by the navigation system to the active menu item.
+Menu items can send some or new commands to child items, usually the selected item and do its own interpretation of the result.
+The navigation system will then act upon the return value too.
 
-The commands are sent by the navigation system to the active menu item. The navigation system will then act upon the return value.
-
-**Active command is sent to selected items, quering focus candidate (can handle commanda)**
+**`Activate` command is sent to selected items**
 
 |**Activate**|done|close||
 
@@ -58,13 +58,15 @@ The commands are sent by the navigation system to the active menu item. The navi
 |**Left**|done|proceed||
 |**Right**|done|proceed||
 
-*when selected element can handle commands*
+_they can then call default behavior by letting the command proceed to the navigation object again and/or call navigation functions_
+
+**when selected element can handle commands**
 
 |Command|true|false||
 |---|---|---|---|
 |**Enter**|done|close|will send `Activate` to selected item and return true when changing focus|
 
-*when selected element can NOT handle commands*
+**when selected element can NOT handle commands**
 
 |Command|true|false||
 |---|---|---|---|

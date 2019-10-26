@@ -14,15 +14,16 @@ struct NavPos:N {
   operator Idx() const {return pos();}
   template<Cmds c,typename It,typename Nav>
   inline bool _cmd(It& it,Nav& nav) {
+    trace(MDO<<"NavPos::_cmd "<<c<<endl);
     switch(c) {
       case Cmds::Up:
         if (at<(it.size((Ref)nav)-1)) at++;
-        // else return false;
-        return false;
+        else return false;
+        return true;
       case Cmds::Down:
         if (at>0) at--;
-        // else return false;
-        return false;
+        else return false;
+        return true;
     }
     return N::template _cmd<c,It,Nav>(it,nav);
   }
@@ -33,16 +34,45 @@ template<typename Data,Idx max_depth,typename N=Drift<>>
 struct StaticNavTree:N {
   inline StaticNavTree(Data& o):data(o) {}
   operator Ref() {return {level,path};}
-  inline Idx cur() const {return level?path[level]:N::pos();}
+
+  inline Idx pos() const {return path[level];}
+  inline void setPos(Idx n) {path[level]=n;}
+  inline bool selected(Idx idx) const {return path[level]==idx;}
+  operator Idx() const {return pos();}
+  template<Cmds c,typename It,typename Nav>
+  inline bool _cmd(It& it,Nav& nav) {
+    trace(MDO<<"NavPos::_cmd "<<c<<endl);
+    switch(c) {
+      case Cmds::Up:
+        if (path[level]<(it.size()-1)) path[level]++;
+        else return false;
+        return true;
+      case Cmds::Down:
+        if (path[level]>0) path[level]--;
+        else return false;
+        return true;
+    }
+    return N::template _cmd<c,It,Nav>(it,nav);
+  }
+
+  inline void debug_path() {
+    trace(
+      MDO<<"  nav path:[";
+      for(int n=0;n<=level;n++) MDO<<(n?",":"")<<path[n];
+      MDO<<"]"<<endl;
+      MDO<<"  target size:"<<size((Ref)*this)<<endl;
+    );
+  }
+
   inline Idx size() {return size(operator Ref());}
   inline Idx size(Ref ref) {return data.size(ref);}
   inline bool enabled(Idx n) {return data.enabled(*this,n);}
-  inline bool enabled() {return data.enabled(*this,level?path[level]:N::pos());}
+  inline bool enabled() {return data.enabled(pos());}
 
   template<typename Nav,typename Out>
   inline void print(Nav& nav) {
     Ref ref=*this;
-    data.template printMenu<Data,Nav,Out>(data,nav,ref,ref.len?ref.head():cur());
+    data.template printMenu<Data,Nav,Out>(data,nav,ref,ref.head());
   }
 
   template<Cmds c,typename Nav>
@@ -51,37 +81,35 @@ struct StaticNavTree:N {
       close();
       return true;
     }
-    path[level]=cur();
     Ref ref=*this;
-    _trace(MDO<<"Data->cmd:"<<c<<" to level:"<<level<<" idx:"<<path[level-1]<<endl);
-    bool res=data.template cmd<c,Data,Nav>(data,nav,ref,ref.len?ref.head():cur());
+    trace(MDO<<"Data->cmd:"<<c<<" to level:"<<level<<" idx:"<<path[level]<<endl);
+    debug_path();
+    bool res=data.template cmd<c,Data,Nav>(data,nav,ref,ref.head());
     if (c==Cmds::Enter&&!res) {
+      trace(MDO<<"StaticNavTree calling close by "<<c<<" returning false"<<endl);
       close();
     }
     return true;
   }
 
   inline void open() {
-    _trace(MDO<<"StaticNavTree::open"<<endl);
-    _trace({
+    trace(MDO<<"StaticNavTree::open"<<endl);
+    trace({
       Ref ref=*this;
-      assert(data.canNav(*this,ref.len?ref.head():cur()));
-      MDO<<"yeah it handle cmds"<<endl;
+      assert(data.canNav(*this));
+      MDO<<"yeah it handles cmds"<<endl;
       assert(level<max_depth-1);
       MDO<<"and we have depth level to focus"<<endl;
     })
     if (level>=max_depth-1) return;
-    path[level++]=N::pos();
-    N::setPos(0);
-    MDO<<"focus done, depth:"<<level<<" index:"<<path[level-1]<<" pos:"<<0<<endl;
+    level++;
+    path[level]=0;
+    debug_path();
   }
 
   inline void close() {
-    _trace(MDO<<"StaticNavTree::open"<<endl);
-    if (level>0) {
-      level--;
-      N::setPos(path[level]);
-    }
+    trace(MDO<<"StaticNavTree::close"<<endl);
+    if (level>0) level--;
   }
 
   Idx level=0;
