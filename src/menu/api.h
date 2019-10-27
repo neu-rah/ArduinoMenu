@@ -48,10 +48,6 @@ template<typename I=Nil> struct Empty:I {
     Out::template fmt<r,io,It,Out,Nav>(nav,n);
   }
   template<typename Out> inline static void print() {}
-  // template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
-  // inline static void print(It& it,Nav& nav) {it.template print<It,Nav>(it,nav);}
-  // template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
-  // inline static void print(It& it,Nav& nav) {it.It::template print<Out>();}
   template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
   inline static void print(It& it,Nav& nav) {}
   template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>

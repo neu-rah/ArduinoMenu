@@ -72,28 +72,8 @@
         return I::template cmd<c,It,Nav>(it,nav);
       }
 
-      // inline bool up() {
-      //   T s=tunning?tune:step;
-      //   if (value+s<=high) value+=s;
-      //   return true;
-      // }
-      // inline bool down() {
-      //   T s=tunning?tune:step;
-      //   if (value-s>=low) {
-      //     value-=s;
-      //     return true;
-      //   }
-      //   return false;
-      // }
-      // template<typename Nav> inline bool enter(Nav& nav,Idx at=0) {return tunning^=true;}
-      // // inline bool enter() {return tunning^=true;}
-      // inline bool esc() {return true;}//true=>allow unfocus
-      // inline Modes mode() {return tunning?Modes::Tune:Modes::Edit;}
     protected:
-      // bool tunning=false;//TODO: this state should be stored on navigation! (or field agent)
       T reflex;//to check if original value changed
-      // T low,high,step,tune;
-      // static ItemCmd<This> cmds;
   };
 
   // template<typename T>

@@ -35,29 +35,7 @@ struct StaticWrap:Of {
     Of::template print<It,Nav,Out,P>(it,nav);
     Suffix::template print<It,Nav,Out,P>(it,nav);
   }
-  // template<typename Out>
-  // inline void print() {
-  //   // Prefix::template print<Out>();
-  //   Of::template print<Out>();
-  //   // Suffix::template print<Out>();
-  // }
 };
-
-// template<typename T>
-// struct Value {
-//   inline Value(T t):v(t){}
-//   T v;
-//   template<typename... OO>
-//   inline T value(OO... oo) const {return v;}
-//   using Type=T;
-// };
-
-// template<typename R,typename F,typename... OO>
-// struct Func:Value<F> {
-//   using Value<F>::Value;
-//   inline R operator()(OO... oo) const {return f(oo...);}
-//   using Res=R;
-// };
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 // compile time list
@@ -69,10 +47,6 @@ struct StaticData:StaticData<I> {
   using Tail=StaticData<II...>;
   using Base::size;
   Tail next;
-
-  // template<typename n>
-  // using Item=typename lpp::Index<lpp::List<lpp::As<I>,lpp::As<II>...>,n>::App::Type;
-  // template<Idx n> inline Item<lpp::N<n>> item() {return n?next.template item<n-1>():*this;};
 
   inline static constexpr Idx size() {return Tail::size()+1;}
   inline static constexpr Idx size(Ref ref) {

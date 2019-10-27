@@ -75,26 +75,26 @@ int year=1967;
 using MainMenu=StaticMenu<
   StaticText<&main_txt>,
   StaticData<
-    // Action<EnDis<Op1>,test>,
-    // EnDis<MyAction<Op2>>,
-    // Action<StaticText<&tog_txt>,tog12>,
+    Action<EnDis<Op1>,test>,
+    EnDis<MyAction<Op2>>,
+    Action<StaticText<&tog_txt>,tog12>,
     StaticWrap<NumField<int,year,1900,2100,10,1>,StaticText<&yr_txt>>,
-    // Op3,
-    // Op3,
-    // Op3,
-    // // Debug<//will print event info if on debug mode
-    //   StaticMenu<
-    //     StaticText<&sub_txt>,
-    //     StaticData<
-    //       StaticText<&subop_txt>,
-    //       MyAction<Op1>,
-    //       Action<Op2,test>,
-    //       Op3,
-    //       Action<StaticText<&exit_txt>,exit>
-    //     >
-    //   >,
-    // // >,
-    // Op3,
+    Op3,
+    Op3,
+    Op3,
+    // Debug<//will print event info if on debug mode
+      StaticMenu<
+        StaticText<&sub_txt>,
+        StaticData<
+          StaticText<&subop_txt>,
+          MyAction<Op1>,
+          Action<Op2,test>,
+          Op3,
+          Action<StaticText<&exit_txt>,exit>
+        >
+      >,
+    // >,
+    Op3,
     Action<StaticText<&quit_txt>,quit>
   >
 >;
