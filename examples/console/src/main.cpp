@@ -29,6 +29,7 @@ const char* quit_txt="<Quit";
 const char* exit_txt="<Exit";
 const char* main_txt="Main menu";
 const char* sub_txt="Sub-menu";
+const char* yr_txt="Year";
 using Op1=StaticText<&op1_txt>;
 using Op2=StaticText<&op2_txt>;
 using Op3=StaticText<&op3_txt>;
@@ -69,31 +70,31 @@ struct MyAction:I {
 //will togle enable/disable state of the first 2 options
 bool tog12();
 
-int ano=1967;
+int year=1967;
 
 using MainMenu=StaticMenu<
   StaticText<&main_txt>,
   StaticData<
-    Action<EnDis<Op1>,test>,
-    EnDis<MyAction<Op2>>,
-    Action<StaticText<&tog_txt>,tog12>,
-    NumField<int,ano,1900,2100,10,1>,
-    Op3,
-    Op3,
-    Op3,
-    // Debug<//will print event info if on debug mode
-      StaticMenu<
-        StaticText<&sub_txt>,
-        StaticData<
-          StaticText<&subop_txt>,
-          MyAction<Op1>,
-          Action<Op2,test>,
-          Op3,
-          Action<StaticText<&exit_txt>,exit>
-        >
-      >,
-    // >,
-    Op3,
+    // Action<EnDis<Op1>,test>,
+    // EnDis<MyAction<Op2>>,
+    // Action<StaticText<&tog_txt>,tog12>,
+    StaticWrap<NumField<int,year,1900,2100,10,1>,StaticText<&yr_txt>>,
+    // Op3,
+    // Op3,
+    // Op3,
+    // // Debug<//will print event info if on debug mode
+    //   StaticMenu<
+    //     StaticText<&sub_txt>,
+    //     StaticData<
+    //       StaticText<&subop_txt>,
+    //       MyAction<Op1>,
+    //       Action<Op2,test>,
+    //       Op3,
+    //       Action<StaticText<&exit_txt>,exit>
+    //     >
+    //   >,
+    // // >,
+    // Op3,
     Action<StaticText<&quit_txt>,quit>
   >
 >;
@@ -132,8 +133,8 @@ int main() {
   Console::raw("AM5 Tests ----------------------");
   Console::nl();
 
-  mainMenu.enable(0,true);//enable first option
-  mainMenu.enable(1,false);//disable second option
+  // mainMenu.enable(0,true);//enable first option
+  // mainMenu.enable(1,false);//disable second option
 
   // nav.path[0]=3;
   // nav.enter();

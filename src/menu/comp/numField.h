@@ -29,6 +29,8 @@
       }
       template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
       inline void print(It& it,Nav& nav) {
+        it.template fmt<Roles::Mode,true ,It,Out,Nav>(nav);
+        it.template fmt<Roles::Mode,false ,It,Out,Nav>(nav);
         it.template fmt<Roles::Value,true ,It,Out,Nav>(nav);
         print<Out>();
         it.template fmt<Roles::Value,false ,It,Out,Nav>(nav);
@@ -36,20 +38,30 @@
       using I::cmd;
       template<Cmds c,typename It,typename Nav>
       inline bool cmd(It& it,Nav& nav) {
-        _trace(MDO<<"numField::cmd:"<<c<<endl);
+        trace(MDO<<"numField::cmd:"<<c<<endl);
         switch(c) {
-          case Cmds::Activate:return true;//yes we can process commands
-          case Cmds::Enter:return tunning^=true;//assuming true => proceed
+          case Cmds::Activate:
+            nav.setMode(Modes::Edit);
+            return true;//yes we can process commands
+          case Cmds::Enter:
+            if (nav.mode()==Modes::Tune) {
+              nav.setMode(Modes::Normal);
+              return false;
+            } else {
+              nav.setMode(Modes::Tune);
+              return true;
+            }
+            // return tunning^=true;//assuming true => proceed
           case Cmds::Esc:assert(false);return true;
           case Cmds::Up: {
-              T s=tunning?tune:step;
+              T s=(nav.mode()==Modes::Tune)?tune:step;
               if (value+s<=high) {
                 value+=s;
                 return true;
               }
             } return false;
           case Cmds::Down: {
-              T s=tunning?tune:step;
+              T s=(nav.mode()==Modes::Tune)?tune:step;
               if (value-s>=low) {
                 value-=s;
                 return true;
@@ -76,9 +88,9 @@
       // template<typename Nav> inline bool enter(Nav& nav,Idx at=0) {return tunning^=true;}
       // // inline bool enter() {return tunning^=true;}
       // inline bool esc() {return true;}//true=>allow unfocus
-      inline Modes mode() {return tunning?Modes::Tune:Modes::Edit;}
+      // inline Modes mode() {return tunning?Modes::Tune:Modes::Edit;}
     protected:
-      bool tunning=false;//TODO: this state should be stored on navigation! (or field agent)
+      // bool tunning=false;//TODO: this state should be stored on navigation! (or field agent)
       T reflex;//to check if original value changed
       // T low,high,step,tune;
       // static ItemCmd<This> cmds;

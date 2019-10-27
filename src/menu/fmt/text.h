@@ -40,7 +40,7 @@ struct TextFmt:public O {
     }
     template<bool io,typename I,typename Out,typename Nav>
     static inline void fmtMode(Nav& nav,Idx n=0) {
-      if(io) switch(Nav::mode()) {
+      if(io) switch(nav.mode()) {
         case Modes::Normal: Out::raw(' ');break;
         case Modes::Edit: Out::raw(':');break;
         case Modes::Tune: Out::raw('>');break;

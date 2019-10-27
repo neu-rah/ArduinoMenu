@@ -35,6 +35,8 @@ struct StaticNavTree:N {
   inline StaticNavTree(Data& o):data(o) {}
   operator Ref() {return {level,path};}
 
+  inline Modes mode() const {return state;}
+  inline void setMode(Modes m) {state=m;}
   inline Idx pos() const {return path[level];}
   inline void setPos(Idx n) {path[level]=n;}
   inline bool selected(Idx idx) const {return path[level]==idx;}
@@ -111,12 +113,14 @@ struct StaticNavTree:N {
 
   inline void close() {
     trace(MDO<<"StaticNavTree::close"<<endl);
+    state=Modes::Normal;
     if (level>0) level--;
   }
 
   Idx level=0;
   Idx path[max_depth];
   Data& data;
+  Modes state=Modes::Normal;
 };
 
 template<typename N>

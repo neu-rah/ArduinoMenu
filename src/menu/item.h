@@ -25,21 +25,39 @@ struct StaticText:I {
   inline static void print(It& it,Nav& nav) {print<Out>();}
 };
 
-template<typename T>
-struct Value {
-  inline Value(T t):v(t){}
-  T v;
-  template<typename... OO>
-  inline T value(OO... oo) const {return v;}
-  using Type=T;
+//wrap an item with static prefix/suffix content
+template<typename Of,typename Prefix,typename Suffix=Empty<>>
+struct StaticWrap:Of {
+  using Of::print;
+  template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
+  inline void print(It& it,Nav& nav) {
+    Prefix::template print<It,Nav,Out,P>(it,nav);
+    Of::template print<It,Nav,Out,P>(it,nav);
+    Suffix::template print<It,Nav,Out,P>(it,nav);
+  }
+  // template<typename Out>
+  // inline void print() {
+  //   // Prefix::template print<Out>();
+  //   Of::template print<Out>();
+  //   // Suffix::template print<Out>();
+  // }
 };
 
-template<typename R,typename F,typename... OO>
-struct Func:Value<F> {
-  using Value<F>::Value;
-  inline R operator()(OO... oo) const {return f(oo...);}
-  using Res=R;
-};
+// template<typename T>
+// struct Value {
+//   inline Value(T t):v(t){}
+//   T v;
+//   template<typename... OO>
+//   inline T value(OO... oo) const {return v;}
+//   using Type=T;
+// };
+
+// template<typename R,typename F,typename... OO>
+// struct Func:Value<F> {
+//   using Value<F>::Value;
+//   inline R operator()(OO... oo) const {return f(oo...);}
+//   using Res=R;
+// };
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 // compile time list
