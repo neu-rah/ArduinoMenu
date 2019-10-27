@@ -58,7 +58,7 @@ template<typename I=Nil> struct Empty:I {
   }
   template<Cmds c,typename It,typename Nav>
   inline static bool cmd(It& it,Nav& nav,Ref,Idx) {
-    _trace(MDO<<"cmd convertion!"<<endl);
+    trace(MDO<<"cmd convertion!"<<endl);
     return it.template cmd<c,It,Nav>(it,nav);}
   template<Cmds c,typename It,typename Nav>
   inline static bool cmd(It& it,Nav& nav) {return c==Cmds::Activate?false:nav.template _cmd<c,It,Nav>(it,nav);}

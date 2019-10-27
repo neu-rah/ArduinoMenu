@@ -96,7 +96,7 @@ struct StaticData:StaticData<I> {
 
   template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
   inline void printItems(It& it,Nav& nav) {
-    _trace(MDO<<"StaticData<I,II...>::printItems"<<endl);
+    trace(MDO<<"StaticData<I,II...>::printItems"<<endl);
     Out::posTop(nav);
     if (!Out::freeY()) return;
     Out::clrLine(Out::posY());
@@ -222,22 +222,8 @@ struct StaticMenu:B {
   using B::printMenu;
   template<typename It,typename Nav,typename Out>
   inline void printMenu(It& it,Nav& nav,Ref ref,Idx n) {
-    _trace(
-      MDO<<"StaticMenu::printMenu Idx:"<<n<<" ref.len:"<<ref.len<<" parentDraw:"<<This::parentDraw(n)<<endl;
-      nav.debug_path();
-    );
-    if (ref.len==1&&B::parentDraw(n)) {
-      // ref.len=0;
-      _trace(
-        MDO<<"NEED PARENT DRAW HERE!"<<endl;
-        MDO<<"ref.head():"<<ref.head()<<endl;
-      );
-      Out::template printParent<It,Nav,Out>(it,nav);
-      // This::printMenu<It,Nav,Out>(it,nav,ref,0);//does nothing but delaying the old behavior...
-      _trace(
-        MDO<<"WE ARE DONE WITH PARENT DRAW HERE!"<<endl;
-      );
-    } else if (ref.len) B::template printMenu<It,Nav,Out>(it,nav,ref,n);
-    else Out::template printMenu<This,Nav,Out>(*this,nav);//this will depend on current nav state and NOT on synthesized for parent draw
+    if (ref.len==1&&B::parentDraw(n)) Out::template printParent<It,Nav,Out>(it,nav);
+    else if (ref.len) B::template printMenu<It,Nav,Out>(it,nav,ref,n);
+    else Out::template printMenu<This,Nav,Out>(*this,nav);
   }
 };
