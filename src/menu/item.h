@@ -41,6 +41,8 @@ struct Func:Value<F> {
   using Res=R;
 };
 
+////////////////////////////////////////////////////////////////////////////////////////////
+// compile time list
 template<typename I,typename... II>
 struct StaticData:StaticData<I> {
   using This=StaticData<I,II...>;
@@ -54,9 +56,7 @@ struct StaticData:StaticData<I> {
   // using Item=typename lpp::Index<lpp::List<lpp::As<I>,lpp::As<II>...>,n>::App::Type;
   // template<Idx n> inline Item<lpp::N<n>> item() {return n?next.template item<n-1>():*this;};
 
-  inline static constexpr Idx size() {
-    return Tail::size()+1;
-  }
+  inline static constexpr Idx size() {return Tail::size()+1;}
   inline static constexpr Idx size(Ref ref) {
     return ref.len?size(ref,ref.head()):size();
   }
@@ -66,6 +66,10 @@ struct StaticData:StaticData<I> {
         ref.len?
           I::size(ref.tail(),ref.tail().head()):
           size();
+  }
+  using I::parentDraw;
+  inline static constexpr bool parentDraw(Idx n) {
+    return n?Tail::parentDraw(n-1):I::parentDraw();
   }
   using I::enabled;
   inline bool enabled(Idx n) {return n?next.enabled(n-1):enabled();}
@@ -84,14 +88,15 @@ struct StaticData:StaticData<I> {
 
   template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
   inline void printItem(It& it,Nav& nav,Idx n,Idx p=0) {
-    if (p) next.template printItem<It,Nav,Out,P>(it,nav,n,p-1);
     if (!Out::freeY()) return;
+    if (p) next.template printItem<It,Nav,Out,P>(it,nav,n,p-1);
     StaticData<I>::template printItem<I,Nav,Out>(*this,nav,n);
     next.Tail::template printItem<It,Nav,Out>(it,nav,n+1);
   }
 
   template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
   inline void printItems(It& it,Nav& nav) {
+    _trace(MDO<<"StaticData<I,II...>::printItems"<<endl);
     Out::posTop(nav);
     if (!Out::freeY()) return;
     Out::clrLine(Out::posY());
@@ -103,7 +108,8 @@ struct StaticData:StaticData<I> {
   template<typename It,typename Nav,typename Out>
   inline void printMenu(It& it,Nav& nav,Ref ref,Idx n) {
     if (n) next.template printMenu<It,Nav,Out>(it,nav,ref,n-1);
-    else if (ref.len) I::template printMenu<I,Nav,Out>(*reinterpret_cast<I*>(this),nav,ref.tail(),ref.tail().head());
+    else if (ref.len)
+      I::template printMenu<I,Nav,Out>(*reinterpret_cast<I*>(this),nav,ref.tail(),ref.tail().head());
     else Out::template printMenu<I,Nav,Out>(*reinterpret_cast<I*>(this),nav);
   }
 
@@ -126,9 +132,15 @@ struct StaticData:StaticData<I> {
   }
 };
 
+/////////////////////////////////////////////////////////////////////////////////////////
+// compile time list termination
 template<typename I>
 struct StaticData<I>:I {
   using This=StaticData<I>;
+  using I::parentDraw;
+  inline static constexpr bool parentDraw(Idx n) {
+    return I::parentDraw();
+  }
   inline static constexpr bool canNav() {return true;}
   inline static constexpr bool canNav(Ref ref,Idx n) {return n?false:canNav();}
   inline static constexpr Idx size() {return 1;}
@@ -210,11 +222,22 @@ struct StaticMenu:B {
   using B::printMenu;
   template<typename It,typename Nav,typename Out>
   inline void printMenu(It& it,Nav& nav,Ref ref,Idx n) {
-    trace(
-      MDO<<"StaticMenu::printMenu Idx:"<<n<<endl;
+    _trace(
+      MDO<<"StaticMenu::printMenu Idx:"<<n<<" ref.len:"<<ref.len<<" parentDraw:"<<This::parentDraw(n)<<endl;
       nav.debug_path();
     );
-    if (ref.len) B::template printMenu<It,Nav,Out>(it,nav,ref,n);
-    else Out::template printMenu<This,Nav,Out>(*this,nav);
+    if (ref.len==1&&B::parentDraw(n)) {
+      // ref.len=0;
+      _trace(
+        MDO<<"NEED PARENT DRAW HERE!"<<endl;
+        MDO<<"ref.head():"<<ref.head()<<endl;
+      );
+      Out::template printParent<It,Nav,Out>(it,nav);
+      // This::printMenu<It,Nav,Out>(it,nav,ref,0);//does nothing but delaying the old behavior...
+      _trace(
+        MDO<<"WE ARE DONE WITH PARENT DRAW HERE!"<<endl;
+      );
+    } else if (ref.len) B::template printMenu<It,Nav,Out>(it,nav,ref,n);
+    else Out::template printMenu<This,Nav,Out>(*this,nav);//this will depend on current nav state and NOT on synthesized for parent draw
   }
 };

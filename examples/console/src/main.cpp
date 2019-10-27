@@ -132,22 +132,13 @@ int main() {
   Console::raw("AM5 Tests ----------------------");
   Console::nl();
 
-  // nav.path[0]=7;
-  // nav.path[1]=4;
-  // nav.level=1;
-  // cout<<"size:"<<nav.size()<<endl;
-  // // nav.setPos(3);
-  // nav.enter();
-  // nav.up();
-  // cout<<"size:"<<nav.size()<<endl;
-
   mainMenu.enable(0,true);//enable first option
   mainMenu.enable(1,false);//disable second option
-  // // cout<<mainMenu.enabled(0)<<"="<<mainMenu.enabled(1)<<endl;
-  //
-  // // nav.enter();
-  //
-  // // menu------------------------
+
+  // nav.path[0]=3;
+  // nav.enter();
+
+  // menu------------------------
   nav.print<Out>();
   do {
     if (kbhit()) {

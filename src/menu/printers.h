@@ -26,6 +26,12 @@ template<typename P=TextMeasure>
 struct FullPrinter:public P {
   using This=FullPrinter<P>;
   template<typename It,typename Nav,typename Out>
+  inline static void printParent(It& it,Nav& nav) {
+    nav.level--;
+    printMenu<It,Nav,Out>(it,nav);
+    nav.level++;
+  }
+  template<typename It,typename Nav,typename Out>
   inline static void printMenu(It& it,Nav& nav) {
     Out::newView();
     Out::template fmt<Roles::Panel,true,It,Out,Nav>(nav);

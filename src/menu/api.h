@@ -65,5 +65,5 @@ template<typename I=Nil> struct Empty:I {
   inline static constexpr bool canNav() {return false;}
   inline static constexpr bool canNav(Ref ref,Idx n) {return canNav();}
   inline static constexpr bool parentDraw() {return false;}
-  inline static constexpr bool parentDraw(Ref ref,Idx n) {return parentDraw();}
+  inline static constexpr bool parentDraw(Idx n) {return parentDraw();}
 };

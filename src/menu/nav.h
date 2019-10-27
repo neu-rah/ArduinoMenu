@@ -56,7 +56,7 @@ struct StaticNavTree:N {
   }
 
   inline void debug_path() {
-    trace(
+    _trace(
       MDO<<"  nav path:[";
       for(int n=0;n<=level;n++) MDO<<(n?",":"")<<path[n];
       MDO<<"]"<<endl;
@@ -64,6 +64,8 @@ struct StaticNavTree:N {
     );
   }
 
+  // inline bool parentDraw() {return parentDraw(operator Ref());}
+  // inline bool parentDraw(Ref ref) {return data.parentDraw(ref,ref.head());}
   inline Idx size() {return size(operator Ref());}
   inline Idx size(Ref ref) {return data.size(ref);}
   inline bool enabled(Idx n) {return data.enabled(*this,n);}
@@ -83,7 +85,7 @@ struct StaticNavTree:N {
     }
     Ref ref=*this;
     trace(MDO<<"Data->cmd:"<<c<<" to level:"<<level<<" idx:"<<path[level]<<endl);
-    debug_path();
+    // debug_path();
     bool res=data.template cmd<c,Data,Nav>(data,nav,ref,ref.head());
     if (c==Cmds::Enter&&!res) {
       trace(MDO<<"StaticNavTree calling close by "<<c<<" returning false"<<endl);
@@ -104,7 +106,7 @@ struct StaticNavTree:N {
     if (level>=max_depth-1) return;
     level++;
     path[level]=0;
-    debug_path();
+    // debug_path();
   }
 
   inline void close() {

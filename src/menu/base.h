@@ -15,16 +15,6 @@ enum class Modes {Normal,Edit,Tune};
 enum class Roles:Idx {Panel,Menu,Title,Body,Prompt,Index,Cursor,Name,Mode,Value,Unit,Raw};
 enum class Cmds:Idx {None=0,Activate=1,Enter=2,Esc=4,Up=8,Down=16,Left=32,Right=64};
 
-//a reference to menu item that works also for static structures
-struct Ref {
-  Idx len;
-  Idx* path;
-  inline Idx head() const {return path[0];}
-  inline Ref tail() const {return {(Idx)len-1,&path[1]};}
-  inline operator Idx() {return len;}
-  inline operator bool() {return len;}
-};
-
 #ifdef MENU_DEBUG
   constexpr char* roleNames[]{
     "Panel","Menu","Title","Body","Prompt","Index",
@@ -49,6 +39,17 @@ struct Ref {
   }
 
 #endif
+
+//a reference to menu item that works also for static structures
+//and dynamic access
+struct Ref {
+  Idx len;
+  Idx* path;
+  inline Idx head() const {return path[0];}
+  inline Ref tail() const {return {(Idx)len-1,&path[1]};}
+  inline operator Idx() {return len;}
+  inline operator bool() {return len;}
+};
 
 #include "debug.h"
 #define endl "\r\n"
