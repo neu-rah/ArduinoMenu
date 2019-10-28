@@ -31,6 +31,8 @@ const char* exit_txt="<Exit";
 const char* main_txt="Main menu";
 const char* sub_txt="Sub-menu";
 const char* yr_txt="Year";
+const char* vcc_txt="VCC";
+const char* volts_txt="V";
 using Op1=StaticText<&op1_txt>;
 using Op2=StaticText<&op2_txt>;
 using Op3=StaticText<&op3_txt>;
@@ -80,6 +82,22 @@ int year=1967;
 //   "last item"
 // };
 
+int vcc=3;
+
+template<typename O=Empty<>>
+struct Test:O {
+  Test(int) {/*must use this constructor*/}
+};
+
+//construction problem
+// using MainMenu=StaticMenu<
+//   StaticText<&main_txt>,
+//   StaticData<
+//     Test<>,
+//     Test<>
+//   >
+// >;
+
 using MainMenu=StaticMenu<
   StaticText<&main_txt>,
   StaticData<
@@ -87,6 +105,7 @@ using MainMenu=StaticMenu<
     EnDis<MyAction<Op2>>,
     Action<StaticText<&tog_txt>,tog12>,
     NumField<StaticText<&yr_txt>,int,year,1900,2100,1>,
+    NumField<StaticText<&vcc_txt>,decltype(vcc),vcc,0,100,10,1,AsUnit<StaticText<&volts_txt>>>,
     // StaticText<myList>,
     Op3,
     Op3,
@@ -129,6 +148,8 @@ int main() {
 
   mainMenu.enable(0,true);//enable first option
   mainMenu.enable(1,false);//disable second option
+
+  nav.path[0]=4;
 
   // menu------------------------
   nav.print<Out>();

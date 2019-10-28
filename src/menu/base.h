@@ -15,6 +15,29 @@ enum class Modes {Normal,Edit,Tune};
 enum class Roles:Idx {Panel,Menu,Title,Body,Prompt,Index,Cursor,Name,Mode,Value,Unit,Raw};
 enum class Cmds:Idx {None=0,Activate=1,Enter=2,Esc=4,Up=8,Down=16,Left=32,Right=64};
 
+template<Roles role,typename O>
+struct As:O {
+  template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
+  inline static void print(It& it,Nav& nav) {
+    it.template fmt<role,true,It,Out,Nav>(nav);
+    O::template print<It,Nav,Out>(it,nav);
+    it.template fmt<role,false,It,Out,Nav>(nav);
+  }
+};
+
+template<typename O> using AsPanel=As<Roles::Panel,O>;
+template<typename O> using AsMenu=As<Roles::Menu,O>;
+template<typename O> using AsTitle=As<Roles::Title,O>;
+template<typename O> using AsBody=As<Roles::Body,O>;
+template<typename O> using AsPrompt=As<Roles::Prompt,O>;
+template<typename O> using AsIndex=As<Roles::Index,O>;
+template<typename O> using AsCursor=As<Roles::Cursor,O>;
+template<typename O> using AsName=As<Roles::Name,O>;
+template<typename O> using AsMode=As<Roles::Mode,O>;
+template<typename O> using AsValue=As<Roles::Value,O>;
+template<typename O> using AsUnit=As<Roles::Unit,O>;
+template<typename O> using AsRaw=As<Roles::Raw,O>;
+
 #ifdef MENU_DEBUG
   constexpr char* roleNames[]{
     "Panel","Menu","Title","Body","Prompt","Index",

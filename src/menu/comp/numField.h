@@ -79,7 +79,7 @@
       T reflex;//to check if original value changed
   };
 
-  template<typename Label,typename T,T& value,T low,T high,T step,T tune=0,typename I=Empty<>,typename Unit=Empty<>>
+  template<typename Label,typename T,T& value,T low,T high,T step,T tune=0,typename Unit=Empty<>>
   using NumField=StaticWrap<NumValue<T,value,low,high,step,tune>,Label,Unit>;
 
 // };

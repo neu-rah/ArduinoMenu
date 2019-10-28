@@ -28,6 +28,7 @@ struct StaticText:I {
 //wrap an item with static prefix/suffix content
 template<typename Of,typename Prefix,typename Suffix=Empty<>>
 struct StaticWrap:Of {
+  using Of::Of;
   using Of::print;
   template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
   inline void print(It& it,Nav& nav) {
@@ -46,6 +47,7 @@ struct StaticData:StaticData<I> {
   using Base=StaticData<I>;
   using Tail=StaticData<II...>;
   using Base::size;
+  using Base::Base;
   Tail next;
 
   inline static constexpr Idx size() {return Tail::size()+1;}
@@ -130,6 +132,7 @@ template<typename I>
 struct StaticData<I>:I {
   using This=StaticData<I>;
   using I::parentDraw;
+  using I::I;
   inline static constexpr bool parentDraw(Idx n) {
     return I::parentDraw();
   }
@@ -202,6 +205,7 @@ struct StaticMenu:B {
   using This=StaticMenu<T,B>;
   using Title=T;
   using Body=B;
+  using B::B;
   template<typename Out> inline static void print() {T::template print<Out>();}
   template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
   inline static void print(It& it,Nav& nav) {

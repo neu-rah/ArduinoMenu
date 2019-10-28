@@ -36,7 +36,7 @@ struct TextFmt:public O {
     }
     template<bool io,typename I,typename Out,typename Nav>
     static inline void fmtUnit(Nav& nav,Idx n=0) {
-      // Out::raw(io?"(":")");
+      Out::raw(io?"(":")");
     }
     template<bool io,typename I,typename Out,typename Nav>
     static inline void fmtMode(Nav& nav,Idx n=0) {
