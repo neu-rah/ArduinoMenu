@@ -1,10 +1,11 @@
+#include <signal.h>
 #include <menu.h>
 #include <menu/IO/consoleOut.h>
+#include <menu/IO/linuxKeyIn.h>
 #include <menu/fmt/text.h>
 #include <menu/fmt/titleWrap.h>
 #include <menu/comp/endis.h>
 #include <menu/comp/numField.h>
-#include "linuxkb.h"
 
 bool running=true;
 
@@ -72,13 +73,21 @@ bool tog12();
 
 int year=1967;
 
+// const char* myList[]{
+//   "first item",
+//   "secod item",
+//   "third item",
+//   "last item"
+// };
+
 using MainMenu=StaticMenu<
   StaticText<&main_txt>,
   StaticData<
     Action<EnDis<Op1>,test>,
     EnDis<MyAction<Op2>>,
     Action<StaticText<&tog_txt>,tog12>,
-    NumField<StaticText<&yr_txt>,int,year,1900,2100,10,1>,
+    NumField<StaticText<&yr_txt>,int,year,1900,2100,1>,
+    // StaticText<myList>,
     Op3,
     Op3,
     Op3,
@@ -92,7 +101,7 @@ using MainMenu=StaticMenu<
           Op3,
           Action<StaticText<&exit_txt>,exit>
         >
-      >,
+      >,//remove , if using Debug
     // >,
     Op3,
     Action<StaticText<&quit_txt>,quit>
@@ -113,41 +122,20 @@ bool tog12() {
   return true;
 }
 
-//handle serial keys to navigate menu
-bool keys(int key) {
-  switch(key) {
-    case 91:return false;
-    case 66:case '+': return nav.up();
-    case 65:case '-': return nav.down();
-    case 13:case 67:case '*': return nav.enter();
-    case 27:case 68:case '/': return nav.esc();
-    case 3:running=false;break;
-    default: _trace(MDO<<"key:"<<key<<"["<<(key>32?(char)key:'?')<<"]"<<endl);
-  }
-  return false;
-}
-
 int main() {
-  // A1::enabled();
   set_conio_terminal_mode();
   Console::raw("AM5 Tests ----------------------");
   Console::nl();
 
-  // mainMenu.enable(0,true);//enable first option
-  // mainMenu.enable(1,false);//disable second option
-
-  // nav.path[0]=3;
-  // nav.enter();
+  mainMenu.enable(0,true);//enable first option
+  mainMenu.enable(1,false);//disable second option
 
   // menu------------------------
   nav.print<Out>();
   do {
-    if (kbhit()) {
-      int k=getch();
-      if (k==27) if (kbhit()) k=getch();
-      if (keys(k)) nav.print<Out>();
-    }
+    if (nav.doInput<LinuxKeyIn>()) nav.print<Out>();
   } while(running);
   Console::nl();
+  reset_terminal_mode();
   return 0;
 }
