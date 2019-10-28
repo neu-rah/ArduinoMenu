@@ -10,15 +10,15 @@
 // namespace AM5 {
 
   /**
-  * The NumField class links to any numeric type variable
+  * The NumValue class links to any numeric type variable
   * and allows changing it between the validation range
   */
   template<typename T,T& value,T low,T high,T step,T tune,typename I=Empty<>>
-  class NumField:public I {
+  class NumValue:public I {
     public:
       using I::I;
-      using This=NumField<T,value,low,high,step,tune,I>;
-      inline NumField()
+      using This=NumValue<T,value,low,high,step,tune,I>;
+      inline NumValue()
         :reflex(value)
         {}
       inline static constexpr bool canNav() {return true;}
@@ -76,6 +76,7 @@
       T reflex;//to check if original value changed
   };
 
-  // template<typename T>
-  // using NumField=asValue<NavHandler<NumFieldDef<T>>>;
+  template<typename Label,typename T,T& value,T low,T high,T step,T tune,typename I=Empty<>,typename Unit=Empty<>>
+  using NumField=StaticWrap<NumValue<T,value,low,high,step,tune>,Label,Unit>;
+
 // };

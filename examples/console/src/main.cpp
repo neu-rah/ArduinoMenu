@@ -78,7 +78,7 @@ using MainMenu=StaticMenu<
     Action<EnDis<Op1>,test>,
     EnDis<MyAction<Op2>>,
     Action<StaticText<&tog_txt>,tog12>,
-    StaticWrap<NumField<int,year,1900,2100,10,1>,StaticText<&yr_txt>>,
+    NumField<StaticText<&yr_txt>,int,year,1900,2100,10,1>,
     Op3,
     Op3,
     Op3,
