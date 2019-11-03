@@ -26,27 +26,28 @@ template<typename P=TextMeasure>
 struct FullPrinter:public P {
   using This=FullPrinter<P>;
   template<typename It,typename Nav,typename Out>
-  inline static void printParent(It& it,Nav& nav) {
+  inline static void printParent(It& it,Nav& nav,Out& out) {
     nav.level--;
-    printMenu<It,Nav,Out>(it,nav);
+    printMenu<It,Nav,Out>(it,nav,out);
     nav.level++;
   }
   template<typename It,typename Nav,typename Out>
-  inline static void printMenu(It& it,Nav& nav) {
-    Out::newView();
-    Out::template fmt<Roles::Panel,true,It,Out,Nav>(nav);
-    Out::template fmt<Roles::Menu,true,It,Out,Nav>(nav);
+  inline static void printMenu(It& it,Nav& nav,Out& out) {
+    trace(MDO<<"FullPrinter::printMenu"<<endl);
+    out.newView();
+    out.template fmt<Roles::Panel,true,Nav,Out>(nav,out);
+    out.template fmt<Roles::Menu,true,Nav,Out>(nav,out);
 
     //title
-    it.template fmt<Roles::Prompt,true,It,Out,Nav>(nav);
-    it.template fmt<Roles::Title,true,It,Out,Nav>(nav);
-    it.template print<It,Nav,Out,Roles::Title>(it,nav);
-    it.template fmt<Roles::Title,false,It,Out,Nav>(nav);
-    it.template fmt<Roles::Prompt,false,It,Out,Nav>(nav);
+    out.template fmt<Roles::Prompt,true,Nav,Out>(nav,out);
+    out.template fmt<Roles::Title,true,Nav,Out>(nav,out);
+    it.template print<It,Nav,Out,Roles::Title>(it,nav,out);
+    out.template fmt<Roles::Title,false,Nav,Out>(nav,out);
+    out.template fmt<Roles::Prompt,false,Nav,Out>(nav,out);
 
-    it.template printItems<It,Nav,Out,Roles::Body>(it,nav);
+    it.template printItems<It,Nav,Out,Roles::Body>(it,nav,out);
 
-    Out::template fmt<Roles::Menu,false,It,Out,Nav>(nav);
-    Out::template fmt<Roles::Panel,false,It,Out,Nav>(nav);
+    out.template fmt<Roles::Menu,false,Nav,Out>(nav,out);
+    out.template fmt<Roles::Panel,false,Nav,Out>(nav,out);
   }
 };

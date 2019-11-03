@@ -10,79 +10,79 @@
 template<typename O>
 struct TextFmt:public O {
   public:
-    template<bool io,typename I,typename Out,typename Nav>
-    static inline void fmtPanel(Nav& nav,Idx n=0) {
-      // if (io) Out::nl();
-      // Out::raw("*--------*");
-      // Out::nl();
+    template<bool io,typename Out,typename Nav>
+    static inline void fmtPanel(Nav& nav,Out& out,Idx n=0) {
+      // if (io) out.nl();
+      // out.raw("*--------*");
+      // out.nl();
     }
-    template<bool io,typename I,typename Out,typename Nav>
-    static inline void fmtMenu(Nav& nav,Idx n=0) {
-      // Out::raw("----------");
-      // Out::nl();
+    template<bool io,typename Out,typename Nav>
+    static inline void fmtMenu(Nav& nav,Out& out,Idx n=0) {
+      // out.raw("----------");
+      // out.nl();
     }
-    template<bool io,typename I,typename Out,typename Nav>
-    static inline void fmtBody(Nav& nav,Idx n=0) {
-      // Out::raw(io?"| ":" |");
-      // Out::nl();
+    template<bool io,typename Out,typename Nav>
+    static inline void fmtBody(Nav& nav,Out& out,Idx n=0) {
+      // out.raw(io?"| ":" |");
+      // out.nl();
     }
-    template<bool io,typename I,typename Out,typename Nav>
-    static inline void fmtName(Nav& nav,Idx n=0) {
-      Out::raw(io?"«":"»");
+    template<bool io,typename Out,typename Nav>
+    static inline void fmtName(Nav& nav,Out& out,Idx n=0) {
+      out.raw(io?"«":"»");
     }
-    template<bool io,typename I,typename Out,typename Nav>
-    static inline void fmtValue(Nav& nav,Idx n=0) {
-      // Out::raw(io?"{":"}");
+    template<bool io,typename Out,typename Nav>
+    static inline void fmtValue(Nav& nav,Out& out,Idx n=0) {
+      // out.raw(io?"{":"}");
     }
-    template<bool io,typename I,typename Out,typename Nav>
-    static inline void fmtUnit(Nav& nav,Idx n=0) {
-      Out::raw(io?"(":")");
+    template<bool io,typename Out,typename Nav>
+    static inline void fmtUnit(Nav& nav,Out& out,Idx n=0) {
+      // out.raw(io?"(":")");
     }
-    template<bool io,typename I,typename Out,typename Nav>
-    static inline void fmtMode(Nav& nav,Idx n=0) {
+    template<bool io,typename Out,typename Nav>
+    static inline void fmtMode(Nav& nav,Out& out,Idx n=0) {
       if(io) switch(nav.mode()) {
-        case Modes::Normal: Out::raw(' ');break;
-        case Modes::Edit: Out::raw(':');break;
-        case Modes::Tune: Out::raw('>');break;
+        case Modes::Normal: out.raw(' ');break;
+        case Modes::Edit: out.raw(':');break;
+        case Modes::Tune: out.raw('>');break;
       }
     }
-    template<bool io,typename I,typename Out,typename Nav>
-    static inline void fmtTitle(Nav& nav,Idx n=0) {
-      // if (!io) Out::nl();
+    template<bool io,typename Out,typename Nav>
+    static inline void fmtTitle(Nav& nav,Out& out,Idx n=0) {
+      // if (!io) out.nl();
     }
-    template<bool io,typename I,typename Out,typename Nav>
-    static inline void fmtItem(Nav& nav,Idx n=0) {
-      if (!io) Out::nl();
+    template<bool io,typename Out,typename Nav>
+    static inline void fmtItem(Nav& nav,Out& out,Idx n=0) {
+      if (!io) out.nl();
     }
-    template<bool io,typename I,typename Out,typename Nav>
-    static inline void fmtIndex(Nav& nav,Idx n=0) {
+    template<bool io,typename Out,typename Nav>
+    static inline void fmtIndex(Nav& nav,Out& out,Idx n=0) {
       if(io) {
-        if (n<9) Out::raw(n+1);
-        else Out::raw(' ');
+        if (n<9) out.raw(n+1);
+        else out.raw(' ');
       }
     }
-    template<bool io,typename I,typename Out,typename Nav>
-    static inline void fmtCursor(Nav& nav,Idx n=0) {
-      if (io) Out::raw(nav.selected(n)?((nav.enabled(n)?'>':'-')):' ');
+    template<bool io,typename Out,typename Nav>
+    static inline void fmtCursor(Nav& nav,Out& out,Idx n=0) {
+      if (io) out.raw(nav.selected(n)?((nav.enabled(n)?'>':'-')):' ');
     }
   public:
-    template<Roles r,bool io,typename I,typename Out,typename Nav>
-    static inline void fmt(Nav& nav,Idx n=0) {
-      if (!io) O::template fmt<r,io,I,Out,Nav>(nav,n);
+    template<Roles r,bool io,typename Nav,typename Out>
+    static inline void fmt(Nav& nav,Out& out,Idx n=0) {
+      if (!io) O::template fmt<r,io,Nav,Out>(nav,out,n);
       switch(r) {
-        case Roles::Panel:  Out::template fmtPanel <io,I,Out,Nav>(nav,n);break;
-        case Roles::Menu:   Out::template fmtMenu  <io,I,Out,Nav>(nav,n);break;
-        case Roles::Title:  Out::template fmtTitle <io,I,Out,Nav>(nav,n);break;
-        case Roles::Body:   Out::template fmtBody  <io,I,Out,Nav>(nav,n);break;
-        case Roles::Prompt: Out::template fmtItem  <io,I,Out,Nav>(nav,n);break;
-        case Roles::Index:  Out::template fmtIndex <io,I,Out,Nav>(nav,n);break;
-        case Roles::Cursor: Out::template fmtCursor<io,I,Out,Nav>(nav,n);break;
-        case Roles::Name:   Out::template fmtName  <io,I,Out,Nav>(nav,n);break;
-        case Roles::Mode:   Out::template fmtMode  <io,I,Out,Nav>(nav,n);break;
-        case Roles::Value:  Out::template fmtValue <io,I,Out,Nav>(nav,n);break;
-        case Roles::Unit:   Out::template fmtUnit  <io,I,Out,Nav>(nav,n);break;
+        case Roles::Panel:  Out::template fmtPanel <io,Out,Nav>(nav,out,n);break;
+        case Roles::Menu:   Out::template fmtMenu  <io,Out,Nav>(nav,out,n);break;
+        case Roles::Title:  Out::template fmtTitle <io,Out,Nav>(nav,out,n);break;
+        case Roles::Body:   Out::template fmtBody  <io,Out,Nav>(nav,out,n);break;
+        case Roles::Prompt: Out::template fmtItem  <io,Out,Nav>(nav,out,n);break;
+        case Roles::Index:  Out::template fmtIndex <io,Out,Nav>(nav,out,n);break;
+        case Roles::Cursor: Out::template fmtCursor<io,Out,Nav>(nav,out,n);break;
+        case Roles::Name:   Out::template fmtName  <io,Out,Nav>(nav,out,n);break;
+        case Roles::Mode:   Out::template fmtMode  <io,Out,Nav>(nav,out,n);break;
+        case Roles::Value:  Out::template fmtValue <io,Out,Nav>(nav,out,n);break;
+        case Roles::Unit:   Out::template fmtUnit  <io,Out,Nav>(nav,out,n);break;
         default:break;
       }
-      if (io) O::template fmt<r,io,I,Out,Nav>(nav,n);
+      if (io) O::template fmt<r,io,Nav,Out>(nav,out,n);
     }
 };

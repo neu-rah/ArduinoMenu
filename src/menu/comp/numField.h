@@ -23,17 +23,17 @@
         {}
       inline static constexpr bool canNav() {return true;}
       inline static constexpr bool parentDraw() {return true;}
-      template<typename Out> inline void print() {
-        Out::raw(value);
-        I::template print<Out>();
+      template<typename Out> inline void print(Out& out) {
+        out.raw(value);
+        I::template print<Out>(out);
       }
       template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
-      inline void print(It& it,Nav& nav) {
-        it.template fmt<Roles::Mode,true ,It,Out,Nav>(nav);
-        it.template fmt<Roles::Mode,false ,It,Out,Nav>(nav);
-        it.template fmt<Roles::Value,true ,It,Out,Nav>(nav);
-        print<Out>();
-        it.template fmt<Roles::Value,false ,It,Out,Nav>(nav);
+      inline void print(It& it,Nav& nav,Out& out) {
+        it.template fmt<Roles::Mode,true ,Nav,Out>(nav,out);
+        it.template fmt<Roles::Mode,false ,Nav,Out>(nav,out);
+        it.template fmt<Roles::Value,true ,Nav,Out>(nav,out);
+        print<Out>(out);
+        it.template fmt<Roles::Value,false ,Nav,Out>(nav,out);
       }
       using I::cmd;
       template<Cmds c,typename It,typename Nav>

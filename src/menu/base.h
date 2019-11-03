@@ -18,10 +18,10 @@ enum class Cmds:Idx {None=0,Activate=1,Enter=2,Esc=4,Up=8,Down=16,Left=32,Right=
 template<Roles role,typename O>
 struct As:O {
   template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
-  inline static void print(It& it,Nav& nav) {
-    it.template fmt<role,true,It,Out,Nav>(nav);
-    O::template print<It,Nav,Out>(it,nav);
-    it.template fmt<role,false,It,Out,Nav>(nav);
+  inline static void print(It& it,Nav& nav,Out& out) {
+    it.template fmt<role,true,Nav,Out>(nav,out);
+    O::template print<It,Nav,Out>(it,nav,out);
+    it.template fmt<role,false,Nav,Out>(nav,out);
   }
 };
 
@@ -39,7 +39,7 @@ template<typename O> using AsUnit=As<Roles::Unit,O>;
 template<typename O> using AsRaw=As<Roles::Raw,O>;
 
 #ifdef MENU_DEBUG
-  constexpr char* roleNames[]{
+  constexpr const char* roleNames[]{
     "Panel","Menu","Title","Body","Prompt","Index",
     "Cursor","Name","Mode","Value","Unit","Raw"
   };
@@ -67,9 +67,9 @@ template<typename O> using AsRaw=As<Roles::Raw,O>;
 //and dynamic access
 struct Ref {
   Idx len;
-  Idx* path;
+  const Idx* path;
   inline Idx head() const {return path[0];}
-  inline Ref tail() const {return {(Idx)len-1,&path[1]};}
+  inline Ref tail() const {return {(Idx)(len-1),&path[1]};}
   inline operator Idx() {return len;}
   inline operator bool() {return len;}
 };

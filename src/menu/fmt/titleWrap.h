@@ -10,14 +10,14 @@
 // namespace Menu {
   template<typename O,char open='[',char close=']'>
   struct TitleWrapFmt:public O {
-    template<bool io,typename I,typename Out,typename Nav>
-    static inline void fmtTitle(Nav& nav,Idx n=0) {
+    template<bool io,typename Out,typename Nav>
+    static inline void fmtTitle(Nav& nav,Out& out,Idx n=0) {
       if (io) {
-        Out::raw(open);
-        O::template fmtTitle<io,I,Out,Nav>(nav,n);
+        out.raw(open);
+        O::template fmtTitle<io,Out,Nav>(nav,out,n);
       } else {
-        O::template fmtTitle<io,I,Out,Nav>(nav,n);
-        Out::raw(close);
+        O::template fmtTitle<io,Out,Nav>(nav,out,n);
+        out.raw(close);
       }
     }
   };

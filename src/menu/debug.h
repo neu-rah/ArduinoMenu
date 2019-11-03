@@ -53,7 +53,7 @@ struct DebugOut:O {
         <<" ref.len:"<<ref.len
         <<" n:"<<n<<"\r\n"
     );
-    O::template cmd<c,It,Nav>(it,nav,ref,n);
+    return O::template cmd<c,It,Nav>(it,nav,ref,n);
   }
 };
 

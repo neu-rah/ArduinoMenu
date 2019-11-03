@@ -5,7 +5,7 @@
 #include <menu/fmt/text.h>
 #include "fpsTicks.h"
 
-using Out=MenuOut<
+using Out=StaticMenuOut<
   FullPrinter<
     TextFmt<
       RangePanel<
@@ -57,9 +57,9 @@ void setup() {
   while(!Serial);
   Serial.println(F("AM5 AVR Test."));
   Serial.println(F("This is a test for size, expect minimalist menu"));
-  nav.print<Out>();
+  nav.print(out);
 }
 
 void loop() {
-  if (menuFps&&nav.doInput<SerialIn>()) nav.print<Out>();
+  if (menuFps&&nav.doInput<SerialIn>()) nav.print(out);
 }

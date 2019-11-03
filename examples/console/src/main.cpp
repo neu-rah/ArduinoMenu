@@ -20,143 +20,54 @@ using Out=MenuOut<
     >
   >
 >;
+Out out;
 
+MenuIn<LinuxKeyIn> in;
+
+const char* title_txt="Main menu";
 const char* op1_txt="Option 1";
 const char* op2_txt="Option 2";
-const char* tog_txt="Tog 1/2";
-const char* subop_txt="submenu option!";
-const char* op3_txt="...";
+const char* opn_txt="Op...";
 const char* quit_txt="<Quit";
-const char* exit_txt="<Exit";
-const char* main_txt="Main menu";
-const char* sub_txt="Sub-menu";
-const char* yr_txt="Year";
-const char* vcc_txt="VCC";
-const char* volts_txt="V";
-using Op1=StaticText<&op1_txt>;
-using Op2=StaticText<&op2_txt>;
-using Op3=StaticText<&op3_txt>;
 
-bool test() {
-  _trace(MDO<<"this is a test action"<<endl);
-  _trace(MDO<<"no context provided but we can have it"<<endl);
-  _trace(MDO<<"by accessing the navigation root object"<<endl);
-  _trace(MDO<<"assuming only one assigned to this action"<<endl);
-  return true;
-}
-
-//returning false from an action will exit the current level
-inline constexpr bool exit() {return false;}
+template<typename I>
+struct Text:I {
+  const char* text;
+  template<typename Out> inline void print(Out& out) {out.raw(text);}
+  template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
+  inline void print(It& it,Nav& nav,Out& out) {print(out);}
+};
 
 bool quit() {
   //just signal program exit
   return running=false;
 }
 
-template<typename I>
-struct MyAction:I {
-  using I::cmd;
-  template<Cmds c,typename It,typename Nav>
-  inline bool cmd(It& it,Nav& nav) {
-    cout<<"custom action with context"<<endl;
-    cout<<"we received target and nav objects"<<endl;
-    cout<<"Nav pos:"<<nav.pos()<<endl;
-    cout<<"level:"<<nav.level<<endl;
-    Ref ref=nav;
-    cout<<"path:";
-    for(int n=0;n<ref.len;n++)
-      cout<<"/"<<nav.path[n];
-    cout<<"/"<<nav.pos();
-  }
+//heap static allocation
+IItem* mainMenu_data[] {
+  new Item<StaticText<&op1_txt>>(),
+  new Item<StaticText<&op2_txt>>(),
+  new Item<StaticText<&opn_txt>>(),
+  new Item<StaticText<&opn_txt>>(),
+  new Item<Action<StaticText<&quit_txt>,quit>>
 };
 
-//will togle enable/disable state of the first 2 options
-bool tog12();
+Item<StaticText<&title_txt>> mainTitle;
+Item<Menu<>> mainMenu(mainTitle,mainMenu_data,sizeof(mainMenu_data)/sizeof(IItem*));
 
-int year=1967;
-
-// const char* myList[]{
-//   "first item",
-//   "secod item",
-//   "third item",
-//   "last item"
-// };
-
-int vcc=3;
-
-template<typename O=Empty<>>
-struct Test:O {
-  Test(int) {/*must use this constructor*/}
-};
-
-//construction problem
-// using MainMenu=StaticMenu<
-//   StaticText<&main_txt>,
-//   StaticData<
-//     Test<>,
-//     Test<>
-//   >
-// >;
-
-using MainMenu=StaticMenu<
-  StaticText<&main_txt>,
-  StaticData<
-    Action<EnDis<Op1>,test>,
-    EnDis<MyAction<Op2>>,
-    Action<StaticText<&tog_txt>,tog12>,
-    NumField<StaticText<&yr_txt>,int,year,1900,2100,1>,
-    NumField<StaticText<&vcc_txt>,decltype(vcc),vcc,0,100,10,1,AsUnit<StaticText<&volts_txt>>>,
-    // StaticText<myList>,
-    Op3,
-    Op3,
-    Op3,
-    // Debug<//will print event info if on debug mode
-      StaticMenu<
-        StaticText<&sub_txt>,
-        StaticData<
-          StaticText<&subop_txt>,
-          MyAction<Op1>,
-          Action<Op2,test>,
-          Op3,
-          Action<StaticText<&exit_txt>,exit>
-        >
-      >,//remove , if using Debug
-    // >,
-    Op3,
-    Action<StaticText<&quit_txt>,quit>
-  >
->;
-
-MainMenu mainMenu;
-
-using Nav=StaticRoot<
-  StaticNavTree<MainMenu,2>
->;
-
-Nav nav(mainMenu);
-
-bool tog12() {
-  mainMenu.enable(0,!mainMenu.enabled(0));
-  mainMenu.enable(1,!mainMenu.enabled(1));
-  return true;
-}
+NavRoot<NavTree<1>> nav(mainMenu);
 
 int main() {
-  set_conio_terminal_mode();
   Console::raw("AM5 Tests ----------------------");
   Console::nl();
 
-  mainMenu.enable(0,true);//enable first option
-  mainMenu.enable(1,false);//disable second option
-
-  nav.path[0]=4;
-
   // menu------------------------
-  nav.print<Out>();
+  nav.printOn(out);
+  nav.up();
   do {
-    if (nav.doInput<LinuxKeyIn>()) nav.print<Out>();
+    if (nav.doInput(in)) nav.printOn(out);
+    cout.flush();
   } while(running);
   Console::nl();
-  reset_terminal_mode();
   return 0;
 }

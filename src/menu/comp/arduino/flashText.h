@@ -14,10 +14,10 @@
   struct FlashText:public I {
     using I::I;
     using I::size;
-    template<typename Out> inline static void print() {
-      Out::raw(reinterpret_cast<const __FlashStringHelper *>(text[0]));
+    template<typename Out> inline static void print(Out& out) {
+      out.raw(reinterpret_cast<const __FlashStringHelper *>(text[0]));
     }
     template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
-    inline static void print(It& it,Nav& nav) {print<Out>();}
+    inline static void print(It& it,Nav& nav,Out& out) {print<Out>(out);}
   };
 // };

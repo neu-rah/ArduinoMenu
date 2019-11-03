@@ -36,6 +36,7 @@ int getch() {
 
 struct LinuxKeyIn {
   inline LinuxKeyIn() {set_conio_terminal_mode();}//capture the keyboard
+  inline ~LinuxKeyIn() {reset_terminal_mode();}//capture the keyboard
   template<typename Nav,bool invY=false>
   inline static bool cmd(Nav& nav) {
     if (kbhit()) {

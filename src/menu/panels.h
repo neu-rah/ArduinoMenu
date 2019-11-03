@@ -1,6 +1,10 @@
 /* -*- C++ -*- */
 #pragma once
 
+/**************
+This os part of the output system
+*/
+
 #include "api.h"
 
 //Output Device Operation
@@ -35,27 +39,30 @@ class RangePanel:public O {
     inline Idx top() const {return topLine;}
     inline void setTop(Idx n) {topLine=n;}
     inline void newView() {
+      trace(MDO<<"RangePanel::newView"<<endl);
       freeLines=O::height();
     }
     inline void useY(Idx uy=1) {
       //devices should stop printing if no free lines,
       //otherwise we should ignore somewhere, but not here
       // if (!freeLines) {
-      //   _trace(MDO<<"WTF!"<<endl);
+      //   trace(MDO<<"WTF!"<<endl);
       // }
       // assert(freeLines);
       if (freeLines) freeLines-=uy;
     }
     inline void nl() {
       O::nl();
-      This::useY();
+      useY();
     }
     inline Idx freeY() const {return freeLines;}
     template<typename Nav>
     inline void posTop(Nav& nav) {
+      trace(MDO<<"RangePanel::posTop for "<<nav.pos()<<endl);
       while(top()>nav.pos()) setTop(top()-1);
       //TODO: this is NOT correct for multiline options!!!!
       while(nav.pos()>=top()+freeY()) setTop(top()+1);
+      trace(MDO<<"top:"<<top()<<endl);
     }
   protected:
     Idx topLine=0;
@@ -73,6 +80,7 @@ class Viewport:public O {
     inline operator bool() const {return fx&&fy;}
     inline operator int() const {return free();}
     inline void newView() {
+      trace(MDO<<"Viewport::newView"<<endl);
       fx=O::width();fy=O::height();
       //O::newView();
     }
