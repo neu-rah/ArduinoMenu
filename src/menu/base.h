@@ -17,6 +17,8 @@ enum class Cmds:Idx {None=0,Activate=1,Enter=2,Esc=4,Up=8,Down=16,Left=32,Right=
 
 template<Roles role,typename O>
 struct As:O {
+  template<typename Out>
+  inline static void print(Out& out) {O::template print<Out>(out);}
   template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
   inline static void print(It& it,Nav& nav,Out& out) {
     it.template fmt<role,true,Nav,Out>(nav,out);

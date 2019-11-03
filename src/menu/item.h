@@ -31,9 +31,10 @@ struct StaticWrap:Of {
   using Of::print;
   template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
   inline void print(It& it,Nav& nav,Out& out) {
-    Prefix::template print<It,Nav,Out,P>(it,nav,out);
+    trace(MDO<<"StaticWrap::print"<<endl);
+    Prefix::template print<Prefix,Nav,Out,P>(*reinterpret_cast<Prefix*>(&it),nav,out);
     Of::template print<It,Nav,Out,P>(it,nav,out);
-    Suffix::template print<It,Nav,Out,P>(it,nav,out);
+    Suffix::template print<Suffix,Nav,Out,P>(*reinterpret_cast<Suffix*>(&it),nav,out);
   }
 };
 
