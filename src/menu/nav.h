@@ -72,14 +72,14 @@ class NavTreeBase:public N {
     inline bool enabled() const {return data.enabled(pos());}
 
     inline void open() {
-      trace(MDO<<"StaticNavTree::open"<<endl);
+      trace(MDO<<"NavTreeBase::open"<<endl);
       trace({
         Ref ref=*this;
-        assert(data.canNav(*this));
+        // assert(data.canNav(*this));
         MDO<<"yeah it handles cmds"<<endl;
-        assert(level<max_depth-1);
         MDO<<"and we have depth level to focus"<<endl;
       })
+      assert(level<max_depth-1);
       if (level>=max_depth-1) return;
       level++;
       path[level]=0;
@@ -87,7 +87,7 @@ class NavTreeBase:public N {
     }
 
     inline void close() {
-      trace(MDO<<"StaticNavTree::close"<<endl);
+      trace(MDO<<"NavTreeBase::close"<<endl);
       state=Modes::Normal;
       if (level>0) level--;
     }
@@ -145,7 +145,8 @@ struct NavTree:NavTreeBase<IItem,max_depth,N> {
     Ref ref=*this;
     trace(MDO<<"Data->cmd:"<<c<<" to level:"<<Base::level<<" idx:"<<Base::path[Base::level]<<endl);
     // debug_path();
-    bool res=Base::data.cmd(c,nav);
+    bool res=Base::data.cmd(c,nav,nav,nav);
+    // bool res=Base::data.template cmd<c,IItem,This>(Base::data,nav,(Ref)nav,(Idx)nav);
     if (c==Cmds::Enter&&!res) {
       trace(MDO<<"StaticNavTree calling close by "<<c<<" returning false"<<endl);
       This::close();
@@ -190,6 +191,7 @@ class NavRoot:public INav,public N {
     inline Idx pos() const override {return N::pos();};
     inline void setPos(Idx n) override {N::setPos(n);};
     inline void printOn(IMenuOut& out) override {N::print(*this,out);};
+    using N::cmd;
     inline bool cmd(Cmds c) override {return N::cmd(c,*this);};
     inline bool cmd(Cmds c,IItem& it) override {
       switch(c) {

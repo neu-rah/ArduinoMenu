@@ -236,8 +236,11 @@ class Item:public IItem,public I {
     inline bool enabled() const override {return I::enabled();}
     inline bool enabled(Ref ref,Idx n) const override {return I::enabled(ref,n);};
     inline bool canNav() const override {return I::canNav();}
+    inline bool canNav(Ref ref,Idx n) override {return I::canNav();}
     inline bool parentDraw() const override {return I::parentDraw();}
+    using I::cmd;
     inline bool cmd(Cmds c,INav& nav) override {
+      trace(MDO<<"Item::_cmd "<<c<<" nav"<<endl);
       switch(c) {
         case Cmds::Activate: return I::template cmd<Cmds::Activate, This,INav>(*this,nav);
         case Cmds::Enter:    return I::template cmd<Cmds::Enter,    This,INav>(*this,nav);
@@ -249,7 +252,20 @@ class Item:public IItem,public I {
         case Cmds::None:
         default: return I::template cmd<Cmds::None,Item<I>,INav>(*this,nav);
       }
-      // return I::template cmd<c,Item<I>,INav>(*this,nav,(Ref)nav,(Idx)nav);
+    };
+    inline bool cmd(Cmds c,INav& nav,Ref ref,Idx n) override {
+      trace(MDO<<"Item::cmd "<<c<<" nav ref "<<n<<endl);
+      switch(c) {
+        case Cmds::Activate: return I::template cmd<Cmds::Activate, This,INav>(*this,nav,ref,n);
+        case Cmds::Enter:    return I::template cmd<Cmds::Enter,    This,INav>(*this,nav,ref,n);
+        case Cmds::Esc:      return I::template cmd<Cmds::Esc,      This,INav>(*this,nav,ref,n);
+        case Cmds::Up:       return I::template cmd<Cmds::Up,       This,INav>(*this,nav,ref,n);
+        case Cmds::Down:     return I::template cmd<Cmds::Down,     This,INav>(*this,nav,ref,n);
+        case Cmds::Left:     return I::template cmd<Cmds::Left,     This,INav>(*this,nav,ref,n);
+        case Cmds::Right:    return I::template cmd<Cmds::Right,    This,INav>(*this,nav,ref,n);
+        case Cmds::None:
+        default: return I::template cmd<Cmds::None,Item<I>,INav>(*this,nav);
+      }
     }
     using I::print;
     inline Idx size() const override {return I::size();}
@@ -292,6 +308,50 @@ class Menu:public I {
       trace(MDO<<"Menu::printMenu"<<endl);
       out.template printMenu<It,Nav,Out>(it,nav);
     }
+    using I::cmd;
+    template<Cmds c,typename It,typename Nav>
+    inline bool cmd(It& it,Nav& nav) {
+      trace(MDO<<"Menu::cmd "<<c<<" it nav"<<endl);
+      return c==Cmds::Activate;
+    }
+    template<Cmds c,typename It,typename Nav>
+    inline bool cmd(It& it,Nav& nav,Ref ref,Idx n) {
+      trace(MDO<<"Menu::cmd "<<c<<" it nav ref["<<ref.len<<"] "<<n<<endl);
+      assert(c!=Cmds::Esc);
+      if (ref.len) return data[n]->cmd<c,It,Nav>(it,nav,ref.tail(),ref.head());
+      if(c==Cmds::Enter){
+        if(data[n]->cmd<Cmds::Activate,It,Nav>(it,nav)) {
+          if (data[n]->canNav()) {nav.open();return true;}
+        } else if (!data[n]->canNav()) {nav.close();return true;}
+      }
+      trace(MDO<<"ask navigation..."<<endl);
+      return Empty<>::template cmd<c,It,Nav>(it,nav);//will pass cmd back to navigation
+    }
+    template<Cmds c,typename It,typename Nav>
+    inline bool doNav(It& it,Nav& nav) {
+      trace(MDO<<"Menu::doNav "<<c<<" it nav"<<endl);
+      if(c==Cmds::Enter){
+        if(I::template cmd<Cmds::Activate,It,Nav>(it,nav)) {
+          if (I::canNav()) {nav.open();return true;}
+        } else if (!I::canNav()) {nav.close();return true;}
+      }
+      return Empty<>::template cmd<c,It,Nav>(it,nav);//will pass cmd back to navigation
+    }
+    inline static constexpr bool canNav() {return true;}
+    inline bool canNav(Ref ref,Idx n) {
+      return ref.len?data[n]->canNav(ref.tail(),ref.head()):data[n]->canNav();
+    }
+    // template<Cmds c,typename It,typename Nav>
+    // inline bool cmd(It& it,Nav& nav) {
+    //   trace(MDO<<"Menu::cmd "<<c<<" it nav"<<endl);
+    //   return c==Cmds::Activate?true:nav.template _cmd<c,It,Nav>(it,nav);
+    // }
+    // template<Cmds c,typename It,typename Nav>
+    // inline bool cmd(It& it,Nav& nav,Ref ref,Idx n) {
+    //   trace(MDO<<"Menu::cmd "<<c<<" it nav ref "<<n<<endl);
+    //   return ref.len?data[n]->cmd<c,It,Nav>(it,nav,ref.tail(),ref.head()):c==Cmds::Enter&&data[n]->cmd<Cmds::Activate,It,Nav>(it,nav);
+    // }
+
     template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
     inline void printItems(It& it,Nav& nav,Out& out) {
       out.posTop(nav);

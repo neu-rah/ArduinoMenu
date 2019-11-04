@@ -117,8 +117,10 @@ class IItem {
     virtual inline bool enabled() const {return true;}
     virtual inline bool enabled(Ref ref,Idx n) const=0;
     virtual inline bool canNav() const=0;
+    virtual inline bool canNav(Ref ref,Idx n)=0;
     virtual inline bool parentDraw() const=0;
-    virtual inline bool cmd(Cmds,INav&)=0;
+    virtual inline bool cmd(Cmds,INav&,Ref,Idx)=0;
+    virtual inline bool cmd(Cmds c,INav& nav)=0;
     virtual void fmt(Roles r,bool io,INav& nav,IMenuOut& out,Idx n)=0;
     virtual inline Idx size() const {return 0;}
     virtual inline Idx size(Ref) const {return 0;}
@@ -129,6 +131,10 @@ class IItem {
     inline void printItems(It& it,Nav& nav,Out& out) {printItems(nav,out);}
     template<Cmds c,typename It,typename Nav>
     inline bool _cmd(It& it,Nav& nav) {return cmd(c,nav);}
+    template<Cmds c,typename It,typename Nav>
+    inline bool cmd(It& it,Nav& nav) {return cmd(c,nav);}
+    template<Cmds c,typename It,typename Nav>
+    inline bool cmd(It& it,Nav& nav,Ref ref,Idx n) {return cmd(c,nav,ref,n);}
     template<typename Out> inline void print(Out& out) {print(out);}
     template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
     inline void print(It& it,Nav& nav,Out& out) {print(out);}
@@ -169,7 +175,7 @@ template<typename I=Nil> struct Empty:I {
   template<Cmds c,typename It,typename Nav>
   inline static bool cmd(It& it,Nav& nav) {return c==Cmds::Activate?false:nav.template _cmd<c,It,Nav>(it,nav);}
   template<Cmds c,typename It,typename Nav>
-  inline static bool cmd(It& it,Nav& nav,Ref,Idx) {return it.template cmd<c,It,Nav>(it,nav);}
+  inline static bool cmd(It& it,Nav& nav,Ref ref,Idx n) {return it.template _cmd<c,It,Nav>(it,nav);}
   inline static constexpr bool canNav() {return false;}
   inline static constexpr bool canNav(Ref ref,Idx n) {return canNav();}
   inline static constexpr bool parentDraw() {return false;}
