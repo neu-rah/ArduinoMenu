@@ -111,12 +111,16 @@ struct StaticData:StaticData<I> {
   using StaticData<I>::doNav;
   template<Cmds c,typename It,typename Nav>
   inline bool cmd(It& it,Nav& nav,Ref ref,Idx n) {
+    _trace(MDO<<"StaticData<I,II...>::cmd "<<c<<" ref["<<ref.len<<"] "<<n<<endl);
     assert(c!=Cmds::Esc);
     if (n) {
       return next.Tail::template cmd<c,It,Nav>(it,nav,ref,n-1);
     } else if (ref.len) {
+      _trace(MDO<<"branch..."<<endl);
       return I::template cmd<c,I,Nav>(*reinterpret_cast<I*>(this),nav,ref.tail(),ref.tail().head());
-    } else return Base::template doNav<c,It,Nav>(it,nav);
+    }
+    _trace(MDO<<"doNav..."<<n<<endl);
+    return Base::template doNav<c,It,Nav>(it,nav);
   }
   using StaticData<I>::canNav;
   inline static bool canNav(Ref ref,Idx n) {
@@ -184,6 +188,7 @@ struct StaticData<I>:I {
   }
   template<Cmds c,typename It,typename Nav>
   inline bool cmd(It& it,Nav& nav,Ref ref,Idx n) {
+    _trace(MDO<<"StaticData<I>::cmd "<<c<<" ref["<<ref.len<<"] "<<n<<endl);
     assert(c!=Cmds::Esc);
     if (n)
       assert(!n);
@@ -271,11 +276,15 @@ class Item:public IItem,public I {
     inline Idx size() const override {return I::size();}
     inline Idx size(Ref r) const {return I::size(r);}
     inline void print(IMenuOut& out) override {I::template print<IMenuOut>(out);}
-    inline void printMenu(INav& nav,IMenuOut& out) override {
-      I::template printMenu<Item,INav,IMenuOut>(*this,nav,out,nav,nav);
-    }
     inline void printItems(INav& nav,IMenuOut& out) override {
       I::template printItems<IItem,INav,IMenuOut>(*this,nav,out);
+    }
+    inline void printMenu(INav& nav,IMenuOut& out) override {
+      Ref ref=nav;
+      I::template printMenu<Item,INav,IMenuOut>(*this,nav,out,ref,ref.head());
+    }
+    inline void printMenu(INav& nav,IMenuOut& out,Ref ref) override {
+      I::template printMenu<Item,INav,IMenuOut>(*this,nav,out,ref,ref.head());
     }
     void fmt(Roles r,bool io,INav& nav,IMenuOut& out,Idx n) override {
       switch(r) {
@@ -305,8 +314,9 @@ class Menu:public I {
     inline void print(It& it,Nav& nav,Out& out) {title.print<It,Nav,Out,P>(it,nav,out);}
     template<typename It,typename Nav,typename Out>
     inline void printMenu(It& it,Nav& nav,Out& out,Ref ref,Idx n) {
-      trace(MDO<<"Menu::printMenu"<<endl);
-      out.template printMenu<It,Nav,Out>(it,nav);
+      trace(MDO<<"Menu::printMenu<> it nav out ref["<<ref.len<<"] "<<n<<endl);
+      if (ref.len) data[n]->printMenu(nav,out,ref.tail());
+      else out.template printMenu<It,Nav,Out>(it,nav);
     }
     using I::cmd;
     template<Cmds c,typename It,typename Nav>
@@ -341,16 +351,6 @@ class Menu:public I {
     inline bool canNav(Ref ref,Idx n) {
       return ref.len?data[n]->canNav(ref.tail(),ref.head()):data[n]->canNav();
     }
-    // template<Cmds c,typename It,typename Nav>
-    // inline bool cmd(It& it,Nav& nav) {
-    //   trace(MDO<<"Menu::cmd "<<c<<" it nav"<<endl);
-    //   return c==Cmds::Activate?true:nav.template _cmd<c,It,Nav>(it,nav);
-    // }
-    // template<Cmds c,typename It,typename Nav>
-    // inline bool cmd(It& it,Nav& nav,Ref ref,Idx n) {
-    //   trace(MDO<<"Menu::cmd "<<c<<" it nav ref "<<n<<endl);
-    //   return ref.len?data[n]->cmd<c,It,Nav>(it,nav,ref.tail(),ref.head()):c==Cmds::Enter&&data[n]->cmd<Cmds::Activate,It,Nav>(it,nav);
-    // }
 
     template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
     inline void printItems(It& it,Nav& nav,Out& out) {
@@ -375,9 +375,15 @@ class Menu:public I {
         out.template fmt<P,false,Nav,Out>(nav,out);
       }
     }
-    inline Idx size() const {return sz;}
-    inline constexpr Idx size(Ref ref) const {return ref.len>1?size(ref.tail(),ref.head()):size();}
-    inline constexpr Idx size(Ref ref,Idx n) const {return ref.len>1?data[n]->size(ref):size();}
+    inline Idx size() const {
+      trace(MDO<<"Menu<>::size() "<<sz<<endl);
+      return sz;}
+    inline constexpr Idx size(Ref ref) const {
+      trace(MDO<<"Menu<>::size(Ref["<<ref.len<<"])"<<endl);
+      return ref.len?data[ref.head()]->size(ref.tail()):size();}
+    inline constexpr Idx size(Ref ref,Idx n) const {
+      trace(MDO<<"Menu<>::size(Ref["<<ref.len<<"] "<<n<<")"<<endl);
+      return ref.len?data[n]->size(ref):size();}
   protected:
     IItem& title;
     IItem** data;

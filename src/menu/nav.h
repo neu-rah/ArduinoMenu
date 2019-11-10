@@ -49,7 +49,7 @@ class NavTreeBase:public N {
       trace(MDO<<"NavTreeBase::_cmd "<<c<<" from "<<pos()<<" size:"<<size()<<endl);
       switch(c) {
         case Cmds::Up:
-          if (path[level]<(it.size()-1)) path[level]++;
+          if (path[level]<(size()-1)) path[level]++;
           else return false;
           return true;
         case Cmds::Down:
@@ -116,11 +116,11 @@ struct StaticNavTree:public NavTreeBase<Data,max_depth,N> {
       return true;
     }
     Ref ref=*this;
-    trace(MDO<<"Data->cmd:"<<c<<" to level:"<<level<<" idx:"<<path[level]<<endl);
+    _trace(MDO<<"Data->cmd:"<<c<<" to level:"<<Base::level<<" idx:"<<Base::path[Base::level]<<endl);
     // debug_path();
     bool res=Base::data.template cmd<c,Data,Nav>(Base::data,nav,ref,ref.head());
     if (c==Cmds::Enter&&!res) {
-      trace(MDO<<"StaticNavTree calling close by "<<c<<" returning false"<<endl);
+      _trace(MDO<<"StaticNavTree calling close by "<<c<<" returning false"<<endl);
       This::close();
     }
     return true;

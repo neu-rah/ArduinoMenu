@@ -55,13 +55,13 @@ IItem* subMenu_data[] {
 Item<Text<>> subMenu_title("sub menu");
 Item<Menu<>> subMenu(subMenu_title,subMenu_data,sizeof(subMenu_data)/sizeof(IItem*));
 
-//heap static allocation
+//menu data as static allocated array of Item*
+//Items are "static" heap allocated, static because its global
+//can not delete pr change them.
 IItem* mainMenu_data[] {
   new Item<StaticText<&op1_txt>>(),
   new Item<StaticText<&op2_txt>>(),
   new Item<StaticText<&opn_txt>>(),
-  new Item<StaticText<&opn_txt>>(),
-  new Item<Text<>>("Ok"),
   new Item<Text<>>("Some other option"),
   &subMenu,
   new Item<Action<StaticText<&quit_txt>,quit>>
@@ -76,7 +76,6 @@ int main() {
   Console::raw("AM5 Tests ----------------------");
   Console::nl();
 
-  nav.up();
   // menu------------------------
   nav.printOn(out);
   do {

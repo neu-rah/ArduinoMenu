@@ -38,7 +38,7 @@
       using I::cmd;
       template<Cmds c,typename It,typename Nav>
       inline bool cmd(It& it,Nav& nav) {
-        trace(MDO<<"numField::cmd:"<<c<<endl);
+        _trace(MDO<<"numField::cmd:"<<c<<endl);
         switch(c) {
           case Cmds::Activate:
             nav.setMode(Modes::Edit);
@@ -74,6 +74,8 @@
         }
         return I::template cmd<c,It,Nav>(it,nav);
       }
+      template<Cmds c,typename It,typename Nav>
+      inline bool cmd(It& it,Nav& nav,Ref ref,Idx n) {return cmd<c,It,Nav>(it,nav);}
 
     protected:
       T reflex;//to check if original value changed

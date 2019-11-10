@@ -85,8 +85,8 @@ using MainMenu=StaticMenu<
     Action<EnDis<Op1>,test>,
     EnDis<MyAction<Op2>>,
     Action<StaticText<&tog_txt>,tog12>,
-    NumField<StaticText<&yr_txt>,int,year,1900,2100,1>,
-    NumField<StaticText<&vcc_txt>,decltype(vcc),vcc,0,100,10,1,AsUnit<StaticText<&volts_txt>>>,
+    NumField<StaticText<&yr_txt>,int,year,1900,2100,10,1>,//this is NOT good, changung limits generates new code
+    NumField<StaticText<&vcc_txt>,decltype(vcc),vcc,0,100,1,0,AsUnit<StaticText<&volts_txt>>>,
     Op3,
     Op3,
     Op3,

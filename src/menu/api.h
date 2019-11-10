@@ -2,6 +2,12 @@
 #pragma once
 #include "base.h"
 
+#ifdef MENU_DEBUG
+  #define PURE {}
+#else
+  #define PURE =0
+#endif
+
 struct Nil {};
 
 struct IMenuIn;
@@ -32,7 +38,7 @@ template<typename O=Nil> struct Void:O {
 
 //runtime output interface
 struct IMenuOut {
-  inline virtual void print(char o) const=0;
+  inline virtual void print(char o) const PURE;
   inline virtual void print(int o) const=0;
   inline virtual void print(long o) const=0;
   inline virtual void print(unsigned char o) const=0;
@@ -72,7 +78,7 @@ struct INav {
   virtual inline void setMode(Modes m)=0;
   virtual inline bool enabled(Idx) const=0;
   virtual inline bool selected(Idx) const=0;
-  virtual inline Idx pos() const=0;
+  virtual inline Idx pos() const PURE;
   virtual inline void setPos(Idx)=0;
   virtual inline void printOn(IMenuOut&)=0;
   virtual inline bool cmd(Cmds)=0;
@@ -125,8 +131,9 @@ class IItem {
     virtual inline Idx size() const {return 0;}
     virtual inline Idx size(Ref) const {return 0;}
     virtual inline void print(IMenuOut&)=0;
-    virtual inline void printMenu(INav& nav,IMenuOut&) =0;
     virtual inline void printItems(INav& nav,IMenuOut&) =0;
+    virtual inline void printMenu(INav& nav,IMenuOut&) =0;
+    virtual inline void printMenu(INav&,IMenuOut&,Ref)=0;
     template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
     inline void printItems(It& it,Nav& nav,Out& out) {printItems(nav,out);}
     template<Cmds c,typename It,typename Nav>
@@ -143,6 +150,11 @@ class IItem {
       fmt(r,io,nav,out,n);
     }
 };
+
+//top level static item
+// struct StaticItem:I {
+//   virtual inline bool enabled(Nav nav) const=0;
+// };
 
 template<typename I=Nil> struct Empty:I {
   constexpr static inline bool enabled() {return true;}
@@ -175,7 +187,7 @@ template<typename I=Nil> struct Empty:I {
   template<Cmds c,typename It,typename Nav>
   inline static bool cmd(It& it,Nav& nav) {return c==Cmds::Activate?false:nav.template _cmd<c,It,Nav>(it,nav);}
   template<Cmds c,typename It,typename Nav>
-  inline static bool cmd(It& it,Nav& nav,Ref ref,Idx n) {return it.template _cmd<c,It,Nav>(it,nav);}
+  inline static bool cmd(It& it,Nav& nav,Ref ref,Idx n) {return nav.template _cmd<c,It,Nav>(it,nav);}
   inline static constexpr bool canNav() {return false;}
   inline static constexpr bool canNav(Ref ref,Idx n) {return canNav();}
   inline static constexpr bool parentDraw() {return false;}

@@ -42,8 +42,8 @@ struct TextFmt:public O {
     static inline void fmtMode(Nav& nav,Out& out,Idx n=0) {
       if(io) switch(nav.mode()) {
         case Modes::Normal: out.raw(' ');break;
-        case Modes::Edit: out.raw(':');break;
-        case Modes::Tune: out.raw('>');break;
+        case Modes::Edit: out.raw(nav.selected(n)?':':' ');break;
+        case Modes::Tune: out.raw(nav.selected(n)?'>':' ');break;
       }
     }
     template<bool io,typename Out,typename Nav>
