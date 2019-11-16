@@ -1,43 +1,19 @@
-#include <signal.h>
+#include <iostream>
+using namespace std;
+
+//main include for ArduinoMenu
 #include <menu.h>
+//input/output drivers --------------------------------------
 #include <menu/IO/consoleOut.h>
 #include <menu/IO/linuxKeyIn.h>
+//format specifyers -----------------------------------------
 #include <menu/fmt/text.h>
 #include <menu/fmt/titleWrap.h>
+//components ------------------------------------------------
 #include <menu/comp/endis.h>
 #include <menu/comp/numField.h>
 
 bool running=true;
-
-using Out=MenuOut<
-  FullPrinter<
-    TitleWrapFmt<
-      TextFmt<
-        RangePanel<
-          StaticPanel<0,0,20,4,Console>
-        >
-      >
-    >
-  >
->;
-Out out;
-
-MenuIn<LinuxKeyIn> in;
-
-const char* title_txt="Main menu";
-const char* op1_txt="Option 1";
-const char* op2_txt="Option 2";
-const char* opn_txt="Op...";
-const char* quit_txt="<Quit";
-
-template<typename I=Empty<>>
-struct Text:I {
-  const char* text;
-  inline Text(const char*t):text(t) {}
-  template<typename Out> inline void print(Out& out) {out.raw(text);}
-  template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
-  inline void print(It& it,Nav& nav,Out& out) {print(out);}
-};
 
 bool quit() {
   //just signal program exit
@@ -46,42 +22,72 @@ bool quit() {
   return true;
 }
 
-IItem* subMenu_data[] {
-  new Item<Text<>>("A"),
-  new Item<Text<>>("mA"),
-  new Item<Text<>>("uA")
-};
+Text test("Just a test");
 
-Item<Text<>> subMenu_title("sub menu");
-Item<Menu<>> subMenu(subMenu_title,subMenu_data,sizeof(subMenu_data)/sizeof(IItem*));
+const char* mainMenu_title="Main menu";
+const char* subMenu_title="Sub-menu";
+const char* op1_text="Option 1";
+const char* op2_text="Option 2";
+const char* opn_text="Option ...";
+const char* exit_txt="<Exit";
+const char* quit_txt="<Quit";
+const char* yr_txt="Year";
+const char* vcc_txt="VCC";
+const char* volts_txt="V";
 
-//menu data as static allocated array of Item*
-//Items are "static" heap allocated, static because its global
-//can not delete pr change them.
-IItem* mainMenu_data[] {
-  new Item<StaticText<&op1_txt>>(),
-  new Item<StaticText<&op2_txt>>(),
-  new Item<StaticText<&opn_txt>>(),
-  new Item<Text<>>("Some other option"),
-  &subMenu,
-  new Item<Action<StaticText<&quit_txt>,quit>>
-};
+int year=1967;
+int vcc=3;
 
-Item<StaticText<&title_txt>> mainTitle;
-Item<Menu<>> mainMenu(mainTitle,mainMenu_data,sizeof(mainMenu_data)/sizeof(IItem*));
+StaticMenu<
+  StaticText<&mainMenu_title>,
+  StaticData<
+    Item<EnDis<StaticText<&op1_text>>>,
+    Item<EnDis<StaticText<&op2_text>>>,
+    Item<NumField<StaticText<&yr_txt>,int,year,1900,2100,10,1>>,//this is NOT good, changung limits generates new code
+    // Item<NumField<StaticText<&vcc_txt>,decltype(vcc),vcc,0,100,1,0,AsUnit<StaticText<&volts_txt>>>>,
+    Item<StaticText<&opn_text>>,
+    StaticMenu<
+      StaticText<&subMenu_title>,
+      StaticData<
+        Item<EnDis<StaticText<&op1_text>>>,
+        Item<StaticText<&op2_text>>,
+        Item<StaticText<&opn_text>>,
+        Item<StaticText<&opn_text>>,
+        Item<StaticText<&opn_text>>,
+        Item<Exit<StaticText<&exit_txt>>>
+      >
+    >,
+    Item<Action<StaticText<&quit_txt>,quit>>
+  >
+> mainMenu;
 
-NavRoot<NavTree<2>> nav(mainMenu);
+//menu input --------------------------------------
+LinuxKeyIn in;
+//menu output -------------------------------------
+FullPrinter<Fmt<TitleWrapFmt<TextFmt<Console>>>> out;
+//navigation root ---------------------------------
+Nav<decltype(mainMenu),mainMenu,1> nav;
 
 int main() {
   Console::raw("AM5 Tests ----------------------");
   Console::nl();
-
-  // menu------------------------
-  nav.printOn(out);
-  do {
-    if (nav.doInput(in)) nav.printOn(out);
-    cout.flush();
-  } while(running);
+  test.print(out);//printing single field
   Console::nl();
+  // Idx path[1]{0};
+  // nav.enable(false,{1,path});
+  // nav.up();
+  // nav.up();
+  // mainMenu.canNav(nav,nav.head());
+  // nav.enter();
+  // nav.up();
+  // nav.level=1;
+  // nav.path[0]=2;
+  // nav.up();
+  nav.printMenu(out);
+  while(running) {
+    if (nav.doInput(in)) nav.printMenu(out);
+    cout.flush();
+  };
+  out.nl();
   return 0;
 }

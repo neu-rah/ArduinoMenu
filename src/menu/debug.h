@@ -16,10 +16,10 @@
     #endif
   #else
     #include <iostream>
-    using namespace std;
+    // using namespace std;
     // #define endl "\r\n"
     #ifndef MDO
-      #define MDO cout
+      #define MDO std::cout
     #endif
   #endif
 #endif

@@ -34,7 +34,7 @@ int getch() {
   return r<0?r:c;
 }
 
-struct LinuxKeyIn {
+struct LinuxKeyIn:None {
   inline LinuxKeyIn() {set_conio_terminal_mode();}//capture the keyboard
   inline ~LinuxKeyIn() {reset_terminal_mode();}//capture the keyboard
   template<typename Nav,bool invY=false>
@@ -43,17 +43,17 @@ struct LinuxKeyIn {
       int k=getch();
       if (k==27&&kbhit()) k=getch();
       switch(k) {
-        case 91:return false;
-        case 66: return nav.up();
-        case 65: return nav.down();
-        case 13:case 67: return nav.enter();
-        case 27:case 68: return nav.esc();
+        case 91:break;
+        case 66: nav.up();break;
+        case 65: nav.down();break;
+        case 13:case 67: nav.enter();break;
+        case 27:case 68: nav.esc();break;
         case 3://handle ctrl+c within the capturewd keyboard
           reset_terminal_mode();
           exit(0);
-        default:break;
+        default:return false;
       }
-      return false;
+      return true;
     }
   }
 };
