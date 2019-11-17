@@ -244,14 +244,11 @@ struct StaticMenu:Pair<Title,Body> {
   inline void cmd(Nav& nav) {nav.template _cmd<c>();}
   template<Cmds c,typename Nav>
   inline void cmd(Nav& nav,Ref ref) {
-    _trace(MDO<<"StaticMenu::cmd "<<c<<" ref["<<ref.len<<"] head:"<<ref.head()<<endl);
     if(ref) Base::tail.template cmd<c,Nav>(nav,ref,ref.head());
     else nav.template _cmd<c>();
   }
   template<Cmds c,typename Nav>
-  inline void cmd(Nav& nav,Ref ref,Idx n) {
-    _trace(MDO<<"StaticMenu::cmd "<<c<<" ref["<<ref.len<<"] n:"<<n<<endl);
-    nav.template _cmd<c>();}
+  inline void cmd(Nav& nav,Ref ref,Idx n) {nav.template _cmd<c>();}
 
   inline static constexpr bool canNav() {return true;}
   inline bool canNav(Ref ref,Idx n) {return ref?Base::tail.canNav(ref,n):canNav();}

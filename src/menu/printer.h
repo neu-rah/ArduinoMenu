@@ -47,7 +47,9 @@ struct FullPrinter:public P {
     P::template fmt<Roles::Title,false>();
     P::template fmt<Roles::Item,false>();
 
-    it.template printItems<Nav,This>(nav,*this);
+    //TODO: position top here
+    This::posTop(nav);
+    it.template printItems<Nav,This>(nav,*this,0,This::top());
 
     P::template fmt<Roles::Menu,false>();
     P::template fmt<Roles::Panel,false>();

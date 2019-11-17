@@ -28,9 +28,7 @@
     public:
       using I::I;
       inline bool enabled() const {return en;}
-      inline void enable(bool b) {
-        _trace(MDO<<"enabling "<<b<<endl);
-        en=b;}
+      inline void enable(bool b) {en=b;}
     protected:
       static bool en;
   };
