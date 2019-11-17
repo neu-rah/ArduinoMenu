@@ -17,8 +17,8 @@ struct TextFmt:public O {
   }
   template<bool io>
   inline void fmtMenu(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
-    // O::raw("----------");
-    // out.nl();
+    O::raw("----------");
+    O::nl();
   }
   template<bool io>
   inline void fmtBody(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
@@ -27,7 +27,7 @@ struct TextFmt:public O {
   }
   template<bool io>
   inline void fmtName(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
-    O::raw(io?"«":"»");
+    // O::raw(io?"«":"»");
   }
   template<bool io>
   inline void fmtValue(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
@@ -39,11 +39,14 @@ struct TextFmt:public O {
   }
   template<bool io>
   inline void fmtMode(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
+    // if (io) O::raw("[");
+    // if (io) _trace(MDO<<(int)m<<s);
     if(io) switch(m) {
       case Modes::Normal: O::raw(' ');break;
       case Modes::Edit: O::raw(s?':':' ');break;
       case Modes::Tune: O::raw(s?'>':' ');break;
     }
+    // if (!io) O::raw("]");
   }
   template<bool io>
   inline void fmtTitle(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {

@@ -62,9 +62,10 @@ struct FullPrinter:public P {
     P::template fmt<Roles::Cursor,false>(n,s,e,m);
     //TODO: need a custom print here! however received item is NOT the top
     //we can pass parameters along or use some sort of CRTP
-    //however CRTP does not mix with Mixins, they are oposite
-    // it.template printItem<This,Roles::Item>(*this,n,s,e,m);
-    it.print(*this);
+    //however CRTP does not mix with Mixins, they are oposites
+    //using a forward reference instead
+    it.template printItem<This,Roles::Item>(*this,n,s,e,m);
+    // it.print(*this);
     P::template fmt<Roles::Item,false>(n,s,e,m);
   }
 };

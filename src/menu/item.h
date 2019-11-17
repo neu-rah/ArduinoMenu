@@ -11,25 +11,27 @@ using ActionHandler=bool (*)();
 */
 template<typename I>
 struct Item:I {
-  template<typename Nav,typename Out>
-  inline void printMenu(bool pd,Nav& nav,Out& out) {I::print(out);}
-  template<typename Nav,typename Out>
-  inline void printMenu(bool pd,Nav& nav,Out& out,Ref ref,Idx n) {I::print(out);}
+  using Base=I;
+  using This=Item<I>;
   template<typename Nav,typename Out,Roles P=Roles::Item>
   inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0) {
     out.printItem(*this,idx,nav.selected(idx),I::enabled(),nav.mode());
   }
-  // template<typename Out,Roles P=Roles::Item>
-  // inline void printItem(Out& out,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {I::print(out);}
+  template<typename Out,Roles P=Roles::Item>
+  inline void printItem(Out& out,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
+    I::template printItem<This,Out,P>(*this,out,n,s,e,m);
+  }
   using I::canNav;
   inline bool canNav(Ref ref,Idx n) const {return I::canNav();}
+  using I::isMenu;
+  inline bool isMenu(Ref ref,Idx n) const {return I::isMenu();}
   using I::activate;
   inline static bool activate(Ref,Idx=0) {return I::activate();}
   using I::cmd;
   template<Cmds c,typename Nav>
   inline void cmd(Nav& nav,Ref ref,Idx n) {cmd<c,Nav>(nav);}
   using I::parentDraw;
-  inline static constexpr bool parentDraw(Ref,Idx) {return I::parentDraw();}
+  inline constexpr bool parentDraw(Ref,Idx) {return I::parentDraw();}
 };
 
 /**
@@ -37,6 +39,7 @@ struct Item:I {
 */
 template<typename I,ActionHandler act>
 struct Action:I {
+  using Base=I;
   using I::I;
   using This=Action<I,act>;
   inline static bool activate() {return act();}
@@ -45,11 +48,14 @@ struct Action:I {
 
 template<const char**text,typename I=Empty>
 struct StaticText:I {
+  using Base=I;
   template<typename Out,Roles role=Roles::Raw>
   inline void print(Out& out) {out.raw(text[0]);}
 };
 
-struct Text:Empty {
+template<typename I=Empty>
+struct Text:I {
+  using Base=I;
   const char* text;
   inline Text(const char*o):text(o) {}
   template<typename Out,Roles role=Roles::Raw> inline void print(Out& out) {out.raw(text);}
@@ -57,25 +63,72 @@ struct Text:Empty {
 
 template<typename I>
 struct Exit:I {
+  using Base=I;
   inline static constexpr bool activate() {return false;}
   inline static constexpr bool activate(Ref,Idx=0) {return activate();}
 };
 
-//wrap an item with static prefix/suffix content
+//wrap an item with static prefix/suffix content, behaves like the wrapped item
 template<typename Of,typename Prefix,typename Suffix=Empty>
 struct StaticWrap:Of {
+  using Base=Of;
   using Of::Of;
   using Of::print;
+  Prefix prefix;
+  Suffix suffix;
   template<typename Out,Roles role=Roles::Raw>
   inline void print(Out& out) {
-    Prefix().template print<Out,role>(out);
+    prefix.template print<Out,role>(out);
     Of::template print<Out,role>(out);
-    Suffix::template print<Out,role>(out);
+    suffix.template print<Out,role>(out);
+  }
+  template<typename It,typename Out,Roles role=Roles::Raw>
+  inline void printItem(It& it,Out& out,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
+    trace(MDO<<"printing wrap"<<endl);
+    prefix.template printItem<Prefix,Out,role>(prefix,out,n,s,e,m);
+    Of::template printItem<Of,Out,role>(*this,out,n,s,e,m);
+    suffix.template printItem<Suffix,Out,role>(suffix,out,n,s,e,m);
   }
 };
 
+// this messes the wrap of parts
+template<typename I>
+struct ChainPrint:I {
+  template<typename Out,Roles role=Roles::Raw>
+  inline void print(Out& out) {
+    I::print(out);
+    I::Base::print(out);
+  }
+  // template<typename It,typename Out,Roles P=Roles::Item>
+  // static inline void printItem(It& it,Out& out,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
+  //   I::printItem(it,out,n,s,e,m);
+  //   I::Base::printItem(it,out,n,s,e,m);
+  // }
+};
+
+//prints all items in sequencde but behaves like the first
+// template<typename I,typename... II>
+// struct Seq:I {
+//   Seq<II...> next;
+//   using I::print;
+//   template<typename Out,Roles role=Roles::Raw>
+//   inline void print(Out& out) {
+//     I::print(out);
+//     next.print(out);
+//   }
+//   template<typename It,typename Out,Roles role=Roles::Raw>
+//   inline void printItem(It& it,Out& out,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
+//     I::template printItem<It,Out,role>(it,out,n,s,e,m);
+//     next.template printItem<It,Out,role>(it,out,n,s,e,m);
+//   }
+// };
+//
+// template<typename I>
+// struct Seq<I>:I {};
+
 template<typename F,typename S=Empty>
 struct Pair:F {
+  using Base=F;
   using This=Pair<F,S>;
   using F::F;
   S tail;
@@ -96,8 +149,6 @@ struct Pair:F {
   inline bool enabled(Ref ref,Idx n) const {return n?tail.enabled(ref,n-1):ref?enabled(ref.tail(),ref.tail().head()):F::enabled();}
 
   // commands ------------------------------------------------------------------
-  // template<Cmds c,typename Nav>
-  // inline void cmd(Nav& nav,Ref ref) {if (ref) cmd<c,Nav>(nav,ref,ref.head());}
   using F::cmd;
   template<Cmds c,typename Nav>
   inline void cmd(Nav& nav,Ref ref) {cmd(nav,ref,ref.head());}
@@ -109,11 +160,11 @@ struct Pair:F {
   }
 
   // print ---------------------------------------------------------------------
-  template<typename Nav,typename Out>
-  inline void printMenu(bool pd,Nav& nav,Out& out,Ref ref,Idx n) {
-    if (n) tail.printMenu(pd,nav,out,ref,n-1);
-    else if (ref) F::printMenu(pd,nav,out,ref.tail(),ref.tail().head());
-    else out.printMenu(*this,nav);
+  template<typename It,typename Nav,typename Out>
+  inline void printMenu(bool pd,It& it,Nav& nav,Out& out,Ref ref,Idx n) {
+    if (n) tail.printMenu(pd,*this,nav,out,ref,n-1);
+    else if (ref) F::printMenu(pd,*this,nav,out,ref.tail(),ref.tail().head());
+    else out.printMenu(*reinterpret_cast<F*>(this),nav);
   }
   template<typename Nav,typename Out>
   inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0) {
@@ -138,6 +189,12 @@ struct Pair:F {
     if (ref) return F::canNav(ref.tail(),ref.tail().head());
     return F::canNav();
   }
+  using F::isMenu;
+  inline bool isMenu(Ref ref,Idx n) {
+    if (n) return tail.isMenu(ref,n-1);
+    if (ref) return F::isMenu(ref.tail(),ref.tail().head());
+    return F::isMenu();
+  }
   using F::parentDraw;
   inline bool parentDraw() const {return F::parentDraw();}
   inline bool parentDraw(Idx n) const {return n?tail.parentDraw(n-1):F::parentDraw();}
@@ -153,18 +210,18 @@ struct StaticMenu:Pair<Title,Body> {
 
   // cmd ---------------------------------------------------
   // using Title::printMenu;
-  template<typename Nav,typename Out>
-  inline void printMenu(bool pd,Nav& nav,Out& out) {out.printMenu(pd,*this,nav);}
-  template<typename Nav,typename Out>
-  inline void printMenu(bool pd,Nav& nav,Out& out,Ref ref) {
+  template<typename It,typename Nav,typename Out>
+  inline void printMenu(bool pd,It& it,Nav& nav,Out& out) {out.printMenu(pd,*this,nav);}
+  template<typename It,typename Nav,typename Out>
+  inline void printMenu(bool pd,It& it,Nav& nav,Out& out,Ref ref) {
     if (pd&&ref.len==1) out.printParent(*this,nav);
-    else if(ref) Base::tail.printMenu(pd,nav,out,ref,ref.head());
+    else if(ref) Base::tail.printMenu(pd,*this,nav,out,ref,ref.head());
     else out.printMenu(*this,nav);
   }
-  template<typename Nav,typename Out>
-  inline void printMenu(bool pd,Nav& nav,Out& out,Ref ref,Idx n) {
+  template<typename It,typename Nav,typename Out>
+  inline void printMenu(bool pd,It& it,Nav& nav,Out& out,Ref ref,Idx n) {
     if (pd&&ref.len==1) out.printParent(*this,nav);
-    else if (ref) Base::printMenu(pd,nav,out,ref,ref.head());
+    else if (ref) Base::printMenu(pd,*this,nav,out,ref,ref.head());
     else out.printMenu(*this,nav);
   }
   template<typename Nav,typename Out>
@@ -198,6 +255,9 @@ struct StaticMenu:Pair<Title,Body> {
 
   inline static constexpr bool canNav() {return true;}
   inline bool canNav(Ref ref,Idx n) {return ref?Base::tail.canNav(ref,n):canNav();}
+
+  inline static constexpr bool isMenu() {return true;}
+  inline bool isMenu(Ref ref,Idx n) {return ref?Base::tail.isMenu(ref,n):isMenu();}
 
   inline static constexpr bool activate() {return true;}
   inline bool activate(Ref ref,Idx n) {return ref?Base::tail.activate(ref,n):activate();}

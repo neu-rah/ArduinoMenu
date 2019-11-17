@@ -26,12 +26,13 @@ struct None:Nil {
 
 ////////////////////////////////////////////////////////////////
 struct Empty:Nil {
+  using Base=Nil;
   inline static constexpr Idx size(Ref ref,Idx n) {return size();}
   inline static constexpr Idx size() {return 0;}
   template<typename Out,Roles=Roles::Raw>
   inline static void print(Out&) {}
-  template<typename Nav,typename Out>
-  inline void printMenu(bool,Nav& nav,Out& out,Ref ref,Idx n) {}
+  // template<typename It,typename Nav,typename Out>
+  // inline void printMenu(bool,It&,Nav& nav,Out& out,Ref ref,Idx n) {}
   template<typename Nav,typename Out>
   inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0) {}
   inline static void enable(bool) {}
@@ -40,6 +41,8 @@ struct Empty:Nil {
   inline static constexpr bool enabled(Ref,Idx=0) {return enabled();}
   inline static constexpr bool canNav() {return false;}
   inline static constexpr bool canNav(Ref,Idx=0) {return canNav();}
+  inline static constexpr bool isMenu() {return false;}
+  inline static constexpr bool isMenu(Ref,Idx=0) {return isMenu();}
   inline static constexpr bool activate() {return true;}
   inline static constexpr bool activate(Ref,Idx=0) {return activate();}
   inline static constexpr bool parentDraw(Idx=0) {return true;}
@@ -50,6 +53,17 @@ struct Empty:Nil {
   // inline void cmd(Nav& nav,Ref ref) {nav.template _cmd<c>();}
   template<Cmds c,typename Nav>
   inline void cmd(Nav& nav,Ref ref,Idx n) {nav.template _cmd<c>();}
+  //this functions would benefit from CRTP-----------------
+  //using a reference parameter instead
+  template<typename It,typename Nav,typename Out>
+  static inline void printMenu(bool,It& it,Nav&,Out& out) {it.print(out);}
+  template<typename It,typename Nav,typename Out>
+  static inline void printMenu(bool,It& it,Nav&,Out& out,Ref,Idx) {it.print(out);}
+  template<typename It,typename Out,Roles=Roles::Raw>
+  static inline void printItem(It& it,Out& out,Idx=0,bool=false,bool=true,Modes=Modes::Normal) {
+    trace(MDO<<"Empty::printItem"<<endl);
+    it.print(out);
+  }
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -58,14 +72,23 @@ struct Nav:Nil {
   using This=Nav<R,entry,md>;
   using Root=R;
   static constexpr Idx max_depth=md;
-  inline Modes mode() const {return editMode;}
+  inline Modes mode() const {
+    return editMode;}
   inline void setMode(Modes m) {editMode=m;}
   inline Idx head() const {return path[0];}
   inline Idx pos() const {return path[level];}
   inline bool selected(Idx n) const {return n==pos();}
   inline void setPos(Idx n) {path[level]=n;}
-  inline void open() {path[++level]=0;}
-  inline void close() {path[level--]=0;}
+  inline void open() {
+    assert(level<md-1);
+    if(!entry.isMenu(*this,head())) setMode(Modes::Edit);
+    path[++level]=0;
+  }
+  inline void close() {
+    assert(level>0);
+    path[level--]=0;
+    setMode(Modes::Normal);
+  }
   inline operator Ref() const {return Ref{level+1,path};}
   inline Ref parent() const {return operator Ref().parent();}
   inline Idx size() const {entry.size((Ref)*this);}
@@ -76,9 +99,8 @@ struct Nav:Nil {
   inline bool enabled(Ref ref) const {entry.enabled(ref);}
   template<typename Out>
   inline void printMenu(Out& out) {
-    // _trace(MDO<<"Nav::printMenu parentDraw:"<<entry.parentDraw(parent())<<endl);
     bool pd=entry.parentDraw(parent());
-    entry.template printMenu<This,Out>(pd,*this,out,parent());
+    entry.template printMenu<Root,This,Out>(pd,entry,*this,out,parent());
   }
 
   template<typename In>
@@ -112,6 +134,6 @@ struct Nav:Nil {
   inline void cmd() {entry.template cmd<c,This>(*this,((Ref)*this).parent());}
 
   Idx level=0;
-  Idx path[max_depth];
   Modes editMode;
+  Idx path[max_depth];
 };

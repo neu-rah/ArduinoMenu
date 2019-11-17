@@ -14,31 +14,6 @@ enum class Modes {Normal,Edit,Tune};
 enum class Roles:Idx {Raw,Panel,Menu,Title,Body,Item,Index,Cursor,Name,Mode,Value,Unit};
 enum class Cmds:Idx {None=0,/*Activate=1,*/Enter=2,Esc=4,Up=8,Down=16,Left=32,Right=64};
 
-template<Roles role,typename O>
-struct As:O {
-  template<typename Out>
-  inline static void print(Out& out) {O::template print<Out>(out);}
-  template<typename It,typename Nav,typename Out,Roles P=Roles::Raw>
-  inline static void print(It& it,Nav& nav,Out& out) {
-    it.template fmt<role,true,Nav,Out>(nav,out);
-    O::template print<It,Nav,Out>(it,nav,out);
-    it.template fmt<role,false,Nav,Out>(nav,out);
-  }
-};
-
-template<typename O> using AsPanel=As<Roles::Panel,O>;
-template<typename O> using AsMenu=As<Roles::Menu,O>;
-template<typename O> using AsTitle=As<Roles::Title,O>;
-template<typename O> using AsBody=As<Roles::Body,O>;
-template<typename O> using AsItem=As<Roles::Item,O>;
-template<typename O> using AsIndex=As<Roles::Index,O>;
-template<typename O> using AsCursor=As<Roles::Cursor,O>;
-template<typename O> using AsName=As<Roles::Name,O>;
-template<typename O> using AsMode=As<Roles::Mode,O>;
-template<typename O> using AsValue=As<Roles::Value,O>;
-template<typename O> using AsUnit=As<Roles::Unit,O>;
-template<typename O> using AsRaw=As<Roles::Raw,O>;
-
 #ifdef MENU_DEBUG
   constexpr const char* roleNames[]{
     "Panel","Menu","Title","Body","Prompt","Index",
@@ -78,12 +53,37 @@ struct Ref {
   }
 };
 
-// template<typename Nav,Nav& nav>
-// struct NavRef:Ref {
-//   inline NavRef():Ref{nav.level+1,nav.path} {}
-//   inline NavRef<Nav,nav> parent() const {return len?(NavRef<Nav,nav>){len-1,path}:*this;}
-//   inline Nav& root() const {return nav;}
-// };
-
 #include "debug.h"
 #define endl "\n\r"
+
+template<Roles role,typename O>
+struct As:O {
+  using O::print;
+  template<typename It,typename Out,Roles=role>
+  static inline void printItem(It& it,Out& out,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
+    trace(MDO<<"As<"<<role<<">");
+    out.template fmt<role,true>(n,s,e,m);
+    O::template printItem<It,Out,role>(it,out,n,s,e,m);
+    out.template fmt<role,false>(n,s,e,m);
+    trace(MDO<<"</"<<role<<">"<<endl);
+  }
+  // template<typename Out,Roles=Roles::Raw>
+  // inline void print(Out& out) {
+  //   out.template fmt<role,true>();
+  //   O::template print<Out>(out);
+  //   out.template fmt<role,false>();
+  // }
+};
+
+template<typename O> using AsPanel=As<Roles::Panel,O>;
+template<typename O> using AsMenu=As<Roles::Menu,O>;
+template<typename O> using AsTitle=As<Roles::Title,O>;
+template<typename O> using AsBody=As<Roles::Body,O>;
+template<typename O> using AsItem=As<Roles::Item,O>;
+template<typename O> using AsIndex=As<Roles::Index,O>;
+template<typename O> using AsCursor=As<Roles::Cursor,O>;
+template<typename O> using AsName=As<Roles::Name,O>;
+template<typename O> using AsMode=As<Roles::Mode,O>;
+template<typename O> using AsValue=As<Roles::Value,O>;
+template<typename O> using AsUnit=As<Roles::Unit,O>;
+template<typename O> using AsRaw=As<Roles::Raw,O>;
