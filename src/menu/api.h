@@ -16,6 +16,10 @@ struct Void:Nil {
   static inline void posY(Idx) {}
   constexpr static inline Idx posY() {return 0;}
   constexpr static inline Idx freeY() {return idx_max;}
+  inline static void setClip(int x,int y,int w,int h) {}
+  inline static void clipOff() {}
+  inline static constexpr Idx top() {return 0;}
+  template<typename Nav> inline void posTop(Nav&) {}
 };
 
 ////////////////////////////////////////////////////////////////////////////////

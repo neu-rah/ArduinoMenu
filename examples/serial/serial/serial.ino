@@ -16,6 +16,7 @@ tested on nano
 //components ------------------------------------------------
 #include <menu/comp/endis.h>//enable/disable
 #include <menu/comp/numField.h>//numeric fields with name, value and unit
+#include <menu/comp/Arduino/flashText.h>
 
 // some user code for example --------------------------------------------------------------
 int year=1967;
@@ -28,37 +29,36 @@ bool tog12();
 // define menu structure ---------------------------------------------------------------
 
 //texts for menu
-const char* mainMenu_title="Main menu";
-const char* subMenu_title="Sub-menu";
-const char* op1_text="Option 1";
-const char* op2_text="Option 2";
-const char* tog12_text="toggle 1&2";
-const char* opn_text="Option ...";
-const char* exit_txt="<Exit";
-const char* quit_txt="<Quit";
-const char* yr_txt="Year";
-const char* vcc_txt="VCC";
-const char* volts_txt="V";
+const char mainMenu_title[] PROGMEM="Main menu";
+const char subMenu_title[] PROGMEM="Sub-menu";
+const char op1_text[] PROGMEM="Option 1";
+const char op2_text[] PROGMEM="Option 2";
+const char tog12_text[] PROGMEM="toggle 1&2";
+const char opn_text[] PROGMEM="Option ...";
+const char exit_txt[] PROGMEM="<Exit";
+const char yr_txt[] PROGMEM="Year";
+const char vcc_txt[] PROGMEM="VCC";
+const char volts_txt[] PROGMEM="V";
 
 //static menu structure
 StaticMenu<
-  Item<StaticText<&mainMenu_title>>,
+  Item<FlashText<decltype(mainMenu_title),&mainMenu_title>>,
   StaticData<
-    Item<EnDis<StaticText<&op1_text>>>,
-    Item<EnDis<StaticText<&op2_text>>>,
-    Item<Action<StaticText<&tog12_text>,tog12>>,
-    Item<NumField<StaticText<&yr_txt>,int,year,1900,2100,10,1>>,//this is NOT good, changing limits generates new code->TODO: add a translation
-    Item<NumField<StaticText<&vcc_txt>,decltype(vcc),vcc,0,100,1,0,StaticText<&volts_txt>>>,
-    Item<StaticText<&opn_text>>,
+    Item<EnDis<FlashText<decltype(op1_text),&op1_text>>>,
+    Item<EnDis<FlashText<decltype(op2_text),&op2_text>>>,
+    Item<Action<FlashText<decltype(tog12_text),&tog12_text>,tog12>>,
+    Item<NumField<FlashText<decltype(yr_txt),&yr_txt>,int,year,1900,2100,10,1>>,//this is NOT good, changing limits generates new code->TODO: add a translation
+    Item<NumField<FlashText<decltype(vcc_txt),&vcc_txt>,decltype(vcc),vcc,0,100,1,0,FlashText<decltype(volts_txt),&volts_txt>>>,
+    Item<FlashText<decltype(opn_text),&opn_text>>,
     StaticMenu<
-      Item<StaticText<&subMenu_title>>,
+      Item<FlashText<decltype(subMenu_title),&subMenu_title>>,
       StaticData<
-        Item<EnDis<StaticText<&op1_text>>>,
-        Item<StaticText<&op2_text>>,
-        Item<StaticText<&opn_text>>,
-        Item<StaticText<&opn_text>>,
-        Item<StaticText<&opn_text>>,
-        Item<Exit<StaticText<&exit_txt>>>
+        Item<EnDis<FlashText<decltype(op1_text),&op1_text>>>,
+        Item<FlashText<decltype(op2_text),&op2_text>>,
+        Item<FlashText<decltype(opn_text),&opn_text>>,
+        Item<FlashText<decltype(opn_text),&opn_text>>,
+        Item<FlashText<decltype(opn_text),&opn_text>>,
+        Item<Exit<FlashText<decltype(exit_txt),&exit_txt>>>
       >
     >
   >
@@ -72,9 +72,7 @@ using Out=FullPrinter<//print title and items
   Fmt<//formating API
     TitleWrapFmt<//put [] around menu title
       TextFmt<//apply text formating
-        RangePanel<//scroll content on output geometry
-          StaticPanel<0,0,20,4,SerialOut<decltype(Serial),Serial>>//describe output geometry and device
-        >
+        SerialOut<decltype(Serial),Serial>//describe output geometry and device
       >
     >
   >
