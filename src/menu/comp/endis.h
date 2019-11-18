@@ -12,14 +12,14 @@
   /**
   * The EnDis class provides Enable/Disable functionality for menu items
   */
-  template<typename I>
+  template<typename I,bool e=true>
   class EnDis:public I {
     public:
       using I::I;
       inline bool enabled() const {return en;}
       inline void enable(bool b) {en=b;}
     protected:
-      bool en=true;
+      bool en=e;
   };
 
   //because static menu item have unique types

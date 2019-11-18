@@ -2,6 +2,6 @@
 #pragma once
 
 #include <iostream>
-#include "../out.h"
+#include "../menuIO.h"
 
 using Console=StreamOut<decltype(std::cout),std::cout>;

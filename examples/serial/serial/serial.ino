@@ -1,30 +1,33 @@
-#include <iostream>
-using namespace std;
+/***
+example for arduino (generic)
+using serial for menu IO
+tested on nano
+*/
 
 //main include for ArduinoMenu
 #include <menu.h>
 //input/output drivers --------------------------------------
-#include <menu/IO/consoleOut.h>
-#include <menu/IO/linuxKeyIn.h>
+// #include <menu/IO/Arduino/serialIn.h>
+// #include <menu/IO/Arduino/serialOut.h>
+#include <menu/IO/Arduino/serialIO.h>//include both serial in and out
 //format specifyers -----------------------------------------
 #include <menu/fmt/text.h>
 #include <menu/fmt/titleWrap.h>
 //components ------------------------------------------------
-#include <menu/comp/endis.h>
-#include <menu/comp/numField.h>
+#include <menu/comp/endis.h>//enable/disable
+#include <menu/comp/numField.h>//numeric fields with name, value and unit
 
-bool running=true;
+// some user code for example --------------------------------------------------------------
+int year=1967;
+int vcc=3;
 
+//------------------------------
+//menu action handlers
 bool tog12();
-bool quit() {
-  //just signal program exit
-  trace(MDO<<"Quit!"<<endl);
-  running=false;
-  return true;
-}
 
-Text<> test("Just a test");
+// define menu structure ---------------------------------------------------------------
 
+//texts for menu
 const char* mainMenu_title="Main menu";
 const char* subMenu_title="Sub-menu";
 const char* op1_text="Option 1";
@@ -37,14 +40,12 @@ const char* yr_txt="Year";
 const char* vcc_txt="VCC";
 const char* volts_txt="V";
 
-int year=1967;
-int vcc=3;
-
+//static menu structure
 StaticMenu<
   Item<StaticText<&mainMenu_title>>,
   StaticData<
     Item<EnDis<StaticText<&op1_text>>>,
-    Item<EnDis<StaticText<&op2_text>,false>>,//define as disabled on startup
+    Item<EnDis<StaticText<&op2_text>>>,
     Item<Action<StaticText<&tog12_text>,tog12>>,
     Item<NumField<StaticText<&yr_txt>,int,year,1900,2100,10,1>>,//this is NOT good, changing limits generates new code->TODO: add a translation
     Item<NumField<StaticText<&vcc_txt>,decltype(vcc),vcc,0,100,1,0,StaticText<&volts_txt>>>,
@@ -59,56 +60,52 @@ StaticMenu<
         Item<StaticText<&opn_text>>,
         Item<Exit<StaticText<&exit_txt>>>
       >
-    >,
-    Item<Action<StaticText<&quit_txt>,quit>>
+    >
   >
-> mainMenu;
+> mainMenu;//create menu object
 
 //menu input --------------------------------------
-LinuxKeyIn in;
-//menu output -------------------------------------
+SerialIn<decltype(Serial),Serial> in;//create input object (here serial)
 
-//a simpler print device, not constrained or scrolling, adequate for console devices (serial monitor)
-// using Out=FullPrinter<Fmt<TitleWrapFmt<TextFmt<Console>>>>;
-
-//a more complete output device sonstrained and scrolling, we should use on almost all screens (LCD, TFT, etc...)
+//menu output (Serial)
 using Out=FullPrinter<//print title and items
   Fmt<//formating API
     TitleWrapFmt<//put [] around menu title
       TextFmt<//apply text formating
         RangePanel<//scroll content on output geometry
-          StaticPanel<0,0,20,4,Console>//describe output geometry and device
+          StaticPanel<0,0,20,4,SerialOut<decltype(Serial),Serial>>//describe output geometry and device
         >
       >
     >
   >
 >;
 
-Out out;
+Out out;//create output object (Serial)
 
 //navigation root ---------------------------------
 Nav<decltype(mainMenu),mainMenu,2> nav;
 
+//menu action handlers implementation
 bool tog12() {
-  _trace(MDO<<"to12:"<<mainMenu.enabled(0)<<mainMenu.enabled(1));
+  // Idx fstPath[]{0};
+  // Ref fst{0,fstPath};
+  // Idx sndPath[]{0};
+  // Ref snd{0,sndPath};
   mainMenu.enable(!mainMenu.enabled(0),0);
   mainMenu.enable(!mainMenu.enabled(1),1);
-  _trace(MDO<<"->"<<mainMenu.enabled(0)<<mainMenu.enabled(1));
   return true;
 }
 
-int main() {
-  Console::raw("AM5 Tests ----------------------");
-  Console::nl();
-  test.print(out);//printing single field
-  Console::nl();
-  mainMenu.enabled(1);
-  // mainMenu.enable(false,1);//dynamic disable second option... its already disable on definition
+void setup() {
+  Serial.begin(115200);
+  while(!Serial);
+  Serial.println("ArduinoMenu 5");
+  delay(500);
+  // test.print(out);//printing single field
   nav.printMenu(out);
-  while(running) {
-    if (nav.doInput(in)) nav.printMenu(out);
-    cout.flush();
-  };
-  out.nl();
-  return 0;
+  mainMenu.enable(false,1);//disable second option
+}
+
+void loop() {
+  if (nav.doInput(in)) nav.printMenu(out);
 }

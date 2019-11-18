@@ -36,8 +36,10 @@ struct Empty:Nil {
   template<typename Nav,typename Out>
   inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0) {}
   inline static void enable(bool) {}
-  inline static void enable(bool e,Ref ref,Idx n) {}
+  inline static void enable(bool,Idx) {}
+  inline static void enable(bool,Ref,Idx) {}
   inline static constexpr bool enabled() {return true;}
+  inline static constexpr bool enabled(Idx) {return enabled();}
   inline static constexpr bool enabled(Ref,Idx=0) {return enabled();}
   inline static constexpr bool canNav() {return false;}
   inline static constexpr bool canNav(Ref,Idx=0) {return canNav();}
@@ -85,18 +87,20 @@ struct Nav:Nil {
     path[++level]=0;
   }
   inline void close() {
-    assert(level>0);
-    path[level--]=0;
-    setMode(Modes::Normal);
+    // assert(level>0);
+    if(level>0) {
+      path[level--]=0;
+      setMode(Modes::Normal);
+    }
   }
-  inline operator Ref() const {return Ref{level+1,path};}
+  inline operator Ref() const {return Ref{(Idx)(level+1),path};}
   inline Ref parent() const {return operator Ref().parent();}
-  inline Idx size() const {entry.size((Ref)*this);}
-  inline Idx size(Ref ref) const {entry.size(ref);}
+  inline Idx size() const {return entry.size((Ref)*this);}
+  inline Idx size(Ref ref) const {return entry.size(ref);}
   inline void enable(bool e) {entry.enable(e,*this);}
   inline void enable(bool e,Ref ref) {entry.enable(e,ref);}
-  inline bool enabled() const {enabled(*this);}
-  inline bool enabled(Ref ref) const {entry.enabled(ref);}
+  inline bool enabled() const {return enabled(*this);}
+  inline bool enabled(Ref ref) const {return entry.enabled(ref);}
   template<typename Out>
   inline void printMenu(Out& out) {
     bool pd=entry.parentDraw(parent());
@@ -105,7 +109,8 @@ struct Nav:Nil {
 
   template<typename In>
   inline bool doInput(In& in) {return in.cmd(*this);}
-  inline void _up() {if(pos()<size(parent())-1) setPos(pos()+1);}
+  inline void _up() {
+    if(pos()<size(parent())-1) setPos(pos()+1);}
   inline void _down() {if(pos()>0) setPos(pos()-1);}
   inline void _enter() {
     bool n=entry.canNav(*this,head());

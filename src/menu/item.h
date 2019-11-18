@@ -138,6 +138,7 @@ struct Pair:F {
   inline constexpr Idx size(Ref ref,Idx n) const {return n?tail.size(ref,n-1):ref.len>1?size(ref.tail(),ref.tail().head()):F::size();}
   //enable -------------------------------------------------------------------
   using F::enable;
+  inline void enable(bool e,Idx n) {return n?tail.enable(e,n-1):F::enable(e);}
   inline void enable(bool e,Ref ref) {if (ref) enable(e,ref,ref.head());}
   inline void enable(bool e,Ref ref,Idx n) {
     if(n) tail.enable(e,ref,n-1);
@@ -145,8 +146,10 @@ struct Pair:F {
     else F::enable(e);
   }
   using F::enabled;
+  inline bool enabled(Idx n) const {return n?tail.enabled(n-1):F::enabled();}
   inline bool enabled(Ref ref) const {return ref?enabled(ref,ref.head()):enabled();}
   inline bool enabled(Ref ref,Idx n) const {return n?tail.enabled(ref,n-1):ref?enabled(ref.tail(),ref.tail().head()):F::enabled();}
+
 
   // commands ------------------------------------------------------------------
   using F::cmd;
@@ -235,8 +238,10 @@ struct StaticMenu:Pair<Title,Body> {
   inline constexpr Idx size(Ref ref,Idx n) const {return Base::tail.size(ref,n);}
 
   using Title::enable;
+  inline void enable(bool e,Idx n) {Base::tail.enable(e,n);}
   inline void enable(bool e,Ref ref) {Base::tail.enable(e,ref,ref.head());}
   using Title::enabled;
+  inline bool enabled(Idx n) const {return Base::tail.enabled(n);}
   inline bool enabled(Ref ref) const {return Base::tail.enabled(ref);}
 
   // cmd ---------------------------------------------------

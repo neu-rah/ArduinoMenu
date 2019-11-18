@@ -17,8 +17,8 @@ struct TextFmt:public O {
   }
   template<bool io>
   inline void fmtMenu(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
-    O::raw("----------");
-    O::nl();
+    // O::raw("----------");
+    // O::nl();
   }
   template<bool io>
   inline void fmtBody(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
@@ -40,7 +40,7 @@ struct TextFmt:public O {
   template<bool io>
   inline void fmtMode(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
     // if (io) O::raw("[");
-    // if (io) _trace(MDO<<(int)m<<s);
+    // if (io) _trace(MDO<<n<<s<<e<<(int)m);
     if(io) switch(m) {
       case Modes::Normal: O::raw(' ');break;
       case Modes::Edit: O::raw(s?':':' ');break;
@@ -65,6 +65,7 @@ struct TextFmt:public O {
   }
   template<bool io>
   inline void fmtCursor(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
+    // if (io) _trace(MDO<<n<<s<<e<<(int)m);
     if (io) O::raw(s?((e?'>':'-')):' ');
   }
 };

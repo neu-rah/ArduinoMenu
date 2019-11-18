@@ -1,11 +1,11 @@
-#include <iostream>
-using namespace std;
+#include <U8g2lib.h>
+#include <Wire.h>
 
 //main include for ArduinoMenu
 #include <menu.h>
 //input/output drivers --------------------------------------
-#include <menu/IO/consoleOut.h>
-#include <menu/IO/linuxKeyIn.h>
+#include <menu/IO/Arduino/serialIn.h>
+#include <menu/IO/Arduino/serialOut.h>
 //format specifyers -----------------------------------------
 #include <menu/fmt/text.h>
 #include <menu/fmt/titleWrap.h>
@@ -13,9 +13,19 @@ using namespace std;
 #include <menu/comp/endis.h>
 #include <menu/comp/numField.h>
 
-bool running=true;
+//wemos lolin 32 + oled + u8g2
+#define SDA 5
+#define SCL 4
+#define fontName u8g2_font_7x13_mf
 
-bool tog12();
+U8G2_SSD1306_128X64_VCOMH0_F_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE, SCL, SDA);//allow contrast change
+
+// some user code for example --------------------------------------------------------------
+bool running=true;
+int year=1967;
+int vcc=3;
+
+//handler for "Quit" option
 bool quit() {
   //just signal program exit
   trace(MDO<<"Quit!"<<endl);
@@ -23,13 +33,16 @@ bool quit() {
   return true;
 }
 
+// define menu structure ---------------------------------------------------------------
+
+//a single rogue test, not part of a menu
 Text<> test("Just a test");
 
+//texts for menu
 const char* mainMenu_title="Main menu";
 const char* subMenu_title="Sub-menu";
 const char* op1_text="Option 1";
 const char* op2_text="Option 2";
-const char* tog12_text="toggle 1&2";
 const char* opn_text="Option ...";
 const char* exit_txt="<Exit";
 const char* quit_txt="<Quit";
@@ -37,15 +50,12 @@ const char* yr_txt="Year";
 const char* vcc_txt="VCC";
 const char* volts_txt="V";
 
-int year=1967;
-int vcc=3;
-
+//static menu structure
 StaticMenu<
   Item<StaticText<&mainMenu_title>>,
   StaticData<
     Item<EnDis<StaticText<&op1_text>>>,
-    Item<EnDis<StaticText<&op2_text>,false>>,//define as disabled on startup
-    Item<Action<StaticText<&tog12_text>,tog12>>,
+    Item<EnDis<StaticText<&op2_text>>>,
     Item<NumField<StaticText<&yr_txt>,int,year,1900,2100,10,1>>,//this is NOT good, changing limits generates new code->TODO: add a translation
     Item<NumField<StaticText<&vcc_txt>,decltype(vcc),vcc,0,100,1,0,StaticText<&volts_txt>>>,
     Item<StaticText<&opn_text>>,
@@ -62,53 +72,45 @@ StaticMenu<
     >,
     Item<Action<StaticText<&quit_txt>,quit>>
   >
-> mainMenu;
+> mainMenu;//create menu object
 
 //menu input --------------------------------------
-LinuxKeyIn in;
-//menu output -------------------------------------
+SerialIn<decltype(Serial),Serial> in;//create input object (here serial)
 
-//a simpler print device, not constrained or scrolling, adequate for console devices (serial monitor)
-// using Out=FullPrinter<Fmt<TitleWrapFmt<TextFmt<Console>>>>;
-
-//a more complete output device sonstrained and scrolling, we should use on almost all screens (LCD, TFT, etc...)
+//menu output (Serial)
 using Out=FullPrinter<//print title and items
   Fmt<//formating API
     TitleWrapFmt<//put [] around menu title
       TextFmt<//apply text formating
         RangePanel<//scroll content on output geometry
-          StaticPanel<0,0,20,4,Console>//describe output geometry and device
+          StaticPanel<0,0,20,4,SerialOut<decltype(Serial),Serial>>//describe output geometry and device
         >
       >
     >
   >
 >;
 
-Out out;
+Out out;//create output object (Serial)
 
 //navigation root ---------------------------------
 Nav<decltype(mainMenu),mainMenu,2> nav;
 
-bool tog12() {
-  _trace(MDO<<"to12:"<<mainMenu.enabled(0)<<mainMenu.enabled(1));
-  mainMenu.enable(!mainMenu.enabled(0),0);
-  mainMenu.enable(!mainMenu.enabled(1),1);
-  _trace(MDO<<"->"<<mainMenu.enabled(0)<<mainMenu.enabled(1));
-  return true;
+void setup() {
+  Serial.begin(115200);
+  while(!Serial);
+  Wire.begin(SDA,SCL);
+  u8g2.setFont(fontName);
+  u8g2.begin();
+  u8g2.setContrast(255);
+  do {
+    u8g2.drawStr(0,63,"www.r-site.net");
+  } while ( u8g2.nextPage() );
+  delay(1000);
+  // test.print(out);//printing single field
+  // Console::nl();
+  nav.printMenu(out);
 }
 
-int main() {
-  Console::raw("AM5 Tests ----------------------");
-  Console::nl();
-  test.print(out);//printing single field
-  Console::nl();
-  mainMenu.enabled(1);
-  // mainMenu.enable(false,1);//dynamic disable second option... its already disable on definition
-  nav.printMenu(out);
-  while(running) {
-    if (nav.doInput(in)) nav.printMenu(out);
-    cout.flush();
-  };
-  out.nl();
-  return 0;
+void loop() {
+  if (nav.doInput(in)) nav.printMenu(out);
 }

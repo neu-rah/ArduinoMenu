@@ -55,5 +55,6 @@ struct LinuxKeyIn:None {
       }
       return true;
     }
+    return false;
   }
 };

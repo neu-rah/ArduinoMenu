@@ -49,7 +49,7 @@ struct Ref {
   inline operator Idx() const {return len;}
   inline operator bool() const {return len;}
   inline Ref parent() const {
-    return len?(Ref){len-1,path}:*this;
+    return len?(Ref){(Idx)(len-1),path}:*this;
   }
 };
 
