@@ -14,6 +14,9 @@ struct TextMeasure:public Void {
       return _str(o);
     #endif
   }
+  inline static constexpr int maxCharWidth() {return 1;}
+  inline static constexpr int maxCharHeight() {return 1;}
+  int textWidth(const char*s) const {return measure(s);}
   protected:
     #ifndef ARDUINO
     static inline Idx _str(const char*o){return std::string(o).length();}
@@ -36,6 +39,7 @@ struct FullPrinter:public P {
   }
   template<typename It,typename Nav>
   void printMenu(It& it,Nav& nav) {
+    trace(MDO<<"FullPrinter::printMenu"<<endl);
     P::newView();
     P::template fmt<Roles::Panel,true>();
     P::template fmt<Roles::Menu,true>();

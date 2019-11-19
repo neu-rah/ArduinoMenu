@@ -7,7 +7,7 @@ using namespace std;
 #include <menu/IO/consoleOut.h>
 #include <menu/IO/linuxKeyIn.h>
 //format specifyers -----------------------------------------
-#include <menu/fmt/text.h>
+#include <menu/fmt/fullText.h>//to draw index and text cursors (nav and edit)
 #include <menu/fmt/titleWrap.h>
 //components ------------------------------------------------
 #include <menu/comp/endis.h>

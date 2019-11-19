@@ -32,7 +32,7 @@ struct StaticPanel:public O {
   static inline void useY(Idx uy=1) {}
 };
 
-template<typename O>
+template<typename O,int w=1,int h=1>
 class RangePanel:public O {
   public:
     using This=RangePanel<O>;
@@ -41,15 +41,14 @@ class RangePanel:public O {
     inline void newView() {
       trace(MDO<<"RangePanel::newView"<<endl);
       freeLines=O::height();
+      O::setCursor(0,O::ascent());
     }
-    inline void useY(Idx uy=1) {
-      //devices should stop printing if no free lines,
-      //otherwise we should ignore somewhere, but not here
-      // if (!freeLines) {
-      //   trace(MDO<<"WTF!"<<endl);
-      // }
-      // assert(freeLines);
-      if (freeLines) freeLines-=uy;
+    inline void useY(Idx uy=h) {
+      if (freeLines) {
+        freeLines-=uy;
+        trace(MDO<<"useY h:"<<O::height()<<"-freeLines:"<<freeLines<<"="<<O::height()-freeLines<<endl);
+        O::setCursor(0,(O::height()-freeLines)*O::maxCharHeight()+O::ascent());
+      }
     }
     inline void nl() {
       O::nl();

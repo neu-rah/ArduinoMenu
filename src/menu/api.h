@@ -12,14 +12,36 @@ struct Void:Nil {
   inline static void newView() {}
   template<Roles role,bool io>
   inline static void fmt(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
-  static inline void clrLine(Idx) {}
-  static inline void posY(Idx) {}
+  inline static void clrLine(Idx) {}
+  inline static void posY(Idx) {}
   constexpr static inline Idx posY() {return 0;}
   constexpr static inline Idx freeY() {return idx_max;}
   inline static void setClip(int x,int y,int w,int h) {}
   inline static void clipOff() {}
   inline static constexpr Idx top() {return 0;}
-  template<typename Nav> inline void posTop(Nav&) {}
+  template<typename Nav> inline static void posTop(Nav&) {}
+  inline static constexpr int ascent() {return 0;}
+  inline static void setCursor(int x,int y) {}
+
+  template<bool io> inline static void fmtRaw(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
+  template<bool io> inline static void fmtPanel(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
+  template<bool io> inline static void fmtMenu(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
+  template<bool io> inline static void fmtTitle(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
+  template<bool io> inline static void fmtBody(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
+  template<bool io> inline static void fmtItem(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
+  template<bool io> inline static void fmtIndex(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
+  template<bool io> inline static void fmtCursor(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
+  template<bool io> inline static void fmtName(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
+  template<bool io> inline static void fmtMode(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
+  template<bool io> inline static void fmtValue(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
+  template<bool io> inline static void fmtUnit(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
+
+  inline static constexpr int maxCharWidth() {return 1;}
+  inline static constexpr int maxCharHeight() {return 1;}
+
+  //print loopback by default
+  template<typename Nav,typename Out>
+  inline static void printOn(Nav& nav,Out& out) {nav._printMenu(out);}
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -106,7 +128,9 @@ struct Nav:Nil {
   inline bool enabled() const {return enabled(*this);}
   inline bool enabled(Ref ref) const {return entry.enabled(ref);}
   template<typename Out>
-  inline void printMenu(Out& out) {
+  inline void printMenu(Out& out) {out.printOn(*this,out);}
+  template<typename Out>
+  inline void _printMenu(Out& out) {
     bool pd=entry.parentDraw(parent());
     entry.template printMenu<Root,This,Out>(pd,entry,*this,out,parent());
   }

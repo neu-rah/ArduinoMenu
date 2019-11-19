@@ -11,7 +11,7 @@ tested on nano
 // #include <menu/IO/Arduino/serialOut.h>
 #include <menu/IO/Arduino/serialIO.h>//include both serial in and out
 //format specifyers -----------------------------------------
-#include <menu/fmt/text.h>
+#include <menu/fmt/fullText.h>
 #include <menu/fmt/titleWrap.h>
 //components ------------------------------------------------
 #include <menu/comp/endis.h>//enable/disable

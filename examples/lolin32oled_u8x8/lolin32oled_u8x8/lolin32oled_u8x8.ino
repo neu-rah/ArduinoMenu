@@ -1,4 +1,3 @@
-#include <U8g2lib.h>
 #include <Wire.h>
 
 //main include for ArduinoMenu
@@ -6,24 +5,33 @@
 //input/output drivers --------------------------------------
 #include <menu/IO/Arduino/serialIn.h>
 #include <menu/IO/Arduino/serialOut.h>
+#include <menu/IO/Arduino/u8x8Out.h>
 //format specifyers -----------------------------------------
-#include <menu/fmt/text.h>
+// #include <menu/fmt/text.h>
 #include <menu/fmt/titleWrap.h>
+#include <menu/fmt/textEditMode.h>
+#include <menu/fmt/textCursor.h>
+#include <menu/fmt/textItem.h>
 //components ------------------------------------------------
 #include <menu/comp/endis.h>
 #include <menu/comp/numField.h>
 
-//wemos lolin 32 + oled + u8g2
+//wemos lolin 32 + oled + u8x8
 #define SDA 5
 #define SCL 4
-#define fontName u8g2_font_7x13_mf
+#define fontName u8x8_font_5x7_f
+// #define fontName u8x8_font_amstrad_cpc_extended_f
 
-U8G2_SSD1306_128X64_VCOMH0_F_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE, SCL, SDA);//allow contrast change
+U8X8_SSD1306_128X64_VCOMH0_HW_I2C u8x8(U8X8_PIN_NONE, SCL, SDA);//allow contrast change
 
 // some user code for example --------------------------------------------------------------
 bool running=true;
 int year=1967;
 int vcc=3;
+
+//------------------------------
+//menu action handlers
+bool tog12();
 
 //handler for "Quit" option
 bool quit() {
@@ -80,10 +88,14 @@ SerialIn<decltype(Serial),Serial> in;//create input object (here serial)
 //menu output (Serial)
 using Out=FullPrinter<//print title and items
   Fmt<//formating API
-    TitleWrapFmt<//put [] around menu title
-      TextFmt<//apply text formating
-        RangePanel<//scroll content on output geometry
-          StaticPanel<0,0,20,4,SerialOut<decltype(Serial),Serial>>//describe output geometry and device
+    U8x8Fmt<
+      TextCursorFmt<//draw text cursor
+        TextEditModeFmt<//draw edit mode text cursor
+          TextItemFmt<//add newline after each item
+            RangePanel<//scroll content on output geometry
+              StaticPanel<0,0,128/8,64/8-3,U8x8Out<decltype(u8x8),u8x8>>//describe output geometry and device
+            >
+          >
         >
       >
     >
@@ -95,22 +107,31 @@ Out out;//create output object (Serial)
 //navigation root ---------------------------------
 Nav<decltype(mainMenu),mainMenu,2> nav;
 
+//menu action handlers implementation -------------------------
+bool tog12() {
+  //TODO: add a better reference constructor
+  mainMenu.enable(!mainMenu.enabled(0),0);
+  mainMenu.enable(!mainMenu.enabled(1),1);
+  return true;
+}
+
 void setup() {
   Serial.begin(115200);
   while(!Serial);
   Wire.begin(SDA,SCL);
-  u8g2.setFont(fontName);
-  u8g2.begin();
-  u8g2.setContrast(255);
-  do {
-    u8g2.drawStr(0,63,"www.r-site.net");
-  } while ( u8g2.nextPage() );
-  delay(1000);
+  u8x8.setFont(fontName);
+  u8x8.begin();
+  u8x8.setContrast(255);
+  u8x8.drawString(0,0,"www.r-site.net");
+  delay(500);
+  u8x8.clear();
   // test.print(out);//printing single field
   // Console::nl();
+  mainMenu.enable(false,1);//disable second option
   nav.printMenu(out);
 }
 
 void loop() {
   if (nav.doInput(in)) nav.printMenu(out);
+  u8x8.drawString(0,64/8-1,"www.r-site.net");
 }
