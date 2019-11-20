@@ -8,7 +8,7 @@ struct Nil {};
 ////////////////////////////////////////////////////////////////////////////////
 struct Void:Nil {
   inline static void nl() {}
-  template<typename T> inline static void raw(T o) {}
+  template<typename T> inline static void raw(T o,Roles role=Roles::Raw) {}
   inline static void newView() {}
   template<Roles role,bool io>
   inline static void fmt(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}

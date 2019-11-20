@@ -27,7 +27,7 @@
         return true;
       }
       template<typename Out,Roles role=Roles::Raw>
-      inline void print(Out& out) {out.raw(value);}
+      inline void print(Out& out) {out.raw(value,role);}
       using I::cmd;
       template<Cmds c,typename Nav>
       inline void cmd(Nav& nav) {

@@ -50,7 +50,7 @@ template<const char**text,typename I=Empty>
 struct StaticText:I {
   using Base=I;
   template<typename Out,Roles role=Roles::Raw>
-  inline void print(Out& out) {out.raw(text[0]);}
+  inline void print(Out& out) {out.raw(text[0],role);}
 };
 
 template<typename I=Empty>
@@ -58,7 +58,7 @@ struct Text:I {
   using Base=I;
   const char* text;
   inline Text(const char*o):text(o) {}
-  template<typename Out,Roles role=Roles::Raw> inline void print(Out& out) {out.raw(text);}
+  template<typename Out,Roles role=Roles::Raw> inline void print(Out& out) {out.raw(text,role);}
 };
 
 template<typename I>

@@ -68,57 +68,57 @@ class RangePanel:public O {
     Idx freeLines;
 };
 
-template<typename O>
-class Viewport:public O {
-  public:
-    // using O::O;
-    using This=Viewport<O>;
-    inline Viewport() {}
-    inline Viewport(const Viewport<O>& o) {fx=o.width();fy=o.height();}
-    constexpr static inline bool isViewport() {return true;}
-    inline operator bool() const {return fx&&fy;}
-    inline operator int() const {return free();}
-    inline void newView() {
-      trace(MDO<<"Viewport::newView"<<endl);
-      fx=O::width();fy=O::height();
-      //O::newView();
-    }
-    inline void nl() {O::nl();This::useY();}
-    template<typename T>
-    inline void raw(T i) {
-      O::setCursor(This::posX(),This::posY());
-      O::raw(i);
-      This::useX(O::measure(i));
-    }
-
-    //device coordinates ---------
-    inline Idx posX() const {return (O::width()-fx)+O::orgX();}
-    inline Idx posY() const {return (O::height()-fy)+O::orgY();}
-    // get free space ----
-    inline Idx freeX() const {return fx;}
-    inline Idx freeY() const {
-      // Serial<<"Viewport::freeY "<<fy<<endl;
-      return fy;}
-    inline Idx height() const {
-      return freeY();}
-    inline Idx free() const {return fx+O::width()*fy;}
-    // use space ----
-    inline void useX(Idx ux=1) {if (fx) fx-=ux; else useY();}
-    inline void useY(Idx uy=1) {
-      if (!fy) {
-        fx=0;
-        // fy=0;
-      } else {
-        fy-=uy;
-        fx=O::width();
-      }
-    }
-  protected:
-    inline void _nl(RawOutOp) {O::nl();}
-    inline void _nl(MeasureOp) {O::useY();}
-    template<typename T>
-    inline void _raw(T i,RawOutOp) {O::raw(i);}
-    template<typename T>
-    inline void _raw(T i,MeasureOp) {O::measure(i);}
-    Idx fx,fy;
-};
+// template<typename O>
+// class Viewport:public O {
+//   public:
+//     // using O::O;
+//     using This=Viewport<O>;
+//     inline Viewport() {}
+//     inline Viewport(const Viewport<O>& o) {fx=o.width();fy=o.height();}
+//     constexpr static inline bool isViewport() {return true;}
+//     inline operator bool() const {return fx&&fy;}
+//     inline operator int() const {return free();}
+//     inline void newView() {
+//       trace(MDO<<"Viewport::newView"<<endl);
+//       fx=O::width();fy=O::height();
+//       //O::newView();
+//     }
+//     inline void nl() {O::nl();This::useY();}
+//     template<typename T>
+//     inline void raw(T i) {
+//       O::setCursor(This::posX(),This::posY());
+//       O::raw(i);
+//       This::useX(O::measure(i));
+//     }
+//
+//     //device coordinates ---------
+//     inline Idx posX() const {return (O::width()-fx)+O::orgX();}
+//     inline Idx posY() const {return (O::height()-fy)+O::orgY();}
+//     // get free space ----
+//     inline Idx freeX() const {return fx;}
+//     inline Idx freeY() const {
+//       // Serial<<"Viewport::freeY "<<fy<<endl;
+//       return fy;}
+//     inline Idx height() const {
+//       return freeY();}
+//     inline Idx free() const {return fx+O::width()*fy;}
+//     // use space ----
+//     inline void useX(Idx ux=1) {if (fx) fx-=ux; else useY();}
+//     inline void useY(Idx uy=1) {
+//       if (!fy) {
+//         fx=0;
+//         // fy=0;
+//       } else {
+//         fy-=uy;
+//         fx=O::width();
+//       }
+//     }
+//   protected:
+//     inline void _nl(RawOutOp) {O::nl();}
+//     inline void _nl(MeasureOp) {O::useY();}
+//     template<typename T>
+//     inline void _raw(T i,RawOutOp) {O::raw(i);}
+//     template<typename T>
+//     inline void _raw(T i,MeasureOp) {O::measure(i);}
+//     Idx fx,fy;
+// };

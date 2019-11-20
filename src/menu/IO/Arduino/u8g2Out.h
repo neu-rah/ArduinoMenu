@@ -3,6 +3,8 @@
 
 #include "../../../menu.h"
 
+// DO NOT USE - INCOMPLETE!
+
 // template<int charWidth,int charHeight,typename O>
 // struct GfxOut:O {//O must be a panel
 //   inline static constexpr int maxCharWidth() {return charWidth;}
@@ -52,7 +54,7 @@ template<typename Dev,Dev& dev,typename O=Void>
 struct U8g2Out:O,U8g2TextMeasure<Dev,dev> {
   inline static void nl() {}
   template<typename T>
-  inline static void raw(T o) {dev.print(o);}
+  inline static void raw(T o,Roles role=Roles::Raw) {dev.print(o);}
   inline static int ascent() {return dev.getAscent()+1;}
   inline static void setCursor(int x,int y) {dev.setCursor(x,y);}
 };

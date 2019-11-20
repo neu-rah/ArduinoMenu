@@ -19,7 +19,9 @@
 //wemos lolin 32 + oled + u8x8
 #define SDA 5
 #define SCL 4
-#define fontName u8x8_font_5x7_f
+// #define fontName u8x8_font_5x7_f
+// #define fontName u8x8_font_artossans8_r
+#define fontName u8x8_font_pcsenior_f
 // #define fontName u8x8_font_amstrad_cpc_extended_f
 
 U8X8_SSD1306_128X64_VCOMH0_HW_I2C u8x8(U8X8_PIN_NONE, SCL, SDA);//allow contrast change
@@ -47,7 +49,7 @@ bool quit() {
 Text<> test("Just a test");
 
 //texts for menu
-const char* mainMenu_title="Main menu";
+const char* mainMenu_title="Main";
 const char* subMenu_title="Sub-menu";
 const char* op1_text="Option 1";
 const char* op2_text="Option 2";
@@ -85,15 +87,17 @@ StaticMenu<
 //menu input --------------------------------------
 SerialIn<decltype(Serial),Serial> in;//create input object (here serial)
 
-//menu output (Serial)
+//menu output (u8x8)
 using Out=FullPrinter<//print title and items
   Fmt<//formating API
-    U8x8Fmt<
-      TextCursorFmt<//draw text cursor
-        TextEditModeFmt<//draw edit mode text cursor
-          TextItemFmt<//add newline after each item
-            RangePanel<//scroll content on output geometry
-              StaticPanel<0,0,128/8,64/8-3,U8x8Out<decltype(u8x8),u8x8>>//describe output geometry and device
+    BigTitleU8x8Out<//print title using u8x8::draw2x2String()
+      U8x8Fmt<//specific u8x8 formatings (clearing and inverting text)
+        TextCursorFmt<//draw text cursor
+          TextEditModeFmt<//draw edit mode text cursor
+            TextItemFmt<//add newline after each item
+              RangePanel<//scroll content on output geometry
+                StaticPanel<0,0,128/8,64/8-1,U8x8Out<decltype(u8x8),u8x8>>//describe output geometry and device
+              >
             >
           >
         >

@@ -10,7 +10,7 @@ struct StringOut:public std::stringstream,O {
   inline void newView() {str("");}
   inline void nl() {write("\r\n",2);}
   template<typename T>
-  inline void raw(T o) {operator<<(o);}
-  inline void raw(char o) {put(o);}
-  inline void raw(const char* o) {write(o,strlen(o));}
+  inline void raw(T o,Roles role=Roles::Raw) {operator<<(o);}
+  inline void raw(char o,Roles role=Roles::Raw) {put(o);}
+  inline void raw(const char* o,Roles role=Roles::Raw) {write(o,strlen(o));}
 };

@@ -7,7 +7,7 @@ template<typename Dev,Dev& dev,typename O=Void>
 struct StreamOut:O {
   inline static void nl() {dev<<endl;}
   template<typename T>
-  inline static void raw(T o) {dev<<o;}
+  inline static void raw(T o,Roles role=Roles::Raw) {dev<<o;}
 };
 
 template<typename Dev,Dev& dev,typename O=Void>

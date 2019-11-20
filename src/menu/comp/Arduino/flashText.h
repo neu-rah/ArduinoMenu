@@ -16,7 +16,7 @@
     using I::size;
     template<typename Out,Roles role=Roles::Raw>
     inline void print(Out& out) {
-      out.raw(reinterpret_cast<const __FlashStringHelper *>(text[0]));
+      out.raw(reinterpret_cast<const __FlashStringHelper *>(text[0]),role);
     }
   };
 // };
