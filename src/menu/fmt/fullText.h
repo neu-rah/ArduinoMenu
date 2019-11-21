@@ -43,9 +43,9 @@ struct TextFmt:public O {
     // if (io) O::raw("[");
     // if (io) _trace(MDO<<n<<s<<e<<(int)m);
     if(io) switch(m) {
-      case Modes::Normal: O::template raw<char,This,toPrint>(' ',*this,Roles::Mode);break;
-      case Modes::Edit: O::template raw<char,This,toPrint>(s?':':' ',*this,Roles::Mode);break;
-      case Modes::Tune: O::template raw<char,This,toPrint>(s?'>':' ',*this,Roles::Mode);break;
+      case Modes::Normal: O::template print<char,This,toPrint>(' ',*this,Roles::Mode);break;
+      case Modes::Edit: O::template print<char,This,toPrint>(s?':':' ',*this,Roles::Mode);break;
+      case Modes::Tune: O::template print<char,This,toPrint>(s?'>':' ',*this,Roles::Mode);break;
     }
     // if (!io) O::raw("]");
   }
@@ -60,13 +60,13 @@ struct TextFmt:public O {
   template<bool io,bool toPrint=true>
   inline void fmtIndex(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
     if(io) {
-      if (n<9) O::template raw<char,This,toPrint>(n+1,*this,Roles::Index);
-      else O::template raw<char,This,toPrint>(' ',*this,Roles::Index);
+      if (n<9) O::template print<char,This,toPrint>(n+1,*this,Roles::Index);
+      else O::template print<char,This,toPrint>(' ',*this,Roles::Index);
     }
   }
   template<bool io,bool toPrint=true>
   inline void fmtCursor(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
-    // if (io) _trace(MDO<<n<<s<<e<<(int)m);
-    if (io) O::template raw<char,This,toPrint>(s?((e?'>':'-')):' ',*this,Roles::Cursor);
+    // if (io) _trace(MDO<<n<<s<<e<<(int)m<<toPrint);
+    if (io) O::template print<char,This,toPrint>(s?((e?'>':'-')):' ',*this,Roles::Cursor);
   }
 };

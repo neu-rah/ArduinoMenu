@@ -13,13 +13,13 @@
   * The EnDis class provides Enable/Disable functionality for menu items
   */
   template<typename I,bool e=true>
-  class EnDis:public I {
+  class EnDis:public I,virtual MutBits {
     public:
       using I::I;
-      inline bool enabled() const {return en;}
-      inline void enable(bool b) {en=b;}
-    protected:
-      bool en=e;
+      inline bool enabled() const {return isEnabled;}
+      inline void enable(bool b) {isEnabled=b;}
+    // protected:
+    //   bool en=e;
   };
 
   //because static menu item have unique types

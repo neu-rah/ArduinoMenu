@@ -33,7 +33,7 @@ struct FullPrinter:public P {
     P::template fmt<Roles::Item,false>();
 
     //TODO: position top here
-    it.changed(This::posTop(nav));
+    it.changed(This::posTop(nav)||true);
     it.template printItems<Nav,This>(nav,*this,0,This::top());
 
     P::template fmt<Roles::Menu,false>();
@@ -50,7 +50,7 @@ struct FullPrinter:public P {
     // if (it.changed()||!P::partialDraw())//TODO:we need parent menu `changed` state.. this is better done on Item side to better server composition
     //   it.template printItem<This,Roles::Item,true>(*this,n,s,e,m);
     // else
-    it.template printItem<This,Roles::Item,false>(*this,n,s,e,m);
+    it.template printItem<This,Roles::Item,toPrint>(*this,n,s,e,m);
     // it.print(*this);
     P::template fmt<Roles::Item,false>(n,s,e,m);
   }

@@ -13,8 +13,8 @@ struct CanMeasure:O {
   }
   using O::raw;
   template<typename T,typename Out,bool toPrint>
-  inline void raw(T o,Out& out,Roles role=Roles::Raw) {
-    if (toPrint) out.raw(o,role);
+  inline void print(T o,Out& out,Roles role=Roles::Raw) {
+    if (toPrint) O::template print<T,Out,toPrint>(o,out,role);
     else out.useX(O::measure(o));
   }
 };
@@ -29,24 +29,9 @@ struct StreamOut:O {
   using This=StreamOut<Dev,dev,O>;
 
   inline static void nl() {dev<<endl;}
-  // template<typename Out=This,bool toPrint=true>
-  // inline static void nl(Out& out) {
-  //   if (toPrint) nl();
-  //   else out.useY();
-  // }
-
+  using O::raw;
   template<typename T>
-  inline static void raw(T o,Roles role=Roles::Raw) {dev<<o;}
-  // template<typename T,typename Out,bool toPrint=true>
-  // inline static void raw(T o,Out& out,Roles role=Roles::Raw) {
-  //   if (toPrint) dev<<o;
-  //   else out.use(O::measure(o),1);//assuming only one line internal string \n are not accounted for
-  // }
-  // template<typename T>
-  // inline static void raw(T o,Roles role=Roles::Raw) {
-  //   if (toPrint) dev<<o;
-  //   else out.use(measure(o),1);//assuming only one line internal string \n are not accounted for
-  // }
+  inline static void raw(T o,Roles=Roles::Raw) {dev<<o;}
 };
 
 template<typename Dev,Dev& dev,typename O=Void>

@@ -52,17 +52,17 @@ class RangePanel:public O {
     template<typename Out,bool toPrint=true>
     inline void nl(Out&) {
       if (toPrint) O::template nl<This,toPrint>(*this);
-      useY();
+      else useY();
     }
     inline Idx freeY() const {return freeLines;}
     template<typename Nav>
     inline bool posTop(Nav& nav) {
-      _trace(MDO<<"RangePanel::posTop for "<<nav.pos()<<endl);
+      trace(MDO<<"RangePanel::posTop for "<<nav.pos()<<endl);
       Idx ot=top();
       while(top()>nav.pos()) setTop(top()-1);
       //TODO: this is NOT correct for multiline options!!!!
       while(nav.pos()>=top()+freeY()) setTop(top()+1);
-      _trace(MDO<<"top:"<<top()<<endl);
+      trace(MDO<<"top:"<<top()<<endl);
       return ot!=top();
     }
   protected:

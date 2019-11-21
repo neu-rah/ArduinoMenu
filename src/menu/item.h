@@ -6,16 +6,27 @@
 /// ActionHanlder, type of action functions to associate with items
 using ActionHandler=bool (*)();
 
+struct MutBits {
+  Idx isEnabled:1, hasChanged:1;
+};
+
+template<typename I>
+struct Mutable:I,virtual MutBits {
+  // bool hasChanged=false;
+  inline bool changed() const {return hasChanged;}
+  inline void changed(bool o) {hasChanged=o;}
+};
+
 /**
 * The Item class encapsulates a composition to be a menu item.
 */
 template<typename I>
-struct Item:I {
-  using Base=I;
+struct Item:Mutable<I> {
+  using Base=Mutable<I>;
   using This=Item<I>;
-  template<typename Nav,typename Out,Roles P=Roles::Item>
+  template<typename Nav,typename Out,Roles P=Roles::Item,bool toPrint=true>
   inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,bool=true) {
-    out.printItem(*this,idx,nav.selected(idx),I::enabled(),nav.mode());
+    out.template printItem<This,toPrint>(*this,idx,nav.selected(idx),I::enabled(),nav.mode());
   }
   template<typename Out,Roles P=Roles::Item,bool toPrint=true>
   inline void printItem(Out& out,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
@@ -51,7 +62,7 @@ struct StaticText:I {
   using Base=I;
   template<typename Out,Roles role=Roles::Raw,bool toPrint=true>
   inline void print(Out& out) {
-    out.template raw<decltype(text[0]),Out,toPrint>(text[0],out,role);
+    out.template print<decltype(text[0]),Out,toPrint>(text[0],out,role);
   }
 };
 
@@ -62,7 +73,7 @@ struct Text:I {
   inline Text(const char*o):text(o) {}
   template<typename Out,Roles role=Roles::Raw,bool toPrint=true>
   inline void print(Out& out) {
-    out.template raw<decltype(text),Out,toPrint>(text,out,role);
+    out.template print<decltype(text),Out,toPrint>(text,out,role);
   }
 };
 
@@ -71,13 +82,6 @@ struct Exit:I {
   using Base=I;
   inline static constexpr bool activate() {return false;}
   inline static constexpr bool activate(Ref,Idx=0) {return activate();}
-};
-
-template<typename I>
-struct Mutable:I {
-  bool hasChanged=false;
-  inline bool changed() const {return hasChanged;}
-  inline void changed(bool o) {hasChanged=o;}
 };
 
 //wrap an item with static prefix/suffix content, behaves like the wrapped item
@@ -96,7 +100,6 @@ struct StaticWrap:Of {
   }
   template<typename It,typename Out,Roles role=Roles::Raw,bool toPrint=true>
   inline void printItem(It& it,Out& out,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
-    trace(MDO<<"printing wrap"<<endl);
     prefix.template printItem<Prefix,Out,role,toPrint>(prefix,out,n,s,e,m);
     Of::template printItem<Of,Out,role,toPrint>(*this,out,n,s,e,m);
     suffix.template printItem<Suffix,Out,role,toPrint>(suffix,out,n,s,e,m);
@@ -181,13 +184,14 @@ struct Pair:F {
     else if (ref) F::printMenu(pd,*this,nav,out,ref.tail(),ref.tail().head());
     else out.printMenu(*reinterpret_cast<F*>(this),nav);
   }
-  template<typename Nav,typename Out>
+  template<typename Nav,typename Out,Roles P=Roles::Item,bool toPrint=true>
   inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,bool fullPrint=true) {
     if (!out.freeY()) return;
     if(top) tail.printItems(nav,out,idx+1,top-1);
     else {
-      out.template printItem<F>(*this,idx,nav.selected(idx),F::enabled(),nav.mode());
-      tail.printItems(nav,out,idx+1);
+      out.template printItem<F,toPrint>(*this,idx,nav.selected(idx),F::enabled(),nav.mode());
+      tail.printItems(nav,out,idx+1,top,fullPrint);
+      MDO.flush();
     }
   }
 
@@ -241,7 +245,7 @@ struct StaticMenu:Mutable<Pair<Title,Body>> {
     else out.printMenu(*this,nav);
   }
   template<typename Nav,typename Out>
-  inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0) {
+  inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,bool fullPrint=true) {
     Base::tail.template printItems<Nav,Out>(nav,out,idx,top,This::changed());
   }
 

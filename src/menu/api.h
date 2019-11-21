@@ -11,11 +11,11 @@ struct Void:Nil {
   template<typename Out,bool toPrint=true>
   inline static void nl(Out&) {}
   template<typename T,typename Out,bool toPrint=true>
-  inline static void raw(T,Out&,Roles=Roles::Raw) {}
-  // template<typename T>
-  // inline static void raw<T,This>(T o,Roles role=Roles::Raw) {raw<T,This>(o,*this);}
+  inline static void print(T o,Out& out,Roles role=Roles::Raw) {out.raw(o,role);}
+  template<typename T>
+  inline static void raw(T,Roles=Roles::Raw) {}
   inline static void newView() {}
-  template<Roles role,bool io>
+  template<Roles role,bool io,bool toPrint>
   inline static void fmt(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
   inline static void clrLine(Idx) {}
   inline static void posY(Idx) {}
@@ -30,18 +30,18 @@ struct Void:Nil {
 
   inline static constexpr bool partialDraw() {return false;}
 
-  template<bool io> inline static void fmtRaw(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
-  template<bool io> inline static void fmtPanel(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
-  template<bool io> inline static void fmtMenu(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
-  template<bool io> inline static void fmtTitle(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
-  template<bool io> inline static void fmtBody(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
-  template<bool io> inline static void fmtItem(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
-  template<bool io> inline static void fmtIndex(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
-  template<bool io> inline static void fmtCursor(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
-  template<bool io> inline static void fmtName(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
-  template<bool io> inline static void fmtMode(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
-  template<bool io> inline static void fmtValue(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
-  template<bool io> inline static void fmtUnit(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
+  template<bool io,bool toPrint> inline static void fmtRaw(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
+  template<bool io,bool toPrint> inline static void fmtPanel(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
+  template<bool io,bool toPrint> inline static void fmtMenu(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
+  template<bool io,bool toPrint> inline static void fmtTitle(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
+  template<bool io,bool toPrint> inline static void fmtBody(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
+  template<bool io,bool toPrint> inline static void fmtItem(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
+  template<bool io,bool toPrint> inline static void fmtIndex(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
+  template<bool io,bool toPrint> inline static void fmtCursor(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
+  template<bool io,bool toPrint> inline static void fmtName(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
+  template<bool io,bool toPrint> inline static void fmtMode(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
+  template<bool io,bool toPrint> inline static void fmtValue(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
+  template<bool io,bool toPrint> inline static void fmtUnit(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
 
   inline static constexpr int maxCharWidth() {return 1;}
   inline static constexpr int maxCharHeight() {return 1;}
@@ -51,7 +51,7 @@ struct Void:Nil {
   inline static void printOn(Nav& nav,Out& out) {nav._printMenu(out);}
 };
 
-struct TextMeasure:public Void {
+struct TextMeasure: Void {
   template<typename T>
   static inline Idx measure(T o) {
     #ifdef ARDUINO
@@ -87,7 +87,7 @@ struct Empty:Nil {
   // template<typename It,typename Nav,typename Out>
   // inline void printMenu(bool,It&,Nav& nav,Out& out,Ref ref,Idx n) {}
   template<typename Nav,typename Out>
-  inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0) {}
+  inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,bool fullPrint=true) {}
   inline static void enable(bool) {}
   inline static void enable(bool,Idx) {}
   inline static void enable(bool,Ref,Idx) {}

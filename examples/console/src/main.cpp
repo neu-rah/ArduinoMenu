@@ -77,7 +77,7 @@ using Out=FullPrinter<//print title and items
     TitleWrapFmt<//put [] around menu title
       TextFmt<//apply text formating
         RangePanel<//scroll content on output geometry
-          StaticPanel<0,0,20,4,Console>//describe output geometry and device
+          StaticPanel<0,0,20,6,Console>//describe output geometry and device
         >
       >
     >
