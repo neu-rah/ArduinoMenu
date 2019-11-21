@@ -56,12 +56,14 @@ class RangePanel:public O {
     }
     inline Idx freeY() const {return freeLines;}
     template<typename Nav>
-    inline void posTop(Nav& nav) {
-      trace(MDO<<"RangePanel::posTop for "<<nav.pos()<<endl);
+    inline bool posTop(Nav& nav) {
+      _trace(MDO<<"RangePanel::posTop for "<<nav.pos()<<endl);
+      Idx ot=top();
       while(top()>nav.pos()) setTop(top()-1);
       //TODO: this is NOT correct for multiline options!!!!
       while(nav.pos()>=top()+freeY()) setTop(top()+1);
-      trace(MDO<<"top:"<<top()<<endl);
+      _trace(MDO<<"top:"<<top()<<endl);
+      return ot!=top();
     }
   protected:
     Idx topLine=0;

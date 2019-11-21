@@ -14,7 +14,7 @@ struct Item:I {
   using Base=I;
   using This=Item<I>;
   template<typename Nav,typename Out,Roles P=Roles::Item>
-  inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0) {
+  inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,bool=true) {
     out.printItem(*this,idx,nav.selected(idx),I::enabled(),nav.mode());
   }
   template<typename Out,Roles P=Roles::Item,bool toPrint=true>
@@ -182,7 +182,7 @@ struct Pair:F {
     else out.printMenu(*reinterpret_cast<F*>(this),nav);
   }
   template<typename Nav,typename Out>
-  inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0) {
+  inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,bool fullPrint=true) {
     if (!out.freeY()) return;
     if(top) tail.printItems(nav,out,idx+1,top-1);
     else {
@@ -220,8 +220,9 @@ template<typename O,typename... OO> struct StaticData:Pair<O,StaticData<OO...>> 
 template<typename O>                struct StaticData<O>:Pair<O> {};
 
 template<typename Title,typename Body>
-struct StaticMenu:Pair<Title,Body> {
-  using Base=Pair<Title,Body>;
+struct StaticMenu:Mutable<Pair<Title,Body>> {
+  using Base=Mutable<Pair<Title,Body>>;
+  using This=StaticMenu<Title,Body>;
 
   // cmd ---------------------------------------------------
   // using Title::printMenu;
@@ -241,7 +242,7 @@ struct StaticMenu:Pair<Title,Body> {
   }
   template<typename Nav,typename Out>
   inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0) {
-    Base::tail.template printItems<Nav,Out>(nav,out,idx,top);
+    Base::tail.template printItems<Nav,Out>(nav,out,idx,top,This::changed());
   }
 
   // using Title::size;

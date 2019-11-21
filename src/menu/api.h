@@ -24,7 +24,7 @@ struct Void:Nil {
   inline static void setClip(int x,int y,int w,int h) {}
   inline static void clipOff() {}
   inline static constexpr Idx top() {return 0;}
-  template<typename Nav> inline static void posTop(Nav&) {}
+  template<typename Nav> inline static constexpr bool posTop(Nav&) {return false;}
   inline static constexpr int ascent() {return 0;}
   inline static void setCursor(int x,int y) {}
 
