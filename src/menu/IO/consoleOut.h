@@ -4,4 +4,4 @@
 #include <iostream>
 #include "../menuIO.h"
 
-using Console=StreamOut<decltype(std::cout),std::cout>;
+using Console=CanMeasure<StreamOut<decltype(std::cout),std::cout>>;

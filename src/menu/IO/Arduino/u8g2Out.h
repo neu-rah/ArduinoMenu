@@ -52,7 +52,7 @@ struct U8g2Fmt:public O {
 
 template<typename Dev,Dev& dev,typename O=Void>
 struct U8g2Out:O,U8g2TextMeasure<Dev,dev> {
-  template<typename Out,boool toPrint=true>
+  template<typename Out,bool toPrint=true>
   inline static void nl(Out&) {}
   template<typename T>
   inline static void raw(T o,Roles role=Roles::Raw) {dev.print(o);}

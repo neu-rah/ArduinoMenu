@@ -91,12 +91,18 @@ SerialIn<decltype(Serial),Serial> in;//create input object (here serial)
 using Out=FullPrinter<//print title and items
   Fmt<//formating API
     BigTitleU8x8Out<//print title using u8x8::draw2x2String()
-      U8x8Fmt<//specific u8x8 formatings (clearing and inverting text)
-        TextCursorFmt<//draw text cursor
-          TextEditModeFmt<//draw edit mode text cursor
-            TextItemFmt<//add newline after each item
-              RangePanel<//scroll content on output geometry
-                StaticPanel<0,0,128/8,64/8-1,U8x8Out<decltype(u8x8),u8x8>>//describe output geometry and device
+      PartialDraw<
+        U8x8Fmt<//specific u8x8 formatings (clearing and inverting text)
+          TextCursorFmt<//draw text cursor
+            TextEditModeFmt<//draw edit mode text cursor
+              TextItemFmt<//add newline after each item
+                RangePanel<//scroll content on output geometry
+                  StaticPanel<0,0,128/8,64/8-1,
+                    CanMeasure<
+                      U8x8Out<decltype(u8x8),u8x8>
+                    >
+                  >//describe output geometry and device
+                >
               >
             >
           >

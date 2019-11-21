@@ -28,6 +28,8 @@ struct Void:Nil {
   inline static constexpr int ascent() {return 0;}
   inline static void setCursor(int x,int y) {}
 
+  inline static constexpr bool partialDraw() {return false;}
+
   template<bool io> inline static void fmtRaw(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
   template<bool io> inline static void fmtPanel(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
   template<bool io> inline static void fmtMenu(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
