@@ -7,8 +7,13 @@ struct Nil {};
 
 ////////////////////////////////////////////////////////////////////////////////
 struct Void:Nil {
-  inline static void nl() {}
-  template<typename T> inline static void raw(T o,Roles role=Roles::Raw) {}
+  using This=Void;
+  template<typename Out,bool toPrint=true>
+  inline static void nl(Out&) {}
+  template<typename T,typename Out,bool toPrint=true>
+  inline static void raw(T,Out&,Roles=Roles::Raw) {}
+  // template<typename T>
+  // inline static void raw<T,This>(T o,Roles role=Roles::Raw) {raw<T,This>(o,*this);}
   inline static void newView() {}
   template<Roles role,bool io>
   inline static void fmt(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
@@ -44,6 +49,26 @@ struct Void:Nil {
   inline static void printOn(Nav& nav,Out& out) {nav._printMenu(out);}
 };
 
+struct TextMeasure:public Void {
+  template<typename T>
+  static inline Idx measure(T o) {
+    #ifdef ARDUINO
+      return String(o).length();
+    #else
+      return _str(o);
+    #endif
+  }
+  inline static constexpr int maxCharWidth() {return 1;}
+  inline static constexpr int maxCharHeight() {return 1;}
+  int textWidth(const char*s) const {return measure(s);}
+  protected:
+    #ifndef ARDUINO
+    static inline Idx _str(const char*o){return std::string(o).length();}
+    template<typename T>
+    static inline Idx _str(T i){return std::string(std::to_string(i)).length();}
+    #endif
+};
+
 ////////////////////////////////////////////////////////////////////////////////
 struct None:Nil {
   template<typename Nav,bool invY=false>
@@ -55,7 +80,7 @@ struct Empty:Nil {
   using Base=Nil;
   inline static constexpr Idx size(Ref ref,Idx n) {return size();}
   inline static constexpr Idx size() {return 0;}
-  template<typename Out,Roles=Roles::Raw>
+  template<typename Out,Roles=Roles::Raw,bool=true>
   inline static void print(Out&) {}
   // template<typename It,typename Nav,typename Out>
   // inline void printMenu(bool,It&,Nav& nav,Out& out,Ref ref,Idx n) {}
@@ -87,11 +112,12 @@ struct Empty:Nil {
   static inline void printMenu(bool,It& it,Nav&,Out& out) {it.print(out);}
   template<typename It,typename Nav,typename Out>
   static inline void printMenu(bool,It& it,Nav&,Out& out,Ref,Idx) {it.print(out);}
-  template<typename It,typename Out,Roles=Roles::Raw>
+  template<typename It,typename Out,Roles role=Roles::Raw,bool toPrint=true>
   static inline void printItem(It& it,Out& out,Idx=0,bool=false,bool=true,Modes=Modes::Normal) {
-    trace(MDO<<"Empty::printItem"<<endl);
-    it.print(out);
+    it.template print<Out,role,toPrint>(out);
   }
+  inline static constexpr bool changed() {return false;}
+  inline static void changed(bool) {}
 };
 
 ///////////////////////////////////////////////////////////////////////////////

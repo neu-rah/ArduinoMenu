@@ -7,13 +7,6 @@ This os part of the output system
 
 #include "api.h"
 
-//Output Device Operation
-enum class OutOps {RawOut,Measure};
-template<OutOps> struct OutOp {};
-
-using RawOutOp=OutOp<OutOps::RawOut>;
-using MeasureOp=OutOp<OutOps::Measure>;
-
 ////////////////////////////////////////////////////////////////////////////////
 // panels and viewports
 template<Idx x,Idx y,Idx w,Idx h,typename O>
@@ -30,6 +23,7 @@ struct StaticPanel:public O {
   constexpr static inline Idx free() {return w*h;}
   static inline void useX(Idx ux=1) {}
   static inline void useY(Idx uy=1) {}
+  static inline void use(Idx ux=1,Idx uy=1) {}
 };
 
 template<typename O,int w=1,int h=1>
@@ -50,8 +44,14 @@ class RangePanel:public O {
         O::setCursor(0,(O::height()-freeLines)*O::maxCharHeight()+O::ascent());
       }
     }
+    inline void use(Idx ux=1,Idx uy=1) {This::useX(ux);This::useY(uy);}
     inline void nl() {
       O::nl();
+      useY();
+    }
+    template<typename Out,bool toPrint=true>
+    inline void nl(Out&) {
+      if (toPrint) O::template nl<This,toPrint>(*this);
       useY();
     }
     inline Idx freeY() const {return freeLines;}

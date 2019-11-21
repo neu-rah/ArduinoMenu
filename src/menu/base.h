@@ -12,7 +12,20 @@
 
 enum class Modes {Normal,Edit,Tune};
 enum class Roles:Idx {Raw,Panel,Menu,Title,Body,Item,Index,Cursor,Name,Mode,Value,Unit};
-enum class Cmds:Idx {None=0,/*Activate=1,*/Enter=2,Esc=4,Up=8,Down=16,Left=32,Right=64};
+enum class Cmds:Idx {None=0,Enter=2,Esc=4,Up=8,Down=16,Left=32,Right=64};
+//Output Device Operation
+// enum class OutOp {Printing,MeasureHeight,MeasureWidth,Measure};
+// struct Used {
+//   struct Area {Idx x,y;};
+//   union {
+//     Idx size;
+//     Area used;
+//   };
+//   inline Used() {}
+//   inline Used(Idx s):size(s){}
+//   inline Used(Idx x,Idx y):used{x,y}{}
+//   inline Used(Used::Area u):used(u){}
+// };
 
 #ifdef MENU_DEBUG
   constexpr const char* roleNames[]{
@@ -20,8 +33,17 @@ enum class Cmds:Idx {None=0,/*Activate=1,*/Enter=2,Esc=4,Up=8,Down=16,Left=32,Ri
     "Cursor","Name","Mode","Value","Unit","Raw"
   };
 
+  constexpr const char* modeNames[]{"Normal","Edit","Tune"};
+  // constexpr const char* opNames[]{"Printing","MeasureWidth","MeasureHeight","Measure"};
+
   template<typename O>
   constexpr inline O& operator<<(O& o,Roles r) {return o<<roleNames[(Idx)r];}
+
+  template<typename O>
+  constexpr inline O& operator<<(O& o,Modes r) {return o<<modeNames[(Idx)r];}
+
+  // template<typename O>
+  // constexpr inline O& operator<<(O& o,OutOp r) {return o<<opNames[(Idx)r];}
 
   template<typename O>
   inline O& operator<<(O& o,Cmds r) {
@@ -59,7 +81,7 @@ struct Ref {
 template<Roles role,typename O>
 struct As:O {
   using O::print;
-  template<typename It,typename Out,Roles=role>
+  template<typename It,typename Out,Roles=role,bool toPrint=true>
   static inline void printItem(It& it,Out& out,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
     trace(MDO<<"As<"<<role<<">");
     out.template fmt<role,true>(n,s,e,m);

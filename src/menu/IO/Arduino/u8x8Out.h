@@ -57,7 +57,8 @@ struct BigTitleU8x8Out:O {
 template<typename Dev,Dev& dev,typename O=TextMeasure>
 struct U8x8Out:O {
   static constexpr Dev& u8x8_dev_v=dev;
-  inline static void nl() {}
+  template<typename Out,boool toPrint=true>
+  inline static void nl(Out&) {}
   template<typename T>
   inline static void raw(T o,Roles role=Roles::Raw) {dev.print(o);}
   inline static constexpr int ascent() {return 0;}

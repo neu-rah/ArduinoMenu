@@ -5,25 +5,6 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 // printers
-struct TextMeasure:public Void {
-  template<typename T>
-  static inline Idx measure(T o) {
-    #ifdef ARDUINO
-      return String(o).length();
-    #else
-      return _str(o);
-    #endif
-  }
-  inline static constexpr int maxCharWidth() {return 1;}
-  inline static constexpr int maxCharHeight() {return 1;}
-  int textWidth(const char*s) const {return measure(s);}
-  protected:
-    #ifndef ARDUINO
-    static inline Idx _str(const char*o){return std::string(o).length();}
-    template<typename T>
-    static inline Idx _str(T i){return std::string(std::to_string(i)).length();}
-    #endif
-};
 
 //to avoid passing the output object back and forth a printer must be a top level vomposition
 //because it needs do call back data for item printing
@@ -58,7 +39,7 @@ struct FullPrinter:public P {
     P::template fmt<Roles::Menu,false>();
     P::template fmt<Roles::Panel,false>();
   }
-  template<typename It>
+  template<typename It,bool toPrint=true>
   void printItem(It& it,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
     P::clrLine(P::posY());
     P::template fmt<Roles::Item,  true >(n,s,e,m);
@@ -70,7 +51,7 @@ struct FullPrinter:public P {
     //we can pass parameters along or use some sort of CRTP
     //however CRTP does not mix with Mixins, they are oposites
     //using a forward reference instead
-    it.template printItem<This,Roles::Item>(*this,n,s,e,m);
+    it.template printItem<This,Roles::Item,toPrint>(*this,n,s,e,m);
     // it.print(*this);
     P::template fmt<Roles::Item,false>(n,s,e,m);
   }

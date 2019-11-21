@@ -9,7 +9,7 @@
 
 template<typename O>
 struct TextEditModeFmt:public O {
-  template<bool io>
+  template<bool io,bool toPrint=true>
   inline void fmtMode(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
     if(io) switch(m) {
       case Modes::Normal: O::raw(' ');break;

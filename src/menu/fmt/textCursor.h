@@ -9,7 +9,7 @@
 
 template<typename O>
 struct TextCursorFmt:public O {
-  template<bool io>
+  template<bool io,bool toPrint=true>
   inline void fmtCursor(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
     // if (io) _trace(MDO<<n<<s<<e<<(int)m);
     if (io) O::raw(s?((e?'>':'-')):' ');

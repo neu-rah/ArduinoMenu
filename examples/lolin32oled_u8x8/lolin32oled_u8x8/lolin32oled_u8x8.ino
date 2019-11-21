@@ -106,7 +106,7 @@ using Out=FullPrinter<//print title and items
   >
 >;
 
-Out out;//create output object (Serial)
+Out out;//create output object (u8x8)
 
 //navigation root ---------------------------------
 Nav<decltype(mainMenu),mainMenu,2> nav;

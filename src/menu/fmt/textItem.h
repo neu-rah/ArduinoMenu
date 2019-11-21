@@ -9,7 +9,7 @@
 
 template<typename O>
 struct TextItemFmt:public O {
-  template<bool io>
+  template<bool io,bool toPrint=true>
   inline void fmtItem(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
     if (!io) O::nl();
   }

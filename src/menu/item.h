@@ -17,9 +17,9 @@ struct Item:I {
   inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0) {
     out.printItem(*this,idx,nav.selected(idx),I::enabled(),nav.mode());
   }
-  template<typename Out,Roles P=Roles::Item>
+  template<typename Out,Roles P=Roles::Item,bool toPrint=true>
   inline void printItem(Out& out,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
-    I::template printItem<This,Out,P>(*this,out,n,s,e,m);
+    I::template printItem<This,Out,P,toPrint>(*this,out,n,s,e,m);
   }
   using I::canNav;
   inline bool canNav(Ref ref,Idx n) const {return I::canNav();}
@@ -49,8 +49,10 @@ struct Action:I {
 template<const char**text,typename I=Empty>
 struct StaticText:I {
   using Base=I;
-  template<typename Out,Roles role=Roles::Raw>
-  inline void print(Out& out) {out.raw(text[0],role);}
+  template<typename Out,Roles role=Roles::Raw,bool toPrint=true>
+  inline void print(Out& out) {
+    out.template raw<decltype(text[0]),Out,toPrint>(text[0],out,role);
+  }
 };
 
 template<typename I=Empty>
@@ -58,7 +60,10 @@ struct Text:I {
   using Base=I;
   const char* text;
   inline Text(const char*o):text(o) {}
-  template<typename Out,Roles role=Roles::Raw> inline void print(Out& out) {out.raw(text,role);}
+  template<typename Out,Roles role=Roles::Raw,bool toPrint=true>
+  inline void print(Out& out) {
+    out.template raw<decltype(text),Out,toPrint>(text,out,role);
+  }
 };
 
 template<typename I>
@@ -66,6 +71,13 @@ struct Exit:I {
   using Base=I;
   inline static constexpr bool activate() {return false;}
   inline static constexpr bool activate(Ref,Idx=0) {return activate();}
+};
+
+template<typename I>
+struct Mutable:I {
+  bool hasChanged=false;
+  inline bool changed() const {return hasChanged;}
+  inline void changed(bool o) {hasChanged=o;}
 };
 
 //wrap an item with static prefix/suffix content, behaves like the wrapped item
@@ -76,31 +88,31 @@ struct StaticWrap:Of {
   using Of::print;
   Prefix prefix;
   Suffix suffix;
-  template<typename Out,Roles role=Roles::Raw>
+  template<typename Out,Roles role=Roles::Raw,bool toPrint=true>
   inline void print(Out& out) {
-    prefix.template print<Out,role>(out);
-    Of::template print<Out,role>(out);
-    suffix.template print<Out,role>(out);
+    prefix.template print<Out,role,toPrint>(out);
+    Of::template print<Out,role,toPrint>(out);
+    suffix.template print<Out,role,toPrint>(out);
   }
-  template<typename It,typename Out,Roles role=Roles::Raw>
+  template<typename It,typename Out,Roles role=Roles::Raw,bool toPrint=true>
   inline void printItem(It& it,Out& out,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
     trace(MDO<<"printing wrap"<<endl);
-    prefix.template printItem<Prefix,Out,role>(prefix,out,n,s,e,m);
-    Of::template printItem<Of,Out,role>(*this,out,n,s,e,m);
-    suffix.template printItem<Suffix,Out,role>(suffix,out,n,s,e,m);
+    prefix.template printItem<Prefix,Out,role,toPrint>(prefix,out,n,s,e,m);
+    Of::template printItem<Of,Out,role,toPrint>(*this,out,n,s,e,m);
+    suffix.template printItem<Suffix,Out,role,toPrint>(suffix,out,n,s,e,m);
   }
 };
 
 // this messes the wrap of parts
 template<typename I>
 struct ChainPrint:I {
-  template<typename Out,Roles role=Roles::Raw>
+  template<typename Out,Roles role=Roles::Raw,bool toPrint=true>
   inline void print(Out& out) {
     I::print(out);
     I::Base::print(out);
   }
-  // template<typename It,typename Out,Roles P=Roles::Item>
-  // static inline void printItem(It& it,Out& out,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
+  // template<typename It,typename Out,Roles P=Roles::Item,bool toPrint=true>
+  // static inline It& it,Out& out,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
   //   I::printItem(it,out,n,s,e,m);
   //   I::Base::printItem(it,out,n,s,e,m);
   // }
@@ -111,13 +123,13 @@ struct ChainPrint:I {
 // struct Seq:I {
 //   Seq<II...> next;
 //   using I::print;
-//   template<typename Out,Roles role=Roles::Raw>
+//   template<typename Out,Roles role=Roles::Raw,bool toPrint=true>
 //   inline void print(Out& out) {
 //     I::print(out);
 //     next.print(out);
 //   }
-//   template<typename It,typename Out,Roles role=Roles::Raw>
-//   inline void printItem(It& it,Out& out,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
+//   template<typename It,typename Out,Roles role=Roles::Raw,bool toPrint=true>
+//   inline It& it,Out& out,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
 //     I::template printItem<It,Out,role>(it,out,n,s,e,m);
 //     next.template printItem<It,Out,role>(it,out,n,s,e,m);
 //   }

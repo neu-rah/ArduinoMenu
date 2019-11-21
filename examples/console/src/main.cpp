@@ -98,7 +98,7 @@ bool tog12() {
 }
 
 int main() {
-  Console::raw("AM5 Tests ----------------------");
+  Console::raw("AM5 Tests ----------------------",out);
   Console::nl();
   test.print(out);//printing single field
   Console::nl();

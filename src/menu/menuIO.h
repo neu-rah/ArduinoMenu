@@ -3,11 +3,27 @@
 
 #include "api.h"
 
-template<typename Dev,Dev& dev,typename O=Void>
+template<typename Dev,Dev& dev,typename O=TextMeasure>
 struct StreamOut:O {
+  using This=StreamOut<Dev,dev,O>;
+
   inline static void nl() {dev<<endl;}
-  template<typename T>
-  inline static void raw(T o,Roles role=Roles::Raw) {dev<<o;}
+  template<typename Out=This,bool toPrint=true>
+  inline static void nl(Out& out) {
+    if (toPrint) nl();
+    else out.useY();
+  }
+
+  template<typename T,typename Out,bool toPrint=true>
+  inline static void raw(T o,Out& out,Roles role=Roles::Raw) {
+    if (toPrint) dev<<o;
+    else out.use(O::measure(o),1);//assuming only one line internal string \n are not accounted for
+  }
+  // template<typename T>
+  // inline static void raw(T o,Roles role=Roles::Raw) {
+  //   if (toPrint) dev<<o;
+  //   else out.use(measure(o),1);//assuming only one line internal string \n are not accounted for
+  // }
 };
 
 template<typename Dev,Dev& dev,typename O=Void>

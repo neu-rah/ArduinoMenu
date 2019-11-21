@@ -26,8 +26,8 @@
         //nav.setMode(Modes::Edit);//either need Nav& or nav should do this part
         return true;
       }
-      template<typename Out,Roles role=Roles::Raw>
-      inline void print(Out& out) {out.raw(value,role);}
+      template<typename Out,Roles role=Roles::Raw,bool toPrint=true>
+      inline void print(Out& out) {out.template raw<T,Out,toPrint>(value,out,role);}
       using I::cmd;
       template<Cmds c,typename Nav>
       inline void cmd(Nav& nav) {
@@ -58,6 +58,16 @@
   };
 
   template<typename Label,typename T,T& value,T low,T high,T step,T tune=0,typename Unit=Empty>
-  using NumField=StaticWrap<AsMode<AsValue<NumValue<T,value,low,high,step,tune>>>,AsName<Label>,AsUnit<Unit>>;
+  using NumField=StaticWrap<
+    AsMode<
+      AsValue<
+        Mutable<
+          NumValue<T,value,low,high,step,tune>
+        >
+      >
+    >,
+    AsName<Label>,
+    AsUnit<Unit>
+  >;
 
 // };
