@@ -191,7 +191,6 @@ struct Pair:F {
     else {
       out.template printItem<F,toPrint>(*this,idx,nav.selected(idx),F::enabled(),nav.mode());
       tail.printItems(nav,out,idx+1,top,fullPrint);
-      MDO.flush();
     }
   }
 

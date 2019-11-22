@@ -14,9 +14,9 @@
   struct FlashText:public I {
     using I::I;
     using I::size;
-    template<typename Out,Roles role=Roles::Raw>
+    template<typename Out,Roles role=Roles::Raw,bool toPrint=true>
     inline void print(Out& out) {
-      out.raw(reinterpret_cast<const __FlashStringHelper *>(text[0]),role);
+      out.template print<const __FlashStringHelper *,Out,toPrint>(reinterpret_cast<const __FlashStringHelper *>(text[0]),out,role);
     }
   };
 // };
