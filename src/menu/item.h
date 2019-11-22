@@ -6,13 +6,14 @@
 /// ActionHanlder, type of action functions to associate with items
 using ActionHandler=bool (*)();
 
-struct MutBits {
-  Idx isEnabled:1, hasChanged:1;
-};
+//do not use vitual inheritance, memory cost is too high to share a byte
+// struct MutBits {
+//   Idx isEnabled:1, hasChanged:1;
+// };
 
 template<typename I>
-struct Mutable:I,virtual MutBits {
-  // bool hasChanged=false;
+struct Mutable:I/*,virtual MutBits*/ {
+  bool hasChanged=false;
   inline bool changed() const {return hasChanged;}
   inline void changed(bool o) {hasChanged=o;}
 };
@@ -21,8 +22,8 @@ struct Mutable:I,virtual MutBits {
 * The Item class encapsulates a composition to be a menu item.
 */
 template<typename I>
-struct Item:Mutable<I> {
-  using Base=Mutable<I>;
+struct Item:I/*Mutable<I>*/ {
+  using Base=I;//Mutable<I>;
   using This=Item<I>;
   template<typename Nav,typename Out,Roles P=Roles::Item,bool toPrint=true>
   inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,bool=true) {
@@ -223,8 +224,9 @@ template<typename O,typename... OO> struct StaticData:Pair<O,StaticData<OO...>> 
 template<typename O>                struct StaticData<O>:Pair<O> {};
 
 template<typename Title,typename Body>
-struct StaticMenu:Mutable<Pair<Title,Body>> {
+struct StaticMenu:/*Pair<Title,Body>*/Mutable<Pair<Title,Body>>{
   using Base=Mutable<Pair<Title,Body>>;
+  // using Base=Pair<Title,Body>;
   using This=StaticMenu<Title,Body>;
 
   // cmd ---------------------------------------------------
