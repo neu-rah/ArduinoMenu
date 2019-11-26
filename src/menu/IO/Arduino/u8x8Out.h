@@ -15,22 +15,17 @@ struct U8x8Fmt:public O {
       O::u8x8_dev_v.setCursor(x,y+h);
     }
   }
-  // template<bool io,bool toPrint>
-  // inline void fmtPanel(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
-  //   // if(io) O::u8x8_dev_v.clear();
-  //   // O::template fmtPanel<io>(n,s,e,m);
-  // }
   template<bool io,bool toPrint=true>
   inline void fmtTitle(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
     O::u8x8_dev_v.setInverseFont(io);
-    if(io) fillLines(O::u8x8_dev_v.getCols());
-    O::template fmtTitle<io,toPrint>(n,s,e,m);
+    if(io&&toPrint) fillLines(O::u8x8_dev_v.getCols());
+    // O::template fmtTitle<io,toPrint>(n,s,e,m);
   }
   template<bool io,bool toPrint=true>
   inline void fmtItem(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
     if (io) {
       if (s) O::u8x8_dev_v.setInverseFont(true);
-      fillLines(O::u8x8_dev_v.getCols());
+      if (toPrint) fillLines(O::u8x8_dev_v.getCols());
     }
     O::template fmtItem<io,toPrint>(n,s,e,m);
     if (s&&!io) O::u8x8_dev_v.setInverseFont(false);
@@ -39,21 +34,14 @@ struct U8x8Fmt:public O {
 
 template<typename O>
 struct BigTitleU8x8Out:O {
-  template<bool io,bool toPrint=true>
-  inline void fmtTitle(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
-    if (toPrint) {
-      O::u8x8_dev_v.setInverseFont(io);
-      if(io) O::fillLines(O::u8x8_dev_v.getCols(),2);
-    }
-    O::template fmtTitle<io,toPrint>(n,s,e,m);
-  }
-  using O::raw;
-  template<typename T>
-  inline void raw(T o,Roles role=Roles::Raw) {
+  template<typename T,typename Out,bool toPrint=true>
+  inline void print(T o,Out& out,Roles role=Roles::Raw) {
     if (role==Roles::Title) {
-      O::u8x8_dev_v.draw2x2String(O::u8x8_dev_v.tx,O::u8x8_dev_v.ty,(const char*)o);
+      O::u8x8_dev_v.setInverseFont(true);
+      if (toPrint) O::u8x8_dev_v.draw2x2String(O::u8x8_dev_v.tx,O::u8x8_dev_v.ty,(const char*)o);
+      O::u8x8_dev_v.setInverseFont(false);
       O::useY();
-    } else O::raw(o,role);
+    } else O::template print<T,Out,toPrint>(o,out,role);
   }
 };
 

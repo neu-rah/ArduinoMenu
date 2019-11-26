@@ -85,10 +85,6 @@ Nav<decltype(mainMenu),mainMenu,2> nav;
 
 //menu action handlers implementation
 bool tog12() {
-  // Idx fstPath[]{0};
-  // Ref fst{0,fstPath};
-  // Idx sndPath[]{0};
-  // Ref snd{0,sndPath};
   mainMenu.enable(!mainMenu.enabled(0),0);
   mainMenu.enable(!mainMenu.enabled(1),1);
   return true;

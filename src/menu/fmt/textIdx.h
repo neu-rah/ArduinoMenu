@@ -12,8 +12,9 @@ struct TextIdxFmt:public O {
   template<bool io,bool toPrint=true>
   inline void fmtIndex(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
     if(io) {
-      if (n<9) O::raw(n+1);
-      else O::raw(' ');
+      if (n<9) O::template print<int,This,toPrint>(n+1,*this,Roles::Index);
+      else O::template print<char,This,toPrint>(' ',*this,Roles::Index);
     }
+    O::template fmtIndex<io,toPrint>(n,s,e,m);
   }
 };

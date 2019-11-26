@@ -17,5 +17,6 @@ struct TextEditModeFmt:public O {
       case Modes::Edit: O::template print<char,This,toPrint>(s?':':' ',*this,Roles::Mode);break;
       case Modes::Tune: O::template print<char,This,toPrint>(s?'>':' ',*this,Roles::Mode);break;
     }
+    O::template fmtMode<io,toPrint>(n,s,e,m);
   }
 };

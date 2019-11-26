@@ -8,6 +8,7 @@ using namespace std;
 #include <menu/IO/linuxKeyIn.h>
 //format specifyers -----------------------------------------
 #include <menu/fmt/fullText.h>//to draw index and text cursors (nav and edit)
+#include <menu/fmt/ANSI.h>//to draw index and text cursors (nav and edit)
 #include <menu/fmt/titleWrap.h>
 //components ------------------------------------------------
 #include <menu/comp/endis.h>
@@ -46,8 +47,8 @@ StaticMenu<
     Item<EnDis<StaticText<&op1_text>>>,
     Item<EnDis<StaticText<&op2_text>,false>>,//define as disabled on startup
     Item<Action<StaticText<&tog12_text>,tog12>>,
-    Item<NumField<StaticText<&yr_txt>,int,year,1900,2100,10,1>>,//this is NOT good, changing limits generates new code->TODO: add a translation
-    Item<NumField<StaticText<&vcc_txt>,decltype(vcc),vcc,0,100,1,0,StaticText<&volts_txt>>>,
+    // Item<NumField<StaticText<&yr_txt>,int,year,1900,2100,10,1>>,//this is NOT good, changing limits generates new code->TODO: add a translation
+    // Item<NumField<StaticText<&vcc_txt>,decltype(vcc),vcc,0,100,1,0,StaticText<&volts_txt>>>,
     Item<StaticText<&opn_text>>,
     StaticMenu<
       Item<StaticText<&subMenu_title>>,
@@ -71,13 +72,13 @@ LinuxKeyIn in;
 //a simpler print device, not constrained or scrolling, adequate for console devices (serial monitor)
 // using Out=FullPrinter<Fmt<TitleWrapFmt<TextFmt<Console>>>>;
 
-//a more complete output device sonstrained and scrolling, we should use on almost all screens (LCD, TFT, etc...)
+// a more complete output device sonstrained and scrolling, we should use on almost all screens (LCD, TFT, etc...)
 using Out=FullPrinter<//print title and items
   Fmt<//formating API
     TitleWrapFmt<//put [] around menu title
       TextFmt<//apply text formating
         RangePanel<//scroll content on output geometry
-          StaticPanel<0,0,20,6,Console>//describe output geometry and device
+          StaticPanel<50,2,20,6,Console>//describe output geometry and device
         >
       >
     >
@@ -90,7 +91,7 @@ Out out;
 Nav<decltype(mainMenu),mainMenu,2> nav;
 
 bool tog12() {
-  _trace(MDO<<"to12:"<<mainMenu.enabled(0)<<mainMenu.enabled(1));
+  _trace(MDO<<"tog12:"<<mainMenu.enabled(0)<<mainMenu.enabled(1));
   mainMenu.enable(!mainMenu.enabled(0),0);
   mainMenu.enable(!mainMenu.enabled(1),1);
   _trace(MDO<<"->"<<mainMenu.enabled(0)<<mainMenu.enabled(1));
@@ -98,12 +99,6 @@ bool tog12() {
 }
 
 int main() {
-  Console::raw("AM5 Tests ----------------------");
-  Console::nl();
-  test.print(out);//printing single field
-  Console::nl();
-  mainMenu.enabled(1);
-  // mainMenu.enable(false,1);//dynamic disable second option... its already disable on definition
   nav.printMenu(out);
   while(running) {
     if (nav.doInput(in)) nav.printMenu(out);

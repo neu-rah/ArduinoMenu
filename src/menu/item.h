@@ -11,27 +11,38 @@ using ActionHandler=bool (*)();
 //   Idx isEnabled:1, hasChanged:1;
 // };
 
+//mutable is to be used on items but it is needed when using partial draw devices
+// guess we need <λ++> here...
+// well Mitable will be needed for other cases, considering making it a defualt
 template<typename I>
 struct Mutable:I/*,virtual MutBits*/ {
-  bool hasChanged=false;
+  bool hasChanged=true;
   inline bool changed() const {return hasChanged;}
   inline void changed(bool o) {hasChanged=o;}
+  inline static void changed(Idx,bool o) {assert(false);}
 };
 
 /**
 * The Item class encapsulates a composition to be a menu item.
 */
 template<typename I>
-struct Item:I/*Mutable<I>*/ {
-  using Base=I;//Mutable<I>;
+struct Item:Mutable<I> {
+  using Base=Mutable<I>;
   using This=Item<I>;
-  template<typename Nav,typename Out,Roles P=Roles::Item,bool toPrint=true>
-  inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,bool=true) {
-    out.template printItem<This,toPrint>(*this,idx,nav.selected(idx),I::enabled(),nav.mode());
+  //terminate items printing by printing just this last one as a single item
+  template<typename Nav,typename Out,Roles role=Roles::Item,OutOp op=OutOp::Printing>
+  inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,bool fullPrint=true) {
+    assert(op!=OutOp::ClearChanges);
+    out.template printItem<This,op!=OutOp::Measure>(*this,idx,nav.selected(idx),I::enabled(),nav.mode());
+  }
+
+  template<typename It,typename Out,Roles role=Roles::Raw,bool toPrint=true>
+  inline void printItem(It& it,Out& out,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
+    I::template printItem<This,Out,role,toPrint>(*this,out,n,s,e,m);
   }
   template<typename Out,Roles P=Roles::Item,bool toPrint=true>
   inline void printItem(Out& out,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
-    I::template printItem<This,Out,P,toPrint>(*this,out,n,s,e,m);
+    This::template printItem<This,Out,P,toPrint>(*this,out,n,s,e,m);
   }
   using I::canNav;
   inline bool canNav(Ref ref,Idx n) const {return I::canNav();}
@@ -55,7 +66,6 @@ struct Action:I {
   using I::I;
   using This=Action<I,act>;
   inline static bool activate() {return act();}
-  // inline static bool activate(Ref,Idx=0) {return activate();}
 };
 
 template<const char**text,typename I=Empty>
@@ -93,12 +103,6 @@ struct StaticWrap:Of {
   using Of::print;
   Prefix prefix;
   Suffix suffix;
-  template<typename Out,Roles role=Roles::Raw,bool toPrint=true>
-  inline void print(Out& out) {
-    prefix.template print<Out,role,toPrint>(out);
-    Of::template print<Out,role,toPrint>(out);
-    suffix.template print<Out,role,toPrint>(out);
-  }
   template<typename It,typename Out,Roles role=Roles::Raw,bool toPrint=true>
   inline void printItem(It& it,Out& out,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
     prefix.template printItem<Prefix,Out,role,toPrint>(prefix,out,n,s,e,m);
@@ -107,40 +111,14 @@ struct StaticWrap:Of {
   }
 };
 
-// this messes the wrap of parts
-template<typename I>
-struct ChainPrint:I {
-  template<typename Out,Roles role=Roles::Raw,bool toPrint=true>
-  inline void print(Out& out) {
-    I::print(out);
-    I::Base::print(out);
-  }
-  // template<typename It,typename Out,Roles P=Roles::Item,bool toPrint=true>
-  // static inline It& it,Out& out,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
-  //   I::printItem(it,out,n,s,e,m);
-  //   I::Base::printItem(it,out,n,s,e,m);
-  // }
-};
-
-//prints all items in sequencde but behaves like the first
-// template<typename I,typename... II>
-// struct Seq:I {
-//   Seq<II...> next;
-//   using I::print;
+// template<typename I>
+// struct ChainPrint:I {
 //   template<typename Out,Roles role=Roles::Raw,bool toPrint=true>
 //   inline void print(Out& out) {
 //     I::print(out);
-//     next.print(out);
-//   }
-//   template<typename It,typename Out,Roles role=Roles::Raw,bool toPrint=true>
-//   inline It& it,Out& out,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
-//     I::template printItem<It,Out,role>(it,out,n,s,e,m);
-//     next.template printItem<It,Out,role>(it,out,n,s,e,m);
+//     I::Base::print(out);
 //   }
 // };
-//
-// template<typename I>
-// struct Seq<I>:I {};
 
 template<typename F,typename S=Empty>
 struct Pair:F {
@@ -166,16 +144,26 @@ struct Pair:F {
   inline bool enabled(Ref ref) const {return ref?enabled(ref,ref.head()):enabled();}
   inline bool enabled(Ref ref,Idx n) const {return n?tail.enabled(ref,n-1):ref?enabled(ref.tail(),ref.tail().head()):F::enabled();}
 
+  inline void changed(Idx n,bool o) {
+    if (n) tail.changed(n-1,o);
+    else F::changed(o);
+  }
 
   // commands ------------------------------------------------------------------
   using F::cmd;
-  template<Cmds c,typename Nav>
-  inline void cmd(Nav& nav,Ref ref) {cmd(nav,ref,ref.head());}
+  // template<Cmds c,typename Nav>
+  // inline void cmd(Nav& nav,Ref ref) {
+  //   assert(false);
+  //   cmd(nav,ref,ref.head());
+  // }
   template<Cmds c,typename Nav>
   inline void cmd(Nav& nav,Ref ref,Idx n) {
     if (n) tail.template cmd<c,Nav>(nav,ref,n-1);
     else if(ref) F::template cmd<c,Nav>(nav,ref.tail(),ref.tail().head());
-    else F::template cmd<c,Nav>(nav);
+    else {
+      assert(false);
+      F::template cmd<c,Nav>(nav);
+    }
   }
 
   // print ---------------------------------------------------------------------
@@ -185,13 +173,25 @@ struct Pair:F {
     else if (ref) F::printMenu(pd,*this,nav,out,ref.tail(),ref.tail().head());
     else out.printMenu(*reinterpret_cast<F*>(this),nav);
   }
-  template<typename Nav,typename Out,Roles P=Roles::Item,bool toPrint=true>
+  template<typename Nav,typename Out,Roles P/*=Roles::Item*/,OutOp op/*=OutOp::Printing*/>
   inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,bool fullPrint=true) {
     if (!out.freeY()) return;
-    if(top) tail.printItems(nav,out,idx+1,top-1);
+    if(top) tail.template printItems<Nav,Out,P,op>(nav,out,idx+1,top-1,fullPrint);//skip scroll-out part
     else {
-      out.template printItem<F,toPrint>(*this,idx,nav.selected(idx),F::enabled(),nav.mode());
-      tail.printItems(nav,out,idx+1,top,fullPrint);
+      switch(op) {
+        case OutOp::Measure:
+          out.template printItem<F,false>(*this,idx,nav.selected(idx),F::enabled(),nav.mode());
+          break;
+        case OutOp::Printing:
+          if (fullPrint||F::changed()||!out.partialDraw())
+            out.template printItem<F,true>(*this,idx,nav.selected(idx),F::enabled(),nav.mode());
+          else
+            out.template printItem<F,false>(*this,idx,nav.selected(idx),F::enabled(),nav.mode());
+          break;
+        case OutOp::ClearChanges:
+          F::changed(false);
+      }
+      tail.template printItems<Nav,Out,P,op>(nav,out,idx+1,top,fullPrint);
     }
   }
 
@@ -224,33 +224,32 @@ template<typename O,typename... OO> struct StaticData:Pair<O,StaticData<OO...>> 
 template<typename O>                struct StaticData<O>:Pair<O> {};
 
 template<typename Title,typename Body>
-struct StaticMenu:/*Pair<Title,Body>*/Mutable<Pair<Title,Body>>{
+struct StaticMenu:Mutable<Pair<Title,Body>>{
   using Base=Mutable<Pair<Title,Body>>;
-  // using Base=Pair<Title,Body>;
   using This=StaticMenu<Title,Body>;
 
-  // cmd ---------------------------------------------------
   // using Title::printMenu;
   template<typename It,typename Nav,typename Out>
   inline void printMenu(bool pd,It& it,Nav& nav,Out& out) {out.printMenu(pd,*this,nav);}
   template<typename It,typename Nav,typename Out>
   inline void printMenu(bool pd,It& it,Nav& nav,Out& out,Ref ref) {
-    if (pd&&ref.len==1) out.printParent(*this,nav);
-    else if(ref) Base::tail.printMenu(pd,*this,nav,out,ref,ref.head());
-    else out.printMenu(*this,nav);
+    This::printMenu(pd,*this,nav,out,ref,ref.head());
   }
   template<typename It,typename Nav,typename Out>
   inline void printMenu(bool pd,It& it,Nav& nav,Out& out,Ref ref,Idx n) {
     if (pd&&ref.len==1) out.printParent(*this,nav);
-    else if (ref) Base::printMenu(pd,*this,nav,out,ref,ref.head());
-    else out.printMenu(*this,nav);
+    else if (ref) Base::tail.printMenu(pd,*this,nav,out,ref,ref.head());
+    else {
+      out.template printMenu<This,Nav,OutOp::Printing>(*this,nav);
+      if (out.partialDraw()) out.template printMenu<This,Nav,OutOp::ClearChanges>(*this,nav);
+    }
   }
-  template<typename Nav,typename Out>
+  template<typename Nav,typename Out,Roles role=Roles::Item,OutOp op=OutOp::Printing>
   inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,bool fullPrint=true) {
-    Base::tail.template printItems<Nav,Out>(nav,out,idx,top,This::changed());
+    Base::tail.template printItems<Nav,Out,role,op>(nav,out,idx,top,fullPrint||(op==OutOp::Printing&&This::changed()));
+    // if (op==OutOp::ClearChanges) This::changed(false);
   }
 
-  // using Title::size;
   inline constexpr Idx size() const {return Base::tail.size();}
   inline constexpr Idx size(Ref ref) const {return Base::tail.size(ref);}
   inline constexpr Idx size(Ref ref,Idx n) const {return Base::tail.size(ref,n);}
@@ -262,16 +261,39 @@ struct StaticMenu:/*Pair<Title,Body>*/Mutable<Pair<Title,Body>>{
   inline bool enabled(Idx n) const {return Base::tail.enabled(n);}
   inline bool enabled(Ref ref) const {return Base::tail.enabled(ref);}
 
+  using Base::changed;
+  inline void changed(Idx n,bool o) {
+    // _trace(MDO<<"StaticMenu::changed("<<n<<")"<<endl);
+    Base::tail.changed(n,o);}
   // cmd ---------------------------------------------------
   template<Cmds c,typename Nav>
-  inline void cmd(Nav& nav) {nav.template _cmd<c>();}
-  template<Cmds c,typename Nav>
-  inline void cmd(Nav& nav,Ref ref) {
-    if(ref) Base::tail.template cmd<c,Nav>(nav,ref,ref.head());
-    else nav.template _cmd<c>();
+  void _cmd(Nav& nav) {
+    Idx p=nav.pos();
+    nav.template _cmd<c>();
+    if(p!=nav.pos()) {
+      changed(p,true);
+      changed(nav.pos(),true);
+    }
   }
   template<Cmds c,typename Nav>
-  inline void cmd(Nav& nav,Ref ref,Idx n) {nav.template _cmd<c>();}
+  inline static void cmd(Nav& nav) {
+    assert(false);
+    // _cmd<c,Nav>(nav);
+  }
+  template<Cmds c,typename Nav>
+  inline void cmd(Nav& nav,Ref ref) {
+    if(ref.len) Base::tail.template cmd<c,Nav>(nav,ref,ref.head());
+    else _cmd<c,Nav>(nav);
+  }
+  template<Cmds c,typename Nav>
+  inline void cmd(Nav& nav,Ref ref,Idx n) {
+    Idx p=nav.pos();
+    nav.template _cmd<c>();
+    if(p!=nav.pos()) {
+      changed(p,true);
+      changed(nav.pos(),true);
+    }
+  }
 
   inline static constexpr bool canNav() {return true;}
   inline bool canNav(Ref ref,Idx n) {return ref?Base::tail.canNav(ref,n):canNav();}

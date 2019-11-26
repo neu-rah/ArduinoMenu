@@ -13,5 +13,6 @@ struct TextCursorFmt:public O {
   template<bool io,bool toPrint=true>
   inline void fmtCursor(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
     if (io) O::template print<char,This,toPrint>(s?((e?'>':'-')):' ',*this,Roles::Cursor);
+    O::template fmtCursor<io,toPrint>(n,s,e,m);
   }
 };

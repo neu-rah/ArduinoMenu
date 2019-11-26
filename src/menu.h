@@ -12,4 +12,5 @@
 #include "menu/printer.h"
 #include "menu/fmt.h"
 //
+#include <menu/debug.hpp>
 // #include <menu/api.hpp>

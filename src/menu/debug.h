@@ -41,7 +41,7 @@
 #endif
 
 template<typename Out,typename O>
-struct DebugOut:O {
+struct DebugCmds:O {
   using O::O;
   using O::cmd;
   using O::print;
@@ -59,7 +59,6 @@ struct DebugOut:O {
 
 #include <assert.h>
 #ifdef ARDUINO
-
   //from: https://gist.github.com/jlesech/3089916
   #if !defined(__AVR_ATtiny13__) && !defined(ARDUINO_attiny)
     #define __ASSERT_USE_STDERR

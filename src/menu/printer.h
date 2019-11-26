@@ -8,9 +8,9 @@
 
 //to avoid passing the output object back and forth a printer must be a top level vomposition
 //because it needs do call back data for item printing
-template<typename P=TextMeasure>
-struct FullPrinter:public P {
-  using This=FullPrinter<P>;
+template<typename O=TextMeasure>
+struct FullPrinter:public O {
+  using This=FullPrinter<O>;
   template<typename It,typename Nav>
   inline void printParent(It& it,Nav& nav) {
     //this is ugly but short
@@ -18,40 +18,52 @@ struct FullPrinter:public P {
     This::printMenu<It,Nav>(it,nav);
     nav.level++;
   }
-  template<typename It,typename Nav>
+  template<typename It,typename Nav,OutOp op=OutOp::Printing>
   void printMenu(It& it,Nav& nav) {
     trace(MDO<<"FullPrinter::printMenu"<<endl);
-    P::newView();
-    P::template fmt<Roles::Panel,true>();
-    P::template fmt<Roles::Menu,true>();
+    constexpr bool toPrint=op==OutOp::Printing;
+    O::newView();
+    bool dp=(!O::partialDraw())||(O::partialDraw()&&!O::isSame(&it));
+    if(dp) O::template fmt<Roles::Panel,true,toPrint>();
+    O::template fmt<Roles::Menu,true,toPrint>();
 
     //title
-    P::template fmt<Roles::Item,true>();
-    P::template fmt<Roles::Title,true>();
-    it.template print<This,Roles::Title>(*this);
-    P::template fmt<Roles::Title,false>();
-    P::template fmt<Roles::Item,false>();
+    if (op==OutOp::ClearChanges) it.changed(false);
 
-    //TODO: position top here
-    it.changed(This::posTop(nav)||true);
-    it.template printItems<Nav,This>(nav,*this,0,This::top());
+    bool tp=toPrint&&((!O::isSame(&it))||(!O::partialDraw())||it.changed());
+    if (tp) {
+      O::template fmt<Roles::Item,true,true>();
+      O::template fmt<Roles::Title,true,true>();
+      it.template print<This,Roles::Title,true>(*this);
+      O::template fmt<Roles::Title,false,true>();
+      O::template fmt<Roles::Item,false,true>();
+    } else {
+      it.changed(false);
+      O::template fmt<Roles::Item,true,false>();
+      O::template fmt<Roles::Title,true,false>();
+      it.template print<This,Roles::Title,false>(*this);
+      O::template fmt<Roles::Title,false,false>();
+      O::template fmt<Roles::Item,false,false>();
+    }
 
-    P::template fmt<Roles::Menu,false>();
-    P::template fmt<Roles::Panel,false>();
+    it.changed(This::posTop(nav));
+    bool fp=toPrint&&((!O::partialDraw())||it.changed()||!O::isSame(&it));
+    it.template printItems<Nav,This,Roles::Item,op>(nav,*this,0,This::top(),fp);
+
+    O::template fmt<Roles::Menu,false,toPrint>();
+    if(dp) O::template fmt<Roles::Panel,false,toPrint>();
+    if (toPrint) O::lastDrawn(&it);
   }
   template<typename It,bool toPrint=true>
   void printItem(It& it,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
-    P::clrLine(P::posY());
-    P::template fmt<Roles::Item,  true >(n,s,e,m);
-    P::template fmt<Roles::Index, true >(n,s,e,m);
-    P::template fmt<Roles::Index, false>(n,s,e,m);
-    P::template fmt<Roles::Cursor,true >(n,s,e,m);
-    P::template fmt<Roles::Cursor,false>(n,s,e,m);
-    // if (it.changed()||!P::partialDraw())//TODO:we need parent menu `changed` state.. this is better done on Item side to better server composition
-    //   it.template printItem<This,Roles::Item,true>(*this,n,s,e,m);
-    // else
+    if (toPrint) O::clrLine(O::orgY()+O::posY());
+    O::setCursor(O::orgX(),O::orgY()+O::posY());
+    O::template fmt<Roles::Item,  true ,toPrint>(n,s,e,m);
+    O::template fmt<Roles::Index, true ,toPrint>(n,s,e,m);
+    O::template fmt<Roles::Index, false,toPrint>(n,s,e,m);
+    O::template fmt<Roles::Cursor,true ,toPrint>(n,s,e,m);
+    O::template fmt<Roles::Cursor,false,toPrint>(n,s,e,m);
     it.template printItem<This,Roles::Item,toPrint>(*this,n,s,e,m);
-    // it.print(*this);
-    P::template fmt<Roles::Item,false>(n,s,e,m);
+    O::template fmt<Roles::Item,false,toPrint>(n,s,e,m);
   }
 };

@@ -26,6 +26,13 @@ struct StaticPanel:public O {
   static inline void use(Idx ux=1,Idx uy=1) {}
 };
 
+template<typename O>
+struct PanelTarget:O {
+  void *target=nullptr;
+  inline bool isSame(void *menu) const {return target==menu;}
+  inline void lastDrawn(void *menu) {target=menu;}
+};
+
 template<typename O,int w=1,int h=1>
 class RangePanel:public O {
   public:
@@ -35,13 +42,12 @@ class RangePanel:public O {
     inline void newView() {
       trace(MDO<<"RangePanel::newView"<<endl);
       freeLines=O::height();
-      O::setCursor(0,O::ascent());
+      O::setCursor(O::orgX(),O::orgY()+O::ascent());
     }
     inline void useY(Idx uy=h) {
       if (freeLines) {
         freeLines-=uy;
-        trace(MDO<<"useY h:"<<O::height()<<"-freeLines:"<<freeLines<<"="<<O::height()-freeLines<<endl);
-        O::setCursor(0,(O::height()-freeLines)*O::maxCharHeight()+O::ascent());
+        // O::setCursor(0,(O::height()-freeLines)*O::maxCharHeight()+O::ascent());
       }
     }
     inline void use(Idx ux=1,Idx uy=1) {This::useX(ux);This::useY(uy);}
@@ -49,12 +55,9 @@ class RangePanel:public O {
       O::nl();
       useY();
     }
-    template<typename Out,bool toPrint=true>
-    inline void nl(Out&) {
-      if (toPrint) O::template nl<This,toPrint>(*this);
-      else useY();
-    }
     inline Idx freeY() const {return freeLines;}
+    inline Idx posY() const {return O::height()-freeLines;}
+    inline Idx free() const {return w*freeY();}
     template<typename Nav>
     inline bool posTop(Nav& nav) {
       trace(MDO<<"RangePanel::posTop for "<<nav.pos()<<endl);
@@ -66,8 +69,8 @@ class RangePanel:public O {
       return ot!=top();
     }
   protected:
-    Idx topLine=0;
-    Idx freeLines;
+    Idx topLine=0;//this refers to menu items
+    Idx freeLines;//this refers to device free space
 };
 
 // template<typename O>

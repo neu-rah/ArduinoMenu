@@ -5,12 +5,6 @@
 
 template<typename O>
 struct CanMeasure:O {
-  using O::nl;
-  template<typename Out,bool toPrint=true>
-  inline void nl(Out& out) {
-    if (toPrint) out.nl();
-    else out.useY();
-  }
   using O::raw;
   template<typename T,typename Out,bool toPrint>
   inline void print(T o,Out& out,Roles role=Roles::Raw) {

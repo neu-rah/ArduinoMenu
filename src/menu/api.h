@@ -8,8 +8,8 @@ struct Nil {};
 ////////////////////////////////////////////////////////////////////////////////
 struct Void:Nil {
   using This=Void;
-  template<typename Out,bool toPrint=true>
-  inline static void nl(Out&) {}
+  // template<typename Out,bool toPrint=true>
+  // inline static void nl(Out&) {}
   template<typename T,typename Out,bool toPrint=true>
   inline static void print(T o,Out& out,Roles role=Roles::Raw) {out.raw(o,role);}
   template<typename T>
@@ -18,6 +18,10 @@ struct Void:Nil {
   template<Roles role,bool io,bool toPrint>
   inline static void fmt(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
   inline static void clrLine(Idx) {}
+  constexpr static inline Idx orgX() {return 0;}
+  constexpr static inline Idx orgY() {return 0;}
+  constexpr static inline Idx width() {return idx_max;}
+  constexpr static inline Idx height() {return idx_max;}
   inline static void posY(Idx) {}
   constexpr static inline Idx posY() {return 0;}
   constexpr static inline Idx freeY() {return idx_max;}
@@ -49,6 +53,8 @@ struct Void:Nil {
   //print loopback by default
   template<typename Nav,typename Out>
   inline static void printOn(Nav& nav,Out& out) {nav._printMenu(out);}
+  inline static constexpr bool isSame(void*) {return false;}
+  inline static void lastDrawn(void*) {}
 };
 
 struct TextMeasure: Void {
@@ -71,6 +77,28 @@ struct TextMeasure: Void {
     #endif
 };
 
+#ifdef MENU_DEBUG
+  template<typename Dev,Dev& dev,typename O=Void>
+  struct DebugOut:O {
+    // template<bool toPrint=true>
+    inline static void nl() {dev.println();}
+    template<typename T>
+    inline static void raw(T o,Roles role=Roles::Raw) {
+      #ifdef ARDUINO
+        dev.print(o);
+      #else
+        dev<<o;
+      #endif
+    }
+  };
+
+  #ifdef ARDUINO
+    extern DebugOut<decltype(Serial),Serial> debugOut;
+  #else
+    extern DebugOut<decltype(cout),cout> debugOut;
+  #endif
+#endif
+
 ////////////////////////////////////////////////////////////////////////////////
 struct None:Nil {
   template<typename Nav,bool invY=false>
@@ -84,10 +112,8 @@ struct Empty:Nil {
   inline static constexpr Idx size() {return 0;}
   template<typename Out,Roles=Roles::Raw,bool=true>
   inline static void print(Out&) {}
-  // template<typename It,typename Nav,typename Out>
-  // inline void printMenu(bool,It&,Nav& nav,Out& out,Ref ref,Idx n) {}
-  template<typename Nav,typename Out>
-  inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,bool fullPrint=true) {}
+  template<typename Nav,typename Out,Roles P=Roles::Item,OutOp op=OutOp::Printing>
+  inline static void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,bool fullPrint=true) {}
   inline static void enable(bool) {}
   inline static void enable(bool,Idx) {}
   inline static void enable(bool,Ref,Idx) {}
@@ -104,12 +130,8 @@ struct Empty:Nil {
   inline static constexpr bool parentDraw(Ref,Idx) {return parentDraw();}
   template<Cmds c,typename Nav>
   inline void cmd(Nav& nav) {nav.template _cmd<c>();}
-  // template<Cmds c,typename Nav>
-  // inline void cmd(Nav& nav,Ref ref) {nav.template _cmd<c>();}
   template<Cmds c,typename Nav>
   inline void cmd(Nav& nav,Ref ref,Idx n) {nav.template _cmd<c>();}
-  //this functions would benefit from CRTP-----------------
-  //using a reference parameter instead
   template<typename It,typename Nav,typename Out>
   static inline void printMenu(bool,It& it,Nav&,Out& out) {it.print(out);}
   template<typename It,typename Nav,typename Out>
@@ -120,6 +142,7 @@ struct Empty:Nil {
   }
   inline static constexpr bool changed() {return false;}
   inline static void changed(bool) {}
+  inline static void changed(Idx,bool) {}
 };
 
 ///////////////////////////////////////////////////////////////////////////////

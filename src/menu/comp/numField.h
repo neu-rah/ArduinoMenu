@@ -22,12 +22,14 @@
       inline static constexpr bool canNav() {return true;}
       inline static constexpr bool isMenu() {return false;}
       inline static constexpr bool parentDraw(Idx=0) {return true;}
-      inline static bool activate() {
-        //nav.setMode(Modes::Edit);//either need Nav& or nav should do this part
-        return true;
-      }
+      inline static bool activate() {return true;}
+      // template<typename It,typename Out,Roles role=Roles::Raw,bool toPrint=true>
+      // inline void printItem(It& it,Out& out,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
+      // }
       template<typename Out,Roles role=Roles::Raw,bool toPrint=true>
-      inline void print(Out& out) {out.template print<T,Out,toPrint>(value,out,role);}
+      inline void print(Out& out) {
+        out.template print<T,Out,toPrint>(value,out,role);
+      }
       using I::cmd;
       template<Cmds c,typename Nav>
       inline void cmd(Nav& nav) {
@@ -59,13 +61,7 @@
 
   template<typename Label,typename T,T& value,T low,T high,T step,T tune=0,typename Unit=Empty>
   using NumField=StaticWrap<
-    AsMode<
-      AsValue<
-        // Mutable<// items should be mutable
-          NumValue<T,value,low,high,step,tune>
-        // >
-      >
-    >,
+    AsMode<AsValue<NumValue<T,value,low,high,step,tune>>>,
     AsName<Label>,
     AsUnit<Unit>
   >;

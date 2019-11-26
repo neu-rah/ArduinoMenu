@@ -10,63 +10,59 @@
 template<typename O>
 struct TextFmt:public O {
   using This=TextFmt<O>;
-  template<bool io,bool toPrint=true>
-  inline void fmtPanel(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
-    // if (io) out.nl();
-    // O::raw("*--------*");
-    // out.nl();
-  }
+  // template<bool io,bool toPrint=true>
+  // inline void fmtPanel(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
+  //   O::template fmtPanel<io,toPrint>(n,s,e,m);
+  // }
   template<bool io,bool toPrint=true>
   inline void fmtMenu(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
-    // O::raw("----------");
-    // O::nl();
+    O::template fmtMenu<io,toPrint>(n,s,e,m);
   }
-  template<bool io,bool toPrint=true>
-  inline void fmtBody(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
-    // O::raw(io?"| ":" |");
-    // out.nl();
-  }
-  template<bool io,bool toPrint=true>
-  inline void fmtName(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
-    // O::raw(io?"«":"»");
-  }
-  template<bool io,bool toPrint=true>
-  inline void fmtValue(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
-    // O::raw(io?"{":"}");
-  }
-  template<bool io,bool toPrint=true>
-  inline void fmtUnit(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
-    // O::raw(io?"(":")");
-  }
+  // template<bool io,bool toPrint=true>
+  // inline void fmtBody(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
+  //   O::template fmtBody<io,toPrint>(n,s,e,m);
+  // }
+  // template<bool io,bool toPrint=true>
+  // inline void fmtName(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
+  //   O::template fmtName<io,toPrint>(n,s,e,m);
+  // }
+  // template<bool io,bool toPrint=true>
+  // inline void fmtValue(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
+  //   O::template fmtValue<io,toPrint>(n,s,e,m);
+  // }
+  // template<bool io,bool toPrint=true>
+  // inline void fmtUnit(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
+  //   O::template fmtUnit<io,toPrint>(n,s,e,m);
+  // }
   template<bool io,bool toPrint=true>
   inline void fmtMode(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
-    // if (io) O::raw("[");
-    // if (io) _trace(MDO<<n<<s<<e<<(int)m);
     if(io) switch(m) {
       case Modes::Normal: O::template print<char,This,toPrint>(' ',*this,Roles::Mode);break;
       case Modes::Edit: O::template print<char,This,toPrint>(s?':':' ',*this,Roles::Mode);break;
       case Modes::Tune: O::template print<char,This,toPrint>(s?'>':' ',*this,Roles::Mode);break;
     }
-    // if (!io) O::raw("]");
+		O::template fmtMode<io,toPrint>(n,s,e,m);
   }
-  template<bool io,bool toPrint=true>
-  inline void fmtTitle(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
-    // if (!io) out.nl();
-  }
+  // template<bool io,bool toPrint=true>
+  // inline void fmtTitle(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
+  //   O::template fmtTitle<io,toPrint>(n,s,e,m);
+  // }
   template<bool io,bool toPrint=true>
   inline void fmtItem(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
-    if (!io) O::template nl<This,toPrint>(*this);
+		O::template fmtItem<io,toPrint>(n,s,e,m);
+    if (!io) O::nl();
   }
   template<bool io,bool toPrint=true>
   inline void fmtIndex(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
     if(io) {
-      if (n<9) O::template print<char,This,toPrint>(n+1,*this,Roles::Index);
+      if (n<9) O::template print<int,This,toPrint>(n+1,*this,Roles::Index);
       else O::template print<char,This,toPrint>(' ',*this,Roles::Index);
     }
+    O::template fmtIndex<io,toPrint>(n,s,e,m);
   }
   template<bool io,bool toPrint=true>
   inline void fmtCursor(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
-    // if (io) _trace(MDO<<n<<s<<e<<(int)m<<toPrint);
     if (io) O::template print<char,This,toPrint>(s?((e?'>':'-')):' ',*this,Roles::Cursor);
+    O::template fmtCursor<io,toPrint>(n,s,e,m);
   }
 };

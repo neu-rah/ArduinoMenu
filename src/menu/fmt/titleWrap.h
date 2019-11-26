@@ -15,9 +15,9 @@
     inline void fmtTitle(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
       if (io) {
         O::template print<char,This,toPrint>(open,*this,Roles::Title);
-        O::template fmtTitle<io>(n,s,e,m);
+        O::template fmtTitle<io,toPrint>(n,s,e,m);
       } else {
-        O::template fmtTitle<io>(n,s,e,m);
+        O::template fmtTitle<io,toPrint>(n,s,e,m);
         O::template print<char,This,toPrint>(close,*this,Roles::Title);
       }
     }
