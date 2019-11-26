@@ -19,7 +19,7 @@ struct U8x8Fmt:public O {
   inline void fmtTitle(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
     O::u8x8_dev_v.setInverseFont(io);
     if(io&&toPrint) fillLines(O::u8x8_dev_v.getCols());
-    // O::template fmtTitle<io,toPrint>(n,s,e,m);
+    // O::template fmtTitle<io,toPrint>(n,s,e,m);//don't call inner!
   }
   template<bool io,bool toPrint=true>
   inline void fmtItem(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {

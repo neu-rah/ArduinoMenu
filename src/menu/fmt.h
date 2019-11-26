@@ -12,7 +12,6 @@ template<typename O>
 struct Fmt:O {
   template<Roles r,bool io,bool toPrint=true>
   inline void fmt(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
-    // if (!io) O::template fmt<r,io,toPrint>(n,s,e,m);
     switch(r) {
       case Roles::Panel:  O::template fmtPanel <io,toPrint>(n,s,e,m);break;
       case Roles::Menu:   O::template fmtMenu  <io,toPrint>(n,s,e,m);break;
@@ -27,6 +26,5 @@ struct Fmt:O {
       case Roles::Unit:   O::template fmtUnit  <io,toPrint>(n,s,e,m);break;
       default:break;
     }
-    // if (io) O::template fmt<r,io,toPrint>(n,s,e,m);
   }
 };

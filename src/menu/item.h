@@ -151,11 +151,6 @@ struct Pair:F {
 
   // commands ------------------------------------------------------------------
   using F::cmd;
-  // template<Cmds c,typename Nav>
-  // inline void cmd(Nav& nav,Ref ref) {
-  //   assert(false);
-  //   cmd(nav,ref,ref.head());
-  // }
   template<Cmds c,typename Nav>
   inline void cmd(Nav& nav,Ref ref,Idx n) {
     if (n) tail.template cmd<c,Nav>(nav,ref,n-1);

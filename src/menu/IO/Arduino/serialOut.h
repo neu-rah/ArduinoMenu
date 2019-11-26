@@ -5,7 +5,6 @@
 
 template<typename Dev,Dev& dev,typename O=TextMeasure>
 struct SerialOut:O {
-  // template<bool toPrint=true>
   inline static void nl() {dev.println();}
   template<typename T>
   inline static void raw(T o,Roles role=Roles::Raw) {
