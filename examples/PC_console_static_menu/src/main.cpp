@@ -38,6 +38,7 @@ const char* yr_txt="Year";
 const char* vcc_txt="VCC";
 const char* volts_txt="V";
 
+//menu will change this variables
 int year=1967;
 int vcc=3;
 
@@ -46,9 +47,9 @@ StaticMenu<
   StaticData<
     Item<EnDis<StaticText<&op1_text>>>,
     Item<EnDis<StaticText<&op2_text>,false>>,//define as disabled on startup
-    Item<Action<StaticText<&tog12_text>,tog12>>,
-    // Item<NumField<StaticText<&yr_txt>,int,year,1900,2100,10,1>>,//this is NOT good, changing limits generates new code->TODO: add a translation
-    // Item<NumField<StaticText<&vcc_txt>,decltype(vcc),vcc,0,100,1,0,StaticText<&volts_txt>>>,
+    Item<Action<tog12,StaticText<&tog12_text>>>,
+    Item<NumField<StaticText<&yr_txt>,int,year,1900,2100,10,1>>,//this is NOT good, changing limits generates new code->TODO: add a translation
+    Item<NumField<StaticText<&vcc_txt>,decltype(vcc),vcc,0,100,1,0,StaticText<&volts_txt>>>,
     Item<StaticText<&opn_text>>,
     StaticMenu<
       Item<StaticText<&subMenu_title>>,
@@ -61,7 +62,7 @@ StaticMenu<
         Item<Exit<StaticText<&exit_txt>>>
       >
     >,
-    Item<Action<StaticText<&quit_txt>,quit>>
+    Item<Action<quit,StaticText<&quit_txt>>>
   >
 > mainMenu;
 

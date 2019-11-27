@@ -99,11 +99,17 @@ struct TextMeasure: Void {
   #endif
 #endif
 
+//output interface -----------------------------------------------------
+class IMenuOut {};
 ////////////////////////////////////////////////////////////////////////////////
+//imput API
 struct None:Nil {
   template<typename Nav,bool invY=false>
   inline static void cmd(Nav&) {}
 };
+
+//input interface -------------------------------------------------
+class IMenuIn {};
 
 ////////////////////////////////////////////////////////////////
 struct Empty:Nil {
@@ -144,6 +150,9 @@ struct Empty:Nil {
   inline static void changed(bool) {}
   inline static void changed(Idx,bool) {}
 };
+
+//item interface -------------------------------------------------------
+class IItem {};
 
 ///////////////////////////////////////////////////////////////////////////////
 template<typename R,R& entry,Idx md>
@@ -221,3 +230,6 @@ struct Nav:Nil {
   Modes editMode;
   Idx path[max_depth];
 };
+
+//navigation interface ---------------------------------------------------
+class INav {};

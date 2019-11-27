@@ -132,7 +132,7 @@ struct Pair:F {
   inline constexpr Idx size(Ref ref,Idx n) const {return n?tail.size(ref,n-1):ref.len>1?size(ref.tail(),ref.tail().head()):F::size();}
   //enable -------------------------------------------------------------------
   using F::enable;
-  inline void enable(bool e,Idx n) {return n?tail.enable(e,n-1):F::enable(e);}
+  inline void enable(bool e,Idx n) {n?tail.enable(e,n-1):F::enable(e);}
   inline void enable(bool e,Ref ref) {if (ref) enable(e,ref,ref.head());}
   inline void enable(bool e,Ref ref,Idx n) {
     if(n) tail.enable(e,ref,n-1);
@@ -302,4 +302,9 @@ struct StaticMenu:Mutable<Pair<Title,Body>>{
   inline static constexpr bool parentDraw() {return false;}
   inline bool parentDraw(Ref ref) const {return ref?Base::tail.parentDraw(ref,ref.head()):false;}
   inline bool parentDraw(Ref ref,Idx n) const {return Base::tail.parentDraw(ref,n);}
+};
+
+template<typename I>
+class Prompt:public IItem,public I {
+
 };

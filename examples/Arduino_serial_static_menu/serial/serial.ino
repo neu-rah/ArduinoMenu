@@ -46,7 +46,7 @@ StaticMenu<
   StaticData<
     Item<EnDis<FlashText<decltype(op1_text),&op1_text>>>,
     Item<EnDis<FlashText<decltype(op2_text),&op2_text>>>,
-    Item<Action<FlashText<decltype(tog12_text),&tog12_text>,tog12>>,
+    Item<Action<tog12,FlashText<decltype(tog12_text),&tog12_text>>>,
     Item<NumField<FlashText<decltype(yr_txt),&yr_txt>,int,year,1900,2100,10,1>>,//this is NOT good, changing limits generates new code->TODO: add a translation
     Item<NumField<FlashText<decltype(vcc_txt),&vcc_txt>,decltype(vcc),vcc,0,100,1,0,FlashText<decltype(volts_txt),&volts_txt>>>,
     Item<FlashText<decltype(opn_text),&opn_text>>,
