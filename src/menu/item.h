@@ -216,6 +216,7 @@ template<typename Title,typename Body>
 struct StaticMenu:Mutable<Pair<Title,Body>>{
   using Base=Mutable<Pair<Title,Body>>;
   using This=StaticMenu<Title,Body>;
+  using Base::Base;
 
   template<typename It,typename Nav,typename Out>
   inline void printMenu(bool pd,It& it,Nav& nav,Out& out) {out.printMenu(pd,*this,nav);}
@@ -250,9 +251,7 @@ struct StaticMenu:Mutable<Pair<Title,Body>>{
   inline bool enabled(Ref ref) const {return Base::tail.enabled(ref);}
 
   using Base::changed;
-  inline void changed(Idx n,bool o) {
-    // _trace(MDO<<"StaticMenu::changed("<<n<<")"<<endl);
-    Base::tail.changed(n,o);}
+  inline void changed(Idx n,bool o) {Base::tail.changed(n,o);}
   // cmd ---------------------------------------------------
   template<Cmds c,typename Nav>
   void _cmd(Nav& nav) {

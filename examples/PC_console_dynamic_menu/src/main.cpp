@@ -25,12 +25,20 @@ bool someAction() {
 Prompt<Action<someAction,Text<>>> ok("Ok");
 Prompt<Action<someAction,Text<>>> cancel("Cancel");
 
-IItem* menu_data[]{&ok,&cancel};
+IItem* subMenu_data[]{&ok,&cancel};
+IterableData<ArrayData<IItem,subMenu_data,sizeof(subMenu_data)/sizeof(decltype(subMenu_data[0]))>> subMenu_body;
+Prompt<StaticMenu<Text<>,decltype(subMenu_body)>> subMenu("Mix-menu");
 
-IterableData<ArrayData<IItem,menu_data,sizeof(menu_data)/sizeof(menu_data[0])>> mainMenu_data;
+const char* op1_text="Option A";
+Prompt<StaticText<&op1_text>> op1;
+Prompt<Text<>> op2("Option B");
+Prompt<Text<>> op3("Option C");
+
+IItem* mainMenu_data[]{&op1,&op2,&op3,&subMenu};
+IterableData<ArrayData<IItem,mainMenu_data,sizeof(mainMenu_data)/sizeof(decltype(mainMenu_data[0]))>> mainMenu_body;
 
 const char* mainMenu_title="Main menu";
-StaticMenu<StaticText<&mainMenu_title>,decltype(mainMenu_data)> mainMenu;
+StaticMenu<StaticText<&mainMenu_title>,decltype(mainMenu_body)> mainMenu;
 
 //menu input --------------------------------------
 LinuxKeyIn in;
@@ -55,10 +63,10 @@ Out out;
 Nav<decltype(mainMenu),mainMenu,2> nav;
 
 int main() {
-  ok.print(out);
-  out.nl();
-  ok.activate();
-  out.nl();
+  // ok.print(out);
+  // out.nl();
+  // ok.activate();
+  // out.nl();
   ///////////////
   nav.printMenu(out);
   while(running) {
