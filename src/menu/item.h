@@ -27,7 +27,7 @@ struct Item:Mutable<I> {
   template<typename Nav,typename Out,Roles role=Roles::Item,OutOp op=OutOp::Printing>
   inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,bool fullPrint=true) {
     assert(op!=OutOp::ClearChanges);
-    out.template printItem<This,op!=OutOp::Measure>(*this,idx,nav.selected(idx),I::enabled(),nav.mode());
+    out.template printItem<This,Out,op!=OutOp::Measure>(*this,out,idx,nav.selected(idx),I::enabled(),nav.mode());
   }
 
   template<typename It,typename Out,Roles role=Roles::Raw,bool toPrint=true>
@@ -160,7 +160,7 @@ struct Pair:F {
   inline void printMenu(bool pd,It& it,Nav& nav,Out& out,Ref ref,Idx n) {
     if (n) tail.printMenu(pd,*this,nav,out,ref,n-1);
     else if (ref) F::printMenu(pd,*this,nav,out,ref.tail(),ref.tail().head());
-    else out.printMenu(*reinterpret_cast<F*>(this),nav);
+    else out.printMenu(*reinterpret_cast<F*>(this),nav,out);
   }
   template<typename Nav,typename Out,Roles P/*=Roles::Item*/,OutOp op/*=OutOp::Printing*/>
   inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,bool fullPrint=true) {
@@ -175,7 +175,7 @@ struct Pair:F {
           if (fullPrint||F::changed()||!out.partialDraw())
             out.template printItem<F,Out,true>(*this,out,idx,nav.selected(idx),F::enabled(),nav.mode());
           else
-            out.template printItem<F,false>(*this,idx,nav.selected(idx),F::enabled(),nav.mode());
+            out.template printItem<F,Out,false>(*this,out,idx,nav.selected(idx),F::enabled(),nav.mode());
           break;
         case OutOp::ClearChanges:
           F::changed(false);
@@ -266,8 +266,10 @@ struct StaticMenu:Mutable<Pair<Title,Body>>{
   inline static void cmd(Nav& nav) {assert(false);/*_cmd<c,Nav>(nav);*/}
   template<Cmds c,typename Nav>
   inline void cmd(Nav& nav,Ref ref) {
-    if(ref.len) Base::tail.template cmd<c,Nav>(nav,ref,ref.head());
-    else _cmd<c,Nav>(nav);
+    Base::tail.template cmd<c,Nav>(nav,ref);
+    // if(ref.len)
+    // Base::tail.template cmd<c,Nav>(nav,ref,ref.head());
+    // else _cmd<c,Nav>(nav);
   }
   template<Cmds c,typename Nav>
   inline void cmd(Nav& nav,Ref ref,Idx n) {

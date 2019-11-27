@@ -17,6 +17,8 @@ using namespace std;
 
 bool running=true;
 
+bool quit() {running=false;}
+
 bool someAction() {
   cout<<"Some action!"<<endl;
   return true;
@@ -33,8 +35,9 @@ const char* op1_text="Option A";
 Prompt<StaticText<&op1_text>> op1;
 Prompt<Text<>> op2("Option B");
 Prompt<Text<>> op3("Option C");
+Prompt<Action<quit,Text<>>> op_quit("<Quit!");
 
-IItem* mainMenu_data[]{&op1,&op2,&op3,&subMenu};
+IItem* mainMenu_data[]{&subMenu,&op1,&op2,&op3,&op_quit};
 IterableData<ArrayData<IItem,mainMenu_data,sizeof(mainMenu_data)/sizeof(decltype(mainMenu_data[0]))>> mainMenu_body;
 
 const char* mainMenu_title="Main menu";
@@ -60,7 +63,7 @@ using Out=MenuOut<
 Out out;
 
 //navigation root ---------------------------------
-Nav<decltype(mainMenu),mainMenu,2> nav;
+NavRoot<Nav<decltype(mainMenu),mainMenu,2>> nav;
 
 int main() {
   // ok.print(out);
@@ -69,6 +72,7 @@ int main() {
   // out.nl();
   ///////////////
   nav.printMenu(out);
+  nav.enter();
   while(running) {
     if (nav.doInput(in)) nav.printMenu(out);
     cout.flush();

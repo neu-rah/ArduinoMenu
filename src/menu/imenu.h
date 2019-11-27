@@ -6,6 +6,12 @@
 
 #include "item.h"
 
+//navigation interface
+class INav {};
+
+template<typename N>
+class NavRoot:public INav,public N {};
+
 //output interface -----------------------------------------------------
 class IMenuOut {
   public:
@@ -37,10 +43,10 @@ class IItem {
     virtual bool enabled() const=0;
     virtual bool enabled(Idx n) const=0;
     virtual void printItem(IMenuOut&,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal,Roles role=Roles::Item,bool toPrint=true)=0;
+    virtual void cmd(Cmds,INav&,Ref)=0;
     template<typename Out,Roles role=Roles::Item,bool toPrint=true>
-    inline void printItem(Out& out,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
-      printItem(out,n,s,e,m,role,toPrint);
-    }
+    inline void printItem(Out& out,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {printItem(out,n,s,e,m,role,toPrint);}
+    template<Cmds c,typename Nav> inline void cmd(Nav& nav,Ref ref) {cmd(c,nav,ref);}
 };
 
 //item virtual cap
@@ -107,6 +113,17 @@ class Prompt:public IItem,public Item<I> {
           break;
       }
     }
+    void cmd(Cmds c,INav& nav,Ref ref) override {
+      switch(c) {
+        case Cmds::Enter:Base::template cmd<Cmds::Enter,INav>(nav,ref);break;
+        case Cmds::Esc:Base::template cmd<Cmds::Esc,INav>(nav,ref);break;
+        case Cmds::Up:Base::template cmd<Cmds::Up,INav>(nav,ref);break;
+        case Cmds::Down:Base::template cmd<Cmds::Down,INav>(nav,ref);break;
+        case Cmds::Left:Base::template cmd<Cmds::Left,INav>(nav,ref);break;
+        case Cmds::Right:Base::template cmd<Cmds::Right,INav>(nav,ref);break;
+        default:break;
+      }
+    }
 };
 
 template<typename T,T** data,Idx sz,typename I=Empty>
@@ -121,6 +138,12 @@ struct IterableData:I {
   using I::I;
   inline Idx size() const {return data.size();}
   inline Idx size(Ref ref) const {return ref.len?data[ref.head()].size(ref.tail()):data.size();}
+  template<Cmds c,typename Nav> inline void cmd(Nav& nav,Ref ref) {
+    data[ref.head()].template cmd<c,Nav>(nav,ref.tail());
+  }
+  template<Cmds c,typename Nav> inline void cmd(Nav& nav,Ref ref,Idx) {
+    assert(false);
+  }
   template<typename Nav,typename Out,Roles role=Roles::Item,OutOp op=OutOp::Printing>
   inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,bool fullPrint=true) {
     for(int n=top;n<size()&&out.freeY();n++) {

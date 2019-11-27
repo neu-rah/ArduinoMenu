@@ -31,7 +31,6 @@ struct Void:Nil {
   template<typename Nav> inline static constexpr bool posTop(Nav&) {return false;}
   inline static constexpr int ascent() {return 0;}
   inline static void setCursor(int x,int y) {}
-
   inline static constexpr bool partialDraw() {return false;}
 
   template<bool io,bool toPrint> inline static void fmtRaw(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
@@ -222,6 +221,3 @@ struct Nav:Nil {
   Modes editMode;
   Idx path[max_depth];
 };
-
-//navigation interface ---------------------------------------------------
-class INav {};
