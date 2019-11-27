@@ -107,6 +107,9 @@ Some plugins might be platform specific or require some hardware.
 Some applications/tutorials using ArduinoMenu, (current and older versions).  
 Do you have another? please let me know on gitter or email me.
 
+**Project-GlassKilnController** electrically-heated kiln for making "Warm Glass"  
+https://arduinoinfo.mywikis.net/wiki/Project-GlassKilnController
+
 **ArduinoMenu demo TTGO T-Display** awesome tutorial.  
 https://sites.google.com/site/jmaathuis/arduino/lilygo-ttgo-t-display-esp32/arduinomenu-demo-ttgo-t-display
 
