@@ -27,42 +27,14 @@ Prompt<Action<someAction,Text<>>> cancel("Cancel");
 
 IItem* menu_data[]{&ok,&cancel};
 
-template<typename T,Idx sz,typename I=Empty>
-struct ArrayData:I {
-  T** data;
-  inline constexpr Idx size() const {return sz;}
-  T& operator[](Idx n) const {return *data[n];}
-};
-
-template<typename T,typename I=Empty>
-struct IterableData:I {
-  T data;
-  inline Idx size() const {return data.size();}
-  template<typename Nav,typename Out,Roles role=Roles::Item,OutOp op=OutOp::Printing>
-  inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,bool fullPrint=true) {
-    for(int n=top;n<size()&&out.freeY();n++) {
-      switch(op) {
-        case OutOp::Measure:
-          out.template printItem<IItem,Out,false>(data[n],out,idx,nav.selected(idx),data[n].enabled(),nav.mode());
-          break;
-        case OutOp::Printing:
-          if (fullPrint||data[n].changed()||!out.partialDraw())
-            out.template printItem<IItem,Out,true>(data[n],out,idx,nav.selected(idx),data[n].enabled(),nav.mode());
-          else
-            out.template printItem<IItem,Out,false>(data[n],out,idx,nav.selected(idx),data[n].enabled(),nav.mode());
-          break;
-        case OutOp::ClearChanges:
-          data[n].changed(false);
-      }
-    }
-  }
-};
-
-IterableData<ArrayData<IItem,sizeof(menu_data)/sizeof(menu_data[0])>> mainMenu_data;
+IterableData<ArrayData<IItem,menu_data,sizeof(menu_data)/sizeof(menu_data[0])>> mainMenu_data;
 
 const char* mainMenu_title="Main menu";
 StaticMenu<StaticText<&mainMenu_title>,decltype(mainMenu_data)> mainMenu;
 
+//menu input --------------------------------------
+LinuxKeyIn in;
+//menu output -------------------------------------
 using Out=MenuOut<
   FullPrinter<//print title and items
     Fmt<//formating API
@@ -86,7 +58,13 @@ int main() {
   ok.print(out);
   out.nl();
   ok.activate();
-
-  mainMenu.printItems<decltype(nav),Out>(nav,out);
+  out.nl();
+  ///////////////
+  nav.printMenu(out);
+  while(running) {
+    if (nav.doInput(in)) nav.printMenu(out);
+    cout.flush();
+  };
+  out.nl();
   return 0;
 }

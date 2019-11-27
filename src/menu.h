@@ -10,5 +10,6 @@
 #include "menu/panels.h"
 #include "menu/printer.h"
 #include "menu/fmt.h"
+#include "menu/imenu.h"
 
 #include <menu/debug.hpp>

@@ -6,29 +6,23 @@
 /// ActionHanlder, type of action functions to associate with items
 using ActionHandler=bool (*)();
 
-//do not use vitual inheritance, memory cost is too high to share a byte
-// struct MutBits {
-//   Idx isEnabled:1, hasChanged:1;
-// };
-
-//mutable is to be used on items but it is needed when using partial draw devices
-// guess we need <λ++> here...
-// well Mitable will be needed for other cases, considering making it a defualt
 template<typename I>
-struct Mutable:I/*,virtual MutBits*/ {
+struct Mutable:I {
   bool hasChanged=true;
+  using I::I;
   inline bool changed() const {return hasChanged;}
   inline void changed(bool o) {hasChanged=o;}
   inline static void changed(Idx,bool o) {assert(false);}
 };
 
 /**
-* The Item class encapsulates a composition to be a menu item.
+* The Item class encapsulates a composition to be a stratic menu item.
 */
 template<typename I>
 struct Item:Mutable<I> {
   using Base=Mutable<I>;
   using This=Item<I>;
+  using Base::Base;
   //terminate items printing by printing just this last one as a single item
   template<typename Nav,typename Out,Roles role=Roles::Item,OutOp op=OutOp::Printing>
   inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,bool fullPrint=true) {
@@ -60,11 +54,11 @@ struct Item:Mutable<I> {
 /**
 * The Action class associates an actikon function with a menu item.
 */
-template<typename I,ActionHandler act>
+template<ActionHandler act,typename I=Empty>
 struct Action:I {
   using Base=I;
   using I::I;
-  using This=Action<I,act>;
+  using This=Action<act,I>;
   inline static bool activate() {return act();}
 };
 
@@ -175,11 +169,11 @@ struct Pair:F {
     else {
       switch(op) {
         case OutOp::Measure:
-          out.template printItem<F,false>(*this,idx,nav.selected(idx),F::enabled(),nav.mode());
+          out.template printItem<F,Out,false>(*this,out,idx,nav.selected(idx),F::enabled(),nav.mode());
           break;
         case OutOp::Printing:
           if (fullPrint||F::changed()||!out.partialDraw())
-            out.template printItem<F,true>(*this,idx,nav.selected(idx),F::enabled(),nav.mode());
+            out.template printItem<F,Out,true>(*this,out,idx,nav.selected(idx),F::enabled(),nav.mode());
           else
             out.template printItem<F,false>(*this,idx,nav.selected(idx),F::enabled(),nav.mode());
           break;
@@ -223,7 +217,6 @@ struct StaticMenu:Mutable<Pair<Title,Body>>{
   using Base=Mutable<Pair<Title,Body>>;
   using This=StaticMenu<Title,Body>;
 
-  // using Title::printMenu;
   template<typename It,typename Nav,typename Out>
   inline void printMenu(bool pd,It& it,Nav& nav,Out& out) {out.printMenu(pd,*this,nav);}
   template<typename It,typename Nav,typename Out>
@@ -232,11 +225,11 @@ struct StaticMenu:Mutable<Pair<Title,Body>>{
   }
   template<typename It,typename Nav,typename Out>
   inline void printMenu(bool pd,It& it,Nav& nav,Out& out,Ref ref,Idx n) {
-    if (pd&&ref.len==1) out.printParent(*this,nav);
+    if (pd&&ref.len==1) out.printParent(*this,nav,out);
     else if (ref) Base::tail.printMenu(pd,*this,nav,out,ref,ref.head());
     else {
-      out.template printMenu<This,Nav,OutOp::Printing>(*this,nav);
-      if (out.partialDraw()) out.template printMenu<This,Nav,OutOp::ClearChanges>(*this,nav);
+      out.template printMenu<This,Nav,Out,OutOp::Printing>(*this,nav,out);
+      if (out.partialDraw()) out.template printMenu<This,Nav,Out,OutOp::ClearChanges>(*this,nav,out);
     }
   }
   template<typename Nav,typename Out,Roles role=Roles::Item,OutOp op=OutOp::Printing>
@@ -271,10 +264,7 @@ struct StaticMenu:Mutable<Pair<Title,Body>>{
     }
   }
   template<Cmds c,typename Nav>
-  inline static void cmd(Nav& nav) {
-    assert(false);
-    // _cmd<c,Nav>(nav);
-  }
+  inline static void cmd(Nav& nav) {assert(false);/*_cmd<c,Nav>(nav);*/}
   template<Cmds c,typename Nav>
   inline void cmd(Nav& nav,Ref ref) {
     if(ref.len) Base::tail.template cmd<c,Nav>(nav,ref,ref.head());
@@ -302,9 +292,4 @@ struct StaticMenu:Mutable<Pair<Title,Body>>{
   inline static constexpr bool parentDraw() {return false;}
   inline bool parentDraw(Ref ref) const {return ref?Base::tail.parentDraw(ref,ref.head()):false;}
   inline bool parentDraw(Ref ref,Idx n) const {return Base::tail.parentDraw(ref,n);}
-};
-
-template<typename I>
-class Prompt:public IItem,public I {
-
 };

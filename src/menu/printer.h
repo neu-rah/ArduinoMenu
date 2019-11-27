@@ -11,15 +11,15 @@
 template<typename O=TextMeasure>
 struct FullPrinter:public O {
   using This=FullPrinter<O>;
-  template<typename It,typename Nav>
-  inline void printParent(It& it,Nav& nav) {
+  template<typename It,typename Nav,typename Out>
+  inline void printParent(It& it,Nav& nav,Out& out) {
     //this is ugly but short
     nav.level--;
-    This::printMenu<It,Nav>(it,nav);
+    This::printMenu<It,Nav>(it,nav,out);
     nav.level++;
   }
-  template<typename It,typename Nav,OutOp op=OutOp::Printing>
-  void printMenu(It& it,Nav& nav) {
+  template<typename It,typename Nav,typename Out,OutOp op=OutOp::Printing>
+  void printMenu(It& it,Nav& nav,Out& out) {
     trace(MDO<<"FullPrinter::printMenu"<<endl);
     constexpr bool toPrint=op==OutOp::Printing;
     O::newView();
@@ -48,14 +48,14 @@ struct FullPrinter:public O {
 
     it.changed(This::posTop(nav));
     bool fp=toPrint&&((!O::partialDraw())||it.changed()||!O::isSame(&it));
-    it.template printItems<Nav,This,Roles::Item,op>(nav,*this,0,This::top(),fp);
+    it.template printItems<Nav,Out,Roles::Item,op>(nav,out,0,This::top(),fp);
 
     O::template fmt<Roles::Menu,false,toPrint>();
     if(dp) O::template fmt<Roles::Panel,false,toPrint>();
     if (toPrint) O::lastDrawn(&it);
   }
-  template<typename It,bool toPrint=true>
-  void printItem(It& it,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
+  template<typename It,typename Out,bool toPrint=true>
+  void printItem(It& it,Out& out,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
     if (toPrint) O::clrLine(O::orgY()+O::posY());
     O::setCursor(O::orgX(),O::orgY()+O::posY());
     O::template fmt<Roles::Item,  true ,toPrint>(n,s,e,m);
@@ -63,7 +63,7 @@ struct FullPrinter:public O {
     O::template fmt<Roles::Index, false,toPrint>(n,s,e,m);
     O::template fmt<Roles::Cursor,true ,toPrint>(n,s,e,m);
     O::template fmt<Roles::Cursor,false,toPrint>(n,s,e,m);
-    it.template printItem<This,Roles::Item,toPrint>(*this,n,s,e,m);
+    it.template printItem<Out,Roles::Item,toPrint>(out,n,s,e,m);
     O::template fmt<Roles::Item,false,toPrint>(n,s,e,m);
   }
 };
