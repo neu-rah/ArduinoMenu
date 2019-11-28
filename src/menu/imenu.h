@@ -9,19 +9,39 @@
 //navigation interface
 class INav {
   public:
-    // template<Cmds c,typename Nav>
+    virtual Idx pos() const=0;
     virtual void cmd(Cmds c,INav& nav)=0;
+    virtual void _cmd(Cmds c)=0;
+    template<Cmds c> inline void _cmd() {_cmd(c);}
 };
 
 template<typename N>
 class NavRoot:public INav,public N {
   public:
     using This=NavRoot<N>;
-    void cmd(Cmds c,INav& nav) override {N::template cmd<c,INav>(*this);}
+    Idx pos() const override {return N::pos();}
+    void cmd(Cmds c,INav& nav) override {
+      switch(c) {
+        case Cmds::Enter:N::template cmd<Cmds::Enter,INav>(nav);break;
+        case Cmds::Esc:N::template cmd<Cmds::Esc,INav>(nav);break;
+        case Cmds::Up:N::template cmd<Cmds::Up,INav>(nav);break;
+        case Cmds::Down:N::template cmd<Cmds::Down,INav>(nav);break;
+        default:break;
+      }
+    }
     inline void up() {N::template cmd<Cmds::Up,This>(*this);}
     inline void down() {N::template cmd<Cmds::Down,This>(*this);}
     inline void enter() {N::template cmd<Cmds::Enter,This>(*this);}
     inline void esc() {N::template cmd<Cmds::Esc,This>(*this);}
+    void _cmd(Cmds c) override {
+      switch(c) {
+        case Cmds::Enter:N::template _cmd<Cmds::Enter>();break;
+        case Cmds::Esc:N::template _cmd<Cmds::Esc>();break;
+        case Cmds::Up:N::template _cmd<Cmds::Up>();break;
+        case Cmds::Down:N::template _cmd<Cmds::Down>();break;
+        default:break;
+      }
+    }
 };
 
 //output interface -----------------------------------------------------
@@ -56,9 +76,14 @@ class IItem {
     virtual bool enabled(Idx n) const=0;
     virtual void printItem(IMenuOut&,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal,Roles role=Roles::Item,bool toPrint=true)=0;
     virtual void cmd(Cmds,INav&,Ref)=0;
+    virtual bool activate()=0;
+    virtual bool activate(Ref,Idx)=0;
+    virtual bool canNav() const =0;
+    //--------------------------------------------
     template<typename Out,Roles role=Roles::Item,bool toPrint=true>
     inline void printItem(Out& out,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {printItem(out,n,s,e,m,role,toPrint);}
     template<Cmds c,typename Nav> inline void cmd(Nav& nav,Ref ref) {cmd(c,nav,ref);}
+    // inline static constexpr bool activate(Ref,Idx=0) {return activate();}
 };
 
 //item virtual cap
@@ -72,6 +97,9 @@ class Prompt:public IItem,public Item<I> {
     bool changed() const override {return Base::changed();}
     bool enabled() const override {return Base::enabled();}
     bool enabled(Idx n) const override {return Base::enabled(n);}
+    bool activate() override {return Base::activate();}
+    bool activate(Ref ref,Idx n) override {return Base::activate(ref,n);}
+    bool canNav() const override {return Base::canNav();}
     using Base::printItem;
     void printItem(IMenuOut& out,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal,Roles role=Roles::Item,bool toPrint=true) override {
       switch (role) {
@@ -153,8 +181,10 @@ struct IterableData:I {
   template<Cmds c,typename Nav> inline void cmd(Nav& nav,Ref ref) {
     data[ref.head()].template cmd<c,Nav>(nav,ref.tail());
   }
-  template<Cmds c,typename Nav> inline void cmd(Nav& nav,Ref ref,Idx) {
-    assert(false);
+  template<Cmds c,typename Nav> inline void cmd(Nav& nav,Ref ref,Idx) {assert(false);}
+  inline static constexpr bool activate() {return true;}
+  inline bool activate(Ref ref,Idx n) {
+    return ref?data[n].activate(ref.tail(),ref.tail().head()):activate();
   }
   template<typename Nav,typename Out,Roles role=Roles::Item,OutOp op=OutOp::Printing>
   inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,bool fullPrint=true) {

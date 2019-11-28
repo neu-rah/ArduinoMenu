@@ -32,12 +32,12 @@ IterableData<ArrayData<IItem,subMenu_data,sizeof(subMenu_data)/sizeof(decltype(s
 Prompt<StaticMenu<Text<>,decltype(subMenu_body)>> subMenu("Mix-menu");
 
 const char* op1_text="Option A";
-Prompt<StaticText<&op1_text>> op1;
+Prompt<Action<someAction,StaticText<&op1_text>>> op1;
 Prompt<Text<>> op2("Option B");
 Prompt<Text<>> op3("Option C");
 Prompt<Action<quit,Text<>>> op_quit("<Quit!");
 
-IItem* mainMenu_data[]{&subMenu,&op1,&op2,&op3,&op_quit};
+IItem* mainMenu_data[]{&op1,&op2,&op3,&subMenu,&op_quit};
 IterableData<ArrayData<IItem,mainMenu_data,sizeof(mainMenu_data)/sizeof(decltype(mainMenu_data[0]))>> mainMenu_body;
 
 const char* mainMenu_title="Main menu";
@@ -45,6 +45,7 @@ StaticMenu<StaticText<&mainMenu_title>,decltype(mainMenu_body)> mainMenu;
 
 //menu input --------------------------------------
 LinuxKeyIn in;
+
 //menu output -------------------------------------
 using Out=MenuOut<
   FullPrinter<//print title and items

@@ -101,8 +101,8 @@ struct TextMeasure: Void {
 ////////////////////////////////////////////////////////////////////////////////
 //imput API
 struct None:Nil {
-  template<typename Nav,bool invY=false>
-  inline static void cmd(Nav&) {}
+  template<bool onField=false>
+  inline static constexpr Cmds cmd() {return Cmds::None;}
 };
 
 ////////////////////////////////////////////////////////////////
@@ -187,9 +187,18 @@ struct Nav:Nil {
   }
 
   template<typename In,typename Nav>
-  inline bool doInput(In& in,Nav& nav) {return in.cmd(nav);}
-  inline void _up() {
-    if(pos()<size(parent())-1) setPos(pos()+1);}
+  inline bool doInput(In& in,Nav& nav) {
+    Cmds c=in.cmd();
+    switch(c) {
+      case Cmds::Up:cmd<Cmds::Up,Nav>(nav);break;
+      case Cmds::Down:cmd<Cmds::Down,Nav>(nav);break;
+      case Cmds::Enter:cmd<Cmds::Enter,Nav>(nav);break;
+      case Cmds::Esc:cmd<Cmds::Esc,Nav>(nav);break;
+      default:return false;
+    }
+    return true;
+  }
+  inline void _up() {if(pos()<size(parent())-1) setPos(pos()+1);}
   inline void _down() {if(pos()>0) setPos(pos()-1);}
   inline void _enter() {
     bool n=entry.canNav(*this,head());

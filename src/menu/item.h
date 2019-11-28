@@ -47,6 +47,8 @@ struct Item:Mutable<I> {
   using I::cmd;
   template<Cmds c,typename Nav>
   inline void cmd(Nav& nav,Ref ref,Idx n) {cmd<c,Nav>(nav);}
+  template<Cmds c,typename Nav>
+  inline void cmd(Nav& nav,Ref ref) {cmd<c,Nav>(nav);}
   using I::parentDraw;
   inline constexpr bool parentDraw(Ref,Idx) {return I::parentDraw();}
 };
@@ -263,7 +265,7 @@ struct StaticMenu:Mutable<Pair<Title,Body>>{
     }
   }
   template<Cmds c,typename Nav>
-  inline static void cmd(Nav& nav) {assert(false);/*_cmd<c,Nav>(nav);*/}
+  inline void cmd(Nav& nav) {_cmd<c,Nav>(nav);}
   template<Cmds c,typename Nav>
   inline void cmd(Nav& nav,Ref ref) {
     Base::tail.template cmd<c,Nav>(nav,ref);
