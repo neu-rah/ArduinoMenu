@@ -74,7 +74,7 @@ int main() {
   nav.printMenu(out);
   nav.enter();
   while(running) {
-    if (nav.doInput(in)) nav.printMenu(out);
+    if (nav.doInput(in,nav)) nav.printMenu(out);
     cout.flush();
   };
   out.nl();

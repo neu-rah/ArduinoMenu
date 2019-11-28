@@ -186,8 +186,8 @@ struct Nav:Nil {
     entry.template printMenu<Root,This,Out>(pd,entry,*this,out,parent());
   }
 
-  template<typename In>
-  inline bool doInput(In& in) {return in.cmd(*this);}
+  template<typename In,typename Nav>
+  inline bool doInput(In& in,Nav& nav) {return in.cmd(nav);}
   inline void _up() {
     if(pos()<size(parent())-1) setPos(pos()+1);}
   inline void _down() {if(pos()>0) setPos(pos()-1);}
@@ -209,10 +209,10 @@ struct Nav:Nil {
     }
   }
 
-  inline void up() {cmd<Cmds::Up,This>(*this);}
-  inline void down() {cmd<Cmds::Down,This>(*this);}
-  inline void enter() {cmd<Cmds::Enter,This>(*this);}
-  inline void esc() {cmd<Cmds::Esc,This>(*this);}
+  // inline void up() {cmd<Cmds::Up,This>(*this);}
+  // inline void down() {cmd<Cmds::Down,This>(*this);}
+  // inline void enter() {cmd<Cmds::Enter,This>(*this);}
+  // inline void esc() {cmd<Cmds::Esc,This>(*this);}
 
   template<typename Nav> inline void up(Nav& nav) {cmd<Cmds::Up,Nav>(nav);}
   template<typename Nav> inline void down(Nav& nav) {cmd<Cmds::Down,Nav>(nav);}

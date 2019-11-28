@@ -17,7 +17,7 @@ template<typename N>
 class NavRoot:public INav,public N {
   public:
     using This=NavRoot<N>;
-    void cmd(Cmds c,INav& nav) override {N::template cmd<c,NavRoot>(*this);}
+    void cmd(Cmds c,INav& nav) override {N::template cmd<c,INav>(*this);}
     inline void up() {N::template cmd<Cmds::Up,This>(*this);}
     inline void down() {N::template cmd<Cmds::Down,This>(*this);}
     inline void enter() {N::template cmd<Cmds::Enter,This>(*this);}

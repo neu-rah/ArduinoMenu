@@ -44,10 +44,10 @@ struct LinuxKeyIn:None {
       if (k==27&&kbhit()) k=getch();
       switch(k) {
         case 91:break;
-        case 66: nav.up();break;
-        case 65: nav.down();break;
-        case 13:case 67: nav.enter();break;
-        case 27:case 68: nav.esc();break;
+        case 66: nav.up(nav);break;
+        case 65: nav.down(nav);break;
+        case 13:case 67: nav.enter(nav);break;
+        case 27:case 68: nav.esc(nav);break;
         case 3://handle ctrl+c within the capturewd keyboard
           reset_terminal_mode();
           exit(0);
