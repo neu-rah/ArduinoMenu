@@ -209,13 +209,18 @@ struct Nav:Nil {
     }
   }
 
-  inline void up() {cmd<Cmds::Up>();}
-  inline void down() {cmd<Cmds::Down>();}
-  inline void enter() {cmd<Cmds::Enter>();}
-  inline void esc() {cmd<Cmds::Esc>();}
+  inline void up() {cmd<Cmds::Up,This>(*this);}
+  inline void down() {cmd<Cmds::Down,This>(*this);}
+  inline void enter() {cmd<Cmds::Enter,This>(*this);}
+  inline void esc() {cmd<Cmds::Esc,This>(*this);}
 
-  template<Cmds c>
-  inline void cmd() {entry.template cmd<c,This>(*this,((Ref)*this).parent());}
+  template<typename Nav> inline void up(Nav& nav) {cmd<Cmds::Up,Nav>(nav);}
+  template<typename Nav> inline void down(Nav& nav) {cmd<Cmds::Down,Nav>(nav);}
+  template<typename Nav> inline void enter(Nav& nav) {cmd<Cmds::Enter,Nav>(nav);}
+  template<typename Nav> inline void esc(Nav& nav) {cmd<Cmds::Esc,Nav>(nav);}
+
+  template<Cmds c,typename Nav>
+  inline void cmd(Nav& nav) {entry.template cmd<c,Nav>(nav,((Ref)*this).parent());}
 
   Idx level=0;
   Modes editMode;

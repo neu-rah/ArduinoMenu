@@ -7,10 +7,22 @@
 #include "item.h"
 
 //navigation interface
-class INav {};
+class INav {
+  public:
+    // template<Cmds c,typename Nav>
+    virtual void cmd(Cmds c,INav& nav)=0;
+};
 
 template<typename N>
-class NavRoot:public INav,public N {};
+class NavRoot:public INav,public N {
+  public:
+    using This=NavRoot<N>;
+    void cmd(Cmds c,INav& nav) override {N::template cmd<c,NavRoot>(*this);}
+    inline void up() {N::template cmd<Cmds::Up,This>(*this);}
+    inline void down() {N::template cmd<Cmds::Down,This>(*this);}
+    inline void enter() {N::template cmd<Cmds::Enter,This>(*this);}
+    inline void esc() {N::template cmd<Cmds::Esc,This>(*this);}
+};
 
 //output interface -----------------------------------------------------
 class IMenuOut {
