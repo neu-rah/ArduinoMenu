@@ -33,6 +33,7 @@ class NavRoot:public INav,public N {
     inline void down() {N::template cmd<Cmds::Down,This>(*this);}
     inline void enter() {N::template cmd<Cmds::Enter,This>(*this);}
     inline void esc() {N::template cmd<Cmds::Esc,This>(*this);}
+    using INav::_cmd;
     void _cmd(Cmds c) override {
       switch(c) {
         case Cmds::Enter:N::template _cmd<Cmds::Enter>();break;

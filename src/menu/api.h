@@ -186,6 +186,7 @@ struct Nav:Nil {
     entry.template printMenu<Root,This,Out>(pd,entry,*this,out,parent());
   }
 
+  template<typename In> inline bool doInput(In& in) {return doInput(in,*this);}
   template<typename In,typename Nav>
   inline bool doInput(In& in,Nav& nav) {
     Cmds c=in.cmd();
