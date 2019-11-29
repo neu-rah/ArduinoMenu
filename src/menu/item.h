@@ -12,7 +12,7 @@ struct Mutable:I {
   using I::I;
   inline bool changed() const {return hasChanged;}
   inline void changed(bool o) {hasChanged=o;}
-  inline static void changed(Idx,bool o) {assert(false);}
+  inline void changed(Idx,bool o) {changed(o);}
 };
 
 /**
@@ -229,7 +229,7 @@ struct StaticMenu:Mutable<Pair<Title,Body>>{
   template<typename It,typename Nav,typename Out>
   inline void printMenu(bool pd,It& it,Nav& nav,Out& out,Ref ref,Idx n) {
     if (pd&&ref.len==1) out.printParent(*this,nav,out);
-    else if (ref) Base::tail.printMenu(pd,*this,nav,out,ref,ref.head());
+    else if (ref) Base::tail.printMenu(pd,*this,nav,out,ref,ref.head());//TODO: really? what about n?
     else {
       out.template printMenu<This,Nav,Out,OutOp::Printing>(*this,nav,out);
       if (out.partialDraw()) out.template printMenu<This,Nav,Out,OutOp::ClearChanges>(*this,nav,out);

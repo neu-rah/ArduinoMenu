@@ -1,8 +1,6 @@
 #include <iostream>
 using namespace std;
 
-//NOT YET!
-
 //main include for ArduinoMenu
 #include <menu.h>
 
@@ -30,8 +28,8 @@ bool someAction() {
 Prompt<Action<someAction,Text<>>> ok("Ok");
 Prompt<Action<someAction,Text<>>> cancel("Cancel");
 
-IItem* subMenu_data[]{&ok,&cancel};
-IterableData<ArrayData<IItem,subMenu_data,sizeof(subMenu_data)/sizeof(decltype(subMenu_data[0]))>> subMenu_body;
+// vector<IItem*> subMenu_data{&ok,&cancel};
+Prompt<VectorData<>> subMenu_body{&ok,&cancel};
 Prompt<StaticMenu<Text<>,decltype(subMenu_body)>> subMenu("Mix-menu");
 
 const char* op1_text="Option A";
@@ -40,7 +38,7 @@ Prompt<Text<>> op2("Option B");
 Prompt<Text<>> op3("Option C");
 Prompt<Action<quit,Text<>>> op_quit("<Quit!");
 
-IItem* mainMenu_data[]{&op1,&op2,&op3,&subMenu,&op_quit};
+IItem* mainMenu_data[]{&subMenu,&op1,&op2,&op3,&op_quit};
 IterableData<ArrayData<IItem,mainMenu_data,sizeof(mainMenu_data)/sizeof(decltype(mainMenu_data[0]))>> mainMenu_body;
 
 const char* mainMenu_title="Main menu";
@@ -75,8 +73,11 @@ int main() {
   // ok.activate();
   // out.nl();
   ///////////////
+  // nav.enter();
+  nav.level=1;
+  nav.path[0]=0;
+  nav.path[1]=0;
   nav.printMenu(out);
-  nav.enter();
   while(running) {
     if (nav.doInput(in,nav)) nav.printMenu(out);
     cout.flush();

@@ -4,11 +4,19 @@
 #include <menu.h>
 #include <vector>
 
-using namespace std;
-
 template<typename I=Empty>
-struct VectorMenu:public I,vector<IItem*> {
-  using vector<IItem*>::vector;
+struct VectorData:public I,std::vector<IItem*> {
+  using Org=std::vector<IItem*>;
+  using Org::Org;
+  using Org::size;
+  template<typename... II>
+  inline VectorData(II... oo):vector<IItem*>{oo...} {}
+  inline static constexpr bool canNav() {return true;}
+  inline bool canNav(Ref ref,Idx n) {
+    return ref?operator[](n)->canNav(ref.tail(),ref.tail().head()):operator[](n)->canNav();
+  }
+  // template<typename... II>
+  // inline VectorData(II... oo):vector<IItem*>({(IItem*)oo...}) {}
   // inline Idx size() const {return data.size();}
   // inline Idx size(Ref ref) const {return ref.len?data[ref.head()].size(ref.tail()):data.size();}
   // constexpr static inline bool isNode(idx_t) const {return true;}

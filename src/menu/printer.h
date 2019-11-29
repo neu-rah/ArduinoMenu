@@ -34,14 +34,14 @@ struct FullPrinter:public O {
     if (tp) {
       O::template fmt<Roles::Item,true,true>();
       O::template fmt<Roles::Title,true,true>();
-      it.template print<This,Roles::Title,true>(*this);
+      it.template print<Out,Roles::Title,true>(out);
       O::template fmt<Roles::Title,false,true>();
       O::template fmt<Roles::Item,false,true>();
     } else {
       it.changed(false);
       O::template fmt<Roles::Item,true,false>();
       O::template fmt<Roles::Title,true,false>();
-      it.template print<This,Roles::Title,false>(*this);
+      it.template print<Out,Roles::Title,false>(out);
       O::template fmt<Roles::Title,false,false>();
       O::template fmt<Roles::Item,false,false>();
     }
