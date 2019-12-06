@@ -107,6 +107,9 @@ Some plugins might be platform specific or require some hardware.
 Some applications/tutorials using ArduinoMenu, (current and older versions).  
 Do you have another? please let me know on gitter or email me.
 
+**Arduino script for temperature sensor and timer.** It allows to turn on heater and light accordingly to schedule  
+https://github.com/vikulin/LCD_LAT
+
 **Project-GlassKilnController** electrically-heated kiln for making "Warm Glass"  
 https://arduinoinfo.mywikis.net/wiki/Project-GlassKilnController
 
