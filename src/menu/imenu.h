@@ -65,7 +65,9 @@ class IMenuOut {
     template<typename T,typename Out,bool toPrint>
     inline void print(T o,Out& out,Roles role=Roles::Raw) {print(o,role,toPrint);}
     template<typename It,typename Nav,typename Out,OutOp op=OutOp::Printing>
-    inline void printMenu(It& it,Nav& nav,Out& out) {printMenu(it,nav,out,op);}
+    inline void printMenu(It& it,Nav& nav,Out& out) {
+      _trace(MDO<<"IMenuOut::printMenu"<<endl);
+      printMenu(it,nav,out,op);}
     template<typename It,typename Out,bool toPrint=true>
     void printItem(It& it,Out& out,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
       printItem(it,out,n,s,e,m,toPrint);
@@ -77,6 +79,7 @@ class MenuOut:public IMenuOut,public O {
   public:
     using O::printMenu;
     void printMenu(IItem& it,INav& nav,IMenuOut& out,OutOp op=OutOp::Printing) override {
+      _trace(MDO<<"MenuOut::printMenu"<<endl);
       switch(op) {
         case OutOp::Measure:
         O::template printMenu<IItem,INav,IMenuOut,OutOp::Measure>(it,nav,out);
@@ -122,14 +125,14 @@ class IItem {
     virtual bool canNav(Ref,Idx) const =0;
     virtual bool parentDraw() const=0;
     virtual bool parentDraw(Ref,Idx) const=0;
-    //--------------------------------------------
 
     virtual void printMenu(bool pd,IItem& it,INav& nav,IMenuOut& out)=0;
+    virtual void printMenu(bool pd,IItem& it,INav& nav,IMenuOut& out,Ref ref,Idx n)=0;
     // virtual void printMenu(bool pd,IItem& it,INav& nav,IMenuOut& out,Ref ref)=0;
-    // virtual void printMenu(bool pd,IItem& it,INav& nav,IMenuOut& out,Ref ref,Idx n)=0;
     virtual void print(IMenuOut&,Roles=Roles::Raw,bool=true)=0;
     virtual void printItems(INav& nav,IMenuOut& out,Idx idx=0,Idx top=0,bool fullPrint=true,Roles role=Roles::Item,OutOp op=OutOp::Printing)=0;
 
+    //--------------------------------------------
     template<typename Out,Roles role=Roles::Item,bool toPrint=true>
     inline void printItem(Out& out,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {printItem(out,n,s,e,m,role,toPrint);}
     template<Cmds c,typename Nav> inline void cmd(Nav& nav,Ref ref) {cmd(c,nav,ref,ref.head());}
@@ -137,7 +140,10 @@ class IItem {
     template<typename Out,Roles role=Roles::Raw,bool toPrint=true>
     inline void print(Out& out) {print(out,role,toPrint);}
     template<typename Nav,typename Out,Roles role=Roles::Item,OutOp op=OutOp::Printing>
-    inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,bool fullPrint=true) {printItems(nav,out,idx,top,fullPrint);}
+    inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,bool fullPrint=true) {
+      _trace(MDO<<"IItem::printItems"<<endl);
+      printItems(nav,out,idx,top,fullPrint);
+    }
 };
 
 //item virtual cap
@@ -160,11 +166,12 @@ class Prompt:public IItem,public Item<I> {
     bool parentDraw(Ref ref,Idx n) const override {return Base::parentDraw(ref,n);}
 
     void printMenu(bool pd,IItem& it,INav& nav,IMenuOut& out) override {
+      _trace(MDO<<"Prompt::printMenu"<<endl);
       Base::printMenu(pd,it,nav,out);}
     // void printMenu(bool pd,IItem& it,INav& nav,IMenuOut& out,Ref ref) override {
     //   Base::printMenu(pd,it,nav,out,ref);}
-    // void printMenu(bool pd,IItem& it,INav& nav,IMenuOut& out,Ref ref,Idx n) override {
-    //   Base::printMenu(pd,it,nav,out,ref,n);}
+    void printMenu(bool pd,IItem& it,INav& nav,IMenuOut& out,Ref ref,Idx n) override {
+      Base::printMenu(pd,it,nav,out,ref,n);}
     void print(IMenuOut& out,Roles role=Roles::Raw,bool toPrint=true) override {
       switch(role) {
         case Roles::Raw:
@@ -218,12 +225,13 @@ class Prompt:public IItem,public Item<I> {
       }
     }
     void printItems(INav& nav,IMenuOut& out,Idx idx=0,Idx top=0,bool fullPrint=true,Roles role=Roles::Item,OutOp op=OutOp::Printing) override {
+      _trace(MDO<<"Prompt::printItems"<<endl);
      switch(role) {
        case Roles::Raw:
          switch(op) {
-           case OutOp::Measure: Base::template printItems<INav,IMenuOut,Roles::Raw,OutOp::Measure>(nav,out,idx,top);break;
-           case OutOp::Printing: Base::template printItems<INav,IMenuOut,Roles::Raw,OutOp::Printing>(nav,out,idx,top);break;
-           case OutOp::ClearChanges: Base::template printItems<INav,IMenuOut,Roles::Raw,OutOp::ClearChanges>(nav,out,idx,top);break;
+           case OutOp::Measure: Base::template printItems<IItem,INav,IMenuOut,Roles::Raw,OutOp::Measure>(*this,nav,out,idx,top);break;
+           case OutOp::Printing: Base::template printItems<IItem,INav,IMenuOut,Roles::Raw,OutOp::Printing>(*this,nav,out,idx,top);break;
+           case OutOp::ClearChanges: Base::template printItems<IItem,INav,IMenuOut,Roles::Raw,OutOp::ClearChanges>(*this,nav,out,idx,top);break;
          }
          break;
      }
@@ -326,8 +334,15 @@ struct IterableData:I {
   inline bool canNav(Ref ref,Idx n) {
     return ref?data[n].canNav(ref.tail(),ref.tail().head()):data[n].canNav();
   }
-  template<typename Nav,typename Out,Roles role=Roles::Item,OutOp op=OutOp::Printing>
-  inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,bool fullPrint=true) {
+  template<typename It,typename Nav,typename Out>
+  inline void printMenu(bool pd,It& it,Nav& nav,Out& out,Ref ref,Idx n) {
+    _trace(MDO<<"IterableData::printItems"<<endl);
+    if (ref) data[n].printMenu(pd,data[n],nav,out,ref.tail(),ref.tail().head());
+    else data[n].printMenu(pd,data[n],nav,out);
+  }
+  template<typename It,typename Nav,typename Out,Roles role=Roles::Item,OutOp op=OutOp::Printing>
+  inline void printItems(It& it,Nav& nav,Out& out,Idx idx=0,Idx top=0,bool fullPrint=true) {
+    _trace(MDO<<"IterableData::printItems"<<endl);
     for(int n=top;n<size()&&out.freeY();n++) {
       switch(op) {
         case OutOp::Measure:

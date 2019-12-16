@@ -24,10 +24,10 @@ struct Item:Mutable<I> {
   using This=Item<I>;
   using Base::Base;
   //terminate items printing by printing just this last one as a single item
-  template<typename Nav,typename Out,Roles role=Roles::Item,OutOp op=OutOp::Printing>
-  inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,bool fullPrint=true) {
+  template<typename It,typename Nav,typename Out,Roles role=Roles::Item,OutOp op=OutOp::Printing>
+  inline void printItems(It& it,Nav& nav,Out& out,Idx idx=0,Idx top=0,bool fullPrint=true) {
     assert(op!=OutOp::ClearChanges);
-    out.template printItem<This,Out,op!=OutOp::Measure>(*this,out,idx,nav.selected(idx),I::enabled(),nav.mode());
+    out.template printItem<It,Out,op!=OutOp::Measure>(it,out,idx,nav.selected(idx),I::enabled(),nav.mode());
   }
 
   template<typename It,typename Out,Roles role=Roles::Raw,bool toPrint=true>
@@ -140,6 +140,7 @@ struct Pair:F {
   inline bool enabled(Ref ref) const {return ref?enabled(ref,ref.head()):enabled();}
   inline bool enabled(Ref ref,Idx n) const {return n?tail.enabled(ref,n-1):ref?enabled(ref.tail(),ref.tail().head()):F::enabled();}
 
+  using F::changed;
   inline void changed(Idx n,bool o) {
     if (n) tail.changed(n-1,o);
     else F::changed(o);
@@ -164,10 +165,14 @@ struct Pair:F {
     else if (ref) F::printMenu(pd,*this,nav,out,ref.tail(),ref.tail().head());
     else out.printMenu(*reinterpret_cast<F*>(this),nav,out);
   }
-  template<typename Nav,typename Out,Roles P/*=Roles::Item*/,OutOp op/*=OutOp::Printing*/>
-  inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,bool fullPrint=true) {
+  template<typename It,typename Nav,typename Out,Roles P/*=Roles::Item*/,OutOp op/*=OutOp::Printing*/>
+  inline void printItems(It& it,Nav& nav,Out& out,Idx idx=0,Idx top=0,bool fullPrint=true) {
+    trace(
+      MDO<<"Pair::printItems of:";
+      it.print(debugOut);
+      MDO<<endl);
     if (!out.freeY()) return;
-    if(top) tail.template printItems<Nav,Out,P,op>(nav,out,idx+1,top-1,fullPrint);//skip scroll-out part
+    if(top) tail.template printItems<S,Nav,Out,P,op>(tail,nav,out,idx+1,top-1,fullPrint);//skip scroll-out part
     else {
       switch(op) {
         case OutOp::Measure:
@@ -182,7 +187,7 @@ struct Pair:F {
         case OutOp::ClearChanges:
           F::changed(false);
       }
-      tail.template printItems<Nav,Out,P,op>(nav,out,idx+1,top,fullPrint);
+      tail.template printItems<S,Nav,Out,P,op>(tail,nav,out,idx+1,top,fullPrint);
     }
   }
 
@@ -221,23 +226,32 @@ struct StaticMenu:Mutable<Pair<Title,Body>>{
   using Base::Base;
 
   template<typename It,typename Nav,typename Out>
-  inline void printMenu(bool pd,It& it,Nav& nav,Out& out) {out.printMenu(pd,*this,nav);}
+  inline void printMenu(bool pd,It& it,Nav& nav,Out& out) {out.printMenu(it,nav,out);}
   template<typename It,typename Nav,typename Out>
   inline void printMenu(bool pd,It& it,Nav& nav,Out& out,Ref ref) {
-    This::printMenu(pd,*this,nav,out,ref,ref.head());
+    This::printMenu(pd,it,nav,out,ref,ref.head());
   }
   template<typename It,typename Nav,typename Out>
   inline void printMenu(bool pd,It& it,Nav& nav,Out& out,Ref ref,Idx n) {
-    if (pd&&ref.len==1) out.printParent(*this,nav,out);
-    else if (ref) Base::tail.printMenu(pd,*this,nav,out,ref,ref.head());//TODO: really? what about n?
+    trace(
+      MDO<<"StaticMenu::printMenu of:";
+      it.print(debugOut);
+      MDO<<endl
+    );
+    if (pd&&ref.len==1) out.printParent(it,nav,out);
+    else if (ref) Base::tail.printMenu(pd,Base::tail,nav,out,ref,ref.head());//TODO: really? what about n?
     else {
       out.template printMenu<This,Nav,Out,OutOp::Printing>(*this,nav,out);
-      if (out.partialDraw()) out.template printMenu<This,Nav,Out,OutOp::ClearChanges>(*this,nav,out);
+      if (out.partialDraw()) out.template printMenu<It,Nav,Out,OutOp::ClearChanges>(it,nav,out);
     }
   }
-  template<typename Nav,typename Out,Roles role=Roles::Item,OutOp op=OutOp::Printing>
-  inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,bool fullPrint=true) {
-    Base::tail.template printItems<Nav,Out,role,op>(nav,out,idx,top,fullPrint||(op==OutOp::Printing&&This::changed()));
+  template<typename It,typename Nav,typename Out,Roles role=Roles::Item,OutOp op=OutOp::Printing>
+  inline void printItems(It& it,Nav& nav,Out& out,Idx idx=0,Idx top=0,bool fullPrint=true) {
+    trace(MDO<<"StaticMenu::printItems of:";
+    Base::tail.print(debugOut);
+    MDO<<endl
+  );
+    Base::tail.template printItems<decltype(Base::tail),Nav,Out,role,op>(Base::tail,nav,out,idx,top,fullPrint||(op==OutOp::Printing&&This::changed()));
     // if (op==OutOp::ClearChanges) This::changed(false);
   }
 

@@ -102,9 +102,11 @@ bool tog12() {
 int main() {
   nav.printMenu(out);
   while(running) {
-    if (nav.doInput(in)) nav.printMenu(out);
+    if (nav.doInput(in)) {
+      nav.printMenu(out);
+      out.nl();
+    }
     cout.flush();
   };
-  out.nl();
   return 0;
 }

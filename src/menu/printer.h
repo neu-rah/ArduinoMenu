@@ -48,7 +48,7 @@ struct FullPrinter:public O {
 
     it.changed(This::posTop(nav));
     bool fp=toPrint&&((!O::partialDraw())||it.changed()||!O::isSame(&it));
-    it.template printItems<Nav,Out,Roles::Item,op>(nav,out,0,This::top(),fp);
+    it.template printItems<It,Nav,Out,Roles::Item,op>(it,nav,out,0,This::top(),fp);
 
     O::template fmt<Roles::Menu,false,toPrint>();
     if(dp) O::template fmt<Roles::Panel,false,toPrint>();

@@ -51,7 +51,7 @@ struct Void:Nil {
 
   //print loopback by default
   template<typename Nav,typename Out>
-  inline static void printOn(Nav& nav,Out& out) {nav._printMenu(out);}
+  inline static void printOn(Nav& nav,Out& out) {nav._printMenu(nav,out);}
   inline static constexpr bool isSame(void*) {return false;}
   inline static void lastDrawn(void*) {}
 };
@@ -112,8 +112,10 @@ struct Empty:Nil {
   inline static constexpr Idx size() {return 0;}
   template<typename Out,Roles=Roles::Raw,bool=true>
   inline static void print(Out&) {}
-  template<typename Nav,typename Out,Roles P=Roles::Item,OutOp op=OutOp::Printing>
-  inline static void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,bool fullPrint=true) {}
+  template<typename It,typename Nav,typename Out,Roles P=Roles::Item,OutOp op=OutOp::Printing>
+  inline static void printItems(It&,Nav& nav,Out& out,Idx idx=0,Idx top=0,bool fullPrint=true) {
+    trace(MDO<<"Empty::printItems"<<endl);
+  }
   inline static void enable(bool) {}
   inline static void enable(bool,Idx) {}
   inline static void enable(bool,Ref,Idx) {}
@@ -133,11 +135,16 @@ struct Empty:Nil {
   template<Cmds c,typename Nav>
   inline void cmd(Nav& nav,Ref ref,Idx n) {nav.template _cmd<c>();}
   template<typename It,typename Nav,typename Out>
-  static inline void printMenu(bool,It& it,Nav&,Out& out) {it.print(out);}
+  static inline void printMenu(bool,It& it,Nav&,Out& out) {
+    trace(MDO<<"Empty::printMenu"<<endl);
+    it.print(out);}
   template<typename It,typename Nav,typename Out>
-  static inline void printMenu(bool,It& it,Nav&,Out& out,Ref,Idx) {it.print(out);}
+  static inline void printMenu(bool,It& it,Nav&,Out& out,Ref,Idx) {
+    trace(MDO<<"Empty::printMenu"<<endl);
+    it.print(out);}
   template<typename It,typename Out,Roles role=Roles::Raw,bool toPrint=true>
   static inline void printItem(It& it,Out& out,Idx=0,bool=false,bool=true,Modes=Modes::Normal) {
+    trace(MDO<<"Nav::printItem"<<endl);
     it.template print<Out,role,toPrint>(out);
   }
   inline static constexpr bool changed() {return false;}
@@ -179,11 +186,18 @@ struct Nav:Nil {
   inline bool enabled() const {return enabled(*this);}
   inline bool enabled(Ref ref) const {return entry.enabled(ref);}
   template<typename Out>
-  inline void printMenu(Out& out) {out.printOn(*this,out);}
-  template<typename Out>
-  inline void _printMenu(Out& out) {
+  inline void printMenu(Out& out) {
+    trace(MDO<<"Nav::printMenu(Out)"<<endl);
+    out.printOn(*this,out);}
+  template<typename Nav,typename Out>
+  inline void printMenu(Nav& nav,Out& out) {
+    trace(MDO<<"Nav::printMenu(Nav,Out)"<<endl);
+    out.printOn(nav,out);}
+  template<typename Nav,typename Out>
+  inline void _printMenu(Nav& nav,Out& out) {
+    trace(MDO<<"Nav::_printMenu"<<endl);
     bool pd=entry.parentDraw(parent());
-    entry.template printMenu<Root,This,Out>(pd,entry,*this,out,parent());
+    entry.template printMenu<Root,This,Out>(pd,entry,nav,out,parent());
   }
 
   template<typename In> inline bool doInput(In& in) {return doInput(in,*this);}
