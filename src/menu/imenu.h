@@ -18,6 +18,9 @@ class INav {
     virtual void _cmd(Cmds c)=0;
     virtual bool selected(Idx n) const=0;
     virtual Modes mode() const=0;
+    virtual void _printMenu(INav& nav,IMenuOut& out)=0;
+    virtual void left()=0;
+    virtual void right()=0;
     //-----------------------
     template<Cmds c> inline void _cmd() {_cmd(c);}
 };
@@ -38,7 +41,13 @@ class NavRoot:public INav,public N {
     }
     bool selected(Idx n) const override {return N::selected(n);}
     Modes mode() const override {return N::mode();}
+    void _printMenu(INav& nav,IMenuOut& out) override {
+      N::_printMenu(nav,out);
+    }
+    // inline void printMenu(IMenuOut& out);
 
+    void left() override {N::level--;}
+    void right() override {N::level++;}
     inline void up() {N::template cmd<Cmds::Up,This>(*this);}
     inline void down() {N::template cmd<Cmds::Down,This>(*this);}
     inline void enter() {N::template cmd<Cmds::Enter,This>(*this);}
@@ -53,6 +62,11 @@ class NavRoot:public INav,public N {
         default:break;
       }
     }
+    using N::printMenu;
+    template<typename Out>
+    inline void printMenu(Out& out) {
+      trace(MDO<<"INav::printMenu(Out)"<<endl);
+      out.printOn(*this,out);}
 };
 
 //output interface -----------------------------------------------------
@@ -61,17 +75,18 @@ class IMenuOut {
     virtual void print(const char* o,Roles role=Roles::Raw,bool toPrint=true)=0;
     virtual void printMenu(IItem& it,INav& nav,IMenuOut& out,OutOp op=OutOp::Printing)=0;
     virtual void printItem(IItem& it,IMenuOut& out,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal,bool toPrint=true)=0;
+    virtual void printParent(IItem& it,INav& nav,IMenuOut& out)=0;
+    virtual bool partialDraw()=0;
     //-----------------------
     template<typename T,typename Out,bool toPrint>
     inline void print(T o,Out& out,Roles role=Roles::Raw) {print(o,role,toPrint);}
     template<typename It,typename Nav,typename Out,OutOp op=OutOp::Printing>
-    inline void printMenu(It& it,Nav& nav,Out& out) {
-      _trace(MDO<<"IMenuOut::printMenu"<<endl);
-      printMenu(it,nav,out,op);}
+    inline void printMenu(It& it,Nav& nav,Out& out);//TODO: remove this
     template<typename It,typename Out,bool toPrint=true>
     void printItem(It& it,Out& out,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
       printItem(it,out,n,s,e,m,toPrint);
     }
+    // void printOn(INav& nav,IMenuOut& out) {nav._printMenu(nav,out);}
 };
 
 template<typename O>
@@ -102,6 +117,8 @@ class MenuOut:public IMenuOut,public O {
       if(toPrint) O::template printItem<IItem,IMenuOut,true>(it,out,n,s,e,m);
       else O::template printItem<IItem,IMenuOut,false>(it,out,n,s,e,m);
     }
+    void printParent(IItem& it,INav& nav,IMenuOut& out) override {O::printParent(it,nav,out);}
+    bool partialDraw() override {return O::partialDraw;}
 };
 
 //input interface -------------------------------------------------
@@ -139,11 +156,15 @@ class IItem {
     template<Cmds c,typename Nav> inline void cmd(Nav& nav,Ref ref,Idx n) {cmd(c,nav,ref,n);}
     template<typename Out,Roles role=Roles::Raw,bool toPrint=true>
     inline void print(Out& out) {print(out,role,toPrint);}
-    template<typename Nav,typename Out,Roles role=Roles::Item,OutOp op=OutOp::Printing>
-    inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,bool fullPrint=true) {
+    template<typename It,typename Nav,typename Out,Roles role=Roles::Item,OutOp op=OutOp::Printing>
+    inline void printItems(It& it,Nav& nav,Out& out,Idx idx=0,Idx top=0,bool fullPrint=true) {
       _trace(MDO<<"IItem::printItems"<<endl);
       printItems(nav,out,idx,top,fullPrint);
     }
+    // template<Cmds c,typename Nav>
+    // inline void cmd(Nav& nav) {cmd(c,nav,nav);}
+    // template<Cmds c,typename Nav>
+    // inline void cmd(Nav& nav,Ref ref,Idx n=0) {cmd(c,nav,nav);}
 };
 
 //item virtual cap
@@ -152,6 +173,7 @@ class Prompt:public IItem,public Item<I> {
   public:
     using Base=Item<I>;
     using Base::Base;
+    using IItem::size;
     inline Idx size() const override {return Base::size();}
     bool changed() const override {return Base::changed();}
     void changed(bool o) override {Base::changed(o);}
@@ -163,67 +185,17 @@ class Prompt:public IItem,public Item<I> {
     bool canNav() const override {return Base::canNav();}
     bool canNav(Ref ref,Idx n) const override {return Base::canNav(ref,n);}
     bool parentDraw() const override {return Base::parentDraw();}
-    bool parentDraw(Ref ref,Idx n) const override {return Base::parentDraw(ref,n);}
+    bool parentDraw(Ref ref,Idx n=0) const override {return Base::parentDraw(ref,n);}
 
+    using I::printMenu;
     void printMenu(bool pd,IItem& it,INav& nav,IMenuOut& out) override {
       _trace(MDO<<"Prompt::printMenu"<<endl);
       Base::printMenu(pd,it,nav,out);}
     // void printMenu(bool pd,IItem& it,INav& nav,IMenuOut& out,Ref ref) override {
     //   Base::printMenu(pd,it,nav,out,ref);}
-    void printMenu(bool pd,IItem& it,INav& nav,IMenuOut& out,Ref ref,Idx n) override {
+    void printMenu(bool pd,IItem& it,INav& nav,IMenuOut& out,Ref ref,Idx n=0) override {
       Base::printMenu(pd,it,nav,out,ref,n);}
-    void print(IMenuOut& out,Roles role=Roles::Raw,bool toPrint=true) override {
-      switch(role) {
-        case Roles::Raw:
-          if(toPrint) Base::template print<IMenuOut,Roles::Raw,true>(out);
-          else Base::template print<IMenuOut,Roles::Raw,false>(out);
-          break;
-        case Roles::Panel:
-          if(toPrint) Base::template print<IMenuOut,Roles::Panel,true>(out);
-          else Base::template print<IMenuOut,Roles::Panel,false>(out);
-          break;
-        case Roles::Menu:
-          if(toPrint) Base::template print<IMenuOut,Roles::Menu,true>(out);
-          else Base::template print<IMenuOut,Roles::Menu,false>(out);
-          break;
-        case Roles::Title:
-          if(toPrint) Base::template print<IMenuOut,Roles::Title,true>(out);
-          else Base::template print<IMenuOut,Roles::Title,false>(out);
-          break;
-        case Roles::Body:
-          if(toPrint) Base::template print<IMenuOut,Roles::Body,true>(out);
-          else Base::template print<IMenuOut,Roles::Body,false>(out);
-          break;
-        case Roles::Item:
-          if(toPrint) Base::template print<IMenuOut,Roles::Item,true>(out);
-          else Base::template print<IMenuOut,Roles::Item,false>(out);
-          break;
-        case Roles::Index:
-          if(toPrint) Base::template print<IMenuOut,Roles::Index,true>(out);
-          else Base::template print<IMenuOut,Roles::Index,false>(out);
-          break;
-        case Roles::Cursor:
-          if(toPrint) Base::template print<IMenuOut,Roles::Cursor,true>(out);
-          else Base::template print<IMenuOut,Roles::Cursor,false>(out);
-          break;
-        case Roles::Name:
-          if(toPrint) Base::template print<IMenuOut,Roles::Name,true>(out);
-          else Base::template print<IMenuOut,Roles::Name,false>(out);
-          break;
-        case Roles::Mode:
-          if(toPrint) Base::template print<IMenuOut,Roles::Mode,true>(out);
-          else Base::template print<IMenuOut,Roles::Mode,false>(out);
-          break;
-        case Roles::Value:
-          if(toPrint) Base::template print<IMenuOut,Roles::Value,true>(out);
-          else Base::template print<IMenuOut,Roles::Value,false>(out);
-          break;
-        case Roles::Unit:
-          if(toPrint) Base::template print<IMenuOut,Roles::Unit,true>(out);
-          else Base::template print<IMenuOut,Roles::Unit,false>(out);
-          break;
-      }
-    }
+    void print(IMenuOut& out,Roles role=Roles::Raw,bool toPrint=true) override;
     void printItems(INav& nav,IMenuOut& out,Idx idx=0,Idx top=0,bool fullPrint=true,Roles role=Roles::Item,OutOp op=OutOp::Printing) override {
       _trace(MDO<<"Prompt::printItems"<<endl);
      switch(role) {
@@ -232,74 +204,38 @@ class Prompt:public IItem,public Item<I> {
            case OutOp::Measure: Base::template printItems<IItem,INav,IMenuOut,Roles::Raw,OutOp::Measure>(*this,nav,out,idx,top);break;
            case OutOp::Printing: Base::template printItems<IItem,INav,IMenuOut,Roles::Raw,OutOp::Printing>(*this,nav,out,idx,top);break;
            case OutOp::ClearChanges: Base::template printItems<IItem,INav,IMenuOut,Roles::Raw,OutOp::ClearChanges>(*this,nav,out,idx,top);break;
-         }
-         break;
+        }
+        break;
+      }
+   }
+   using Base::printItem;
+   void printItem(IMenuOut& out,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal,Roles role=Roles::Item,bool toPrint=true) override;
+   using IItem::cmd;
+   void cmd(Cmds c,INav& nav,Ref ref,Idx n=0) override {
+     switch(c) {
+       case Cmds::Enter:Base::template cmd<Cmds::Enter,INav>(nav,ref,n);break;
+       case Cmds::Esc:Base::template cmd<Cmds::Esc,INav>(nav,ref,n);break;
+       case Cmds::Up:Base::template cmd<Cmds::Up,INav>(nav,ref,n);break;
+       case Cmds::Down:Base::template cmd<Cmds::Down,INav>(nav,ref,n);break;
+       case Cmds::Left:Base::template cmd<Cmds::Left,INav>(nav,ref,n);break;
+       case Cmds::Right:Base::template cmd<Cmds::Right,INav>(nav,ref,n);break;
+       default:break;
      }
    }
-    using Base::printItem;
-    void printItem(IMenuOut& out,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal,Roles role=Roles::Item,bool toPrint=true) override {
-      switch (role) {
-        case Roles::Raw:
-          if (toPrint) Base::template printItem<Item<I>,IMenuOut,Roles::Raw,true>(*this,out,n,s,e,m);
-          else Base::template printItem<Item<I>,IMenuOut,Roles::Raw,false>(*this,out,n,s,e,m);
-          break;
-        case Roles::Panel:
-          if (toPrint) Base::template printItem<Item<I>,IMenuOut,Roles::Panel,true>(*this,out,n,s,e,m);
-          else Base::template printItem<Item<I>,IMenuOut,Roles::Panel,false>(*this,out,n,s,e,m);
-          break;
-        case Roles::Menu:
-          if (toPrint) Base::template printItem<Item<I>,IMenuOut,Roles::Menu,true>(*this,out,n,s,e,m);
-          else Base::template printItem<Item<I>,IMenuOut,Roles::Menu,false>(*this,out,n,s,e,m);
-          break;
-        case Roles::Title:
-          if (toPrint) Base::template printItem<Item<I>,IMenuOut,Roles::Title,true>(*this,out,n,s,e,m);
-          else Base::template printItem<Item<I>,IMenuOut,Roles::Title,false>(*this,out,n,s,e,m);
-          break;
-        case Roles::Body:
-          if (toPrint) Base::template printItem<Item<I>,IMenuOut,Roles::Body,true>(*this,out,n,s,e,m);
-          else Base::template printItem<Item<I>,IMenuOut,Roles::Body,false>(*this,out,n,s,e,m);
-          break;
-        case Roles::Item:
-          if (toPrint) Base::template printItem<Item<I>,IMenuOut,Roles::Item,true>(*this,out,n,s,e,m);
-          else Base::template printItem<Item<I>,IMenuOut,Roles::Item,false>(*this,out,n,s,e,m);
-          break;
-        case Roles::Index:
-          if (toPrint) Base::template printItem<Item<I>,IMenuOut,Roles::Index,true>(*this,out,n,s,e,m);
-          else Base::template printItem<Item<I>,IMenuOut,Roles::Index,false>(*this,out,n,s,e,m);
-          break;
-        case Roles::Cursor:
-          if (toPrint) Base::template printItem<Item<I>,IMenuOut,Roles::Cursor,true>(*this,out,n,s,e,m);
-          else Base::template printItem<Item<I>,IMenuOut,Roles::Cursor,false>(*this,out,n,s,e,m);
-          break;
-        case Roles::Name:
-          if (toPrint) Base::template printItem<Item<I>,IMenuOut,Roles::Name,true>(*this,out,n,s,e,m);
-          else Base::template printItem<Item<I>,IMenuOut,Roles::Name,false>(*this,out,n,s,e,m);
-          break;
-        case Roles::Mode:
-          if (toPrint) Base::template printItem<Item<I>,IMenuOut,Roles::Mode,true>(*this,out,n,s,e,m);
-          else Base::template printItem<Item<I>,IMenuOut,Roles::Mode,false>(*this,out,n,s,e,m);
-          break;
-        case Roles::Value:
-          if (toPrint) Base::template printItem<Item<I>,IMenuOut,Roles::Value,true>(*this,out,n,s,e,m);
-          else Base::template printItem<Item<I>,IMenuOut,Roles::Value,false>(*this,out,n,s,e,m);
-          break;
-        case Roles::Unit:
-          if (toPrint) Base::template printItem<Item<I>,IMenuOut,Roles::Unit,true>(*this,out,n,s,e,m);
-          else Base::template printItem<Item<I>,IMenuOut,Roles::Unit,false>(*this,out,n,s,e,m);
-          break;
-      }
+  template<typename It,typename Nav,typename Out>
+  inline void printMenu(bool pd,It& it,Nav& nav,Out& out,OutOp op=OutOp::Printing) {
+    switch(op) {
+      case OutOp::Measure:
+        out.template printMenu<It,Nav,Out,OutOp::Measure>(it,nav,out);
+        break;
+      case OutOp::Printing:
+        out.template printMenu<It,Nav,Out,OutOp::Printing>(it,nav,out);
+        break;
+      case OutOp::ClearChanges:
+        out.template printMenu<It,Nav,Out,OutOp::ClearChanges>(it,nav,out);
+        break;
     }
-    void cmd(Cmds c,INav& nav,Ref ref,Idx n=0) override {
-      switch(c) {
-        case Cmds::Enter:Base::template cmd<Cmds::Enter,INav>(nav,ref,n);break;
-        case Cmds::Esc:Base::template cmd<Cmds::Esc,INav>(nav,ref,n);break;
-        case Cmds::Up:Base::template cmd<Cmds::Up,INav>(nav,ref,n);break;
-        case Cmds::Down:Base::template cmd<Cmds::Down,INav>(nav,ref,n);break;
-        case Cmds::Left:Base::template cmd<Cmds::Left,INav>(nav,ref,n);break;
-        case Cmds::Right:Base::template cmd<Cmds::Right,INav>(nav,ref,n);break;
-        default:break;
-      }
-    }
+  }
 };
 
 template<typename T,T** data,Idx sz,typename I=Empty>
@@ -321,6 +257,9 @@ struct IterableData:I {
   inline Idx size(Ref ref) const {return ref.len?data[ref.head()].size(ref.tail()):data.size();}
   template<Cmds c,typename Nav> inline void cmd(Nav& nav,Ref ref) {
     data[ref.head()].template cmd<c,Nav>(nav,ref.tail());
+  }
+  template<Cmds c,typename Nav> inline void cmd(Nav& nav) {
+    I::template cmd<c,Nav>(nav);
   }
   template<Cmds c,typename Nav> inline void cmd(Nav& nav,Ref ref,Idx n) {
     if (ref) data[n].template cmd<c,Nav>(nav,ref.tail(),ref.tail().head());

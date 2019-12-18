@@ -28,7 +28,7 @@ Prompt<Action<someAction,Text<>>> ok("Ok");
 Prompt<Action<someAction,Text<>>> cancel("Cancel");
 
 IItem* subMenu_data[]{&ok,&cancel};
-IterableData<ArrayData<IItem,subMenu_data,sizeof(subMenu_data)/sizeof(decltype(subMenu_data[0]))>> subMenu_body;
+Item<IterableData<ArrayData<IItem,subMenu_data,sizeof(subMenu_data)/sizeof(decltype(subMenu_data[0]))>>> subMenu_body;
 Prompt<StaticMenu<Text<>,decltype(subMenu_body)>> subMenu("Mix-menu");
 
 const char* op1_text="Option A";
@@ -38,10 +38,10 @@ Prompt<Text<>> op3("Option C");
 Prompt<Action<quit,Text<>>> op_quit("<Quit!");
 
 IItem* mainMenu_data[]{&op1,&op2,&op3,&subMenu,&op_quit};
-IterableData<ArrayData<IItem,mainMenu_data,sizeof(mainMenu_data)/sizeof(decltype(mainMenu_data[0]))>> mainMenu_body;
+Item<IterableData<ArrayData<IItem,mainMenu_data,sizeof(mainMenu_data)/sizeof(decltype(mainMenu_data[0]))>>> mainMenu_body;
 
 const char* mainMenu_title="Main menu";
-StaticMenu<StaticText<&mainMenu_title>,decltype(mainMenu_body)> mainMenu;
+Prompt<StaticMenu<StaticText<&mainMenu_title>,decltype(mainMenu_body)>> mainMenu;
 
 //menu input --------------------------------------
 LinuxKeyIn in;
@@ -73,7 +73,7 @@ int main() {
   // out.nl();
   ///////////////
   nav.printMenu(out);
-  nav.enter();
+  // nav.enter();
   while(running) {
     if (nav.doInput(in,nav)) nav.printMenu(out);
     cout.flush();

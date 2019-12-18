@@ -14,9 +14,9 @@ struct FullPrinter:public O {
   template<typename It,typename Nav,typename Out>
   inline void printParent(It& it,Nav& nav,Out& out) {
     //this is ugly but short
-    nav.level--;
+    nav.left();
     This::printMenu<It,Nav>(it,nav,out);
-    nav.level++;
+    nav.right();
   }
   template<typename It,typename Nav,typename Out,OutOp op=OutOp::Printing>
   void printMenu(It& it,Nav& nav,Out& out) {

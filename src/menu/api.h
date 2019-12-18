@@ -197,7 +197,7 @@ struct Nav:Nil {
   inline void _printMenu(Nav& nav,Out& out) {
     trace(MDO<<"Nav::_printMenu"<<endl);
     bool pd=entry.parentDraw(parent());
-    entry.template printMenu<Root,This,Out>(pd,entry,nav,out,parent());
+    entry.template printMenu<decltype(entry),Nav,Out>(pd,entry,nav,out,parent());
   }
 
   template<typename In> inline bool doInput(In& in) {return doInput(in,*this);}
@@ -242,6 +242,8 @@ struct Nav:Nil {
   template<typename Nav> inline void down(Nav& nav) {cmd<Cmds::Down,Nav>(nav);}
   template<typename Nav> inline void enter(Nav& nav) {cmd<Cmds::Enter,Nav>(nav);}
   template<typename Nav> inline void esc(Nav& nav) {cmd<Cmds::Esc,Nav>(nav);}
+  inline void left() {level--;}
+  inline void right() {level++;}
 
   template<Cmds c,typename Nav>
   inline void cmd(Nav& nav) {entry.template cmd<c,Nav>(nav,((Ref)*this).parent());}

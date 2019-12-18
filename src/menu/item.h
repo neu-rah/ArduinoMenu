@@ -46,7 +46,7 @@ struct Item:Mutable<I> {
   inline static bool activate(Ref,Idx=0) {return I::activate();}
   using I::cmd;
   template<Cmds c,typename Nav>
-  inline void cmd(Nav& nav,Ref ref,Idx n) {cmd<c,Nav>(nav);}
+  inline void cmd(Nav& nav,Ref ref,Idx n) {I::template cmd<c,Nav>(nav);}
   template<Cmds c,typename Nav>
   inline void cmd(Nav& nav,Ref ref) {cmd<c,Nav>(nav);}
   using I::parentDraw;
@@ -162,7 +162,7 @@ struct Pair:F {
   template<typename It,typename Nav,typename Out>
   inline void printMenu(bool pd,It& it,Nav& nav,Out& out,Ref ref,Idx n) {
     if (n) tail.printMenu(pd,*this,nav,out,ref,n-1);
-    else if (ref) F::printMenu(pd,*this,nav,out,ref.tail(),ref.tail().head());
+    else if (ref) F::printMenu(pd,it,nav,out,ref.tail(),ref.tail().head());
     else out.printMenu(*reinterpret_cast<F*>(this),nav,out);
   }
   template<typename It,typename Nav,typename Out,Roles P/*=Roles::Item*/,OutOp op/*=OutOp::Printing*/>
@@ -242,6 +242,7 @@ struct StaticMenu:Mutable<Pair<Title,Body>>{
     else if (ref) Base::tail.printMenu(pd,Base::tail,nav,out,ref,ref.head());//TODO: really? what about n?
     else {
       out.template printMenu<This,Nav,Out,OutOp::Printing>(*this,nav,out);
+      // out.template printMenu<It,Nav,Out,OutOp::Printing>(it,nav,out);
       if (out.partialDraw()) out.template printMenu<It,Nav,Out,OutOp::ClearChanges>(it,nav,out);
     }
   }
