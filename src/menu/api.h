@@ -76,28 +76,6 @@ struct TextMeasure: Void {
     #endif
 };
 
-#ifdef MENU_DEBUG
-  template<typename Dev,Dev& dev,typename O=Void>
-  struct DebugOut:O {
-    // template<bool toPrint=true>
-    inline static void nl() {dev.println();}
-    template<typename T>
-    inline static void raw(T o,Roles role=Roles::Raw) {
-      #ifdef ARDUINO
-        dev.print(o);
-      #else
-        dev<<o;
-      #endif
-    }
-  };
-
-  #ifdef ARDUINO
-    extern DebugOut<decltype(Serial),Serial> debugOut;
-  #else
-    extern DebugOut<decltype(cout),cout> debugOut;
-  #endif
-#endif
-
 ////////////////////////////////////////////////////////////////////////////////
 //imput API
 struct None:Nil {
@@ -216,8 +194,10 @@ struct Nav:Nil {
   inline void _up() {if(pos()<size(parent())-1) setPos(pos()+1);}
   inline void _down() {if(pos()>0) setPos(pos()-1);}
   inline void _enter() {
+    trace(MDO<<"enter->sending activate"<<endl);
     bool n=entry.canNav(*this,head());
     bool r=entry.activate(*this,head());
+    trace(MDO<<"canNav:"<<n<<" activated:"<<r<<endl);
     if (!(n^r)) n?open():close();
   }
   inline void _esc() {close();}

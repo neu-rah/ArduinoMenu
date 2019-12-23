@@ -1,11 +1,11 @@
 #include "imenu.h"
 
-template<typename It,typename Nav,typename Out,OutOp op/*=OutOp::Printing*/>
-inline void IMenuOut::printMenu(It& it,Nav& nav,Out& out) {//TODO: remove this
-  // assert(false);
-  printMenu<It,Nav,Out,op>(it,nav,out);
-  // printMenu(it,nav,out,op);
-}
+// template<typename It,typename Nav,typename Out,OutOp op/*=OutOp::Printing*/>
+// inline void IMenuOut::printMenu(It& it,Nav& nav,Out& out) {//TODO: remove this
+//   // assert(false);
+//   // printMenu<It,Nav,Out,op>(it,nav,out);
+//   printMenu<It,Nav,Out>(it,nav,out,op);//`it` is NOT IItem, now what?
+// }
 
 template<typename I>
 void Prompt<I>::print(

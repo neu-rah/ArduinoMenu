@@ -24,10 +24,24 @@ struct Item:Mutable<I> {
   using This=Item<I>;
   using Base::Base;
   //terminate items printing by printing just this last one as a single item
-  template<typename It,typename Nav,typename Out,Roles role=Roles::Item,OutOp op=OutOp::Printing>
-  inline void printItems(It& it,Nav& nav,Out& out,Idx idx=0,Idx top=0,bool fullPrint=true) {
-    assert(op!=OutOp::ClearChanges);
-    out.template printItem<It,Out,op!=OutOp::Measure>(it,out,idx,nav.selected(idx),I::enabled(),nav.mode());
+  // template<typename It,typename Nav,typename Out,Roles role=Roles::Item,OutOp op=OutOp::Printing>
+  // inline void printItems(It& it,Nav& nav,Out& out,Idx idx=0,Idx top=0,bool fullPrint=true) {
+  //   trace(MDO<<"Item::printItems"<<endl);
+  //   assert(op!=OutOp::ClearChanges);
+  //   out.template printItem<It,Out,op!=OutOp::Measure>(it,out,idx,nav.selected(idx),I::enabled(),nav.mode());
+  // }
+  template<typename It,typename Nav,typename Out>
+  inline void printMenu(bool pd,It& it,Nav& nav,Out& out) {
+    _trace(MDO<<"Item::printMenu"<<endl);
+    assert(false);
+    // I::printMenu(pd,*this,nav,out);
+    I::printMenu(pd,it,nav,out);
+  }
+  template<typename It,typename Nav,typename Out>
+  inline void printMenu(bool pd,It& it,Nav& nav,Out& out,Ref ref,Idx n=0) {
+    _trace(MDO<<"Item::printMenu..."<<endl);
+    // I::printMenu(pd,*this,nav,out,ref,n);
+    I::printMenu(pd,it,nav,out,ref,n);
   }
 
   template<typename It,typename Out,Roles role=Roles::Raw,bool toPrint=true>
@@ -38,12 +52,12 @@ struct Item:Mutable<I> {
   inline void printItem(Out& out,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
     This::template printItem<This,Out,P,toPrint>(*this,out,n,s,e,m);
   }
-  using I::canNav;
-  inline bool canNav(Ref ref,Idx n) const {return I::canNav();}
+  // using I::canNav;
+  // inline bool canNav(Ref ref,Idx n) const {return I::canNav(ref,n);}
   using I::isMenu;
-  inline bool isMenu(Ref ref,Idx n) const {return I::isMenu();}
+  inline bool isMenu(Ref ref,Idx n) const {return I::isMenu(ref,n);}
   using I::activate;
-  inline static bool activate(Ref,Idx=0) {return I::activate();}
+  inline bool activate(Ref ref,Idx n=0) {I::activate(ref,n);}
   using I::cmd;
   template<Cmds c,typename Nav>
   inline void cmd(Nav& nav,Ref ref,Idx n) {I::template cmd<c,Nav>(nav);}
@@ -62,6 +76,7 @@ struct Action:I {
   using I::I;
   using This=Action<act,I>;
   inline static bool activate() {return act();}
+  inline static bool activate(Ref ref,Idx n) {return ref?false:act();}
 };
 
 template<const char**text,typename I=Empty>
@@ -199,13 +214,13 @@ struct Pair:F {
   }
 
   using F::canNav;
-  inline bool canNav(Ref ref,Idx n) {
+  inline bool canNav(Ref ref,Idx n) const {
     if (n) return tail.canNav(ref,n-1);
     if (ref) return F::canNav(ref.tail(),ref.tail().head());
     return F::canNav();
   }
   using F::isMenu;
-  inline bool isMenu(Ref ref,Idx n) {
+  inline bool isMenu(Ref ref,Idx n) const {
     if (n) return tail.isMenu(ref,n-1);
     if (ref) return F::isMenu(ref.tail(),ref.tail().head());
     return F::isMenu();
@@ -232,20 +247,7 @@ struct StaticMenu:Mutable<Pair<Title,Body>>{
     This::printMenu(pd,it,nav,out,ref,ref.head());
   }
   template<typename It,typename Nav,typename Out>
-  inline void printMenu(bool pd,It& it,Nav& nav,Out& out,Ref ref,Idx n) {
-    trace(
-      MDO<<"StaticMenu::printMenu of:";
-      it.print(debugOut);
-      MDO<<endl
-    );
-    if (pd&&ref.len==1) out.printParent(it,nav,out);
-    else if (ref) Base::tail.printMenu(pd,Base::tail,nav,out,ref,ref.head());//TODO: really? what about n?
-    else {
-      out.template printMenu<This,Nav,Out,OutOp::Printing>(*this,nav,out);
-      // out.template printMenu<It,Nav,Out,OutOp::Printing>(it,nav,out);
-      if (out.partialDraw()) out.template printMenu<It,Nav,Out,OutOp::ClearChanges>(it,nav,out);
-    }
-  }
+  void printMenu(bool pd,It& it,Nav& nav,Out& out,Ref ref,Idx n);
   template<typename It,typename Nav,typename Out,Roles role=Roles::Item,OutOp op=OutOp::Printing>
   inline void printItems(It& it,Nav& nav,Out& out,Idx idx=0,Idx top=0,bool fullPrint=true) {
     trace(MDO<<"StaticMenu::printItems of:";
@@ -298,10 +300,10 @@ struct StaticMenu:Mutable<Pair<Title,Body>>{
   }
 
   inline static constexpr bool canNav() {return true;}
-  inline bool canNav(Ref ref,Idx n) {return ref?Base::tail.canNav(ref,n):canNav();}
+  inline bool canNav(Ref ref,Idx n) const {return ref?Base::tail.canNav(ref,n):canNav();}
 
   inline static constexpr bool isMenu() {return true;}
-  inline bool isMenu(Ref ref,Idx n) {return ref?Base::tail.isMenu(ref,n):isMenu();}
+  inline bool isMenu(Ref ref,Idx n) const {return ref?Base::tail.isMenu(ref,n):isMenu();}
 
   inline static constexpr bool activate() {return true;}
   inline bool activate(Ref ref,Idx n) {return ref?Base::tail.activate(ref,n):activate();}

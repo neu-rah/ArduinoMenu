@@ -19,10 +19,16 @@
       using I::I;
       using This=NumValue<T,value,low,high,step,tune,I>;
       inline NumValue():reflex(value){}
+      using I::canNav;
       inline static constexpr bool canNav() {return true;}
+      using I::isMenu;
       inline static constexpr bool isMenu() {return false;}
+      using I::parentDraw;
       inline static constexpr bool parentDraw(Idx=0) {return true;}
+      using I::activate;
       inline static bool activate() {return true;}
+      inline static bool activate(Ref,Idx) {return activate();}
+      // using I::printItem
       // template<typename It,typename Out,Roles role=Roles::Raw,bool toPrint=true>
       // inline void printItem(It& it,Out& out,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
       // }

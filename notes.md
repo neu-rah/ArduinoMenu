@@ -50,3 +50,39 @@ PROGRAM: [=======   ]  67.0% (used 5488 bytes from 8192 bytes)
 DATA:    [===       ]  25.6% (used 131 bytes from 512 bytes)
 PROGRAM: [=======   ]  68.3% (used 5594 bytes from 8192 bytes)
 ```
+
+## BAD Dyn print chain
+
+```c++
+nav.printMenu(out);
+NavRoot<N>::printMenu -> out.printOn(*this,out)
+Void::printOn<> -> nav._printMenu(nav,out)
+NavRoot<N>::_printMenu() -> N::_printMenu()
+Nav<>::_printMenu<> -> entry.printMenu<>()
+Prompt<I>::printMenu<>() -> printMenu()
+StaticMenu<Title,Body>::printMenu() -> out.printMenu<>()
+
+IMenuOut::printMenu<>() -> printMenu()
+MenuOut<>::printMenu() -> O::printMenu<>()
+FullPrinter<>::printMenu<>() -> it.printItems<>()
+///////////////////////////////////////////////////////
+IItem::printItems<>() -> printItems()
+Prompt<>::printItems() -> it.printItems<>()
+Item<>::printItems<>() -> out.printItem<>()
+
+IMenuOut::printItem<>()
+MenuOut<>::printItem() -> O::printItem<>()
+FullPrinter<>::printItem<>() -> it.printItem<>()
+
+IItem::printItem<>() -> printItem()
+Prompt<>::printItem() -> Base::printItem<>()
+Item<>::printItem<>() -> I::printItem<>()
+Empty<>::printItem<>() -> it.print<>()
+StaticText<>::print<>() -> out.print<>()
+
+IMenuOut::print<>() -> print()
+MenuOut<>::print() -> O::print<>()
+CanMeasure<>::print<>() -> O::print<>()
+Void::print<>() -> out.raw()
+StreamOut<>::raw<>()
+```

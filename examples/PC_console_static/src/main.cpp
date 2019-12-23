@@ -42,7 +42,7 @@ const char* volts_txt="V";
 int year=1967;
 int vcc=3;
 
-StaticMenu<
+Item<StaticMenu<
   Item<StaticText<&mainMenu_title>>,
   StaticData<
     Item<EnDis<StaticText<&op1_text>>>,
@@ -51,7 +51,7 @@ StaticMenu<
     Item<NumField<StaticText<&yr_txt>,int,year,1900,2100,10,1>>,//this is NOT good, changing limits generates new code->TODO: add a translation
     Item<NumField<StaticText<&vcc_txt>,decltype(vcc),vcc,0,100,1,0,StaticText<&volts_txt>>>,
     Item<StaticText<&opn_text>>,
-    StaticMenu<
+    Item<StaticMenu<
       Item<StaticText<&subMenu_title>>,
       StaticData<
         Item<EnDis<StaticText<&op1_text>>>,
@@ -61,10 +61,10 @@ StaticMenu<
         Item<StaticText<&opn_text>>,
         Item<Exit<StaticText<&exit_txt>>>
       >
-    >,
+    >>,
     Item<Action<quit,StaticText<&quit_txt>>>
   >
-> mainMenu;
+>> mainMenu;
 
 //menu input --------------------------------------
 LinuxKeyIn in;
