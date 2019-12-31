@@ -201,7 +201,7 @@ class Prompt:public IItem,public Item<I> {
     using Base::printMenu;
     void printMenu(bool pd,IItem& it,INav& nav,IMenuOut& out) override {
       trace(MDO<<"Prompt::printMenu"<<endl);
-      Base::printMenu(pd,it,nav,out);}
+      Base::printMenu(pd,*this,nav,out);}
     // void printMenu(bool pd,IItem& it,INav& nav,IMenuOut& out,Ref ref) override {
     //   Base::printMenu(pd,it,nav,out,ref);}
     void printMenu(bool pd,IItem& it,INav& nav,IMenuOut& out,Ref ref,Idx n=0) override {

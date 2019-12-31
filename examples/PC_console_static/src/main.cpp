@@ -100,6 +100,8 @@ bool tog12() {
 }
 
 int main() {
+  nav.level=1;
+  nav.path[0]=6;
   nav.printMenu(out);
   while(running) {
     if (nav.doInput(in)) {
