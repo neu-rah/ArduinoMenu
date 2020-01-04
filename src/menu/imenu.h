@@ -149,9 +149,9 @@ class IItem {
     virtual bool activate()=0;
     virtual bool activate(Ref,Idx)=0;
     virtual bool canNav() const =0;
-    virtual bool canNav(Ref,Idx) const =0;
-    virtual bool parentDraw() const=0;
-    virtual bool parentDraw(Ref,Idx) const=0;
+    virtual bool canNav(Ref,Idx) const =0;//TODO: eliminate this by always passing the naviogation, item should the request for parent navigation
+    virtual bool parentDraw() const=0;//TODO: eliminate this? item can call parent draw
+    virtual bool parentDraw(Ref,Idx) const=0;//TODO: +1
 
     virtual void printMenu(bool pd,IItem& it,INav& nav,IMenuOut& out)=0;
     virtual void printMenu(bool pd,IItem& it,INav& nav,IMenuOut& out,Ref ref,Idx n)=0;

@@ -41,7 +41,7 @@ struct Item:Mutable<I> {
   inline void printMenu(bool pd,It& it,Nav& nav,Out& out,Ref ref,Idx n=0) {
     _trace(MDO<<"Item::printMenu..."<<endl);
     // I::printMenu(pd,*this,nav,out,ref,n);
-    I::printMenu(pd,*this,nav,out,ref,n);
+    I::printMenu(pd,it,nav,out,ref,n);
   }
 
   template<typename It,typename Out,Roles role=Roles::Raw,bool toPrint=true>
@@ -60,7 +60,7 @@ struct Item:Mutable<I> {
   inline bool activate(Ref ref,Idx n=0) {I::activate(ref,n);}
   using I::cmd;
   template<Cmds c,typename Nav>
-  inline void cmd(Nav& nav,Ref ref,Idx n) {I::template cmd<c,Nav>(nav);}
+  inline void cmd(Nav& nav,Ref ref,Idx n) {I::template cmd<c,Nav>(nav,ref,n);}
   template<Cmds c,typename Nav>
   inline void cmd(Nav& nav,Ref ref) {cmd<c,Nav>(nav);}
   using I::parentDraw;

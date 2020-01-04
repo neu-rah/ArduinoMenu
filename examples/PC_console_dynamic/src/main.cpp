@@ -39,7 +39,17 @@ Prompt<Text<>> op2("Option B");
 Prompt<Text<>> op3("Option ...");
 Prompt<Action<quit,Text<>>> op_quit("<Quit!");
 
-IItem* mainMenu_data[]{&op1,&op2,&op3,&op3,&op3,&op3,&op3,&subMenu,&op_quit};
+IItem* mainMenu_data[]{
+  &op1,
+  &op2,
+  &op3,
+  &op3,
+  &op3,
+  &op3,
+  &op3,
+  &subMenu,
+  &op_quit
+};
 Item<IterableData<ArrayData<IItem,mainMenu_data,sizeof(mainMenu_data)/sizeof(decltype(mainMenu_data[0]))>>> mainMenu_body;
 
 const char* mainMenu_title="Main menu";
@@ -74,8 +84,14 @@ int main() {
   // ok.activate();
   // out.nl();
   ///////////////
+  nav.level=1;
+  nav.path[0]=7;
+  nav.path[1]=0;
   nav.printMenu(out);
-  nav.enter();
+  nav.up();
+  nav.up();
+  nav.up();
+  // nav.enter();
   while(running) {
     if (nav.doInput(in,nav)) nav.printMenu(out);
     cout.flush();
