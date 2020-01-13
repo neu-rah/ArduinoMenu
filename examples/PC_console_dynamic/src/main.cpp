@@ -87,11 +87,11 @@ int main() {
   nav.level=1;
   nav.path[0]=7;
   nav.path[1]=0;
-  nav.printMenu(out);
   nav.up();
   nav.up();
-  nav.up();
+  // nav.up();
   // nav.enter();
+  nav.printMenu(out);
   while(running) {
     if (nav.doInput(in,nav)) nav.printMenu(out);
     cout.flush();

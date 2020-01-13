@@ -137,8 +137,8 @@ class IMenuIn {};
 //item interface -------------------------------------------------------
 class IItem {
   public:
-    inline virtual Idx size() const=0;
-    inline Idx size(Ref) const {return size();}
+    virtual Idx size() const=0;
+    virtual Idx size(Ref r) const=0;
     virtual bool changed() const=0;
     virtual void changed(bool)=0;
     virtual void changed(Idx,bool)=0;
@@ -162,10 +162,16 @@ class IItem {
     //--------------------------------------------
     template<typename Out,Roles role=Roles::Item,bool toPrint=true>
     inline void printItem(Out& out,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {printItem(out,n,s,e,m,role,toPrint);}
-    template<Cmds c,typename Nav> inline void cmd(Nav& nav,Ref ref) {cmd(c,nav,ref,ref.head());}
-    template<Cmds c,typename Nav> inline void cmd(Nav& nav,Ref ref,Idx n) {cmd(c,nav,ref,n);}
+
+    template<Cmds c,typename Nav>
+    inline void cmd(Nav& nav,Ref ref) {cmd(c,nav,ref,ref.head());}
+
+    template<Cmds c,typename Nav>
+    inline void cmd(Nav& nav,Ref ref,Idx n) {cmd(c,nav,ref,n);}
+
     template<typename Out,Roles role=Roles::Raw,bool toPrint=true>
     inline void print(Out& out) {print(out,role,toPrint);}
+
     template<typename It,typename Nav,typename Out,Roles role=Roles::Item,OutOp op=OutOp::Printing>
     inline void printItems(It& it,Nav& nav,Out& out,Idx idx=0,Idx top=0,bool fullPrint=true) {
       trace(MDO<<"IItem::printItems"<<endl);
@@ -186,6 +192,7 @@ class Prompt:public IItem,public Item<I> {
     using Base::Base;
     using IItem::size;
     inline Idx size() const override {return Base::size();}
+    inline Idx size(Ref ref) const override {return Base::size(ref);}
     bool changed() const override {return Base::changed();}
     void changed(bool o) override {Base::changed(o);}
     void changed(Idx n,bool o) override {Base::changed(n,o);}

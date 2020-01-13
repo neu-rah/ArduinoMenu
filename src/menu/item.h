@@ -60,7 +60,9 @@ struct Item:Mutable<I> {
   inline bool activate(Ref ref,Idx n=0) {I::activate(ref,n);}
   using I::cmd;
   template<Cmds c,typename Nav>
-  inline void cmd(Nav& nav,Ref ref,Idx n) {I::template cmd<c,Nav>(nav,ref,n);}
+  inline void cmd(Nav& nav,Ref ref,Idx n) {
+    I::template cmd<c,Nav>(nav,ref,n);
+  }
   template<Cmds c,typename Nav>
   inline void cmd(Nav& nav,Ref ref) {cmd<c,Nav>(nav);}
   using I::parentDraw;
