@@ -158,6 +158,12 @@ struct PrintAgent:NavAgent<It,Nav> {
   }
 };
 
+template<typename T>
+struct CRTP {
+  inline T& item() {return *(T*)this;}
+  inline T& operator[](size_t) {return item();}
+};
+
 struct Empty:Nil {
   using Base=Nil;
   inline static constexpr Idx size(Ref ref,Idx n=0) {return size();}
@@ -265,7 +271,16 @@ struct Nav:Nil {
     }
     return true;
   }
-  inline void _up() {if(pos()<size(parent())-1) setPos(pos()+1);}
+  inline void _up() {
+    _trace(
+      MDO
+        <<"_up() pos():"<<pos()
+        <<" < "
+        <<" size(parent())-1):"<<size(parent())-1
+        <<" size()-1:"<<size()-1
+        <<endl;
+    );
+    if(pos()<size(parent())-1) setPos(pos()+1);}
   inline void _down() {if(pos()>0) setPos(pos()-1);}
   inline void _enter() {
     trace(MDO<<"enter->sending activate"<<endl);
@@ -287,10 +302,10 @@ struct Nav:Nil {
     }
   }
 
-  // inline void up() {cmd<Cmds::Up,This>(*this);}
-  // inline void down() {cmd<Cmds::Down,This>(*this);}
-  // inline void enter() {cmd<Cmds::Enter,This>(*this);}
-  // inline void esc() {cmd<Cmds::Esc,This>(*this);}
+  inline void up() {cmd<Cmds::Up,This>(*this);}
+  inline void down() {cmd<Cmds::Down,This>(*this);}
+  inline void enter() {cmd<Cmds::Enter,This>(*this);}
+  inline void esc() {cmd<Cmds::Esc,This>(*this);}
 
   template<typename Nav> inline void up(Nav& nav) {cmd<Cmds::Up,Nav>(nav);}
   template<typename Nav> inline void down(Nav& nav) {cmd<Cmds::Down,Nav>(nav);}

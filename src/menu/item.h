@@ -61,10 +61,10 @@ struct Item:Mutable<I> {
   using I::cmd;
   template<Cmds c,typename Nav>
   inline void cmd(Nav& nav,Ref ref,Idx n) {
-    I::template cmd<c,Nav>(nav,ref,n);
+    Base::template cmd<c,Nav>(nav,ref,n);
   }
   template<Cmds c,typename Nav>
-  inline void cmd(Nav& nav,Ref ref) {cmd<c,Nav>(nav);}
+  inline void cmd(Nav& nav,Ref ref) {Base::template cmd<c,Nav>(nav,ref);}
   using I::parentDraw;
   inline constexpr bool parentDraw(Ref,Idx) const {return I::parentDraw();}
 };
@@ -237,10 +237,14 @@ template<typename O,typename... OO> struct StaticData:Pair<O,StaticData<OO...>> 
 template<typename O>                struct StaticData<O>:Pair<O> {};
 
 template<typename Title,typename Body>
-struct StaticMenu:Mutable<Pair<Title,Body>>{
+struct StaticMenu:Mutable<Pair<Title,Body>>,CRTP<Agent<StaticMenu<Title,Body>>> {
   using Base=Mutable<Pair<Title,Body>>;
   using This=StaticMenu<Title,Body>;
   using Base::Base;
+
+  inline auto operator[](size_t n) -> Agent<This> {
+
+  }
 
   template<typename It,typename Nav,typename Out>
   inline void printMenu(bool pd,It& it,Nav& nav,Out& out) {out.printMenu(it,nav,out);}
