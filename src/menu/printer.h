@@ -8,7 +8,7 @@
 
 //to avoid passing the output object back and forth a printer must be a top level vomposition
 //because it needs do call back data for item printing
-template<typename O=TextMeasure>
+template<typename O>
 struct FullPrinter:public O {
   using This=FullPrinter<O>;
   template<typename It,typename Nav,typename Out>
@@ -18,37 +18,37 @@ struct FullPrinter:public O {
     This::printMenu<It,Nav>(it,nav,out);
     nav.right();
   }
-  template<typename It,typename Nav,typename Out,OutOp op=OutOp::Printing>
-  void printMenu(It& it,Nav& nav,Out& out) {
+  template<typename It,typename Nav,Op op=Op::Printing>
+  void printMenu(It& it,Nav& nav) {
     trace(MDO<<"FullPrinter::printMenu"<<endl);
-    constexpr bool toPrint=op==OutOp::Printing;
+    constexpr bool toPrint=op==Op::Printing;
     O::newView();
     bool dp=(!O::partialDraw())||(O::partialDraw()&&!O::isSame(&it));
     if(dp) O::template fmt<Roles::Panel,true,toPrint>();
     O::template fmt<Roles::Menu,true,toPrint>();
 
     //title
-    if (op==OutOp::ClearChanges) it.changed(false);
+    if (op==Op::ClearChanges) it.changed(false);
 
     bool tp=toPrint&&((!O::isSame(&it))||(!O::partialDraw())||it.changed());
     if (tp) {
       O::template fmt<Roles::Item,true,true>();
       O::template fmt<Roles::Title,true,true>();
-      it.template print<Out,Roles::Title,true>(out);
+      it.template print<Nav,decltype(O::obj()),op,Roles::Title>(nav,O::obj());
       O::template fmt<Roles::Title,false,true>();
       O::template fmt<Roles::Item,false,true>();
     } else {
       it.changed(false);
       O::template fmt<Roles::Item,true,false>();
       O::template fmt<Roles::Title,true,false>();
-      it.template print<Out,Roles::Title,false>(out);
+      it.template print<Nav,decltype(O::obj()),op,Roles::Title>(nav,O::obj());
       O::template fmt<Roles::Title,false,false>();
       O::template fmt<Roles::Item,false,false>();
     }
 
     it.changed(This::posTop(nav));
     bool fp=toPrint&&((!O::partialDraw())||it.changed()||!O::isSame(&it));
-    it.template printItems<It,Nav,Out,Roles::Item,op>(it,nav,out,0,This::top(),fp);
+    it.template printItems<decltype(O::obj()),op,Roles::Item>(O::obj(),0,O::obj().top());
 
     O::template fmt<Roles::Menu,false,toPrint>();
     if(dp) O::template fmt<Roles::Panel,false,toPrint>();

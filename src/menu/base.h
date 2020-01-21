@@ -1,6 +1,8 @@
 /* -*- C++ -*- */
 #pragma once
 
+#include "chain.h"
+
 #ifdef ARDUINO
   using Idx=uint8_t;
   constexpr Idx idx_max=(1ul<<(sizeof(Idx)<<3))-1;
@@ -11,10 +13,18 @@
 #endif
 
 enum class Modes {Normal,Edit,Tune};
-enum class Roles:Idx {Raw,Panel,Menu,Title,Body,Item,Index,Cursor,Name,Mode,Value,Unit};
-enum class Cmds:Idx {None=0,Enter=1,Esc=2,Up=4,Down=8,Left=16,Right=32};
+enum class Roles:Idx {Raw=0,Panel,Menu,Title,Body,Item,Index,Cursor,Name,Mode,Value,Unit};
+enum class Cmd:Idx {None=0,Enter=1,Esc=2,Up=4,Down=8,Left=16,Right=32};
 // Output Device Operations
-enum class OutOp {Measure,Printing,ClearChanges};
+enum class Op {Measure,Printing,ClearChanges};
+
+inline Idx operator|(Roles a,Roles b) {return static_cast<Idx>(a)|static_cast<Idx>(b);}
+inline Idx operator|(Roles a,Idx b) {return static_cast<Idx>(a)&b;}
+inline Idx operator&(Roles a,Roles b) {return static_cast<Idx>(a)&static_cast<Idx>(b);}
+inline Idx operator&(Roles a,Idx b) {return static_cast<Idx>(a)&b;}
+
+inline bool is(Roles o,Idx p) {return static_cast<Idx>(o)==p;}
+inline bool has(Roles o,Idx p) {return static_cast<Idx>(o)|p;}
 
 #ifdef MENU_DEBUG
   constexpr const char* roleNames[]{
@@ -32,19 +42,19 @@ enum class OutOp {Measure,Printing,ClearChanges};
   constexpr inline O& operator<<(O& o,Modes r) {return o<<modeNames[(Idx)r];}
 
   template<typename O>
-  inline O& operator<<(O& o,OutOp r) {o<<opNames[(Idx)r];return o;}
+  inline O& operator<<(O& o,Op r) {o<<opNames[(Idx)r];return o;}
 
   template<typename O>
-  inline O& operator<<(O& o,Cmds r) {
+  inline O& operator<<(O& o,Cmd r) {
     switch(r){
-      case Cmds::None:return o<<"None";
-      // case Cmds::Activate:return o<<"Activate";
-      case Cmds::Enter:return o<<"Enter";
-      case Cmds::Esc:return o<<"Esc";
-      case Cmds::Up:return o<<"Up";
-      case Cmds::Down:return o<<"Down";
-      case Cmds::Left:return o<<"Left";
-      case Cmds::Right:return o<<"Right";
+      case Cmd::None:return o<<"None";
+      // case Cmd::Activate:return o<<"Activate";
+      case Cmd::Enter:return o<<"Enter";
+      case Cmd::Esc:return o<<"Esc";
+      case Cmd::Up:return o<<"Up";
+      case Cmd::Down:return o<<"Down";
+      case Cmd::Left:return o<<"Left";
+      case Cmd::Right:return o<<"Right";
     }
     return o;
   }

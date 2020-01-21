@@ -33,44 +33,47 @@ struct PanelTarget:O {
   inline void lastDrawn(void *menu) {target=menu;}
 };
 
-template<typename O,int w=1,int h=1>
-class RangePanel:public O {
-  public:
-    using This=RangePanel<O>;
-    inline Idx top() const {return topLine;}
-    inline void setTop(Idx n) {topLine=n;}
-    inline void newView() {
-      trace(MDO<<"RangePanel::newView"<<endl);
-      freeLines=O::height();
-      O::setCursor(O::orgX(),O::orgY()+O::ascent());
-    }
-    inline void useY(Idx uy=h) {
-      if (freeLines) {
-        freeLines-=uy;
-        // O::setCursor(0,(O::height()-freeLines)*O::maxCharHeight()+O::ascent());
+template<int w=1,int h=1>
+struct RangePanel {
+  template<typename O>
+  class As:public O {
+    public:
+      using This=RangePanel<w,h>::As<O>;
+      inline Idx top() const {return topLine;}
+      inline void setTop(Idx n) {topLine=n;}
+      inline void newView() {
+        trace(MDO<<"RangePanel::newView"<<endl);
+        freeLines=O::height();
+        O::setCursor(O::orgX(),O::orgY()+O::ascent());
       }
-    }
-    inline void use(Idx ux=1,Idx uy=1) {This::useX(ux);This::useY(uy);}
-    inline void nl() {
-      O::nl();
-      useY();
-    }
-    inline Idx freeY() const {return freeLines;}
-    inline Idx posY() const {return O::height()-freeLines;}
-    inline Idx free() const {return w*freeY();}
-    template<typename Nav>
-    inline bool posTop(Nav& nav) {
-      trace(MDO<<"RangePanel::posTop for "<<nav.pos()<<endl);
-      Idx ot=top();
-      while(top()>nav.pos()) setTop(top()-1);
-      //TODO: this is NOT correct for multiline options!!!!
-      while(nav.pos()>=top()+freeY()) setTop(top()+1);
-      trace(MDO<<"top:"<<top()<<endl);
-      return ot!=top();
-    }
-  protected:
-    Idx topLine=0;//this refers to menu items
-    Idx freeLines;//this refers to device free space
+      inline void useY(Idx uy=h) {
+        if (freeLines) {
+          freeLines-=uy;
+          // O::setCursor(0,(O::height()-freeLines)*O::maxCharHeight()+O::ascent());
+        }
+      }
+      inline void use(Idx ux=1,Idx uy=1) {This::useX(ux);This::useY(uy);}
+      inline void nl() {
+        O::nl();
+        useY();
+      }
+      inline Idx freeY() const {return freeLines;}
+      inline Idx posY() const {return O::height()-freeLines;}
+      inline Idx free() const {return w*freeY();}
+      template<typename Nav>
+      inline bool posTop(Nav& nav) {
+        trace(MDO<<"RangePanel::posTop for "<<nav.pos()<<endl);
+        Idx ot=top();
+        while(top()>nav.pos()) setTop(top()-1);
+        //TODO: this is NOT correct for multiline options!!!!
+        while(nav.pos()>=top()+freeY()) setTop(top()+1);
+        trace(MDO<<"top:"<<top()<<endl);
+        return ot!=top();
+      }
+    protected:
+      Idx topLine=0;//this refers to menu items
+      Idx freeLines;//this refers to device free space
+  };
 };
 
 // template<typename O>
