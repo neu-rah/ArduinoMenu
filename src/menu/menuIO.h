@@ -3,6 +3,32 @@
 
 #include "api.h"
 
+//aux class for monometric text measure
+template<int szX=1,int szY=1>
+struct TextMeasure {
+  template<typename O>
+  struct As:O {
+    template<typename T>
+    static inline Idx measure(T o) {
+      #ifdef ARDUINO
+        return String(o).length();
+      #else
+        return _str(o);
+      #endif
+    }
+    inline static constexpr int maxCharWidth() {return 1;}
+    inline static constexpr int maxCharHeight() {return 1;}
+    int textWidth(const char*s) const {return measure(s);}
+    protected:
+      #ifndef ARDUINO
+      static inline Idx _str(const char*o){return std::string(o).length();}
+      template<typename T>
+      static inline Idx _str(T i){return std::string(std::to_string(i)).length();}
+      #endif
+  };
+  template<typename O> using Open=As<O>;
+};
+
 template<Expr... O>
 struct MenuOut:Chain<O...,Void>::template To<Obj<MenuOut<O...>>> {
   using Base=typename Chain<O...,Void>::template To<Obj<MenuOut<O...>>>;
@@ -33,8 +59,7 @@ struct StreamOut {
     inline static void nl() {dev<<endl;}
     template<typename T> inline static void raw(T o) {dev<<o;}
   };
-  template<typename O>
-  using Template=As<O>;
+  template<typename O> using Open=As<O>;
 };
 
 template<typename Dev,Dev& dev,typename O>

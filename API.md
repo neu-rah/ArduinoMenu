@@ -29,13 +29,63 @@ enum class Roles:Idx {Raw,Panel,Menu,Title,Body,Item,Index,Cursor,Name,Mode,Valu
 enum class Op {Measure,Printing,ClearChanges};
 ```
 
-## Items
-
-using CRTP pattern for top level elements (caps)
-
-**print** - print item or menu to given output device
+## Printing chain
 
 ```c++
-template<typename Out,Roles=Roles::Item,Op=Op::Printing>
-inline static void print(Out& out,Idx idx=0,Idx top=0,bool fullPrint=false) {}
+//Items
+template<typename Out,Op=Op::Printing> inline void print(Out&);
+
+template<typename Nav,typename Out,Op=Op::Printing,Roles=Roles::Raw>
+inline void printItems(Nav&,Out&,Idx=0,Idx=0);
+
+template<typename Nav,typename Out,Op op=Op::Printing>
+inline void printItem(Nav&,Out&,Idx=0,Idx=0);
+
+template<typename Nav,typename Out,Op=Op::Printing>
+inline void printMenu(Nav&,Out&);
+
+//Output
+template<typename It,typename Nav,Op=Op::Printing>
+void printMenu(It&,Nav&);
+
+template<typename It,Op=Op::Printing,Roles=Roles::Raw>
+inline void printItems(It&,Idx=0,Idx=0);
+
+template<typename I> inline static void printItem(I&);
+
+inline static void nl();
+template<typename T> inline static void raw(T);
+
+//Navigation
+
 ```
+
+```text
+nav.print()
+  it.printMenu(nav,out)
+  ...|out.printMenu(it,nav)
+    it.print<Roles::Title>(out)
+    it.printItems()
+      ...|out.printItems<>(it)
+        {out.printItem(it[n])}
+          ...|it.print<Roles::Raw>(out)
+            out.raw(T)
+```
+
+## Object cathegories
+
+### struct **Obj**
+
+CRTP implementation
+
+allow components to access methods of the group by having a reference to the top level composition
+
+without this its up to the code to introduce the top level elements using a lot of parameters. That would make customization harder.
+
+```c++
+template<typename T> struct Obj;
+```
+
+`Obj::Type` - composition typename.
+
+`Type& obj();` - get composed object (top level).
