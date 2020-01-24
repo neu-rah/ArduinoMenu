@@ -12,20 +12,28 @@ Item<Text> op1("Option 1");
 Item<Text> op2("Option 2");
 
 Item<
-  ItemArray<Item<Text>>::Open
+  ItemArray<Item<Text>>::As
 > mainMenu_data{&op1,&op2};
 
-NavRoot<> nav;
+using MainMenu=StaticMenu<
+  decltype(title),
+  decltype(mainMenu_data),
+  title,
+  mainMenu_data
+>::template As<>;
+
+MainMenu mainMenu;
+
+NavRoot<Nav<MainMenu,1>::As> nav(mainMenu);
 
 MenuOut<
   FullPrinter,
+  Fmt,
   TextFmt,
   RangePanel<>::As,
   StreamOut<decltype(cout),cout>::As,
   TextMeasure<>::As
 > out;
-
-StaticMenu<decltype(title),decltype(mainMenu_data),title,mainMenu_data>::template As<> mainMenu;
 
 int main() {
   // MDO<<"lone print:";

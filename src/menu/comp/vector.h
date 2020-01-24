@@ -10,10 +10,10 @@ struct ItemArray {
     using vector<M*>::vector;
     template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
     inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0) {
-      for(auto a:*this) {
-        a->template printItem<Nav,Out,op>(nav,out);
-        MDO<<endl;
-      }
+      for(auto a:*this)
+        out.template printItem
+          <decltype(*a),Nav,op,true>
+          (*a,idx++,nav.selected(idx),a->enabled(),nav.mode());
     }
     template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
     inline void print(Nav& nav,Out& out) {

@@ -63,7 +63,8 @@ struct FullPrinter:public O {
     O::template fmt<Roles::Index, false,toPrint>(n,s,e,m);
     O::template fmt<Roles::Cursor,true ,toPrint>(n,s,e,m);
     O::template fmt<Roles::Cursor,false,toPrint>(n,s,e,m);
-    it.template printItem<O::Type,Roles::Item,toPrint>(O::obj(),n,s,e,m);
+    // it.template printItem<O::Type,Roles::Item,toPrint>(O::obj(),n,s,e,m);
+    it.template print<typename O::Type,op>(O::obj());
     O::template fmt<Roles::Item,false,toPrint>(n,s,e,m);
   }
 };

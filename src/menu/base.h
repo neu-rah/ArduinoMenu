@@ -61,17 +61,26 @@ inline bool has(Roles o,Idx p) {return static_cast<Idx>(o)|p;}
 
 #endif
 
+////////////////////////////////////////////////////////////////////////////////
+//implement CRTP
+// otherwise encapsulation becomes a code issue, making customizations hard
+template<typename T>
+struct Obj {
+  using Type=T;
+  inline Type& obj() const {return *(Type*)this;}
+};
+
 //a reference to menu item that works also for static structures
 //and dynamic access
-struct Ref {
+template<typename Nav,Nav& nav>
+struct PathRef {
   Idx len;
-  const Idx* path;
-  inline Idx head() const {return path[0];}
-  inline Ref tail() const {return {(Idx)(len-1),&path[1]};}
+  inline Idx head() const {return nav.path[0];}
+  inline PathRef tail() const {return {(Idx)(len-1),&nav.path[1]};}
   inline operator Idx() const {return len;}
   inline operator bool() const {return len;}
-  inline Ref parent() const {
-    return len?(Ref){(Idx)(len-1),path}:*this;
+  inline PathRef parent() const {
+    return len?(PathRef){(Idx)(len-1),nav.path}:*this;
   }
 };
 

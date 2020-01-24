@@ -33,7 +33,8 @@ enum class Op {Measure,Printing,ClearChanges};
 
 ```c++
 //Items
-template<typename Out,Op=Op::Printing> inline void print(Out&);
+template<typename Nav,typename Out,Op=Op::Printing>
+inline void printMenu(Nav&,Out&);
 
 template<typename Nav,typename Out,Op=Op::Printing,Roles=Roles::Raw>
 inline void printItems(Nav&,Out&,Idx=0,Idx=0);
@@ -41,8 +42,7 @@ inline void printItems(Nav&,Out&,Idx=0,Idx=0);
 template<typename Nav,typename Out,Op op=Op::Printing>
 inline void printItem(Nav&,Out&,Idx=0,Idx=0);
 
-template<typename Nav,typename Out,Op=Op::Printing>
-inline void printMenu(Nav&,Out&);
+template<typename Out,Op=Op::Printing> inline void print(Out&);
 
 //Output
 template<typename It,typename Nav,Op=Op::Printing>

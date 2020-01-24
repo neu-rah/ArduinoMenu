@@ -4,15 +4,6 @@
 #include "base.h"
 
 ////////////////////////////////////////////////////////////////////////////////
-//implement CRTP
-// otherwise encapsulation becomes a code issue, making customizations hard
-template<typename T>
-struct Obj {
-  using Type=T;
-  inline Type& obj() const {return *(Type*)this;}
-};
-
-////////////////////////////////////////////////////////////////////////////////
 //basic output, just ignore the output
 template<typename O>
 struct Void:O {
@@ -39,6 +30,20 @@ struct Void:O {
   constexpr static inline Idx height() {return idx_max;}
   inline static void setCursor(int x,int y) {}
   inline static constexpr int ascent() {return 0;}
+  inline static void clrLine(Idx) {}
+
+  template<bool io,bool toPrint> inline static void fmtRaw(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
+  template<bool io,bool toPrint> inline static void fmtPanel(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
+  template<bool io,bool toPrint> inline static void fmtMenu(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
+  template<bool io,bool toPrint> inline static void fmtTitle(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
+  template<bool io,bool toPrint> inline static void fmtBody(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
+  template<bool io,bool toPrint> inline static void fmtItem(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
+  template<bool io,bool toPrint> inline static void fmtIndex(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
+  template<bool io,bool toPrint> inline static void fmtCursor(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
+  template<bool io,bool toPrint> inline static void fmtName(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
+  template<bool io,bool toPrint> inline static void fmtMode(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
+  template<bool io,bool toPrint> inline static void fmtValue(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
+  template<bool io,bool toPrint> inline static void fmtUnit(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -47,6 +52,8 @@ template<typename N>
 struct Drift:N {
   template<typename Out> inline static void print(Out& out) {}
   inline static Idx pos() {return 0;}
+  inline static bool selected(Idx) {return false;}
+  inline Modes mode() const {return Modes::Normal;}
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -61,9 +68,6 @@ struct Empty:I {
     out.template printItems<I::Type>();
   }
 
-  template<typename Nav,typename Out,Op op=Op::Printing>
-  inline void printItem(Nav& nav,Out& out,Idx idx=0,Idx top=0) {
-    I::obj().print(out);
-  }
-
+  inline static bool enabled() {return true;}
+  inline static void enable(bool) {}
 };

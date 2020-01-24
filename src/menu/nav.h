@@ -9,13 +9,16 @@ struct Nav {
   struct As:N {
     using This=Nav<I,max_depth>::As<N>;
     using Data=I;
-    Idx path[]{0};
+    Idx path[max_depth]{0};
     Idx level=0;
     Data& root;
+    Modes editMode;
     inline As(Data& o):root(o){}
     template<typename Out>
     inline void print(Out& out) {root.printMenu(N::obj(),out);}
     inline Idx pos() const {return path[level];}
+    inline Modes mode() const {return editMode;}
+    inline bool selected(Idx i) const {return path[level]==i;}
   };
 };
 
