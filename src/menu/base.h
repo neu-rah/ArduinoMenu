@@ -72,17 +72,19 @@ struct Obj {
 
 //a reference to menu item that works also for static structures
 //and dynamic access
-template<typename Nav,Nav& nav>
 struct PathRef {
   Idx len;
-  inline Idx head() const {return nav.path[0];}
-  inline PathRef tail() const {return {(Idx)(len-1),&nav.path[1]};}
+  Idx* path;
+  inline Idx head() const {return path[0];}
+  inline PathRef tail() const {return {(Idx)(len-1),&path[1]};}
   inline operator Idx() const {return len;}
   inline operator bool() const {return len;}
   inline PathRef parent() const {
-    return len?(PathRef){(Idx)(len-1),nav.path}:*this;
+    return len?(PathRef){(Idx)(len-1),path}:*this;
   }
 };
+
+constexpr PathRef self{0,0};
 
 #include "debug.h"
 #define endl "\n\r"

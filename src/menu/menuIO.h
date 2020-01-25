@@ -29,13 +29,6 @@ struct TextMeasure {
   template<typename O> using Open=As<O>;
 };
 
-template<Expr... O>
-struct MenuOut:Chain<O...,Void>::template To<Obj<MenuOut<O...>>> {
-  using Base=typename Chain<O...,Void>::template To<Obj<MenuOut<O...>>>;
-  using This=MenuOut<O...>;
-  using Base::Base;
-};
-
 template<typename O>
 struct CanMeasure:O {
   // using O::raw;
@@ -74,6 +67,66 @@ struct StreamIn:O {
       case '*': return Cmd::Enter;
       case '/': return Cmd::Esc;
       default:return Cmd::None;
+    }
+  }
+};
+
+template<Expr... O>
+struct StaticMenuOut:Chain<O...,Void>::template To<Obj<StaticMenuOut<O...>>> {
+  using Base=typename Chain<O...,Void>::template To<Obj<StaticMenuOut<O...>>>;
+  using This=StaticMenuOut<O...>;
+  using Base::Base;
+};
+
+struct IOut {
+  virtual inline void nl()=0;
+  virtual void raw(const char* o)=0;
+  virtual void printMenu(IItem& it,INav& nav, Op=Op::Printing)=0;
+  virtual void printItem(IItem& it,INav& nav,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal,Op op=Op::Printing,bool toPrint=true)=0;
+  // virtual void print(INav& nav,IOut& out,Op op=Op::Printing,Roles role=Roles::Raw)=0;
+
+  template<typename It,typename Nav,Op op=Op::Printing>
+  inline void printMenu(It& it,Nav& nav) {printMenu(it,nav,op);}
+
+  // template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
+  // inline void print(Nav& nav,Out& out)
+  template<typename It,typename Nav,Op op=Op::Printing,bool toPrint=true>
+  void printItem(It& it,Nav& nav,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
+    printItem(it,nav,n,s,e,m,op,toPrint);
+  }
+};
+
+template<Expr...  O>
+struct MenuOut:IOut,Chain<O...,Void>::template To<Obj<MenuOut<O...>>> {
+  using Base=typename Chain<O...,Void>::template To<Obj<MenuOut<O...>>>;
+  using This=MenuOut<O...>;
+  using Base::Base;
+  inline void nl() override {Base::nl();}
+  void raw(const char* o) override {Base::raw(o);}
+  void printMenu(IItem& it,INav& nav, Op op=Op::Printing) override {
+    switch(op) {
+      case Op::Printing: Base::template printMenu<IItem,INav,Op::Printing>(it,nav);break;
+      case Op::Measure: Base::template printMenu<IItem,INav,Op::Measure>(it,nav);break;
+      case Op::ClearChanges: Base::template printMenu<IItem,INav,Op::ClearChanges>(it,nav);break;
+    };
+  }
+  void printItem(IItem& it,INav& nav,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal,Op op=Op::Printing,bool toPrint=true) override {
+    switch(op) {
+      case Op::Printing:
+        toPrint?
+        Base::template printItem<IItem,INav,Op::Printing,true>(it,nav,n,s,e,m):
+        Base::template printItem<IItem,INav,Op::Printing,false>(it,nav,n,s,e,m);
+      break;
+      case Op::Measure:
+        toPrint?
+        Base::template printItem<IItem,INav,Op::Measure,true>(it,nav,n,s,e,m):
+        Base::template printItem<IItem,INav,Op::Measure,false>(it,nav,n,s,e,m);
+      break;
+      case Op::ClearChanges:
+        toPrint?
+        Base::template printItem<IItem,INav,Op::ClearChanges,true>(it,nav,n,s,e,m):
+        Base::template printItem<IItem,INav,Op::ClearChanges,false>(it,nav,n,s,e,m);
+      break;
     }
   }
 };

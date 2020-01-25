@@ -3,6 +3,10 @@
 
 #include "base.h"
 
+class IItem;
+class INav;
+class IOut;
+
 ////////////////////////////////////////////////////////////////////////////////
 //basic output, just ignore the output
 template<typename O>
@@ -13,8 +17,6 @@ struct Void:O {
   inline static void printItem(I& i) {i.print();}
   inline static void newView() {}
   inline static constexpr bool partialDraw() {return false;}
-  template<Roles role,bool io,bool toPrint>
-  inline static void fmt(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
   inline static constexpr bool isSame(void*) {return false;}
   inline static constexpr Idx top() {return 0;}
   template<typename Nav> inline static constexpr bool posTop(Nav&) {return false;}
@@ -44,6 +46,24 @@ struct Void:O {
   template<bool io,bool toPrint> inline static void fmtMode(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
   template<bool io,bool toPrint> inline static void fmtValue(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
   template<bool io,bool toPrint> inline static void fmtUnit(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
+
+  template<Roles r,bool io,bool toPrint=true>
+  inline void fmt(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
+    switch(r) {
+      case Roles::Panel:  O::obj().template fmtPanel <io,toPrint>(n,s,e,m);break;
+      case Roles::Menu:   O::obj().template fmtMenu  <io,toPrint>(n,s,e,m);break;
+      case Roles::Title:  O::obj().template fmtTitle <io,toPrint>(n,s,e,m);break;
+      case Roles::Body:   O::obj().template fmtBody  <io,toPrint>(n,s,e,m);break;
+      case Roles::Item:   O::obj().template fmtItem  <io,toPrint>(n,s,e,m);break;
+      case Roles::Index:  O::obj().template fmtIndex <io,toPrint>(n,s,e,m);break;
+      case Roles::Cursor: O::obj().template fmtCursor<io,toPrint>(n,s,e,m);break;
+      case Roles::Name:   O::obj().template fmtName  <io,toPrint>(n,s,e,m);break;
+      case Roles::Mode:   O::obj().template fmtMode  <io,toPrint>(n,s,e,m);break;
+      case Roles::Value:  O::obj().template fmtValue <io,toPrint>(n,s,e,m);break;
+      case Roles::Unit:   O::obj().template fmtUnit  <io,toPrint>(n,s,e,m);break;
+      default:break;
+    }
+  }
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -60,14 +80,17 @@ struct Drift:N {
 // menu items base
 template<typename I>
 struct Empty:I {
-  inline static Idx len() {return 0;}
-  template<typename Out,Op=Op::Printing> inline void print(Out&) {}
+  inline static bool parentPrint(PathRef=self) {return true;}
 
-  template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
-  inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0) {
-    out.template printItems<I::Type>();
-  }
+  template<typename Out,Op=Op::Printing>
+  inline void print(Out&,PathRef=self) {}
 
-  inline static bool enabled() {return true;}
-  inline static void enable(bool) {}
+  template<typename Nav,typename Out,Op=Op::Printing,Roles=Roles::Raw>
+  inline void printItems(Nav&,Out&,Idx=0,Idx=0,PathRef=self) {}
+
+  template<typename Nav,typename Out,Op op=Op::Printing>
+  inline void printMenu(Nav& nav,Out& out) {print<Out,op>(out);}
+
+  inline static bool enabled(PathRef=self) {return true;}
+  inline static void enable(bool,PathRef=self) {}
 };

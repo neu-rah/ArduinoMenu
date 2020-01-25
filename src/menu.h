@@ -10,12 +10,11 @@
 #include "menu/item.h"
 #include "menu/panels.h"
 #include "menu/printer.h"
-#include "menu/fmt.h"
 // #include "menu/imenu.h"
 
 #ifdef MENU_DEBUG
   // template<typename Dev,Dev& dev,typename O=Void>
-  // struct DebugOut:MenuOut<FullPrinter<O>> {
+  // struct DebugOut:StaticMenuOut<FullPrinter<O>> {
   //   // template<bool toPrint=true>
   //   inline static void nl() {dev.println();}
   //   template<typename T>

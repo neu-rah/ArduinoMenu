@@ -8,18 +8,55 @@ using namespace std;
 const char* mainText="Main menu";
 Item<StaticText<&mainText>::As> title;
 
-Item<Text> op1("Option 1");
-Item<Text> op2("Option 2");
+Prompt<Text> op1("Option 1");
+Prompt<Text> op2("Option 2");
+Prompt<Text> opn("Option...");
+Prompt<Text> quit("<Quit.");
 
-Item<
-  ItemArray<Item<Text>>::As
-> mainMenu_data{&op1,&op2};
+Prompt<Text> sub_title("Sub-menu");
+Prompt<Text> sub1("Sub 1");
+Prompt<Text> sub2("Sub 2");
+Prompt<Text> subn("Sub...");
+Prompt<Text> exitOp("<Exit");
 
-using MainMenu=StaticMenu<
-  decltype(title),
-  decltype(mainMenu_data),
-  title,
-  mainMenu_data
+Prompt<
+  ItemArray<IItem>::As
+> subMenu_data{
+  &sub1,
+  &sub2,
+  &subn,
+  &exitOp
+};
+
+using SubMenu=Prompt<
+  StaticMenu<
+    decltype(sub_title),
+    decltype(subMenu_data),
+    sub_title,
+    subMenu_data
+  >::As
+>::template As<>;
+
+SubMenu subMenu;
+
+Prompt<
+  ItemArray<IItem>::As
+> mainMenu_data{
+  &op1,
+  &op2,
+  &opn,
+  &opn,
+  (IItem*)&subMenu,
+  &quit
+};
+
+using MainMenu=Prompt<
+  StaticMenu<
+    decltype(title),
+    decltype(mainMenu_data),
+    title,
+    mainMenu_data
+  >::As
 >::template As<>;
 
 MainMenu mainMenu;
@@ -28,7 +65,6 @@ NavRoot<Nav<MainMenu,1>::As> nav(mainMenu);
 
 MenuOut<
   FullPrinter,
-  Fmt,
   TextFmt,
   RangePanel<>::As,
   StreamOut<decltype(cout),cout>::As,
@@ -46,7 +82,8 @@ int main() {
   // MDO<<endl;
   // out.printMenu(mainMenu_data,nav);
   // MDO<<endl;
-  out.printMenu(mainMenu,nav);
+  // out.printMenu(mainMenu,nav);
+  nav.print(out);
   MDO<<endl;
   return 0;
 }
