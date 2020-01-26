@@ -18,8 +18,9 @@ struct ItemArray {
     }
     template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
     inline void print(Nav& nav,Out& out,PathRef ref=self) {
-      if (role&(Roles::Title|Roles::Raw)) I::print(out);
-      else out.printMenu(I::obj(),nav);
+      _trace(MDO<<"ItemArray::print "<<role<<endl);
+      // if (role&(Roles::Title|Roles::Raw|Roles::Item)) I::print(out);
+      // else out.printMenu(I::obj(),nav);
     }
     inline static bool parentPrint(PathRef ref=self) {
       return ref?

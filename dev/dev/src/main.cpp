@@ -42,10 +42,10 @@ SubMenu subMenu;
 Prompt<
   ItemArray<IItem>::As
 > mainMenu_data{
-  &op1,
-  &op2,
-  &opn,
-  &opn,
+  // &op1,
+  // &op2,
+  // &opn,
+  // &opn,
   (IItem*)&subMenu,
   &quit
 };
@@ -84,6 +84,7 @@ int main() {
   // MDO<<endl;
   // out.printMenu(mainMenu,nav);
   nav.print(out);
+  // mainMenu.print(nav,out);
   MDO<<endl;
   return 0;
 }

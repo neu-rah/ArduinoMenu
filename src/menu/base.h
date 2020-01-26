@@ -13,23 +13,25 @@
 #endif
 
 enum class Modes {Normal,Edit,Tune};
-enum class Roles:Idx {Raw=0,Panel,Menu,Title,Body,Item,Index,Cursor,Name,Mode,Value,Unit};
+enum class Roles:Idx {None=0,Raw,Panel,Menu,Title,Body,Item,Index,Cursor,Name,Mode,Value,Unit};
 enum class Cmd:Idx {None=0,Enter=1,Esc=2,Up=4,Down=8,Left=16,Right=32};
 // Output Device Operations
 enum class Op {Measure,Printing,ClearChanges};
 
 inline Idx operator|(Roles a,Roles b) {return static_cast<Idx>(a)|static_cast<Idx>(b);}
 inline Idx operator|(Roles a,Idx b) {return static_cast<Idx>(a)&b;}
+inline Idx operator|(Idx a,Roles b) {return a&static_cast<Idx>(b);}
 inline Idx operator&(Roles a,Roles b) {return static_cast<Idx>(a)&static_cast<Idx>(b);}
 inline Idx operator&(Roles a,Idx b) {return static_cast<Idx>(a)&b;}
+inline Idx operator&(Idx a,Roles b) {return a&static_cast<Idx>(b);}
 
 inline bool is(Roles o,Idx p) {return static_cast<Idx>(o)==p;}
 inline bool has(Roles o,Idx p) {return static_cast<Idx>(o)|p;}
 
 #ifdef MENU_DEBUG
   constexpr const char* roleNames[]{
-    "Panel","Menu","Title","Body","Prompt","Index",
-    "Cursor","Name","Mode","Value","Unit","Raw"
+    "None","Panel","Menu","Title","Body","Item",
+    "Index","Cursor","Name","Mode","Value","Unit","Raw"
   };
 
   constexpr const char* modeNames[]{"Normal","Edit","Tune"};
