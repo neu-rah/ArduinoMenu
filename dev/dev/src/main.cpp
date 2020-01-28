@@ -35,17 +35,17 @@ using SubMenu=Prompt<
     sub_title,
     subMenu_data
   >::As
->::template As<>;
+>;
 
 SubMenu subMenu;
 
 Prompt<
   ItemArray<IItem>::As
 > mainMenu_data{
-  // &op1,
-  // &op2,
-  // &opn,
-  // &opn,
+  &op1,
+  &op2,
+  &opn,
+  &opn,
   (IItem*)&subMenu,
   &quit
 };
@@ -57,7 +57,7 @@ using MainMenu=Prompt<
     title,
     mainMenu_data
   >::As
->::template As<>;
+>;
 
 MainMenu mainMenu;
 

@@ -20,7 +20,7 @@ struct FullPrinter:public O {
   // }
   template<typename It,typename Nav,Op op=Op::Printing>
   void printMenu(It& it,Nav& nav) {
-    _trace(MDO<<"FullPrinter::printMenu"<<endl);
+    trace(MDO<<"FullPrinter::printMenu"<<endl);
     constexpr bool toPrint=op==Op::Printing;
     O::newView();
     bool dp=(!O::partialDraw())||(O::partialDraw()&&!O::isSame((void*)&it));
@@ -30,6 +30,7 @@ struct FullPrinter:public O {
     //title
     if (op==Op::ClearChanges) it.changed(false);
 
+    trace(MDO<<"FullPrinter printing title"<<endl);
     bool tp=toPrint&&((!O::isSame(&it))||(!O::partialDraw())||it.changed());
     if (tp) {
       O::template fmt<Roles::Item,true,true>();
@@ -48,6 +49,7 @@ struct FullPrinter:public O {
 
     it.changed(This::posTop(nav));
     bool fp=toPrint&&((!O::partialDraw())||it.changed()||!O::isSame(&it));
+    trace(MDO<<"FullPrinter printing body"<<endl);
     it.template printItems
       <Nav,typename O::Type,op,Roles::Item>
       (nav,O::obj(),0,O::obj().top());

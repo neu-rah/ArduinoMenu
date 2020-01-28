@@ -32,7 +32,7 @@ struct StaticText:Obj<StaticText<text>> {
   template<typename I>
   struct As:I {
     template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
-    inline static void print(Nav& nav,Out& out) {out.raw(text[0]);}
+    inline static void print(Nav& nav,Out& out,PathRef ref=self) {out.raw(text[0]);}
   };
 };
 
@@ -44,7 +44,7 @@ struct Text:I {
   template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
   inline void print(Nav& nav,Out& out,PathRef ref=self) {
     if (op==Op::Printing) out.raw(text);
-    I::template print<Out,op>(out);
+    I::template print<Nav,Out,op>(nav,out);
   }
 };
 
@@ -73,29 +73,56 @@ struct Pair {
 
 template<typename Title,typename Body,Title& title,Body& body>
 struct StaticMenu {
-  template<typename I=Title>
-  struct As:Chain<Mutable,Pair<Title,Body>::template As>::template To<Obj<StaticMenu<Title,Body,title,body>::As<I>>> {
-    using This=typename StaticMenu<Title,Body,title,body>::template As<I>;
-    using Base=typename Chain<Mutable,Pair<Title,Body>::template As>::template To<Obj<StaticMenu<Title,Body,title,body>::As<I>>>;
+  template<typename I>
+  struct As:I {
+    using This=StaticMenu<Title,Body,title,body>::As<I>;
+    using I::I;
+
     template<typename Nav,typename Out,Op op=Op::Printing>
     inline void printMenu(Nav& nav,Out& out) {
-      _trace(MDO<<"StaticMenu::printMenu "<<op<<endl);
-      out.template printMenu<decltype(body),Nav,op>(body,nav);
+      trace(MDO<<"StaticMenu::printMenu "<<op<<endl);
+      out.template printMenu<decltype(I::obj()),Nav,op>(I::obj(),nav);
     }
 
     template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
-    inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0) {
-      body.template printItems<Nav,Out,op,role>(nav,out,idx,top);
-    }
+    inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,PathRef ref=self)
+      {body.template printItems<Nav,Out,op,role>(nav,out,idx,top,ref);}
+
     template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
-    inline void print(Nav& nav,Out& out) {
-      _trace(MDO<<"StaticMenu::print "<<role<<endl);
+    inline void print(Nav& nav,Out& out,PathRef ref=self) {
+      trace(MDO<<"StaticMenu::print "<<role<<endl);
       if (role&(Roles::Title|Roles::Raw)) title.print(nav,out);
       // else out.printMenu(I::obj(),nav);
     }
+
   };
-  template<typename O> using Open=As<O>;
 };
+
+// template<typename Title,typename Body,Title& title,Body& body>
+// struct StaticMenu {
+//   template<typename I=Title>
+//   struct As:Chain<Mutable,Pair<Title,Body>::template As>::template To<Obj<StaticMenu<Title,Body,title,body>::As<I>>> {
+//     using This=typename StaticMenu<Title,Body,title,body>::template As<I>;
+//     using Base=typename Chain<Mutable,Pair<Title,Body>::template As>::template To<Obj<StaticMenu<Title,Body,title,body>::As<I>>>;
+//     template<typename Nav,typename Out,Op op=Op::Printing>
+//     inline void printMenu(Nav& nav,Out& out) {
+//       _trace(MDO<<"StaticMenu::printMenu "<<op<<endl);
+//       out.template printMenu<decltype(body),Nav,op>(body,nav);
+//     }
+//
+//     template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
+//     inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0) {
+//       body.template printItems<Nav,Out,op,role>(nav,out,idx,top);
+//     }
+//     template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
+//     inline void print(Nav& nav,Out& out,PathRef ref=self) {
+//       _trace(MDO<<"StaticMenu::print "<<role<<endl);
+//       if (role&(Roles::Title|Roles::Raw)) title.print(nav,out);
+//       // else out.printMenu(I::obj(),nav);
+//     }
+//   };
+//   template<typename O> using Open=As<O>;
+// };
 
 struct IItem {
   // virtual inline Idx len(PathRef=self)=0;
@@ -121,9 +148,9 @@ struct Prompt:IItem,Chain<Mutable,I...,Empty>::template To<Obj<Prompt<I...>>> {
   using Base=typename Chain<Mutable,I...,Empty>::template To<Obj<Prompt<I...>>>;
   using This=Prompt<I...>;
   using Base::Base;
-  // using Base::printItems;
+  using Base::printItems;
   // using Base::printMenu;
-  // using Base::print;
+  using Base::print;
   // inline Idx len(PathRef ref=self) override {return O::len(ref);}
   inline void printMenu(INav& nav,IOut& out,Op op=Op::Printing) override {
     switch(op) {
@@ -133,6 +160,7 @@ struct Prompt:IItem,Chain<Mutable,I...,Empty>::template To<Obj<Prompt<I...>>> {
     }
   }
   inline void printItems(INav& nav,IOut& out,Idx idx=0,Idx top=0,PathRef ref=self,Op op=Op::Printing,Roles role=Roles::Raw) override {
+    trace(MDO<<"Prompt::printItems"<<endl);
     switch(op) {
       case Op::Measure:
       switch(role) {
@@ -182,6 +210,7 @@ struct Prompt:IItem,Chain<Mutable,I...,Empty>::template To<Obj<Prompt<I...>>> {
     }
   }
   inline void print(INav& nav,IOut& out,Op op,Roles role,PathRef ref=self) override {
+    trace(MDO<<"Prompt::print"<<endl);
     switch(op) {
       case Op::Measure:
         switch(role) {
