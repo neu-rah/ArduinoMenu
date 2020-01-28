@@ -84,14 +84,11 @@ template<typename I>
 struct Empty:I {
   inline static bool parentPrint(PathRef=self) {return true;}
 
-  // template<typename Out,Op=Op::Printing>
-  // inline void print(Out&,PathRef=self) {}
   template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
   inline void print(Nav& nav,Out& out,PathRef ref=self) {}
 
   template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
-  inline void printItems(Nav& nav,Out& out,Idx=0,Idx=0,PathRef ref=self)
-    {I::obj().template print<Nav,Out,op,role>(nav,out,ref);}
+  inline void printItems(Nav& nav,Out& out,Idx=0,Idx=0,PathRef ref=self) {}
 
   template<typename Nav,typename Out,Op op=Op::Printing>
   inline void printMenu(Nav& nav,Out& out) {print<Nav,Out,op>(nav,out);}
