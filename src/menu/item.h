@@ -58,17 +58,30 @@ struct Item:Chain<Mutable,I...,Empty>::template To<Obj<Item<I...>>> {
   using Base::Base;
 };
 
-template<typename F,typename S>
-struct Pair {
-  template<typename I>
-  struct As:I {
-    using Base=I;
-    using This=Pair<F,S>::As<I>;
-    using I::I;
-    S tail;
-    //size ---------------------------------------------------------------------
-    // inline constexpr Idx size() const {return tail.size()+1;}
-  };
+template<typename F,typename S=Empty<Nil>>
+struct Pair:F {
+  using Base=F;
+  using This=Pair<F,S>;
+  using F::F;
+  S tail;
+  template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
+  inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,PathRef ref=self) {
+    trace(MDO<<"Pair::printItems"<<endl);
+    if (ref) printItems<Nav,Out,op,role>(nav,out,idx,top,ref.tail(),ref.head());
+    else {
+      out.template printItem
+        <typename F::Type,Nav,op,true>
+        (F::obj(),nav,idx,nav.selected(idx),F::enabled(),nav.mode());
+      tail.template printItems<Nav,Out,op,role>(nav,out,++idx,top);
+    }
+  }
+  template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
+  inline void printItems(Nav& nav,Out& out,Idx idx,Idx top,PathRef ref,Idx n) {
+    trace(MDO<<"Pair::printItems..."<<endl);
+    if (n) tail.template printItems<Nav,Out,op,role>(nav,out,++idx,top,ref,n-1);
+    else if (ref) F::template printItems<Nav,Out,op,role>(nav,out,idx,top,ref.tail());
+    else out.template printItem<typename F::Type,Nav,op,true>(F::obj(),nav,idx,nav.selected(idx),F::enabled(),nav.mode());
+  }
 };
 
 template<typename Title,typename Body,Title& title,Body& body>
@@ -97,6 +110,9 @@ struct StaticMenu {
 
   };
 };
+
+template<typename O,typename... OO> struct StaticData:Pair<O,StaticData<OO...>> {};
+template<typename O>                struct StaticData<O>:Pair<O> {};
 
 // template<typename Title,typename Body,Title& title,Body& body>
 // struct StaticMenu {
