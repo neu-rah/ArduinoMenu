@@ -21,6 +21,7 @@ struct Void:O {
   inline static constexpr bool partialDraw() {return false;}
   inline static constexpr bool isSame(void*) {return false;}
   inline static constexpr Idx top() {return 0;}
+  inline static constexpr Idx posY() {return 0;}
   template<typename Nav> inline static constexpr bool posTop(Nav&) {return false;}
   template<typename It,Op op=Op::Printing,Roles role=Roles::Raw>
   inline void printItems(It& it,Idx idx=0,Idx top=0) {
@@ -82,7 +83,7 @@ struct Drift:N {
 // menu items base
 template<typename I>
 struct Empty:I {
-  inline static bool parentPrint(PathRef=self) {return true;}
+  inline static constexpr bool parentPrint(PathRef=self) {return true;}
 
   template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
   inline static void print(Nav& nav,Out& out,PathRef ref=self) {}
@@ -96,6 +97,9 @@ struct Empty:I {
   template<typename Nav,typename Out,Op op=Op::Printing>
   inline void printMenu(Nav& nav,Out& out) {print<Nav,Out,op>(nav,out);}
 
-  inline static bool enabled(PathRef=self) {return true;}
+  inline static constexpr bool enabled(PathRef=self) {return true;}
   inline static void enable(bool,PathRef=self) {}
+
+  inline static constexpr bool changed() {return false;}
+  inline static void changed(bool o) {}
 };

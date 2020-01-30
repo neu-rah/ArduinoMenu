@@ -7,6 +7,30 @@ using namespace std;
 
 Pair<Nil,Nil> ok;
 
+const char* subText="Sub-menu";
+Item<StaticText<&subText>::As> subTitle;
+
+const char* sub1_text="Sub 1";
+const char* sub2_text="Sub 2";
+const char* subn_text="Sub...";
+const char* exit_text="<Exit";
+
+StaticData<
+  Item<StaticText<&sub1_text>::As>,
+  Item<StaticText<&sub2_text>::As>,
+  Item<StaticText<&subn_text>::As>,
+  Item<StaticText<&exit_text>::As>
+> subMenu_data;
+
+using SubMenu=Item<
+  Menu<
+    decltype(subTitle),
+    decltype(subMenu_data),
+    subTitle,
+    subMenu_data
+  >::As
+>;
+
 const char* mainText="Main menu";
 Item<StaticText<&mainText>::As> title;
 
@@ -19,11 +43,13 @@ StaticData<
   Item<StaticText<&op1_text>::As>,
   Item<StaticText<&op2_text>::As>,
   Item<StaticText<&opn_text>::As>,
+  SubMenu,
+  Item<StaticText<&opn_text>::As>,
   Item<StaticText<&quit_text>::As>
 > mainMenu_data;
 
 using MainMenu=Item<
-  StaticMenu<
+  Menu<
     decltype(title),
     decltype(mainMenu_data),
     title,
@@ -44,6 +70,9 @@ StaticMenuOut<
 > out;
 
 int main() {
+  nav.level=1;
+  nav.path[0]=3;
+  nav.path[1]=0;
   nav.print(out);
   MDO<<endl;
   return 0;

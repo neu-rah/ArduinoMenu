@@ -52,8 +52,8 @@ struct Text:I {
 * The Item class encapsulates a composition to be a stratic menu item.
 */
 template<Expr... I>
-struct Item:Chain<Mutable,I...,Empty>::template To<Obj<Item<I...>>> {
-  using Base=typename Chain<Mutable,I...,Empty>::template To<Obj<Item<I...>>>;
+struct Item:Chain<I...,Empty>::template To<Obj<Item<I...>>> {
+  using Base=typename Chain<I...,Empty>::template To<Obj<Item<I...>>>;
   using This=Item<I...>;
   using Base::Base;
 };
@@ -65,35 +65,21 @@ struct Pair:F {
   using F::F;
   S tail;
   template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
-  inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,PathRef ref=self) {
-    trace(MDO<<"Pair::printItems"<<endl);
-    if (ref) printItems<Nav,Out,op,role>(nav,out,idx,top,ref.tail(),ref.head());
-    else {
-      out.template printItem
-        <typename F::Type,Nav,op,true>
-        (F::obj(),nav,idx,nav.selected(idx),F::enabled(),nav.mode());
-      tail.template printItems<Nav,Out,op,role>(nav,out,++idx,top);
-    }
-  }
+  inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,PathRef ref=self);
   template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
-  inline void printItems(Nav& nav,Out& out,Idx idx,Idx top,PathRef ref,Idx n) {
-    trace(MDO<<"Pair::printItems..."<<endl);
-    if (n) tail.template printItems<Nav,Out,op,role>(nav,out,++idx,top,ref,n-1);
-    else if (ref) F::template printItems<Nav,Out,op,role>(nav,out,idx,top,ref.tail());
-    else out.template printItem<typename F::Type,Nav,op,true>(F::obj(),nav,idx,nav.selected(idx),F::enabled(),nav.mode());
-  }
+  inline void printItems(Nav& nav,Out& out,Idx idx,Idx top,PathRef ref,Idx n);
 };
 
 template<typename Title,typename Body,Title& title,Body& body>
-struct StaticMenu {
+struct Menu {
   template<typename I>
   struct As:I {
-    using This=StaticMenu<Title,Body,title,body>::As<I>;
+    using This=Menu<Title,Body,title,body>::As<I>;
     using I::I;
 
     template<typename Nav,typename Out,Op op=Op::Printing>
     inline void printMenu(Nav& nav,Out& out) {
-      trace(MDO<<"StaticMenu::printMenu "<<op<<endl);
+      trace(MDO<<"Menu::printMenu "<<op<<endl);
       out.template printMenu<decltype(I::obj()),Nav,op>(I::obj(),nav);
     }
 
@@ -103,26 +89,50 @@ struct StaticMenu {
 
     template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
     inline void print(Nav& nav,Out& out,PathRef ref=self) {
-      trace(MDO<<"StaticMenu::print "<<role<<endl);
+      trace(MDO<<"Menu::print "<<role<<endl);
       if (role&(Roles::Title|Roles::Raw)) title.print(nav,out);
       // else out.printMenu(I::obj(),nav);
     }
-
   };
+};
+
+template<typename Title,typename Body>
+struct StaticMenu:Title {
+  Body body;
+  using This=StaticMenu<Title,Body>;
+  using Title::Title;
+
+  template<typename Nav,typename Out,Op op=Op::Printing>
+  inline void printMenu(Nav& nav,Out& out) {
+    _trace(MDO<<"StaticMenu::printMenu "<<op<<endl);
+    out.template printMenu<Body,Nav,op>(body,nav);
+  }
+
+  template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
+  inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,PathRef ref=self) {
+    _trace(MDO<<"StaticMenu::printItems"<<endl);
+  /*body.template printItems<Nav,Out,op,role>(nav,out,idx,top,ref);*/
+  }
+
+  // template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
+  // inline void print(Nav& nav,Out& out,PathRef ref=self) {
+  //   _trace(MDO<<"StaticMenu::print "<<role<<endl);
+  //   if (role&(Roles::Title|Roles::Raw)) title.print(nav,out);
+  // }
 };
 
 template<typename O,typename... OO> struct StaticData:Pair<O,StaticData<OO...>> {};
 template<typename O>                struct StaticData<O>:Pair<O> {};
 
 // template<typename Title,typename Body,Title& title,Body& body>
-// struct StaticMenu {
+// struct Menu {
 //   template<typename I=Title>
-//   struct As:Chain<Mutable,Pair<Title,Body>::template As>::template To<Obj<StaticMenu<Title,Body,title,body>::As<I>>> {
-//     using This=typename StaticMenu<Title,Body,title,body>::template As<I>;
-//     using Base=typename Chain<Mutable,Pair<Title,Body>::template As>::template To<Obj<StaticMenu<Title,Body,title,body>::As<I>>>;
+//   struct As:Chain<Mutable,Pair<Title,Body>::template As>::template To<Obj<Menu<Title,Body,title,body>::As<I>>> {
+//     using This=typename Menu<Title,Body,title,body>::template As<I>;
+//     using Base=typename Chain<Mutable,Pair<Title,Body>::template As>::template To<Obj<Menu<Title,Body,title,body>::As<I>>>;
 //     template<typename Nav,typename Out,Op op=Op::Printing>
 //     inline void printMenu(Nav& nav,Out& out) {
-//       _trace(MDO<<"StaticMenu::printMenu "<<op<<endl);
+//       _trace(MDO<<"Menu::printMenu "<<op<<endl);
 //       out.template printMenu<decltype(body),Nav,op>(body,nav);
 //     }
 //
@@ -132,7 +142,7 @@ template<typename O>                struct StaticData<O>:Pair<O> {};
 //     }
 //     template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
 //     inline void print(Nav& nav,Out& out,PathRef ref=self) {
-//       _trace(MDO<<"StaticMenu::print "<<role<<endl);
+//       _trace(MDO<<"Menu::print "<<role<<endl);
 //       if (role&(Roles::Title|Roles::Raw)) title.print(nav,out);
 //       // else out.printMenu(I::obj(),nav);
 //     }
@@ -160,123 +170,26 @@ struct IItem {
 };
 
 template<Expr... I>
-struct Prompt:IItem,Chain<Mutable,I...,Empty>::template To<Obj<Prompt<I...>>> {
-  using Base=typename Chain<Mutable,I...,Empty>::template To<Obj<Prompt<I...>>>;
+struct Prompt:IItem,Chain<I...,Empty>::template To<Obj<Prompt<I...>>> {
+  using Base=typename Chain<I...,Empty>::template To<Obj<Prompt<I...>>>;
   using This=Prompt<I...>;
   using Base::Base;
   using Base::printItems;
   // using Base::printMenu;
   using Base::print;
   // inline Idx len(PathRef ref=self) override {return O::len(ref);}
-  inline void printMenu(INav& nav,IOut& out,Op op=Op::Printing) override {
-    switch(op) {
-      case Op::Measure: Base::template printMenu<INav,IOut,Op::Measure>(nav,out);break;
-      case Op::Printing: Base::template printMenu<INav,IOut,Op::Printing>(nav,out);break;
-      case Op::ClearChanges: Base::template printMenu<INav,IOut,Op::ClearChanges>(nav,out);break;
-    }
-  }
-  inline void printItems(INav& nav,IOut& out,Idx idx=0,Idx top=0,PathRef ref=self,Op op=Op::Printing,Roles role=Roles::Raw) override {
-    trace(MDO<<"Prompt::printItems"<<endl);
-    switch(op) {
-      case Op::Measure:
-      switch(role) {
-        case Roles::Raw: Base::template printItems<INav,IOut,Op::Measure,Roles::Raw>(nav,out,idx,top,ref);break;
-        case Roles::Panel: Base::template printItems<INav,IOut,Op::Measure,Roles::Panel>(nav,out,idx,top,ref);break;
-        case Roles::Menu: Base::template printItems<INav,IOut,Op::Measure,Roles::Menu>(nav,out,idx,top,ref);break;
-        case Roles::Title: Base::template printItems<INav,IOut,Op::Measure,Roles::Title>(nav,out,idx,top,ref);break;
-        case Roles::Body: Base::template printItems<INav,IOut,Op::Measure,Roles::Body>(nav,out,idx,top,ref);break;
-        case Roles::Item: Base::template printItems<INav,IOut,Op::Measure,Roles::Item>(nav,out,idx,top,ref);break;
-        case Roles::Index: Base::template printItems<INav,IOut,Op::Measure,Roles::Index>(nav,out,idx,top,ref);break;
-        case Roles::Cursor: Base::template printItems<INav,IOut,Op::Measure,Roles::Cursor>(nav,out,idx,top,ref);break;
-        case Roles::Name: Base::template printItems<INav,IOut,Op::Measure,Roles::Name>(nav,out,idx,top,ref);break;
-        case Roles::Mode: Base::template printItems<INav,IOut,Op::Measure,Roles::Mode>(nav,out,idx,top,ref);break;
-        case Roles::Value: Base::template printItems<INav,IOut,Op::Measure,Roles::Value>(nav,out,idx,top,ref);break;
-        case Roles::Unit: Base::template printItems<INav,IOut,Op::Measure,Roles::Unit>(nav,out,idx,top,ref);break;
-      };break;
-      case Op::Printing:
-      switch(role) {
-        case Roles::Raw: Base::template printItems<INav,IOut,Op::Printing,Roles::Raw>(nav,out,idx,top,ref);break;
-        case Roles::Panel: Base::template printItems<INav,IOut,Op::Printing,Roles::Panel>(nav,out,idx,top,ref);break;
-        case Roles::Menu: Base::template printItems<INav,IOut,Op::Printing,Roles::Menu>(nav,out,idx,top,ref);break;
-        case Roles::Title: Base::template printItems<INav,IOut,Op::Printing,Roles::Title>(nav,out,idx,top,ref);break;
-        case Roles::Body: Base::template printItems<INav,IOut,Op::Printing,Roles::Body>(nav,out,idx,top,ref);break;
-        case Roles::Item: Base::template printItems<INav,IOut,Op::Printing,Roles::Item>(nav,out,idx,top,ref);break;
-        case Roles::Index: Base::template printItems<INav,IOut,Op::Printing,Roles::Index>(nav,out,idx,top,ref);break;
-        case Roles::Cursor: Base::template printItems<INav,IOut,Op::Printing,Roles::Cursor>(nav,out,idx,top,ref);break;
-        case Roles::Name: Base::template printItems<INav,IOut,Op::Printing,Roles::Name>(nav,out,idx,top,ref);break;
-        case Roles::Mode: Base::template printItems<INav,IOut,Op::Printing,Roles::Mode>(nav,out,idx,top,ref);break;
-        case Roles::Value: Base::template printItems<INav,IOut,Op::Printing,Roles::Value>(nav,out,idx,top,ref);break;
-        case Roles::Unit: Base::template printItems<INav,IOut,Op::Printing,Roles::Unit>(nav,out,idx,top,ref);break;
-      };break;
-      case Op::ClearChanges:
-      switch(role) {
-        case Roles::Raw: Base::template printItems<INav,IOut,Op::ClearChanges,Roles::Raw>(nav,out,idx,top,ref);break;
-        case Roles::Panel: Base::template printItems<INav,IOut,Op::ClearChanges,Roles::Panel>(nav,out,idx,top,ref);break;
-        case Roles::Menu: Base::template printItems<INav,IOut,Op::ClearChanges,Roles::Menu>(nav,out,idx,top,ref);break;
-        case Roles::Title: Base::template printItems<INav,IOut,Op::ClearChanges,Roles::Title>(nav,out,idx,top,ref);break;
-        case Roles::Body: Base::template printItems<INav,IOut,Op::ClearChanges,Roles::Body>(nav,out,idx,top,ref);break;
-        case Roles::Item: Base::template printItems<INav,IOut,Op::ClearChanges,Roles::Item>(nav,out,idx,top,ref);break;
-        case Roles::Index: Base::template printItems<INav,IOut,Op::ClearChanges,Roles::Index>(nav,out,idx,top,ref);break;
-        case Roles::Cursor: Base::template printItems<INav,IOut,Op::ClearChanges,Roles::Cursor>(nav,out,idx,top,ref);break;
-        case Roles::Name: Base::template printItems<INav,IOut,Op::ClearChanges,Roles::Name>(nav,out,idx,top,ref);break;
-        case Roles::Mode: Base::template printItems<INav,IOut,Op::ClearChanges,Roles::Mode>(nav,out,idx,top,ref);break;
-        case Roles::Value: Base::template printItems<INav,IOut,Op::ClearChanges,Roles::Value>(nav,out,idx,top,ref);break;
-        case Roles::Unit: Base::template printItems<INav,IOut,Op::ClearChanges,Roles::Unit>(nav,out,idx,top,ref);break;
-      };break;
-    }
-  }
-  inline void print(INav& nav,IOut& out,Op op,Roles role,PathRef ref=self) override {
-    trace(MDO<<"Prompt::print"<<endl);
-    switch(op) {
-      case Op::Measure:
-        switch(role) {
-          case Roles::Raw: Base::template print<INav,IOut,Op::Measure,Roles::Raw>(nav,out,ref);break;
-          case Roles::Panel: Base::template print<INav,IOut,Op::Measure,Roles::Panel>(nav,out,ref);break;
-          case Roles::Menu: Base::template print<INav,IOut,Op::Measure,Roles::Menu>(nav,out,ref);break;
-          case Roles::Title: Base::template print<INav,IOut,Op::Measure,Roles::Title>(nav,out,ref);break;
-          case Roles::Body: Base::template print<INav,IOut,Op::Measure,Roles::Body>(nav,out,ref);break;
-          case Roles::Item: Base::template print<INav,IOut,Op::Measure,Roles::Item>(nav,out,ref);break;
-          case Roles::Index: Base::template print<INav,IOut,Op::Measure,Roles::Index>(nav,out,ref);break;
-          case Roles::Cursor: Base::template print<INav,IOut,Op::Measure,Roles::Cursor>(nav,out,ref);break;
-          case Roles::Name: Base::template print<INav,IOut,Op::Measure,Roles::Name>(nav,out,ref);break;
-          case Roles::Mode: Base::template print<INav,IOut,Op::Measure,Roles::Mode>(nav,out,ref);break;
-          case Roles::Value: Base::template print<INav,IOut,Op::Measure,Roles::Value>(nav,out,ref);break;
-          case Roles::Unit: Base::template print<INav,IOut,Op::Measure,Roles::Unit>(nav,out,ref);break;
-        };break;
-      case Op::Printing:
-        switch(role) {
-          case Roles::Raw: Base::template print<INav,IOut,Op::Printing,Roles::Raw>(nav,out,ref);break;
-          case Roles::Panel: Base::template print<INav,IOut,Op::Printing,Roles::Panel>(nav,out,ref);break;
-          case Roles::Menu: Base::template print<INav,IOut,Op::Printing,Roles::Menu>(nav,out,ref);break;
-          case Roles::Title: Base::template print<INav,IOut,Op::Printing,Roles::Title>(nav,out,ref);break;
-          case Roles::Body: Base::template print<INav,IOut,Op::Printing,Roles::Body>(nav,out,ref);break;
-          case Roles::Item: Base::template print<INav,IOut,Op::Printing,Roles::Item>(nav,out,ref);break;
-          case Roles::Index: Base::template print<INav,IOut,Op::Printing,Roles::Index>(nav,out,ref);break;
-          case Roles::Cursor: Base::template print<INav,IOut,Op::Printing,Roles::Cursor>(nav,out,ref);break;
-          case Roles::Name: Base::template print<INav,IOut,Op::Printing,Roles::Name>(nav,out,ref);break;
-          case Roles::Mode: Base::template print<INav,IOut,Op::Printing,Roles::Mode>(nav,out,ref);break;
-          case Roles::Value: Base::template print<INav,IOut,Op::Printing,Roles::Value>(nav,out,ref);break;
-          case Roles::Unit: Base::template print<INav,IOut,Op::Printing,Roles::Unit>(nav,out,ref);break;
-        };break;
-      case Op::ClearChanges:
-        switch(role) {
-          case Roles::Raw: Base::template print<INav,IOut,Op::ClearChanges,Roles::Raw>(nav,out,ref);break;
-          case Roles::Panel: Base::template print<INav,IOut,Op::ClearChanges,Roles::Panel>(nav,out,ref);break;
-          case Roles::Menu: Base::template print<INav,IOut,Op::ClearChanges,Roles::Menu>(nav,out,ref);break;
-          case Roles::Title: Base::template print<INav,IOut,Op::ClearChanges,Roles::Title>(nav,out,ref);break;
-          case Roles::Body: Base::template print<INav,IOut,Op::ClearChanges,Roles::Body>(nav,out,ref);break;
-          case Roles::Item: Base::template print<INav,IOut,Op::ClearChanges,Roles::Item>(nav,out,ref);break;
-          case Roles::Index: Base::template print<INav,IOut,Op::ClearChanges,Roles::Index>(nav,out,ref);break;
-          case Roles::Cursor: Base::template print<INav,IOut,Op::ClearChanges,Roles::Cursor>(nav,out,ref);break;
-          case Roles::Name: Base::template print<INav,IOut,Op::ClearChanges,Roles::Name>(nav,out,ref);break;
-          case Roles::Mode: Base::template print<INav,IOut,Op::ClearChanges,Roles::Mode>(nav,out,ref);break;
-          case Roles::Value: Base::template print<INav,IOut,Op::ClearChanges,Roles::Value>(nav,out,ref);break;
-          case Roles::Unit: Base::template print<INav,IOut,Op::ClearChanges,Roles::Unit>(nav,out,ref);break;
-        };break;
-    }
-  }
+  inline void printMenu(INav& nav,IOut& out,Op op=Op::Printing) override;
+  inline void printItems(INav& nav,IOut& out,Idx idx=0,Idx top=0,PathRef ref=self,Op op=Op::Printing,Roles role=Roles::Raw) override;
+  inline void print(INav& nav,IOut& out,Op op,Roles role,PathRef ref=self) override;
   inline bool enabled(PathRef ref=self) override {return Base::enabled(ref);}
   inline void enable(bool o,PathRef ref=self) override {Base::enable(o,ref);}
   virtual inline bool changed() const {return Base::changed();}
   virtual inline void changed(bool o) {Base::changed(o);}
+};
+
+template<typename I>
+struct Exit:I {
+  using Base=I;
+  inline static constexpr bool activate() {return false;}
+  inline static constexpr bool activate(PathRef,Idx=0) {return activate();}
 };

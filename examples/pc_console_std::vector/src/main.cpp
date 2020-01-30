@@ -29,7 +29,7 @@ Prompt<
 };
 
 using SubMenu=Prompt<
-  StaticMenu<
+  Menu<
     decltype(sub_title),
     decltype(subMenu_data),
     sub_title,
@@ -51,7 +51,7 @@ Prompt<
 };
 
 using MainMenu=Prompt<
-  StaticMenu<
+  Menu<
     decltype(title),
     decltype(mainMenu_data),
     title,
