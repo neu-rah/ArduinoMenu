@@ -11,8 +11,8 @@
   template<char open='[',char close=']'>
   struct TitleWrapFmt {
     template<typename O>
-    struct As:O {
-      using This=TitleWrapFmt<open,close>::As<O>;
+    struct Part:O {
+      using This=TitleWrapFmt<open,close>::Part<O>;
       template<bool io,bool toPrint=true>
       inline void fmtTitle(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
         if (io) {

@@ -28,9 +28,9 @@ struct Action:I {
 };
 
 template<const char** text>
-struct StaticText:Obj<StaticText<text>> {
-  template<typename I>
-  struct As:I {
+struct StaticText {
+  template<typename I=Empty<Nil>>
+  struct Part:I {
     template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
     inline static void print(Nav& nav,Out& out,PathRef ref=self) {out.raw(text[0]);}
   };
@@ -52,8 +52,8 @@ struct Text:I {
 * The Item class encapsulates a composition to be a stratic menu item.
 */
 template<Expr... I>
-struct Item:Chain<I...,Empty>::template To<Obj<Item<I...>>> {
-  using Base=typename Chain<I...,Empty>::template To<Obj<Item<I...>>>;
+struct Item:Chain<Mutable,I...,Empty>::template To<Obj<Item<I...>>> {
+  using Base=typename Chain<Mutable,I...,Empty>::template To<Obj<Item<I...>>>;
   using This=Item<I...>;
   using Base::Base;
 };
@@ -73,8 +73,8 @@ struct Pair:F {
 template<typename Title,typename Body,Title& title,Body& body>
 struct Menu {
   template<typename I>
-  struct As:I {
-    using This=Menu<Title,Body,title,body>::As<I>;
+  struct Part:I {
+    using This=Menu<Title,Body,title,body>::Part<I>;
     using I::I;
 
     template<typename Nav,typename Out,Op op=Op::Printing>
@@ -97,28 +97,34 @@ struct Menu {
 };
 
 template<typename Title,typename Body>
-struct StaticMenu:Title {
-  Body body;
-  using This=StaticMenu<Title,Body>;
-  using Title::Title;
+struct StaticMenu {
+  template<typename I>
+  struct Part:I {
+    using Base=I;
+    Title title;
+    Body body;
+    using This=StaticMenu<Title,Body>;
+    using I::I;
 
-  template<typename Nav,typename Out,Op op=Op::Printing>
-  inline void printMenu(Nav& nav,Out& out) {
-    _trace(MDO<<"StaticMenu::printMenu "<<op<<endl);
-    out.template printMenu<Body,Nav,op>(body,nav);
-  }
+    template<typename Nav,typename Out,Op op=Op::Printing>
+    inline void printMenu(Nav& nav,Out& out) {
+      trace(MDO<<"StaticMenu::printMenu "<<op<<endl);
+      out.template printMenu<typename Base::Type,Nav,op>(Base::obj(),nav);
+    }
 
-  template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
-  inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,PathRef ref=self) {
-    _trace(MDO<<"StaticMenu::printItems"<<endl);
-  /*body.template printItems<Nav,Out,op,role>(nav,out,idx,top,ref);*/
-  }
+    template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
+    inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,PathRef ref=self) {
+      trace(MDO<<"StaticMenu::printItems"<<endl);
+      body.template printItems<Nav,Out,op,role>(nav,out,idx,top,ref);
+    }
 
-  // template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
-  // inline void print(Nav& nav,Out& out,PathRef ref=self) {
-  //   _trace(MDO<<"StaticMenu::print "<<role<<endl);
-  //   if (role&(Roles::Title|Roles::Raw)) title.print(nav,out);
-  // }
+    template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
+    inline void print(Nav& nav,Out& out,PathRef ref=self) {
+      _trace(MDO<<"StaticMenu::print "<<role<<endl);
+      // if (role&(Roles::Title|Roles::Raw))
+      title.template print<Nav,Out,op,role>(nav,out,ref);
+    }
+  };
 };
 
 template<typename O,typename... OO> struct StaticData:Pair<O,StaticData<OO...>> {};
@@ -127,7 +133,7 @@ template<typename O>                struct StaticData<O>:Pair<O> {};
 // template<typename Title,typename Body,Title& title,Body& body>
 // struct Menu {
 //   template<typename I=Title>
-//   struct As:Chain<Mutable,Pair<Title,Body>::template As>::template To<Obj<Menu<Title,Body,title,body>::As<I>>> {
+//   struct Part:Chain<Mutable,Pair<Title,Body>::template As>::template To<Obj<Menu<Title,Body,title,body>::As<I>>> {
 //     using This=typename Menu<Title,Body,title,body>::template As<I>;
 //     using Base=typename Chain<Mutable,Pair<Title,Body>::template As>::template To<Obj<Menu<Title,Body,title,body>::As<I>>>;
 //     template<typename Nav,typename Out,Op op=Op::Printing>
@@ -170,8 +176,8 @@ struct IItem {
 };
 
 template<Expr... I>
-struct Prompt:IItem,Chain<I...,Empty>::template To<Obj<Prompt<I...>>> {
-  using Base=typename Chain<I...,Empty>::template To<Obj<Prompt<I...>>>;
+struct Prompt:IItem,Chain<Mutable,I...,Empty>::template To<Obj<Prompt<I...>>> {
+  using Base=typename Chain<Mutable,I...,Empty>::template To<Obj<Prompt<I...>>>;
   using This=Prompt<I...>;
   using Base::Base;
   using Base::printItems;

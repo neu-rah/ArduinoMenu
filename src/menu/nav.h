@@ -6,14 +6,14 @@
 template<typename I,Idx max_depth>
 struct Nav {
   template<typename N>
-  struct As:N {
-    using This=Nav<I,max_depth>::As<N>;
+  struct Part:N {
+    using This=Nav<I,max_depth>::Part<N>;
     using Data=I;
-    Idx path[max_depth]{0};
     Idx level=0;
+    Idx path[max_depth]{0};
     Data& root;
     Modes editMode;
-    inline As(Data& o):root(o){}
+    inline Part(Data& o):root(o){}
     template<typename Out>
     inline void print(Out& out) {
       _trace(MDO<<"Nav::print"<<endl);
@@ -21,6 +21,7 @@ struct Nav {
     inline Idx pos() const {return path[level];}
     inline Modes mode() const {return editMode;}
     inline bool selected(Idx i) const {return path[level]==i;}
+    inline operator PathRef() {return (PathRef){level,path};}
   };
 };
 

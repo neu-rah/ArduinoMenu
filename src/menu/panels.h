@@ -36,9 +36,9 @@ struct PanelTarget:O {
 template<int w=1,int h=1>
 struct RangePanel {
   template<typename O>
-  class As:public O {
+  class Part:public O {
     public:
-      using This=RangePanel<w,h>::As<O>;
+      using This=RangePanel<w,h>::Part<O>;
       inline Idx top() const {return topLine;}
       inline void setTop(Idx n) {topLine=n;}
       inline void newView() {

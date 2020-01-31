@@ -7,7 +7,7 @@
 template<int szX=1,int szY=1>
 struct TextMeasure {
   template<typename O>
-  struct As:O {
+  struct Part:O {
     template<typename T>
     static inline Idx measure(T o) {
       #ifdef ARDUINO
@@ -26,7 +26,7 @@ struct TextMeasure {
       static inline Idx _str(T i){return std::string(std::to_string(i)).length();}
       #endif
   };
-  template<typename O> using Open=As<O>;
+  template<typename O> using Open=Part<O>;
 };
 
 template<typename O>
@@ -47,12 +47,11 @@ struct PartialDraw:O {
 template<typename Dev,Dev& dev>
 struct StreamOut {
   template<typename O>
-  struct As:O {
-    using This=StreamOut<Dev,dev>::As<O>;
+  struct Part:O {
+    using This=StreamOut<Dev,dev>::Part<O>;
     inline static void nl() {dev<<endl;}
     template<typename T> inline static void raw(T o) {dev<<o;}
   };
-  template<typename O> using Open=As<O>;
 };
 
 template<typename Dev,Dev& dev,typename O>

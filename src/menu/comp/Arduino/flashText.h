@@ -13,7 +13,7 @@
   template<typename T,const T* text>
   struct FlashText {
     template<typename I>
-    struct As:I {
+    struct Part:I {
       using I::I;
       // using I::size;
       template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>

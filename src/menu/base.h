@@ -30,8 +30,8 @@ inline bool has(Roles o,Idx p) {return static_cast<Idx>(o)|p;}
 
 #ifdef MENU_DEBUG
   constexpr const char* roleNames[]{
-    "None","Panel","Menu","Title","Body","Item",
-    "Index","Cursor","Name","Mode","Value","Unit","Raw"
+    "None","Raw","Panel","Menu","Title","Body","Item",
+    "Index","Cursor","Name","Mode","Value","Unit"
   };
 
   constexpr const char* modeNames[]{"Normal","Edit","Tune"};

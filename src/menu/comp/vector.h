@@ -7,7 +7,7 @@
 template<typename M>
 struct ItemArray {
   template<typename I>
-  struct As:I,vector<M*> {
+  struct Part:I,vector<M*> {
     using vector<M*>::vector;
     template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
     inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,PathRef ref=self) {
