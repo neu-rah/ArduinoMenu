@@ -64,36 +64,14 @@ struct Pair:F {
   using This=Pair<F,S>;
   using F::F;
   S tail;
+  // template<typename Nav,typename Out,Op op=Op::Printing>
+  // inline void printMenu(Nav& nav,Out& out,PathRef ref=self);
+  template<typename Nav,typename Out,Op op=Op::Printing>
+  inline void printMenu(Nav& nav,Out& out,PathRef ref=self,Idx n=0);
   template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
   inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,PathRef ref=self);
   template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
   inline void printItems(Nav& nav,Out& out,Idx idx,Idx top,PathRef ref,Idx n);
-};
-
-template<typename Title,typename Body,Title& title,Body& body>
-struct Menu {
-  template<typename I>
-  struct Part:I {
-    using This=Menu<Title,Body,title,body>::Part<I>;
-    using I::I;
-
-    template<typename Nav,typename Out,Op op=Op::Printing>
-    inline void printMenu(Nav& nav,Out& out) {
-      trace(MDO<<"Menu::printMenu "<<op<<endl);
-      out.template printMenu<decltype(I::obj()),Nav,op>(I::obj(),nav);
-    }
-
-    template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
-    inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,PathRef ref=self)
-      {body.template printItems<Nav,Out,op,role>(nav,out,idx,top,ref);}
-
-    template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
-    inline void print(Nav& nav,Out& out,PathRef ref=self) {
-      trace(MDO<<"Menu::print "<<role<<endl);
-      if (role&(Roles::Title|Roles::Raw)) title.print(nav,out);
-      // else out.printMenu(I::obj(),nav);
-    }
-  };
 };
 
 template<typename Title,typename Body>
@@ -107,9 +85,10 @@ struct StaticMenu {
     using I::I;
 
     template<typename Nav,typename Out,Op op=Op::Printing>
-    inline void printMenu(Nav& nav,Out& out) {
-      trace(MDO<<"StaticMenu::printMenu "<<op<<endl);
-      out.template printMenu<typename Base::Type,Nav,op>(Base::obj(),nav);
+    inline void printMenu(Nav& nav,Out& out,PathRef ref=self,Idx n=0) {
+      trace(MDO<<"StaticMenu::printMenu... "<<op<<endl);
+      if (ref) body.template printMenu<Nav,Out,op>(nav,out,ref,ref.head());
+      else out.template printMenu<typename I::Type,Nav,op>(I::obj(),nav);
     }
 
     template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
@@ -120,7 +99,7 @@ struct StaticMenu {
 
     template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
     inline void print(Nav& nav,Out& out,PathRef ref=self) {
-      _trace(MDO<<"StaticMenu::print "<<role<<endl);
+      trace(MDO<<"StaticMenu::print "<<role<<endl);
       // if (role&(Roles::Title|Roles::Raw))
       title.template print<Nav,Out,op,role>(nav,out,ref);
     }
@@ -129,6 +108,35 @@ struct StaticMenu {
 
 template<typename O,typename... OO> struct StaticData:Pair<O,StaticData<OO...>> {};
 template<typename O>                struct StaticData<O>:Pair<O> {};
+
+template<typename Title,typename Body,Title& title,Body& body>
+struct Menu {
+  template<typename I>
+  struct Part:I {
+    using This=Menu<Title,Body,title,body>::Part<I>;
+    using I::I;
+
+    template<typename Nav,typename Out,Op op=Op::Printing>
+    inline void printMenu(Nav& nav,Out& out,PathRef ref=self) {
+      _trace(MDO<<"Menu::printMenu "<<op<<endl);
+      if (ref) body.template printMenu<Nav,Out,op>(nav,out,ref);
+      else out.template printMenu<decltype(I::obj()),Nav,op>(I::obj(),nav);
+    }
+
+    template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
+    inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,PathRef ref=self) {
+      _trace(MDO<<"Menu::printItems "<<op<<endl);
+      body.template printItems<Nav,Out,op,role>(nav,out,idx,top,ref);
+    }
+
+    template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
+    inline void print(Nav& nav,Out& out,PathRef ref=self) {
+      _trace(MDO<<"Menu::print "<<role<<endl);
+      if (role&(Roles::Title|Roles::Raw)) title.print(nav,out);
+      // else out.printMenu(I::obj(),nav);
+    }
+  };
+};
 
 // template<typename Title,typename Body,Title& title,Body& body>
 // struct Menu {

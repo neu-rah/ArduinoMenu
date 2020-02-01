@@ -46,8 +46,6 @@ using MainMenu=Item<
 
 MainMenu mainMenu;
 
-StaticNavRoot<Nav<MainMenu,1>::Part> nav(mainMenu);
-
 StaticMenuOut<
   FullPrinter,
   TitleWrapFmt<>::Part,
@@ -57,12 +55,12 @@ StaticMenuOut<
   TextMeasure<>::Part
 > out;
 
-// using X=MainMenu::Test;
+StaticNavRoot<Nav<MainMenu,2>::Part> nav(mainMenu);
 
 int main() {
-  // nav.level=1;
-  // nav.path[0]=3;
-  // nav.path[1]=0;
+  nav.level=1;
+  nav.path[0]=3;
+  nav.path[1]=0;
   nav.print(out);
   MDO<<endl;
   return 0;

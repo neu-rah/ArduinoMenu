@@ -95,7 +95,10 @@ struct Empty:I {
   inline static void printItems(Nav& nav,Out& out,Idx idx,Idx top,PathRef ref,Idx n) {}
 
   template<typename Nav,typename Out,Op op=Op::Printing>
-  inline void printMenu(Nav& nav,Out& out) {print<Nav,Out,op>(nav,out);}
+  inline void printMenu(Nav& nav,Out& out,PathRef=self) {print<Nav,Out,op>(nav,out);}
+
+  template<typename Nav,typename Out,Op op=Op::Printing>
+  inline void printMenu(Nav& nav,Out& out,PathRef,Idx) {print<Nav,Out,op>(nav,out);}
 
   inline static constexpr bool enabled(PathRef=self) {return true;}
   inline static void enable(bool,PathRef=self) {}

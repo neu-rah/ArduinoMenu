@@ -1,5 +1,21 @@
 #include "item.h"
 
+// template<typename F,typename S>
+// template<typename Nav,typename Out,Op op>
+// inline void Pair<F,S>::printMenu(Nav& nav,Out& out,PathRef ref) {
+//   if (ref) printMenu<Nav,Out,op>(nav,out,ref,ref.head());
+//   else out.template printMenu<typename F::Type,Nav,op>(F::obj(),nav);
+// }
+
+template<typename F,typename S>
+template<typename Nav,typename Out,Op op>
+inline void Pair<F,S>::printMenu(Nav& nav,Out& out,PathRef ref,Idx n) {
+  trace(MDO<<"Pair::printMenu..."<<endl);
+  if (n) tail.template printMenu<Nav,Out,op>(nav,out,ref,n-1);
+  else if (ref) F::template printMenu<Nav,Out,op>(nav,out,ref.tail(),ref.head());
+  else out.template printMenu<typename F::Type,Nav,op>(F::obj(),nav);
+}
+
 template<typename F,typename S>
 template<typename Nav,typename Out,Op op,Roles role>
 inline void Pair<F,S>::printItems(Nav& nav,Out& out,Idx idx,Idx top,PathRef ref) {

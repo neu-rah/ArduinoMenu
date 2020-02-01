@@ -17,7 +17,7 @@ struct Nav {
     template<typename Out>
     inline void print(Out& out) {
       _trace(MDO<<"Nav::print"<<endl);
-      root.printMenu(N::obj(),out);}
+      root.printMenu(N::obj(),out,*this);}
     inline Idx pos() const {return path[level];}
     inline Modes mode() const {return editMode;}
     inline bool selected(Idx i) const {return path[level]==i;}
