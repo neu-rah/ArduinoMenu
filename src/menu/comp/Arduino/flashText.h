@@ -12,7 +12,7 @@
 
   template<typename T,const T* text>
   struct FlashText {
-    template<typename I>
+    template<typename I=Empty<Nil>>
     struct Part:I {
       using I::I;
       // using I::size;

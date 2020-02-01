@@ -48,7 +48,7 @@ struct FullPrinter:public O {
     }
 
     it.changed(This::posTop(nav));
-    bool fp=toPrint&&((!O::partialDraw())||it.changed()||!O::isSame(&it));
+    // bool fp=toPrint&&((!O::partialDraw())||it.changed()||!O::isSame(&it));
     trace(MDO<<"FullPrinter printing body"<<endl);
     it.template printItems
       <Nav,typename O::Type,op,Roles::Item>

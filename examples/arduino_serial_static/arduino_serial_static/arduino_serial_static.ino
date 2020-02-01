@@ -41,27 +41,29 @@ extern const char exit_txt[] PROGMEM="<Exit";
 // extern const char volts_txt[] PROGMEM="V";
 
 //static menu structure
-StaticMenu<
-  Item<FlashText<decltype(mainMenu_title),&mainMenu_title>::As>,
-  StaticData<
-    Item<EnDis<FlashText<decltype(op1_text),&op1_text>>::As>,
-    Item<EnDis<FlashText<decltype(op2_text),&op2_text>>::As>,
-    Item<Action<tog12,FlashText<decltype(tog12_text),&tog12_text>>::As>,
-    // Item<NumField<FlashText<decltype(yr_txt),&yr_txt>,int,year,1900,2100,10,1>>,//this is NOT good, changing limits generates new code->TODO: add a translation
-    // Item<NumField<FlashText<decltype(vcc_txt),&vcc_txt>,decltype(vcc),vcc,0,100,1,0,FlashText<decltype(volts_txt),&volts_txt>>>,
-    Item<FlashText<decltype(opn_text),&opn_text>::As>,
-    StaticMenu<
-      Item<FlashText<decltype(subMenu_title),&subMenu_title>::As>,
-      StaticData<
-        Item<EnDis<FlashText<decltype(op1_text),&op1_text>>::As>,
-        Item<FlashText<decltype(op2_text),&op2_text>::As>,
-        Item<FlashText<decltype(opn_text),&opn_text>::As>,
-        Item<FlashText<decltype(opn_text),&opn_text>::As>,
-        Item<FlashText<decltype(opn_text),&opn_text>::As>,
-        Item<Exit<FlashText<decltype(exit_txt),&exit_txt>>::As>
+Item<
+  StaticMenu<
+    FlashText<decltype(mainMenu_title),&mainMenu_title>::Part<>,
+    StaticData<
+      Item<EnDis<FlashText<decltype(op1_text),&op1_text>>::Part>,
+      Item<EnDis<FlashText<decltype(op2_text),&op2_text>>::Part>,
+      Item<Action<tog12,FlashText<decltype(tog12_text),&tog12_text>>::Part>,
+      Item<FlashText<decltype(opn_text),&opn_text>::Part>,
+      Item<
+        StaticMenu<
+          FlashText<decltype(subMenu_title),&subMenu_title>::Part<>,
+          StaticData<
+            Item<EnDis<FlashText<decltype(op1_text),&op1_text>>::Part>,
+            Item<FlashText<decltype(op2_text),&op2_text>::Part>,
+            Item<FlashText<decltype(opn_text),&opn_text>::Part>,
+            Item<FlashText<decltype(opn_text),&opn_text>::Part>,
+            Item<FlashText<decltype(opn_text),&opn_text>::Part>,
+            Item<Exit<FlashText<decltype(exit_txt),&exit_txt>>::Part>
+          >
+        >::Part
       >
     >
-  >
+  >::Part
 > mainMenu;//create menu object
 
 //menu input --------------------------------------
@@ -70,15 +72,15 @@ StaticMenu<
 //menu output (Serial)
 using Out=StaticMenuOut<
   FullPrinter,//print title and items
-  TitleWrapFmt<>::As,//put [] around menu title
+  TitleWrapFmt<>::Part,//put [] around menu title
   TextFmt,//apply text formating
-  SerialOut<decltype(Serial),Serial>::As//describe output geometry and device
+  SerialOut<decltype(Serial),Serial>::Part//describe output geometry and device
 >;
 
 Out out;//create output object (Serial)
 
 //navigation root ---------------------------------
-StaticNavRoot<Nav<decltype(mainMenu),1>::As> nav(mainMenu);
+StaticNavRoot<Nav<decltype(mainMenu),2>::Part> nav(mainMenu);
 
 //menu action handlers implementation
 bool tog12() {
@@ -93,6 +95,9 @@ void setup() {
   Serial.println("ArduinoMenu 5");
   delay(500);
   // test.print(out);//printing single field
+  nav.path[0]=4;
+  nav.path[1]=0;
+  nav.level=1;
   nav.print(out);
   // mainMenu.enable(false,1);//disable second option
 }
