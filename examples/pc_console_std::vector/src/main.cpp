@@ -6,7 +6,7 @@ using namespace std;
 #include <menu/fmt/fullText.h>
 
 const char* mainText="Main menu";
-Item<StaticText<&mainText>::As> title;
+Item<StaticText<&mainText>::Part> title;
 
 Prompt<Text> op1("Option 1");
 Prompt<Text> op2("Option 2");
@@ -20,7 +20,7 @@ Prompt<Text> subn("Sub...");
 Prompt<Text> exitOp("<Exit");
 
 Prompt<
-  ItemArray<IItem>::As
+  ItemArray<IItem>::Part
 > subMenu_data{
   &sub1,
   &sub2,
@@ -34,13 +34,13 @@ using SubMenu=Prompt<
     decltype(subMenu_data),
     sub_title,
     subMenu_data
-  >::As
+  >::Part
 >;
 
 SubMenu subMenu;
 
 Prompt<
-  ItemArray<IItem>::As
+  ItemArray<IItem>::Part
 > mainMenu_data{
   &op1,
   &op2,
@@ -56,19 +56,19 @@ using MainMenu=Prompt<
     decltype(mainMenu_data),
     title,
     mainMenu_data
-  >::As
+  >::Part
 >;
 
 MainMenu mainMenu;
 
-NavRoot<Nav<MainMenu,1>::As> nav(mainMenu);
+NavRoot<Nav<MainMenu,2>::Part> nav(mainMenu);
 
 MenuOut<
   FullPrinter,
   TextFmt,
-  RangePanel<>::As,
-  StreamOut<decltype(cout),cout>::As,
-  TextMeasure<>::As
+  RangePanel<>::Part,
+  StreamOut<decltype(cout),cout>::Part,
+  TextMeasure<>::Part
 > out;
 
 int main() {
@@ -83,6 +83,9 @@ int main() {
   // out.printMenu(mainMenu_data,nav);
   // MDO<<endl;
   // out.printMenu(mainMenu,nav);
+  nav.path[0]=4;
+  nav.level=1;
+  nav.path[1]=0;
   nav.print(out);
   // mainMenu.print(nav,out);
   MDO<<endl;

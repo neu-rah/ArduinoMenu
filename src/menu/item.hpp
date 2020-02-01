@@ -1,12 +1,5 @@
 #include "item.h"
 
-// template<typename F,typename S>
-// template<typename Nav,typename Out,Op op>
-// inline void Pair<F,S>::printMenu(Nav& nav,Out& out,PathRef ref) {
-//   if (ref) printMenu<Nav,Out,op>(nav,out,ref,ref.head());
-//   else out.template printMenu<typename F::Type,Nav,op>(F::obj(),nav);
-// }
-
 template<typename F,typename S>
 template<typename Nav,typename Out,Op op>
 inline void Pair<F,S>::printMenu(Nav& nav,Out& out,PathRef ref,Idx n) {
@@ -39,11 +32,11 @@ inline void Pair<F,S>::printItems(Nav& nav,Out& out,Idx idx,Idx top,PathRef ref,
 
 /////////////////////////////////////////////////////////
 template<Expr... I>
-inline void Prompt<I...>::printMenu(INav& nav,IOut& out,Op op) {
+inline void Prompt<I...>::printMenu(INav& nav,IOut& out,Op op,PathRef ref) {
   switch(op) {
-    case Op::Measure: Base::template printMenu<INav,IOut,Op::Measure>(nav,out);break;
-    case Op::Printing: Base::template printMenu<INav,IOut,Op::Printing>(nav,out);break;
-    case Op::ClearChanges: Base::template printMenu<INav,IOut,Op::ClearChanges>(nav,out);break;
+    case Op::Measure: Base::template printMenu<INav,IOut,Op::Measure>(nav,out,ref);break;
+    case Op::Printing: Base::template printMenu<INav,IOut,Op::Printing>(nav,out,ref);break;
+    case Op::ClearChanges: Base::template printMenu<INav,IOut,Op::ClearChanges>(nav,out,ref);break;
   }
 }
 template<Expr... I>
