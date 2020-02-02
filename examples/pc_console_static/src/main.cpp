@@ -68,6 +68,7 @@ int main() {
   nav._up();
   nav._up();
   nav._up();
+  nav._down();
   nav.print(out);
   MDO<<endl;
   return 0;

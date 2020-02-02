@@ -84,7 +84,7 @@ struct Drift:N {
 // menu items base
 template<typename I>
 struct Empty:I {
-  inline static constexpr size_t size(PathRef=self) {return 0;}
+  inline static constexpr size_t size(PathRef=self,Idx=0) {return 0;}
 
   inline static constexpr bool parentPrint(PathRef=self) {return true;}
 
