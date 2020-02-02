@@ -78,6 +78,22 @@ struct Drift:N {
   inline static bool selected(Idx) {return false;}
   inline Modes mode() const {return Modes::Normal;}
   inline static void cmd(Cmd) {}
+  inline static void up(Cmd) {}
+  inline static void down(Cmd) {}
+  inline static void enter(Cmd) {}
+  inline static void esc(Cmd) {}
+  template<typename In>
+  inline bool doInput(In& in) {
+    Cmd c=in.cmd();
+    switch(c) {
+      case Cmd::Up:N::obj().up();break;
+      case Cmd::Down:N::obj().down();break;
+      case Cmd::Enter:N::obj().enter();break;
+      case Cmd::Esc:N::obj().esc();break;
+      default:return false;
+    }
+    return true;
+  }
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -108,6 +124,11 @@ struct Empty:I {
 
   inline static constexpr bool changed() {return false;}
   inline static void changed(bool o) {}
+
+  template<typename Nav> inline void up(Nav& nav) {nav._up();}
+  template<typename Nav> inline void down(Nav& nav) {nav._down();}
+  template<typename Nav> inline void enter(Nav& nav) {nav._enter();}
+  template<typename Nav> inline void esc(Nav& nav) {nav._esc();}
 
   // template<Cmds c,typename Nav>
   // inline void cmd(Nav& nav,PathRef=self) {nav.template _cmd<c>();}

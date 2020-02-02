@@ -48,16 +48,20 @@ struct Nav {
     //   }
     // }
     inline size_t size() const {return root.size(*this);}
+    inline void up() {root.up(N::obj());}
+    inline void down() {root.down(N::obj());}
+    inline void enter() {root.enter(N::obj());}
+    inline void esc() {root.esc(N::obj());}
     inline void _up() {
       _trace(MDO<<"pos:"<<pos()<<" size:"<<size()<<endl);
       if(pos()+1<size()) setPos(pos()+1);}
     inline void _down() {if(pos()>0) setPos(pos()-1);}
     inline void _enter() {
-      trace(MDO<<"enter->sending activate"<<endl);
-      bool n=root.canNav(*this,This::head());
-      bool r=root.activate(*this,head());
-      trace(MDO<<"canNav:"<<n<<" activated:"<<r<<endl);
-      if (!(n^r)) n?open():close();
+    _trace(MDO<<"enter->sending activate"<<endl);
+      // bool n=root.canNav(*this,This::head());
+      // bool r=root.activate(*this,head());
+      // trace(MDO<<"canNav:"<<n<<" activated:"<<r<<endl);
+      // if (!(n^r)) n?open():close();
     }
     inline void _esc() {close();}
     template<Cmd c>

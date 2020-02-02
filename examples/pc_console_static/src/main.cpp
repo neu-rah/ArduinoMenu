@@ -7,7 +7,7 @@ using namespace std;
 #include <menu/fmt/titleWrap.h>
 #include <menu/IO/linuxKeyIn.h>
 
-Pair<Nil,Nil> ok;
+bool running=true;
 
 const char* subText="Sub-menu";
 const char* sub1_text="Sub 1";
@@ -58,18 +58,17 @@ StaticMenuOut<
 
 StaticNavRoot<Nav<MainMenu,2>::Part> nav(mainMenu);
 
+//menu input --------------------------------------
+LinuxKeyIn in;
+
 int main() {
-  // nav.path[0]=5;
-  // nav.path[0]=3;
-  // nav.path[1]=0;
-  // nav.level=1;
-  nav._up();
-  nav._up();
-  nav._up();
-  nav._up();
-  nav._up();
-  nav._down();
   nav.print(out);
-  MDO<<endl;
+  while(running) {
+    if (nav.doInput(in)) {
+      nav.print(out);
+      out.nl();
+    }
+    cout.flush();
+  };
   return 0;
 }
