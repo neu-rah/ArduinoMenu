@@ -77,12 +77,15 @@ struct Drift:N {
   inline static Idx pos() {return 0;}
   inline static bool selected(Idx) {return false;}
   inline Modes mode() const {return Modes::Normal;}
+  inline static void cmd(Cmd) {}
 };
 
 ////////////////////////////////////////////////////////////////////////////////
 // menu items base
 template<typename I>
 struct Empty:I {
+  inline static constexpr size_t size(PathRef=self) {return 0;}
+
   inline static constexpr bool parentPrint(PathRef=self) {return true;}
 
   template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
@@ -105,4 +108,10 @@ struct Empty:I {
 
   inline static constexpr bool changed() {return false;}
   inline static void changed(bool o) {}
+
+  // template<Cmds c,typename Nav>
+  // inline void cmd(Nav& nav,PathRef=self) {nav.template _cmd<c>();}
+  //
+  // template<Cmds c,typename Nav>
+  // inline void cmd(Nav& nav,Ref ref,Idx n) {nav.template _cmd<c>();}
 };

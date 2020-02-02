@@ -9,6 +9,11 @@ struct ItemArray {
   template<typename I>
   struct Part:I,vector<M*> {
     using vector<M*>::vector;
+
+    inline size_t size(PathRef ref=self) const {
+      _trace(MDO<<"ItemArray::size "<<ref<<endl);
+      return ref?vector<M*>::operator[](ref.head())->size(ref.tail()):vector<M*>::size();
+    }
     template<typename Nav,typename Out,Op op=Op::Printing>
     inline void printMenu(Nav& nav,Out& out,PathRef ref=self,Idx n=0) {
       trace(MDO<<"ItemArray::printMenu"<<endl);

@@ -5,6 +5,7 @@ using namespace std;
 #include <menu/comp/vector.h>
 #include <menu/fmt/fullText.h>
 #include <menu/fmt/titleWrap.h>
+#include <menu/IO/linuxKeyIn.h>
 
 Pair<Nil,Nil> ok;
 
@@ -58,9 +59,15 @@ StaticMenuOut<
 StaticNavRoot<Nav<MainMenu,2>::Part> nav(mainMenu);
 
 int main() {
-  nav.level=1;
-  nav.path[0]=3;
-  nav.path[1]=0;
+  // nav.path[0]=5;
+  // nav.path[0]=3;
+  // nav.path[1]=0;
+  // nav.level=1;
+  nav._up();
+  nav._up();
+  nav._up();
+  nav._up();
+  nav._up();
   nav.print(out);
   MDO<<endl;
   return 0;

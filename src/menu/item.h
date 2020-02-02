@@ -64,6 +64,12 @@ struct Pair:F {
   using This=Pair<F,S>;
   using F::F;
   S tail;
+  inline Idx size(PathRef ref=self,Idx n=0) const {
+    trace(MDO<<"Pair::size "<<ref<<" "<<n<<endl);
+    if(n>1) return tail.size(ref,--n);
+    else if (ref) return size(ref.tail(),ref.head());
+    else return tail.size()+1;
+  }
   template<typename Nav,typename Out,Op op=Op::Printing>
   inline void printMenu(Nav& nav,Out& out,PathRef ref=self,Idx n=0);
   template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
@@ -81,6 +87,10 @@ struct StaticMenu {
     Body body;
     using This=StaticMenu<Title,Body>;
     using I::I;
+
+    inline size_t size(PathRef ref=self) const {
+      trace(MDO<<"StaticMenu::Part::size -> body.size() "<<ref<<endl);
+      return body.size(ref);}
 
     template<typename Nav,typename Out,Op op=Op::Printing>
     inline void printMenu(Nav& nav,Out& out,PathRef ref=self,Idx n=0) {
@@ -113,6 +123,8 @@ struct Menu {
     using This=Menu<Title,Body,title,body>::Part<I>;
     using I::I;
 
+    inline size_t size(PathRef ref=self) const {return body.size(ref);}
+
     template<typename Nav,typename Out,Op op=Op::Printing>
     inline void printMenu(Nav& nav,Out& out,PathRef ref=self,Idx n=0) {
       trace(MDO<<"Menu::printMenu "<<op<<endl);
@@ -135,7 +147,7 @@ struct Menu {
 };
 
 struct IItem {
-  // virtual inline Idx len(PathRef=self)=0;
+  virtual inline size_t size(PathRef=self)=0;
   virtual inline void printMenu(INav& nav,IOut& out,Op op=Op::Printing,PathRef=self)=0;
   virtual inline void printItems(INav&,IOut&,Idx=0,Idx=0,PathRef=self,Op op=Op::Printing,Roles role=Roles::Raw)=0;
   virtual inline void print(INav&,IOut&,Op op,Roles role,PathRef=self)=0;
@@ -161,7 +173,7 @@ struct Prompt:IItem,Chain<Mutable,I...,Empty>::template To<Obj<Prompt<I...>>> {
   using Base::printItems;
   using Base::printMenu;
   using Base::print;
-  // inline Idx len(PathRef ref=self) override {return O::len(ref);}
+  inline size_t size(PathRef ref=self) override {return Base::size(ref);}
   inline void printMenu(INav& nav,IOut& out,Op op=Op::Printing,PathRef ref=self) override;
   inline void printItems(INav& nav,IOut& out,Idx idx=0,Idx top=0,PathRef ref=self,Op op=Op::Printing,Roles role=Roles::Raw) override;
   inline void print(INav& nav,IOut& out,Op op,Roles role,PathRef ref=self) override;

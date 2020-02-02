@@ -38,22 +38,22 @@ struct LinuxKeyIn:None {
   inline LinuxKeyIn() {set_conio_terminal_mode();}//capture the keyboard
   inline ~LinuxKeyIn() {reset_terminal_mode();}//capture the keyboard
   template<bool onField=false>
-  inline static Cmds cmd() {
+  inline static Cmd cmd() {
     if (kbhit()) {
       int k=getch();
       if (k==27&&kbhit()) k=getch();
       switch(k) {
         case 91:break;
-        case 66: return Cmds::Up;
-        case 65: return Cmds::Down;
-        case 13:case 67: return Cmds::Enter;
-        case 27:case 68: return Cmds::Esc;
+        case 66: return Cmd::Up;
+        case 65: return Cmd::Down;
+        case 13:case 67: return Cmd::Enter;
+        case 27:case 68: return Cmd::Esc;
         case 3://handle ctrl+c within the capturewd keyboard
           reset_terminal_mode();
           exit(0);
         default:break;
       }
     }
-    return Cmds::None;
+    return Cmd::None;
   }
 };

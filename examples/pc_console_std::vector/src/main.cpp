@@ -83,9 +83,9 @@ int main() {
   // out.printMenu(mainMenu_data,nav);
   // MDO<<endl;
   // out.printMenu(mainMenu,nav);
-  nav.path[0]=4;
-  nav.level=1;
-  nav.path[1]=0;
+  // nav.path[0]=4;
+  // nav.level=1;
+  // nav.path[1]=0;
   nav.print(out);
   // mainMenu.print(nav,out);
   MDO<<endl;

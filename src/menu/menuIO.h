@@ -70,6 +70,11 @@ struct StreamIn:O {
   }
 };
 
+struct None:Nil {
+  template<bool invY=false>
+  inline static constexpr Cmd cmd() {return Cmd::None;}
+};
+
 template<Expr... O>
 struct StaticMenuOut:Chain<O...,Void>::template To<Obj<StaticMenuOut<O...>>> {
   using Base=typename Chain<O...,Void>::template To<Obj<StaticMenuOut<O...>>>;

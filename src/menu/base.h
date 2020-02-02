@@ -76,7 +76,7 @@ struct Obj {
 //and dynamic access
 struct PathRef {
   Idx len;
-  Idx* path;
+  const Idx* path;
   inline Idx head() const {return path[0];}
   inline PathRef tail() const {return {(Idx)(len-1),&path[1]};}
   inline operator Idx() const {return len;}
@@ -85,6 +85,14 @@ struct PathRef {
     return len?(PathRef){(Idx)(len-1),path}:*this;
   }
 };
+
+template<typename O>
+inline O& operator<<(O& o,PathRef ref) {
+  o<<"{"<<ref.len<<",[";
+  for(int n=0;n<ref.len;n++)
+    o<<(n?", ":"")<<ref.path[n];
+  return o<<"]}";
+}
 
 constexpr PathRef self{0,0};
 
