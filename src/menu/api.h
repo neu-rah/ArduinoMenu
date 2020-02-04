@@ -2,6 +2,7 @@
 #pragma once
 
 #include "base.h"
+#include "path.h"
 
 class IItem;
 class INav;
@@ -100,6 +101,9 @@ struct Drift:N {
 // menu items base
 template<typename I>
 struct Empty:I {
+  inline static constexpr bool canNav(PathRef=self,Idx=0) {return false;}
+  inline static constexpr bool isMenu(PathRef=self,Idx=0) {return false;}
+
   inline static constexpr size_t size(PathRef=self,Idx=0) {return 0;}
 
   inline static constexpr bool parentPrint(PathRef=self) {return true;}
@@ -124,6 +128,8 @@ struct Empty:I {
 
   inline static constexpr bool changed() {return false;}
   inline static void changed(bool o) {}
+
+  inline static constexpr bool activate(PathRef=self,Idx=0) {return true;}
 
   template<typename Nav> inline void up(Nav& nav) {nav._up();}
   template<typename Nav> inline void down(Nav& nav) {nav._down();}

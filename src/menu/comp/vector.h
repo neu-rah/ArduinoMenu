@@ -10,6 +10,13 @@ struct ItemArray {
   struct Part:I,vector<M*> {
     using vector<M*>::vector;
 
+    inline bool canNav(PathRef ref=self,Idx n=0) {
+      _trace(MDO<<"ItemArray::canNav "<<ref<<" "<<n<<endl);
+      if(n) return vector<M*>::operator[](n).canNav(ref);
+      else if (ref) return vector<M*>::operator[](n).canNav(ref.tail(),ref.head());
+      else return canNav();
+    }
+
     inline size_t size(PathRef ref=self) const {
       _trace(MDO<<"ItemArray::size "<<ref<<endl);
       return ref?vector<M*>::operator[](ref.head())->size(ref.tail()):vector<M*>::size();

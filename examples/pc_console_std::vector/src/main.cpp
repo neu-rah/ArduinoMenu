@@ -4,7 +4,11 @@ using namespace std;
 #include <menu.h>
 #include <menu/comp/vector.h>
 #include <menu/fmt/fullText.h>
+#include <menu/IO/linuxKeyIn.h>
 
+bool running=true;
+
+//menu data/texts ----------------------------
 const char* mainText="Main menu";
 Item<StaticText<&mainText>::Part> title;
 
@@ -19,6 +23,7 @@ Prompt<Text> sub2("Sub 2");
 Prompt<Text> subn("Sub...");
 Prompt<Text> exitOp("<Exit");
 
+//menu structure -------------------------
 Prompt<
   ItemArray<IItem>::Part
 > subMenu_data{
@@ -61,8 +66,10 @@ using MainMenu=Prompt<
 
 MainMenu mainMenu;
 
+//menu navigation control -------------------------
 NavRoot<Nav<MainMenu,2>::Part> nav(mainMenu);
 
+//menu output --------------------------------------
 MenuOut<
   FullPrinter,
   TextFmt,
@@ -71,23 +78,17 @@ MenuOut<
   TextMeasure<>::Part
 > out;
 
+//menu input --------------------------------------
+LinuxKeyIn in;
+
 int main() {
-  // MDO<<"lone print:";
-  // op1.print(out);
-  // MDO<<endl;
-  // MDO<<"AM5 data size:"<<mainMenu_data.size()<<endl<<endl;
-  // title.print(out);
-  // MDO<<endl;
-  // mainMenu_data.printItems(nav,out);
-  // MDO<<endl;
-  // out.printMenu(mainMenu_data,nav);
-  // MDO<<endl;
-  // out.printMenu(mainMenu,nav);
-  // nav.path[0]=4;
-  // nav.level=1;
-  // nav.path[1]=0;
   nav.print(out);
-  // mainMenu.print(nav,out);
-  MDO<<endl;
+  while(running) {
+    if (nav.doInput(in)) {
+      nav.print(out);
+      out.nl();
+    }
+    cout.flush();
+  };
   return 0;
 }

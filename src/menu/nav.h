@@ -16,7 +16,7 @@ struct Nav {
     inline Part(Data& o):root(o){}
     template<typename Out>
     inline void print(Out& out) {
-      _trace(MDO<<"Nav::print"<<endl);
+      trace(MDO<<"Nav::print"<<endl);
       root.printMenu(N::obj(),out,*this);}
     inline Idx pos() const {return path[level];}
     inline Modes mode() const {return editMode;}
@@ -53,15 +53,16 @@ struct Nav {
     inline void enter() {root.enter(N::obj());}
     inline void esc() {root.esc(N::obj());}
     inline void _up() {
-      _trace(MDO<<"pos:"<<pos()<<" size:"<<size()<<endl);
+      trace(MDO<<"pos:"<<pos()<<" size:"<<size()<<endl);
       if(pos()+1<size()) setPos(pos()+1);}
     inline void _down() {if(pos()>0) setPos(pos()-1);}
     inline void _enter() {
-    _trace(MDO<<"enter->sending activate"<<endl);
-      // bool n=root.canNav(*this,This::head());
-      // bool r=root.activate(*this,head());
-      // trace(MDO<<"canNav:"<<n<<" activated:"<<r<<endl);
-      // if (!(n^r)) n?open():close();
+      _trace(MDO<<"enter->sending activate "<<(PathRef)*this<<endl);
+      bool n=root.canNav(*this,This::head());
+      bool r=root.activate(*this);
+      _trace(MDO<<"canNav:"<<n<<" activated:"<<r<<endl);
+      _trace(MDO<<"!(n^r):"<<(!(n^r))<<endl);
+      if (!(n^r)) n?open():close();
     }
     inline void _esc() {close();}
     template<Cmd c>

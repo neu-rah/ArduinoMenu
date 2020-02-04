@@ -18,13 +18,15 @@ using ActionHandler=bool (*)();
 /**
 * The Action class associates an actikon function with a menu item.
 */
-template<ActionHandler act,typename I>
-struct Action:I {
-  using Base=I;
-  using I::I;
-  using This=Action<act,I>;
-  inline static bool activate() {return act();}
-  // inline static bool activate(PathRef ref,Idx n) {return ref?false:act();}
+template<ActionHandler act>
+struct Action {
+  template<typename I>
+  struct Part:I {
+    using Base=I;
+    using I::I;
+    using This=Action<act>::Part<I>;
+    inline static bool activate(PathRef ref=self) {return ref?false:act();}
+  };
 };
 
 template<const char** text>
@@ -76,6 +78,30 @@ struct Pair:F {
   inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,PathRef ref=self);
   template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
   inline void printItems(Nav& nav,Out& out,Idx idx,Idx top,PathRef ref,Idx n);
+
+  inline bool activate(PathRef ref=self,Idx n=0) {
+    trace(MDO<<"Pair::activate "<<ref<<" "<<n<<endl);
+    if(n) return tail.activate(ref,--n);
+    if (ref) return activate(ref.tail(),ref.head());
+    // _trace(
+    //   MDO<<"activating ";
+    //   F::print(debugOut);
+    //   MDO<<endl;
+    // );
+    return F::activate();
+  }
+  inline bool canNav(PathRef ref=self,Idx n=0) {
+    _trace(MDO<<"Pair::canNav "<<ref<<" "<<n<<endl);
+    if(n) return tail.canNav(ref,--n);
+    else if (ref) return canNav(ref.tail(),ref.head());
+    else return F::canNav();
+  }
+  inline bool isMenu(PathRef ref=self,Idx n=0) {
+    _trace(MDO<<"Pair::isMenu "<<ref<<" "<<n<<endl);
+    if(n) return tail.isMenu(ref,--n);
+    else if (ref) return isMenu(ref.tail(),ref.head());
+    else return F::isMenu();
+  }
 };
 
 template<typename Title,typename Body>
@@ -87,6 +113,21 @@ struct StaticMenu {
     Body body;
     using This=StaticMenu<Title,Body>;
     using I::I;
+
+    inline bool activate(PathRef ref=self) {
+      _trace(MDO<<"StaticMenu::activate "<<ref<<endl);
+      return ref.path?body.activate(ref,ref.head()):true;
+    }
+
+    inline bool canNav(PathRef ref=self,Idx n=0) {
+      _trace(MDO<<"StaticMenu::canNav "<<ref<<endl);
+      return ref.path?body.canNav(ref,ref.head()):true;
+    }
+
+    inline bool isMenu(PathRef ref=self,Idx n=0) {
+      _trace(MDO<<"StaticMenu::isMenu "<<ref<<endl);
+      return ref.path?body.isMenu(ref,ref.head()):true;
+    }
 
     inline size_t size(PathRef ref=self) const {
       trace(MDO<<"StaticMenu::Part::size -> body.size() "<<ref<<endl);

@@ -72,30 +72,6 @@ struct Obj {
   inline Type& obj() const {return *(Type*)this;}
 };
 
-//a reference to menu item that works also for static structures
-//and dynamic access
-struct PathRef {
-  Idx len;
-  const Idx* path;
-  inline Idx head() const {return path[0];}
-  inline PathRef tail() const {return {(Idx)(len-1),&path[1]};}
-  inline operator Idx() const {return len;}
-  inline operator bool() const {return len;}
-  inline PathRef parent() const {
-    return len?(PathRef){(Idx)(len-1),path}:*this;
-  }
-};
-
-template<typename O>
-inline O& operator<<(O& o,PathRef ref) {
-  o<<"{"<<ref.len<<",[";
-  for(int n=0;n<ref.len;n++)
-    o<<(n?", ":"")<<ref.path[n];
-  return o<<"]}";
-}
-
-constexpr PathRef self{0,0};
-
 #include "debug.h"
 #define endl "\n\r"
 
