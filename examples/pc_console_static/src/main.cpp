@@ -45,6 +45,7 @@ using MainMenu=Item<
       Item<StaticText<&op1_text>::Part>,
       Item<StaticText<&op2_text>::Part>,
       Item<StaticText<&opn_text>::Part>,
+      Item<StaticText<&opn_text>::Part>,
       Item<
         StaticMenu<
           StaticText<&subText>::Part<>,
@@ -74,16 +75,16 @@ StaticMenuOut<
   TextMeasure<>::Part
 > out;
 
-StaticNavRoot<Nav<MainMenu,2>::Part> nav(mainMenu);
+StaticNavRoot<Nav<MainMenu,3>::Part> nav(mainMenu);
 
 //menu input --------------------------------------
 LinuxKeyIn in;
 
 int main() {
-  // _trace(MDO<<"isMenu:"<<mainMenu.isMenu()<<endl);
-  // _trace(MDO<<"isMenu:"<<mainMenu.canNav(Path<2>().ref())<<endl);
-  // nav.setPos(3);
-  // nav.enter();
+  nav.path[0]=4;
+  nav.path[1]=3;
+  nav.level=1;
+  nav.enter();
   nav.print(out);
   while(running) {
     if (nav.doInput(in)) {

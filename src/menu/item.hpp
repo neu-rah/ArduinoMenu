@@ -3,7 +3,7 @@
 template<typename F,typename S>
 template<typename Nav,typename Out,Op op>
 inline void Pair<F,S>::printMenu(Nav& nav,Out& out,PathRef ref,Idx n) {
-  trace(MDO<<"Pair::printMenu..."<<endl);
+  _trace(MDO<<"Pair::printMenu... "<<ref<<":"<<n<<endl);
   if (n) tail.template printMenu<Nav,Out,op>(nav,out,ref,n-1);
   else if (ref) F::template printMenu<Nav,Out,op>(nav,out,ref.tail(),ref.head());
   else out.template printMenu<typename F::Type,Nav,op>(F::obj(),nav);

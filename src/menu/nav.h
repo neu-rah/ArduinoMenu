@@ -18,13 +18,17 @@ struct Nav {
     inline void print(Out& out) {
       trace(MDO<<"Nav::print"<<endl);
       root.printMenu(N::obj(),out,*this);}
+    template<typename Out>
+    inline void printParent(Out& out) {
+      trace(MDO<<"Nav::printParent"<<endl);
+      root.printMenu(N::obj(),out,parent());}
     inline Idx pos() const {return path[level];}
     inline Modes mode() const {return editMode;}
     inline void setMode(Modes m) {editMode=m;}
     inline bool selected(Idx i) const {return path[level]==i;}
     inline void setPos(Idx n) {path[level]=n;}
     inline Idx head() const {return path[0];}
-    inline operator PathRef() const {return (PathRef){level,path};}
+    inline operator PathRef() const {return (PathRef){level+1,path};}
     inline PathRef parent() const {return operator PathRef().parent();}
     inline void open() {
       assert(level<max_depth-1);

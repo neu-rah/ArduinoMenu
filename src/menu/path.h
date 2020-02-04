@@ -16,7 +16,7 @@ struct PathRef {
   inline Idx head() const {return path[0];}
   inline PathRef tail() const {return {(Idx)(len-1),&path[1]};}
   inline operator Idx() const {return len;}
-  inline operator bool() const {return len;}
+  inline operator bool() const {return len>1;}
   inline PathRef parent() const {
     return len?(PathRef){(Idx)(len-1),path}:*this;
   }
@@ -26,7 +26,7 @@ template<typename O>
 inline O& operator<<(O& o,PathRef ref) {
   o<<"{"<<ref.len<<",[";
   if(ref.path)
-    for(int n=0;n<=ref.len;n++)
+    for(int n=0;n<ref.len;n++)
       o<<(n?", ":"")<<ref.path[n];
   else o<<"NULL";
   return o<<"]}";

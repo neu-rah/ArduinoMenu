@@ -115,17 +115,18 @@ struct StaticMenu {
     using I::I;
 
     inline bool activate(PathRef ref=self) {
-      _trace(MDO<<"StaticMenu::activate "<<ref<<endl);
+      trace(MDO<<"StaticMenu::activate "<<ref<<endl);
       return ref.path?body.activate(ref,ref.head()):true;
     }
 
     inline bool canNav(PathRef ref=self,Idx n=0) {
-      _trace(MDO<<"StaticMenu::canNav "<<ref<<endl);
-      return ref.path?body.canNav(ref,ref.head()):true;
+      trace(MDO<<"StaticMenu::canNav "<<ref<<endl);
+      if(n) return canNav(ref,--n);
+      return ref?body.canNav(ref.tail(),ref.head()):true;
     }
 
     inline bool isMenu(PathRef ref=self,Idx n=0) {
-      _trace(MDO<<"StaticMenu::isMenu "<<ref<<endl);
+      trace(MDO<<"StaticMenu::isMenu "<<ref<<endl);
       return ref.path?body.isMenu(ref,ref.head()):true;
     }
 
@@ -135,7 +136,7 @@ struct StaticMenu {
 
     template<typename Nav,typename Out,Op op=Op::Printing>
     inline void printMenu(Nav& nav,Out& out,PathRef ref=self,Idx n=0) {
-      trace(MDO<<"StaticMenu::printMenu... "<<op<<endl);
+      trace(MDO<<"StaticMenu::printMenu... "<<op<<" "<<ref<<endl);
       if (ref) body.template printMenu<Nav,Out,op>(nav,out,ref,ref.head());
       else out.template printMenu<typename I::Type,Nav,op>(I::obj(),nav);
     }
