@@ -110,22 +110,22 @@ struct Empty:I {
 
   template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
   inline static void print(Nav& nav,Out& out,PathRef ref=self) {
-    trace(MDO<<"Empty::print "<<ref<<endl);
+    _trace(MDO<<"Empty::print "<<ref<<endl);
   }
 
   template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
   inline static void printItems(Nav& nav,Out& out,Idx=0,Idx=0,PathRef ref=self) {
-    trace(MDO<<"Empty::printItems "<<ref<<endl);
+    _trace(MDO<<"Empty::printItems "<<ref<<endl);
   }
 
   template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
   inline static void printItems(Nav& nav,Out& out,Idx idx,Idx top,PathRef ref,Idx n) {
-    trace(MDO<<"Empty::printItems "<<ref<<":"<<n<<endl);
+    _trace(MDO<<"Empty::printItems "<<ref<<":"<<n<<endl);
   }
 
   template<typename Nav,typename Out,Op op=Op::Printing>
   inline void printMenu(Nav& nav,Out& out,PathRef ref=self,Idx n=0) {
-    trace(MDO<<"Empty::printMenu "<<ref<<":"<<n<<endl);
+    _trace(MDO<<"Empty::printMenu "<<ref<<":"<<n<<" printing parent"<<endl);
     //print<Nav,Out,op>(nav,out);
     nav.printParent(out);
   }

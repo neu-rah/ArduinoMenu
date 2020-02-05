@@ -68,17 +68,22 @@ struct Pair:F {
   S tail;
   inline Idx size(PathRef ref=self,Idx n=0) const {
     trace(MDO<<"Pair::size "<<ref<<" "<<n<<endl);
-    if(n>1) return tail.size(ref,--n);
-    else if (ref) return size(ref.tail(),ref.head());
-    else return tail.size()+1;
+    if(n) return tail.size(ref,--n);
+    if (ref) return F::size(ref.tail());
+    return tail.size()+1;
   }
-  template<typename Nav,typename Out,Op op=Op::Printing>
-  inline void printMenu(Nav& nav,Out& out,PathRef ref=self,Idx n=0);
-  template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
-  inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,PathRef ref=self);
-  template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
-  inline void printItems(Nav& nav,Out& out,Idx idx,Idx top,PathRef ref,Idx n);
-
+  inline bool canNav(PathRef ref=self,Idx n=0) {
+    _trace(MDO<<"Pair::canNav "<<ref<<" "<<n<<endl);
+    if(n) return tail.canNav(ref,--n);
+    if (ref) return F::canNav(ref.tail());
+    return F::canNav();
+  }
+  inline bool isMenu(PathRef ref=self,Idx n=0) {
+    _trace(MDO<<"Pair::isMenu "<<ref<<" "<<n<<endl);
+    if(n) return tail.isMenu(ref,--n);
+    if (ref) return F::isMenu(ref.tail());
+    return F::isMenu();
+  }
   inline bool activate(PathRef ref=self,Idx n=0) {
     trace(MDO<<"Pair::activate "<<ref<<" "<<n<<endl);
     if(n) return tail.activate(ref,--n);
@@ -90,18 +95,13 @@ struct Pair:F {
     // );
     return F::activate();
   }
-  inline bool canNav(PathRef ref=self,Idx n=0) {
-    _trace(MDO<<"Pair::canNav "<<ref<<" "<<n<<endl);
-    if(n) return tail.canNav(ref,--n);
-    else if (ref) return canNav(ref.tail(),ref.head());
-    else return F::canNav();
-  }
-  inline bool isMenu(PathRef ref=self,Idx n=0) {
-    _trace(MDO<<"Pair::isMenu "<<ref<<" "<<n<<endl);
-    if(n) return tail.isMenu(ref,--n);
-    else if (ref) return isMenu(ref.tail(),ref.head());
-    else return F::isMenu();
-  }
+  template<typename Nav,typename Out,Op op=Op::Printing>
+  inline void printMenu(Nav& nav,Out& out,PathRef ref=self,Idx n=0);
+  template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
+  inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,PathRef ref=self);
+  template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
+  inline void printItems(Nav& nav,Out& out,Idx idx,Idx top,PathRef ref,Idx n);
+
 };
 
 template<typename Title,typename Body>
@@ -114,25 +114,25 @@ struct StaticMenu {
     using This=StaticMenu<Title,Body>;
     using I::I;
 
-    inline bool activate(PathRef ref=self) {
-      trace(MDO<<"StaticMenu::activate "<<ref<<endl);
-      return ref.path?body.activate(ref,ref.head()):true;
+    inline size_t size(PathRef ref=self) const {
+      trace(MDO<<"StaticMenu::Part::size -> body.size() "<<ref<<endl);
+      return ref?body.size(ref,ref.head()):body.size();
     }
 
     inline bool canNav(PathRef ref=self,Idx n=0) {
       trace(MDO<<"StaticMenu::canNav "<<ref<<endl);
-      if(n) return canNav(ref,--n);
-      return ref?body.canNav(ref.tail(),ref.head()):true;
+      return ref?body.canNav(ref,ref.head()):true;
     }
 
     inline bool isMenu(PathRef ref=self,Idx n=0) {
       trace(MDO<<"StaticMenu::isMenu "<<ref<<endl);
-      return ref.path?body.isMenu(ref,ref.head()):true;
+      return ref?body.isMenu(ref,ref.head()):true;
     }
 
-    inline size_t size(PathRef ref=self) const {
-      trace(MDO<<"StaticMenu::Part::size -> body.size() "<<ref<<endl);
-      return body.size(ref);}
+    inline bool activate(PathRef ref=self) {
+      trace(MDO<<"StaticMenu::activate "<<ref<<endl);
+      return ref?body.activate(ref,ref.head()):true;
+    }
 
     template<typename Nav,typename Out,Op op=Op::Printing>
     inline void printMenu(Nav& nav,Out& out,PathRef ref=self,Idx n=0) {
