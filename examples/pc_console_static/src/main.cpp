@@ -21,7 +21,7 @@ bool quit() {
 bool exit() {
   //just signal program exit
   _trace(MDO<<"Exit!"<<endl);
-  return true;
+  return false;
 }
 
 //menu texts -------------------------

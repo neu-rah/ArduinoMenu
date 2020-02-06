@@ -22,18 +22,10 @@ struct PathRef {
   }
 };
 
-template<typename O>
-inline O& operator<<(O& o,PathRef ref) {
-  o<<"{"<<ref.len<<",[";
-  if(ref.path)
-    for(int n=0;n<ref.len;n++)
-      o<<(n?", ":"")<<ref.path[n];
-  else o<<"NULL";
-  return o<<"]}";
-}
-
+//default self reference
 constexpr PathRef self{0,0};
 
+//synthesizing a PathReference at compile time
 template<Idx... OO>
 struct Path {
   template<Idx i,Idx... ii> struct Len {inline static constexpr size_t len() {return 1+Len<ii...>::len();}};
@@ -42,3 +34,15 @@ struct Path {
   Idx path[Len<OO...>::len()]{OO...};
   inline PathRef ref() {return {Len<OO...>::len(),path};}
 };
+
+#ifdef MENU_DEBUG
+  template<typename O>
+  inline O& operator<<(O& o,PathRef ref) {
+    o<<"{"<<ref.len<<",[";
+    if(ref.path)
+      for(int n=0;n<ref.len;n++)
+        o<<(n?", ":"")<<ref.path[n];
+    else o<<"NULL";
+    return o<<"]}";
+  }
+#endif

@@ -47,7 +47,7 @@ Item<
     StaticData<
       Item<EnDis<FlashText<decltype(op1_text),&op1_text>>::Part>,
       Item<EnDis<FlashText<decltype(op2_text),&op2_text>>::Part>,
-      Item<Action<tog12,FlashText<decltype(tog12_text),&tog12_text>>::Part>,
+      Item<Action<tog12>::Part,FlashText<decltype(tog12_text),&tog12_text>::Part>,
       Item<FlashText<decltype(opn_text),&opn_text>::Part>,
       Item<
         StaticMenu<
@@ -80,7 +80,7 @@ using Out=StaticMenuOut<
 Out out;//create output object (Serial)
 
 //navigation root ---------------------------------
-StaticNavRoot<Nav<decltype(mainMenu),2>::Part> nav(mainMenu);
+StaticNavRoot<Nav<decltype(mainMenu),3>::Part> nav(mainMenu);
 
 //menu action handlers implementation
 bool tog12() {

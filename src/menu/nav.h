@@ -64,7 +64,7 @@ struct Nav {
     inline void _enter() {
       _trace(MDO<<"enter->sending activate "<<(PathRef)*this<<endl);
       bool n=root.canNav(*this);//TODO: check this on activate!
-      bool r=root.activate(parent());
+      bool r=root.activate(*this);
       _trace(MDO<<"canNav:"<<n<<" activated:"<<r<<endl);
       _trace(MDO<<"!(n^r):"<<(!(n^r))<<endl);
       if (!(n^r)) n?open():close();
