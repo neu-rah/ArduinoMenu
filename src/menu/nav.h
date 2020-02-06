@@ -32,7 +32,7 @@ struct Nav {
     inline PathRef parent() const {return operator PathRef().parent();}
     inline void open() {
       assert(level<max_depth-1);
-      if(!root.isMenu(*this,head())) setMode(Modes::Edit);
+      if(!root.isMenu(*this)) setMode(Modes::Edit);
       path[++level]=0;
     }
     inline void close() {
@@ -52,18 +52,19 @@ struct Nav {
     //   }
     // }
     inline size_t size() const {return root.size(*this);}
+    inline size_t size(PathRef ref) const {return root.size(ref);}
     inline void up() {root.up(N::obj());}
     inline void down() {root.down(N::obj());}
     inline void enter() {root.enter(N::obj());}
     inline void esc() {root.esc(N::obj());}
     inline void _up() {
-      trace(MDO<<"pos:"<<pos()<<" size:"<<size()<<endl);
-      if(pos()+1<size()) setPos(pos()+1);}
+      _trace(MDO<<"pos:"<<pos()<<" size:"<<size(parent())<<endl);
+      if(pos()+1<size(parent())) setPos(pos()+1);}
     inline void _down() {if(pos()>0) setPos(pos()-1);}
     inline void _enter() {
       _trace(MDO<<"enter->sending activate "<<(PathRef)*this<<endl);
-      bool n=root.canNav(*this,This::head());
-      bool r=root.activate(*this);
+      bool n=root.canNav(*this);//TODO: check this on activate!
+      bool r=root.activate(parent());
       _trace(MDO<<"canNav:"<<n<<" activated:"<<r<<endl);
       _trace(MDO<<"!(n^r):"<<(!(n^r))<<endl);
       if (!(n^r)) n?open():close();

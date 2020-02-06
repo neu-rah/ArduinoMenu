@@ -106,7 +106,7 @@ struct Empty:I {
 
   inline static constexpr size_t size(PathRef=self,Idx=0) {return 0;}
 
-  inline static constexpr bool parentPrint(PathRef=self) {return true;}
+  inline static constexpr bool parentPrint(PathRef=self,Idx=0) {return true;}
 
   template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
   inline static void print(Nav& nav,Out& out,PathRef ref=self) {
