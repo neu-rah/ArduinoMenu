@@ -102,7 +102,7 @@ struct Drift:N {
 template<typename I>
 struct Empty:I {
   inline static constexpr bool canNav(PathRef=self,Idx=0) {return false;}
-  inline static constexpr bool isMenu(PathRef=self,Idx=0) {return false;}
+  // inline static constexpr bool isMenu(PathRef=self,Idx=0) {return false;}
 
   inline static constexpr size_t size(PathRef=self,Idx=0) {return 0;}
 
@@ -110,24 +110,24 @@ struct Empty:I {
 
   template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
   inline static void print(Nav& nav,Out& out,PathRef ref=self) {
-    _trace(MDO<<"Empty::print "<<ref<<endl);
+    trace(MDO<<"Empty::print "<<ref<<endl);
   }
 
   template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
   inline static void printItems(Nav& nav,Out& out,Idx=0,Idx=0,PathRef ref=self) {
-    _trace(MDO<<"Empty::printItems "<<ref<<endl);
+    trace(MDO<<"Empty::printItems "<<ref<<endl);
   }
 
   template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
   inline static void printItems(Nav& nav,Out& out,Idx idx,Idx top,PathRef ref,Idx n) {
-    _trace(MDO<<"Empty::printItems "<<ref<<":"<<n<<endl);
+    trace(MDO<<"Empty::printItems "<<ref<<":"<<n<<endl);
   }
 
   template<typename Nav,typename Out,Op op=Op::Printing>
   inline void printMenu(Nav& nav,Out& out,PathRef ref=self,Idx n=0) {
-    _trace(MDO<<"Empty::printMenu "<<ref<<":"<<n<<" printing parent"<<endl);
+    trace(MDO<<"Empty::printMenu "<<ref<<":"<<n<<" printing parent"<<endl);
     //print<Nav,Out,op>(nav,out);
-    nav.printParent(out);
+    // nav.printParent(out);
   }
 
   // template<typename Nav,typename Out,Op op=Op::Printing>

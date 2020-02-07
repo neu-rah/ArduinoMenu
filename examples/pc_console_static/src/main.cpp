@@ -2,7 +2,6 @@
 using namespace std;
 
 #include <menu.h>
-#include <menu/comp/vector.h>
 #include <menu/fmt/fullText.h>
 #include <menu/fmt/titleWrap.h>
 #include <menu/IO/linuxKeyIn.h>

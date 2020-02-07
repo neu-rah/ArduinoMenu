@@ -67,7 +67,7 @@ using MainMenu=Prompt<
 MainMenu mainMenu;
 
 //menu navigation control -------------------------
-NavRoot<Nav<MainMenu,2>::Part> nav(mainMenu);
+NavRoot<Nav<MainMenu,3>::Part> nav(mainMenu);
 
 //menu output --------------------------------------
 MenuOut<

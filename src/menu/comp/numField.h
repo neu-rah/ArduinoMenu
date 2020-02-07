@@ -21,8 +21,8 @@
       inline NumValue():reflex(value){}
       using I::canNav;
       inline static constexpr bool canNav() {return true;}
-      using I::isMenu;
-      inline static constexpr bool isMenu() {return false;}
+      // using I::isMenu;
+      // inline static constexpr bool isMenu() {return false;}
       using I::parentDraw;
       inline static constexpr bool parentDraw(Idx=0) {return true;}
       using I::activate;
