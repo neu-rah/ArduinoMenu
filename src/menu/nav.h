@@ -16,7 +16,7 @@ struct Nav {
     inline Part(Data& o):root(o){}
     template<typename Out>
     inline void print(Out& out) {
-      _trace(MDO<<"Nav::print"<<endl);
+      trace(MDO<<"Nav::print"<<endl);
       root.printMenu(N::obj(),out,*this);}
     template<typename Out>
     inline void printParent(Out& out) {
@@ -32,26 +32,15 @@ struct Nav {
     inline PathRef parent() const {return operator PathRef().parent();}
     inline void open() {
       assert(level<max_depth-1);
-      // if(!root.isMenu(*this)) setMode(Modes::Edit);
       if(!root.canNav(*this)) setMode(Modes::Edit);
       path[++level]=0;
     }
     inline void close() {
-      // assert(level>0);
       if(level>0) {
         path[level--]=0;
         setMode(Modes::Normal);
       }
     }
-    // inline void up() {root.template cmd<typename N::Type,Cmd::Up>();}
-    // inline void down() {root.template cmd<typename N::Type,Cmd::Down>();}
-    // inline void cmd(Cmd c) {
-    //   switch(cmd) {
-    //     case Cmd::None: break;
-    //     case Cmd::Up: up();break;
-    //     case Cmd::Down: down();break;
-    //   }
-    // }
     inline size_t size() const {return root.size(*this);}
     inline size_t size(PathRef ref) const {return root.size(ref);}
     inline void up() {root.up(N::obj());}
@@ -59,15 +48,15 @@ struct Nav {
     inline void enter() {root.enter(N::obj());}
     inline void esc() {root.esc(N::obj());}
     inline void _up() {
-      _trace(MDO<<"pos:"<<pos()<<" size:"<<size(parent())<<endl);
+      trace(MDO<<"pos:"<<pos()<<" size:"<<size(parent())<<endl);
       if(pos()+1<size(parent())) setPos(pos()+1);}
     inline void _down() {if(pos()>0) setPos(pos()-1);}
     inline void _enter() {
-      _trace(MDO<<"enter->sending activate "<<(PathRef)*this<<endl);
+      trace(MDO<<"enter->sending activate "<<(PathRef)*this<<endl);
       bool n=root.canNav(*this);//TODO: check this on activate! => can not, we double check it
       bool r=root.activate(*this);
-      _trace(MDO<<"canNav:"<<n<<" activated:"<<r<<endl);
-      _trace(MDO<<"!(n^r):"<<(!(n^r))<<endl);
+      trace(MDO<<"canNav:"<<n<<" activated:"<<r<<endl);
+      trace(MDO<<"!(n^r):"<<(!(n^r))<<endl);
       if (!(n^r)) n?open():close();
     }
     inline void _esc() {close();}

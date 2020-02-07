@@ -11,13 +11,6 @@
 template<typename O>
 struct FullPrinter:public O {
   using This=FullPrinter<O>;
-  // template<typename It,typename Nav,typename Out>
-  // inline void printParent(It& it,Nav& nav,Out& out) {
-  //   //this is ugly but short
-  //   nav.left();
-  //   This::printMenu<It,Nav>(it,nav,out);
-  //   nav.right();
-  // }
   template<typename It,typename Nav,Op op=Op::Printing>
   void printMenu(It& it,Nav& nav) {
     trace(MDO<<"FullPrinter::printMenu"<<endl);

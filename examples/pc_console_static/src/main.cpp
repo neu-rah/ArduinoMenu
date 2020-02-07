@@ -80,9 +80,6 @@ StaticNavRoot<Nav<MainMenu,3>::Part> nav(mainMenu);
 LinuxKeyIn in;
 
 int main() {
-  // nav.path[0]=4;
-  // nav.path[1]=3;
-  // nav.level=1;
   nav.enter();
   nav.print(out);
   while(running) {

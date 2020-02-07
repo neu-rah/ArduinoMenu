@@ -8,6 +8,19 @@ using namespace std;
 
 bool running=true;
 
+bool quit() {
+  //just signal program exit
+  _trace(MDO<<"Quit!"<<endl);
+  running=false;
+  return true;
+}
+
+bool exit() {
+  //just signal program exit
+  _trace(MDO<<"Exit!"<<endl);
+  return false;
+}
+
 //menu data/texts ----------------------------
 const char* mainText="Main menu";
 Item<StaticText<&mainText>::Part> title;
@@ -15,13 +28,13 @@ Item<StaticText<&mainText>::Part> title;
 Prompt<Text> op1("Option 1");
 Prompt<Text> op2("Option 2");
 Prompt<Text> opn("Option...");
-Prompt<Text> quit("<Quit.");
+Prompt<Action<quit>::Part,Text> quitOp("<Quit.");
 
 Prompt<Text> sub_title("Sub-menu");
 Prompt<Text> sub1("Sub 1");
 Prompt<Text> sub2("Sub 2");
 Prompt<Text> subn("Sub...");
-Prompt<Text> exitOp("<Exit");
+Prompt<Action<exit>::Part,Text> exitOp("<Exit");
 
 //menu structure -------------------------
 Prompt<
@@ -52,7 +65,7 @@ Prompt<
   &opn,
   &opn,
   (IItem*)&subMenu,
-  &quit
+  &quitOp
 };
 
 using MainMenu=Prompt<

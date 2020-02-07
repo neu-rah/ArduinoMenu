@@ -126,12 +126,7 @@ struct Empty:I {
   template<typename Nav,typename Out,Op op=Op::Printing>
   inline void printMenu(Nav& nav,Out& out,PathRef ref=self,Idx n=0) {
     trace(MDO<<"Empty::printMenu "<<ref<<":"<<n<<" printing parent"<<endl);
-    //print<Nav,Out,op>(nav,out);
-    // nav.printParent(out);
   }
-
-  // template<typename Nav,typename Out,Op op=Op::Printing>
-  // inline void printMenu(Nav& nav,Out& out,PathRef,Idx) {print<Nav,Out,op>(nav,out);}
 
   inline static constexpr bool enabled(PathRef=self) {return true;}
   inline static void enable(bool,PathRef=self) {}
