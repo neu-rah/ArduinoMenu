@@ -242,5 +242,5 @@ template<typename I>
 struct Exit:I {
   using Base=I;
   inline static constexpr bool activate() {return false;}
-  inline static constexpr bool activate(PathRef,Idx=0) {return activate();}
+  // inline static constexpr bool activate(PathRef,Idx=0) {return activate();}
 };

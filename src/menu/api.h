@@ -84,17 +84,7 @@ struct Drift:N {
   inline static void enter(Cmd) {}
   inline static void esc(Cmd) {}
   template<typename In>
-  inline bool doInput(In& in) {
-    Cmd c=in.cmd();
-    switch(c) {
-      case Cmd::Up:N::obj().up();break;
-      case Cmd::Down:N::obj().down();break;
-      case Cmd::Enter:N::obj().enter();break;
-      case Cmd::Esc:N::obj().esc();break;
-      default:return false;
-    }
-    return true;
-  }
+  inline bool doInput(In& in) {return in.cmd(N::obj());}
 };
 
 ////////////////////////////////////////////////////////////////////////////////

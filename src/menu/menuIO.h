@@ -56,16 +56,16 @@ struct StreamOut {
 
 template<typename Dev,Dev& dev,typename O>
 struct StreamIn:O {
-  template<bool invY=false>
-  inline static Cmd cmd() {
+  template<typename Nav>
+  inline static bool cmd(Nav& nav) {
     char c;
     dev>>c;
     switch(c) {
-      case '+': return Cmd::Up;
-      case '-': return Cmd::Down;
-      case '*': return Cmd::Enter;
-      case '/': return Cmd::Esc;
-      default:return Cmd::None;
+      case '+': return nav.cmd(Cmd::Up);
+      case '-': return nav.cmd(Cmd::Down);
+      case '*': return nav.cmd(Cmd::Enter);
+      case '/': return nav.cmd(Cmd::Esc);
+      default:return false;
     }
   }
 };

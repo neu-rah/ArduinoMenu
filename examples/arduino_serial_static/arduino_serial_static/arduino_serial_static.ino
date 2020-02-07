@@ -7,7 +7,7 @@ tested on nano
 //main include for ArduinoMenu
 #include <menu.h>
 //input/output drivers --------------------------------------
-// #include <menu/IO/Arduino/serialIn.h>
+#include <menu/IO/Arduino/serialIn.h>
 #include <menu/IO/Arduino/serialOut.h>
 // #include <menu/IO/Arduino/serialIO.h>//include both serial in and out
 //format specifyers -----------------------------------------
@@ -67,7 +67,7 @@ Item<
 > mainMenu;//create menu object
 
 //menu input --------------------------------------
-// SerialIn<decltype(Serial),Serial> in;//create input object (here serial)
+SerialIn<decltype(Serial),Serial> in;//create input object (here serial)
 
 //menu output (Serial)
 using Out=StaticMenuOut<
@@ -94,14 +94,9 @@ void setup() {
   while(!Serial);
   Serial.println("ArduinoMenu 5");
   delay(500);
-  // test.print(out);//printing single field
-  nav.path[0]=4;
-  nav.path[1]=0;
-  nav.level=1;
   nav.print(out);
-  // mainMenu.enable(false,1);//disable second option
 }
 
 void loop() {
-  // if (nav.doInput(in)) nav.printMenu(out);
+  if (nav.doInput(in)) nav.print(out);
 }

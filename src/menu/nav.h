@@ -61,14 +61,15 @@ struct Nav {
     }
     inline void _esc() {close();}
     template<Cmd c>
-    inline void _cmd() {
+    inline bool cmd() {
       switch(c) {
         case Cmd::Up:_up();break;
         case Cmd::Down:_down();break;
         case Cmd::Enter:_enter();break;
         case Cmd::Esc:_esc();break;
-        default:break;
+        default:return false;
       }
+      return true;
     }
 
   };
