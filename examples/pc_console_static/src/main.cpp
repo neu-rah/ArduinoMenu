@@ -6,6 +6,7 @@ using namespace std;
 #include <menu/fmt/titleWrap.h>
 #include <menu/IO/linuxKeyIn.h>
 #include <menu/IO/consoleOut.h>
+#include <menu/comp/endis.h>//enable/disable
 
 //sketch control and actions ------------------------
 bool running=true;//exit program when false
@@ -35,8 +36,8 @@ using MainMenu=Item<
   StaticMenu<
     StaticText<&mainText>::Part<>,
     StaticData<
-      Item<StaticText<&op1_text>::Part>,
-      Item<StaticText<&op2_text>::Part>,
+      Item<EnDis<>::Part,StaticText<&op1_text>::Part>,
+      Item<EnDis<false>::Part,StaticText<&op2_text>::Part>,
       Item<StaticText<&opn_text>::Part>,
       Item<StaticText<&opn_text>::Part>,
       Item<

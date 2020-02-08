@@ -7,9 +7,9 @@ tested on nano
 //main include for ArduinoMenu
 #include <menu.h>
 //input/output drivers --------------------------------------
-#include <menu/IO/Arduino/serialIn.h>
-#include <menu/IO/Arduino/serialOut.h>
-// #include <menu/IO/Arduino/serialIO.h>//include both serial in and out
+// #include <menu/IO/Arduino/serialIn.h>
+// #include <menu/IO/Arduino/serialOut.h>
+#include <menu/IO/Arduino/serialIO.h>//include both serial in and out
 //format specifyers -----------------------------------------
 #include <menu/fmt/fullText.h>
 #include <menu/fmt/titleWrap.h>
@@ -45,15 +45,15 @@ Item<
   StaticMenu<
     FlashText<decltype(mainMenu_title),&mainMenu_title>::Part<>,
     StaticData<
-      Item<EnDis<FlashText<decltype(op1_text),&op1_text>>::Part>,
-      Item<EnDis<FlashText<decltype(op2_text),&op2_text>>::Part>,
+      Item<EnDis<>::Part,FlashText<decltype(op1_text),&op1_text>::Part>,
+      Item<EnDis<false>::Part,FlashText<decltype(op2_text),&op2_text>::Part>,
       Item<Action<tog12>::Part,FlashText<decltype(tog12_text),&tog12_text>::Part>,
       Item<FlashText<decltype(opn_text),&opn_text>::Part>,
       Item<
         StaticMenu<
           FlashText<decltype(subMenu_title),&subMenu_title>::Part<>,
           StaticData<
-            Item<EnDis<FlashText<decltype(op1_text),&op1_text>>::Part>,
+            Item<EnDis<>::Part,FlashText<decltype(op1_text),&op1_text>::Part>,
             Item<FlashText<decltype(op2_text),&op2_text>::Part>,
             Item<FlashText<decltype(opn_text),&opn_text>::Part>,
             Item<FlashText<decltype(opn_text),&opn_text>::Part>,

@@ -12,14 +12,18 @@
   /**
   * The EnDis class provides Enable/Disable functionality for menu items
   */
-  template<typename I,bool e=true>
-  class EnDis:public I/*,virtual MutBits*/ {
+  template<bool e=true>
+  class EnDis {
     public:
-      using I::I;
-      inline bool enabled() const {return isEnabled;}
-      inline void enable(bool b) {isEnabled=b;}
-    protected:
-      bool isEnabled=e;
+      template<typename I>
+      struct Part:public I {
+        public:
+          using I::I;
+          inline bool enabled() const {return isEnabled;}
+          inline void enable(bool b) {isEnabled=b;}
+        protected:
+          bool isEnabled=e;
+      };
   };
 
   //because static menu item have unique types
