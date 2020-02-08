@@ -74,7 +74,7 @@ using Out=StaticMenuOut<
   FullPrinter,//print title and items
   TitleWrapFmt<>::Part,//put [] around menu title
   TextFmt,//apply text formating
-  SerialOut<decltype(Serial),Serial>::Part//describe output geometry and device
+  SerialOut<decltype(Serial),Serial>::Part//raw output device
 >;
 
 Out out;//create output object (Serial)

@@ -23,6 +23,7 @@ struct Void:O {
   inline static constexpr bool isSame(void*) {return false;}
   inline static constexpr Idx top() {return 0;}
   inline static constexpr Idx posY() {return 0;}
+  inline static constexpr Idx freeY() {return idx_max;}
   template<typename Nav> inline static constexpr bool posTop(Nav&) {return false;}
   template<typename It,Op op=Op::Printing,Roles role=Roles::Raw>
   inline void printItems(It& it,Idx idx=0,Idx top=0) {
@@ -124,7 +125,7 @@ struct Empty:I {
   inline static constexpr bool changed() {return false;}
   inline static void changed(bool o) {}
 
-  inline static constexpr bool activate(PathRef=self,Idx=0) {return true;}
+  inline static constexpr bool activate(PathRef=self,Idx=0) {return false;}
 
   template<typename Nav> inline void up(Nav& nav) {nav._up();}
   template<typename Nav> inline void down(Nav& nav) {nav._down();}

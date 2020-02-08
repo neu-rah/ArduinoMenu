@@ -12,10 +12,12 @@ inline void Pair<F,S>::printMenu(Nav& nav,Out& out,PathRef ref,Idx n) {
 template<typename F,typename S>
 template<typename Nav,typename Out,Op op,Roles role>
 inline void Pair<F,S>::printItems(Nav& nav,Out& out,Idx idx,Idx top,PathRef ref) {
-  trace(MDO<<"Pair::printItems"<<endl);
+  trace(MDO<<"Pair::printItems top:"<<top<<" out.freeY:"<<out.freeY()<<endl);
   if (ref) printItems<Nav,Out,op,role>(nav,out,idx,top,ref.tail(),ref.head());
   else {
-    out.template printItem
+    if (!out.freeY()) return;
+    if(top) tail.template printItems<Nav,Out,op,role>(nav,out,++idx,top-1);//skip scroll-out part
+    else out.template printItem
       <typename F::Type,Nav,op,true>
       (F::obj(),nav,idx,nav.selected(idx),F::enabled(),nav.mode());
     tail.template printItems<Nav,Out,op,role>(nav,out,++idx,top);

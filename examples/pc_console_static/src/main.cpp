@@ -17,12 +17,6 @@ bool quit() {
   return true;
 }
 
-bool exit() {
-  //just signal program exit
-  _trace(MDO<<"Exit!"<<endl);
-  return false;
-}
-
 //menu texts -------------------------
 const char* subText="Sub-menu";
 const char* sub1_text="Sub 1";
@@ -52,7 +46,7 @@ using MainMenu=Item<
             Item<StaticText<&sub1_text>::Part>,
             Item<StaticText<&sub2_text>::Part>,
             Item<StaticText<&subn_text>::Part>,
-            Item<Action<exit>::Part,StaticText<&exit_text>::Part>
+            Item<StaticText<&exit_text>::Part>
           >
         >::Part
       >,
@@ -66,12 +60,13 @@ MainMenu mainMenu;
 
 //menu output ---------------------------------------
 StaticMenuOut<
-  FullPrinter,
-  TitleWrapFmt<>::Part,
-  TextFmt,
-  RangePanel<>::Part,
-  Console,
-  TextMeasure<>::Part
+  FullPrinter,//print all parts, title, index, text cursor
+  TitleWrapFmt<>::Part,//wrap title in []
+  TextFmt,//format the text parts, use `>` as text cursor`
+  RangePanel<>::Part,//control vertical scrolling
+  StaticPanel<0,0,20,4>::Part,//define output geometry
+  Console,//the raw output device to use
+  TextMeasure<>::Part//default monometric text measure
 > out;
 
 StaticNavRoot<Nav<MainMenu,3>::Part> nav(mainMenu);

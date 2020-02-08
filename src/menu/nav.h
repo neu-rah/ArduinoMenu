@@ -52,11 +52,11 @@ struct Nav {
       if(pos()+1<size(parent())) setPos(pos()+1);}
     inline void _down() {if(pos()>0) setPos(pos()-1);}
     inline void _enter() {
-      trace(MDO<<"enter->sending activate "<<(PathRef)*this<<endl);
+      _trace(MDO<<"enter->sending activate "<<(PathRef)*this<<endl);
       bool n=root.canNav(*this);//TODO: check this on activate! => can not, we double check it
       bool r=root.activate(*this);
-      trace(MDO<<"canNav:"<<n<<" activated:"<<r<<endl);
-      trace(MDO<<"!(n^r):"<<(!(n^r))<<endl);
+      _trace(MDO<<"canNav:"<<n<<" activated:"<<r<<endl);
+      _trace(MDO<<"!(n^r):"<<(!(n^r))<<endl);
       if (!(n^r)) n?open():close();
     }
     inline void _esc() {close();}

@@ -9,21 +9,24 @@ This os part of the output system
 
 ////////////////////////////////////////////////////////////////////////////////
 // panels and viewports
-template<Idx x,Idx y,Idx w,Idx h,typename O>
-struct StaticPanel:public O {
-  constexpr static inline Idx orgX() {return x;}
-  constexpr static inline Idx orgY() {return y;}
-  constexpr static inline Idx width() {return w;}
-  constexpr static inline Idx height() {return h;}
+template<Idx x,Idx y,Idx w,Idx h>
+struct StaticPanel {
+  template<typename O>
+  struct Part:O {
+    constexpr static inline Idx orgX() {return x;}
+    constexpr static inline Idx orgY() {return y;}
+    constexpr static inline Idx width() {return w;}
+    constexpr static inline Idx height() {return h;}
 
-  constexpr static inline Idx posX() {return x;}
-  constexpr static inline Idx posY() {return y;}
-  constexpr static inline Idx freeX() {return w;}
-  constexpr static inline Idx freeY() {return h;}
-  constexpr static inline Idx free() {return w*h;}
-  static inline void useX(Idx ux=1) {}
-  static inline void useY(Idx uy=1) {}
-  static inline void use(Idx ux=1,Idx uy=1) {}
+    constexpr static inline Idx posX() {return x;}
+    constexpr static inline Idx posY() {return y;}
+    constexpr static inline Idx freeX() {return w;}
+    constexpr static inline Idx freeY() {return h;}
+    constexpr static inline Idx free() {return w*h;}
+    static inline void useX(Idx ux=1) {}
+    static inline void useY(Idx uy=1) {}
+    static inline void use(Idx ux=1,Idx uy=1) {}
+  };
 };
 
 template<typename O>

@@ -25,3 +25,11 @@ PROGRAM: [=======   ]  68.3% (used 5594 bytes from 8192 bytes)
 2020.02.02 - joing dynamic and static API's
 DATA:    [==        ]  23.6% (used 121 bytes from 512 bytes)
 PROGRAM: [====      ]  35.3% (used 2894 bytes from 8192 bytes)
+
+2020.02.07 - static&dynamic API's + PathRef length
+DATA:    [==        ]  23.8% (used 122 bytes from 512 bytes)
+PROGRAM: [=====     ]  54.2% (used 4444 bytes from 8192 bytes)
+
+2020.02.08 - use panels, rewrite std::vector menu
+DATA:    [==        ]  23.8% (used 122 bytes from 512 bytes)
+PROGRAM: [======    ]  64.6% (used 5294 bytes from 8192 bytes)

@@ -4,7 +4,9 @@ using namespace std;
 #include <menu.h>
 #include <menu/comp/vector.h>
 #include <menu/fmt/fullText.h>
+#include <menu/fmt/titleWrap.h>
 #include <menu/IO/linuxKeyIn.h>
+#include <menu/IO/consoleOut.h>
 
 bool running=true;
 
@@ -37,58 +39,34 @@ Prompt<Text> subn("Sub...");
 Prompt<Action<exit>::Part,Text> exitOp("<Exit");
 
 //menu structure -------------------------
-Prompt<
-  ItemArray<IItem>::Part
-> subMenu_data{
+Prompt<StdVectorMenu<decltype(sub_title),sub_title>::Part> subMenu {
   &sub1,
   &sub2,
   &subn,
   &exitOp
 };
 
-using SubMenu=Prompt<
-  Menu<
-    decltype(sub_title),
-    decltype(subMenu_data),
-    sub_title,
-    subMenu_data
-  >::Part
->;
-
-SubMenu subMenu;
-
-Prompt<
-  ItemArray<IItem>::Part
-> mainMenu_data{
+Prompt<StdVectorMenu<decltype(title),title>::Part> mainMenu {
   &op1,
   &op2,
   &opn,
   &opn,
-  (IItem*)&subMenu,
+  &subMenu,
   &quitOp
 };
 
-using MainMenu=Prompt<
-  Menu<
-    decltype(title),
-    decltype(mainMenu_data),
-    title,
-    mainMenu_data
-  >::Part
->;
-
-MainMenu mainMenu;
-
 //menu navigation control -------------------------
-NavRoot<Nav<MainMenu,3>::Part> nav(mainMenu);
+NavRoot<Nav<decltype(mainMenu),3>::Part> nav(mainMenu);
 
 //menu output --------------------------------------
 MenuOut<
-  FullPrinter,
-  TextFmt,
-  RangePanel<>::Part,
-  StreamOut<decltype(cout),cout>::Part,
-  TextMeasure<>::Part
+  FullPrinter,//print all parts, title, index, text cursor
+  TitleWrapFmt<>::Part,//wrap title in []
+  TextFmt,//format the text parts, use `>` as text cursor`
+  RangePanel<>::Part,//control vertical scrolling
+  StaticPanel<0,0,20,4>::Part,//define output geometry
+  Console,//the raw output device to use
+  TextMeasure<>::Part//default monometric text measure
 > out;
 
 //menu input --------------------------------------

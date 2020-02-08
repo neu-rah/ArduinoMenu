@@ -2,6 +2,6 @@
 
 ## TODO
 
--default "no action" item act as "Exit"
--fields
--minimal draw and viewports
++ default "no action" item act as "Exit"
+- minimal draw and viewports
+- fields

@@ -30,16 +30,6 @@ struct TextMeasure {
 };
 
 template<typename O>
-struct CanMeasure:O {
-  // using O::raw;
-  // template<typename T,typename Out,bool toPrint>
-  // inline void print(T o,Out& out,Roles role=Roles::Raw) {
-  //   if (toPrint) O::template print<T,Out,toPrint>(o,out,role);
-  //   else out.useX(O::measure(o));
-  // }
-};
-
-template<typename O>
 struct PartialDraw:O {
   inline static constexpr bool partialDraw() {return true;}
 };
@@ -87,7 +77,7 @@ struct IOut {
   virtual void raw(const char* o)=0;
   virtual void printMenu(IItem& it,INav& nav, Op=Op::Printing)=0;
   virtual void printItem(IItem& it,INav& nav,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal,Op op=Op::Printing,bool toPrint=true)=0;
-  // virtual void print(INav& nav,IOut& out,Op op=Op::Printing,Roles role=Roles::Raw)=0;
+  virtual Idx freeY() const=0;
 
   template<typename It,typename Nav,Op op=Op::Printing>
   inline void printMenu(It& it,Nav& nav) {printMenu(it,nav,op);}
@@ -109,4 +99,5 @@ struct MenuOut:IOut,Chain<O...,Void>::template To<Obj<MenuOut<O...>>> {
   inline void raw(const char* o) override {Base::raw(o);}
   void printMenu(IItem& it,INav& nav, Op op=Op::Printing) override;
   void printItem(IItem& it,INav& nav,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal,Op op=Op::Printing,bool toPrint=true) override;
+  Idx freeY() const override {return Base::freeY();}
 };

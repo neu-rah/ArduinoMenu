@@ -155,46 +155,6 @@ struct StaticMenu {
 template<typename O,typename... OO> struct StaticData:Pair<O,StaticData<OO...>> {};
 template<typename O>                struct StaticData<O>:Pair<O> {};
 
-template<typename Title,typename Body,Title& title,Body& body>
-struct Menu {
-  template<typename I>
-  struct Part:I {
-    using This=Menu<Title,Body,title,body>::Part<I>;
-    using I::I;
-
-    inline size_t size(PathRef ref=self) const {return body.size(ref);}
-
-    inline bool canNav(PathRef ref=self) {
-      trace(MDO<<"Menu::canNav "<<ref<<endl);
-      return ref?body.canNav(ref):true;
-    }
-
-    inline bool activate(PathRef ref=self) {
-      trace(MDO<<"Menu::activate "<<ref<<endl);
-      return ref?body.activate(ref):true;
-    }
-
-    template<typename Nav,typename Out,Op op=Op::Printing>
-    inline void printMenu(Nav& nav,Out& out,PathRef ref=self/*,Idx n=0*/) {
-      trace(MDO<<"Menu::printMenu "<<op<<endl);
-      if (ref) body.template printMenu<Nav,Out,op>(nav,out,ref);
-      else out.template printMenu<decltype(I::obj()),Nav,op>(I::obj(),nav);
-    }
-
-    template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
-    inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,PathRef ref=self) {
-      trace(MDO<<"Menu::printItems "<<op<<endl);
-      body.template printItems<Nav,Out,op,role>(nav,out,idx,top,ref);
-    }
-
-    template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
-    inline void print(Nav& nav,Out& out,PathRef ref=self) {
-      trace(MDO<<"Menu::print "<<role<<endl);
-      title.print(nav,out);
-    }
-  };
-};
-
 struct IItem {
   virtual inline size_t size(PathRef=self)=0;
   virtual inline size_t canNav(PathRef=self)=0;
