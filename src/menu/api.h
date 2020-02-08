@@ -119,8 +119,8 @@ struct Empty:I {
     trace(MDO<<"Empty::printMenu "<<ref<<":"<<n<<" printing parent"<<endl);
   }
 
-  inline static constexpr bool enabled(PathRef=self) {return true;}
-  inline static void enable(bool,PathRef=self) {}
+  inline static constexpr bool enabled(PathRef=self,Idx=0) {return true;}
+  inline static void enable(bool,PathRef=self,Idx=0) {}
 
   inline static constexpr bool changed() {return false;}
   inline static void changed(bool o) {}

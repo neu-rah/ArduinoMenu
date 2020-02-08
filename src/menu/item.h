@@ -66,8 +66,20 @@ struct Pair:F {
   using This=Pair<F,S>;
   using F::F;
   S tail;
+  inline bool enabled(PathRef ref=self,Idx n=0) const {
+    trace(MDO<<"Pair::enabled "<<ref<<" "<<n<<endl);
+    if(n) return tail.enabled(ref,--n);
+    if (ref) return F::enabled(ref.tail());
+    return F::enabled();
+  }
+  inline void enable(bool b,PathRef ref=self,Idx n=0) {
+    trace(MDO<<"Pair::enable "<<ref<<" "<<n<<endl);
+    if(n) tail.enable(b,ref,--n);
+    else if (ref) F::enable(b,ref.tail());
+    else F::enable(n);
+  }
   inline Idx size(PathRef ref=self,Idx n=0) const {
-    trace(MDO<<"Pair::size "<<ref<<" "<<n<<endl);
+    _trace(MDO<<"Pair::size "<<ref<<" "<<n<<endl);
     if(n) return tail.size(ref,--n);
     if (ref) return F::size(ref.tail());
     return tail.size()+1;
@@ -109,6 +121,14 @@ struct StaticMenu {
     Body body;
     using This=StaticMenu<Title,Body>;
     using I::I;
+
+    inline bool enabled(PathRef ref=self) const {
+      return ref?body.enabled(ref,ref.head()):Base::enabled();
+    }
+    inline void enable(bool b,PathRef ref=self) {
+      if(ref) body.enable(b,ref,ref.head());
+      else Base::enable(b);
+    }
 
     inline size_t size(PathRef ref=self) const {
       trace(MDO<<"StaticMenu::Part::size -> body.size() "<<ref<<endl);

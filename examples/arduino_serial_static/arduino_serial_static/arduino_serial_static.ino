@@ -84,8 +84,8 @@ StaticNavRoot<Nav<decltype(mainMenu),3>::Part> nav(mainMenu);
 
 //menu action handlers implementation
 bool tog12() {
-  // mainMenu.enable(!mainMenu.enabled(0),0);
-  // mainMenu.enable(!mainMenu.enabled(1),1);
+  mainMenu.enable(!mainMenu.enabled(Path<0>().ref()),Path<0>().ref());
+  mainMenu.enable(!mainMenu.enabled(Path<1>().ref()),Path<1>().ref());
   return true;
 }
 

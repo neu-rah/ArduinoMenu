@@ -19,8 +19,8 @@
       struct Part:public I {
         public:
           using I::I;
-          inline bool enabled() const {return isEnabled;}
-          inline void enable(bool b) {isEnabled=b;}
+          inline bool enabled(PathRef=self) const {return isEnabled;}
+          inline void enable(bool b,PathRef=self) {isEnabled=b;}
         protected:
           bool isEnabled=e;
       };

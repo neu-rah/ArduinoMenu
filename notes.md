@@ -33,3 +33,7 @@ PROGRAM: [=====     ]  54.2% (used 4444 bytes from 8192 bytes)
 2020.02.08 - use panels, rewrite std::vector menu
 DATA:    [==        ]  23.8% (used 122 bytes from 512 bytes)
 PROGRAM: [======    ]  64.6% (used 5294 bytes from 8192 bytes)
+
+2020.02.08 - toggle enable/disable on dynamic and static menus
+DATA:    [==        ]  24.2% (used 124 bytes from 512 bytes)
+PROGRAM: [=======   ]  69.4% (used 5684 bytes from 8192 bytes)

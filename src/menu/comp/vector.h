@@ -11,6 +11,19 @@ struct StdVectorMenu {
     using vector<IItem*>::vector;
     using This=StdVectorMenu<Title,title>::Part<I>;
     using Base=I;
+
+    inline bool enabled(PathRef ref=self) const {
+      trace(MDO<<"StdVectorMenu::enabled "<<ref<<endl);
+      return ref?
+        vector<IItem*>::operator[](ref.head())->enabled(ref.tail()):
+        Base::enabled();
+    }
+    inline void enable(bool b,PathRef ref=self) {
+      trace(MDO<<"StdVectorMenu::enable "<<b<<" "<<ref<<endl);
+      if (ref) vector<IItem*>::operator[](ref.head())->enable(b,ref.tail());
+      else Base::enable(b);
+    }
+
     inline bool canNav(PathRef ref=self) {
       trace(MDO<<"StdVectorMenu::canNav "<<ref<<endl);
       if (ref) return vector<IItem*>::operator[](ref.head())->canNav(ref.tail());

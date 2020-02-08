@@ -17,11 +17,13 @@ bool quit() {
   running=false;
   return true;
 }
+bool tog12();//implemented later because we need to access mainMenu
 
 //menu texts -------------------------
 const char* subText="Sub-menu";
 const char* sub1_text="Sub 1";
 const char* sub2_text="Sub 2";
+const char* tog12_text="Toggle 1&2";
 const char* subn_text="Sub...";
 const char* exit_text="<Exit";
 
@@ -38,6 +40,7 @@ using MainMenu=Item<
     StaticData<
       Item<EnDis<>::Part,StaticText<&op1_text>::Part>,
       Item<EnDis<false>::Part,StaticText<&op2_text>::Part>,
+      Item<Action<tog12>::Part,StaticText<&tog12_text>::Part>,
       Item<StaticText<&opn_text>::Part>,
       Item<StaticText<&opn_text>::Part>,
       Item<
@@ -75,8 +78,14 @@ StaticNavRoot<Nav<MainMenu,3>::Part> nav(mainMenu);
 //menu input --------------------------------------
 LinuxKeyIn in;
 
+bool tog12() {
+  _trace(MDO<<"Toggle Enable/Disable of options 1 and 2"<<endl);
+  mainMenu.enable(!mainMenu.enabled(Path<0>().ref()),Path<0>().ref());
+  mainMenu.enable(!mainMenu.enabled(Path<1>().ref()),Path<1>().ref());
+  return true;
+}
+
 int main() {
-  nav.enter();
   nav.print(out);
   while(running) {
     if (nav.doInput(in)) {
