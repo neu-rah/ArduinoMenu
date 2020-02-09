@@ -1,12 +1,21 @@
 #include <iostream>
 using namespace std;
 
+//main include for ArduinoMenu
 #include <menu.h>
-#include <menu/fmt/fullText.h>
-#include <menu/fmt/titleWrap.h>
-#include <menu/IO/linuxKeyIn.h>
+//input/output drivers --------------------------------------
 #include <menu/IO/consoleOut.h>
-#include <menu/comp/endis.h>//enable/disable
+#include <menu/IO/linuxKeyIn.h>
+//format specifyers -----------------------------------------
+#include <menu/fmt/ANSI.h>//to draw index and text cursors (nav and edit)
+// #include <menu/fmt/fullText.h>
+#include <menu/fmt/textEditMode.h>
+#include <menu/fmt/textCursor.h>
+#include <menu/fmt/textItem.h>
+#include <menu/fmt/titleWrap.h>
+//components ------------------------------------------------
+#include <menu/comp/endis.h>
+// #include <menu/comp/numField.h>
 
 //sketch control and actions ------------------------
 bool running=true;//exit program when false
@@ -66,10 +75,14 @@ MainMenu mainMenu;
 StaticMenuOut<
   FullPrinter,//print all parts, title, index, text cursor
   PartialDraw,
+  AnsiFmt,//format using ANSI escape codes
   TitleWrapFmt<>::Part,//wrap title in []
-  TextFmt,//format the text parts, use `>` as text cursor`
+  // TextFmt,//format the text parts, use `>` as text cursor`
+  TextCursorFmt,//draw text cursor
+  TextEditModeFmt,//draw edit mode text cursor
+  TextItemFmt,//add newline after each item
   RangePanel<>::Part,//control vertical scrolling
-  StaticPanel<0,0,20,6>::Part,//define output geometry
+  StaticPanel<10,20,20,6>::Part,//define output geometry
   Console,//the raw output device to use
   TextMeasure<>::Part//default monometric text measure
 > out;

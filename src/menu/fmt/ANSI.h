@@ -56,6 +56,21 @@ struct preambleAndNumberAndValue {
 template<typename Out>
 inline Out& operator<<(Out &o, preambleAndNumberAndValue cmd) { return cmd(o); }
 
+struct cursorOp {
+	char v;
+	cursorOp(char v):v(v) {}
+	template<typename Out>
+	inline Out& operator()(Out& out) {
+		out<<preamble();
+		out.raw('?');
+		out.raw((Idx)25);
+		out.raw(v);
+		return out;
+	}
+};
+template<typename Out>
+inline Out& operator<<(Out &o, cursorOp cmd) { return cmd(o); }
+
 struct setAttribute {
 	int a;
 	setAttribute(int a):a(a) {}
@@ -178,12 +193,12 @@ inline Out& operator<<(Out &o, const attr<c> cmd) { return cmd(o); }
 
 struct hideCursor {
 	template<typename Out>
-	inline Out& operator()(Out& out) const {return out<<preambleAndNumberAndValue(25, 'h');}
+	inline Out& operator()(Out& out) const {return out<<cursorOp('h');}
 };
 
 struct showCursor {
 	template<typename Out>
-	inline Out& operator()(Out& out) const {return out<<preambleAndNumberAndValue(25, 'l');}
+	inline Out& operator()(Out& out) const {return out<<cursorOp('l');}
 };
 
 typedef attr<BOLD_ON> boldOn;

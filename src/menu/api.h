@@ -100,8 +100,13 @@ struct Empty:I {
   inline static constexpr bool parentPrint(PathRef=self,Idx=0) {return true;}
 
   template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
-  inline static void print(Nav& nav,Out& out,PathRef ref=self) {
-    trace(MDO<<"Empty::print "<<ref<<endl);
+  inline void print(Nav& nav,Out& out,PathRef ref=self) {
+    _trace(MDO<<"Empty::print "<<ref<<endl);
+    switch(op) {
+      case Op::Printing: I::obj().template draw<Nav,Out,role>(nav,out,ref);break;
+      case Op::ClearChanges: I::obj().template clear<Nav,Out,role>(nav,out,ref);break;
+      case Op::Measure: I::obj().template measure<Nav,Out,role>(nav,out,ref);break;
+    }
   }
 
   template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
@@ -137,4 +142,18 @@ struct Empty:I {
   //
   // template<Cmds c,typename Nav>
   // inline void cmd(Nav& nav,Ref ref,Idx n) {nav.template _cmd<c>();}
+
+protected:
+  template<typename Nav,typename Out,Roles role=Roles::Raw>
+  inline static void draw(Nav& nav,Out& out,PathRef ref=self)
+    {_trace(MDO<<"Empty::draw "<<ref<<endl);}
+
+  template<typename Nav,typename Out,Roles role=Roles::Raw>
+  inline static void clear(Nav& nav,Out& out,PathRef ref=self)
+    {_trace(MDO<<"Empty::clear "<<ref<<endl);}
+
+  template<typename Nav,typename Out,Roles role=Roles::Raw>
+  inline static void measure(Nav& nav,Out& out,PathRef ref=self)
+    {_trace(MDO<<"Empty::measure "<<ref<<endl);}
+
 };

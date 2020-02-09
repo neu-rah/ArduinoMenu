@@ -5,7 +5,7 @@ tested on nano
 */
 
 //main include for ArduinoMenu
-#include <menu.h>
+#include <staticMenu.h>
 //input/output drivers --------------------------------------
 // #include <menu/IO/Arduino/serialIn.h>
 // #include <menu/IO/Arduino/serialOut.h>
@@ -58,7 +58,7 @@ Item<
             Item<FlashText<decltype(opn_text),&opn_text>::Part>,
             Item<FlashText<decltype(opn_text),&opn_text>::Part>,
             Item<FlashText<decltype(opn_text),&opn_text>::Part>,
-            Item<Exit<FlashText<decltype(exit_txt),&exit_txt>>::Part>
+            Item<FlashText<decltype(exit_txt),&exit_txt>::Part>
           >
         >::Part
       >

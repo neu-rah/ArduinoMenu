@@ -1,7 +1,10 @@
+//this is part of development files and might not work
+//its just for testing and experimenting
+
 #include <iostream>
 using namespace std;
 
-#include <menu.h>
+#include <staticMenu.h>
 #include <menu/comp/vector.h>
 #include <menu/fmt/fullText.h>
 #include <menu/fmt/titleWrap.h>
@@ -79,16 +82,18 @@ using MainMenu=Item<
 MainMenu mainMenu;
 
 //menu output ---------------------------------------
-StaticMenuOut<
+using Out=StaticMenuOut<
   FullPrinter,
   TitleWrapFmt<>::Part,
   TextFmt,
   RangePanel<>::Part,
   Console,
   TextMeasure<>::Part
-> out;
+>;
+Out out;
 
-StaticNavRoot<Nav<MainMenu,5>::Part> nav(mainMenu);
+using ThisNav=StaticNavRoot<Nav<MainMenu,5>::Part>;
+ThisNav nav(mainMenu);
 
 //menu input --------------------------------------
 LinuxKeyIn in;
@@ -110,8 +115,13 @@ int main() {
   // MDO<<"root /4/4 isMenu:"<<mainMenu.isMenu(Path<4,4>().ref())<<endl;
   // MDO<<"root /4/5 isMenu:"<<mainMenu.isMenu(Path<4,5>().ref())<<endl;
 
-  MDO<<"root /4 activate:"<<mainMenu.activate(Path<4>().ref())<<endl;
-  MDO<<"root /4/4 activate:"<<mainMenu.activate(Path<4,4>().ref())<<endl;
-  MDO<<"root /4/5 activate:"<<mainMenu.activate(Path<4,5>().ref())<<endl;
+  // MDO<<"root /4 activate:"<<mainMenu.activate(Path<4>().ref())<<endl;
+  // MDO<<"root /4/4 activate:"<<mainMenu.activate(Path<4,4>().ref())<<endl;
+  // MDO<<"root /4/5 activate:"<<mainMenu.activate(Path<4,5>().ref())<<endl;
+
+  MDO<<"mainMenu.changed():"<<mainMenu.changed()<<endl;
+  mainMenu.template print<ThisNav,Out,Op::ClearChanges>(nav,out,self);
+  MDO<<"mainMenu.changed():"<<mainMenu.changed()<<endl;
+
   return 0;
 }

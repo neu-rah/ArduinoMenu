@@ -52,11 +52,11 @@ struct Nav {
       if(pos()+1<size(parent())) setPos(pos()+1);}
     inline void _down() {if(pos()>0) setPos(pos()-1);}
     inline void _enter() {
-      _trace(MDO<<"enter->sending activate "<<(PathRef)*this<<endl);
+      trace(MDO<<"enter->sending activate "<<(PathRef)*this<<endl);
       bool n=root.canNav(*this);//TODO: check this on activate! => can not, we double check it
       bool r=root.activate(*this);
-      _trace(MDO<<"canNav:"<<n<<" activated:"<<r<<endl);
-      _trace(MDO<<"!(n^r):"<<(!(n^r))<<endl);
+      trace(MDO<<"canNav:"<<n<<" activated:"<<r<<endl);
+      trace(MDO<<"!(n^r):"<<(!(n^r))<<endl);
       if (!(n^r)) n?open():close();
     }
     inline void _esc() {close();}
@@ -80,22 +80,4 @@ struct StaticNavRoot:Chain<I...,Drift>::template To<Obj<StaticNavRoot<I...>>> {
   using Base=typename Chain<I...,Drift>::template To<Obj<StaticNavRoot<I...>>>;
   using This=StaticNavRoot<I...>;
   using Base::Base;
-};
-
-struct INav {
-  virtual inline void print(IOut& out)=0;
-  virtual inline Idx pos() const=0;
-  virtual inline Modes mode() const=0;
-  virtual inline bool selected(Idx i) const =0;
-};
-
-template<Expr... N>
-struct NavRoot:INav,Chain<N...,Drift>::template To<Obj<NavRoot<N...>>> {
-  using Base=typename Chain<N...,Drift>::template To<Obj<NavRoot<N...>>>;
-  using This=NavRoot<N...>;
-  using Base::Base;
-  inline void print(IOut& out) override {Base::print(out);}
-  inline Idx pos() const override {return Base::pos();}
-  inline Modes mode() const override {return Base::mode();}
-  inline bool selected(Idx i) const override {return Base::selected(i);}
 };

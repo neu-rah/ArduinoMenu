@@ -45,11 +45,12 @@ struct RangePanel {
       inline Idx top() const {return topLine;}
       inline void setTop(Idx n) {topLine=n;}
       inline void newView() {
-        trace(MDO<<"RangePanel::newView"<<endl);
+        _trace(MDO<<"RangePanel::newView"<<endl);
         freeLines=O::height();
         O::setCursor(O::orgX(),O::orgY()+O::ascent());
       }
       inline void useY(Idx uy=h) {
+        trace(MDO<<"RangePanel::useY "<<uy<<endl);
         if (freeLines) {
           freeLines-=uy;
           // O::setCursor(0,(O::height()-freeLines)*O::maxCharHeight()+O::ascent());
