@@ -126,6 +126,7 @@ struct Empty:I {
 
   inline static constexpr bool changed() {return false;}
   inline static void changed(bool o) {}
+  inline static void changed(Idx,bool o) {}
 
   inline static constexpr bool activate(PathRef=self,Idx=0) {return false;}
 
@@ -134,11 +135,8 @@ struct Empty:I {
   template<typename Nav> inline void enter(Nav& nav) {nav._enter();}
   template<typename Nav> inline void esc(Nav& nav) {nav._esc();}
 
-  // template<Cmds c,typename Nav>
-  // inline void cmd(Nav& nav,PathRef=self) {nav.template _cmd<c>();}
-  //
-  // template<Cmds c,typename Nav>
-  // inline void cmd(Nav& nav,Ref ref,Idx n) {nav.template _cmd<c>();}
+  template<Cmd c,typename Nav>
+  inline bool cmd(Nav& nav,PathRef=self,Idx=0) {return nav.template _cmd<c>();}
 
   template<typename Nav,typename Out,Roles role=Roles::Raw>
   inline static void draw(Nav& nav,Out& out,PathRef ref=self)
@@ -150,7 +148,6 @@ struct Empty:I {
 
   template<typename Nav,typename Out,Roles role=Roles::Raw>
   inline static void measure(Nav& nav,Out& out,PathRef ref=self) {
-    _trace(MDO<<"Empty::measure "<<ref<<endl);
-  }
+    trace(MDO<<"Empty::measure "<<ref<<endl);}
 
 };

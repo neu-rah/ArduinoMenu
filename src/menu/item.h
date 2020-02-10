@@ -85,6 +85,13 @@ struct Pair:F {
   using This=Pair<F,S>;
   using F::F;
   S tail;
+  using F::changed;
+
+  inline void changed(Idx n,bool o) {
+    if (n) tail.changed(n-1,o);
+    else F::changed(o);
+  }
+
   inline bool enabled(PathRef ref=self,Idx n=0) const {
     trace(MDO<<"Pair::enabled "<<ref<<" "<<n<<endl);
     if(n) return tail.enabled(ref,--n);
@@ -116,12 +123,14 @@ struct Pair:F {
     if (ref) return F::activate(ref.tail());
     return F::activate();
   }
-  // inline bool parentPrint(PathRef ref=self,Idx n=0) {
-  //   trace(MDO<<"Pair::parentPrint "<<ref<<" "<<n<<endl);
-  //   if(n) return tail.parentPrint(ref,--n);
-  //   if (ref) return F::parentPrint(ref.tail());
-  //   return false;
-  // }
+
+  template<Cmd c,typename Nav>
+  inline bool cmd(Nav& nav,PathRef ref=self,Idx n=0) {
+    if(n) return tail.template cmd<c,Nav>(nav,ref,--n);
+    if (ref) return F::template cmd<c,Nav>(nav,ref.tail());
+    return F::template cmd<c,Nav>(nav);
+  }
+
   template<typename Nav,typename Out,Op op=Op::Printing>
   inline void printMenu(Nav& nav,Out& out,PathRef ref=self,Idx n=0);
   template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
@@ -169,22 +178,26 @@ struct StaticMenu {
       return ref?body.parentPrint(ref,ref.head()):false;
     }
 
+    inline void changed(Idx n,bool o) {body.changed(n,o);}
+
+    template<Cmd c,typename Nav>
+    inline bool cmd(Nav& nav,PathRef ref=self) {
+      Idx p=nav.pos();
+      bool res=ref?body.template cmd<c,Nav>(nav,ref,ref.head()):body.template cmd<c,Nav>(nav);
+      if(p!=nav.pos()) {
+        changed(p,true);
+        changed(nav.pos(),true);
+      }
+    }
+
     template<typename Nav,typename Out,Op op=Op::Printing>
     inline void printMenu(Nav& nav,Out& out,PathRef ref=self,Idx n=0) {
       trace(MDO<<"StaticMenu::printMenu... "<<op<<" "<<ref<<endl);
-      // if (!ref||ref.len==1&&body.parentPrint(ref))
-        out.template printMenu<typename I::Type,Nav,op>(I::obj(),nav);
-        if (out.partialDraw()) {
-          trace(MDO<<"partial draw cleanup!"<<endl);
-          out.template printMenu<typename I::Type,Nav,Op::ClearChanges>(I::obj(),nav);
-        }
-      // else {
-      //   body.template printMenu<Nav,Out,op>(nav,out,ref,ref.head());
-      //   if (out.partialDraw()) {
-      //     _trace(MDO<<"partial draw cleanup!"<<endl);
-      //     body.template printMenu<Nav,Out,Op::ClearChanges>(nav,out,ref,ref.head());
-      //   }
-      // }
+      out.template printMenu<typename I::Type,Nav,op>(I::obj(),nav);
+      if (out.partialDraw()) {
+        trace(MDO<<"partial draw cleanup!"<<endl);
+        out.template printMenu<typename I::Type,Nav,Op::ClearChanges>(I::obj(),nav);
+      }
     }
 
     template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
@@ -193,17 +206,6 @@ struct StaticMenu {
       body.template printItems<Nav,Out,op,role>(nav,out,idx,top,ref);
     }
 
-    // template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
-    // inline void print(Nav& nav,Out& out,PathRef ref=self) {
-    //   _trace(MDO<<"StaticMenu::print "<<role<<endl);
-    //   switch(op) {
-    //     case Op::Printing:
-    //       title.template print<Nav,Out,op,role>(nav,out,ref);
-    //       break;
-    //     case Op::ClearChanges: Base::obj().changed(false);break;
-    //     case Op::Measure: out.useY();break;
-    //   }
-    // }
   };
 };
 

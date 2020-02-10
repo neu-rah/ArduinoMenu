@@ -44,10 +44,27 @@ struct Nav {
     inline size_t size() const {return root.size(*this);}
     inline size_t size(PathRef ref) const {return root.size(ref);}
 
-    inline void up() {root.up(N::obj());}
-    inline void down() {root.down(N::obj());}
-    inline void enter() {root.enter(N::obj());}
-    inline void esc() {root.esc(N::obj());}
+    template<Cmd c>
+    inline bool cmd() {
+      return root.template cmd<c,typename N::Type>(N::obj());
+    }
+
+    inline void up()    {cmd<Cmd::Up>();}
+    inline void down()  {cmd<Cmd::Down>();}
+    inline void enter() {cmd<Cmd::Enter>();}
+    inline void esc()   {cmd<Cmd::Esc>();}
+
+    template<Cmd c>
+    inline bool _cmd() {
+      switch(c) {
+        case Cmd::Up:_up();break;
+        case Cmd::Down:_down();break;
+        case Cmd::Enter:_enter();break;
+        case Cmd::Esc:_esc();break;
+        default:return false;
+      }
+      return true;
+    }
 
     inline void _up() {
       trace(MDO<<"pos:"<<pos()<<" size:"<<size(parent())<<endl);
@@ -62,18 +79,6 @@ struct Nav {
       if (!(n^r)) n?open():close();
     }
     inline void _esc() {close();}
-
-    template<Cmd c>
-    inline bool cmd() {
-      switch(c) {
-        case Cmd::Up:_up();break;
-        case Cmd::Down:_down();break;
-        case Cmd::Enter:_enter();break;
-        case Cmd::Esc:_esc();break;
-        default:return false;
-      }
-      return true;
-    }
 
   };
 };
