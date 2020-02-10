@@ -1,7 +1,7 @@
 #include <iostream>
 using namespace std;
 
-#include <menu.h>
+#include <staticMenu.h>
 #include <menu/fmt/fullText.h>
 #include <menu/fmt/titleWrap.h>
 #include <menu/IO/linuxKeyIn.h>
@@ -65,7 +65,7 @@ MainMenu mainMenu;
 //menu output ---------------------------------------
 StaticMenuOut<
   FullPrinter,//print all parts, title, index, text cursor
-  PartialDraw,
+  PartialDraw,//just for testing, because console is not ob this cathegory
   TitleWrapFmt<>::Part,//wrap title in []
   TextFmt,//format the text parts, use `>` as text cursor`
   RangePanel<>::Part,//control vertical scrolling

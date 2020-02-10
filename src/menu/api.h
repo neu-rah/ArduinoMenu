@@ -4,20 +4,15 @@
 #include "base.h"
 #include "path.h"
 
-class IItem;
-class INav;
-class IOut;
-
 struct Nil {};
 
 ////////////////////////////////////////////////////////////////////////////////
 //basic output, just ignore the output
 template<typename O>
 struct Void:O {
-  template<typename T>
+  template<typename T,bool toPrint=true>
   inline static void raw(T) {}
-  template<typename I>
-  inline static void printItem(I& i) {i.print();}
+  template<typename T> inline static void measure(T t) {raw<false>(t);}
   inline static void newView() {}
   inline static constexpr bool partialDraw() {return false;}
   inline static constexpr bool isSame(void*) {return false;}
@@ -39,6 +34,7 @@ struct Void:O {
   inline static constexpr int ascent() {return 0;}
   inline static void clrLine(Idx) {}
 
+  //formating api
   template<bool io,bool toPrint> inline static void fmtRaw(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
   template<bool io,bool toPrint> inline static void fmtPanel(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
   template<bool io,bool toPrint> inline static void fmtMenu(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
@@ -52,6 +48,7 @@ struct Void:O {
   template<bool io,bool toPrint> inline static void fmtValue(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
   template<bool io,bool toPrint> inline static void fmtUnit(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
 
+  //format multiplex
   template<Roles r,bool io,bool toPrint=true>
   inline void fmt(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
     switch(r) {
@@ -101,7 +98,7 @@ struct Empty:I {
 
   template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
   inline void print(Nav& nav,Out& out,PathRef ref=self) {
-    _trace(MDO<<"Empty::print "<<ref<<endl);
+    trace(MDO<<"Empty::print "<<ref<<endl);
     switch(op) {
       case Op::Printing: I::obj().template draw<Nav,Out,role>(nav,out,ref);break;
       case Op::ClearChanges: I::obj().template clear<Nav,Out,role>(nav,out,ref);break;
@@ -143,17 +140,17 @@ struct Empty:I {
   // template<Cmds c,typename Nav>
   // inline void cmd(Nav& nav,Ref ref,Idx n) {nav.template _cmd<c>();}
 
-protected:
   template<typename Nav,typename Out,Roles role=Roles::Raw>
   inline static void draw(Nav& nav,Out& out,PathRef ref=self)
-    {_trace(MDO<<"Empty::draw "<<ref<<endl);}
+    {trace(MDO<<"Empty::draw "<<ref<<endl);}
 
   template<typename Nav,typename Out,Roles role=Roles::Raw>
   inline static void clear(Nav& nav,Out& out,PathRef ref=self)
-    {_trace(MDO<<"Empty::clear "<<ref<<endl);}
+    {trace(MDO<<"Empty::clear "<<ref<<endl);}
 
   template<typename Nav,typename Out,Roles role=Roles::Raw>
-  inline static void measure(Nav& nav,Out& out,PathRef ref=self)
-    {_trace(MDO<<"Empty::measure "<<ref<<endl);}
+  inline static void measure(Nav& nav,Out& out,PathRef ref=self) {
+    _trace(MDO<<"Empty::measure "<<ref<<endl);
+  }
 
 };

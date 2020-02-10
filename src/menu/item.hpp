@@ -27,7 +27,7 @@ inline void Pair<F,S>::printItems(Nav& nav,Out& out,Idx idx,Idx top,PathRef ref)
           out.template printItem<typename F::Type,Nav,op,true>(F::obj(),nav,idx,nav.selected(idx),F::enabled(),nav.mode());
           // out.template printItem<F,Out,true>(*this,out,idx,nav.selected(idx),F::enabled(),nav.mode());
         else
-          out.template printItem<typename F::Type,Nav,op,false>(F::obj(),nav,idx,nav.selected(idx),F::enabled(),nav.mode());
+          out.template printItem<typename F::Type,Nav,Op::Measure,false>(F::obj(),nav,idx,nav.selected(idx),F::enabled(),nav.mode());
         break;
       case Op::ClearChanges:
         F::changed(false);

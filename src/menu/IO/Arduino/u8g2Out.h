@@ -54,7 +54,7 @@ template<typename Dev,Dev& dev,typename O=Void>
 struct U8g2Out:O,U8g2TextMeasure<Dev,dev> {
   // template<typename Out,bool toPrint=true>
   // inline static void nl(Out&) {}
-  template<typename T>
+  template<typename T,bool toPrint=true>
   inline static void raw(T o,Roles role=Roles::Raw) {dev.print(o);}
   inline static int ascent() {return dev.getAscent()+1;}
   inline static void setCursor(int x,int y) {dev.setCursor(x,y);}

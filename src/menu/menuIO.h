@@ -9,11 +9,11 @@ struct TextMeasure {
   template<typename O>
   struct Part:O {
     template<typename T>
-    static inline Idx measure(T o) {
+    static inline Area measure(T o) {
       #ifdef ARDUINO
-        return String(o).length();
+        return {String(o).length(),maxCharHeight()};
       #else
-        return _str(o);
+        return {_str(o),maxCharHeight()};
       #endif
     }
     inline static constexpr int maxCharWidth() {return 1;}
@@ -26,7 +26,6 @@ struct TextMeasure {
       static inline Idx _str(T i){return std::string(std::to_string(i)).length();}
       #endif
   };
-  template<typename O> using Open=Part<O>;
 };
 
 template<typename O>
@@ -39,8 +38,9 @@ struct StreamOut {
   template<typename O>
   struct Part:O {
     using This=StreamOut<Dev,dev>::Part<O>;
-    inline static void nl() {dev<<endl;}
-    template<typename T> inline static void raw(T o) {dev<<o;}
+    template<bool toPrint=true>
+    inline static void nl() {if(toPrint) dev<<endl;}
+    template<typename T,bool toPrint=true> inline static void raw(T o) {dev<<o;}
   };
 };
 

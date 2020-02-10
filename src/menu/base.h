@@ -28,6 +28,11 @@ inline Idx operator&(Idx a,Roles b) {return a&static_cast<Idx>(b);}
 inline bool is(Roles o,Idx p) {return static_cast<Idx>(o)==p;}
 inline bool has(Roles o,Idx p) {return static_cast<Idx>(o)|p;}
 
+struct Area {
+  Idx width;
+  Idx height;
+};
+
 #ifdef MENU_DEBUG
   constexpr const char* roleNames[]{
     "None","Raw","Panel","Menu","Title","Body","Item",

@@ -43,10 +43,12 @@ struct Nav {
     }
     inline size_t size() const {return root.size(*this);}
     inline size_t size(PathRef ref) const {return root.size(ref);}
+
     inline void up() {root.up(N::obj());}
     inline void down() {root.down(N::obj());}
     inline void enter() {root.enter(N::obj());}
     inline void esc() {root.esc(N::obj());}
+
     inline void _up() {
       trace(MDO<<"pos:"<<pos()<<" size:"<<size(parent())<<endl);
       if(pos()+1<size(parent())) setPos(pos()+1);}
@@ -60,6 +62,7 @@ struct Nav {
       if (!(n^r)) n?open():close();
     }
     inline void _esc() {close();}
+
     template<Cmd c>
     inline bool cmd() {
       switch(c) {

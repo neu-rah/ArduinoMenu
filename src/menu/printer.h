@@ -13,7 +13,7 @@ struct FullPrinter:public O {
   using This=FullPrinter<O>;
   template<typename It,typename Nav,Op op=Op::Printing>
   void printMenu(It& it,Nav& nav) {
-    trace(MDO<<"FullPrinter::printMenu"<<endl);
+    _trace(MDO<<"FullPrinter::printMenu "<<op<<endl);
     constexpr bool toPrint=op==Op::Printing;
     O::newView();
     bool dp=(!O::partialDraw())||(O::partialDraw()&&!O::isSame((void*)&it));
@@ -53,6 +53,7 @@ struct FullPrinter:public O {
   }
   template<typename It,typename Nav,Op op=Op::Printing,bool toPrint=true>
   void printItem(It& it,Nav& nav,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
+    _trace(MDO<<"FullPrinter::printItem "<<op<<endl);
     if (toPrint) O::clrLine(O::orgY()+O::posY());
     O::setCursor(O::orgX(),O::orgY()+O::posY());
     O::template fmt<Roles::Item,  true ,toPrint>(n,s,e,m);

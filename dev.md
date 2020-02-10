@@ -10,8 +10,14 @@
 - multiline options/title
 - simpler printers
 
+## what about...
 
 Empty::print<Op>()
-  -> obj().draw
-  -> obj().measure
-  -> obj().clear
+  Op::Printing     -> obj().draw
+  Op::Measure      -> obj().measure
+  Op::ClearChanges -> obj().clear
+
+split print into operations?
+- clear should follow the print for consistency
+- sending ops down to output print makes ez measuring for text
+- spliting ops makes ClearChanges easy, less code

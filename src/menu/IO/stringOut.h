@@ -8,8 +8,9 @@
 template<typename O=Void>
 struct StringOut:public std::stringstream,O {
   inline void newView() {str("");}
-  template<typename T>
-  inline void raw(T o,Roles role=Roles::Raw) {operator<<(o);}
-  inline void raw(char o,Roles role=Roles::Raw) {put(o);}
-  inline void raw(const char* o,Roles role=Roles::Raw) {write(o,strlen(o));}
+  template<typename T,bool toPrint=true>
+  inline void raw(T o) {operator<<(o);}
+  template<bool toPrint=true>
+  inline void raw<char,toPrint>(char o) {put(o);}
+  inline void raw<const char*,toPrint>(const char* o) {write(o,strlen(o));}
 };

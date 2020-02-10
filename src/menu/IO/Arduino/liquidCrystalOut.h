@@ -16,12 +16,13 @@
     struct Part:O {
       using O::O;
       using This = LiquidCrystalOut<dev>::Part<O>;
-      inline static void nl() {dev.println();}
+      template<bool toPrint=true>
+      inline static void nl() {if(toPrint) dev.println();}
       static inline void setCursor(Idx x,Idx y) {
         trace(MDO<<"lcd.setCursor("<<x<<","<<y<<") "<<endl);
         dev.setCursor(x,y);
       }
-      template<typename T>
+      template<typename T,bool toPrint=true>
       inline void raw(T i) {
         trace(MDO<<"lcd.raw(\""<<i<<"\") "<<endl);
         dev.print(i);}

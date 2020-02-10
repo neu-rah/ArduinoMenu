@@ -13,7 +13,7 @@ struct Mutable:I {
   //this can not be `protected` because of `CRTP` and `mixin` composition
   template<typename Nav,typename Out,Roles role=Roles::Raw>
   inline void clear(Nav& nav,Out& out,PathRef ref=self) {
-    _trace(MDO<<"Mutable::clear "<<ref<<endl);
+    trace(MDO<<"Mutable::clear "<<ref<<endl);
     changed(false);
   }
 protected:
@@ -41,9 +41,15 @@ template<const char** text>
 struct StaticText {
   template<typename I=Empty<Nil>>
   struct Part:I {
-    template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
-    inline static void print(Nav& nav,Out& out,PathRef ref=self) {out.raw(text[0]);}
+    template<typename Nav,typename Out,Roles role=Roles::Raw>
+    inline static void draw(Nav& nav,Out& out,PathRef ref=self) {out.raw(text[0]);}
+    // template<typename Nav,typename Out,Roles role=Roles::Raw>
+    // inline static void measure(Nav& nav,Out& out,PathRef ref=self) {
+    //   out.use(out.measure(text[0]));
+    // }
   };
+  template<typename Nav,typename Out,Roles role=Roles::Raw>
+  inline static void measure(Nav& nav,Out& out,PathRef ref=self) {out.measure(text[0]);}
 };
 
 template<typename I>
@@ -51,10 +57,15 @@ struct Text:I {
   using Base=I;
   const char* text;
   inline Text(const char*o):text(o) {}
-  template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
-  inline void print(Nav& nav,Out& out,PathRef ref=self) {
-    if (op==Op::Printing) out.raw(text);
-    I::template print<Nav,Out,op>(nav,out);
+  template<typename Nav,typename Out,Roles role=Roles::Raw>
+  inline void draw(Nav& nav,Out& out,PathRef ref=self) {
+    out.raw(text);
+    I::template draw<Nav,Out,role>(nav,out);
+  }
+  template<typename Nav,typename Out,Roles role=Roles::Raw>
+  inline void measure(Nav& nav,Out& out,PathRef ref=self) {
+    out.measure(text);
+    I::template measure<Nav,Out,role>(nav,out);
   }
 };
 
@@ -161,12 +172,19 @@ struct StaticMenu {
     template<typename Nav,typename Out,Op op=Op::Printing>
     inline void printMenu(Nav& nav,Out& out,PathRef ref=self,Idx n=0) {
       trace(MDO<<"StaticMenu::printMenu... "<<op<<" "<<ref<<endl);
-      if (!ref||ref.len==1&&body.parentPrint(ref))
+      // if (!ref||ref.len==1&&body.parentPrint(ref))
         out.template printMenu<typename I::Type,Nav,op>(I::obj(),nav);
-      else {
-        body.template printMenu<Nav,Out,op>(nav,out,ref,ref.head());
-        if (out.partialDraw()) body.template printMenu<Nav,Out,Op::ClearChanges>(nav,out,ref,ref.head());
-      }
+        if (out.partialDraw()) {
+          trace(MDO<<"partial draw cleanup!"<<endl);
+          out.template printMenu<typename I::Type,Nav,Op::ClearChanges>(I::obj(),nav);
+        }
+      // else {
+      //   body.template printMenu<Nav,Out,op>(nav,out,ref,ref.head());
+      //   if (out.partialDraw()) {
+      //     _trace(MDO<<"partial draw cleanup!"<<endl);
+      //     body.template printMenu<Nav,Out,Op::ClearChanges>(nav,out,ref,ref.head());
+      //   }
+      // }
     }
 
     template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>

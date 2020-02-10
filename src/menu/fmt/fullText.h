@@ -37,9 +37,9 @@ struct TextFmt:public O {
   template<bool io,bool toPrint=true>
   inline void fmtMode(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
     if(io) switch(m) {
-      case Modes::Normal: O::raw(' ');break;
-      case Modes::Edit: O::raw(s?':':' ');break;
-      case Modes::Tune: O::raw(s?'>':' ');break;
+      case Modes::Normal: O::template raw<char,toPrint>(' ');break;
+      case Modes::Edit: O::template raw<char,toPrint>(s?':':' ');break;
+      case Modes::Tune: O::template raw<char,toPrint>(s?'>':' ');break;
     }
 		O::template fmtMode<io,toPrint>(n,s,e,m);
   }
@@ -55,14 +55,14 @@ struct TextFmt:public O {
   template<bool io,bool toPrint=true>
   inline void fmtIndex(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
     if(io) {
-      if (n<9) O::raw(n+1);
-      else O::raw(' ');
+      if (n<9) O::template raw<char,toPrint>('1'+n);
+      else O::template raw<char,toPrint>(' ');
     }
     O::template fmtIndex<io,toPrint>(n,s,e,m);
   }
   template<bool io,bool toPrint=true>
   inline void fmtCursor(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
-    if (io) O::raw(s?((e?'>':'-')):' ');
+    if (io) O::template raw<char,toPrint>(s?((e?'>':'-')):' ');
     O::template fmtCursor<io,toPrint>(n,s,e,m);
   }
 };
