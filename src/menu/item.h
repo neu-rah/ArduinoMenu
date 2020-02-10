@@ -134,10 +134,7 @@ struct Pair:F {
   template<typename Nav,typename Out,Op op=Op::Printing>
   inline void printMenu(Nav& nav,Out& out,PathRef ref=self,Idx n=0);
   template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
-  inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,PathRef ref=self);
-  // template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
-  // inline void printItems(Nav& nav,Out& out,Idx idx,Idx top,PathRef ref,Idx n);
-
+  inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,PathRef ref=self,bool fullPrint=true);
 };
 
 template<typename Title,typename Body>
@@ -201,9 +198,9 @@ struct StaticMenu {
     }
 
     template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
-    inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,PathRef ref=self) {
-      trace(MDO<<"StaticMenu::printItems"<<endl);
-      body.template printItems<Nav,Out,op,role>(nav,out,idx,top,ref);
+    inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,PathRef ref=self,bool fullPrint=false) {
+      trace(MDO<<"StaticMenu::printItems fullPrint:"<<fullPrint<<endl);
+      body.template printItems<Nav,Out,op,role>(nav,out,idx,top,ref,fullPrint);
     }
 
   };

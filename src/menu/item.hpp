@@ -11,55 +11,26 @@ inline void Pair<F,S>::printMenu(Nav& nav,Out& out,PathRef ref,Idx n) {
 
 template<typename F,typename S>
 template<typename Nav,typename Out,Op op,Roles role>
-inline void Pair<F,S>::printItems(Nav& nav,Out& out,Idx idx,Idx top,PathRef ref) {
-  trace(MDO<<"Pair::printItems top:"<<top<<" out.freeY:"<<out.freeY()<<endl);
-  if (ref) printItems<Nav,Out,op,role>(nav,out,idx,top,ref.tail()/*,ref.head()*/);
+inline void Pair<F,S>::printItems(Nav& nav,Out& out,Idx idx,Idx top,PathRef ref,bool fullPrint) {
+  trace(MDO<<"Pair::printItems top:"<<top<<" out.freeY:"<<out.freeY()<<" fullPrint:"<<fullPrint<<endl);
+  if (ref) printItems<Nav,Out,op,role>(nav,out,idx,top,ref.tail(),fullPrint);
   else {
     if (!out.freeY()) return;
-    if(top) tail.template printItems<Nav,Out,op,role>(nav,out,++idx,top-1);//skip scroll-out part
+    if(top) tail.template printItems<Nav,Out,op,role>(nav,out,++idx,top-1,self,fullPrint);//skip scroll-out part
     else switch(op) {
       case Op::Measure:
         out.template printItem<typename F::Type,Nav,op,false>(F::obj(),nav,idx,nav.selected(idx),F::enabled(),nav.mode());
         break;
       case Op::Printing:
         trace(MDO<<"Pair::printItems changed:"<<F::changed()<<" partialDraw:"<<out.partialDraw()<<endl);
-        if (/*fullPrint||*/F::changed()||!out.partialDraw())
+        if (fullPrint||F::changed()||!out.partialDraw())
           out.template printItem<typename F::Type,Nav,op,true>(F::obj(),nav,idx,nav.selected(idx),F::enabled(),nav.mode());
-          // out.template printItem<F,Out,true>(*this,out,idx,nav.selected(idx),F::enabled(),nav.mode());
         else
           out.template printItem<typename F::Type,Nav,Op::Measure,false>(F::obj(),nav,idx,nav.selected(idx),F::enabled(),nav.mode());
         break;
       case Op::ClearChanges:
         F::changed(false);
     }
-    tail.template printItems<Nav,Out,op,role>(nav,out,idx+1,top/*,fullPrint*/);
-    // else out.template printItem
-    //   <typename F::Type,Nav,op,true>
-    //   (F::obj(),nav,idx,nav.selected(idx),F::enabled(),nav.mode());
-    // tail.template printItems<Nav,Out,op,role>(nav,out,++idx,top);
+    tail.template printItems<Nav,Out,op,role>(nav,out,idx+1,top,self,fullPrint);
   }
 }
-// template<typename F,typename S>
-// template<typename Nav,typename Out,Op op,Roles role>
-// inline void Pair<F,S>::printItems(Nav& nav,Out& out,Idx idx,Idx top,PathRef ref,Idx n) {
-//   _trace(MDO<<"Pair::printItems..."<<endl);
-//   if (n) tail.template printItems<Nav,Out,op,role>(nav,out,++idx,top,ref,n-1);
-//   else if (ref) F::template printItems<Nav,Out,op,role>(nav,out,idx,top,ref.tail());
-//   else switch(op) {
-//     case Op::Measure:
-//       out.template printItem<typename F::Type,Nav,op,false>(F::obj(),nav,idx,nav.selected(idx),F::enabled(),nav.mode());
-//       break;
-//     case Op::Printing:
-//       _trace(MDO<<"Pair::printItems changed:"<<F::changed()<<" partialDraw:"<<out.partialDraw()<<endl);
-//       if (/*fullPrint||*/F::changed()||!out.partialDraw())
-//         out.template printItem<typename F::Type,Nav,op,true>(F::obj(),nav,idx,nav.selected(idx),F::enabled(),nav.mode());
-//         // out.template printItem<F,Out,true>(*this,out,idx,nav.selected(idx),F::enabled(),nav.mode());
-//       else
-//         out.template printItem<typename F::Type,Nav,op,false>(F::obj(),nav,idx,nav.selected(idx),F::enabled(),nav.mode());
-//       break;
-//     case Op::ClearChanges:
-//       F::changed(false);
-//   }
-//   tail.template printItems<Nav,Out,op,role>(nav,out,idx+1,top/*,fullPrint*/);
-//   // else out.template printItem<typename F::Type,Nav,op,true>(F::obj(),nav,idx,nav.selected(idx),F::enabled(),nav.mode());
-// }

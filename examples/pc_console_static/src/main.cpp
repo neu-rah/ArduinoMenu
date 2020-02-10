@@ -68,6 +68,7 @@ StaticMenuOut<
   PartialDraw,//just for testing, because console is not ob this cathegory
   TitleWrapFmt<>::Part,//wrap title in []
   TextFmt,//format the text parts, use `>` as text cursor`
+  PanelTarget,
   RangePanel<>::Part,//control vertical scrolling
   StaticPanel<0,0,20,6>::Part,//define output geometry
   Console,//the raw output device to use

@@ -20,10 +20,10 @@ struct Void:O {
   inline static constexpr Idx posY() {return 0;}
   inline static constexpr Idx freeY() {return idx_max;}
   template<typename Nav> inline static constexpr bool posTop(Nav&) {return false;}
-  template<typename It,Op op=Op::Printing,Roles role=Roles::Raw>
-  inline void printItems(It& it,Idx idx=0,Idx top=0) {
-    for(auto o:it) o->printItem(O::obj());
-  }
+  // template<typename It,Op op=Op::Printing,Roles role=Roles::Raw>
+  // inline void printItems(It& it,Idx idx=0,Idx top=0) {
+  //   for(auto o:it) o->printItem(O::obj());
+  // }
   //to detect target menu change when nothing else changed
   inline static void lastDrawn(void*) {}
   constexpr static inline Idx orgX() {return 0;}

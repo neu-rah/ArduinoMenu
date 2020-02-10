@@ -13,7 +13,7 @@ struct FullPrinter:public O {
   using This=FullPrinter<O>;
   template<typename It,typename Nav,Op op=Op::Printing>
   void printMenu(It& it,Nav& nav) {
-    _trace(MDO<<"FullPrinter::printMenu "<<op<<endl);
+    trace(MDO<<"FullPrinter::printMenu "<<op<<endl);
     constexpr bool toPrint=op==Op::Printing;
     O::newView();
     bool dp=(!O::partialDraw())||(O::partialDraw()&&!O::isSame((void*)&it));
@@ -41,11 +41,11 @@ struct FullPrinter:public O {
     }
 
     it.changed(This::posTop(nav));
-    // bool fp=toPrint&&((!O::partialDraw())||it.changed()||!O::isSame(&it));
-    trace(MDO<<"FullPrinter printing body"<<endl);
+    bool fp=/*toPrint&&*/((!O::partialDraw())||it.changed()||!O::isSame(&it));
+    _trace(MDO<<"FullPrinter printing body, fullPrint:"<<fp<<" partialDraw:"<<O::partialDraw()<<" changed:"<<it.changed()<<" isSame:"<<O::isSame(&it)<<endl);
     it.template printItems
       <Nav,typename O::Type,op,Roles::Item>
-      (nav,O::obj(),0,O::obj().top());
+      (nav,O::obj(),0,O::obj().top(),self,fp);
 
     O::template fmt<Roles::Menu,false,toPrint>();
     if(dp) O::template fmt<Roles::Panel,false,toPrint>();
