@@ -36,7 +36,7 @@ const char* quit_text="<Quit.";
 //menu static structure ---------------------------
 using MainMenu=Item<
   StaticMenu<
-    StaticText<&mainText>::Part<>,
+    Item<StaticText<&mainText>::Part>::Part,
     StaticData<
       Item<EnDis<>::Part,StaticText<&op1_text>::Part>,
       Item<EnDis<false>::Part,StaticText<&op2_text>::Part>,
@@ -45,7 +45,7 @@ using MainMenu=Item<
       Item<StaticText<&opn_text>::Part>,
       Item<
         StaticMenu<
-          StaticText<&subText>::Part<>,
+          Item<StaticText<&subText>::Part>,
           StaticData<
             Item<StaticText<&sub1_text>::Part>,
             Item<StaticText<&sub2_text>::Part>,

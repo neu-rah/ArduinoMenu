@@ -203,6 +203,11 @@ struct StaticMenu {
       body.template printItems<Nav,Out,op,role>(nav,out,idx,top,ref,fullPrint);
     }
 
+    template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
+    inline void print(Nav& nav,Out& out,PathRef ref=self) {
+      trace(MDO<<"StaticMenu::print "<<role<<endl);
+      title.template print<Nav,Out,op,role>(nav,out,ref);
+    }
   };
 };
 
