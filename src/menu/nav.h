@@ -17,11 +17,14 @@ struct Nav {
     template<typename Out>
     inline void print(Out& out) {
       trace(MDO<<"Nav::print"<<endl);
-      root.printMenu(N::obj(),out,*this);}
-    template<typename Out>
-    inline void printParent(Out& out) {
-      trace(MDO<<"Nav::printParent"<<endl);
-      root.printMenu(N::obj(),out,parent());}
+      root.printMenu(N::obj(),out,*this);
+      if (out.partialDraw())
+        root.template printMenu<typename N::Type,Out,Op::ClearChanges>(N::obj(),out,*this);
+    }
+    // template<typename Out>
+    // inline void printParent(Out& out) {
+    //   trace(MDO<<"Nav::printParent"<<endl);
+    //   root.printMenu(N::obj(),out,parent());}
     inline Idx pos() const {return path[level];}
     inline Modes mode() const {return editMode;}
     inline void setMode(Modes m) {editMode=m;}
@@ -46,6 +49,7 @@ struct Nav {
 
     template<Cmd c>
     inline bool cmd() {
+      trace(MDO<<"Nav::cmd "<<c<<endl);
       return root.template cmd<c,typename N::Type>(N::obj());
     }
 

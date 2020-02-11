@@ -62,8 +62,10 @@ MenuOut<
   FullPrinter,//print all parts, title, index, text cursor
   TitleWrapFmt<>::Part,//wrap title in []
   TextFmt,//format the text parts, use `>` as text cursor`
+  PartialDraw,//just for testing, because console is not ob this cathegory
+  PanelTarget,//detect target (menu) changes
   RangePanel<>::Part,//control vertical scrolling
-  StaticPanel<0,0,20,4>::Part,//define output geometry
+  StaticPanel<0,0,20,6>::Part,//define output geometry
   Console,//the raw output device to use
   TextMeasure<>::Part//default monometric text measure
 > out;

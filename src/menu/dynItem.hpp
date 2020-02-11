@@ -14,48 +14,48 @@ inline void Prompt<I...>::printItems(INav& nav,IOut& out,Idx idx,Idx top,PathRef
   switch(op) {
     case Op::Measure:
     switch(role) {
-      case Roles::Raw:Base::template printItems<INav,IOut,Op::Measure,Roles::Raw>(nav,out,idx,top,ref);break;
-      case Roles::Panel: Base::template printItems<INav,IOut,Op::Measure,Roles::Panel>(nav,out,idx,top,ref);break;
-      case Roles::Menu: Base::template printItems<INav,IOut,Op::Measure,Roles::Menu>(nav,out,idx,top,ref);break;
-      case Roles::Title: Base::template printItems<INav,IOut,Op::Measure,Roles::Title>(nav,out,idx,top,ref);break;
-      case Roles::Body: Base::template printItems<INav,IOut,Op::Measure,Roles::Body>(nav,out,idx,top,ref);break;
-      case Roles::Item: Base::template printItems<INav,IOut,Op::Measure,Roles::Item>(nav,out,idx,top,ref);break;
-      case Roles::Index: Base::template printItems<INav,IOut,Op::Measure,Roles::Index>(nav,out,idx,top,ref);break;
-      case Roles::Cursor: Base::template printItems<INav,IOut,Op::Measure,Roles::Cursor>(nav,out,idx,top,ref);break;
-      case Roles::Name: Base::template printItems<INav,IOut,Op::Measure,Roles::Name>(nav,out,idx,top,ref);break;
-      case Roles::Mode: Base::template printItems<INav,IOut,Op::Measure,Roles::Mode>(nav,out,idx,top,ref);break;
-      case Roles::Value: Base::template printItems<INav,IOut,Op::Measure,Roles::Value>(nav,out,idx,top,ref);break;
-      case Roles::Unit: Base::template printItems<INav,IOut,Op::Measure,Roles::Unit>(nav,out,idx,top,ref);break;
+      case Roles::Raw:Base::template printItems<INav,IOut,Op::Measure,Roles::Raw>(nav,out,idx,top,ref,toPrint);break;
+      case Roles::Panel: Base::template printItems<INav,IOut,Op::Measure,Roles::Panel>(nav,out,idx,top,ref,toPrint);break;
+      case Roles::Menu: Base::template printItems<INav,IOut,Op::Measure,Roles::Menu>(nav,out,idx,top,ref,toPrint);break;
+      case Roles::Title: Base::template printItems<INav,IOut,Op::Measure,Roles::Title>(nav,out,idx,top,ref,toPrint);break;
+      case Roles::Body: Base::template printItems<INav,IOut,Op::Measure,Roles::Body>(nav,out,idx,top,ref,toPrint);break;
+      case Roles::Item: Base::template printItems<INav,IOut,Op::Measure,Roles::Item>(nav,out,idx,top,ref,toPrint);break;
+      case Roles::Index: Base::template printItems<INav,IOut,Op::Measure,Roles::Index>(nav,out,idx,top,ref,toPrint);break;
+      case Roles::Cursor: Base::template printItems<INav,IOut,Op::Measure,Roles::Cursor>(nav,out,idx,top,ref,toPrint);break;
+      case Roles::Name: Base::template printItems<INav,IOut,Op::Measure,Roles::Name>(nav,out,idx,top,ref,toPrint);break;
+      case Roles::Mode: Base::template printItems<INav,IOut,Op::Measure,Roles::Mode>(nav,out,idx,top,ref,toPrint);break;
+      case Roles::Value: Base::template printItems<INav,IOut,Op::Measure,Roles::Value>(nav,out,idx,top,ref,toPrint);break;
+      case Roles::Unit: Base::template printItems<INav,IOut,Op::Measure,Roles::Unit>(nav,out,idx,top,ref,toPrint);break;
     };break;
     case Op::Printing:
     switch(role) {
-      case Roles::Raw: Base::template printItems<INav,IOut,Op::Printing,Roles::Raw>(nav,out,idx,top,ref);break;
-      case Roles::Panel: Base::template printItems<INav,IOut,Op::Printing,Roles::Panel>(nav,out,idx,top,ref);break;
-      case Roles::Menu: Base::template printItems<INav,IOut,Op::Printing,Roles::Menu>(nav,out,idx,top,ref);break;
-      case Roles::Title: Base::template printItems<INav,IOut,Op::Printing,Roles::Title>(nav,out,idx,top,ref);break;
-      case Roles::Body: Base::template printItems<INav,IOut,Op::Printing,Roles::Body>(nav,out,idx,top,ref);break;
-      case Roles::Item: Base::template printItems<INav,IOut,Op::Printing,Roles::Item>(nav,out,idx,top,ref);break;
-      case Roles::Index: Base::template printItems<INav,IOut,Op::Printing,Roles::Index>(nav,out,idx,top,ref);break;
-      case Roles::Cursor: Base::template printItems<INav,IOut,Op::Printing,Roles::Cursor>(nav,out,idx,top,ref);break;
-      case Roles::Name: Base::template printItems<INav,IOut,Op::Printing,Roles::Name>(nav,out,idx,top,ref);break;
-      case Roles::Mode: Base::template printItems<INav,IOut,Op::Printing,Roles::Mode>(nav,out,idx,top,ref);break;
-      case Roles::Value: Base::template printItems<INav,IOut,Op::Printing,Roles::Value>(nav,out,idx,top,ref);break;
-      case Roles::Unit: Base::template printItems<INav,IOut,Op::Printing,Roles::Unit>(nav,out,idx,top,ref);break;
+      case Roles::Raw: Base::template printItems<INav,IOut,Op::Printing,Roles::Raw>(nav,out,idx,top,ref,toPrint);break;
+      case Roles::Panel: Base::template printItems<INav,IOut,Op::Printing,Roles::Panel>(nav,out,idx,top,ref,toPrint);break;
+      case Roles::Menu: Base::template printItems<INav,IOut,Op::Printing,Roles::Menu>(nav,out,idx,top,ref,toPrint);break;
+      case Roles::Title: Base::template printItems<INav,IOut,Op::Printing,Roles::Title>(nav,out,idx,top,ref,toPrint);break;
+      case Roles::Body: Base::template printItems<INav,IOut,Op::Printing,Roles::Body>(nav,out,idx,top,ref,toPrint);break;
+      case Roles::Item: Base::template printItems<INav,IOut,Op::Printing,Roles::Item>(nav,out,idx,top,ref,toPrint);break;
+      case Roles::Index: Base::template printItems<INav,IOut,Op::Printing,Roles::Index>(nav,out,idx,top,ref,toPrint);break;
+      case Roles::Cursor: Base::template printItems<INav,IOut,Op::Printing,Roles::Cursor>(nav,out,idx,top,ref,toPrint);break;
+      case Roles::Name: Base::template printItems<INav,IOut,Op::Printing,Roles::Name>(nav,out,idx,top,ref,toPrint);break;
+      case Roles::Mode: Base::template printItems<INav,IOut,Op::Printing,Roles::Mode>(nav,out,idx,top,ref,toPrint);break;
+      case Roles::Value: Base::template printItems<INav,IOut,Op::Printing,Roles::Value>(nav,out,idx,top,ref,toPrint);break;
+      case Roles::Unit: Base::template printItems<INav,IOut,Op::Printing,Roles::Unit>(nav,out,idx,top,ref,toPrint);break;
     };break;
     case Op::ClearChanges:
     switch(role) {
-      case Roles::Raw: Base::template printItems<INav,IOut,Op::ClearChanges,Roles::Raw>(nav,out,idx,top,ref);break;
-      case Roles::Panel: Base::template printItems<INav,IOut,Op::ClearChanges,Roles::Panel>(nav,out,idx,top,ref);break;
-      case Roles::Menu: Base::template printItems<INav,IOut,Op::ClearChanges,Roles::Menu>(nav,out,idx,top,ref);break;
-      case Roles::Title: Base::template printItems<INav,IOut,Op::ClearChanges,Roles::Title>(nav,out,idx,top,ref);break;
-      case Roles::Body: Base::template printItems<INav,IOut,Op::ClearChanges,Roles::Body>(nav,out,idx,top,ref);break;
-      case Roles::Item: Base::template printItems<INav,IOut,Op::ClearChanges,Roles::Item>(nav,out,idx,top,ref);break;
-      case Roles::Index: Base::template printItems<INav,IOut,Op::ClearChanges,Roles::Index>(nav,out,idx,top,ref);break;
-      case Roles::Cursor: Base::template printItems<INav,IOut,Op::ClearChanges,Roles::Cursor>(nav,out,idx,top,ref);break;
-      case Roles::Name: Base::template printItems<INav,IOut,Op::ClearChanges,Roles::Name>(nav,out,idx,top,ref);break;
-      case Roles::Mode: Base::template printItems<INav,IOut,Op::ClearChanges,Roles::Mode>(nav,out,idx,top,ref);break;
-      case Roles::Value: Base::template printItems<INav,IOut,Op::ClearChanges,Roles::Value>(nav,out,idx,top,ref);break;
-      case Roles::Unit: Base::template printItems<INav,IOut,Op::ClearChanges,Roles::Unit>(nav,out,idx,top,ref);break;
+      case Roles::Raw: Base::template printItems<INav,IOut,Op::ClearChanges,Roles::Raw>(nav,out,idx,top,ref,toPrint);break;
+      case Roles::Panel: Base::template printItems<INav,IOut,Op::ClearChanges,Roles::Panel>(nav,out,idx,top,ref,toPrint);break;
+      case Roles::Menu: Base::template printItems<INav,IOut,Op::ClearChanges,Roles::Menu>(nav,out,idx,top,ref,toPrint);break;
+      case Roles::Title: Base::template printItems<INav,IOut,Op::ClearChanges,Roles::Title>(nav,out,idx,top,ref,toPrint);break;
+      case Roles::Body: Base::template printItems<INav,IOut,Op::ClearChanges,Roles::Body>(nav,out,idx,top,ref,toPrint);break;
+      case Roles::Item: Base::template printItems<INav,IOut,Op::ClearChanges,Roles::Item>(nav,out,idx,top,ref,toPrint);break;
+      case Roles::Index: Base::template printItems<INav,IOut,Op::ClearChanges,Roles::Index>(nav,out,idx,top,ref,toPrint);break;
+      case Roles::Cursor: Base::template printItems<INav,IOut,Op::ClearChanges,Roles::Cursor>(nav,out,idx,top,ref,toPrint);break;
+      case Roles::Name: Base::template printItems<INav,IOut,Op::ClearChanges,Roles::Name>(nav,out,idx,top,ref,toPrint);break;
+      case Roles::Mode: Base::template printItems<INav,IOut,Op::ClearChanges,Roles::Mode>(nav,out,idx,top,ref,toPrint);break;
+      case Roles::Value: Base::template printItems<INav,IOut,Op::ClearChanges,Roles::Value>(nav,out,idx,top,ref,toPrint);break;
+      case Roles::Unit: Base::template printItems<INav,IOut,Op::ClearChanges,Roles::Unit>(nav,out,idx,top,ref,toPrint);break;
     };break;
   }
 }

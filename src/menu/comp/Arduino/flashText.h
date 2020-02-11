@@ -16,9 +16,9 @@
     struct Part:I {
       using I::I;
       // using I::size;
-      template<typename Nav,typename Out,Roles role=Roles::Raw>
-      inline static void draw(Nav& nav,Out& out,PathRef ref=self) {
-        out.template raw<const __FlashStringHelper *>(reinterpret_cast<const __FlashStringHelper *>(text[0]));
+      template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
+      inline static void print(Nav& nav,Out& out,PathRef ref=self) {
+        out.template raw<const __FlashStringHelper *>(reinterpret_cast<const __FlashStringHelper *,op==Op::Printing>(text[0]));
       }
     };
   };

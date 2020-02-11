@@ -40,7 +40,8 @@ struct StreamOut {
     using This=StreamOut<Dev,dev>::Part<O>;
     template<bool toPrint=true>
     inline static void nl() {if(toPrint) dev<<endl;}
-    template<typename T,bool toPrint=true> inline static void raw(T o) {
+    template<typename T,bool toPrint=true>
+    inline static void raw(T o) {
       if(toPrint) dev<<o;
     }
   };
