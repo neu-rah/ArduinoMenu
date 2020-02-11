@@ -36,7 +36,7 @@ const char* quit_text="<Quit.";
 //menu static structure ---------------------------
 using MainMenu=Item<
   StaticMenu<
-    Item<StaticText<&mainText>::Part>::Part,
+    Item<StaticText<&mainText>::Part>,
     StaticData<
       Item<EnDis<>::Part,StaticText<&op1_text>::Part>,
       Item<EnDis<false>::Part,StaticText<&op2_text>::Part>,
@@ -65,12 +65,12 @@ MainMenu mainMenu;
 //menu output ---------------------------------------
 StaticMenuOut<
   FullPrinter,//print all parts, title, index, text cursor
-  PartialDraw,//just for testing, because console is not ob this cathegory
   TitleWrapFmt<>::Part,//wrap title in []
   TextFmt,//format the text parts, use `>` as text cursor`
-  PanelTarget,
-  RangePanel<>::Part,//control vertical scrolling
-  StaticPanel<0,0,20,6>::Part,//define output geometry
+  // PartialDraw,//just for testing, because console is not ob this cathegory
+  // PanelTarget,//detect target (menu) changes
+  // RangePanel<>::Part,//control vertical scrolling
+  // StaticPanel<0,0,20,6>::Part,//define output geometry
   Console,//the raw output device to use
   TextMeasure<>::Part//default monometric text measure
 > out;

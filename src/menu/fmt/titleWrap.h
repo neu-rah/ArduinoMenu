@@ -16,11 +16,11 @@
       template<bool io,bool toPrint=true>
       inline void fmtTitle(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
         if (io) {
-          O::template raw<char>(open);
+          O::template raw<char,toPrint>(open);
           O::template fmtTitle<io,toPrint>(n,s,e,m);
         } else {
           O::template fmtTitle<io,toPrint>(n,s,e,m);
-          O::template raw<char>(close);
+          O::template raw<char,toPrint>(close);
         }
       }
     };

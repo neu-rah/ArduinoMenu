@@ -9,12 +9,12 @@ inline void Prompt<I...>::printMenu(INav& nav,IOut& out,Op op,PathRef ref) {
   }
 }
 template<Expr... I>
-inline void Prompt<I...>::printItems(INav& nav,IOut& out,Idx idx,Idx top,PathRef ref,Op op,Roles role) {
+inline void Prompt<I...>::printItems(INav& nav,IOut& out,Idx idx,Idx top,PathRef ref,Op op,Roles role,bool toPrint) {
   trace(MDO<<"Prompt::printItems"<<endl);
   switch(op) {
     case Op::Measure:
     switch(role) {
-      case Roles::Raw: Base::template printItems<INav,IOut,Op::Measure,Roles::Raw>(nav,out,idx,top,ref);break;
+      case Roles::Raw:Base::template printItems<INav,IOut,Op::Measure,Roles::Raw>(nav,out,idx,top,ref);break;
       case Roles::Panel: Base::template printItems<INav,IOut,Op::Measure,Roles::Panel>(nav,out,idx,top,ref);break;
       case Roles::Menu: Base::template printItems<INav,IOut,Op::Measure,Roles::Menu>(nav,out,idx,top,ref);break;
       case Roles::Title: Base::template printItems<INav,IOut,Op::Measure,Roles::Title>(nav,out,idx,top,ref);break;

@@ -29,7 +29,10 @@ struct MenuOut:IOut,Chain<O...,Void>::template To<Obj<MenuOut<O...>>> {
   inline void nl(bool toPrint=true) override {
     toPrint?Base::template nl<true>():Base::template nl<false>();
   }
-  inline void raw(const char* o,bool toPrint=true) override {Base::template raw<decltype(o,toPrint)>(o);}
+  inline void raw(const char* o,bool toPrint=true) override {
+    if (toPrint) Base::template raw<decltype(o),true>(o);
+    else Base::template raw<decltype(o),false>(o);
+  }
   void printMenu(IItem& it,INav& nav, Op op=Op::Printing) override;
   void printItem(IItem& it,INav& nav,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal,Op op=Op::Printing,bool toPrint=true) override;
   Idx freeY() const override {return Base::freeY();}

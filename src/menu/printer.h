@@ -41,14 +41,18 @@ struct FullPrinter:public O {
     }
 
     it.changed(This::posTop(nav));
-    bool fp=/*toPrint&&*/((!O::partialDraw())||it.changed()||!O::isSame(&it));
+    bool fp=toPrint&&((!O::partialDraw())||it.changed()||!O::isSame(&it));
     trace(MDO<<"FullPrinter printing body, fullPrint:"<<fp<<" partialDraw:"<<O::partialDraw()<<" changed:"<<it.changed()<<" isSame:"<<O::isSame(&it)<<endl);
     it.template printItems
       <Nav,typename O::Type,op,Roles::Item>
       (nav,O::obj(),0,O::obj().top(),self,fp);
 
-    O::template fmt<Roles::Menu,false,toPrint>();
-    if(dp) O::template fmt<Roles::Panel,false,toPrint>();
+    if (tp) O::template fmt<Roles::Menu,false,true>();
+    else O::template fmt<Roles::Menu,false,false>();
+    if(dp) {
+      if(tp) O::template fmt<Roles::Panel,false,true>();
+      else O::template fmt<Roles::Panel,false,false>();
+    }
     if (toPrint) O::lastDrawn(&it);
   }
   template<typename It,typename Nav,Op op=Op::Printing,bool toPrint=true>

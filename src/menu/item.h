@@ -47,9 +47,9 @@ struct StaticText {
     // inline static void measure(Nav& nav,Out& out,PathRef ref=self) {
     //   out.use(out.measure(text[0]));
     // }
+    template<typename Nav,typename Out,Roles role=Roles::Raw>
+    inline static void measure(Nav& nav,Out& out,PathRef ref=self) {out.measure(text[0]);}
   };
-  template<typename Nav,typename Out,Roles role=Roles::Raw>
-  inline static void measure(Nav& nav,Out& out,PathRef ref=self) {out.measure(text[0]);}
 };
 
 template<typename I>
@@ -206,7 +206,7 @@ struct StaticMenu {
     template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
     inline void print(Nav& nav,Out& out,PathRef ref=self) {
       trace(MDO<<"StaticMenu::print "<<role<<endl);
-      title.template print<Nav,Out,op,role>(nav,out,ref);
+      if (Base::obj().changed()||title.changed()) title.template print<Nav,Out,op,role>(nav,out,ref);
     }
   };
 };
