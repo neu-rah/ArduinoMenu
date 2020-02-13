@@ -5,6 +5,8 @@
 + default "no action" item act as "Exit"
 + enable/disable
 - minimal draw and viewports
+- rename files use static instead on dyn
+- do not send activation for disabled items
 - fields
 - 2d nav
 - multiline options/title

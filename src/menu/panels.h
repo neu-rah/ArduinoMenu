@@ -45,7 +45,7 @@ struct RangePanel {
       inline Idx top() const {return topLine;}
       inline void setTop(Idx n) {topLine=n;}
       inline void newView() {
-        trace(MDO<<"RangePanel::newView"<<endl);
+        trace(MDO<<"RangePanel::newView---------------------------"<<endl);
         freeLines=O::height();
         O::setCursor(O::orgX(),O::orgY()+O::ascent());
       }
@@ -60,7 +60,7 @@ struct RangePanel {
       inline void use(Area a) {This::useX(a.height);This::useY(a.width);}
       template<bool toPrint=true>
       inline void nl() {
-        O::nl();
+        O::template nl<toPrint>();
         useY();
       }
       inline Idx freeY() const {return freeLines;}

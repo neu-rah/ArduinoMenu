@@ -19,6 +19,10 @@ bool quit() {
 }
 bool tog12();//implemented later because we need to access mainMenu
 
+bool op1_action() {
+  cout<<"Option 1 action called!"<<endl;
+}
+
 //menu texts -------------------------
 const char* subText="Sub-menu";
 const char* sub1_text="Sub 1";
@@ -38,7 +42,7 @@ using MainMenu=Item<
   StaticMenu<
     Item<StaticText<&mainText>::Part>,
     StaticData<
-      Item<EnDis<>::Part,StaticText<&op1_text>::Part>,
+      Item<Action<op1_action>::Part,EnDis<>::Part,StaticText<&op1_text>::Part>,
       Item<EnDis<false>::Part,StaticText<&op2_text>::Part>,
       Item<Action<tog12>::Part,StaticText<&tog12_text>::Part>,
       Item<StaticText<&opn_text>::Part>,
@@ -67,12 +71,12 @@ StaticMenuOut<
   FullPrinter,//print all parts, title, index, text cursor
   TitleWrapFmt<>::Part,//wrap title in []
   TextFmt,//format the text parts, use `>` as text cursor`
-#ifdef MENU_DEBUG
-  PartialDraw,//just for testing, because console is not of this cathegory
-  PanelTarget,//detect target (menu) changes
-  RangePanel<>::Part,//control vertical scrolling
-  StaticPanel<0,0,20,6>::Part,//define output geometry
-#endif
+// #ifdef MENU_DEBUG
+//   PartialDraw,//just for testing, because console is not of this cathegory
+//   PanelTarget,//detect target (menu) changes
+//   RangePanel<>::Part,//control vertical scrolling
+//   StaticPanel<0,0,20,6>::Part,//define output geometry
+// #endif
   Console,//the raw output device to use
   TextMeasure<>::Part//default monometric text measure
 > out;

@@ -7,16 +7,19 @@ template<class I>
 struct Mutable:I {
   using I::I;
   inline bool changed() const {return hasChanged;}
-  inline void changed(bool o) {hasChanged=o;}
+  inline void changed(bool o) {
+    trace(MDO<<"Mutable "<<(o?"dirt":"clear")<<endl);
+    hasChanged=o;}
   // inline void changed(Idx,bool o) {changed(o);}
 
   //this can not be `protected` because of `CRTP` and `mixin` composition
   template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
   inline void print(Nav& nav,Out& out,PathRef ref=self) {
-    if (!ref&&op==Op::ClearChanges) {
-      _trace(MDO<<"Mutable::clear "<<ref<<endl);
+    if (op==Op::ClearChanges&&!ref) {
+      trace(MDO<<"Mutable::print clear "<<endl);
       changed(false);
-    } else I::template print<Nav,Out,op,role>(nav,out,ref);
+    }// else
+    I::template print<Nav,Out,op,role>(nav,out,ref);
   }
 protected:
   bool hasChanged=true;
@@ -97,18 +100,21 @@ struct Pair:F {
     if (ref) return F::enabled(ref.tail());
     return F::enabled();
   }
+
   inline void enable(bool b,PathRef ref=self,Idx n=0) {
     trace(MDO<<"Pair::enable "<<ref<<" "<<n<<endl);
     if(n) tail.enable(b,ref,--n);
     else if (ref) F::enable(b,ref.tail());
     else F::enable(n);
   }
+
   inline Idx size(PathRef ref=self,Idx n=0) const {
     trace(MDO<<"Pair::size "<<ref<<" "<<n<<endl);
     if(n) return tail.size(ref,--n);
     if (ref) return F::size(ref.tail());
     return tail.size()+1;
   }
+
   inline bool canNav(PathRef ref=self,Idx n=0) {
     trace(MDO<<"Pair::canNav "<<ref<<" "<<n<<endl);
     if(n) return tail.canNav(ref,--n);
@@ -190,11 +196,8 @@ struct StaticMenu {
     template<typename Nav,typename Out,Op op=Op::Printing>
     inline void printMenu(Nav& nav,Out& out,PathRef ref=self,Idx n=0) {
       trace(MDO<<"StaticMenu::printMenu... "<<op<<" "<<ref<<endl);
-      out.template printMenu<typename I::Type,Nav,op>(I::obj(),nav);
-      // if (out.partialDraw()) {
-      //   trace(MDO<<"partial draw cleanup!"<<endl);
-      //   out.template printMenu<typename I::Type,Nav,Op::ClearChanges>(I::obj(),nav);
-      // }
+      if(ref.len>1) body.template printMenu<>(nav,out,ref.tail(),ref.head());
+      else out.template printMenu<typename I::Type,Nav,op>(I::obj(),nav);
     }
 
     template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>

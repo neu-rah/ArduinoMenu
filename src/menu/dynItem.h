@@ -15,6 +15,7 @@ struct IItem {
   virtual inline bool changed() const=0;
   virtual inline void changed(bool o)=0;
   virtual inline bool parentPrint(PathRef ref=self)=0;
+  virtual inline bool cmd(Cmd,INav&,PathRef=self)=0;
 
   template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
   inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,PathRef ref=self,bool toPrint=true)
@@ -26,6 +27,9 @@ struct IItem {
 
   template<typename Nav,typename Out,Roles role=Roles::Raw>
   inline static void measure(Nav& nav,Out& out,PathRef ref=self) {print(nav,out,ref,Op::Measure);}
+
+  template<Cmd c,typename Nav>
+  inline bool cmd(Nav& nav,PathRef ref=self) {return cmd(c,nav,ref);}
 };
 
 template<Expr... I>
@@ -36,6 +40,7 @@ struct Prompt:IItem,Chain<Mutable,I...,Empty>::template To<Obj<Prompt<I...>>> {
   using Base::printItems;
   using Base::printMenu;
   using Base::print;
+  using Base::cmd;
   inline size_t size(PathRef ref=self) override {return Base::size(ref);}
   inline size_t canNav(PathRef ref=self) override {return Base::canNav(ref);}
   inline bool activate(PathRef ref=self) override {return Base::activate(ref);}
@@ -47,4 +52,5 @@ struct Prompt:IItem,Chain<Mutable,I...,Empty>::template To<Obj<Prompt<I...>>> {
   inline bool changed() const override {return Base::changed();}
   inline void changed(bool o) override {Base::changed(o);}
   inline bool parentPrint(PathRef ref=self) override {return Base::parentPrint(ref);}
+  inline bool cmd(Cmd,INav&,PathRef=self) override;
 };

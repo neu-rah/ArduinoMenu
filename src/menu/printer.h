@@ -21,10 +21,14 @@ struct FullPrinter:public O {
     O::template fmt<Roles::Menu,true,toPrint>();
 
     //title
-    if (op==Op::ClearChanges) it.changed(false);
+    // if (op==Op::ClearChanges) it.changed(false);
 
     trace(MDO<<"FullPrinter printing title"<<endl);
-    bool tp=toPrint&&((!O::isSame(&it))||(!O::partialDraw())||it.changed());
+    bool tp=toPrint&&(
+      (!O::partialDraw())
+      ||it.changed()
+      ||!O::isSame(&it)
+    );
     if (tp) {
       O::template fmt<Roles::Item,true,true>();
       O::template fmt<Roles::Title,true,true>();
@@ -32,7 +36,6 @@ struct FullPrinter:public O {
       O::template fmt<Roles::Title,false,true>();
       O::template fmt<Roles::Item,false,true>();
     } else {
-      it.changed(false);
       O::template fmt<Roles::Item,true,false>();
       O::template fmt<Roles::Title,true,false>();
       it.template print<Nav,decltype(O::obj()),op,Roles::Title>(nav,O::obj());
@@ -40,9 +43,16 @@ struct FullPrinter:public O {
       O::template fmt<Roles::Item,false,false>();
     }
 
-    it.changed(This::posTop(nav));
+    This::posTop(nav);
+    // if (This::posTop(nav)) it.changed(true);
     bool fp=toPrint&&((!O::partialDraw())||it.changed()||!O::isSame(&it));
-    trace(MDO<<"FullPrinter printing body, fullPrint:"<<fp<<" partialDraw:"<<O::partialDraw()<<" changed:"<<it.changed()<<" isSame:"<<O::isSame(&it)<<" => fp:"<<fp<<endl);
+    trace(MDO
+        <<"FullPrinter printing body, fullPrint:"<<fp
+        <<" partialDraw:"<<O::partialDraw()
+        <<" changed:"<<it.changed()
+        <<" isSame:"<<O::isSame(&it)
+        <<" => fp:"<<fp<<endl
+      );
     it.template printItems
       <Nav,typename O::Type,op,Roles::Item>
       (nav,O::obj(),0,O::obj().top(),self,fp);

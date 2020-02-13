@@ -27,7 +27,12 @@ Item<StaticText<&mainText>::Part> title;
 Prompt<EnDis<>::Part,Text> op1("Option 1");
 Prompt<EnDis<false>::Part,Text> op2("Option 2");
 Prompt<Action<tog12>::Part,Text> tog12Op("Toggle 1&2");
-Prompt<Text> opn("Option...");
+const char*opn_text="Option...";//sharing same text
+Prompt<Text> op3(opn_text);
+Prompt<Text> op4(opn_text);
+Prompt<Text> op5(opn_text);
+Prompt<Text> op6(opn_text);
+Prompt<Text> op7(opn_text);
 Prompt<Action<quit>::Part,Text> quitOp("<Quit.");
 
 Prompt<Text> sub_title("Sub-menu");
@@ -48,8 +53,11 @@ Prompt<StdVectorMenu<decltype(title),title>::Part> mainMenu {
   &op1,
   &op2,
   &tog12Op,
-  &opn,
-  &opn,
+  &op3,
+  &op4,
+  &op5,
+  &op6,
+  &op7,
   &subMenu,
   &quitOp
 };
@@ -62,10 +70,10 @@ MenuOut<
   FullPrinter,//print all parts, title, index, text cursor
   TitleWrapFmt<>::Part,//wrap title in []
   TextFmt,//format the text parts, use `>` as text cursor`
-  PartialDraw,//just for testing, because console is not ob this cathegory
-  PanelTarget,//detect target (menu) changes
-  RangePanel<>::Part,//control vertical scrolling
-  StaticPanel<0,0,20,6>::Part,//define output geometry
+  // PartialDraw,//just for testing, because console is not ob this cathegory
+  // PanelTarget,//detect target (menu) changes
+  // RangePanel<>::Part,//control vertical scrolling
+  // StaticPanel<0,0,20,30>::Part,//define output geometry
   Console,//the raw output device to use
   TextMeasure<>::Part//default monometric text measure
 > out;
@@ -83,12 +91,6 @@ bool tog12() {
 
 int main() {
   nav.print(out);
-  while(running) {
-    if (nav.doInput(in)) {
-      nav.print(out);
-      out.nl();
-    }
-    cout.flush();
-  };
+  while(running) if (nav.doInput(in)) nav.print(out);
   return 0;
 }

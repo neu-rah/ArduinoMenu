@@ -40,6 +40,12 @@
   #define __trace(x)
 #endif
 
+template<typename T>
+inline T debugFn(const char*text,T o) {
+  _trace(MDO<<text<<": "<<o<<endl);
+  return o;
+}
+
 // template<typename Out,typename O>
 // struct DebugCmds:O {
 //   using O::O;
