@@ -41,3 +41,7 @@ PROGRAM: [=======   ]  69.4% (used 5684 bytes from 8192 bytes)
 2020.02.09 rearranging files
 DATA:    [==        ]  24.2% (used 124 bytes from 512 bytes)
 PROGRAM: [======    ]  63.0% (used 5164 bytes from 8192 bytes)
+
+2020.02.13 minimal draw (draw only changes)
+DATA:    [==        ]  24.2% (used 124 bytes from 512 bytes)
+PROGRAM: [=====     ]  45.5% (used 3730 bytes from 8192 bytes)

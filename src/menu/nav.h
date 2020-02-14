@@ -31,7 +31,7 @@ struct Nav {
     inline bool selected(Idx i) const {return path[level]==i;}
     inline void setPos(Idx n) {path[level]=n;}
     inline Idx head() const {return path[0];}
-    inline operator PathRef() const {return (PathRef){level+1,path};}
+    inline operator PathRef() const {return PathRef{(Idx)(level+1),path};}
     inline PathRef parent() const {return operator PathRef().parent();}
     inline void open() {
       assert(level<max_depth-1);
@@ -72,7 +72,7 @@ struct Nav {
 
     inline void _up() {
       trace(MDO<<"pos:"<<pos()<<" size:"<<size(parent())<<endl);
-      if(pos()+1<size(parent())) setPos(pos()+1);}
+      if(((size_t)pos()+1)<size(parent())) setPos(pos()+1);}
     inline void _down() {if(pos()>0) setPos(pos()-1);}
     inline void _enter() {
       trace(MDO<<"enter->sending activate "<<(PathRef)*this<<endl);

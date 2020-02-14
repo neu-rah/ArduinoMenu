@@ -11,7 +11,7 @@ struct INav {
   virtual inline bool _cmd(Cmd)=0;
 
   template<Cmd c>
-  inline bool _cmd() {_cmd(c);}
+  inline bool _cmd() {return _cmd(c);}
 };
 
 template<Expr... N>

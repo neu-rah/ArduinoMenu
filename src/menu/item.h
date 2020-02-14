@@ -191,6 +191,7 @@ struct StaticMenu {
         changed(p,true);
         changed(nav.pos(),true);
       }
+      return res;
     }
 
     template<typename Nav,typename Out,Op op=Op::Printing>

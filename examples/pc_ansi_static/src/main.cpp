@@ -81,8 +81,10 @@ StaticMenuOut<
   TextCursorFmt,//draw text cursor
   TextEditModeFmt,//draw edit mode text cursor
   TextItemFmt,//add newline after each item
+  PartialDraw,//this device can position the cursor and do a partial draw
+  PanelTarget,//detect target (menu) changes
   RangePanel<>::Part,//control vertical scrolling
-  StaticPanel<10,20,20,6>::Part,//define output geometry
+  StaticPanel<0,0,20,6>::Part,//define output geometry
   Console,//the raw output device to use
   TextMeasure<>::Part//default monometric text measure
 > out;
