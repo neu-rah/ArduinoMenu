@@ -10,9 +10,9 @@ class INav;
 class IOut;
 
 #include "staticMenu.h"
-#include "menu/dynItem.h"
-#include "menu/dynNav.h"
-#include "menu/dynIO.h"
+#include "menu/item.h"
+#include "menu/nav.h"
+#include "menu/menuIO.h"
 
-#include "menu/dynItem.hpp"
-#include <menu/dynIO.hpp>
+#include "menu/item.hpp"
+#include <menu/menuIO.hpp>

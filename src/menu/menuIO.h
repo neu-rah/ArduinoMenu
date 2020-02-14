@@ -1,76 +1,46 @@
 /* -*- C++ -*- */
 #pragma once
 
-#include "api.h"
+#include "staticIO.h"
 
-//aux class for monometric text measure
-template<int szX=1,int szY=1>
-struct TextMeasure {
-  template<typename O>
-  struct Part:O {
-    template<typename T>
-    static inline Area measure(T o) {
-      #ifdef ARDUINO
-        return {String(o).length(),maxCharHeight()};
-      #else
-        return {_str(o),maxCharHeight()};
-      #endif
-    }
-    inline static constexpr int maxCharWidth() {return 1;}
-    inline static constexpr int maxCharHeight() {return 1;}
-    int textWidth(const char*s) const {return measure(s);}
-    protected:
-      #ifndef ARDUINO
-      static inline Idx _str(const char*o){return std::string(o).length();}
-      template<typename T>
-      static inline Idx _str(T i){return std::string(std::to_string(i)).length();}
-      #endif
-  };
-};
+struct IOut {
+  virtual inline void nl(bool toPrint=true)=0;
+  virtual void raw(const char* o,bool toPrint=true)=0;
+  virtual void printMenu(IItem& it,INav& nav, Op=Op::Printing)=0;
+  virtual void printItem(IItem& it,INav& nav,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal,Op op=Op::Printing,bool toPrint=true)=0;
+  virtual Idx freeY() const=0;
+  virtual bool partialDraw() const=0;
 
-template<typename O>
-struct PartialDraw:O {
-  inline static constexpr bool partialDraw() {return true;}
-};
+  template<typename It,typename Nav,Op op=Op::Printing>
+  inline void printMenu(It& it,Nav& nav) {printMenu(it,nav,op);}
 
-template<typename Dev,Dev& dev>
-struct StreamOut {
-  template<typename O>
-  struct Part:O {
-    using This=StreamOut<Dev,dev>::Part<O>;
-    template<bool toPrint=true>
-    inline static void nl() {if(toPrint) dev<<endl;}
-    template<typename T,bool toPrint=true>
-    inline static void raw(T o) {
-      if(toPrint) dev<<o;
-    }
-  };
-};
-
-template<typename Dev,Dev& dev,typename O>
-struct StreamIn:O {
-  template<typename Nav>
-  inline static bool cmd(Nav& nav) {
-    char c;
-    dev>>c;
-    switch(c) {
-      case '+': return nav.cmd(Cmd::Up);
-      case '-': return nav.cmd(Cmd::Down);
-      case '*': return nav.cmd(Cmd::Enter);
-      case '/': return nav.cmd(Cmd::Esc);
-      default:return false;
-    }
+  // template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
+  // inline void print(Nav& nav,Out& out)
+  template<typename It,typename Nav,Op op=Op::Printing,bool toPrint=true>
+  void printItem(It& it,Nav& nav,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
+    printItem(it,nav,n,s,e,m,op,toPrint);
   }
+
+  template<typename T,bool toPrint=true>
+  inline void raw(T o) {raw(o,toPrint);}
+
+
 };
 
-struct None:Nil {
-  template<bool invY=false>
-  inline static constexpr Cmd cmd() {return Cmd::None;}
-};
-
-template<Expr... O>
-struct StaticMenuOut:Chain<O...,Void>::template To<Obj<StaticMenuOut<O...>>> {
-  using Base=typename Chain<O...,Void>::template To<Obj<StaticMenuOut<O...>>>;
-  using This=StaticMenuOut<O...>;
+template<Expr...  O>
+struct MenuOut:IOut,Chain<O...,Void>::template To<Obj<MenuOut<O...>>> {
+  using Base=typename Chain<O...,Void>::template To<Obj<MenuOut<O...>>>;
+  using This=MenuOut<O...>;
   using Base::Base;
+  inline void nl(bool toPrint=true) override {
+    toPrint?Base::template nl<true>():Base::template nl<false>();
+  }
+  inline void raw(const char* o,bool toPrint=true) override {
+    if (toPrint) Base::template raw<decltype(o),true>(o);
+    else Base::template raw<decltype(o),false>(o);
+  }
+  void printMenu(IItem& it,INav& nav, Op op=Op::Printing) override;
+  void printItem(IItem& it,INav& nav,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal,Op op=Op::Printing,bool toPrint=true) override;
+  Idx freeY() const override {return Base::freeY();}
+  bool partialDraw() const {return Base::partialDraw();}
 };

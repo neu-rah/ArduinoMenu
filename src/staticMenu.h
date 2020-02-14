@@ -5,10 +5,10 @@
 * @brief ArduinoMenu main include file for static definitions
 */
 
-#include "menu/menuIO.h"
+#include "menu/staticIO.h"
 #include "menu/printer.h"
-#include "menu/nav.h"
-#include "menu/item.h"
+#include "menu/staticNav.h"
+#include "menu/staticItem.h"
 #include "menu/panels.h"
 // #include "menu/imenu.h"
 
@@ -39,4 +39,4 @@
 #endif
 
 #include <menu/debug.hpp>
-#include <menu/item.hpp>
+#include <menu/staticItem.hpp>
