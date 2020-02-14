@@ -7,6 +7,7 @@ using namespace std;
 #include <menu/IO/linuxKeyIn.h>
 #include <menu/IO/consoleOut.h>
 #include <menu/comp/endis.h>//enable/disable
+using namespace menu;
 
 //sketch control and actions ------------------------
 bool running=true;//exit program when false

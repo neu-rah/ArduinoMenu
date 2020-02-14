@@ -7,7 +7,7 @@
 
 #include <menu.h>
 
-// namespace Menu {
+namespace Menu {
   template<char open='[',char close=']'>
   struct TitleWrapFmt {
     template<typename O>
@@ -25,4 +25,4 @@
       }
     };
   };
-// };
+};

@@ -5,9 +5,11 @@
 * @brief ArduinoMenu main include file
 */
 
-class IItem;
-class INav;
-class IOut;
+namespace Menu {
+  class IItem;
+  class INav;
+  class IOut;
+};
 
 #include "staticMenu.h"
 #include "menu/item.h"

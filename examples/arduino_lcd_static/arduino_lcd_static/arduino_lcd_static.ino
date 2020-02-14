@@ -13,6 +13,7 @@
 #include <menu/fmt/titleWrap.h>
 #include <menu/fmt/fullText.h>
 #include <menu/comp/Arduino/flashText.h>
+using namespace Menu;
 
 // using namespace Menu;
 
@@ -77,6 +78,8 @@ using Out=StaticMenuOut<
   FullPrinter,//print title and items
   TitleWrapFmt<>::Part,//put [] around menu title
   TextFmt,//apply text formating
+  PartialDraw,//this device can position the cursor and do a partial draw
+  PanelTarget,//detect target (menu) changes
   RangePanel<>::Part,//control vertical scrolling
   StaticPanel<0,0,16,2>::Part,//define output geometry
   LiquidCrystalOut<lcd>::Part//raw output device

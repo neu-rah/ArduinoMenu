@@ -7,12 +7,14 @@
 * @brief ArduinoMenu text format, print text cursor, either ">- "
 */
 
-template<typename O>
-struct TextCursorFmt:public O {
-  using This=TextCursorFmt<O>;
-  template<bool io,bool toPrint=true>
-  inline void fmtCursor(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
-    if (io) O::raw(s?((e?'>':'-')):' ');
-    O::template fmtCursor<io,toPrint>(n,s,e,m);
-  }
+namespace Menu {
+  template<typename O>
+  struct TextCursorFmt:public O {
+    using This=TextCursorFmt<O>;
+    template<bool io,bool toPrint=true>
+    inline void fmtCursor(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
+      if (io) O::raw(s?((e?'>':'-')):' ');
+      O::template fmtCursor<io,toPrint>(n,s,e,m);
+    }
+  };
 };

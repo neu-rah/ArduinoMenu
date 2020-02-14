@@ -5,7 +5,7 @@
 
 ### Code
 - ~~rename files use static instead of dyn~~
-- add namespace
+- ~add namespace~~
 
 ### Print/Display/Format
 + ~~minimal draw and viewports~~

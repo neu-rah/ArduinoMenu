@@ -7,7 +7,7 @@
 
 #include <menu.h>
 
-// namespace Menu {
+namespace Menu {
   using ConstText=const char[];
 
   template<typename T,const T* text>
@@ -22,4 +22,4 @@
       }
     };
   };
-// };
+};

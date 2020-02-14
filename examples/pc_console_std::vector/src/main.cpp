@@ -8,6 +8,7 @@ using namespace std;
 #include <menu/IO/linuxKeyIn.h>
 #include <menu/IO/consoleOut.h>
 #include <menu/comp/endis.h>//enable/disable
+using namespace Menu;
 
 bool running=true;
 

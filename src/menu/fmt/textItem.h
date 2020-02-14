@@ -7,11 +7,13 @@
 * @brief ArduinoMenu text format, add `\n` at title and item end, print index and text cursor
 */
 
-template<typename O>
-struct TextItemFmt:public O {
-  template<bool io,bool toPrint=true>
-  inline void fmtItem(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
-    O::template fmtItem<io,toPrint>(n,s,e,m);
-    if (!io) O::nl();
-  }
+namespace Menu {
+  template<typename O>
+  struct TextItemFmt:public O {
+    template<bool io,bool toPrint=true>
+    inline void fmtItem(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
+      O::template fmtItem<io,toPrint>(n,s,e,m);
+      if (!io) O::nl();
+    }
+  };
 };

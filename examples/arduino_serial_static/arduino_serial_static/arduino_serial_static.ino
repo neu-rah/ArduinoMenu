@@ -17,6 +17,7 @@ tested on nano
 #include <menu/comp/endis.h>//enable/disable
 // #include <menu/comp/numField.h>//numeric fields with name, value and unit
 #include <menu/comp/Arduino/flashText.h>
+using namespace Menu;
 
 // some user code for example --------------------------------------------------------------
 int year=1967;

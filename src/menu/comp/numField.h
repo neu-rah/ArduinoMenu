@@ -7,7 +7,7 @@
 
 #include <menu.h>
 
-// namespace AM5 {
+namespace Menu {
 
   /**
   * The NumValue class links to any numeric type variable
@@ -72,4 +72,4 @@
     AsUnit<Unit>
   >;
 
-// };
+};

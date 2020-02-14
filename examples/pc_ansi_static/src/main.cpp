@@ -16,6 +16,7 @@ using namespace std;
 //components ------------------------------------------------
 #include <menu/comp/endis.h>
 // #include <menu/comp/numField.h>
+using namespace Menu;
 
 //sketch control and actions ------------------------
 bool running=true;//exit program when false

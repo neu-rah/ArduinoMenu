@@ -9,7 +9,7 @@
 #include <LiquidCrystal.h>
 #include <menu.h>
 
-// namespace Menu {
+namespace Menu {
   template<LiquidCrystal& dev>
   struct LiquidCrystalOut {
     template<typename O>
@@ -33,4 +33,4 @@
       }
     };
   };
-// };
+};

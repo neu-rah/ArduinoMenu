@@ -1,4 +1,6 @@
 #include "endis.h"
 
-template<typename I>
-bool StaticEnDis<I>::en=true;
+namespace Menu {
+  template<typename I>
+  bool StaticEnDis<I>::en=true;
+};

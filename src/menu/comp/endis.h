@@ -8,7 +8,7 @@
 
 #include <menu.h>
 
-// namespace Menu {
+namespace Menu {
   /**
   * The EnDis class provides Enable/Disable functionality for menu items
   */
@@ -37,5 +37,5 @@
       static bool en;
   };
 
-  #include "endis.hpp"
-// };
+};
+#include "endis.hpp"

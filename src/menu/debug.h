@@ -24,45 +24,6 @@
   #endif
 #endif
 
-#if defined(MENU_DEBUG) && defined(TRACE)
-  #define trace(x) x
-#else
-  #define trace(x)
-#endif
-#ifdef MENU_DEBUG
-  #define _trace(x) x
-#else
-  #define _trace(x)
-#endif
-#ifndef MENU_RELEASE
-  #define __trace(x) x
-#else
-  #define __trace(x)
-#endif
-
-template<typename T>
-inline T debugFn(const char*text,T o) {
-  _trace(MDO<<text<<": "<<o<<endl);
-  return o;
-}
-
-// template<typename Out,typename O>
-// struct DebugCmds:O {
-//   using O::O;
-//   using O::cmd;
-//   using O::print;
-//   template<Cmds c,typename It,typename Nav>
-//   inline bool cmd(It& it,Nav& nav,Ref ref,Idx n) {
-//     O::template print<Out>();
-//     _trace(
-//       MDO<<" cmd:"<<c
-//         <<" ref.len:"<<ref.len
-//         <<" n:"<<n<<"\r\n"
-//     );
-//     return O::template cmd<c,It,Nav>(it,nav,ref,n);
-//   }
-// };
-
 #include <assert.h>
 #ifdef ARDUINO
   //from: https://gist.github.com/jlesech/3089916
@@ -82,3 +43,45 @@ inline T debugFn(const char*text,T o) {
     }
   #endif
 #endif
+
+namespace Menu {
+  #if defined(MENU_DEBUG) && defined(TRACE)
+    #define trace(x) x
+  #else
+    #define trace(x)
+  #endif
+  #ifdef MENU_DEBUG
+    #define _trace(x) x
+  #else
+    #define _trace(x)
+  #endif
+  #ifndef MENU_RELEASE
+    #define __trace(x) x
+  #else
+    #define __trace(x)
+  #endif
+
+  template<typename T>
+  inline T debugFn(const char*text,T o) {
+    _trace(MDO<<text<<": "<<o<<endl);
+    return o;
+  }
+
+  // template<typename Out,typename O>
+  // struct DebugCmds:O {
+  //   using O::O;
+  //   using O::cmd;
+  //   using O::print;
+  //   template<Cmds c,typename It,typename Nav>
+  //   inline bool cmd(It& it,Nav& nav,Ref ref,Idx n) {
+  //     O::template print<Out>();
+  //     _trace(
+  //       MDO<<" cmd:"<<c
+  //         <<" ref.len:"<<ref.len
+  //         <<" n:"<<n<<"\r\n"
+  //     );
+  //     return O::template cmd<c,It,Nav>(it,nav,ref,n);
+  //   }
+  // };
+
+};
