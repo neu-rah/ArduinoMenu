@@ -8,10 +8,10 @@ using namespace std;
 #include <menu/IO/linuxKeyIn.h>
 //format specifyers -----------------------------------------
 #include <menu/fmt/ANSI.h>//to draw index and text cursors (nav and edit)
-// #include <menu/fmt/fullText.h>
-#include <menu/fmt/textEditMode.h>
-#include <menu/fmt/textCursor.h>
-#include <menu/fmt/textItem.h>
+#include <menu/fmt/fullText.h>
+// #include <menu/fmt/textEditMode.h>
+// #include <menu/fmt/textCursor.h>
+// #include <menu/fmt/textItem.h>
 #include <menu/fmt/titleWrap.h>
 //components ------------------------------------------------
 #include <menu/comp/endis.h>
@@ -45,7 +45,7 @@ const char* quit_text="<Quit.";
 //menu static structure ---------------------------
 using MainMenu=Item<
   StaticMenu<
-    StaticText<&mainText>::Part<>,
+    Item<StaticText<&mainText>::Part>,
     StaticData<
       Item<EnDis<>::Part,StaticText<&op1_text>::Part>,
       Item<EnDis<false>::Part,StaticText<&op2_text>::Part>,
@@ -54,7 +54,7 @@ using MainMenu=Item<
       Item<StaticText<&opn_text>::Part>,
       Item<
         StaticMenu<
-          StaticText<&subText>::Part<>,
+          Item<StaticText<&subText>::Part>,
           StaticData<
             Item<StaticText<&sub1_text>::Part>,
             Item<StaticText<&sub2_text>::Part>,
@@ -74,17 +74,16 @@ MainMenu mainMenu;
 //menu output ---------------------------------------
 StaticMenuOut<
   FullPrinter,//print all parts, title, index, text cursor
-  PartialDraw,
   AnsiFmt,//format using ANSI escape codes
   TitleWrapFmt<>::Part,//wrap title in []
-  // TextFmt,//format the text parts, use `>` as text cursor`
-  TextCursorFmt,//draw text cursor
-  TextEditModeFmt,//draw edit mode text cursor
-  TextItemFmt,//add newline after each item
+  TextFmt,//format the text parts, use `>` as text cursor`
+  // TextCursorFmt,//draw text cursor
+  // TextEditModeFmt,//draw edit mode text cursor
+  // TextItemFmt,//add newline after each item
   PartialDraw,//this device can position the cursor and do a partial draw
   PanelTarget,//detect target (menu) changes
   RangePanel<>::Part,//control vertical scrolling
-  StaticPanel<0,0,20,6>::Part,//define output geometry
+  StaticPanel<10,10,20,6>::Part,//define output geometry
   Console,//the raw output device to use
   TextMeasure<>::Part//default monometric text measure
 > out;
@@ -103,12 +102,6 @@ bool tog12() {
 
 int main() {
   nav.print(out);
-  while(running) {
-    if (nav.doInput(in)) {
-      nav.print(out);
-      out.nl();
-    }
-    cout.flush();
-  };
+  while(running) if (nav.doInput(in)) nav.print(out);
   return 0;
 }

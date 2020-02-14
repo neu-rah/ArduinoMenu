@@ -3,8 +3,8 @@
 /**
 * @author Rui Azevedo
 * @date 10 May 2019
-* @copyright 2019 Rui Azevedo
-* @brief ArduinoMenu text format, add `\n` at title and item end, print index and text cursor
+* @copyright 2020 Rui Azevedo
+* @brief ArduinoMenu ANSI terminal output
 */
 
 #define ESCAPE 0x1B

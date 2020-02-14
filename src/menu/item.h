@@ -173,7 +173,7 @@ struct StaticMenu {
 
     inline bool activate(PathRef ref=self) {
       trace(MDO<<"StaticMenu::activate "<<ref<<endl);
-      return ref?body.activate(ref,ref.head()):true;
+      return ref?body.activate(ref,ref.head()):enabled();
     }
 
     inline bool parentPrint(PathRef ref=self) {
@@ -197,8 +197,10 @@ struct StaticMenu {
     template<typename Nav,typename Out,Op op=Op::Printing>
     inline void printMenu(Nav& nav,Out& out,PathRef ref=self,Idx n=0) {
       trace(MDO<<"StaticMenu::printMenu... "<<op<<" "<<ref<<endl);
+      //this should send to item!
       if(ref.len>1) body.template printMenu<>(nav,out,ref.tail(),ref.head());
-      else out.template printMenu<typename I::Type,Nav,op>(I::obj(),nav);
+      else
+      out.template printMenu<typename I::Type,Nav,op>(I::obj(),nav);
     }
 
     template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>

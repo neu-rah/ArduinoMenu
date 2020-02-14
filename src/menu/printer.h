@@ -43,8 +43,8 @@ struct FullPrinter:public O {
       O::template fmt<Roles::Item,false,false>();
     }
 
-    This::posTop(nav);
-    // if (This::posTop(nav)) it.changed(true);
+    // This::posTop(nav);
+    if (This::posTop(nav)) it.changed(true);
     bool fp=toPrint&&((!O::partialDraw())||it.changed()||!O::isSame(&it));
     trace(MDO
         <<"FullPrinter printing body, fullPrint:"<<fp
