@@ -35,17 +35,15 @@ enum class Op {Measure,Printing,ClearChanges};
 
 ## Composition
 
-ArduinoMenu 5.x (AM5) uses state-of-the-art modern C++, limited to C++ 11 due to target platforms.
+ArduinoMenu 5.x (AM5) uses state-of-the-art modern C++ (compatible with C++ 11 due to target platforms).
 
 **Composition**
 
 This allows AM5 to have both rich and complex options while still producing slim code for simpler menus, broading the range or target devices, composition is provided by C++ mixins.
 
-The idea is that instead of relying on complex configuration that uses memory and runtime code to check the config/properties to take adequate actions it uses composition to either provide complex/fancy features if the features are composed in, or produce light code if fancy features are absent. None of those requires config or runtime config checking, therefore no config needed.
+The idea is that instead of relying on complex configuration that uses memory and runtime code to check the config/properties and take adequate actions, it uses composition to either provide complex/fancy features if the features are composed in, or produce light code if fancy features are absent. None of those requires config or runtime config checking, therefore no config needed composing features.
 
-**This is a major boost over AM4!**
-
-It allows AM5 to target even tiny AVR controllers like ATTiny85. :+1:
+**This is a major boost over AM4!** allowing AM5 to target even tiny AVR controllers like ATTiny85. :+1: while preserving the fancy features that we're used from AM4.
 
 **CRTP**
 

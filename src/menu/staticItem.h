@@ -213,7 +213,7 @@ namespace Menu {
       template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
       inline void print(Nav& nav,Out& out,PathRef ref=self) {
         trace(MDO<<"StaticMenu::print "<<role<<endl);
-        if (Base::obj().changed()||title.changed()) title.template print<Nav,Out,op,role>(nav,out,ref);
+        if (Base::obj().changed()||title.changed()||!out.isSame(this)) title.template print<Nav,Out,op,role>(nav,out,ref);
       }
     };
   };

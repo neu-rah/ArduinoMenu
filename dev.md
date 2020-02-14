@@ -9,7 +9,7 @@
 
 ### Print/Display/Format
 + ~~minimal draw and viewports~~
-- check last drawn menu to draw titles (nav. back)
++ ~~check last drawn menu to draw titles (nav. back)~~
 - printMenu should be delivered to the item after checking !parentPrint
 - colors
 - multiline options/title
@@ -34,3 +34,4 @@
 
 ### Examples
 - Arduino ANSI
+- PC NCurses
