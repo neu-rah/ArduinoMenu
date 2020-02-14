@@ -21,12 +21,20 @@ bool quit() {
 
 bool tog12();//implemented later because we need to access mainMenu
 
+bool action1() {
+  cout<<"Action1 called!"<<endl;
+}
+
+bool action2() {
+  cout<<"Action2 called!"<<endl;
+}
+
 //menu data/texts ----------------------------
 const char* mainText="Main menu";
 Item<StaticText<&mainText>::Part> title;
 
-Prompt<EnDis<>::Part,Text> op1("Option 1");
-Prompt<EnDis<false>::Part,Text> op2("Option 2");
+Prompt<Action<action1>::Part,EnDis<>::Part,Text> op1("Option 1");
+Prompt<Action<action2>::Part,EnDis<false>::Part,Text> op2("Option 2");
 Prompt<Action<tog12>::Part,Text> tog12Op("Toggle 1&2");
 const char*opn_text="Option...";//sharing same text
 Prompt<Text> op3(opn_text);
@@ -43,7 +51,7 @@ Prompt<Text> subn("Sub...");
 Prompt<Text> exitOp("<Exit");
 
 //menu structure -------------------------
-Prompt<StdVectorMenu<decltype(sub_title),sub_title>::Part> subMenu {
+Prompt<EnDis<false>::Part,StdVectorMenu<decltype(sub_title),sub_title>::Part> subMenu {
   &sub1,
   &sub2,
   &subn,

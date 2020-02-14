@@ -2,7 +2,7 @@
 using namespace std;
 
 //main include for ArduinoMenu
-#include <menu.h>
+#include <staticMenu.h>
 //input/output drivers --------------------------------------
 #include <menu/IO/consoleOut.h>
 #include <menu/IO/linuxKeyIn.h>
@@ -27,7 +27,16 @@ bool quit() {
   running=false;
   return true;
 }
+
 bool tog12();//implemented later because we need to access mainMenu
+
+bool action1() {
+  cout<<"Action1 called!"<<endl;
+}
+
+bool action2() {
+  cout<<"Action2 called!"<<endl;
+}
 
 //menu texts -------------------------
 const char* subText="Sub-menu";
@@ -48,12 +57,13 @@ using MainMenu=Item<
   StaticMenu<
     Item<StaticText<&mainText>::Part>,
     StaticData<
-      Item<EnDis<>::Part,StaticText<&op1_text>::Part>,
-      Item<EnDis<false>::Part,StaticText<&op2_text>::Part>,
+      Item<Action<action1>::Part,EnDis<>::Part,StaticText<&op1_text>::Part>,
+      Item<Action<action2>::Part,EnDis<false>::Part,StaticText<&op2_text>::Part>,
       Item<Action<tog12>::Part,StaticText<&tog12_text>::Part>,
       Item<StaticText<&opn_text>::Part>,
       Item<StaticText<&opn_text>::Part>,
       Item<
+        EnDis<false>::Part,
         StaticMenu<
           Item<StaticText<&subText>::Part>,
           StaticData<
@@ -103,6 +113,8 @@ bool tog12() {
 
 int main() {
   nav.print(out);
-  while(running) if (nav.doInput(in)) nav.print(out);
+  while(running) if (nav.doInput(in)) {
+    nav.print(out);
+  }
   return 0;
 }

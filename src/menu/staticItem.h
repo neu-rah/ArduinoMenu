@@ -124,9 +124,11 @@ namespace Menu {
     }
 
     inline bool activate(PathRef ref=self,Idx n=0) {
-      trace(MDO<<"Pair::activate "<<ref<<" "<<n<<endl);
+      _trace(MDO<<"Pair::activate "<<ref<<" "<<n<<endl);
       if(n) return tail.activate(ref,--n);
+      if (ref.len==1&&!F::enabled()) return !F::canNav();
       if (ref) return F::activate(ref.tail());
+      _trace(MDO<<"F::enabled "<<F::enabled()<<endl);
       return F::activate();
     }
 

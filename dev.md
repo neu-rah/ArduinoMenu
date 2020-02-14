@@ -15,10 +15,11 @@
 - multiline options/title
 - simpler printers
 - frame borders
+- review ANSI fmt
 
 ### Nav
 + ~~default "no action" item act as "Exit"~~
-- do not send activation for disabled items
+- ~~do not send activation for disabled items~~
 - 2D nav
 
 ### Fields/Items
