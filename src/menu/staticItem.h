@@ -124,11 +124,11 @@ namespace Menu {
     }
 
     inline bool activate(PathRef ref=self,Idx n=0) {
-      _trace(MDO<<"Pair::activate "<<ref<<" "<<n<<endl);
+      trace(MDO<<"Pair::activate "<<ref<<" "<<n<<endl);
       if(n) return tail.activate(ref,--n);
       if (ref.len==1&&!F::enabled()) return !F::canNav();
       if (ref) return F::activate(ref.tail());
-      _trace(MDO<<"F::enabled "<<F::enabled()<<endl);
+      trace(MDO<<"F::enabled "<<F::enabled()<<endl);
       return F::activate();
     }
 
@@ -200,10 +200,8 @@ namespace Menu {
       template<typename Nav,typename Out,Op op=Op::Printing>
       inline void printMenu(Nav& nav,Out& out,PathRef ref=self,Idx n=0) {
         trace(MDO<<"StaticMenu::printMenu... "<<op<<" "<<ref<<endl);
-        //this should send to item!
-        if(ref.len>1) body.template printMenu<>(nav,out,ref.tail(),ref.head());
-        else
-        out.template printMenu<typename I::Type,Nav,op>(I::obj(),nav);
+        if(ref.len>1&&body.parentPrint(ref)) body.template printMenu<>(nav,out,ref.tail(),ref.head());
+        else out.template printMenu<typename I::Type,Nav,op>(I::obj(),nav);
       }
 
       template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>

@@ -51,7 +51,7 @@ Prompt<Text> subn("Sub...");
 Prompt<Text> exitOp("<Exit");
 
 //menu structure -------------------------
-Prompt<EnDis<false>::Part,StdVectorMenu<decltype(sub_title),sub_title>::Part> subMenu {
+Prompt<EnDis<true>::Part,StdVectorMenu<decltype(sub_title),sub_title>::Part> subMenu {
   &sub1,
   &sub2,
   &subn,

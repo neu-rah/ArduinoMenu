@@ -10,7 +10,7 @@
 ### Print/Display/Format
 + ~~minimal draw and viewports~~
 + ~~check last drawn menu to draw titles (nav. back)~~
-- printMenu should be delivered to the item after checking !parentPrint
++ ~~printMenu should be delivered to the item after checking !parentPrint~~
 - colors
 - multiline options/title
 - simpler printers
@@ -24,6 +24,9 @@
 
 ### Fields/Items
 + ~~enable/disable items~~
+- review default composition parts, we want max optionals
+- add default debug part to all items (with empty expression on non-debug versions)
+- add ::Part to all items so that it is selected automatically
 - numeric fields
 - enumerated fields
 - numeric input accel. and easing
