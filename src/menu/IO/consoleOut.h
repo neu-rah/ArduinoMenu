@@ -5,6 +5,5 @@
 #include "../staticIO.h"
 
 namespace Menu {
-  template<typename O>
-  using Console=StreamOut<decltype(std::cout),std::cout>::Part<O>;
+  using Console=StreamOut<decltype(std::cout),std::cout>;
 };

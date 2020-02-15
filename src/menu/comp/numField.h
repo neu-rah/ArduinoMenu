@@ -5,7 +5,7 @@
 * @brief range validated numeric field
 */
 
-#include <menu.h>
+#include <staticMenu.h>
 
 namespace Menu {
 

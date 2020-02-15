@@ -40,22 +40,22 @@ bool sub1Action() {
 const char* mainText="Main menu";
 Item<StaticText<&mainText>::Part> title;
 
-Prompt<Action<action1>::Part,EnDis<>::Part,Text> op1("Option 1");
-Prompt<Action<action2>::Part,EnDis<false>::Part,Text> op2("Option 2");
-Prompt<Action<tog12>::Part,Text> tog12Op("Toggle 1&2");
+Prompt<Action<action1>::Part,EnDis<>::Part,Text::Part> op1("Option 1");
+Prompt<Action<action2>::Part,EnDis<false>::Part,Text::Part> op2("Option 2");
+Prompt<Action<tog12>::Part,Text::Part> tog12Op("Toggle 1&2");
 const char*opn_text="Option...";//sharing same text
-Prompt<Text> op3(opn_text);
-Prompt<Text> op4(opn_text);
-Prompt<Text> op5(opn_text);
-Prompt<Text> op6(opn_text);
-Prompt<Text> op7(opn_text);
-Prompt<Action<quit>::Part,Text> quitOp("<Quit.");
+Prompt<Text::Part> op3(opn_text);
+Prompt<Text::Part> op4(opn_text);
+Prompt<Text::Part> op5(opn_text);
+Prompt<Text::Part> op6(opn_text);
+Prompt<Text::Part> op7(opn_text);
+Prompt<Action<quit>::Part,Text::Part> quitOp("<Quit.");
 
-Prompt<Text> sub_title("Sub-menu");
-Prompt<Action<action1>::Part,Text> sub1("Sub 1");
-Prompt<Text> sub2("Sub 2");
-Prompt<Text> subn("Sub...");
-Prompt<Text> exitOp("<Exit");
+Prompt<Text::Part> sub_title("Sub-menu");
+Prompt<Action<action1>::Part,Text::Part> sub1("Sub 1");
+Prompt<Text::Part> sub2("Sub 2");
+Prompt<Text::Part> subn("Sub...");
+Prompt<Text::Part> exitOp("<Exit");
 
 //menu structure -------------------------
 Prompt<EnDis<true>::Part,StdVectorMenu<decltype(sub_title),sub_title>::Part> subMenu {
@@ -83,14 +83,14 @@ NavRoot<Nav<decltype(mainMenu),3>::Part> nav(mainMenu);
 
 //menu output --------------------------------------
 MenuOut<
-  FullPrinter,//print all parts, title, index, text cursor
+  FullPrinter::Part,//print all parts, title, index, text cursor
   TitleWrapFmt<>::Part,//wrap title in []
-  TextFmt,//format the text parts, use `>` as text cursor`
+  TextFmt::Part,//format the text parts, use `>` as text cursor`
   // PartialDraw,//just for testing, because console is not ob this cathegory
   // PanelTarget,//detect target (menu) changes
   // RangePanel<>::Part,//control vertical scrolling
   // StaticPanel<0,0,20,30>::Part,//define output geometry
-  Console,//the raw output device to use
+  Console::Part,//the raw output device to use
   TextMeasure<>::Part//default monometric text measure
 > out;
 

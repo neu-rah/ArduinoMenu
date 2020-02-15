@@ -24,9 +24,9 @@
 
 ### Fields/Items
 + ~~enable/disable items~~
++ ~~add ::Part to all for consistency~~
 - review default composition parts, we want max optionals
 - add default debug part to all items (with empty expression on non-debug versions)
-- add ::Part to all items so that it is selected automatically
 - numeric fields
 - enumerated fields
 - numeric input accel. and easing

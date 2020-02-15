@@ -7,7 +7,7 @@
 */
 
 #include <LiquidCrystal.h>
-#include <menu.h>
+#include <staticMenu.h>
 
 namespace Menu {
   template<LiquidCrystal& dev>

@@ -34,8 +34,8 @@ namespace Menu {
   };
 
   template<Expr... I>
-  struct Prompt:IItem,Chain<Mutable,I...,Empty>::template To<Obj<Prompt<I...>>> {
-    using Base=typename Chain<Mutable,I...,Empty>::template To<Obj<Prompt<I...>>>;
+  struct Prompt:IItem,Chain<Mutable::Part,I...,Empty>::template To<Obj<Prompt<I...>>> {
+    using Base=typename Chain<Mutable::Part,I...,Empty>::template To<Obj<Prompt<I...>>>;
     using This=Prompt<I...>;
     using Base::Base;
     using Base::printItems;

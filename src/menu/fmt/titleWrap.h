@@ -5,7 +5,7 @@
 * @brief ArduinoMenu format, wrap the title between characters, default: '[' ']'
 */
 
-#include <menu.h>
+#include <staticMenu.h>
 
 namespace Menu {
   template<char open='[',char close=']'>

@@ -4,26 +4,29 @@
 #include "api.h"
 
 namespace Menu {
-  template<class I>
-  struct Mutable:I {
-    using I::I;
-    inline bool changed() const {return hasChanged;}
-    inline void changed(bool o) {
-      trace(MDO<<"Mutable "<<(o?"dirt":"clear")<<endl);
-      hasChanged=o;}
-    // inline void changed(Idx,bool o) {changed(o);}
 
-    //this can not be `protected` because of `CRTP` and `mixin` composition
-    template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
-    inline void print(Nav& nav,Out& out,PathRef ref=self) {
-      if (op==Op::ClearChanges&&!ref) {
-        trace(MDO<<"Mutable::print clear "<<endl);
-        changed(false);
-      }// else
-      I::template print<Nav,Out,op,role>(nav,out,ref);
-    }
-  protected:
-    bool hasChanged=true;
+  struct Mutable {
+    template<class I>
+    struct Part:I {
+      using I::I;
+      inline bool changed() const {return hasChanged;}
+      inline void changed(bool o) {
+        trace(MDO<<"Mutable "<<(o?"dirt":"clear")<<endl);
+        hasChanged=o;}
+      // inline void changed(Idx,bool o) {changed(o);}
+
+      //this can not be `protected` because of `CRTP` and `mixin` composition
+      template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
+      inline void print(Nav& nav,Out& out,PathRef ref=self) {
+        if (op==Op::ClearChanges&&!ref) {
+          trace(MDO<<"Mutable::print clear "<<endl);
+          changed(false);
+        }// else
+        I::template print<Nav,Out,op,role>(nav,out,ref);
+      }
+    protected:
+      bool hasChanged=true;
+    };
   };
 
   /// ActionHanlder, type of action functions to associate with items
@@ -55,29 +58,31 @@ namespace Menu {
     };
   };
 
-  template<typename I>
-  struct Text:I {
-    using Base=I;
-    const char* text;
-    inline Text(const char*o):text(o) {}
-    template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
-    inline void print(Nav& nav,Out& out,PathRef ref=self) {
-      out.template raw<decltype(text),op==Op::Printing>(text);
-      I::template print<Nav,Out,op,role>(nav,out);
-    }
-    template<typename Nav,typename Out,Roles role=Roles::Raw>
-    inline void measure(Nav& nav,Out& out,PathRef ref=self) {
-      out.measure(text);
-      I::template measure<Nav,Out,role>(nav,out);
-    }
+  struct Text {
+    template<typename I>
+    struct Part:I {
+      using Base=I;
+      const char* text;
+      inline Part(const char*o):text(o) {}
+      template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
+      inline void print(Nav& nav,Out& out,PathRef ref=self) {
+        out.template raw<decltype(text),op==Op::Printing>(text);
+        I::template print<Nav,Out,op,role>(nav,out);
+      }
+      template<typename Nav,typename Out,Roles role=Roles::Raw>
+      inline void measure(Nav& nav,Out& out,PathRef ref=self) {
+        out.measure(text);
+        I::template measure<Nav,Out,role>(nav,out);
+      }
+    };
   };
 
   /**
   * The Item class encapsulates a composition to be a stratic menu item.
   */
   template<Expr... I>
-  struct Item:Chain<Mutable,I...,Empty>::template To<Obj<Item<I...>>> {
-    using Base=typename Chain<Mutable,I...,Empty>::template To<Obj<Item<I...>>>;
+  struct Item:Chain<Mutable::Part,I...,Empty>::template To<Obj<Item<I...>>> {
+    using Base=typename Chain<Mutable::Part,I...,Empty>::template To<Obj<Item<I...>>>;
     using This=Item<I...>;
     using Base::Base;
   };

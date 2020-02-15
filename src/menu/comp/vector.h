@@ -1,7 +1,7 @@
 /* -*- C++ -*- */
 #pragma once
 
-#include <menu.h>
+#include <staticMenu.h>
 #include <vector>
 
 namespace Menu {

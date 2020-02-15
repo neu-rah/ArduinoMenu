@@ -5,7 +5,7 @@
 * @brief menu item component, provides flash stored text
 */
 
-#include <menu.h>
+#include <staticMenu.h>
 
 namespace Menu {
   using ConstText=const char[];

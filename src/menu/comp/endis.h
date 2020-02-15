@@ -6,7 +6,7 @@
 * @brief menu item component, provides Enable/Disable functionality
 */
 
-#include <menu.h>
+#include <staticMenu.h>
 
 namespace Menu {
   /**

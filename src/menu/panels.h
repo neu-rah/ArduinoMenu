@@ -30,11 +30,13 @@ namespace Menu {
     };
   };
 
-  template<typename O>
-  struct PanelTarget:O {
-    void *target=nullptr;
-    inline bool isSame(void *menu) const {return target==menu;}
-    inline void lastDrawn(void *menu) {target=menu;}
+  struct PanelTarget {
+    template<typename O>
+    struct Part:O {
+      void *target=nullptr;
+      inline bool isSame(void *menu) const {return target==menu;}
+      inline void lastDrawn(void *menu) {target=menu;}
+    };
   };
 
   template<int w=1,int h=1>

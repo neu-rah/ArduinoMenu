@@ -3,7 +3,7 @@
 // neu-rah (ruihfazevedo@gmail.com)
 // ArduinoMenu lcd+serial output chain example
 
-#include <menu.h>
+#include <staticMenu.h>
 #include <menu/IO/Arduino/liquidCrystalOut.h>
 #include <menu/IO/Arduino/serialIn.h>
 // #include <menu/IO/serialOut.h>
@@ -75,11 +75,11 @@ SerialIn<decltype(Serial),Serial> in;//create input object (here serial)
 
 //menu output (Serial)
 using Out=StaticMenuOut<
-  FullPrinter,//print title and items
+  FullPrinter::Part,//print title and items
   TitleWrapFmt<>::Part,//put [] around menu title
-  TextFmt,//apply text formating
-  PartialDraw,//this device can position the cursor and do a partial draw
-  PanelTarget,//detect target (menu) changes
+  TextFmt::Part,//apply text formating
+  PartialDraw::Part,//this device can position the cursor and do a partial draw
+  PanelTarget::Part,//detect target (menu) changes
   RangePanel<>::Part,//control vertical scrolling
   StaticPanel<0,0,16,2>::Part,//define output geometry
   LiquidCrystalOut<lcd>::Part//raw output device

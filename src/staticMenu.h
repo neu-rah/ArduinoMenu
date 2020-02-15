@@ -17,7 +17,7 @@ namespace Menu {
     template<typename Dev,Dev& dev>
     struct DebugOut {
       template<typename O=Void<Nil>>
-      struct Part:StaticMenuOut<FullPrinter> {
+      struct Part:StaticMenuOut<FullPrinter::Part> {
         // template<bool toPrint=true>
         inline static void nl() {dev.println();}
         template<typename T>

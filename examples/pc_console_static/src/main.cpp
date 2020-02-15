@@ -64,9 +64,7 @@ using MainMenu=Item<
           Item<StaticText<&subText>::Part>,
           StaticData<
             Item<Action<sub1_action>::Part,StaticText<&sub1_text>::Part>,
-            Item<StaticText<&sub2_text>::Part>,
-            Item<StaticText<&subn_text>::Part>,
-            Item<StaticText<&exit_text>::Part>
+            Item<EnDis<false>::Part,StaticText<&exit_text>::Part>
           >
         >::Part
       >,
@@ -80,16 +78,16 @@ MainMenu mainMenu;
 
 //menu output ---------------------------------------
 StaticMenuOut<
-  FullPrinter,//print all parts, title, index, text cursor
+  FullPrinter::Part,//print all parts, title, index, text cursor
   TitleWrapFmt<>::Part,//wrap title in []
-  TextFmt,//format the text parts, use `>` as text cursor`
+  TextFmt::Part,//format the text parts, use `>` as text cursor`
 // #ifdef MENU_DEBUG
 //   PartialDraw,//just for testing, because console is not of this cathegory
 //   PanelTarget,//detect target (menu) changes
 //   RangePanel<>::Part,//control vertical scrolling
 //   StaticPanel<0,0,20,6>::Part,//define output geometry
 // #endif
-  Console,//the raw output device to use
+  Console::Part,//the raw output device to use
   TextMeasure<>::Part//default monometric text measure
 > out;
 

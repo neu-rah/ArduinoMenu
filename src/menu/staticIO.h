@@ -29,9 +29,11 @@ namespace Menu {
     };
   };
 
-  template<typename O>
-  struct PartialDraw:O {
-    inline static constexpr bool partialDraw() {return true;}
+  struct PartialDraw {
+    template<typename O>
+    struct Part:O {
+      inline static constexpr bool partialDraw() {return true;}
+    };
   };
 
   template<typename Dev,Dev& dev>
@@ -48,25 +50,31 @@ namespace Menu {
     };
   };
 
-  template<typename Dev,Dev& dev,typename O>
-  struct StreamIn:O {
-    template<typename Nav>
-    inline static bool cmd(Nav& nav) {
-      char c;
-      dev>>c;
-      switch(c) {
-        case '+': return nav.cmd(Cmd::Up);
-        case '-': return nav.cmd(Cmd::Down);
-        case '*': return nav.cmd(Cmd::Enter);
-        case '/': return nav.cmd(Cmd::Esc);
-        default:return false;
+  template<typename Dev,Dev& dev>
+  struct StreamIn {
+    template<typename O>
+    struct Part:O {
+      template<typename Nav>
+      inline static bool cmd(Nav& nav) {
+        char c;
+        dev>>c;
+        switch(c) {
+          case '+': return nav.cmd(Cmd::Up);
+          case '-': return nav.cmd(Cmd::Down);
+          case '*': return nav.cmd(Cmd::Enter);
+          case '/': return nav.cmd(Cmd::Esc);
+          default:return false;
+        }
       }
-    }
+    };
   };
 
   struct None:Nil {
-    template<bool invY=false>
-    inline static constexpr Cmd cmd() {return Cmd::None;}
+    template<typename N=Nil>
+    struct Part:N {
+      template<typename Nav>
+      inline static bool cmd(Nav& nav) {return false;}
+    };
   };
 
   template<Expr... O>

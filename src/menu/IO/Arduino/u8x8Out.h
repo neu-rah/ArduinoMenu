@@ -2,7 +2,7 @@
 #pragma once
 
 #include <U8x8lib.h>
-#include "../../../menu.h"
+#include "../../../staticMenu.h"
 
 namespace Menu {
   template<typename O>

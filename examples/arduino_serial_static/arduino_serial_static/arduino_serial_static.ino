@@ -70,9 +70,9 @@ SerialIn<decltype(Serial),Serial> in;//create input object (here serial)
 
 //menu output (Serial)
 using Out=StaticMenuOut<
-  FullPrinter,//print title and items
+  FullPrinter::Part,//print title and items
   TitleWrapFmt<>::Part,//put [] around menu title
-  TextFmt,//apply text formating
+  TextFmt::Part,//apply text formating
   SerialOut<decltype(Serial),Serial>::Part//raw output device
 >;
 
