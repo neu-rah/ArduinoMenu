@@ -16,7 +16,7 @@ namespace Menu {
     const Idx* path;
     // inline PathRef(Idx len,Idx* path):len(len),path(path) {}
     inline Idx head() const {return path[0];}
-    inline PathRef tail() const {return {(Idx)(len-1),path};}
+    inline PathRef tail() const {return {(Idx)(len-1),&path[1]};}
     inline operator Idx() const {return len;}
     inline operator bool() const {return len;}
     inline PathRef parent() const {

@@ -23,10 +23,17 @@ bool tog12();//implemented later because we need to access mainMenu
 
 bool action1() {
   cout<<"Action1 called!"<<endl;
+  return true;
 }
 
 bool action2() {
   cout<<"Action2 called!"<<endl;
+  return true;
+}
+
+bool sub1Action() {
+  cout<<"Sub 1 action called!"<<endl;
+  return true;
 }
 
 //menu data/texts ----------------------------
@@ -45,7 +52,7 @@ Prompt<Text> op7(opn_text);
 Prompt<Action<quit>::Part,Text> quitOp("<Quit.");
 
 Prompt<Text> sub_title("Sub-menu");
-Prompt<Text> sub1("Sub 1");
+Prompt<Action<action1>::Part,Text> sub1("Sub 1");
 Prompt<Text> sub2("Sub 2");
 Prompt<Text> subn("Sub...");
 Prompt<Text> exitOp("<Exit");

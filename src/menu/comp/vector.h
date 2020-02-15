@@ -39,7 +39,7 @@ namespace Menu {
       }
 
       inline bool activate(PathRef ref=self) {
-        _trace(MDO<<"StdVectorMenu::activate "<<ref<<endl);
+        trace(MDO<<"StdVectorMenu::activate "<<ref<<endl);
         if(ref.len==1)
           return vector<IItem*>::operator[](ref.head())->enabled()?
             vector<IItem*>::operator[](ref.head())->activate():

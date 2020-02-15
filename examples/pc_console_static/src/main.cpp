@@ -22,6 +22,17 @@ bool tog12();//implemented later because we need to access mainMenu
 
 bool op1_action() {
   cout<<"Option 1 action called!"<<endl;
+  return true;//false would close the menu
+}
+
+bool op2_action() {
+  cout<<"Option 2 action called!"<<endl;
+  return true;
+}
+
+bool sub1_action() {
+  cout<<"Sub 1 action called!"<<endl;
+  return true;
 }
 
 //menu texts -------------------------
@@ -44,7 +55,7 @@ using MainMenu=Item<
     Item<StaticText<&mainText>::Part>,
     StaticData<
       Item<Action<op1_action>::Part,EnDis<>::Part,StaticText<&op1_text>::Part>,
-      Item<EnDis<false>::Part,StaticText<&op2_text>::Part>,
+      Item<Action<op2_action>::Part,EnDis<false>::Part,StaticText<&op2_text>::Part>,
       Item<Action<tog12>::Part,StaticText<&tog12_text>::Part>,
       Item<StaticText<&opn_text>::Part>,
       Item<StaticText<&opn_text>::Part>,
@@ -52,7 +63,7 @@ using MainMenu=Item<
         StaticMenu<
           Item<StaticText<&subText>::Part>,
           StaticData<
-            Item<StaticText<&sub1_text>::Part>,
+            Item<Action<sub1_action>::Part,StaticText<&sub1_text>::Part>,
             Item<StaticText<&sub2_text>::Part>,
             Item<StaticText<&subn_text>::Part>,
             Item<StaticText<&exit_text>::Part>

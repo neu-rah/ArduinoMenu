@@ -63,7 +63,7 @@ using MainMenu=Item<
       Item<StaticText<&opn_text>::Part>,
       Item<StaticText<&opn_text>::Part>,
       Item<
-        EnDis<false>::Part,
+        EnDis<true>::Part,
         StaticMenu<
           Item<StaticText<&subText>::Part>,
           StaticData<

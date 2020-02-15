@@ -57,8 +57,6 @@ Item<
             Item<EnDis<>::Part,FlashText<decltype(op1_text),&op1_text>::Part>,
             Item<FlashText<decltype(op2_text),&op2_text>::Part>,
             Item<FlashText<decltype(opn_text),&opn_text>::Part>,
-            Item<FlashText<decltype(opn_text),&opn_text>::Part>,
-            Item<FlashText<decltype(opn_text),&opn_text>::Part>,
             Item<FlashText<decltype(exit_txt),&exit_txt>::Part>
           >
         >::Part
