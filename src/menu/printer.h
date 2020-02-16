@@ -25,12 +25,14 @@ namespace Menu {
         //title
         // if (op==Op::ClearChanges) it.changed(false);
 
-        trace(MDO<<"FullPrinter printing title"<<endl);
+        _trace(MDO<<"FullPrinter printing title"<<endl);
         bool tp=toPrint&&(
           (!O::partialDraw())
           ||it.changed()
           ||!O::isSame(&it)
         );
+        if (toPrint) O::clrLine(O::orgY()+O::posY());
+        O::setCursor(O::orgX(),O::orgY()+O::posY());
         if (tp) {
           O::template fmt<Roles::Item,true,true>();
           O::template fmt<Roles::Title,true,true>();
@@ -69,7 +71,7 @@ namespace Menu {
       }
       template<typename It,typename Nav,Op op=Op::Printing,bool toPrint=true>
       void printItem(It& it,Nav& nav,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
-        trace(MDO<<"FullPrinter::printItem "<<op<<endl);
+        _trace(MDO<<"FullPrinter::printItem "<<op<<" posY:"<<O::posY()<<endl);
         if (toPrint) O::clrLine(O::orgY()+O::posY());
         O::setCursor(O::orgX(),O::orgY()+O::posY());
         O::template fmt<Roles::Item,  true ,toPrint>(n,s,e,m);

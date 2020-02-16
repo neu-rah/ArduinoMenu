@@ -11,6 +11,8 @@
 + ~~minimal draw and viewports~~
 + ~~check last drawn menu to draw titles (nav. back)~~
 + ~~printMenu should be delivered to the item after checking !parentPrint~~
+- ~~clear title line before title print~~
+- check usage of native device resolution instead of text-box
 - colors
 - multiline options/title
 - simpler printers
@@ -37,5 +39,6 @@
 - alternative inputs for composition, this requires the input to be passed, in ex. numeric accel. => doInput should check item before calling input handler
 
 ### Examples
++ ~~i2c LCD~~
 - Arduino ANSI
 - PC NCurses
