@@ -44,22 +44,23 @@ bool grrr() {
 int tpt=25;
 
 Item<
+  Mutable::Part,
   StaticMenu<
-    FlashText<decltype(mainMenu_title),&mainMenu_title>::Part<>,
+    Item<Mutable::Part,FlashText<decltype(mainMenu_title),&mainMenu_title>::Part>,
     StaticData<
-      Item<Action<hey>::Part,FlashText<decltype(op1_text),&op1_text>::Part>,
-      Item<Action<grrr>::Part,FlashText<decltype(op2_text),&op2_text>::Part>,
+      Item<Action<hey>::Part,Mutable::Part,FlashText<decltype(op1_text),&op1_text>::Part>,
+      Item<Action<grrr>::Part,Mutable::Part,FlashText<decltype(op2_text),&op2_text>::Part>,
       Item<
         StaticMenu<
-          FlashText<decltype(subMenu_title),&subMenu_title>::Part<>,
+          Item<Mutable::Part,FlashText<decltype(subMenu_title),&subMenu_title>::Part>,
           StaticData<
-            Item<FlashText<decltype(opn_text),&opn_text>::Part>,
-            Item<FlashText<decltype(opn_text),&opn_text>::Part>,
-            Item<FlashText<decltype(exit_text),&exit_text>::Part>
+            Item<Mutable::Part,FlashText<decltype(opn_text),&opn_text>::Part>,
+            Item<Mutable::Part,FlashText<decltype(opn_text),&opn_text>::Part>,
+            Item<Mutable::Part,FlashText<decltype(exit_text),&exit_text>::Part>
           >
         >::Part
       >,
-      Item<Action<grrr>::Part,FlashText<decltype(opn_text),&opn_text>::Part>
+      Item<EnDis<false>::Part,Action<grrr>::Part,Mutable::Part,FlashText<decltype(opn_text),&opn_text>::Part>
     >
   >::Part
 > mainMenu;

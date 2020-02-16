@@ -81,8 +81,8 @@ namespace Menu {
   * The Item class encapsulates a composition to be a stratic menu item.
   */
   template<Expr... I>
-  struct Item:Chain<Mutable::Part,I...,Empty>::template To<Obj<Item<I...>>> {
-    using Base=typename Chain<Mutable::Part,I...,Empty>::template To<Obj<Item<I...>>>;
+  struct Item:Chain<I...,Empty>::template To<Obj<Item<I...>>> {
+    using Base=typename Chain<I...,Empty>::template To<Obj<Item<I...>>>;
     using This=Item<I...>;
     using Base::Base;
   };
@@ -189,6 +189,7 @@ namespace Menu {
         return ref?body.parentPrint(ref,ref.head()):false;
       }
 
+      using Base::changed;
       inline void changed(Idx n,bool o) {body.changed(n,o);}
 
       template<Cmd c,typename Nav>

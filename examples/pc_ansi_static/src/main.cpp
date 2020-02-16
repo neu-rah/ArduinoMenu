@@ -54,23 +54,25 @@ const char* quit_text="<Quit.";
 
 //menu static structure ---------------------------
 using MainMenu=Item<
+  Mutable::Part,
   StaticMenu<
-    Item<StaticText<&mainText>::Part>,
+    Item<Mutable::Part,StaticText<&mainText>::Part>,
     StaticData<
-      Item<Action<action1>::Part,EnDis<>::Part,StaticText<&op1_text>::Part>,
-      Item<Action<action2>::Part,EnDis<false>::Part,StaticText<&op2_text>::Part>,
-      Item<Action<tog12>::Part,StaticText<&tog12_text>::Part>,
-      Item<StaticText<&opn_text>::Part>,
-      Item<StaticText<&opn_text>::Part>,
+      Item<Action<action1>::Part,EnDis<>::Part,Mutable::Part,StaticText<&op1_text>::Part>,
+      Item<Action<action2>::Part,EnDis<false>::Part,Mutable::Part,StaticText<&op2_text>::Part>,
+      Item<Action<tog12>::Part,Mutable::Part,StaticText<&tog12_text>::Part>,
+      Item<Mutable::Part,StaticText<&opn_text>::Part>,
+      Item<Mutable::Part,StaticText<&opn_text>::Part>,
       Item<
+        Mutable::Part,
         EnDis<true>::Part,
         StaticMenu<
-          Item<StaticText<&subText>::Part>,
+          Item<Mutable::Part,StaticText<&subText>::Part>,
           StaticData<
-            Item<StaticText<&sub1_text>::Part>,
-            Item<StaticText<&sub2_text>::Part>,
-            Item<StaticText<&subn_text>::Part>,
-            Item<StaticText<&exit_text>::Part>
+            Item<Mutable::Part,StaticText<&sub1_text>::Part>,
+            Item<Mutable::Part,StaticText<&sub2_text>::Part>,
+            Item<Mutable::Part,StaticText<&subn_text>::Part>,
+            Item<Mutable::Part,StaticText<&exit_text>::Part>
           >
         >::Part
       >,

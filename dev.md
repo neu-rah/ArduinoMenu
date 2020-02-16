@@ -24,8 +24,8 @@
 
 ### Fields/Items
 + ~~enable/disable items~~
-+ ~~add ::Part to all for consistency~~
-- review default composition parts, we want max optionals
++ ~~add ::Part to all components for consistency~~
++ ~~review default composition parts, we want max optionals~~
 - add default debug part to all items (with empty expression on non-debug versions)
 - numeric fields
 - enumerated fields

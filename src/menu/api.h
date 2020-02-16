@@ -123,7 +123,7 @@ namespace Menu {
     inline static constexpr bool enabled(PathRef=self,Idx=0) {return true;}
     inline static void enable(bool,PathRef=self,Idx=0) {}
 
-    inline static constexpr bool changed() {return false;}
+    inline static constexpr bool changed() {return true;}
     inline static void changed(bool o) {}
     inline static void changed(Idx,bool o) {}
 

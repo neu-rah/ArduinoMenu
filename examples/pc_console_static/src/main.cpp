@@ -64,7 +64,8 @@ using MainMenu=Item<
           Item<StaticText<&subText>::Part>,
           StaticData<
             Item<Action<sub1_action>::Part,StaticText<&sub1_text>::Part>,
-            Item<EnDis<false>::Part,StaticText<&exit_text>::Part>
+            Item<Action<sub1_action>::Part,StaticText<&sub2_text>::Part>,
+            Item<StaticText<&exit_text>::Part>
           >
         >::Part
       >,
