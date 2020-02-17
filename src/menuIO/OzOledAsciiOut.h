@@ -17,7 +17,7 @@
         OzOLED* device;
         inline OzOledAsciiOut(OzOLED* o,idx_t *t,panelsList &p,menuOut::styles s=menuOut::minimalRedraw)
           :menuOut(t,p,s),device(o) {}
-          size_t write(uint8_t ch) override { device->printChar(ch); return 1;}
+        size_t write(uint8_t ch) override { device->printChar(ch); return 1;}
         void clearLine(idx_t ln,idx_t panelNr=0,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) override {
         	setCursor(0,ln,panelNr);
         	for(int n=0;n<maxX();n++) print(' ');

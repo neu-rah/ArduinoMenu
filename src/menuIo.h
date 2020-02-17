@@ -50,8 +50,7 @@
       public:
         idx_t* tops;
         panelsList& panels;
-        idx_t lastSel=-1;
-        //TODO: turn this bool's into bitfield flags
+        // idx_t lastSel=-1;
         enum styles {
           none=0<<0, // default serialOut
           redraw=1<<0,// changing one part implies printing all visible (deprecated)
