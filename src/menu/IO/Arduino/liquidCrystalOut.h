@@ -26,10 +26,14 @@ namespace Menu {
       inline void raw(T i) {
         trace(MDO<<"lcd.raw(\""<<i<<"\") "<<endl);
         dev.print(i);}
+      template<bool toPrint=true>
       inline void clrLine(Idx n) {
         trace(MDO<<"lcd.clrLine("<<n<<") "<<endl);
         dev.setCursor(0,n);
-        for(int n=0;n<O::obj().width();n++) dev.print(' ');
+        if (toPrint) {
+          for(int n=0;n<O::obj().width();n++) dev.print(' ');
+          dev.setCursor(0,n);
+        }
       }
     };
   };

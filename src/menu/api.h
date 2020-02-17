@@ -17,10 +17,13 @@ namespace Menu {
     inline static void newView() {}
     inline static constexpr bool partialDraw() {return false;}
     inline static constexpr bool isSame(void*) {return false;}
+    inline static bool fullDraw() {return !O::obj().partialDraw();}
     inline static constexpr Idx top() {return 0;}
     inline static constexpr Idx posY() {return 0;}
     inline static constexpr Idx freeY() {return idx_max;}
     template<typename Nav> inline static constexpr bool posTop(Nav&) {return false;}
+    template<typename It,typename Nav,Op op=Op::Printing,bool toPrint=true>
+    inline static void printTitle(It& it,Nav& nav) {}
     // template<typename It,Op op=Op::Printing,Roles role=Roles::Raw>
     // inline void printItems(It& it,Idx idx=0,Idx top=0) {
     //   for(auto o:it) o->printItem(O::obj());
@@ -33,6 +36,7 @@ namespace Menu {
     constexpr static inline Idx height() {return idx_max;}
     inline static void setCursor(int x,int y) {}
     inline static constexpr int ascent() {return 0;}
+    template<bool toPrint=true>
     inline static void clrLine(Idx) {}
 
     //formating api
@@ -137,5 +141,7 @@ namespace Menu {
     template<Cmd c,typename Nav>
     inline bool cmd(Nav& nav,PathRef=self,Idx=0) {return nav.template _cmd<c>();}
 
+    template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
+    inline static void printTitle(Nav& nav,Out out) {}
   };
 };

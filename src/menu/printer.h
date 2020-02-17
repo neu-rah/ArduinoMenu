@@ -15,37 +15,26 @@ namespace Menu {
       using This=FullPrinter::Part<O>;
       template<typename It,typename Nav,Op op=Op::Printing>
       void printMenu(It& it,Nav& nav) {
-        trace(MDO<<"FullPrinter::printMenu "<<op<<endl);
+        _trace(MDO<<"FullPrinter::printMenu "<<op<<endl);
         constexpr bool toPrint=op==Op::Printing;
         O::newView();
-        bool dp=(!O::partialDraw())||(O::partialDraw()&&!O::isSame((void*)&it));
-        if(dp) O::template fmt<Roles::Panel,true,toPrint>();
+        // bool dp=(!O::partialDraw())||(O::partialDraw()&&!O::isSame((void*)&it));
+        // if(dp) O::template fmt<Roles::Panel,true,toPrint>();
         O::template fmt<Roles::Menu,true,toPrint>();
 
+        _trace(MDO<<"FullPrinter printing title toPrint:"<<toPrint<<endl);
+        // bool tp=toPrint&&O::partialDraw()&&!O::isSame(&it);
         //title
-        // if (op==Op::ClearChanges) it.changed(false);
-
-        _trace(MDO<<"FullPrinter printing title"<<endl);
-        bool tp=toPrint&&(
-          (!O::partialDraw())
-          ||it.changed()
-          ||!O::isSame(&it)
-        );
-        if (toPrint) O::clrLine(O::orgY()+O::posY());
-        O::setCursor(O::orgX(),O::orgY()+O::posY());
-        if (tp) {
-          O::template fmt<Roles::Item,true,true>();
-          O::template fmt<Roles::Title,true,true>();
-          it.template print<Nav,typename O::Type,op,Roles::Title>(nav,O::obj());
-          O::template fmt<Roles::Title,false,true>();
-          O::template fmt<Roles::Item,false,true>();
-        } else {
-          O::template fmt<Roles::Item,true,false>();
-          O::template fmt<Roles::Title,true,false>();
-          it.template print<Nav,decltype(O::obj()),op,Roles::Title>(nav,O::obj());
-          O::template fmt<Roles::Title,false,false>();
-          O::template fmt<Roles::Item,false,false>();
-        }
+        // if (tp||it.changed()) {
+          // if (toPrint)
+          it.template printTitle<Nav,typename O::Type,op,Roles::Title>(nav,O::obj());
+        // } else {
+        //   O::template fmt<Roles::Item,true,false>();
+        //   O::template fmt<Roles::Title,true,false>();
+        //   it.template print<Nav,decltype(O::obj()),op,Roles::Title>(nav,O::obj());
+        //   O::template fmt<Roles::Title,false,false>();
+        //   O::template fmt<Roles::Item,false,false>();
+        // }
 
         // This::posTop(nav);
         if (This::posTop(nav)) it.changed(true);
@@ -61,13 +50,24 @@ namespace Menu {
           <Nav,typename O::Type,op,Roles::Item>
           (nav,O::obj(),0,O::obj().top(),self,fp);
 
-        if (tp) O::template fmt<Roles::Menu,false,true>();
-        else O::template fmt<Roles::Menu,false,false>();
-        if(dp) {
-          if(tp) O::template fmt<Roles::Panel,false,true>();
-          else O::template fmt<Roles::Panel,false,false>();
-        }
+        O::template fmt<Roles::Menu,false,toPrint>();
+        // if (tp) O::template fmt<Roles::Menu,false,true>();
+        // else O::template fmt<Roles::Menu,false,false>();
+        // if(dp) {
+        //   if(tp) O::template fmt<Roles::Panel,false,true>();
+        //   else O::template fmt<Roles::Panel,false,false>();
+        // }
+        O::template fmt<Roles::Panel,false,toPrint>();
         if (toPrint) O::lastDrawn(&it);
+      }
+      template<typename It,typename Nav,Op op=Op::Printing,bool toPrint=true>
+      void printTitle(It& it,Nav& nav) {
+        O::template clrLine<toPrint>(O::orgY()+O::posY());
+        O::template fmt<Roles::Item,true,toPrint>();
+        O::template fmt<Roles::Title,true,toPrint>();
+        it.template print<Nav,typename O::Type,op,Roles::Title>(nav,O::obj());
+        O::template fmt<Roles::Title,false,toPrint>();
+        O::template fmt<Roles::Item,false,toPrint>();
       }
       template<typename It,typename Nav,Op op=Op::Printing,bool toPrint=true>
       void printItem(It& it,Nav& nav,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {

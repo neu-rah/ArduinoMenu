@@ -66,14 +66,14 @@ namespace Menu {
       inline Part(const char*o):text(o) {}
       template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
       inline void print(Nav& nav,Out& out,PathRef ref=self) {
-        out.template raw<decltype(text),op==Op::Printing>(text);
+        out.template raw<decltype(text),op==Op::Printing&&out.fullDraw()&&I::obj().changed()>(text);
         I::template print<Nav,Out,op,role>(nav,out);
       }
-      template<typename Nav,typename Out,Roles role=Roles::Raw>
-      inline void measure(Nav& nav,Out& out,PathRef ref=self) {
-        out.measure(text);
-        I::template measure<Nav,Out,role>(nav,out);
-      }
+      // template<typename Nav,typename Out,Roles role=Roles::Raw>
+      // inline void measure(Nav& nav,Out& out,PathRef ref=self) {
+      //   out.measure(text);
+      //   I::template measure<Nav,Out,role>(nav,out);
+      // }
     };
   };
 
@@ -218,10 +218,14 @@ namespace Menu {
 
       template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
       inline void print(Nav& nav,Out& out,PathRef ref=self) {
-        trace(MDO<<"StaticMenu::print "<<role<<endl);
-        if (Base::obj().changed()||title.changed()||!out.isSame(this))
-          title.template print<Nav,Out,op,role>(nav,out,ref);
-          // out.template printItem<decltype(title),Nav,op,op==Op::Printing>(title,nav);
+        _trace(MDO<<"StaticMenu::print "<<role<<endl);
+        title.template print<Nav,Out,op,role>(nav,out,ref);
+      }
+      template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
+      inline void printTitle(Nav& nav,Out out) {
+        _trace(MDO<<"StaticMenu::printTitle "<<role<<endl);
+        if (op==Op::Printing&&out.fullDraw()&&title.changed())
+          out.template printTitle<typename I::Type,Nav,op,toPrint>(I::obj(),nav);
       }
     };
   };

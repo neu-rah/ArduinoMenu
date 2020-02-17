@@ -220,8 +220,9 @@ namespace Menu {
 		template<typename O>
 		struct Part:O {
 		  using This=AnsiFmt::Part<O>;
+			template<bool toPrint=true>
 			inline void clrLine(Idx nr) {
-				ansiFill(O::orgX(),nr,O::orgX()+O::width(),nr)(*this);
+				if(toPrint) ansiFill(O::orgX(),nr,O::orgX()+O::width(),nr)(*this);
 				// setCursor(O::posX(),O::posY());
 			}
 			inline void setCursor(int x,int y) {xy(x,y)(*this);}
