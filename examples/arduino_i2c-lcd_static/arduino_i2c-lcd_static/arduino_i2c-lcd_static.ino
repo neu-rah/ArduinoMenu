@@ -77,7 +77,7 @@ SerialIn<decltype(Serial),Serial> in;//create input object (here serial)
 using Out=StaticMenuOut<
   FullPrinter::Part,//print title and items
   TitleWrapFmt<>::Part,//put [] around menu title
-  // TextCursorFmt,//draw text cursor
+  TextCursorFmt,//draw text cursor
   TextEditModeFmt,//draw edit mode text cursor
   TextItemFmt,//item on a new line
   PartialDraw::Part,//this device can position the cursor and do a partial draw

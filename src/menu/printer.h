@@ -27,7 +27,7 @@ namespace Menu {
         //title
         // if (tp||it.changed()) {
           // if (toPrint)
-          it.template printTitle<Nav,typename O::Type,op,Roles::Title>(nav,O::obj());
+          it.template printTitle<Nav,typename O::Type,op>(nav,O::obj());
         // } else {
         //   O::template fmt<Roles::Item,true,false>();
         //   O::template fmt<Roles::Title,true,false>();
@@ -47,7 +47,7 @@ namespace Menu {
             <<" => fp:"<<fp<<endl
           );
         it.template printItems
-          <Nav,typename O::Type,op,Roles::Item>
+          <Nav,typename O::Type,op>
           (nav,O::obj(),0,O::obj().top(),self,fp);
 
         O::template fmt<Roles::Menu,false,toPrint>();
@@ -65,7 +65,7 @@ namespace Menu {
         O::template clrLine<toPrint>(O::orgY()+O::posY());
         O::template fmt<Roles::Item,true,toPrint>();
         O::template fmt<Roles::Title,true,toPrint>();
-        it.template print<Nav,typename O::Type,op,Roles::Title>(nav,O::obj());
+        it.template print<Nav,typename O::Type,op>(nav,O::obj());
         O::template fmt<Roles::Title,false,toPrint>();
         O::template fmt<Roles::Item,false,toPrint>();
       }
@@ -80,7 +80,7 @@ namespace Menu {
         O::template fmt<Roles::Cursor,true ,toPrint>(n,s,e,m);
         O::template fmt<Roles::Cursor,false,toPrint>(n,s,e,m);
         // it.template printItem<O::Type,Roles::Item,toPrint>(O::obj(),n,s,e,m);
-        it.template print<Nav,typename O::Type,op,Roles::Item>(nav,O::obj());
+        it.template print<Nav,typename O::Type,op>(nav,O::obj());
         O::template fmt<Roles::Item,false,toPrint>(n,s,e,m);
       }
     };

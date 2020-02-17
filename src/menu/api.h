@@ -17,7 +17,7 @@ namespace Menu {
     inline static void newView() {}
     inline static constexpr bool partialDraw() {return false;}
     inline static constexpr bool isSame(void*) {return false;}
-    inline static bool fullDraw() {return !O::obj().partialDraw();}
+    inline bool fullDraw() {return !O::obj().partialDraw();}
     inline static constexpr Idx top() {return 0;}
     inline static constexpr Idx posY() {return 0;}
     inline static constexpr Idx freeY() {return idx_max;}

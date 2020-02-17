@@ -55,7 +55,7 @@ namespace Menu {
         else vector<IItem*>::operator[](ref.head())->template printMenu<Nav,Out,op>(nav,out,ref.tail());
       }
 
-      template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
+      template<typename Nav,typename Out,Op op=Op::Printing>
       inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,PathRef ref=self,bool fullPrint=true) {
         trace(MDO<<"StdVectorMenu::printItems fullPrint:"<<fullPrint<<" top:"<<top<<" freeY:"<<out.freeY()<<endl);
         if(ref) vector<IItem*>::operator[](ref.head())->printItems(nav,out,idx,top,ref.tail(),fullPrint);
@@ -77,7 +77,7 @@ namespace Menu {
         }
       }
 
-      template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
+      template<typename Nav,typename Out,Op op=Op::Printing>
       inline void print(Nav& nav,Out& out,PathRef ref=self) {
         trace(MDO<<"StdVectorMenu::print "<<role<<endl);
         if(title.changed()) title.template print<Nav,Out,op,role>(nav,out,ref);

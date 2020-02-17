@@ -16,13 +16,13 @@ namespace Menu {
       // inline void changed(Idx,bool o) {changed(o);}
 
       //this can not be `protected` because of `CRTP` and `mixin` composition
-      template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
+      template<typename Nav,typename Out,Op op=Op::Printing>
       inline void print(Nav& nav,Out& out,PathRef ref=self) {
         if (op==Op::ClearChanges&&!ref) {
           trace(MDO<<"Mutable::print clear "<<endl);
           changed(false);
         }// else
-        I::template print<Nav,Out,op,role>(nav,out,ref);
+        I::template print<Nav,Out,op>(nav,out,ref);
       }
     protected:
       bool hasChanged=true;
@@ -50,10 +50,10 @@ namespace Menu {
   struct StaticText {
     template<typename I=Empty<Nil>>
     struct Part:I {
-      template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
+      template<typename Nav,typename Out,Op op=Op::Printing>
       inline void print(Nav& nav,Out& out,PathRef ref=self) {
         out.template raw<decltype(text[0]),op==Op::Printing>(text[0]);
-        I::template print<Nav,Out,op,role>(nav,out);
+        I::template print<Nav,Out,op>(nav,out);
       }
     };
   };
@@ -64,10 +64,10 @@ namespace Menu {
       using Base=I;
       const char* text;
       inline Part(const char*o):text(o) {}
-      template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
+      template<typename Nav,typename Out,Op op=Op::Printing>
       inline void print(Nav& nav,Out& out,PathRef ref=self) {
         out.template raw<decltype(text),op==Op::Printing&&out.fullDraw()&&I::obj().changed()>(text);
-        I::template print<Nav,Out,op,role>(nav,out);
+        I::template print<Nav,Out,op>(nav,out);
       }
       // template<typename Nav,typename Out,Roles role=Roles::Raw>
       // inline void measure(Nav& nav,Out& out,PathRef ref=self) {
@@ -146,7 +146,7 @@ namespace Menu {
 
     template<typename Nav,typename Out,Op op=Op::Printing>
     inline void printMenu(Nav& nav,Out& out,PathRef ref=self,Idx n=0);
-    template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
+    template<typename Nav,typename Out,Op op=Op::Printing>
     inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,PathRef ref=self,bool fullPrint=true);
   };
 
@@ -210,22 +210,22 @@ namespace Menu {
         else out.template printMenu<typename I::Type,Nav,op>(I::obj(),nav);
       }
 
-      template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
+      template<typename Nav,typename Out,Op op=Op::Printing>
       inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,PathRef ref=self,bool fullPrint=true) {
         trace(MDO<<"StaticMenu::printItems fullPrint:"<<fullPrint<<endl);
-        body.template printItems<Nav,Out,op,role>(nav,out,idx,top,ref,fullPrint);
+        body.template printItems<Nav,Out,op>(nav,out,idx,top,ref,fullPrint);
       }
 
-      template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
+      template<typename Nav,typename Out,Op op=Op::Printing>
       inline void print(Nav& nav,Out& out,PathRef ref=self) {
-        _trace(MDO<<"StaticMenu::print "<<role<<endl);
-        title.template print<Nav,Out,op,role>(nav,out,ref);
+        _trace(MDO<<"StaticMenu::print "<<op<<endl);
+        title.template print<Nav,Out,op>(nav,out,ref);
       }
-      template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
+      template<typename Nav,typename Out,Op op=Op::Printing>
       inline void printTitle(Nav& nav,Out out) {
-        _trace(MDO<<"StaticMenu::printTitle "<<role<<endl);
+        _trace(MDO<<"StaticMenu::printTitle "<<op<<endl);
         if (op==Op::Printing&&out.fullDraw()&&title.changed())
-          out.template printTitle<typename I::Type,Nav,op,toPrint>(I::obj(),nav);
+          out.template printTitle<typename I::Type,Nav,op>(I::obj(),nav);
       }
     };
   };
