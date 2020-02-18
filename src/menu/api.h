@@ -40,18 +40,67 @@ namespace Menu {
     inline static void clrLine(Idx) {}
 
     //formating api
-    template<bool io,bool toPrint> inline static void fmtRaw(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
-    template<bool io,bool toPrint> inline static void fmtPanel(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
-    template<bool io,bool toPrint> inline static void fmtMenu(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
-    template<bool io,bool toPrint> inline static void fmtTitle(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
-    template<bool io,bool toPrint> inline static void fmtBody(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
-    template<bool io,bool toPrint> inline static void fmtItem(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
-    template<bool io,bool toPrint> inline static void fmtIndex(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
-    template<bool io,bool toPrint> inline static void fmtCursor(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
-    template<bool io,bool toPrint> inline static void fmtName(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
-    template<bool io,bool toPrint> inline static void fmtMode(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
-    template<bool io,bool toPrint> inline static void fmtValue(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
-    template<bool io,bool toPrint> inline static void fmtUnit(Idx=0,bool=false,bool=true,Modes=Modes::Normal) {}
+    template<bool io,bool toPrint> inline static void fmtRaw(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {}
+    template<bool io,bool toPrint> inline static void fmtPanel(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {}
+    template<bool io,bool toPrint> inline static void fmtMenu(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {}
+    template<bool io,bool toPrint> inline static void fmtTitle(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {}
+    template<bool io,bool toPrint> inline static void fmtBody(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {}
+    template<bool io,bool toPrint> inline static void fmtItem(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {}
+    template<bool io,bool toPrint> inline static void fmtIndex(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {}
+    template<bool io,bool toPrint> inline static void fmtCursor(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {}
+    template<bool io,bool toPrint> inline static void fmtName(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {}
+    template<bool io,bool toPrint> inline static void fmtMode(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {}
+    template<bool io,bool toPrint> inline static void fmtValue(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {}
+    template<bool io,bool toPrint> inline static void fmtUnit(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {}
+
+    template<bool io> inline static void fmtRaw(bool toPrint,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
+      if(toPrint) fmtRaw<io,true>(n,s,e,m);
+      else fmtRaw<io,false>(n,s,e,m);
+    }
+    template<bool io> inline static void fmtPanel(bool toPrint,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
+      if(toPrint) fmtPanel<io,true>(n,s,e,m);
+      else fmtPanel<io,false>(n,s,e,m);
+    }
+    template<bool io> inline static void fmtMenu(bool toPrint,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
+      if(toPrint) fmtMenu<io,true>(n,s,e,m);
+      else fmtMenu<io,false>(n,s,e,m);
+    }
+    template<bool io> inline static void fmtTitle(bool toPrint,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
+      if(toPrint) fmtTitle<io,true>(n,s,e,m);
+      else fmtTitle<io,false>(n,s,e,m);
+    }
+    template<bool io> inline static void fmtBody(bool toPrint,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
+      if(toPrint) fmtBody<io,true>(n,s,e,m);
+      else fmtBody<io,false>(n,s,e,m);
+    }
+    template<bool io> inline static void fmtItem(bool toPrint,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
+      if(toPrint) fmtItem<io,true>(n,s,e,m);
+      else fmtItem<io,false>(n,s,e,m);
+    }
+    template<bool io> inline static void fmtIndex(bool toPrint,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
+      if(toPrint) fmtIndex<io,true>(n,s,e,m);
+      else fmtIndex<io,false>(n,s,e,m);
+    }
+    template<bool io> inline static void fmtCursor(bool toPrint,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
+      if(toPrint) fmtCursor<io,true>(n,s,e,m);
+      else fmtCursor<io,false>(n,s,e,m);
+    }
+    template<bool io> inline static void fmtName(bool toPrint,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
+      if(toPrint) fmtName<io,true>(n,s,e,m);
+      else fmtName<io,false>(n,s,e,m);
+    }
+    template<bool io> inline static void fmtMode(bool toPrint,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
+      if(toPrint) fmtMode<io,true>(n,s,e,m);
+      else fmtMode<io,false>(n,s,e,m);
+    }
+    template<bool io> inline static void fmtValue(bool toPrint,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
+      if(toPrint) fmtValue<io,true>(n,s,e,m);
+      else fmtValue<io,false>(n,s,e,m);
+    }
+    template<bool io> inline static void fmtUnit(bool toPrint,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
+      if(toPrint) fmtUnit<io,true>(n,s,e,m);
+      else fmtUnit<io,false>(n,s,e,m);
+    }
 
     //format multiplex
     template<Roles r,bool io,bool toPrint=true>
@@ -70,6 +119,12 @@ namespace Menu {
         case Roles::Unit:   O::obj().template fmtUnit  <io,toPrint>(n,s,e,m);break;
         default:break;
       }
+    }
+    //format multiplex
+    template<Roles r,bool io>
+    inline void fmt(bool toPrint=true,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
+      if(toPrint) fmt<r,io,true>(n,s,e,m);
+      else fmt<r,io,false>(n,s,e,m);
     }
   };
 
