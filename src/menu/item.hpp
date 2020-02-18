@@ -27,18 +27,9 @@ namespace Menu {
   template<Expr... I>
   inline void Prompt<I...>::printTitle(INav& nav,IOut& out,bool fullPrint,Op op) {
     switch(op) {
-      case Op::Measure:
-        if (fullPrint) Base::template printTitle<INav,IOut,true,Op::Measure>(nav,out);
-        else  Base::template printTitle<INav,IOut,false,Op::Measure>(nav,out);
-        break;
-      case Op::Printing:
-        if(fullPrint) Base::template printTitle<INav,IOut,true,Op::Printing>(nav,out);
-        else Base::template printTitle<INav,IOut,false,Op::Printing>(nav,out);
-        break;
-      case Op::ClearChanges:
-        if (fullPrint) Base::template printTitle<INav,IOut,true,Op::ClearChanges>(nav,out);
-        else Base::template printTitle<INav,IOut,false,Op::ClearChanges>(nav,out);
-        break;
+      case Op::Measure: Base::template printTitle<INav,IOut,Op::Measure>(nav,out,fullPrint);break;
+      case Op::Printing: Base::template printTitle<INav,IOut,Op::Printing>(nav,out,fullPrint);break;
+      case Op::ClearChanges: Base::template printTitle<INav,IOut,Op::ClearChanges>(nav,out,fullPrint);break;
     }
   }
   template<Expr... I>

@@ -222,8 +222,8 @@ namespace Menu {
         body.template printItems<Nav,Out,fullPrint,op>(nav,out,idx,top,ref);
       }
 
-      template<typename Nav,typename Out,bool fullPrint,Op op=Op::Printing>
-      inline void printTitle(Nav& nav,Out out) {
+      template<typename Nav,typename Out,Op op=Op::Printing>
+      inline void printTitle(Nav& nav,Out out,bool fullPrint) {
         trace(MDO<<"StaticMenu::printTitle "<<op<<" fullDraw:"<<out.fullDraw()<<" changed:"<<title.changed()<<endl);
         if (op==Op::ClearChanges) title.changed(false);
         else if (op==Op::Printing&&(fullPrint||out.fullDraw()||title.changed()))

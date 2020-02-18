@@ -21,8 +21,8 @@ namespace Menu {
 
     template<typename Nav,typename Out,Op op=Op::Printing>
     inline void printMenu(Nav& nav,Out& out,PathRef ref=self) {printMenu(nav,out,op,ref);}
-    template<typename Nav,typename Out,bool fullPrint,Op op=Op::Printing>
-    inline void printTitle(Nav& nav,Out out) {printTitle(nav,out,fullPrint,op);}
+    template<typename Nav,typename Out,Op op=Op::Printing>
+    inline void printTitle(Nav& nav,Out out,bool fullPrint) {printTitle(nav,out,fullPrint,op);}
     template<typename Nav,typename Out,bool fullPrint,Op op=Op::Printing>
     inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,PathRef ref=self)
       {printItems(nav,out,fullPrint,idx,top,ref,op);}
@@ -49,7 +49,7 @@ namespace Menu {
     inline size_t canNav(PathRef ref=self) override {return Base::canNav(ref);}
     inline bool activate(PathRef ref=self) override {return Base::activate(ref);}
     inline void printMenu(INav& nav,IOut& out,Op op=Op::Printing,PathRef ref=self) override;
-    inline void printTitle(INav& nav,IOut& out,bool fullPrint,Op op=Op::Printing) override;
+    inline void printTitle(INav& nav,IOut& out,Op op=Op::Printing) override;
     inline void printItems(INav& nav,IOut& out,bool fullPrint,Idx idx=0,Idx top=0,PathRef ref=self,Op op=Op::Printing) override;
     inline void print(INav& nav,IOut& out,Op op,PathRef ref=self) override;
     inline bool enabled(PathRef ref=self) override {return Base::enabled(ref);}

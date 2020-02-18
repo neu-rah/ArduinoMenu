@@ -196,7 +196,7 @@ namespace Menu {
     template<Cmd c,typename Nav>
     inline bool cmd(Nav& nav,PathRef=self,Idx=0) {return nav.template _cmd<c>();}
 
-    template<typename Nav,typename Out,bool,Op op=Op::Printing>
-    inline static void printTitle(Nav& nav,Out& out) {}
+    template<typename Nav,typename Out,Op op=Op::Printing>
+    inline static void printTitle(Nav& nav,Out& out,bool) {}
   };
 };

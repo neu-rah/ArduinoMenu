@@ -28,7 +28,7 @@ namespace Menu {
         //title
         // if (tp||it.changed()) {
           // if (toPrint)
-          it.template printTitle<Nav,typename O::Type,fullPrint,op>(nav,O::obj());
+          it.template printTitle<Nav,typename O::Type,op>(nav,O::obj(),fullPrint);
         // } else {
         //   O::template fmt<Roles::Item,true,false>();
         //   O::template fmt<Roles::Title,true,false>();
