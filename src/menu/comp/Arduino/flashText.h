@@ -16,7 +16,7 @@ namespace Menu {
     struct Part:I {
       using I::I;
       // using I::size;
-      template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
+      template<typename Nav,typename Out,Op op=Op::Printing>
       inline static void print(Nav& nav,Out& out,PathRef ref=self) {
         out.template raw<const __FlashStringHelper *,op==Op::Printing>(reinterpret_cast<const __FlashStringHelper *>(text[0]));
       }

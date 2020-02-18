@@ -30,8 +30,8 @@ bool op2_action() {
   return true;
 }
 
-bool sub1_action() {
-  cout<<"Sub 1 action called!"<<endl;
+bool sub_action() {
+  cout<<"Sub-menu action called!"<<endl;
   return true;
 }
 
@@ -52,25 +52,23 @@ const char* quit_text="<Quit.";
 //menu static structure ---------------------------
 using MainMenu=Item<
   StaticMenu<
-    Item<StaticText<&mainText>::Part>,
+    Item<Mutable::Part,StaticText<&mainText>::Part>,
     StaticData<
-      Item<Action<op1_action>::Part,EnDis<>::Part,StaticText<&op1_text>::Part>,
-      Item<Action<op2_action>::Part,EnDis<false>::Part,StaticText<&op2_text>::Part>,
-      Item<Action<tog12>::Part,StaticText<&tog12_text>::Part>,
-      Item<StaticText<&opn_text>::Part>,
-      Item<StaticText<&opn_text>::Part>,
+      Item<Action<op1_action>::Part,EnDis<>::Part,Mutable::Part,StaticText<&op1_text>::Part>,
+      Item<Action<op2_action>::Part,EnDis<false>::Part,Mutable::Part,StaticText<&op2_text>::Part>,
+      Item<Action<tog12>::Part,Mutable::Part,StaticText<&tog12_text>::Part>,
+      Item<Mutable::Part,StaticText<&opn_text>::Part>,
       Item<
         StaticMenu<
-          Item<StaticText<&subText>::Part>,
+          Item<Mutable::Part,StaticText<&subText>::Part>,
           StaticData<
-            Item<Action<sub1_action>::Part,StaticText<&sub1_text>::Part>,
-            Item<Action<sub1_action>::Part,StaticText<&sub2_text>::Part>,
-            Item<StaticText<&exit_text>::Part>
+            Item<Action<sub_action>::Part,Mutable::Part,StaticText<&sub1_text>::Part>,
+            Item<Action<sub_action>::Part,Mutable::Part,StaticText<&sub2_text>::Part>,
+            Item<Mutable::Part,StaticText<&exit_text>::Part>
           >
         >::Part
       >,
-      Item<StaticText<&opn_text>::Part>,
-      Item<Action<quit>::Part,StaticText<&quit_text>::Part>
+      Item<Action<quit>::Part,Mutable::Part,StaticText<&quit_text>::Part>
     >
   >::Part
 >;
@@ -83,10 +81,10 @@ StaticMenuOut<
   TitleWrapFmt<>::Part,//wrap title in []
   TextFmt::Part,//format the text parts, use `>` as text cursor`
 // #ifdef MENU_DEBUG
-//   PartialDraw,//just for testing, because console is not of this cathegory
-//   PanelTarget,//detect target (menu) changes
+//   PartialDraw::Part,//just for testing, because console is not of this cathegory
+//   PanelTarget::Part,//detect target (menu) changes
 //   RangePanel<>::Part,//control vertical scrolling
-//   StaticPanel<0,0,20,6>::Part,//define output geometry
+//   StaticPanel<0,0,20,2>::Part,//define output geometry
 // #endif
   Console::Part,//the raw output device to use
   TextMeasure<>::Part//default monometric text measure
@@ -105,9 +103,11 @@ bool tog12() {
 }
 
 int main() {
+  cout<<"======================="<<endl;
   nav.print(out);
   while(running) {
     if (nav.doInput(in)) {
+      cout<<"======================="<<endl;
       nav.print(out);
       out.nl();
     }

@@ -42,9 +42,13 @@ namespace Menu {
     struct Part:O {
       using This=StreamOut<Dev,dev>::Part<O>;
       template<bool toPrint=true>
-      inline static void nl() {if(toPrint) dev<<endl;}
+      inline static void nl() {
+        trace(MDO<<"StreamOut::nl<"<<(toPrint?"true":"false")<<">()"<<endl);
+        if(toPrint) dev<<endl;
+      }
       template<typename T,bool toPrint=true>
       inline static void raw(T o) {
+        trace(MDO<<"StreamOut::raw<"<<(toPrint?"true":"false")<<">("<<o<<")"<<endl);
         if(toPrint) dev<<o;
       }
     };

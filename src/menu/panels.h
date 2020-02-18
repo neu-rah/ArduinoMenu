@@ -56,13 +56,13 @@ namespace Menu {
           trace(MDO<<"RangePanel::useY "<<uy<<endl);
           if (freeLines) {
             freeLines-=uy;
-            // O::setCursor(0,(O::height()-freeLines)*O::maxCharHeight()+O::ascent());
           }
         }
         // inline void use(Idx ux=1,Idx uy=1) {This::useX(ux);This::useY(uy);}
         inline void use(Area a) {This::useX(a.height);This::useY(a.width);}
         template<bool toPrint=true>
         inline void nl() {
+          trace(MDO<<"RangePanel::nl<"<<toPrint<<">"<<endl);
           O::template nl<toPrint>();
           useY();
         }

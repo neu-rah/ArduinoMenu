@@ -18,7 +18,7 @@ namespace Menu {
       template<typename Out>
       inline void print(Out& out) {
         trace(MDO<<"Nav::print"<<endl);
-        root.printMenu(N::obj(),out,*this);
+        root.template printMenu<typename N::Type,Out,Op::Printing>(N::obj(),out,*this);
         if (out.partialDraw())
           root.template printMenu<typename N::Type,Out,Op::ClearChanges>(N::obj(),out,*this);
       }

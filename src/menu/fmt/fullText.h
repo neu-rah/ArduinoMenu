@@ -53,7 +53,7 @@ namespace Menu {
       template<bool io,bool toPrint=true>
       inline void fmtItem(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
     		O::template fmtItem<io,toPrint>(n,s,e,m);
-        if (!io) O::template nl<toPrint>();
+        if (!io) O::obj().template nl<toPrint>();
       }
       template<bool io,bool toPrint=true>
       inline void fmtIndex(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {

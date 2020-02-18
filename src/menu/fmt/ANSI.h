@@ -223,7 +223,7 @@ namespace Menu {
 			template<bool toPrint=true>
 			inline void clrLine(Idx nr) {
 				if(toPrint) ansiFill(O::orgX(),nr,O::orgX()+O::width(),nr)(*this);
-				// setCursor(O::posX(),O::posY());
+				setCursor(O::orgX(),nr);
 			}
 			inline void setCursor(int x,int y) {xy(x,y)(*this);}
 		  template<bool io,bool toPrint=true>

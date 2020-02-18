@@ -11,7 +11,9 @@
 + ~~minimal draw and viewports~~
 + ~~check last drawn menu to draw titles (nav. back)~~
 + ~~printMenu should be delivered to the item after checking !parentPrint~~
-- ~~clear title line before title print~~
++ ~~clear title line before title print~~
++ ~~reviewed print chain params~~
+- pass boolean template params to normal params on nin-trivial function to reduce code footprint
 - check usage of native device resolution instead of text-box
 - colors
 - multiline options/title

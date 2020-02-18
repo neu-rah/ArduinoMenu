@@ -25,12 +25,38 @@ namespace Menu {
   }
 
   template<Expr... I>
-  inline void Prompt<I...>::printItems(INav& nav,IOut& out,Idx idx,Idx top,PathRef ref,Op op,bool toPrint) {
+  inline void Prompt<I...>::printTitle(INav& nav,IOut& out,bool fullPrint,Op op) {
+    switch(op) {
+      case Op::Measure:
+        if (fullPrint) Base::template printTitle<INav,IOut,true,Op::Measure>(nav,out);
+        else  Base::template printTitle<INav,IOut,false,Op::Measure>(nav,out);
+        break;
+      case Op::Printing:
+        if(fullPrint) Base::template printTitle<INav,IOut,true,Op::Printing>(nav,out);
+        else Base::template printTitle<INav,IOut,false,Op::Printing>(nav,out);
+        break;
+      case Op::ClearChanges:
+        if (fullPrint) Base::template printTitle<INav,IOut,true,Op::ClearChanges>(nav,out);
+        else Base::template printTitle<INav,IOut,false,Op::ClearChanges>(nav,out);
+        break;
+    }
+  }
+  template<Expr... I>
+  inline void Prompt<I...>::printItems(INav& nav,IOut& out,bool fullPrint,Idx idx,Idx top,PathRef ref,Op op) {
     trace(MDO<<"Prompt::printItems"<<endl);
     switch(op) {
-      case Op::Measure: Base::template printItems<INav,IOut,Op::Measure>(nav,out,idx,top,ref,toPrint);break;
-      case Op::Printing: Base::template printItems<INav,IOut,Op::Printing>(nav,out,idx,top,ref,toPrint);break;
-      case Op::ClearChanges: Base::template printItems<INav,IOut,Op::ClearChanges>(nav,out,idx,top,ref,toPrint);break;
+      case Op::Measure:
+        if (fullPrint) Base::template printItems<INav,IOut,true,Op::Measure>(nav,out,idx,top,ref);
+        else  Base::template printItems<INav,IOut,false,Op::Measure>(nav,out,idx,top,ref);
+        break;
+      case Op::Printing:
+        if(fullPrint) Base::template printItems<INav,IOut,true,Op::Printing>(nav,out,idx,top,ref);
+        else Base::template printItems<INav,IOut,false,Op::Printing>(nav,out,idx,top,ref);
+        break;
+      case Op::ClearChanges:
+        if (fullPrint) Base::template printItems<INav,IOut,true,Op::ClearChanges>(nav,out,idx,top,ref);
+        else Base::template printItems<INav,IOut,false,Op::ClearChanges>(nav,out,idx,top,ref);
+        break;
     }
   }
   template<Expr... I>

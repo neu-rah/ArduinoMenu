@@ -50,15 +50,18 @@ namespace Menu {
       template<typename Nav,typename Out,Op op=Op::Printing>
       inline void printMenu(Nav& nav,Out& out,PathRef ref=self,Idx n=0) {
         trace(MDO<<"StdVectorMenu::printMenu "<<op<<endl);
-        if (!ref||ref.len==1&&(vector<IItem*>::operator[](ref.head())->parentPrint(ref.tail())))
-          out.template printMenu<typename I::Type,Nav,op>(I::obj(),nav);
-        else vector<IItem*>::operator[](ref.head())->template printMenu<Nav,Out,op>(nav,out,ref.tail());
+        if (!ref||ref.len==1&&(vector<IItem*>::operator[](ref.head())->parentPrint(ref.tail()))) {
+          bool fullPrint=!(out.partialDraw()&&out.isSame(&Base::obj()));
+          if(fullPrint) out.template printMenu<typename I::Type,Nav,true,op>(I::obj(),nav);
+          else out.template printMenu<typename I::Type,Nav,false,op>(I::obj(),nav);
+        } else
+          vector<IItem*>::operator[](ref.head())->template printMenu<Nav,Out,op>(nav,out,ref.tail());
       }
 
-      template<typename Nav,typename Out,Op op=Op::Printing>
-      inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,PathRef ref=self,bool fullPrint=true) {
+      template<typename Nav,typename Out,bool fullPrint,Op op=Op::Printing>
+      inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,PathRef ref=self) {
         trace(MDO<<"StdVectorMenu::printItems fullPrint:"<<fullPrint<<" top:"<<top<<" freeY:"<<out.freeY()<<endl);
-        if(ref) vector<IItem*>::operator[](ref.head())->printItems(nav,out,idx,top,ref.tail(),fullPrint);
+        if(ref) vector<IItem*>::operator[](ref.head())->printItems(nav,out,idx,top,ref.tail());
         else {
           for(auto a:*this) {
             if (!out.freeY()) return;
@@ -70,7 +73,7 @@ namespace Menu {
             if (fullPrint||a->changed()||!out.partialDraw()) {
               trace(MDO<<"StdVectorMenu::printItems changed:"<<a->changed()<<" partialDraw:"<<out.partialDraw()<<endl);
               out.template printItem
-                <decltype(*a),Nav,op,op==Op::Printing>
+                <decltype(*a),Nav,op>
                 (*a,nav,idx++,nav.selected(idx),a->enabled(),nav.mode());
             } else idx++;
           }
@@ -80,7 +83,7 @@ namespace Menu {
       template<typename Nav,typename Out,Op op=Op::Printing>
       inline void print(Nav& nav,Out& out,PathRef ref=self) {
         trace(MDO<<"StdVectorMenu::print "<<role<<endl);
-        if(title.changed()) title.template print<Nav,Out,op,role>(nav,out,ref);
+        if(title.changed()) title.template print<Nav,Out,op>(nav,out,ref);
       }
 
       template<Cmd c,typename Nav>

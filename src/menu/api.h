@@ -103,18 +103,18 @@ namespace Menu {
 
     inline static constexpr bool parentPrint(PathRef=self,Idx=0) {return true;}
 
-    template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
+    template<typename Nav,typename Out,Op op=Op::Printing>
     inline void print(Nav& nav,Out& out,PathRef ref=self) {
       trace(MDO<<"Empty::print "<<op<<" ref:"<<ref<<endl);
       // if (op==Op::ClearChanges) I::obj().changed(false);
     }
 
-    template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
+    template<typename Nav,typename Out,bool fullPrint,Op op=Op::Printing>
     inline static void printItems(Nav& nav,Out& out,Idx=0,Idx=0,PathRef ref=self) {
       trace(MDO<<"Empty::printItems "<<ref<<endl);
     }
 
-    template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
+    template<typename Nav,typename Out,bool fullPrint,Op op=Op::Printing>
     inline static void printItems(Nav& nav,Out& out,Idx idx,Idx top,PathRef ref,Idx n) {
       trace(MDO<<"Empty::printItems "<<ref<<":"<<n<<endl);
     }
@@ -141,7 +141,7 @@ namespace Menu {
     template<Cmd c,typename Nav>
     inline bool cmd(Nav& nav,PathRef=self,Idx=0) {return nav.template _cmd<c>();}
 
-    template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
-    inline static void printTitle(Nav& nav,Out out) {}
+    template<typename Nav,typename Out,bool,Op op=Op::Printing>
+    inline static void printTitle(Nav& nav,Out& out) {}
   };
 };

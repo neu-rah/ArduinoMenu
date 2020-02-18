@@ -19,7 +19,7 @@ namespace Menu {
       template<typename Nav,typename Out,Op op=Op::Printing>
       inline void print(Nav& nav,Out& out,PathRef ref=self) {
         if (op==Op::ClearChanges&&!ref) {
-          trace(MDO<<"Mutable::print clear "<<endl);
+          _trace(MDO<<"Mutable::print clear "<<endl);
           changed(false);
         }// else
         I::template print<Nav,Out,op>(nav,out,ref);
@@ -66,7 +66,9 @@ namespace Menu {
       inline Part(const char*o):text(o) {}
       template<typename Nav,typename Out,Op op=Op::Printing>
       inline void print(Nav& nav,Out& out,PathRef ref=self) {
-        out.template raw<decltype(text),op==Op::Printing&&out.fullDraw()&&I::obj().changed()>(text);
+        bool toPrint=op==Op::Printing&&out.fullDraw()&&I::obj().changed();
+        if(toPrint) out.template raw<decltype(text),true>(text);
+        else out.template raw<decltype(text),false>(text);
         I::template print<Nav,Out,op>(nav,out);
       }
       // template<typename Nav,typename Out,Roles role=Roles::Raw>
@@ -146,8 +148,8 @@ namespace Menu {
 
     template<typename Nav,typename Out,Op op=Op::Printing>
     inline void printMenu(Nav& nav,Out& out,PathRef ref=self,Idx n=0);
-    template<typename Nav,typename Out,Op op=Op::Printing>
-    inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,PathRef ref=self,bool fullPrint=true);
+    template<typename Nav,typename Out,bool fullPrint,Op op=Op::Printing>
+    inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,PathRef ref=self);
   };
 
   template<typename Title,typename Body>
@@ -206,26 +208,34 @@ namespace Menu {
       template<typename Nav,typename Out,Op op=Op::Printing>
       inline void printMenu(Nav& nav,Out& out,PathRef ref=self,Idx n=0) {
         trace(MDO<<"StaticMenu::printMenu... "<<op<<" "<<ref<<endl);
-        if(ref.len>1&&body.parentPrint(ref)) body.template printMenu<>(nav,out,ref.tail(),ref.head());
-        else out.template printMenu<typename I::Type,Nav,op>(I::obj(),nav);
+        if(ref.len>1&&body.parentPrint(ref)) body.template printMenu<Nav,Out,op>(nav,out,ref.tail(),ref.head());
+        else {
+          bool fullPrint=out.fullDraw()/*||Base::obj().changed()*/||!out.isSame(&Base::obj());
+          if (fullPrint) out.template printMenu<typename I::Type,Nav,true,op>(Base::obj(),nav);
+          else out.template printMenu<typename I::Type,Nav,false,op>(Base::obj(),nav);
+        }
       }
 
-      template<typename Nav,typename Out,Op op=Op::Printing>
-      inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,PathRef ref=self,bool fullPrint=true) {
+      template<typename Nav,typename Out,bool fullPrint,Op op=Op::Printing>
+      inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,PathRef ref=self) {
         trace(MDO<<"StaticMenu::printItems fullPrint:"<<fullPrint<<endl);
-        body.template printItems<Nav,Out,op>(nav,out,idx,top,ref,fullPrint);
+        body.template printItems<Nav,Out,fullPrint,op>(nav,out,idx,top,ref);
+      }
+
+      template<typename Nav,typename Out,bool fullPrint,Op op=Op::Printing>
+      inline void printTitle(Nav& nav,Out out) {
+        trace(MDO<<"StaticMenu::printTitle "<<op<<" fullDraw:"<<out.fullDraw()<<" changed:"<<title.changed()<<endl);
+        if (op==Op::ClearChanges) title.changed(false);
+        else if (op==Op::Printing&&(fullPrint||out.fullDraw()||title.changed()))
+          out.template printTitle<typename I::Type,Nav,op>(I::obj(),nav);
+        else
+          out.template printTitle<typename I::Type,Nav,op==Op::Printing?Op::Measure:op>(I::obj(),nav);
       }
 
       template<typename Nav,typename Out,Op op=Op::Printing>
       inline void print(Nav& nav,Out& out,PathRef ref=self) {
-        _trace(MDO<<"StaticMenu::print "<<op<<endl);
+        trace(MDO<<"StaticMenu::print "<<op<<endl);
         title.template print<Nav,Out,op>(nav,out,ref);
-      }
-      template<typename Nav,typename Out,Op op=Op::Printing>
-      inline void printTitle(Nav& nav,Out out) {
-        _trace(MDO<<"StaticMenu::printTitle "<<op<<endl);
-        if (op==Op::Printing&&out.fullDraw()&&title.changed())
-          out.template printTitle<typename I::Type,Nav,op>(I::obj(),nav);
       }
     };
   };

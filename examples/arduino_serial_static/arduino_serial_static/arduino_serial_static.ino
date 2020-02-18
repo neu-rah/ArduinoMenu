@@ -27,6 +27,21 @@ int vcc=3;
 //menu action handlers
 bool tog12();
 
+bool op1_action() {
+  Serial.println("Option 1 action called!");
+  return true;//false would close the menu
+}
+
+bool op2_action() {
+  Serial.println("Option 2 action called!");
+  return true;
+}
+
+bool sub_action() {
+  Serial.println("Sub-menu action called!");
+  return true;
+}
+
 // define menu structure ---------------------------------------------------------------
 
 //texts for menu
@@ -46,17 +61,17 @@ Item<
   StaticMenu<
     FlashText<decltype(mainMenu_title),&mainMenu_title>::Part<>,
     StaticData<
-      Item<EnDis<>::Part,FlashText<decltype(op1_text),&op1_text>::Part>,
-      Item<EnDis<false>::Part,FlashText<decltype(op2_text),&op2_text>::Part>,
+      Item<Action<op1_action>::Part,EnDis<>::Part,FlashText<decltype(op1_text),&op1_text>::Part>,
+      Item<Action<op2_action>::Part,EnDis<false>::Part,FlashText<decltype(op2_text),&op2_text>::Part>,
       Item<Action<tog12>::Part,FlashText<decltype(tog12_text),&tog12_text>::Part>,
       Item<FlashText<decltype(opn_text),&opn_text>::Part>,
       Item<
         StaticMenu<
           FlashText<decltype(subMenu_title),&subMenu_title>::Part<>,
           StaticData<
-            Item<EnDis<>::Part,FlashText<decltype(op1_text),&op1_text>::Part>,
-            Item<FlashText<decltype(op2_text),&op2_text>::Part>,
-            Item<FlashText<decltype(opn_text),&opn_text>::Part>,
+            Item<Action<sub_action>::Part,EnDis<>::Part,FlashText<decltype(op1_text),&op1_text>::Part>,
+            Item<Action<sub_action>::Part,FlashText<decltype(op2_text),&op2_text>::Part>,
+            Item<Action<sub_action>::Part,FlashText<decltype(opn_text),&opn_text>::Part>,
             Item<FlashText<decltype(exit_txt),&exit_txt>::Part>
           >
         >::Part

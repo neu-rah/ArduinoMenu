@@ -46,9 +46,6 @@ Prompt<Action<tog12>::Part,Text::Part> tog12Op("Toggle 1&2");
 const char*opn_text="Option...";//sharing same text
 Prompt<Text::Part> op3(opn_text);
 Prompt<Text::Part> op4(opn_text);
-Prompt<Text::Part> op5(opn_text);
-Prompt<Text::Part> op6(opn_text);
-Prompt<Text::Part> op7(opn_text);
 Prompt<Action<quit>::Part,Text::Part> quitOp("<Quit.");
 
 Prompt<Text::Part> sub_title("Sub-menu");
@@ -71,9 +68,6 @@ Prompt<StdVectorMenu<decltype(title),title>::Part> mainMenu {
   &tog12Op,
   &op3,
   &op4,
-  &op5,
-  &op6,
-  &op7,
   &subMenu,
   &quitOp
 };
