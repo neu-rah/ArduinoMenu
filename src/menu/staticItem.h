@@ -148,8 +148,9 @@ namespace Menu {
 
     template<typename Nav,typename Out,Op op=Op::Printing>
     inline void printMenu(Nav& nav,Out& out,PathRef ref=self,Idx n=0);
-    template<typename Nav,typename Out,bool fullPrint,Op op=Op::Printing>
-    inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,PathRef ref=self);
+
+    template<typename Nav,typename Out,Op op=Op::Printing>
+    inline void printItems(Nav& nav,Out& out,bool fullPrint,Idx idx=0,Idx top=0,PathRef ref=self);
   };
 
   template<typename Title,typename Body>
@@ -216,10 +217,10 @@ namespace Menu {
         }
       }
 
-      template<typename Nav,typename Out,bool fullPrint,Op op=Op::Printing>
-      inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,PathRef ref=self) {
+      template<typename Nav,typename Out,Op op=Op::Printing>
+      inline void printItems(Nav& nav,Out& out,bool fullPrint,Idx idx=0,Idx top=0,PathRef ref=self) {
         trace(MDO<<"StaticMenu::printItems fullPrint:"<<fullPrint<<endl);
-        body.template printItems<Nav,Out,fullPrint,op>(nav,out,idx,top,ref);
+        body.template printItems<Nav,Out,op>(nav,out,fullPrint,idx,top,ref);
       }
 
       template<typename Nav,typename Out,Op op=Op::Printing>

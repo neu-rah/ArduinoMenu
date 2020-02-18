@@ -47,8 +47,8 @@ namespace Menu {
         //     <<" => fp:"<<fp<<endl
         //   );
         it.template printItems
-          <Nav,typename O::Type,fullPrint,op>
-          (nav,O::obj(),0,O::obj().top(),self);
+          <Nav,typename O::Type,op>
+          (nav,O::obj(),fullPrint,0,O::obj().top(),self);
 
         O::template fmt<Roles::Menu,false,fullPrint>();
         // if (tp) O::template fmt<Roles::Menu,false,true>();

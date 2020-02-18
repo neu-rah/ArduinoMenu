@@ -15,13 +15,13 @@ namespace Menu {
   }
 
   template<typename F,typename S>
-  template<typename Nav,typename Out,bool fullPrint,Op op>
-  inline void Pair<F,S>::printItems(Nav& nav,Out& out,Idx idx,Idx top,PathRef ref) {
+  template<typename Nav,typename Out,Op op>
+  inline void Pair<F,S>::printItems(Nav& nav,Out& out,bool fullPrint,Idx idx,Idx top,PathRef ref) {
     trace(MDO<<"Pair::printItems top:"<<top<<" out.freeY:"<<out.freeY()<<" fullPrint:"<<fullPrint<<endl);
-    if (ref) printItems<Nav,Out,fullPrint,op>(nav,out,idx,top,ref.tail());
+    if (ref) printItems<Nav,Out,op>(nav,out,fullPrint,idx,top,ref.tail());
     else {
       if (!out.freeY()) return;
-      if(top) tail.template printItems<Nav,Out,fullPrint,op>(nav,out,++idx,top-1,self);//skip scroll-out part
+      if(top) tail.template printItems<Nav,Out,op>(nav,out,fullPrint,++idx,top-1,self);//skip scroll-out part
       else if (op==Op::Printing&&(fullPrint||out.fullDraw()||F::changed()))
         out.template printItem<typename F::Type,Nav,op>(F::obj(),nav,idx,nav.selected(idx),F::enabled(),nav.mode());
       else out.template printItem<typename F::Type,Nav,op==Op::Printing?Op::Measure:op>(F::obj(),nav,idx,nav.selected(idx),F::enabled(),nav.mode());
@@ -36,7 +36,7 @@ namespace Menu {
       //   case Op::ClearChanges:
       //     F::changed(false);
       // }
-      tail.template printItems<Nav,Out,fullPrint,op>(nav,out,idx+1,top,self);
+      tail.template printItems<Nav,Out,op>(nav,out,fullPrint,idx+1,top,self);
     }
   }
 };

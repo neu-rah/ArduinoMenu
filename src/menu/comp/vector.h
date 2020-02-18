@@ -58,8 +58,8 @@ namespace Menu {
           vector<IItem*>::operator[](ref.head())->template printMenu<Nav,Out,op>(nav,out,ref.tail());
       }
 
-      template<typename Nav,typename Out,bool fullPrint,Op op=Op::Printing>
-      inline void printItems(Nav& nav,Out& out,Idx idx=0,Idx top=0,PathRef ref=self) {
+      template<typename Nav,typename Out,Op op=Op::Printing>
+      inline void printItems(Nav& nav,Out& out,bool fullPrint,Idx idx=0,Idx top=0,PathRef ref=self) {
         trace(MDO<<"StdVectorMenu::printItems fullPrint:"<<fullPrint<<" top:"<<top<<" freeY:"<<out.freeY()<<endl);
         if(ref) vector<IItem*>::operator[](ref.head())->printItems(nav,out,idx,top,ref.tail());
         else {

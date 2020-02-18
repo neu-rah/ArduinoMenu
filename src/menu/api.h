@@ -164,13 +164,13 @@ namespace Menu {
       // if (op==Op::ClearChanges) I::obj().changed(false);
     }
 
-    template<typename Nav,typename Out,bool fullPrint,Op op=Op::Printing>
-    inline static void printItems(Nav& nav,Out& out,Idx=0,Idx=0,PathRef ref=self) {
+    template<typename Nav,typename Out,Op op=Op::Printing>
+    inline static void printItems(Nav& nav,Out& out,bool fullPrint,Idx=0,Idx=0,PathRef ref=self) {
       trace(MDO<<"Empty::printItems "<<ref<<endl);
     }
 
-    template<typename Nav,typename Out,bool fullPrint,Op op=Op::Printing>
-    inline static void printItems(Nav& nav,Out& out,Idx idx,Idx top,PathRef ref,Idx n) {
+    template<typename Nav,typename Out,Op op=Op::Printing>
+    inline static void printItems(Nav& nav,Out& out,bool fullPrint,Idx idx,Idx top,PathRef ref,Idx n) {
       trace(MDO<<"Empty::printItems "<<ref<<":"<<n<<endl);
     }
 
