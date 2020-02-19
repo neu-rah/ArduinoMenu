@@ -49,3 +49,7 @@ PROGRAM: [=====     ]  45.5% (used 3730 bytes from 8192 bytes)
 2020.02.18 review printing chain params
 RAM:   [====      ]  35.9% (used 184 bytes from 512 bytes)
 Flash: [=======   ]  65.7% (used 5380 bytes from 8192 bytes)
+
+using regular param `fullPrint`
+RAM:   [====      ]  35.9% (used 184 bytes from 512 bytes)
+Flash: [=======   ]  65.7% (used 5380 bytes from 8192 bytes)

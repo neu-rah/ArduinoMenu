@@ -50,12 +50,11 @@ namespace Menu {
       template<typename Nav,typename Out,Op op=Op::Printing>
       inline void printMenu(Nav& nav,Out& out,PathRef ref=self,Idx n=0) {
         trace(MDO<<"StdVectorMenu::printMenu "<<op<<endl);
-        if (!ref||ref.len==1&&(vector<IItem*>::operator[](ref.head())->parentPrint(ref.tail()))) {
-          bool fullPrint=!(out.partialDraw()&&out.isSame(&Base::obj()));
-          if(fullPrint) out.template printMenu<typename I::Type,Nav,true,op>(I::obj(),nav);
-          else out.template printMenu<typename I::Type,Nav,false,op>(I::obj(),nav);
-        } else
-          vector<IItem*>::operator[](ref.head())->template printMenu<Nav,Out,op>(nav,out,ref.tail());
+        if (!ref||ref.len==1&&(vector<IItem*>::operator[](ref.head())->parentPrint(ref.tail())))
+          out.template printMenu
+            <typename I::Type,Nav,op>
+            (I::obj(),nav,!(out.partialDraw()&&out.isSame(&Base::obj())));
+        else vector<IItem*>::operator[](ref.head())->template printMenu<Nav,Out,op>(nav,out,ref.tail());
       }
 
       template<typename Nav,typename Out,Op op=Op::Printing>

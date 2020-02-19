@@ -121,11 +121,11 @@ namespace Menu {
       }
     }
     //format multiplex
-    template<Roles r,bool io>
-    inline void fmt(bool toPrint=true,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
-      if(toPrint) fmt<r,io,true>(n,s,e,m);
-      else fmt<r,io,false>(n,s,e,m);
-    }
+    // template<Roles r,bool io>
+    // inline void fmt(bool toPrint=true,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
+    //   if(toPrint) fmt<r,io,true>(n,s,e,m);
+    //   else fmt<r,io,false>(n,s,e,m);
+    // }
   };
 
   ////////////////////////////////////////////////////////////////////////////////

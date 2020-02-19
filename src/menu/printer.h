@@ -13,8 +13,8 @@ namespace Menu {
     template<typename O>
     struct Part:O {
       using This=FullPrinter::Part<O>;
-      template<typename It,typename Nav,bool fullPrint,Op op=Op::Printing>
-      void printMenu(It& it,Nav& nav) {
+      template<typename It,typename Nav,Op op=Op::Printing>
+      void printMenu(It& it,Nav& nav,bool fullPrint) {
         trace(MDO<<"FullPrinter::printMenu fullPrint:"<<fullPrint<<" Op:"<<op<<endl);
         constexpr bool toPrint=op==Op::Printing;
         // bool fullPrint=toPrint&&(O::fullDraw()||it.changed()||!O::isSame(&it));
@@ -50,7 +50,7 @@ namespace Menu {
           <Nav,typename O::Type,op>
           (nav,O::obj(),fullPrint,0,O::obj().top(),self);
 
-        O::template fmt<Roles::Menu,false,fullPrint>();
+        O::template fmt<Roles::Menu,false>(fullPrint);
         // if (tp) O::template fmt<Roles::Menu,false,true>();
         // else O::template fmt<Roles::Menu,false,false>();
         // if(dp) {

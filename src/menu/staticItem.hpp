@@ -7,11 +7,9 @@ namespace Menu {
     trace(MDO<<"Pair::printMenu... "<<ref<<":"<<n<<endl);
     if (n) tail.template printMenu<Nav,Out,op>(nav,out,ref,n-1);
     else if (ref) F::template printMenu<Nav,Out,op>(nav,out,ref.tail(),ref.head());
-    else {
-      bool fullPrint=op==Op::Printing&&(out.fullDraw()||F::changed()||out.isSame(&F::obj()));
-      if (fullPrint) out.template printMenu<typename F::Type,Nav,true,op>(F::obj(),nav);
-      else  out.template printMenu<typename F::Type,Nav,false,op>(F::obj(),nav);
-    }
+    else out.template printMenu
+      <typename F::Type,Nav,op>
+      (F::obj(),nav,op==Op::Printing&&(out.fullDraw()||F::changed()||out.isSame(&F::obj())));
   }
 
   template<typename F,typename S>

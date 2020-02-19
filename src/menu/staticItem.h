@@ -210,11 +210,9 @@ namespace Menu {
       inline void printMenu(Nav& nav,Out& out,PathRef ref=self,Idx n=0) {
         trace(MDO<<"StaticMenu::printMenu... "<<op<<" "<<ref<<endl);
         if(ref.len>1&&body.parentPrint(ref)) body.template printMenu<Nav,Out,op>(nav,out,ref.tail(),ref.head());
-        else {
-          bool fullPrint=out.fullDraw()/*||Base::obj().changed()*/||!out.isSame(&Base::obj());
-          if (fullPrint) out.template printMenu<typename I::Type,Nav,true,op>(Base::obj(),nav);
-          else out.template printMenu<typename I::Type,Nav,false,op>(Base::obj(),nav);
-        }
+        else out.template printMenu
+          <typename I::Type,Nav,op>
+          (Base::obj(),nav,out.fullDraw()/*||Base::obj().changed()*/||!out.isSame(&Base::obj()));
       }
 
       template<typename Nav,typename Out,Op op=Op::Printing>

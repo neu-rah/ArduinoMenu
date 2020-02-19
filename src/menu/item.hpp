@@ -36,18 +36,9 @@ namespace Menu {
   inline void Prompt<I...>::printItems(INav& nav,IOut& out,bool fullPrint,Idx idx,Idx top,PathRef ref,Op op) {
     trace(MDO<<"Prompt::printItems"<<endl);
     switch(op) {
-      case Op::Measure:
-        if (fullPrint) Base::template printItems<INav,IOut,true,Op::Measure>(nav,out,idx,top,ref);
-        else  Base::template printItems<INav,IOut,false,Op::Measure>(nav,out,idx,top,ref);
-        break;
-      case Op::Printing:
-        if(fullPrint) Base::template printItems<INav,IOut,true,Op::Printing>(nav,out,idx,top,ref);
-        else Base::template printItems<INav,IOut,false,Op::Printing>(nav,out,idx,top,ref);
-        break;
-      case Op::ClearChanges:
-        if (fullPrint) Base::template printItems<INav,IOut,true,Op::ClearChanges>(nav,out,idx,top,ref);
-        else Base::template printItems<INav,IOut,false,Op::ClearChanges>(nav,out,idx,top,ref);
-        break;
+      case Op::Measure: Base::template printItems<INav,IOut,Op::Measure>(nav,out,fullPrint,idx,top,ref);break;
+      case Op::Printing: Base::template printItems<INav,IOut,Op::Printing>(nav,out,fullPrint,idx,top,ref);break;
+      case Op::ClearChanges: Base::template printItems<INav,IOut,Op::ClearChanges>(nav,out,fullPrint,idx,top,ref);break;
     }
   }
   template<Expr... I>

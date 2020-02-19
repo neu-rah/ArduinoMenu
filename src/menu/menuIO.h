@@ -15,8 +15,8 @@ namespace Menu {
 
     inline bool fullDraw() {return !partialDraw();}
 
-    template<typename It,typename Nav,bool fullPrint,Op op=Op::Printing>
-    inline void printMenu(It& it,Nav& nav) {printMenu(it,nav,fullPrint,op);}
+    template<typename It,typename Nav,Op op=Op::Printing>
+    inline void printMenu(It& it,Nav& nav,bool fullPrint) {printMenu(it,nav,fullPrint,op);}
 
     // template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
     // inline void print(Nav& nav,Out& out)

@@ -4,18 +4,9 @@ namespace Menu {
   template<Expr...  O>
   void MenuOut<O...>::printMenu(IItem& it,INav& nav,bool fullPrint, Op op) {
     switch(op) {
-      case Op::Printing:
-        if (fullPrint) Base::template printMenu<IItem,INav,true,Op::Printing>(it,nav);
-        else Base::template printMenu<IItem,INav,false,Op::Printing>(it,nav);
-        break;
-      case Op::Measure:
-        if (fullPrint) Base::template printMenu<IItem,INav,true,Op::Measure>(it,nav);
-        else Base::template printMenu<IItem,INav,false,Op::Measure>(it,nav);
-        break;
-      case Op::ClearChanges:
-        if (fullPrint) Base::template printMenu<IItem,INav,true,Op::ClearChanges>(it,nav);
-        else Base::template printMenu<IItem,INav,false,Op::ClearChanges>(it,nav);
-        break;
+      case Op::Printing: Base::template printMenu<IItem,INav,Op::Printing>(it,nav,fullPrint);break;
+      case Op::Measure: Base::template printMenu<IItem,INav,Op::Measure>(it,nav,fullPrint);break;
+      case Op::ClearChanges: Base::template printMenu<IItem,INav,Op::ClearChanges>(it,nav,fullPrint);break;
     };
   }
   template<Expr...  O>

@@ -49,7 +49,7 @@ namespace Menu {
     inline size_t canNav(PathRef ref=self) override {return Base::canNav(ref);}
     inline bool activate(PathRef ref=self) override {return Base::activate(ref);}
     inline void printMenu(INav& nav,IOut& out,Op op=Op::Printing,PathRef ref=self) override;
-    inline void printTitle(INav& nav,IOut& out,Op op=Op::Printing) override;
+    inline void printTitle(INav& nav,IOut& out,bool fullPrint,Op op=Op::Printing) override;
     inline void printItems(INav& nav,IOut& out,bool fullPrint,Idx idx=0,Idx top=0,PathRef ref=self,Op op=Op::Printing) override;
     inline void print(INav& nav,IOut& out,Op op,PathRef ref=self) override;
     inline bool enabled(PathRef ref=self) override {return Base::enabled(ref);}
