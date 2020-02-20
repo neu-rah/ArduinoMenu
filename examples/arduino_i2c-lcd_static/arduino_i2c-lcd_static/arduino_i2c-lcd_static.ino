@@ -49,20 +49,20 @@ extern const char exit_txt[] PROGMEM="<Exit";
 //static menu structure
 Item<
   StaticMenu<
-    FlashText<decltype(mainMenu_title),&mainMenu_title>::Part<>,
+    Item<Mutable::Part,FlashText<decltype(mainMenu_title),&mainMenu_title>::Part>,
     StaticData<
-      Item<EnDis<>::Part,FlashText<decltype(op1_text),&op1_text>::Part>,
-      Item<EnDis<false>::Part,FlashText<decltype(op2_text),&op2_text>::Part>,
-      Item<Action<tog12>::Part,FlashText<decltype(tog12_text),&tog12_text>::Part>,
-      Item<FlashText<decltype(opn_text),&opn_text>::Part>,
+      Item<EnDis<>::Part,Mutable::Part,FlashText<decltype(op1_text),&op1_text>::Part>,
+      Item<EnDis<false>::Part,Mutable::Part,FlashText<decltype(op2_text),&op2_text>::Part>,
+      Item<Action<tog12>::Part,Mutable::Part,FlashText<decltype(tog12_text),&tog12_text>::Part>,
+      Item<Mutable::Part,FlashText<decltype(opn_text),&opn_text>::Part>,
       Item<
         StaticMenu<
-          FlashText<decltype(subMenu_title),&subMenu_title>::Part<>,
+          Item<Mutable::Part,FlashText<decltype(subMenu_title),&subMenu_title>::Part>,
           StaticData<
-            Item<EnDis<>::Part,FlashText<decltype(op1_text),&op1_text>::Part>,
-            Item<FlashText<decltype(op2_text),&op2_text>::Part>,
-            Item<FlashText<decltype(opn_text),&opn_text>::Part>,
-            Item<FlashText<decltype(exit_txt),&exit_txt>::Part>
+            Item<EnDis<>::Part,Mutable::Part,FlashText<decltype(op1_text),&op1_text>::Part>,
+            Item<Mutable::Part,FlashText<decltype(op2_text),&op2_text>::Part>,
+            Item<Mutable::Part,FlashText<decltype(opn_text),&opn_text>::Part>,
+            Item<Mutable::Part,FlashText<decltype(exit_txt),&exit_txt>::Part>
           >
         >::Part
       >
@@ -110,7 +110,6 @@ void setup() {
   lcd.print("AM5 I2C LCD");
   delay(1000);
   lcd.clear();
-  Serial.println("DEBUG");Serial.flush();
   nav.print(out);//initial menu draw
 }
 

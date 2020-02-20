@@ -22,20 +22,20 @@ namespace Menu {
       template<bool toPrint=true>
       inline static void nl() {}
       static inline void setCursor(Idx x,Idx y) {
-        _trace(MDO<<"lcd.setCursor("<<x<<","<<y<<") "<<endl);
+        trace(MDO<<"lcd.setCursor("<<x<<","<<y<<") "<<endl);
         dev.setCursor(x,y);
       }
       template<typename T,bool toPrint=true>
       inline void raw(T i) {
-        _trace(if(toPrint) MDO<<"lcd.raw(\""<<i<<"\") "<<endl);
+        trace(if(toPrint) MDO<<"lcd.raw(\""<<i<<"\") "<<endl);
         if(toPrint) dev.print(i);}
       template<bool toPrint=true>
       inline void clrLine(Idx n) {
-        _trace(if(toPrint) MDO<<"lcd.clrLine("<<n<<") "<<endl);
-        dev.setCursor(0,n);
+        trace(if(toPrint) MDO<<"lcd.clrLine("<<n<<") "<<endl);
+        dev.setCursor(0,O::orgY()+n);
         if(toPrint) {
           for(int n=0;n<O::obj().width();n++) dev.print(' ');
-          dev.setCursor(0,n);
+          dev.setCursor(0,O::orgY()+n);
         }
       }
     };

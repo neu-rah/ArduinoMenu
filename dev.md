@@ -1,11 +1,10 @@
 # development notes
 
-
 ## TODO
 
 ### Code
 - ~~rename files use static instead of dyn~~
-- ~add namespace~~
+- ~~add namespace~~
 
 ### Print/Display/Format
 + ~~minimal draw and viewports~~
@@ -13,7 +12,7 @@
 + ~~printMenu should be delivered to the item after checking !parentPrint~~
 + ~~clear title line before title print~~
 + ~~reviewed print chain params~~
-- pass boolean template params to normal params on nin-trivial function to reduce code footprint
+- ~~pass boolean template params to normal params on non-trivial function to reduce code footprint~~
 - check usage of native device resolution instead of text-box
 - colors
 - multiline options/title

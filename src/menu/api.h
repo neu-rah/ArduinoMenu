@@ -185,6 +185,7 @@ namespace Menu {
     inline static constexpr bool changed() {return true;}
     inline static void changed(bool o) {}
     inline static void changed(Idx,bool o) {}
+    inline static void changed(Idx i,bool o,PathRef ref,Idx n) {}
 
     inline static constexpr bool activate(PathRef=self,Idx=0) {return false;}
 
@@ -198,5 +199,6 @@ namespace Menu {
 
     template<typename Nav,typename Out,Op op=Op::Printing>
     inline static void printTitle(Nav& nav,Out& out,bool) {}
+
   };
 };

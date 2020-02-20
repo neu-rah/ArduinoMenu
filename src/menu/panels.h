@@ -45,8 +45,8 @@ namespace Menu {
     class Part:public O {
       public:
         using This=RangePanel<w,h>::Part<O>;
-        inline Idx top() const {return topLine;}
-        inline void setTop(Idx n) {topLine=n;}
+        inline Idx top() const {return topItem;}
+        inline void setTop(Idx n) {topItem=n;}
         inline void newView() {
           trace(MDO<<"RangePanel::newView---------------------------"<<endl);
           freeLines=O::height();
@@ -54,9 +54,7 @@ namespace Menu {
         }
         inline void useY(Idx uy=h) {
           trace(MDO<<"RangePanel::useY "<<uy<<endl);
-          if (freeLines) {
-            freeLines-=uy;
-          }
+          if (freeLines) freeLines-=uy;
         }
         // inline void use(Idx ux=1,Idx uy=1) {This::useX(ux);This::useY(uy);}
         inline void use(Area a) {This::useX(a.height);This::useY(a.width);}
@@ -80,7 +78,7 @@ namespace Menu {
           return ot!=top();
         }
       protected:
-        Idx topLine=0;//this refers to menu items
+        Idx topItem=0;//this refers to menu items
         Idx freeLines;//this refers to device free space
     };
   };

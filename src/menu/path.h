@@ -15,8 +15,8 @@ namespace Menu {
     Idx len;
     const Idx* path;
     // inline PathRef(Idx len,Idx* path):len(len),path(path) {}
-    inline Idx head() const {return path[0];}
-    inline PathRef tail() const {return {(Idx)(len-1),&path[1]};}
+    inline Idx head() const {return len?path[0]:0;}
+    inline PathRef tail() const {return len?(PathRef){(Idx)(len-1),&path[1]}:(PathRef){0,0};}
     inline operator Idx() const {return len;}
     inline operator bool() const {return len;}
     inline PathRef parent() const {
@@ -25,7 +25,7 @@ namespace Menu {
   };
 
   //default self reference
-  constexpr PathRef self{0,0};
+  extern constexpr PathRef self{0,0};
 
   //synthesizing a PathReference at compile time
   template<Idx... OO>
@@ -45,7 +45,8 @@ namespace Menu {
         for(int n=0;n<ref.len;n++)
           o<<(n?", ":"")<<ref.path[n];
       else o<<"NULL";
-      return o<<"]}";
+      o<<"]}";
+      return o;
     }
   #endif
 };

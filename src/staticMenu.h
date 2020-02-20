@@ -7,10 +7,6 @@
 
 #include "menu/staticIO.h"
 #include "menu/printer.h"
-#include "menu/staticNav.h"
-#include "menu/staticItem.h"
-#include "menu/panels.h"
-// #include "menu/imenu.h"
 
 namespace Menu {
   #ifdef MENU_DEBUG
@@ -18,10 +14,10 @@ namespace Menu {
     struct DebugOut {
       template<typename O=Void<Nil>>
       struct Part:StaticMenuOut<FullPrinter::Part> {
-        // template<bool toPrint=true>
+        template<bool toPrint=true>
         inline static void nl() {dev.println();}
-        template<typename T>
-        inline static void raw(T o,Roles role=Roles::Raw) {
+        template<typename T,bool toPrint=true>
+        inline static void raw(const T o,Roles role=Roles::Raw) {
           #ifdef ARDUINO
             dev.print(o);
           #else
@@ -32,13 +28,21 @@ namespace Menu {
     };
 
     #ifdef ARDUINO
-      extern DebugOut<decltype(Serial),Serial>::Part<> debugOut;
+      using MenuDebug=DebugOut<decltype(Serial),Serial>::Part<>;
     #else
-      // #include <iostream>
-      extern DebugOut<decltype(std::cout),std::cout>::Part<> debugOut;
+      using MenuDebug=DebugOut<decltype(std::cout),std::cout>::Part<>;
     #endif
+    extern MenuDebug debugOut;
+
+    inline MenuDebug& operator<<(MenuDebug& o,const char* t) {o.raw(t);return o;}
+    inline MenuDebug& operator<<(MenuDebug& o,unsigned char t) {o.raw(t);return o;}
   #endif
 };
 
+#include "menu/staticNav.h"
+#include "menu/staticItem.h"
+#include "menu/panels.h"
+
+// must be at end of file
 #include <menu/debug.hpp>
 #include <menu/staticItem.hpp>

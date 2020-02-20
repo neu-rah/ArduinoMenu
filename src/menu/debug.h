@@ -6,6 +6,8 @@
 * @brief debug macros and utilities
 */
 
+#include "api.h"
+
 #ifdef MENU_DEBUG
   #ifdef ARDUINO
     // #pragma message "COMPILE FOR ARDUINO FRAMEWORK!"
@@ -60,22 +62,4 @@ namespace Menu {
   #else
     #define __trace(x)
   #endif
-
-  // template<typename Out,typename O>
-  // struct DebugCmds:O {
-  //   using O::O;
-  //   using O::cmd;
-  //   using O::print;
-  //   template<Cmds c,typename It,typename Nav>
-  //   inline bool cmd(It& it,Nav& nav,Ref ref,Idx n) {
-  //     O::template print<Out>();
-  //     _trace(
-  //       MDO<<" cmd:"<<c
-  //         <<" ref.len:"<<ref.len
-  //         <<" n:"<<n<<"\r\n"
-  //     );
-  //     return O::template cmd<c,It,Nav>(it,nav,ref,n);
-  //   }
-  // };
-
 };

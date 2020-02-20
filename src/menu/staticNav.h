@@ -19,8 +19,10 @@ namespace Menu {
       inline void print(Out& out) {
         trace(MDO<<"Nav::print"<<endl);
         root.template printMenu<typename N::Type,Out,Op::Printing>(N::obj(),out,*this);
-        if (out.partialDraw())
+        if (out.partialDraw()) {
+          trace(MDO<<"Nav::print cleanup!"<<endl);
           root.template printMenu<typename N::Type,Out,Op::ClearChanges>(N::obj(),out,*this);
+        }
       }
       // template<typename Out>
       // inline void printParent(Out& out) {
@@ -51,7 +53,7 @@ namespace Menu {
       template<Cmd c>
       inline bool cmd() {
         trace(MDO<<"Nav::cmd "<<c<<endl);
-        return root.template cmd<c,typename N::Type>(N::obj());
+        return root.template cmd<c,typename N::Type>(N::obj(),*this);
       }
 
       inline void up()    {cmd<Cmd::Up>();}

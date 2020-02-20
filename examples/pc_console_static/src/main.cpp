@@ -84,7 +84,7 @@ StaticMenuOut<
 //   PartialDraw::Part,//just for testing, because console is not of this cathegory
 //   PanelTarget::Part,//detect target (menu) changes
 //   RangePanel<>::Part,//control vertical scrolling
-//   StaticPanel<0,0,20,2>::Part,//define output geometry
+//   StaticPanel<0,0,20,4>::Part,//define output geometry
 // #endif
   Console::Part,//the raw output device to use
   TextMeasure<>::Part//default monometric text measure
@@ -103,11 +103,9 @@ bool tog12() {
 }
 
 int main() {
-  cout<<"======================="<<endl;
   nav.print(out);
   while(running) {
     if (nav.doInput(in)) {
-      cout<<"======================="<<endl;
       nav.print(out);
       out.nl();
     }
