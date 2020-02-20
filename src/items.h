@@ -215,6 +215,15 @@
         #endif
       };
 
+      template<uint8_t dps>
+      struct decPlaces {
+        template<typename T>
+        struct menuField:Menu::menuField<T> {
+          using Menu::menuField<T>::menuField;
+          idx_t printReflex(menuOut& o) const override;
+        };
+      };
+
     //--------------------------------------------------------------------------
     template<typename T>
     class menuValue:public prompt {

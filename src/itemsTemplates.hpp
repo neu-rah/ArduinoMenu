@@ -102,6 +102,10 @@ namespace Menu {
     }
   }
 
+  template<uint8_t dps>
+  template<typename T>
+  idx_t decPlaces<dps>::menuField<T>::printReflex(menuOut& o) const {return o.print(Menu::menuField<T>::reflex,dps);}
+
   template<typename T>
   Used choose<T>::printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr) {
     bool ed=this==root.navFocus;

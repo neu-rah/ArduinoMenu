@@ -137,7 +137,7 @@ char name[]="                                                  ";
 MENU(mainMenu,"Main menu",showEvent,anyEvent,wrapStyle
   ,OP("Op1",showEvent,anyEvent)
   ,OP("Op2",showEvent,anyEvent)
-  ,FIELD(test,"Test","%",0,100,10,1,showEvent,anyEvent,wrapStyle)
+  ,altFIELD(decPlaces<3>::menuField,test,"Test","%",0,100,1,0.001,showEvent,anyEvent,wrapStyle)
   ,SUBMENU(subMenu)
   ,SUBMENU(setLed)
   ,OP("LED On",myLedOn,enterEvent)
