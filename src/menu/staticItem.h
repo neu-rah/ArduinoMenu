@@ -67,7 +67,7 @@ namespace Menu {
       inline Part(const char*o):text(o) {}
       template<typename Nav,typename Out,Op op=Op::Printing>
       inline void print(Nav& nav,Out& out,PathRef ref=self) {
-        out.template raw<decltype(text),false>(text);
+        out.template raw<decltype(text),op==Op::Printing>(text);
         I::template print<Nav,Out,op>(nav,out);
       }
     };
@@ -122,7 +122,7 @@ namespace Menu {
 
     inline bool activate(PathRef ref=self,Idx n=0) {
       if(n) return tail.activate(ref,--n);
-      if (ref.len==1&&!F::enabled()) return !F::canNav();
+      if (ref.len==1&&!F::enabled()) return F::activate();
       if (ref) return F::activate(ref.tail());
       return F::activate();
     }
@@ -168,8 +168,8 @@ namespace Menu {
       template<Cmd c,typename Nav>
       inline bool cmd(Nav& nav,PathRef ref=self) {
         trace(MDO<<"StaticMenu::cmd "<<c<<" ref:"<<ref<<endl);
-        Idx p=nav.pos();
         if(ref.len==1) {
+          Idx p=nav.pos();
           bool res=body.template cmd<c,Nav>(nav,ref,ref.head());
           if(p!=nav.pos()) {
             changed(p,true);
@@ -197,7 +197,7 @@ namespace Menu {
       }
 
       template<typename Nav,typename Out,Op op=Op::Printing>
-      inline void printTitle(Nav& nav,Out out,bool fullPrint) {
+      inline void printTitle(Nav& nav,Out& out,bool fullPrint) {
         trace(MDO<<"StaticMenu::printTitle "<<op<<" fullDraw:"<<out.fullDraw()<<" changed:"<<title.changed()<<" out:"<<((long)&out)<<endl);
         if (op==Op::ClearChanges) title.changed(false);
         else {

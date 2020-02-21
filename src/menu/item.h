@@ -22,7 +22,7 @@ namespace Menu {
     template<typename Nav,typename Out,Op op=Op::Printing>
     inline void printMenu(Nav& nav,Out& out,PathRef ref=self) {printMenu(nav,out,op,ref);}
     template<typename Nav,typename Out,Op op=Op::Printing>
-    inline void printTitle(Nav& nav,Out out,bool fullPrint) {printTitle(nav,out,fullPrint,op);}
+    inline void printTitle(Nav& nav,Out& out,bool fullPrint) {printTitle(nav,out,fullPrint,op);}
     template<typename Nav,typename Out,Op op=Op::Printing>
     inline void printItems(Nav& nav,Out& out,bool fullPrint,Idx idx=0,Idx top=0,PathRef ref=self)
       {printItems(nav,out,fullPrint,idx,top,ref,op);}

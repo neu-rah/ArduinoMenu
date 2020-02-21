@@ -32,6 +32,16 @@ namespace Menu {
   inline bool is(Roles o,Idx p) {return static_cast<Idx>(o)==p;}
   inline bool has(Roles o,Idx p) {return static_cast<Idx>(o)|p;}
 
+  inline Idx operator|(Cmd a,Cmd b) {return static_cast<Idx>(a)|static_cast<Idx>(b);}
+  inline Idx operator|(Cmd a,Idx b) {return static_cast<Idx>(a)&b;}
+  inline Idx operator|(Idx a,Cmd b) {return a&static_cast<Idx>(b);}
+  inline Idx operator&(Cmd a,Cmd b) {return static_cast<Idx>(a)&static_cast<Idx>(b);}
+  inline Idx operator&(Cmd a,Idx b) {return static_cast<Idx>(a)&b;}
+  inline Idx operator&(Idx a,Cmd b) {return a&static_cast<Idx>(b);}
+
+  inline bool is(Cmd o,Idx p) {return static_cast<Idx>(o)==p;}
+  inline bool has(Cmd o,Idx p) {return static_cast<Idx>(o)|p;}
+
   struct Area {
     Idx width;
     Idx height;

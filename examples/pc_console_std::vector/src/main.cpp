@@ -38,21 +38,21 @@ bool sub1Action() {
 
 //menu data/texts ----------------------------
 const char* mainText="Main menu";
-Item<StaticText<&mainText>::Part> title;
+Item<Mutable::Part,StaticText<&mainText>::Part> title;
 
-Prompt<Action<action1>::Part,EnDis<>::Part,Text::Part> op1("Option 1");
-Prompt<Action<action2>::Part,EnDis<false>::Part,Text::Part> op2("Option 2");
-Prompt<Action<tog12>::Part,Text::Part> tog12Op("Toggle 1&2");
+Prompt<Action<action1>::Part,EnDis<>::Part,Mutable::Part,Text::Part> op1("Option 1");
+Prompt<Action<action2>::Part,EnDis<false>::Part,Mutable::Part,Text::Part> op2("Option 2");
+Prompt<Action<tog12>::Part,Mutable::Part,Text::Part> tog12Op("Toggle 1&2");
 const char*opn_text="Option...";//sharing same text
-Prompt<Text::Part> op3(opn_text);
-Prompt<Text::Part> op4(opn_text);
-Prompt<Action<quit>::Part,Text::Part> quitOp("<Quit.");
+Prompt<Mutable::Part,Text::Part> op3(opn_text);
+Prompt<Mutable::Part,Text::Part> op4(opn_text);
+Prompt<Action<quit>::Part,Mutable::Part,Text::Part> quitOp("<Quit.");
 
-Prompt<Text::Part> sub_title("Sub-menu");
-Prompt<Action<action1>::Part,Text::Part> sub1("Sub 1");
-Prompt<Text::Part> sub2("Sub 2");
-Prompt<Text::Part> subn("Sub...");
-Prompt<Text::Part> exitOp("<Exit");
+Prompt<Mutable::Part,Text::Part> sub_title("Sub-menu");
+Prompt<Action<action1>::Part,Mutable::Part,Text::Part> sub1("Sub 1");
+Prompt<Mutable::Part,Text::Part> sub2("Sub 2");
+Prompt<Mutable::Part,Text::Part> subn("Sub...");
+Prompt<Mutable::Part,Text::Part> exitOp("<Exit");
 
 //menu structure -------------------------
 Prompt<EnDis<true>::Part,StdVectorMenu<decltype(sub_title),sub_title>::Part> subMenu {
@@ -93,13 +93,16 @@ LinuxKeyIn in;
 
 bool tog12() {
   _trace(MDO<<"Toggle Enable/Disable of options 1 and 2"<<endl);
-  // mainMenu[0]->enable(false);
   mainMenu.enable(!mainMenu.enabled(Path<0>().ref()),Path<0>().ref());
   mainMenu.enable(!mainMenu.enabled(Path<1>().ref()),Path<1>().ref());
   return true;
 }
 
 int main() {
+  nav.path[0]=5;
+  nav.path[1]=0;
+  nav.level=1;
+  nav.enter();
   nav.print(out);
   while(running) if (nav.doInput(in)) nav.print(out);
   return 0;

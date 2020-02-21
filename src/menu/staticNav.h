@@ -52,7 +52,7 @@ namespace Menu {
 
       template<Cmd c>
       inline bool cmd() {
-        trace(MDO<<"Nav::cmd "<<c<<endl);
+        trace(MDO<<"Nav::cmd "<<c<<" path:"<<((PathRef)*this)<<endl);
         return root.template cmd<c,typename N::Type>(N::obj(),*this);
       }
 

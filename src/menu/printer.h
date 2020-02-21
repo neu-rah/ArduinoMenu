@@ -19,11 +19,11 @@ namespace Menu {
         constexpr bool toPrint=op==Op::Printing;
         O::newView();
         O::template fmt<Roles::Menu,true,toPrint>();
-        it.template printTitle<Nav,decltype(*this),op>(nav,*this,fullPrint);
+        it.template printTitle<Nav,typename This::Type,op>(nav,This::obj(),fullPrint);
         if (This::posTop(nav)) it.changed(true);
         it.template printItems
-          <Nav,decltype(*this),op>
-          (nav,*this,fullPrint,0,O::top(),self);
+          <Nav,typename This::Type,op>
+          (nav,This::obj(),fullPrint,0,O::top(),self);
         O::template fmt<Roles::Menu,false>(fullPrint);
         if (toPrint) O::lastDrawn(&it);
       }
@@ -34,7 +34,7 @@ namespace Menu {
         O::template clrLine<toPrint>(O::posY());
         O::template fmt<Roles::Item,true,toPrint>();
         O::template fmt<Roles::Title,true,toPrint>();
-        it.template print<Nav,This,op>(nav,*this);
+        it.template print<Nav,typename This::Type,op>(nav,This::obj());
         O::template fmt<Roles::Title,false,toPrint>();
         O::template fmt<Roles::Item,false,toPrint>();
       }
@@ -49,7 +49,7 @@ namespace Menu {
         O::template fmt<Roles::Cursor,true ,toPrint>(n,s,e,m);
         O::template fmt<Roles::Cursor,false,toPrint>(n,s,e,m);
         // it.template printItem<O::Type,Roles::Item,toPrint>(O::obj(),n,s,e,m);
-        it.template print<Nav,This,op>(nav,*this);
+        it.template print<Nav,typename This::Type,op>(nav,This::obj());
         O::template fmt<Roles::Item,false,toPrint>(n,s,e,m);
       }
     };

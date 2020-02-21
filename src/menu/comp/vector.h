@@ -40,17 +40,15 @@ namespace Menu {
 
       inline bool activate(PathRef ref=self) {
         trace(MDO<<"StdVectorMenu::activate "<<ref<<endl);
-        if(ref.len==1)
-          return vector<IItem*>::operator[](ref.head())->enabled()?
-            vector<IItem*>::operator[](ref.head())->activate():
-            !vector<IItem*>::operator[](ref.head())->canNav();
-        return ref?vector<IItem*>::operator[](ref.head())->activate(ref.tail()):true;
+        if(ref.len==1&&operator[](ref.head())->enabled())
+          return operator[](ref.head())->activate();
+        return ref?operator[](ref.head())->activate(ref.tail()):true;
       }
 
       template<typename Nav,typename Out,Op op=Op::Printing>
       inline void printMenu(Nav& nav,Out& out,PathRef ref=self,Idx n=0) {
-        trace(MDO<<"StdVectorMenu::printMenu "<<op<<endl);
-        if (!ref||ref.len==1&&(vector<IItem*>::operator[](ref.head())->parentPrint(ref.tail())))
+        trace(MDO<<"StdVectorMenu::printMenu "<<op<<" @"<<ref<<endl);
+        if (!ref||(ref.len==1&&(vector<IItem*>::operator[](ref.head())->parentPrint(ref.tail()))))
           out.template printMenu
             <typename I::Type,Nav,op>
             (I::obj(),nav,!(out.partialDraw()&&out.isSame(&Base::obj())));
@@ -69,8 +67,7 @@ namespace Menu {
               top--;idx++;continue;
             }
             trace(MDO<<"item "<<idx<<" changed "<<a->changed()<<endl);
-            if (fullPrint||a->changed()||!out.partialDraw()) {
-              trace(MDO<<"StdVectorMenu::printItems changed:"<<a->changed()<<" partialDraw:"<<out.partialDraw()<<endl);
+            if (op==Op::Printing&&(fullPrint||out.fullDraw()||a->changed())) {
               out.template printItem
                 <decltype(*a),Nav,op>
                 (*a,nav,idx++,nav.selected(idx),a->enabled(),nav.mode());
@@ -80,25 +77,39 @@ namespace Menu {
       }
 
       template<typename Nav,typename Out,Op op=Op::Printing>
+      inline void printTitle(Nav& nav,Out& out,bool fullPrint) {
+        trace(MDO<<"StdVectorMenu::printTitle "<<op<<" fullDraw:"<<out.fullDraw()<<" changed:"<<title.changed()<<" out:"<<((long)&out)<<endl);
+        if (op==Op::ClearChanges) title.changed(false);
+        else {
+          if (op==Op::Printing&&(fullPrint||out.fullDraw()||title.changed()))
+          out.template printTitle<typename I::Type,Nav,op>(I::obj(),nav);
+        else
+          out.template printTitle<typename I::Type,Nav,op==Op::Printing?Op::Measure:op>(I::obj(),nav);
+        }
+      }
+
+      template<typename Nav,typename Out,Op op=Op::Printing>
       inline void print(Nav& nav,Out& out,PathRef ref=self) {
         trace(MDO<<"StdVectorMenu::print "<<role<<endl);
-        if(title.changed()) title.template print<Nav,Out,op>(nav,out,ref);
+        // if(title.changed())
+        title.template print<Nav,Out,op>(nav,out,ref);
       }
 
       template<Cmd c,typename Nav>
       inline bool cmd(Nav& nav,PathRef ref=self) {
-        if (ref) return vector<IItem*>::operator[](ref.head())->template cmd<c,Nav>(nav,ref.tail());
-        else {
+        trace(MDO<<"StdVectorMenu::cmd "<<ref<<endl);
+        if(ref.len==1&&!has(c,Cmd::Enter|Cmd::Esc)) {
           Idx p=nav.pos();
-          bool res=Base::template cmd<c,Nav>(nav);
+          bool res=vector<IItem*>::operator[](ref.head())->template cmd<c,Nav>(nav);
           if(p!=nav.pos()) {
-            trace(MDO<<"changed "<<p<<"&"<<+nav.pos()<<endl);
-            operator[](p)->changed(true);
-            operator[](nav.pos())->changed(true);
-            trace(MDO<<"<======>"<<endl);
+            vector<IItem*>::operator[](p)->changed(true);
+            vector<IItem*>::operator[](nav.pos())->changed(true);
           }
           return res;
         }
+        return ref?
+          vector<IItem*>::operator[](ref.head())->template cmd<c,Nav>(nav,ref.tail()):
+          Base::template cmd<c,Nav>(nav);
       }
 
     };

@@ -10,6 +10,14 @@ namespace Menu {
     };
   }
   template<Expr...  O>
+  void MenuOut<O...>::printTitle(IItem& it,INav& nav, Op op) {
+    switch(op) {
+      case Op::Printing: Base::template printTitle<IItem,INav,Op::Printing>(it,nav);break;
+      case Op::Measure: Base::template printTitle<IItem,INav,Op::Measure>(it,nav);break;
+      case Op::ClearChanges: Base::template printTitle<IItem,INav,Op::ClearChanges>(it,nav);break;
+    };
+  }
+  template<Expr...  O>
   void MenuOut<O...>::printItem(IItem& it,INav& nav,Idx n,bool s,bool e,Modes m,Op op) {
     switch(op) {
       case Op::Printing: Base::template printItem<IItem,INav,Op::Printing>(it,nav,n,s,e,m);break;
