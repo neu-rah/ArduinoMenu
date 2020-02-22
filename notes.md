@@ -53,3 +53,7 @@ Flash: [=======   ]  65.7% (used 5380 bytes from 8192 bytes)
 using regular param `fullPrint`
 RAM:   [====      ]  35.9% (used 184 bytes from 512 bytes)
 Flash: [=======   ]  65.7% (used 5380 bytes from 8192 bytes)
+
+2020.02.22 tiny example with similar menu struct to compare with previous essays
+RAM:   [===       ]  27.5% (used 141 bytes from 512 bytes)
+Flash: [====      ]  38.3% (used 3136 bytes from 8192 bytes)
