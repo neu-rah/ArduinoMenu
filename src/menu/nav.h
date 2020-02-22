@@ -7,7 +7,7 @@ namespace Menu {
   struct INav {
     virtual inline void print(IOut& out)=0;
     virtual inline Idx pos() const=0;
-    virtual inline Modes mode() const=0;
+    virtual inline Mode mode() const=0;
     virtual inline bool selected(Idx i) const =0;
     virtual inline bool _cmd(Cmd)=0;
 
@@ -23,7 +23,7 @@ namespace Menu {
     using Base::_cmd;
     inline void print(IOut& out) override {Base::print(out);}
     inline Idx pos() const override {return Base::pos();}
-    inline Modes mode() const override {return Base::mode();}
+    inline Mode mode() const override {return Base::mode();}
     inline bool selected(Idx i) const override {return Base::selected(i);}
     bool _cmd(Cmd c) override {
       switch(c) {

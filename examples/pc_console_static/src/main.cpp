@@ -49,11 +49,14 @@ const char* op2_text="Option 2";
 const char* opn_text="Option...";
 const char* quit_text="<Quit.";
 
+int year=1967;
+
 //menu static structure ---------------------------
 using MainMenu=Item<
   StaticMenu<
     Item<Mutable::Part,StaticText<&mainText>::Part>,
     StaticData<
+      Item<Mutable::Part,StaticNumField<int,year,1900,3000,10,1>::Part>,
       Item<Action<op1_action>::Part,EnDis<>::Part,Mutable::Part,StaticText<&op1_text>::Part>,
       Item<Action<op2_action>::Part,EnDis<false>::Part,Mutable::Part,StaticText<&op2_text>::Part>,
       Item<Action<tog12>::Part,Mutable::Part,StaticText<&tog12_text>::Part>,

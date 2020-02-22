@@ -39,7 +39,7 @@ namespace Menu {
         O::template fmt<Roles::Item,false,toPrint>();
       }
       template<typename It,typename Nav,Op op=Op::Printing>
-      void printItem(It& it,Nav& nav,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
+      void printItem(It& it,Nav& nav,Idx n=0,bool s=false,bool e=true,Mode m=Mode::Normal) {
         trace(MDO<<"FullPrinter::printItem op:"<<op<<" posY:"<<O::posY()<<endl);
         constexpr bool toPrint=op==Op::Printing;
         O::template clrLine<toPrint>(O::posY());

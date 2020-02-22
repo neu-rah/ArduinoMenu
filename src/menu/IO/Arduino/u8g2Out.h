@@ -45,7 +45,7 @@ namespace Menu {
   template<typename O>
   struct U8g2Fmt:public O {
     // template<bool io>
-    // inline void fmtItem(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
+    // inline void fmtItem(Idx n=0,bool s=false,bool e=true,Mode m=Mode::Normal) {
     //   //TODO can NOT position here!
     //   // O::setCursor(10,n*O::maxCharHeight()-O::top()*O::maxCharHeight()+O::ascent());
     // }

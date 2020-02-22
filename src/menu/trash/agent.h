@@ -72,7 +72,7 @@ struct PrintAgent:NavAgent<It,Nav> {
     trace(MDO<<"Empty::printMenu"<<endl);
     it.print(out);}
   template<Roles role=Roles::Raw,bool toPrint=true>
-  static inline void printItem(It& it,Out& out,Idx=0,bool=false,bool=true,Modes=Modes::Normal) {
+  static inline void printItem(It& it,Out& out,Idx=0,bool=false,bool=true,Mode=Mode::Normal) {
     trace(MDO<<"Nav::printItem"<<endl);
     it.template print<Out,role,toPrint>(out);
   }

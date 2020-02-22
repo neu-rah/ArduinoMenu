@@ -16,9 +16,29 @@ namespace Menu {
     constexpr Idx idx_max=std::numeric_limits<Idx>::max();
   #endif
 
-  enum class Modes {Normal,Edit,Tune};
-  enum class Roles:Idx {None=0,Raw,Panel,Menu,Title,Body,Item,Index,Cursor,Name,Mode,Value,Unit};
+  //edit modes
+  enum class Mode {Normal,Edit,Tune};
+
+  //formating parts/roles
+  enum class Roles:int {
+    None=0<<0,
+    Raw=1<<0,
+    Panel=1<<1,
+    Menu=1<<2,
+    Title=1<<3,
+    Body=1<<4,
+    Item=1<<5,
+    Index=1<<6,
+    Cursor=1<<7,
+    Name=1<<8,
+    Mode=1<<9,
+    Value=1<<10,
+    Unit=1<<11
+  };
+
+  //navigation commands
   enum class Cmd:Idx {None=0,Enter=1,Esc=2,Up=4,Down=8,Left=16,Right=32};
+
   // Output Device Operations
   enum class Op {Measure,Printing,ClearChanges};
 
@@ -60,7 +80,7 @@ namespace Menu {
     constexpr inline O& operator<<(O& o,Roles r) {return o<<roleNames[(Idx)r];}
 
     template<typename O>
-    constexpr inline O& operator<<(O& o,Modes r) {return o<<modeNames[(Idx)r];}
+    constexpr inline O& operator<<(O& o,Mode r) {return o<<modeNames[(Idx)r];}
 
     template<typename O>
     inline O& operator<<(O& o,Op r) {o<<opNames[(Idx)r];return o;}
@@ -98,7 +118,7 @@ namespace Menu {
   struct As:O {
     using O::print;
     template<typename It,typename Out,Roles=role,bool toPrint=true>
-    static inline void printItem(It& it,Out& out,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
+    static inline void printItem(It& it,Out& out,Idx n=0,bool s=false,bool e=true,Mode m=Mode::Normal) {
       // trace(MDO<<"As<"<<role<<">");
       out.template fmt<role,true>(n,s,e,m);
       O::template printItem<It,Out,role,toPrint>(it,out,n,s,e,m);

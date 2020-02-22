@@ -18,7 +18,7 @@ namespace Menu {
     };
   }
   template<Expr...  O>
-  void MenuOut<O...>::printItem(IItem& it,INav& nav,Idx n,bool s,bool e,Modes m,Op op) {
+  void MenuOut<O...>::printItem(IItem& it,INav& nav,Idx n,bool s,bool e,Mode m,Op op) {
     switch(op) {
       case Op::Printing: Base::template printItem<IItem,INav,Op::Printing>(it,nav,n,s,e,m);break;
       case Op::Measure: Base::template printItem<IItem,INav,Op::Measure>(it,nav,n,s,e,m);break;

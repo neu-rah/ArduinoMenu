@@ -12,7 +12,7 @@ namespace Menu {
   struct TextCursorFmt:public O {
     using This=TextCursorFmt<O>;
     template<bool io,bool toPrint=true>
-    inline void fmtCursor(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
+    inline void fmtCursor(Idx n=0,bool s=false,bool e=true,Mode m=Mode::Normal) {
       if (io) O::raw(s?((e?'>':'-')):' ');
       O::template fmtCursor<io,toPrint>(n,s,e,m);
     }

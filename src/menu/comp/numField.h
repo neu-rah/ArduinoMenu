@@ -30,7 +30,7 @@ namespace Menu {
       inline static bool activate(Ref,Idx) {return activate();}
       // using I::printItem
       // template<typename It,typename Out,Roles role=Roles::Raw,bool toPrint=true>
-      // inline void printItem(It& it,Out& out,Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
+      // inline void printItem(It& it,Out& out,Idx n=0,bool s=false,bool e=true,Mode m=Mode::Normal) {
       // }
       template<typename Out,Roles role=Roles::Raw,bool toPrint=true>
       inline void print(Out& out) {
@@ -41,19 +41,19 @@ namespace Menu {
       inline void cmd(Nav& nav) {
         switch(c) {
           case Cmds::Enter:
-            if (nav.mode()==Modes::Tune||tune==0) {
-              nav.setMode(Modes::Normal);
+            if (nav.mode()==Mode::Tune||tune==0) {
+              nav.setMode(Mode::Normal);
               nav.close();
-            } else nav.setMode(Modes::Tune);
+            } else nav.setMode(Mode::Tune);
             return;
           case Cmds::Esc:nav.close();break;
           case Cmds::Up: {
-              T s=(nav.mode()==Modes::Tune)?tune:step;
+              T s=(nav.mode()==Mode::Tune)?tune:step;
               if (value+s<=high) value+=s;
             }
             return;
           case Cmds::Down: {
-              T s=(nav.mode()==Modes::Tune)?tune:step;
+              T s=(nav.mode()==Mode::Tune)?tune:step;
               if (value-s>=low) value-=s;
             }
             return;

@@ -73,6 +73,61 @@ namespace Menu {
     };
   };
 
+  //static numeric field, ranges are statically defined
+  template<typename T,T& value,T low,T high,T step,T tune,bool loop=false>
+  struct StaticNumField {
+    template<typename I>
+    struct Part:I {
+
+      inline static bool stepVal(T delta) {
+        if (delta==0) return false;
+        if (delta > 0) {
+          if (high-value>=delta) value+=delta;
+          else value=loop?low:high;
+        } else {
+          if (value-low>=-delta) value+=delta;
+          else value=loop?high:low;
+        }
+        return true;
+      }
+
+      template<typename Nav,typename Out,Op op=Op::Printing>
+      inline void print(Nav& nav,Out& out,PathRef ref=self) {
+        out.raw(value);
+      }
+
+      template<Cmd c,typename Nav>
+      inline bool cmd(Nav& nav,PathRef ref=self) {
+        _trace(MDO<<"Field::cmd "<<c<<" mode:"<<nav.mode()<<endl);
+        if(nav.mode()==Mode::Normal&&c!=Cmd::Enter) return I::template cmd<c,Nav>(nav,ref);
+        if(ref) return false;//wtf!
+        switch(c) {
+          case Cmd::Enter:
+            switch(nav.mode()) {
+              case Mode::Normal: nav.setMode(Mode::Edit);break;
+              case Mode::Edit:
+                if(tune==0) nav.setMode(Mode::Tune);
+                else nav.setMode(Mode::Tune);
+                break;
+              case Mode::Tune: nav.setMode(Mode::Normal);
+              default: return false;
+            }
+            return true;
+          case Cmd::Esc:
+            nav.setMode(Mode::Normal);
+            return false;
+          case Cmd::Up: stepVal(-(nav.mode()==Mode::Edit?step:tune));break;
+          case Cmd::Down: stepVal(nav.mode()==Mode::Edit?step:tune);break;
+          default:return false;
+        }
+        return true;
+      }
+
+    protected:
+      T shadow;
+    };
+  };
+
   /**
   * The Item class encapsulates a composition to be a stratic menu item.
   */

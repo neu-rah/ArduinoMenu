@@ -13,7 +13,7 @@ namespace Menu {
       Idx level=0;
       Idx path[max_depth]{0};
       Data& root;
-      Modes editMode;
+      Mode editMode;
       inline Part(Data& o):root(o){}
       template<typename Out>
       inline void print(Out& out) {
@@ -29,8 +29,8 @@ namespace Menu {
       //   trace(MDO<<"Nav::printParent"<<endl);
       //   root.printMenu(N::obj(),out,parent());}
       inline Idx pos() const {return path[level];}
-      inline Modes mode() const {return editMode;}
-      inline void setMode(Modes m) {editMode=m;}
+      inline Mode mode() const {return editMode;}
+      inline void setMode(Mode m) {editMode=m;}
       inline bool selected(Idx i) const {return path[level]==i;}
       inline void setPos(Idx n) {path[level]=n;}
       inline Idx head() const {return path[0];}
@@ -38,13 +38,13 @@ namespace Menu {
       inline PathRef parent() const {return operator PathRef().parent();}
       inline void open() {
         assert(level<max_depth-1);
-        if(!root.canNav(*this)) setMode(Modes::Edit);
+        if(!root.canNav(*this)) setMode(Mode::Edit);
         path[++level]=0;
       }
       inline void close() {
         if(level>0) {
           path[level--]=0;
-          setMode(Modes::Normal);
+          setMode(Mode::Normal);
         }
       }
       inline size_t size() const {return root.size(*this);}

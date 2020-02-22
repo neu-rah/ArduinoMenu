@@ -12,11 +12,11 @@ namespace Menu {
   struct TextEditModeFmt:public O {
     using This=TextEditModeFmt<O>;
     template<bool io,bool toPrint=true>
-    inline void fmtMode(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
+    inline void fmtMode(Idx n=0,bool s=false,bool e=true,Mode m=Mode::Normal) {
       if(io) switch(m) {
-        case Modes::Normal: O::raw(' ');break;
-        case Modes::Edit: O::raw(s?':':' ');break;
-        case Modes::Tune: O::raw(s?'>':' ');break;
+        case Mode::Normal: O::raw(' ');break;
+        case Mode::Edit: O::raw(s?':':' ');break;
+        case Mode::Tune: O::raw(s?'>':' ');break;
       }
       O::template fmtMode<io,toPrint>(n,s,e,m);
     }

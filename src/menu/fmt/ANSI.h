@@ -227,7 +227,7 @@ namespace Menu {
 			}
 			inline void setCursor(int x,int y) {xy(x,y)(*this);}
 		  template<bool io,bool toPrint=true>
-		  inline void fmtPanel(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
+		  inline void fmtPanel(Idx n=0,bool s=false,bool e=true,Mode m=Mode::Normal) {
 				if (io) {
 					setCursor(O::orgX(),O::orgY());
 					setBackgroundColor(BLUE)(*this);
@@ -245,7 +245,7 @@ namespace Menu {
 				setCursor(O::orgX(),O::orgY());
 		  }
 		  template<bool io,bool toPrint=true>
-		  inline void fmtMenu(Idx n=0,bool s=false,bool e=true,Modes m=Modes::Normal) {
+		  inline void fmtMenu(Idx n=0,bool s=false,bool e=true,Mode m=Mode::Normal) {
 				if (io) {
 					hideCursor()(*this);
 					setBackgroundColor(BLUE)(*this);
