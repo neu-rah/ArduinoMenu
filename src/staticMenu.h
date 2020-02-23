@@ -5,6 +5,8 @@
 * @brief ArduinoMenu main include file for static definitions
 */
 
+// #include "menu/path.h"
+// #include "menu/tags.h"
 #include "menu/staticIO.h"
 #include "menu/printer.h"
 
@@ -42,6 +44,7 @@ namespace Menu {
 #include "menu/staticNav.h"
 #include "menu/staticItem.h"
 #include "menu/panels.h"
+#include "menu/tags.h"
 
 // must be at end of file
 #include <menu/debug.hpp>

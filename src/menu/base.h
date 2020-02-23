@@ -114,35 +114,4 @@ namespace Menu {
   #include "debug.h"
   #define endl "\n\r"
 
-  template<Tag role,class O>
-  struct As {
-    template<typename I>
-    struct Part:O::template Part<I> {
-      using This=As<role,O>;
-      using Base=typename O::template Part<I>;
-      using Base::print;
-      template<typename Nav,typename Out,Op op=Op::Printing>
-      inline void print(Nav& nav,Out& out,
-       ref=self) {
-        // trace(MDO<<"As<"<<role<<">");
-        out.template fmt<role,true>();
-        Base::template print<Nav,Out,op>(nav,out,ref);
-        out.template fmt<role,false>();
-        // trace(MDO<<"</"<<role<<">"<<endl);
-      }
-    };
-  };
-
-  template<typename O> using AsPanel=As<Tag::Panel,O>;
-  template<typename O> using AsMenu=As<Tag::Menu,O>;
-  template<typename O> using AsTitle=As<Tag::Title,O>;
-  template<typename O> using AsBody=As<Tag::Body,O>;
-  template<typename O> using AsItem=As<Tag::Item,O>;
-  template<typename O> using AsIndex=As<Tag::Index,O>;
-  template<typename O> using AsCursor=As<Tag::Cursor,O>;
-  template<typename O> using AsName=As<Tag::Name,O>;
-  template<typename O> using AsMode=As<Tag::Mode,O>;
-  template<typename O> using AsValue=As<Tag::Value,O>;
-  template<typename O> using AsUnit=As<Tag::Unit,O>;
-  template<typename O> using AsRaw=As<Tag::Raw,O>;
 };

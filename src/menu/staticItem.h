@@ -98,7 +98,7 @@ namespace Menu {
 
       template<Cmd c,typename Nav>
       inline bool cmd(Nav& nav,PathRef ref=self) {
-        _trace(MDO<<"Field::cmd "<<c<<" mode:"<<nav.mode()<<endl);
+        trace(MDO<<"Field::cmd "<<c<<" mode:"<<nav.mode()<<endl);
         if(nav.mode()==Mode::Normal&&c!=Cmd::Enter) return I::template cmd<c,Nav>(nav,ref);
         if(ref) return false;//wtf!
         switch(c) {
@@ -131,9 +131,9 @@ namespace Menu {
   /**
   * The Item class encapsulates a composition to be a stratic menu item.
   */
-  template<Expr... I>
-  struct Item:Chain<I...,Empty>::template To<Obj<Item<I...>>> {
-    using Base=typename Chain<I...,Empty>::template To<Obj<Item<I...>>>;
+  template<typename... I>
+  struct Item:Chain<I::template Part...,Empty>::template To<Obj<Item<I...>>> {
+    using Base=typename Chain<I::template Part...,Empty>::template To<Obj<Item<I...>>>;
     using This=Item<I...>;
     using Base::Base;
   };

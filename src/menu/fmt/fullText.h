@@ -27,10 +27,7 @@ namespace Menu {
       // }
       template<bool io,bool toPrint=true>
       inline void fmtName(Idx n=0,bool s=false,bool e=true,Mode m=Mode::Normal) {
-        if (io) {
-          O::raw('<');
-          O::template fmtName<io,toPrint>(n,s,e,m);
-        } else O::raw('>');
+        if (io)O::template fmtName<io,toPrint>(n,s,e,m);
       }
       // template<bool io,bool toPrint=true>
       // inline void fmtValue(Idx n=0,bool s=false,bool e=true,Mode m=Mode::Normal) {
@@ -42,6 +39,7 @@ namespace Menu {
       // }
       template<bool io,bool toPrint=true>
       inline void fmtMode(Idx n=0,bool s=false,bool e=true,Mode m=Mode::Normal) {
+        O::raw('.');
         if(io) switch(m) {
           case Mode::Normal: O::template raw<char,toPrint>(' ');break;
           case Mode::Edit: O::template raw<char,toPrint>(s?':':' ');break;

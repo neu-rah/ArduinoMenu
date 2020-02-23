@@ -55,26 +55,31 @@ int year=1967;
 //menu static structure ---------------------------
 using MainMenu=Item<
   StaticMenu<
-    Item<Mutable::Part,StaticText<&mainText>::Part>,
+    Item<StaticText<&mainText>,Mutable>,
     StaticData<
-      Item<Mutable::Part,AsName<StaticText<&year_label_text>>::Part,StaticNumField<int,year,1900,3000,10,1>::Part>,
-      Item<Action<op1_action>::Part,EnDis<>::Part,Mutable::Part,StaticText<&op1_text>::Part>,
-      Item<Action<op2_action>::Part,EnDis<false>::Part,Mutable::Part,StaticText<&op2_text>::Part>,
-      Item<Action<tog12>::Part,Mutable::Part,StaticText<&tog12_text>::Part>,
-      Item<Mutable::Part,StaticText<&opn_text>::Part>,
+      Item<Action<op1_action>,EnDis<>,StaticText<&op1_text>,Mutable>,
+      Item<Action<op2_action>,EnDis<false>,StaticText<&op2_text>,Mutable>,
+      Item<Action<tog12>,StaticText<&tog12_text>,Mutable>,
       Item<
-        StaticMenu<
-          Item<Mutable::Part,StaticText<&subText>::Part>,
-          StaticData<
-            Item<Action<sub_action>::Part,Mutable::Part,StaticText<&sub1_text>::Part>,
-            Item<Action<sub_action>::Part,Mutable::Part,StaticText<&sub2_text>::Part>,
-            Item<Mutable::Part,StaticText<&exit_text>::Part>
-          >
-        >::Part
+        AsName<StaticText<&year_label_text>>,
+        AsMode<>,
+        StaticNumField<int,year,1900,3000,10,1>,
+        Mutable
       >,
-      Item<Action<quit>::Part,Mutable::Part,StaticText<&quit_text>::Part>
+      Item<StaticText<&opn_text>,Mutable>,
+      Item<
+        StaticMenu< 
+          Item<StaticText<&subText>,Mutable>,
+          StaticData<
+            Item<Action<sub_action>,StaticText<&sub1_text>,Mutable>,
+            Item<Action<sub_action>,StaticText<&sub2_text>,Mutable>,
+            Item<StaticText<&exit_text>,Mutable>
+          >
+        >
+      >,
+      Item<Action<quit>,StaticText<&quit_text>,Mutable>
     >
-  >::Part
+  >
 >;
 
 MainMenu mainMenu;
