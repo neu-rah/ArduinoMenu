@@ -17,7 +17,7 @@ namespace Menu {
         template<bool toPrint=true>
         inline static void nl() {dev.println();}
         template<typename T,bool toPrint=true>
-        inline static void raw(const T o,Roles role=Roles::Raw) {
+        inline static void raw(const T o,Tag role=Tag::Raw) {
           #ifdef ARDUINO
             dev.print(o);
           #else

@@ -29,10 +29,10 @@ namespace Menu {
       inline static bool activate() {return true;}
       inline static bool activate(Ref,Idx) {return activate();}
       // using I::printItem
-      // template<typename It,typename Out,Roles role=Roles::Raw,bool toPrint=true>
+      // template<typename It,typename Out,Tag role=Tag::Raw,bool toPrint=true>
       // inline void printItem(It& it,Out& out,Idx n=0,bool s=false,bool e=true,Mode m=Mode::Normal) {
       // }
-      template<typename Out,Roles role=Roles::Raw,bool toPrint=true>
+      template<typename Out,Tag role=Tag::Raw,bool toPrint=true>
       inline void print(Out& out) {
         out.template print<T,Out,toPrint>(value,out,role);
       }

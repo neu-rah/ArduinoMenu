@@ -20,7 +20,7 @@ namespace Menu {
   enum class Mode {Normal,Edit,Tune};
 
   //formating parts/roles
-  enum class Roles:int {
+  enum class Tag:int {
     None=0<<0,
     Raw=1<<0,
     Panel=1<<1,
@@ -42,15 +42,15 @@ namespace Menu {
   // Output Device Operations
   enum class Op {Measure,Printing,ClearChanges};
 
-  inline Idx operator|(Roles a,Roles b) {return static_cast<Idx>(a)|static_cast<Idx>(b);}
-  inline Idx operator|(Roles a,Idx b) {return static_cast<Idx>(a)&b;}
-  inline Idx operator|(Idx a,Roles b) {return a&static_cast<Idx>(b);}
-  inline Idx operator&(Roles a,Roles b) {return static_cast<Idx>(a)&static_cast<Idx>(b);}
-  inline Idx operator&(Roles a,Idx b) {return static_cast<Idx>(a)&b;}
-  inline Idx operator&(Idx a,Roles b) {return a&static_cast<Idx>(b);}
+  inline Idx operator|(Tag a,Tag b) {return static_cast<Idx>(a)|static_cast<Idx>(b);}
+  inline Idx operator|(Tag a,Idx b) {return static_cast<Idx>(a)&b;}
+  inline Idx operator|(Idx a,Tag b) {return a&static_cast<Idx>(b);}
+  inline Idx operator&(Tag a,Tag b) {return static_cast<Idx>(a)&static_cast<Idx>(b);}
+  inline Idx operator&(Tag a,Idx b) {return static_cast<Idx>(a)&b;}
+  inline Idx operator&(Idx a,Tag b) {return a&static_cast<Idx>(b);}
 
-  inline bool is(Roles o,Idx p) {return static_cast<Idx>(o)==p;}
-  inline bool has(Roles o,Idx p) {return static_cast<Idx>(o)|p;}
+  inline bool is(Tag o,Idx p) {return static_cast<Idx>(o)==p;}
+  inline bool has(Tag o,Idx p) {return static_cast<Idx>(o)|p;}
 
   inline Idx operator|(Cmd a,Cmd b) {return static_cast<Idx>(a)|static_cast<Idx>(b);}
   inline Idx operator|(Cmd a,Idx b) {return static_cast<Idx>(a)&b;}
@@ -77,7 +77,7 @@ namespace Menu {
     constexpr const char* opNames[]{"Measure","Printing","ClearChanges",};
 
     template<typename O>
-    constexpr inline O& operator<<(O& o,Roles r) {return o<<roleNames[(Idx)r];}
+    constexpr inline O& operator<<(O& o,Tag r) {return o<<roleNames[(Idx)r];}
 
     template<typename O>
     constexpr inline O& operator<<(O& o,Mode r) {return o<<modeNames[(Idx)r];}
@@ -114,29 +114,35 @@ namespace Menu {
   #include "debug.h"
   #define endl "\n\r"
 
-  template<Roles role,typename O>
-  struct As:O {
-    using O::print;
-    template<typename It,typename Out,Roles=role,bool toPrint=true>
-    static inline void printItem(It& it,Out& out,Idx n=0,bool s=false,bool e=true,Mode m=Mode::Normal) {
-      // trace(MDO<<"As<"<<role<<">");
-      out.template fmt<role,true>(n,s,e,m);
-      O::template printItem<It,Out,role,toPrint>(it,out,n,s,e,m);
-      out.template fmt<role,false>(n,s,e,m);
-      // trace(MDO<<"</"<<role<<">"<<endl);
-    }
+  template<Tag role,class O>
+  struct As {
+    template<typename I>
+    struct Part:O::template Part<I> {
+      using This=As<role,O>;
+      using Base=typename O::template Part<I>;
+      using Base::print;
+      template<typename Nav,typename Out,Op op=Op::Printing>
+      inline void print(Nav& nav,Out& out,
+       ref=self) {
+        // trace(MDO<<"As<"<<role<<">");
+        out.template fmt<role,true>();
+        Base::template print<Nav,Out,op>(nav,out,ref);
+        out.template fmt<role,false>();
+        // trace(MDO<<"</"<<role<<">"<<endl);
+      }
+    };
   };
 
-  template<typename O> using AsPanel=As<Roles::Panel,O>;
-  template<typename O> using AsMenu=As<Roles::Menu,O>;
-  template<typename O> using AsTitle=As<Roles::Title,O>;
-  template<typename O> using AsBody=As<Roles::Body,O>;
-  template<typename O> using AsItem=As<Roles::Item,O>;
-  template<typename O> using AsIndex=As<Roles::Index,O>;
-  template<typename O> using AsCursor=As<Roles::Cursor,O>;
-  template<typename O> using AsName=As<Roles::Name,O>;
-  template<typename O> using AsMode=As<Roles::Mode,O>;
-  template<typename O> using AsValue=As<Roles::Value,O>;
-  template<typename O> using AsUnit=As<Roles::Unit,O>;
-  template<typename O> using AsRaw=As<Roles::Raw,O>;
+  template<typename O> using AsPanel=As<Tag::Panel,O>;
+  template<typename O> using AsMenu=As<Tag::Menu,O>;
+  template<typename O> using AsTitle=As<Tag::Title,O>;
+  template<typename O> using AsBody=As<Tag::Body,O>;
+  template<typename O> using AsItem=As<Tag::Item,O>;
+  template<typename O> using AsIndex=As<Tag::Index,O>;
+  template<typename O> using AsCursor=As<Tag::Cursor,O>;
+  template<typename O> using AsName=As<Tag::Name,O>;
+  template<typename O> using AsMode=As<Tag::Mode,O>;
+  template<typename O> using AsValue=As<Tag::Value,O>;
+  template<typename O> using AsUnit=As<Tag::Unit,O>;
+  template<typename O> using AsRaw=As<Tag::Raw,O>;
 };

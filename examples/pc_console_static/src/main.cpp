@@ -19,7 +19,7 @@ bool quit() {
   return true;
 }
 bool tog12();//implemented later because we need to access mainMenu
-
+ 
 bool op1_action() {
   cout<<"Option 1 action called!"<<endl;
   return true;//false would close the menu
@@ -44,6 +44,7 @@ const char* subn_text="Sub...";
 const char* exit_text="<Exit";
 
 const char* mainText="Main menu";
+const char* year_label_text="Year";
 const char* op1_text="Option 1";
 const char* op2_text="Option 2";
 const char* opn_text="Option...";
@@ -56,7 +57,7 @@ using MainMenu=Item<
   StaticMenu<
     Item<Mutable::Part,StaticText<&mainText>::Part>,
     StaticData<
-      Item<Mutable::Part,StaticNumField<int,year,1900,3000,10,1>::Part>,
+      Item<Mutable::Part,AsName<StaticText<&year_label_text>>::Part,StaticNumField<int,year,1900,3000,10,1>::Part>,
       Item<Action<op1_action>::Part,EnDis<>::Part,Mutable::Part,StaticText<&op1_text>::Part>,
       Item<Action<op2_action>::Part,EnDis<false>::Part,Mutable::Part,StaticText<&op2_text>::Part>,
       Item<Action<tog12>::Part,Mutable::Part,StaticText<&tog12_text>::Part>,

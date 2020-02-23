@@ -29,6 +29,7 @@ Flash: [====      ]  38.3% (used 3136 bytes from 8192 bytes)
 */
 
 //ArduinoMenu main include for static menus
+#include <Arduino.h>
 #include <staticMenu.h>
 //input/output drivers --------------------------------------
 #include <menu/IO/Arduino/serialIO.h>//include both serial in and out

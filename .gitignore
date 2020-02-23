@@ -13,4 +13,4 @@ platformio.ini
 *.odg
 *.ghc
 RnD/
-/old
+old/

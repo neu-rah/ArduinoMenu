@@ -22,7 +22,7 @@ namespace Menu {
     template<typename It,typename Nav,Op op=Op::Printing>
     inline void printMenu(It& it,Nav& nav,bool fullPrint) {printMenu(it,nav,fullPrint,op);}
 
-    // template<typename Nav,typename Out,Op op=Op::Printing,Roles role=Roles::Raw>
+    // template<typename Nav,typename Out,Op op=Op::Printing,Tag role=Tag::Raw>
     // inline void print(Nav& nav,Out& out)
     template<typename It,typename Nav,Op op=Op::Printing>
     void printItem(It& it,Nav& nav,Idx n=0,bool s=false,bool e=true,Mode m=Mode::Normal) {

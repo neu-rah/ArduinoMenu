@@ -13,8 +13,8 @@ namespace Menu {
     template<bool io,bool toPrint=true>
     inline void fmtIndex(Idx n=0,bool s=false,bool e=true,Mode m=Mode::Normal) {
       if(io) {
-        if (n<9) O::template print<int,This,toPrint>(n+1,*this,Roles::Index);
-        else O::template print<char,This,toPrint>(' ',*this,Roles::Index);
+        if (n<9) O::template print<int,This,toPrint>(n+1,*this,Tag::Index);
+        else O::template print<char,This,toPrint>(' ',*this,Tag::Index);
       }
       O::template fmtIndex<io,toPrint>(n,s,e,m);
     }

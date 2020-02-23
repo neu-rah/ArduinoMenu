@@ -24,7 +24,7 @@ namespace Menu {
     template<typename Nav> inline static constexpr bool posTop(Nav&) {return false;}
     template<typename It,typename Nav,Op op=Op::Printing,bool toPrint=true>
     inline static void printTitle(It& it,Nav& nav) {}
-    // template<typename It,Op op=Op::Printing,Roles role=Roles::Raw>
+    // template<typename It,Op op=Op::Printing,Tag role=Tag::Raw>
     // inline void printItems(It& it,Idx idx=0,Idx top=0) {
     //   for(auto o:it) o->printItem(O::obj());
     // }
@@ -103,25 +103,25 @@ namespace Menu {
     }
 
     //format multiplex
-    template<Roles r,bool io,bool toPrint=true>
+    template<Tag r,bool io,bool toPrint=true>
     inline void fmt(Idx n=0,bool s=false,bool e=true,Mode m=Mode::Normal) {
       switch(r) {
-        case Roles::Panel:  O::obj().template fmtPanel <io,toPrint>(n,s,e,m);break;
-        case Roles::Menu:   O::obj().template fmtMenu  <io,toPrint>(n,s,e,m);break;
-        case Roles::Title:  O::obj().template fmtTitle <io,toPrint>(n,s,e,m);break;
-        case Roles::Body:   O::obj().template fmtBody  <io,toPrint>(n,s,e,m);break;
-        case Roles::Item:   O::obj().template fmtItem  <io,toPrint>(n,s,e,m);break;
-        case Roles::Index:  O::obj().template fmtIndex <io,toPrint>(n,s,e,m);break;
-        case Roles::Cursor: O::obj().template fmtCursor<io,toPrint>(n,s,e,m);break;
-        case Roles::Name:   O::obj().template fmtName  <io,toPrint>(n,s,e,m);break;
-        case Roles::Mode:   O::obj().template fmtMode  <io,toPrint>(n,s,e,m);break;
-        case Roles::Value:  O::obj().template fmtValue <io,toPrint>(n,s,e,m);break;
-        case Roles::Unit:   O::obj().template fmtUnit  <io,toPrint>(n,s,e,m);break;
+        case Tag::Panel:  O::obj().template fmtPanel <io,toPrint>(n,s,e,m);break;
+        case Tag::Menu:   O::obj().template fmtMenu  <io,toPrint>(n,s,e,m);break;
+        case Tag::Title:  O::obj().template fmtTitle <io,toPrint>(n,s,e,m);break;
+        case Tag::Body:   O::obj().template fmtBody  <io,toPrint>(n,s,e,m);break;
+        case Tag::Item:   O::obj().template fmtItem  <io,toPrint>(n,s,e,m);break;
+        case Tag::Index:  O::obj().template fmtIndex <io,toPrint>(n,s,e,m);break;
+        case Tag::Cursor: O::obj().template fmtCursor<io,toPrint>(n,s,e,m);break;
+        case Tag::Name:   O::obj().template fmtName  <io,toPrint>(n,s,e,m);break;
+        case Tag::Mode:   O::obj().template fmtMode  <io,toPrint>(n,s,e,m);break;
+        case Tag::Value:  O::obj().template fmtValue <io,toPrint>(n,s,e,m);break;
+        case Tag::Unit:   O::obj().template fmtUnit  <io,toPrint>(n,s,e,m);break;
         default:break;
       }
     }
     //format multiplex
-    // template<Roles r,bool io>
+    // template<Tag r,bool io>
     // inline void fmt(bool toPrint=true,Idx n=0,bool s=false,bool e=true,Mode m=Mode::Normal) {
     //   if(toPrint) fmt<r,io,true>(n,s,e,m);
     //   else fmt<r,io,false>(n,s,e,m);

@@ -36,8 +36,8 @@ namespace Menu {
   template<typename O>
   struct BigTitleU8x8Out:O {
     template<typename T,typename Out,bool toPrint=true>
-    inline void print(T o,Out& out,Roles role=Roles::Raw) {
-      if (role==Roles::Title) {
+    inline void print(T o,Out& out,Tag role=Tag::Raw) {
+      if (role==Tag::Title) {
         O::u8x8_dev_v.setInverseFont(true);
         if (toPrint) O::u8x8_dev_v.draw2x2String(O::u8x8_dev_v.tx,O::u8x8_dev_v.ty,(const char*)o);
         O::u8x8_dev_v.setInverseFont(false);
@@ -53,7 +53,7 @@ namespace Menu {
     inline static void nl() {}
 
     template<typename T,bool toPrint=true>
-    inline static void raw(T o,Roles role=Roles::Raw) {dev.print(o);}
+    inline static void raw(T o,Tag role=Tag::Raw) {dev.print(o);}
 
     inline static constexpr int ascent() {return 0;}
     inline static void setCursor(int x,int y) {dev.setCursor(x,y);}

@@ -29,7 +29,7 @@ namespace Menu {
     template<typename Nav,typename Out,Op op=Op::Printing>
     inline void print(Nav& nav,Out& out,PathRef ref=self) {print(nav,out,op,ref);}
 
-    // template<typename Nav,typename Out,Roles role=Roles::Raw>
+    // template<typename Nav,typename Out,Tag role=Tag::Raw>
     // inline static void measure(Nav& nav,Out& out,PathRef ref=self) {print(nav,out,ref,Op::Measure);}
 
     template<Cmd c,typename Nav>

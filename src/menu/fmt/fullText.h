@@ -25,10 +25,13 @@ namespace Menu {
       // inline void fmtBody(Idx n=0,bool s=false,bool e=true,Mode m=Mode::Normal) {
       //   O::template fmtBody<io,toPrint>(n,s,e,m);
       // }
-      // template<bool io,bool toPrint=true>
-      // inline void fmtName(Idx n=0,bool s=false,bool e=true,Mode m=Mode::Normal) {
-      //   O::template fmtName<io,toPrint>(n,s,e,m);
-      // }
+      template<bool io,bool toPrint=true>
+      inline void fmtName(Idx n=0,bool s=false,bool e=true,Mode m=Mode::Normal) {
+        if (io) {
+          O::raw('<');
+          O::template fmtName<io,toPrint>(n,s,e,m);
+        } else O::raw('>');
+      }
       // template<bool io,bool toPrint=true>
       // inline void fmtValue(Idx n=0,bool s=false,bool e=true,Mode m=Mode::Normal) {
       //   O::template fmtValue<io,toPrint>(n,s,e,m);

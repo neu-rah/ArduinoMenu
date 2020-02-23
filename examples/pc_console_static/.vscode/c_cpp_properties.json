@@ -1,0 +1,43 @@
+{
+    "configurations": [
+        {
+            "name": "!!! WARNING !!! AUTO-GENERATED FILE, PLEASE DO NOT MODIFY IT AND USE https://docs.platformio.org/page/projectconf/section_env_build.html#build-flags"
+        },
+        {
+            "name": "Linux",
+            "includePath": [
+                "/home/azevedo/Work/AM5/ArduinoMenu/examples/pc_console_static/include",
+                "/home/azevedo/Work/AM5/ArduinoMenu/examples/pc_console_static/src",
+                "/home/azevedo/Work/AM5/ArduinoMenu/src",
+                "/home/azevedo/.platformio/lib/U8glib_ID9",
+                "/home/azevedo/Work/r-site.net/lpp/src",
+                "/home/azevedo/.platformio/packages/tool-unity",
+                ""
+            ],
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true,
+                "path": [
+                    "/home/azevedo/Work/AM5/ArduinoMenu/examples/pc_console_static/include",
+                    "/home/azevedo/Work/AM5/ArduinoMenu/examples/pc_console_static/src",
+                    "/home/azevedo/Work/AM5/ArduinoMenu/src",
+                    "/home/azevedo/.platformio/lib/U8glib_ID9",
+                    "/home/azevedo/Work/r-site.net/lpp/src",
+                    "/home/azevedo/.platformio/packages/tool-unity",
+                    ""
+                ]
+            },
+            "defines": [
+                "PLATFORMIO=40201",
+                "MENU_DEBUG",
+                ""
+            ],
+            "intelliSenseMode": "clang-x64",
+            "cppStandard": "c++11",
+            "compilerPath": "/usr/bin/gcc",
+            "compilerArgs": [
+                ""
+            ]
+        }
+    ],
+    "version": 4
+}
