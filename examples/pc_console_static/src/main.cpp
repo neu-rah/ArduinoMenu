@@ -44,13 +44,14 @@ const char* subn_text="Sub...";
 const char* exit_text="<Exit";
 
 const char* mainText="Main menu";
-const char* year_label_text="Year";
+const char* max_temp_label="Max.";
+const char* max_temp_unit="ºC";
 const char* op1_text="Option 1";
 const char* op2_text="Option 2";
 const char* opn_text="Option...";
 const char* quit_text="<Quit.";
 
-int year=1967;
+int max_temp=80;
 
 //menu static structure ---------------------------
 using MainMenu=Item<
@@ -60,11 +61,12 @@ using MainMenu=Item<
       Item<Action<op1_action>,EnDis<>,StaticText<&op1_text>,Mutable>,
       Item<Action<op2_action>,EnDis<false>,StaticText<&op2_text>,Mutable>,
       Item<Action<tog12>,StaticText<&tog12_text>,Mutable>,
-      Item<
-        AsName<StaticText<&year_label_text>>,
-        AsMode<>,
-        StaticNumField<int,year,1900,3000,10,1>,
-        Mutable
+      Item< //compose a field with a label
+        AsName<StaticText<&max_temp_label>>,//name format apply only to inner content
+        WrapMode<>,//mode format starts here and gores to end of remaining content
+        StaticNumField<int,max_temp,10,99,10,1>,//the numeric field
+        AsUnit<StaticText<&max_temp_unit>>,//name format apply only to inner content
+        Mutable //track changes
       >,
       Item<StaticText<&opn_text>,Mutable>,
       Item<
@@ -75,7 +77,7 @@ using MainMenu=Item<
             Item<Action<sub_action>,StaticText<&sub2_text>,Mutable>,
             Item<StaticText<&exit_text>,Mutable>
           >
-        >
+        >   
       >,
       Item<Action<quit>,StaticText<&quit_text>,Mutable>
     >

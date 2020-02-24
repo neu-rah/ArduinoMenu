@@ -94,6 +94,7 @@ namespace Menu {
       template<typename Nav,typename Out,Op op=Op::Printing>
       inline void print(Nav& nav,Out& out,PathRef ref=self) {
         out.raw(value);
+        I::template print<Nav,Out,op>(nav,out);
       }
 
       template<Cmd c,typename Nav>
