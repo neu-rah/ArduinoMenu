@@ -1,9 +1,9 @@
 /***
    author: Rui Azevedo (neu-rah) Feb 2020
-  example: arduino (generic)
+  example: aeduino multi-head output, simultaneous on LCD and serial
      menu: static
-   output: I2C LCD
-    input:
+   output: I2C LCD + Serial
+    input: Serial
 tested on: nano
 */
 
@@ -16,10 +16,10 @@ LiquidCrystal_PCF8574 lcd(0x27);  // set the LCD address to 0x27 for a 16 chars 
 #include <staticMenu.h>
 //input/output drivers --------------------------------------
 #include <menu/IO/Arduino/i2cLCDOut.h>
-#include <menu/IO/Arduino/serialIn.h>
-// #include <menu/IO/Arduino/serialOut.h>
-// #include <menu/IO/Arduino/serialIO.h>//include both serial in and out
+#include <menu/IO/Arduino/serialIO.h>
+#include <menu/IO/outList.h>
 //format specifyers -----------------------------------------
+#include <menu/fmt/fullText.h>//full text format
 #include <menu/fmt/textEditMode.h>//edit mode cursor
 #include <menu/fmt/textCursor.h>//slected option cursor
 #include <menu/fmt/textItem.h>//cursor moves 1 line on each item
@@ -33,7 +33,6 @@ using namespace Menu;
 //------------------------------
 //menu action handlers
 bool tog12();
-#define BTN A0
 
 extern const char mainMenu_title[] PROGMEM="Main menu";
 extern const char subMenu_title[] PROGMEM="Sub-menu";
@@ -73,8 +72,14 @@ Item<
 //menu input --------------------------------------
 SerialIn<decltype(Serial),Serial> in;//create input object (here serial)
 
-//menu output (Serial)
-using Out=StaticMenuOut<
+using SerialO=StaticMenuOut<
+  FullPrinter::Part,//print title and items
+  TitleWrapFmt<>::Part,//put [] around menu title
+  TextFmt::Part,//apply text formating
+  SerialOut<decltype(Serial),Serial>::Part//raw output device
+>;
+
+using LCD=StaticMenuOut<
   FullPrinter::Part,//print title and items
   TitleWrapFmt<>::Part,//put [] around menu title
   TextCursorFmt,//draw text cursor
@@ -87,6 +92,9 @@ using Out=StaticMenuOut<
   I2CLCDOut<lcd>::Part,//raw output device
   TextMeasure<>::Part//default monometric text measure
 >;
+
+//menu output (Serial)
+using Out=OutList<LCD,SerialO>;
 
 Out out;//create output object (Serial)
 
