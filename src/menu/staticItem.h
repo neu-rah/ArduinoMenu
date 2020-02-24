@@ -106,10 +106,7 @@ namespace Menu {
           case Cmd::Enter:
             switch(nav.mode()) {
               case Mode::Normal: nav.setMode(Mode::Edit);break;
-              case Mode::Edit:
-                if(tune==0) nav.setMode(Mode::Tune);
-                else nav.setMode(Mode::Tune);
-                break;
+              case Mode::Edit:nav.setMode(tune==0?Mode::Normal:Mode::Tune);break;
               case Mode::Tune: nav.setMode(Mode::Normal);break;
               default: return false;
             }
