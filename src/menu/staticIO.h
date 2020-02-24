@@ -2,6 +2,9 @@
 #pragma once
 
 #include "api.h"
+#ifndef ARDUINO
+#include <string>
+#endif
 
 namespace Menu {
   //aux class for monometric text measure
@@ -21,11 +24,11 @@ namespace Menu {
       inline static constexpr int maxCharHeight() {return 1;}
       int textWidth(const char*s) const {return measure(s);}
       protected:
-        #ifndef ARDUINO
+      #ifndef ARDUINO
         static inline Idx _str(const char*o){return std::string(o).length();}
         template<typename T>
         static inline Idx _str(T i){return std::string(std::to_string(i)).length();}
-        #endif
+      #endif
     };
   };
 

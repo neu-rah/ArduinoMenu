@@ -1,7 +1,7 @@
 #include "item.h"
 
 namespace Menu {
-  template<Expr... I>
+  template<typename... I>
   inline bool Prompt<I...>::cmd(Cmd c,INav& nav,PathRef ref) {
     switch(c) {
       case Cmd::None: return Base::template cmd<Cmd::None,INav>(nav,ref);break;
@@ -15,7 +15,7 @@ namespace Menu {
     assert(false);
   }
 
-  template<Expr... I>
+  template<typename... I>
   inline void Prompt<I...>::printMenu(INav& nav,IOut& out,Op op,PathRef ref) {
     switch(op) {
       case Op::Measure: Base::template printMenu<INav,IOut,Op::Measure>(nav,out,ref);break;
@@ -24,7 +24,7 @@ namespace Menu {
     }
   }
 
-  template<Expr... I>
+  template<typename... I>
   inline void Prompt<I...>::printTitle(INav& nav,IOut& out,bool fullPrint,Op op) {
     switch(op) {
       case Op::Measure: Base::template printTitle<INav,IOut,Op::Measure>(nav,out,fullPrint);break;
@@ -32,7 +32,7 @@ namespace Menu {
       case Op::ClearChanges: Base::template printTitle<INav,IOut,Op::ClearChanges>(nav,out,fullPrint);break;
     }
   }
-  template<Expr... I>
+  template<typename... I>
   inline void Prompt<I...>::printItems(INav& nav,IOut& out,bool fullPrint,Idx idx,Idx top,PathRef ref,Op op) {
     trace(MDO<<"Prompt::printItems"<<endl);
     switch(op) {
@@ -41,7 +41,7 @@ namespace Menu {
       case Op::ClearChanges: Base::template printItems<INav,IOut,Op::ClearChanges>(nav,out,fullPrint,idx,top,ref);break;
     }
   }
-  template<Expr... I>
+  template<typename... I>
   inline void Prompt<I...>::print(INav& nav,IOut& out,Op op,PathRef ref) {
     trace(MDO<<"Prompt::print"<<endl);
     switch(op) {

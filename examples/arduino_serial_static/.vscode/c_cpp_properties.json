@@ -6,8 +6,8 @@
         {
             "name": "Linux",
             "includePath": [
-                "/home/azevedo/Work/AM5/ArduinoMenu/examples/arduino_serial_static_tiny/include",
-                "/home/azevedo/Work/AM5/ArduinoMenu/examples/arduino_serial_static_tiny/arduino_serial_static_tiny",
+                "/home/azevedo/Work/AM5/ArduinoMenu/examples/arduino_serial_static/include",
+                "/home/azevedo/Work/AM5/ArduinoMenu/examples/arduino_serial_static/arduino_serial_static",
                 "/home/azevedo/Work/AM5/ArduinoMenu/src",
                 "/home/azevedo/.platformio/lib/streamFlow_ID6234/src",
                 "/home/azevedo/.platformio/packages/framework-arduino-avr-attiny/cores/tiny",
@@ -57,8 +57,8 @@
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
                 "path": [
-                    "/home/azevedo/Work/AM5/ArduinoMenu/examples/arduino_serial_static_tiny/include",
-                    "/home/azevedo/Work/AM5/ArduinoMenu/examples/arduino_serial_static_tiny/arduino_serial_static_tiny",
+                    "/home/azevedo/Work/AM5/ArduinoMenu/examples/arduino_serial_static/include",
+                    "/home/azevedo/Work/AM5/ArduinoMenu/examples/arduino_serial_static/arduino_serial_static",
                     "/home/azevedo/Work/AM5/ArduinoMenu/src",
                     "/home/azevedo/.platformio/lib/streamFlow_ID6234/src",
                     "/home/azevedo/.platformio/packages/framework-arduino-avr-attiny/cores/tiny",

@@ -56,32 +56,32 @@ int max_temp=80;
 //menu static structure ---------------------------
 using MainMenu=Item<
   StaticMenu<
-    Item<StaticText<&mainText>,Mutable>,
+    Item<StaticText<&mainText>::Part,Mutable::Part>,
     StaticData<
-      Item<Action<op1_action>,EnDis<>,StaticText<&op1_text>,Mutable>,
-      Item<Action<op2_action>,EnDis<false>,StaticText<&op2_text>,Mutable>,
-      Item<Action<tog12>,StaticText<&tog12_text>,Mutable>,
-      Item< //compose a field with a label
-        AsName<StaticText<&max_temp_label>>,//name format apply only to inner content
-        WrapMode<>,//mode format starts here and gores to end of remaining content
-        StaticNumField<int,max_temp,10,99,10,1>,//the numeric field
-        AsUnit<StaticText<&max_temp_unit>>,//name format apply only to inner content
-        Mutable //track changes
+      Item<Action<op1_action>::Part,EnDis<>::Part,StaticText<&op1_text>::Part,Mutable::Part>,
+      Item<Action<op2_action>::Part,EnDis<false>::Part,StaticText<&op2_text>::Part,Mutable::Part>,
+      Item<Action<tog12>::Part,StaticText<&tog12_text>::Part,Mutable::Part>,
+      Item< //compose a field with a label, an edit cursor and an unit
+        AsName<StaticText<&max_temp_label>::Part>::Part,//name format apply only to inner content
+        WrapMode<>::Part,//mode format starts here and gores to end of remaining content
+        StaticNumField<int,max_temp,10,99,10,1>::Part,//the numeric field
+        AsUnit<StaticText<&max_temp_unit>::Part>::Part,//name format apply only to inner content
+        Mutable::Part //track changes
       >,
-      Item<StaticText<&opn_text>,Mutable>,
+      Item<StaticText<&opn_text>::Part,Mutable::Part>,
       Item<
         StaticMenu< 
-          Item<StaticText<&subText>,Mutable>,
+          Item<StaticText<&subText>::Part,Mutable::Part>,
           StaticData<
-            Item<Action<sub_action>,StaticText<&sub1_text>,Mutable>,
-            Item<Action<sub_action>,StaticText<&sub2_text>,Mutable>,
-            Item<StaticText<&exit_text>,Mutable>
+            Item<Action<sub_action>::Part,StaticText<&sub1_text>::Part,Mutable::Part>,
+            Item<Action<sub_action>::Part,StaticText<&sub2_text>::Part,Mutable::Part>,
+            Item<StaticText<&exit_text>::Part,Mutable::Part>
           >
-        >   
+        >::Part   
       >,
-      Item<Action<quit>,StaticText<&quit_text>,Mutable>
+      Item<Action<quit>::Part,StaticText<&quit_text>::Part,Mutable::Part>
     >
-  >
+  >::Part
 >;
 
 MainMenu mainMenu;

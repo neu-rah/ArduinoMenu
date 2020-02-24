@@ -13,7 +13,7 @@ namespace Menu {
       using This=StdVectorMenu<Title,title>::Part<I>;
       using Base=I;
 
-      inline void changed(bool o) {return title.changed(o);}
+      // inline void changed(bool o) const {return title.changed(o);}
 
       inline bool enabled(PathRef ref=self) const {
         trace(MDO<<"StdVectorMenu::enabled "<<ref<<endl);
@@ -40,8 +40,8 @@ namespace Menu {
 
       inline bool activate(PathRef ref=self) {
         trace(MDO<<"StdVectorMenu::activate "<<ref<<endl);
-        if(ref.len==1&&operator[](ref.head())->enabled())
-          return operator[](ref.head())->activate();
+        if(ref.len==1)
+          return operator[](ref.head())->enabled()?operator[](ref.head())->activate():false;
         return ref?operator[](ref.head())->activate(ref.tail()):true;
       }
 

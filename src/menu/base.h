@@ -4,7 +4,10 @@
 #include "chain.h"
 
 #ifndef ARDUINO
+  #include <cstddef>
   #include <limits>
+  #include <iostream>
+  using namespace std;
 #endif
 
 namespace Menu {
@@ -112,6 +115,10 @@ namespace Menu {
   };
 
   #include "debug.h"
-  #define endl "\n\r"
+  // #ifdef ARDUINO
+    #define endl "\n\r"
+  // #else
+  //   #define endl std::endl
+  // #endif
 
 };
