@@ -67,11 +67,7 @@ SerialIn<decltype(Serial),Serial> in;//create input object (here serial)
 bool tog12();
 
 bool op1_action() {
-  #ifdef ARDUINO
-    Serial.println(F("Option 1 action called!"));
-  #else
-    std::cout<<"Option 1 action called!"<<std::endl;
-  #endif
+  Serial.println(F("Option 1 action called!"));
   return true;//false would close the menu
 }
 

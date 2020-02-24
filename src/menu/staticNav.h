@@ -38,13 +38,13 @@ namespace Menu {
       inline PathRef parent() const {return operator PathRef().parent();}
       inline void open() {
         assert(level<max_depth-1);
-        if(!root.canNav(*this)) setMode(Mode::Edit);
+        // if(!root.canNav(*this)) setMode(Mode::Edit);
         path[++level]=0;
       }
       inline void close() {
         if(level>0) {
           path[level--]=0;
-          setMode(Mode::Normal);
+          // setMode(Mode::Normal);
         }
       }
       inline size_t size() const {return root.size(*this);}

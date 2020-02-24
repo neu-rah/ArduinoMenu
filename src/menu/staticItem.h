@@ -110,7 +110,7 @@ namespace Menu {
                 if(tune==0) nav.setMode(Mode::Tune);
                 else nav.setMode(Mode::Tune);
                 break;
-              case Mode::Tune: nav.setMode(Mode::Normal);
+              case Mode::Tune: nav.setMode(Mode::Normal);break;
               default: return false;
             }
             return true;
