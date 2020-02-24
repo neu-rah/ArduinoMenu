@@ -41,9 +41,14 @@ extern const char op2_text[] PROGMEM="Option 2";
 extern const char tog12_text[] PROGMEM="toggle 1&2";
 extern const char opn_text[] PROGMEM="Option ...";
 extern const char exit_txt[] PROGMEM="<Exit";
+extern const char max_temp_label[] PROGMEM="Max.";
+extern const char max_temp_unit[] PROGMEM="C";
 // extern const char yr_txt[] PROGMEM="Year";
 // extern const char vcc_txt[] PROGMEM="VCC";
 // extern const char volts_txt[] PROGMEM="V";
+
+//a test variable, this is menu independent, however menu will have a reference to it and change it
+int max_temp=50;
 
 //static menu structure
 Item<
@@ -53,6 +58,13 @@ Item<
       Item<EnDis<>::Part,Mutable::Part,FlashText<decltype(op1_text),&op1_text>::Part>,
       Item<EnDis<false>::Part,Mutable::Part,FlashText<decltype(op2_text),&op2_text>::Part>,
       Item<Action<tog12>::Part,Mutable::Part,FlashText<decltype(tog12_text),&tog12_text>::Part>,
+      Item< //compose a field with a label, an edit cursor and an unit
+        Mutable::Part, //track changes
+        AsName<FlashText<decltype(max_temp_label),&max_temp_label>::Part>::Part,//(As) name format apply only to inner content
+        WrapMode<>::Part,//(Wrap) mode format, starts here and gores to end of remaining content
+        StaticNumField<int,max_temp,10,99,10,1>::Part,//the numeric field
+        AsUnit<FlashText<decltype(max_temp_unit),&max_temp_unit>::Part>::Part//name format apply only to inner content
+      >,
       Item<Mutable::Part,FlashText<decltype(opn_text),&opn_text>::Part>,
       Item<
         StaticMenu<

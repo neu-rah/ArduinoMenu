@@ -62,8 +62,8 @@ using MainMenu=Item<
       Item<Action<op2_action>::Part,EnDis<false>::Part,StaticText<&op2_text>::Part,Mutable::Part>,
       Item<Action<tog12>::Part,StaticText<&tog12_text>::Part,Mutable::Part>,
       Item< //compose a field with a label, an edit cursor and an unit
-        AsName<StaticText<&max_temp_label>::Part>::Part,//name format apply only to inner content
-        WrapMode<>::Part,//mode format starts here and gores to end of remaining content
+        AsName<StaticText<&max_temp_label>::Part>::Part,//(As) name format apply only to inner content
+        WrapMode<>::Part,//(Wrap) mode format, starts here and gores to end of remaining content
         StaticNumField<int,max_temp,10,99,10,1>::Part,//the numeric field
         AsUnit<StaticText<&max_temp_unit>::Part>::Part,//name format apply only to inner content
         Mutable::Part //track changes
