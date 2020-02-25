@@ -3,7 +3,15 @@
 
 #include "chain.h"
 
-#ifndef ARDUINO
+#ifdef ARDUINO
+  #ifdef ARDUINO_AVR_ATTINY13
+    #include <avr/pgmspace.h>
+    struct __FlashStringHelper;
+    #define F(string_literal) (reinterpret_cast<const __FlashStringHelper *>(PSTR(string_literal)))
+    #include "extra/Serial13/serial13.h"
+    extern SwSerial Serial;
+  #endif
+#else
   #include <cstddef>
   #include <limits>
   #include <iostream>

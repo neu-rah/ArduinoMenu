@@ -26,6 +26,10 @@ Flash: [===       ]  33.9% (used 2778 bytes from 8192 bytes)
 2020.02.22 some endis options and all with actions
 RAM:   [===       ]  27.5% (used 141 bytes from 512 bytes)
 Flash: [====      ]  38.3% (used 3136 bytes from 8192 bytes)
+
+2020.02.25 ATTiny13 softuart https://github.com/lpodkalicki/attiny13-software-uart-library
+RAM:   [===       ]  25.0% (used 16 bytes from 64 bytes)
+Flash: [==        ]  17.4% (used 178 bytes from 1024 bytes)
 */
 
 #include <Arduino.h>

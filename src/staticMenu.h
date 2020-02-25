@@ -47,5 +47,6 @@ namespace Menu {
 #include "menu/tags.h"
 
 // must be at end of file
-#include <menu/debug.hpp>
-#include <menu/staticItem.hpp>
+#include "menu/base.hpp"
+#include "menu/debug.hpp"
+#include "menu/staticItem.hpp"

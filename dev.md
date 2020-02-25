@@ -36,6 +36,7 @@
 + ~~add ::Part to all components for consistency~~
 + ~~review default composition parts, we want max optionals~~
 + ~~numeric fields~~
+- reflexivity => doInput will check changes
 - numeric field decimal places format
 - numeric field unit scales
 - numeric field easing
