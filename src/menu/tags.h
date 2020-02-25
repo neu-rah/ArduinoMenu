@@ -1,10 +1,11 @@
+/* -*- C++ -*- */
 #pragma once
 
 #include "path.h"
 
 namespace Menu {
 
-  //wrap remaining content on a `Tag role` 
+  //wrap remaining content on a `Tag role`
   template<Tag role>
   struct Wrap {
     template<typename I>

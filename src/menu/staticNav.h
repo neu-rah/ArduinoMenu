@@ -16,6 +16,11 @@ namespace Menu {
       Mode editMode;
       inline Part(Data& o):root(o){}
       template<typename Out>
+      inline void printItem(Out& out) {
+        trace(MDO<<"Nav::printItem"<<endl);
+        root.template print<typename N::Type,Out,Op::Printing>(N::obj(),out,*this);
+      }
+      template<typename Out>
       inline void print(Out& out) {
         trace(MDO<<"Nav::print"<<endl);
         root.template printMenu<typename N::Type,Out,Op::Printing>(N::obj(),out,*this);

@@ -91,7 +91,7 @@ using SerialO=StaticMenuOut<
   SerialOut<decltype(Serial),Serial>::Part//raw output device
 >;
 
-using LCD=StaticMenuOut<
+using LCDO=StaticMenuOut<
   FullPrinter::Part,//print title and items
   TitleWrapFmt<>::Part,//put [] around menu title
   TextCursorFmt,//draw text cursor
@@ -99,6 +99,7 @@ using LCD=StaticMenuOut<
   TextItemFmt,//item on a new line
   PartialDraw::Part,//this device can position the cursor and do a partial draw
   PanelTarget::Part,//track target (menu) change
+  Viewport::Part,
   RangePanel<>::Part,//control vertical scrolling
   StaticPanel<0,0,16,2>::Part,//define output geometry
   I2CLCDOut<lcd>::Part,//raw output device
@@ -106,7 +107,7 @@ using LCD=StaticMenuOut<
 >;
 
 //menu output (Serial)
-using Out=OutList<LCD,SerialO>;
+using Out=OutList<LCDO,SerialO>;
 
 Out out;//create output object (Serial)
 
