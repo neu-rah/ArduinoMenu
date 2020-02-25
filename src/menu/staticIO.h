@@ -15,7 +15,7 @@ namespace Menu {
       template<typename T>
       static inline Area measure(T o) {
         #ifdef ARDUINO
-          return {String(o).length(),maxCharHeight()};
+          return {(Idx)String(o).length(),maxCharHeight()};
         #else
           return {_str(o),maxCharHeight()};
         #endif

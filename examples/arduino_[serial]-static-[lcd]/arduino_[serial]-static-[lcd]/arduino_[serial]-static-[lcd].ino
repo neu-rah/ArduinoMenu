@@ -81,9 +81,10 @@ using Out=StaticMenuOut<
   TextFmt::Part,//apply text formating
   PartialDraw::Part,//this device can position the cursor and do a partial draw
   PanelTarget::Part,//detect target (menu) changes
-  RangePanel<>::Part,//control vertical scrolling
+  Viewport::Part,//this device can position cursor, tight control of drawing position not just scroll
   StaticPanel<0,0,16,2>::Part,//define output geometry
-  LiquidCrystalOut<lcd>::Part//raw output device
+  LiquidCrystalOut<lcd>::Part,//raw output device
+  TextMeasure<>::Part//default monometric text measure
 >;
 
 Out out;//create output object (Serial)

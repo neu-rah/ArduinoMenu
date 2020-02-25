@@ -28,7 +28,11 @@ namespace Menu {
       template<typename T,bool toPrint=true>
       inline void raw(T i) {
         trace(if(toPrint) MDO<<"lcd.raw(\""<<i<<"\") "<<endl);
-        if(toPrint) dev.print(i);}
+        if(toPrint) {
+          setCursor(O::obj().posX(),O::obj().posY());
+          dev.print(i);
+        }
+      }
       template<bool toPrint=true>
       inline void clrLine(Idx n) {
         trace(if(toPrint) MDO<<"lcd.clrLine("<<n<<") "<<endl);

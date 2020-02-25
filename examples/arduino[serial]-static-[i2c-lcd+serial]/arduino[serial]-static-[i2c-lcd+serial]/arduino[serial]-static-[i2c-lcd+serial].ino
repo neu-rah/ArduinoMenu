@@ -99,8 +99,7 @@ using LCDO=StaticMenuOut<
   TextItemFmt,//item on a new line
   PartialDraw::Part,//this device can position the cursor and do a partial draw
   PanelTarget::Part,//track target (menu) change
-  Viewport::Part,
-  RangePanel<>::Part,//control vertical scrolling
+  Viewport::Part,//this device can position cursor, tight control of drawing position not just scroll
   StaticPanel<0,0,16,2>::Part,//define output geometry
   I2CLCDOut<lcd>::Part,//raw output device
   TextMeasure<>::Part//default monometric text measure

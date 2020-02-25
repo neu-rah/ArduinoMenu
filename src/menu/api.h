@@ -13,13 +13,13 @@ namespace Menu {
   struct Void:O {
     template<typename T,bool toPrint=true>
     inline static void raw(T) {}
-    template<typename T> inline static void measure(T t) {raw<false>(t);}
     inline static void newView() {}
     inline static constexpr bool partialDraw() {return false;}
     inline static constexpr bool isSame(void*) {return false;}
     inline bool fullDraw() {return !O::obj().partialDraw();}
     inline static constexpr Idx top() {return 0;}
     inline static constexpr Idx posY() {return 0;}
+    inline static constexpr Idx posX() {return 0;}
     inline static constexpr Idx freeY() {return idx_max;}
     template<typename Nav> inline static constexpr bool posTop(Nav&) {return false;}
     template<typename It,typename Nav,Op op=Op::Printing,bool toPrint=true>

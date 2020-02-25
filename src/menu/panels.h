@@ -80,79 +80,84 @@ namespace Menu {
       protected:
         Idx topItem=0;//this refers to menu items
         Idx freeLines;//this refers to device free space
-      };
     };
+  };
 
-    struct Viewport {
-      template<typename O>
-      struct Part:O {
-        // using O::O;
-        using This=Viewport::Part<O>;
-        using Base=O;
-        inline Part() {}
-        inline Part(const This& o) {fx=o.width();fy=o.height();}
-        constexpr static inline bool isViewport() {return true;}
-        inline operator bool() const {return fx&&fy;}
-        inline operator int() const {return O::free();}
-        inline void newView() {
-          trace(MDO<<"Viewport::newView"<<endl);
-          fx=O::width();fy=O::height();
-          //O::newView();
-        }
-        // inline void nl() {O::nl();This::useY();}
-        // template<typename T>
-        // inline void raw(T i) {
-        //   O::setCursor(This::posX(),This::posY());
-        //   O::raw(i);
-        //   This::useX(O::measure(i));
-        // }
-        //
-        // //device coordinates ---------
-        inline Idx posX() const {return (O::width()-fx)+O::orgX();}
-        inline Idx posY() const {return (O::height()-fy)+O::orgY();}
-        // // get free space ----
-        inline Idx freeX() const {return fx;}
-        inline Idx freeY() const {
-          trace(MDO<<"Viewport::freeY "<<fy<<endl);
-          return fy;}
-        inline Idx height() const {return freeY();}
-        inline Idx free() const {return fx+O::width()*fy;}
-        // // use space ----
-        inline void useX(Idx ux=1) {
-          trace(MDO<<"Viewport::useX "<<ux<<endl);
-          if (fx) fx-=ux; else useY();}
-        inline void useY(Idx uy=1) {
-          trace(MDO<<"Viewport::useY "<<uy<<endl);
-          if (!fy) {
-            fx=0;
-            // fy=0;
-          } else {
-            fy-=uy;
-            fx=O::width();
-          }
-        }
-        template<bool toPrint=true>
-        inline void nl() {
-          trace(MDO<<"Viewport::nl<"<<toPrint<<">"<<endl);
-          O::template nl<toPrint>();
+  struct Viewport {
+    template<typename O>
+    struct Part:O {
+      using This=Viewport::Part<O>;
+      using Base=O;
+      inline Part() {fx=O::width();fy=O::height();}
+      inline Part(const This& o) {fx=o.width();fy=o.height();}
+      // constexpr static inline bool isViewport() {return true;}
+      inline operator bool() const {return fx&&fy;}
+      inline operator int() const {return O::free();}
+      inline Idx top() const {return topItem;}
+      inline void setTop(Idx n) {topItem=n;}
+      inline void newView() {
+        trace(MDO<<endl<<"Viewport@"<<(long)this<<"::newView freeY:"<<freeY()<<" -------------------------"<<endl);
+        fx=O::width();fy=O::height();
+      }
+      // //device coordinates ---------
+      inline Idx posX() const {return O::width()-fx;}
+      inline Idx posY() const {return O::height()-fy;}
+      // // get free space ----
+      inline Idx freeX() const {
+        trace(MDO<<"Viewport@"<<(long)this<<"::freeX "<<fx<<" posX:"<<posX()<<endl);
+        return fx;}
+      inline Idx freeY() const {
+        trace(MDO<<"Viewport@"<<(long)this<<"::freeY "<<fy<<endl);
+        return fy;}
+      inline Idx height() const {return freeY();}
+      inline Idx free() const {return fx+O::width()*fy;}
+      // // use space ----
+      inline void useX(Idx ux=1) {
+        if (fx) fx-=ux;
+        else {
+          trace(MDO<<"useX wrapping!!!!! => useY"<<endl);
           useY();
         }
-        template<typename T,bool toPrint=true>
-        inline void raw(T o) {
-          trace(MDO<<"Viewport::raw<"<<(toPrint?"true":"false")<<">("<<o<<")"<<endl);
-          Area used=O::measure(o);
-          useX(used.width);
-          useY(used.height-O::maxCharHeight());
-          O::template raw<T,toPrint>(o);
+        trace(MDO<<"Viewport@"<<(long)this<<"::useX "<<ux<<" freeX:"<<freeX()<<endl);
+      }
+      inline void useY(Idx uy=1) {
+        if (!fy) {
+          fx=0;
+          // fy=0;
+        } else {
+          fy-=uy;
+          if(uy) fx=O::width();
         }
-      protected:
-        // inline void _nl(RawOutOp) {O::nl();}
-        // inline void _nl(MeasureOp) {O::useY();}
-        // template<typename T>
-        // inline void _raw(T i,RawOutOp) {O::raw(i);}
-        // template<typename T>
-        // inline void _raw(T i,MeasureOp) {O::measure(i);}
-        Idx fx,fy;
-      };
+        trace(MDO<<"Viewport@"<<(long)this<<"::useY "<<uy<<" freeY:"<<freeY()<<endl);
+      }
+      template<typename Nav>
+      inline bool posTop(Nav& nav) {
+        trace(MDO<<"Viewport@"<<(long)this<<"::posTop for "<<nav.pos()<<endl);
+        Idx ot=top();
+        while(top()>nav.pos()) setTop(top()-1);
+        //TODO: this is NOT correct for multiline options!!!!
+        while(nav.pos()>=top()+freeY()) setTop(top()+1);
+        trace(MDO<<"top:"<<top()<<endl);
+        return ot!=top();
+      }
+      template<bool toPrint=true>
+      inline void nl() {
+        trace(MDO<<"Viewport@"<<(long)this<<"::nl<"<<toPrint<<">"<<endl);
+        O::template nl<toPrint>();
+        useY();
+      }
+      template<typename T,bool toPrint=true>
+      inline void raw(T o) {
+        trace(MDO<<"Viewport@"<<(long)this<<"::raw<"<<(toPrint?"true":"false")<<">("<<o<<")"<<endl);
+        O::template raw<T,toPrint>(o);
+        Area used=O::measure(o);
+        useX(used.width);
+        useY(used.height-O::maxCharHeight());
+      }
+    protected:
+      Idx fx,fy;
+      Idx topItem=0;//this refers to menu items
     };
+  };
+
 };

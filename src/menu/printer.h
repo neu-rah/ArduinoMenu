@@ -13,44 +13,46 @@ namespace Menu {
     template<typename O>
     struct Part:O {
       using This=FullPrinter::Part<O>;
+      using Base=O;
       template<typename It,typename Nav,Op op=Op::Printing>
       void printMenu(It& it,Nav& nav,bool fullPrint) {
-        trace(MDO<<"FullPrinter::printMenu fullPrint:"<<fullPrint<<" Op:"<<op<<endl);
+        trace(MDO<<"FullPrinter::printMenu fullPrint:"<<fullPrint<<" Op:"<<op<<" @"<<((long)&Base::obj())<<endl);
         constexpr bool toPrint=op==Op::Printing;
         O::newView();
         O::template fmt<Tag::Menu,true,toPrint>();
-        it.template printTitle<Nav,typename This::Type,op>(nav,This::obj(),fullPrint);
-        if (This::posTop(nav)) it.changed(true);
+        it.template printTitle<Nav,typename Base::Type,op>(nav,Base::obj(),fullPrint);
+        if (O::posTop(nav)) it.changed(true);
         it.template printItems
-          <Nav,typename This::Type,op>
-          (nav,This::obj(),fullPrint,0,O::top(),self);
+          <Nav,typename Base::Type,op>
+          (nav,Base::obj(),fullPrint,0,O::top(),self);
         O::template fmt<Tag::Menu,false>(fullPrint);
         if (toPrint) O::lastDrawn(&it);
       }
       template<typename It,typename Nav,Op op=Op::Printing>
       void printTitle(It& it,Nav& nav) {
-        trace(MDO<<"FullPrinter::printTitle op:"<<op<<endl);
+        trace(MDO<<"FullPrinter::printTitle op:"<<op<<" @"<<((long)&Base::obj())<<" freeY:"<<O::freeY()<<endl);
         constexpr bool toPrint=op==Op::Printing;
         O::template clrLine<toPrint>(O::posY());
         O::template fmt<Tag::Item,true,toPrint>();
         O::template fmt<Tag::Title,true,toPrint>();
-        it.template print<Nav,typename This::Type,op>(nav,This::obj());
+        it.template print<Nav,typename Base::Type,op>(nav,Base::obj());
         O::template fmt<Tag::Title,false,toPrint>();
         O::template fmt<Tag::Item,false,toPrint>();
       }
       template<typename It,typename Nav,Op op=Op::Printing>
       void printItem(It& it,Nav& nav,Idx n=0,bool s=false,bool e=true,Mode m=Mode::Normal) {
-        trace(MDO<<"FullPrinter::printItem op:"<<op<<" posY:"<<O::posY()<<endl);
+        trace(MDO<<"FullPrinter::printItem op:"<<op<<" posY:"<<Base::posY()<<" @"<<((long)&Base::obj())<<" freeY:"<<Base::freeY()<<endl);
         constexpr bool toPrint=op==Op::Printing;
-        O::template clrLine<toPrint>(O::posY());
-        O::template fmt<Tag::Item,  true ,toPrint>(n,s,e,m);
-        O::template fmt<Tag::Index, true ,toPrint>(n,s,e,m);
-        O::template fmt<Tag::Index, false,toPrint>(n,s,e,m);
-        O::template fmt<Tag::Cursor,true ,toPrint>(n,s,e,m);
-        O::template fmt<Tag::Cursor,false,toPrint>(n,s,e,m);
+        Base::template clrLine<toPrint>(Base::posY());
+        Base::template fmt<Tag::Item,  true ,toPrint>(n,s,e,m);
+        Base::template fmt<Tag::Index, true ,toPrint>(n,s,e,m);
+        Base::template fmt<Tag::Index, false,toPrint>(n,s,e,m);
+        Base::template fmt<Tag::Cursor,true ,toPrint>(n,s,e,m);
+        Base::template fmt<Tag::Cursor,false,toPrint>(n,s,e,m);
         // it.template printItem<O::Type,Tag::Item,toPrint>(O::obj(),n,s,e,m);
-        it.template print<Nav,typename This::Type,op>(nav,This::obj());
-        O::template fmt<Tag::Item,false,toPrint>(n,s,e,m);
+        trace(MDO<<"pos:"<<Base::posX()<<","<<Base::posY()<<endl);
+        it.template print<Nav,typename Base::Type,op>(nav,Base::obj());
+        Base::template fmt<Tag::Item,false,toPrint>(n,s,e,m);
       }
     };
   };
