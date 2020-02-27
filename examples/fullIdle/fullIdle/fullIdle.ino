@@ -81,13 +81,13 @@ void setup() {
 
 void loop() {
   if(nav.sleepTask) {
-    //do idle state stuff here
+    //do your own idle state stuff here
     //....
-    //we can now use encoder, buttons, serial, dosplay or whatever input/output we have
+    //we can now use encoder, buttons, serial, display or whatever input/output we have
     // because menu is 100% dormant
 
     //call `nav.idleOff()` to terminate the idle when some condition is met
-    //.., here using a timeout because we have no buttons
+    //... here using a timeout because we have no buttons
     Serial.write(Serial.available()?(char)Serial.read():'.');
     delay(200);
     if(idleTimeout) {
