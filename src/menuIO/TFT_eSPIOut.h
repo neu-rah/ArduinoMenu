@@ -43,7 +43,14 @@ namespace Menu {
         }
 
 				void setColor(colorDefs c,bool selected=false,status s=enabledStatus,bool e=false) override {
-					gfx.setTextColor(getColor(c,selected,s,e));
+					if (c == titleColor)
+					{	
+						gfx.setTextColor(getColor(titleColor,selected,s,e), getColor(titleColor, false, s, e));
+					}
+					else
+					{
+						gfx.setTextColor(getColor(c,selected,s,e), getColor(bgColor, selected, s, e));
+					}	
 				}
 
 				void clearLine(idx_t ln,idx_t panelNr=0,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) override {
