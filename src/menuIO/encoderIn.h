@@ -64,8 +64,8 @@ quadrature encoder stream (fake, not using buffers)
       }
       int read() override {
         int d=enc.pos-oldPos;
-        if(d>0 && oldPos<=0) d+=sensivity;
-		    else if(d<0 && oldPos>=0) d-=sensivity;
+        if(d>0 && oldPos<0) d+=sensivity;
+        else if(d<0 && oldPos>0) d-=sensivity;
         if (d<=-sensivity) {
           oldPos-=sensivity;
           return options->navCodes[downCmd].ch;
