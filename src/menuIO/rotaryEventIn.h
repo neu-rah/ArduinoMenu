@@ -51,7 +51,6 @@ template<class T> inline T& operator^= (T& a, T b) { return (T&)((int&)a ^= (int
         }
 
         void registerEvent(EventType e) {
-          //Serial.println("registerEvent");
           events |= e; // add it to the current events
         }
 
