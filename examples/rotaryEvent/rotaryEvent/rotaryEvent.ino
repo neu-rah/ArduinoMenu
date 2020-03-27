@@ -1,3 +1,23 @@
+/********************
+March 2020 M. Smit - github@gangkast.nl
+
+Generic Rotary/Button input
+output: SSD1306 OLED
+input: clickable rotary encoder
+
+purpose:
+
+  Having a generic rotary event-based implementation,
+  leaving rotary and button libraries up to the user.
+  Example uses QDEC and AceButton, but could be anything
+  that suits your particular hardware and/or needs.
+
+  TODO: userland rotary/button event mapping to menu actions,
+  as doubleclick/longpress are now hardcoded to back.
+  
+***/
+
+
 #include <menu.h>
 #include <menuIO/u8g2Out.h>
 #include <menuIO/chainStream.h>
@@ -116,7 +136,6 @@ void setup() {
   while(!Serial);
 
   // setup rotary encoder
-  pinMode(ROTARY_PIN_BUT, INPUT);
   qdec.begin();
   attachInterrupt(digitalPinToInterrupt(ROTARY_PIN_A), IsrForQDEC, CHANGE);
   attachInterrupt(digitalPinToInterrupt(ROTARY_PIN_B), IsrForQDEC, CHANGE);
@@ -128,6 +147,9 @@ void setup() {
   buttonConfig->setFeature(ButtonConfig::kFeatureClick);
   buttonConfig->setFeature(ButtonConfig::kFeatureDoubleClick);
   buttonConfig->setFeature(ButtonConfig::kFeatureLongPress);
+  buttonConfig->setFeature(ButtonConfig::kFeatureSuppressClickBeforeDoubleClick);
+  buttonConfig->setFeature(ButtonConfig::kFeatureSuppressAfterClick);
+  buttonConfig->setFeature(ButtonConfig::kFeatureSuppressAfterDoubleClick);
 
   // setup OLED disaply
   Wire.begin(SDA,SCL);

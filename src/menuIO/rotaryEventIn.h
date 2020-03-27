@@ -3,10 +3,16 @@
 
 RotaryEventIn.h
 
-March 2020
+March 2020 M. Smit - github@gangkast.nl
+Generic Rotary/Button input
 
-quick and dirty input eventstream driver to accept events. You can use this
-stream to accept input from rotary encoders and/or buttons for example.
+purpose:
+
+  Having a generic rotary event-based implementation,
+  leaving rotary and button libraries up to the user.
+
+  TODO: userland rotary/button event mapping to menu actions,
+  as doubleclick/longpress are now hardcoded to back.
 
 ***/
 
