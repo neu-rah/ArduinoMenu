@@ -2,18 +2,6 @@
 #pragma once
 
 
-// template<templateA,B>
-// struct Glue:A {
-//   template<typename Nav,typename Out,Op op=Op::Printing>
-//   inline void print(Nav& nav,Out& out,PathRef ref=self) {
-
-//   }
-//   template<typename Nav,typename Out,Op op=Op::Printing>
-//   inline void glue_print(Nav& nav,Out& out,PathRef ref=self) {
-//     A::
-//   }    
-// };
-
 namespace Menu {
   #define Expr template<typename> class
   #define Term typename

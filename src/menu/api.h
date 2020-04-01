@@ -22,8 +22,8 @@ namespace Menu {
     inline static constexpr Idx posX() {return 0;}
     inline static constexpr Idx freeY() {return idx_max;}
     template<typename Nav> inline static constexpr bool posTop(Nav&) {return false;}
-    template<typename It,typename Nav,Op op=Op::Printing,bool toPrint=true>
-    inline static void printTitle(It& it,Nav& nav) {}
+    // template<typename It,typename Nav,Op op=Op::Printing,bool toPrint=true>
+    // inline static void printTitle(It& it,Nav& nav) {}
     // template<typename It,Op op=Op::Printing,Tag role=Tag::Raw>
     // inline void printItems(It& it,Idx idx=0,Idx top=0) {
     //   for(auto o:it) o->printItem(O::obj());
@@ -151,18 +151,15 @@ namespace Menu {
   // menu items base
   template<typename I>
   struct Empty:I {
+
     inline static constexpr bool canNav(PathRef=self,Idx=0) {return false;}
-    // inline static constexpr bool isMenu(PathRef=self,Idx=0) {return false;}
 
     inline static constexpr size_t size(PathRef=self,Idx=0) {return 0;}
 
     inline static constexpr bool parentPrint(PathRef=self,Idx=0) {return true;}
 
     template<typename Nav,typename Out,Op op=Op::Printing>
-    inline void print(Nav& nav,Out& out,PathRef ref=self) {
-      trace(MDO<<"Empty::print "<<op<<" ref:"<<ref<<endl);
-      // if (op==Op::ClearChanges) I::obj().changed(false);
-    }
+    inline void print(Nav& nav,Out& out,PathRef ref=self) {}
 
     template<typename Nav,typename Out,Op op=Op::Printing>
     inline static void printItems(Nav& nav,Out& out,bool fullPrint,Idx=0,Idx=0,PathRef ref=self) {

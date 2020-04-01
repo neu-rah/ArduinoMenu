@@ -183,16 +183,16 @@ namespace Menu {
     template<Cmd c,typename Nav>
     inline bool cmd(Nav& nav,PathRef ref,Idx n) {
       trace(MDO<<"Pair::cmd "<<c<<" ref:"<<ref<<" n:"<<n<<endl);
-      if(n) return tail.template cmd<c,Nav>(nav,ref,--n);
+      if(n) return tail.template cmd<c,Nav>(nav,ref,n-1);
       if (ref) return F::obj().template cmd<c,Nav>(nav,ref.tail());
       return F::template cmd<c,Nav>(nav);
     }
 
     template<typename Nav,typename Out,Op op=Op::Printing>
-    inline void printMenu(Nav& nav,Out& out,PathRef ref=self,Idx n=0);
+    void printMenu(Nav& nav,Out& out,PathRef ref=self,Idx n=0);
 
     template<typename Nav,typename Out,Op op=Op::Printing>
-    inline void printItems(Nav& nav,Out& out,bool fullPrint,Idx idx=0,Idx top=0,PathRef ref=self);
+    void printItems(Nav& nav,Out& out,bool fullPrint,Idx idx=0,Idx top=0,PathRef ref=self);
   };
 
   template<typename Title,typename Body>

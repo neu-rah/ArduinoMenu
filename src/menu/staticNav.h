@@ -43,14 +43,9 @@ namespace Menu {
       inline PathRef parent() const {return operator PathRef().parent();}
       inline void open() {
         assert(level<max_depth-1);
-        // if(!root.canNav(*this)) setMode(Mode::Edit);
         path[++level]=0;
       }
-      inline void close() {
-        if(level>0) {
-          path[level--]=0;
-          // setMode(Mode::Normal);
-        }
+      inline void close() {if(level>0) path[level--]=0;
       }
       inline size_t size() const {return root.size(*this);}
       inline size_t size(PathRef ref) const {return root.size(ref);}
@@ -81,7 +76,9 @@ namespace Menu {
       inline void _up() {
         trace(MDO<<"pos:"<<pos()<<" size:"<<size(parent())<<endl);
         if(((size_t)pos()+1)<size(parent())) setPos(pos()+1);}
+
       inline void _down() {if(pos()>0) setPos(pos()-1);}
+
       inline void _enter() {
         trace(MDO<<"enter->sending activate "<<(PathRef)*this<<endl);
         bool n=root.canNav(*this);//TODO: check this on activate! => can not, we double check it
@@ -90,6 +87,7 @@ namespace Menu {
         trace(MDO<<"!(n^r):"<<(!(n^r))<<endl);
         if (!(n^r)) n?open():close();
       }
+
       inline void _esc() {close();}
 
     };

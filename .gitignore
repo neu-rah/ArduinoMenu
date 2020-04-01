@@ -6,7 +6,6 @@
 /debug
 .travis.yml
 !/.travis.yml
-platformio.ini
 /TODO.txt
 .gitignore
 !/.gitignore
