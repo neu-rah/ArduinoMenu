@@ -65,7 +65,7 @@ using Out=StaticMenuOut<
 Out out;//create output object (Serial)
 
 //menu input --------------------------------------
-SerialIn<decltype(Serial),Serial> in;//create input object (here serial)
+StaticMenuIn<SerialIn<decltype(Serial),Serial>::Part> in;//create input object (here serial)
 //------------------------------
 //menu action handlers
 bool tog12();
@@ -83,20 +83,29 @@ bool op2_action() {
 //////////////////////////////////////////////
 // defining static menu
 
+enum MyIds:Idx {
+  id_mainMenu,
+  id1,
+  id2,
+  id3
+};
+
 //the static menu structure
 Item<
+  IdTag<id_mainMenu>::Part,
   StaticMenu<
     FlashText<decltype(mainMenu_title),&mainMenu_title>::Part<>,
     StaticData<
       // Item<Action<op1_action>::Part,EnDis<true>::Part,FlashText<decltype(op1_text),&op1_text>::Part>,
       // Item<Action<op2_action>::Part,EnDis<false>::Part,FlashText<decltype(op2_text),&op2_text>::Part>,
-      Item<Action<tog12>::Part,FlashText<decltype(op3_text),&op3_text>::Part>
+      Item<IdTag<id3>::Part,Action<tog12>::Part,FlashText<decltype(op3_text),&op3_text>::Part>
     >
   >::Part
 > mainMenu;//create menu object
 
 //navigation root ---------------------------------
-StaticNavRoot<Nav<decltype(mainMenu),1>::Part> nav(mainMenu);
+// StaticNavRoot<Nav<decltype(mainMenu),1>::Part> nav(mainMenu);
+StaticNavRoot<IdNav<decltype(mainMenu)>::Part> nav(mainMenu);
 
 //menu action handlers implementation
 bool tog12() {
@@ -111,9 +120,11 @@ void setup() {
   Serial.println(F("AM5 serial example"));
   //now disabled at type definition
   // mainMenu.enable(false,Path<1>().ref());//disable second option
-  nav.print(out);
+  // nav.print(out);
+  nav.template print<Out,id_mainMenu>(out);
 }
 
 void loop() {
-  if (nav.doInput(in)) nav.print(out);
+  // if (nav.doInput(in)) nav.print(out);
+  if (nav.doInput(in)) nav.template print<Out,id_mainMenu>(out);
 }

@@ -149,16 +149,33 @@ namespace Menu {
       else F::changed(o);
     }
 
+    template<Idx i>
+    inline void changed(bool o) {
+      if (F::id(i)) F::changed(o);
+      else tail.template changed<i>(o);
+    }
+
     inline bool enabled(PathRef ref=self,Idx n=0) const {
       if(n) return tail.enabled(ref,--n);
       if (ref) return F::enabled(ref.tail());
       return F::enabled();
     }
 
+    template<Idx i>
+    inline bool enabled() const {
+      return F::id(i)?F::enabled():tail.template enabled<i>();
+    }
+
     inline void enable(bool b,PathRef ref=self,Idx n=0) {
       if(n) tail.enable(b,ref,--n);
       else if (ref) F::enable(b,ref.tail());
-      else F::enable(n);
+      else F::enable(b);
+    }
+
+    template<Idx i>
+    inline void enable(bool b) {
+      if(F::id(i)) F::enable(b);
+      else tail.template enable<i>(b);
     }
 
     inline Idx size(PathRef ref=self,Idx n=0) const {
@@ -167,10 +184,20 @@ namespace Menu {
       return tail.size()+1;
     }
 
+    template<Idx i>
+    inline constexpr Idx size() const {
+      return F::id(i)?size():tail.template size<i>();
+    }
+
     inline bool canNav(PathRef ref=self,Idx n=0) {
       if(n) return tail.canNav(ref,--n);
       if (ref) return F::canNav(ref.tail());
       return F::canNav();
+    }
+
+    template<Idx i>
+    inline constexpr bool canNav() {
+      return F::id(i)?F::canNav():tail.template canNav<i>();
     }
 
     inline bool activate(PathRef ref=self,Idx n=0) {
@@ -180,6 +207,11 @@ namespace Menu {
       return F::activate();
     }
 
+    template<Idx i>
+    inline bool activate() {
+      return F::id(i)?F::activate():tail.template activate<i>();
+    }
+
     template<Cmd c,typename Nav>
     inline bool cmd(Nav& nav,PathRef ref,Idx n) {
       trace(MDO<<"Pair::cmd "<<c<<" ref:"<<ref<<" n:"<<n<<endl);
@@ -187,6 +219,15 @@ namespace Menu {
       if (ref) return F::obj().template cmd<c,Nav>(nav,ref.tail());
       return F::template cmd<c,Nav>(nav);
     }
+
+    template<Cmd c,typename Nav,Idx i>
+    inline bool cmd(Nav& nav) {
+      trace(MDO<<"Pair::cmd "<<c<<" id:"<<o<<endl);
+      return F::id(i)?F::template cmd<c,Nav,i>(nav):tail.template cmd<c,Nav,i>(nav);
+    }
+
+    template<typename Nav,typename Out,Op op=Op::Printing,Idx i>
+    void printMenu(Nav& nav,Out& out);
 
     template<typename Nav,typename Out,Op op=Op::Printing>
     void printMenu(Nav& nav,Out& out,PathRef ref=self,Idx n=0);
@@ -243,6 +284,11 @@ namespace Menu {
           (Base::obj(),nav,out.fullDraw()||!out.isSame(&Base::obj()));
       }
 
+      template<typename Nav,typename Out,Op op=Op::Printing,Idx i>
+      inline void printMenu(Nav& nav,Out& out) {
+        body.template printMenu<Nav,Out,op,i>(nav,out);
+      }
+
       template<typename Nav,typename Out,Op op=Op::Printing>
       inline void printItems(Nav& nav,Out& out,bool fullPrint,Idx idx=0,Idx top=0,PathRef ref=self) {
         trace(MDO<<"StaticMenu::printItems fullPrint:"<<fullPrint<<" out:"<<((long)&out)<<endl);
@@ -265,6 +311,11 @@ namespace Menu {
       inline void print(Nav& nav,Out& out,PathRef ref=self) {
         trace(MDO<<"StaticMenu::print "<<op<<endl);
         title.template print<Nav,Out,op>(nav,out,ref);
+      }
+
+      template<typename Nav,typename Out,Op op=Op::Printing,Idx i>
+      inline void print(Nav& nav,Out& out) {
+        title.template print<Nav,Out,op,i>(nav,out);
       }
     };
   };

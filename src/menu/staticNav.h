@@ -4,6 +4,30 @@
 #include "api.h"
 
 namespace Menu {
+  
+  template<typename I>
+  struct IdNav {
+    template<typename N>
+    struct Part:N {
+      using Data=I;
+      Data& root;
+      inline Part(Data& o):root(o){}
+      template<typename Out,Idx i>
+      inline void printItem(Out& out) {
+        root.template print<typename N::Type,Out,Op::Printing,i>(N::obj(),out);
+      }
+      template<typename Out,Idx i>
+      inline void print(Out& out) {
+        trace(MDO<<"Nav::print"<<endl);
+        root.template printMenu<typename N::Type,Out,Op::Printing,i>(N::obj(),out);
+        if (out.partialDraw()) {
+          trace(MDO<<"Nav::print cleanup!"<<endl);
+          root.template printMenu<typename N::Type,Out,Op::ClearChanges,i>(N::obj(),out);
+        }
+      }
+    };
+  };
+
   template<typename I,Idx max_depth>
   struct Nav {
     template<typename N>

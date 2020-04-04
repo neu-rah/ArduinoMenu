@@ -78,6 +78,14 @@ namespace Menu {
     Idx height;
   };
 
+  template<Idx idTag>
+  struct IdTag {
+    template<typename I> struct Part:I {
+      // static inline constexpr Idx id() {return idTag;}
+      static inline constexpr bool id(Idx tag) {return idTag==tag;}
+    };
+  };
+
   #ifdef MENU_DEBUG
     constexpr const char* roleNames[]{
       "None","Raw","Panel","Menu","Title","Body","Item",

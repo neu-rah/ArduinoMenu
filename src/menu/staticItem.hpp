@@ -2,6 +2,15 @@
 
 namespace Menu {
   template<typename F,typename S>
+  template<typename Nav,typename Out,Op op,Idx i>
+  inline void Pair<F,S>::printMenu(Nav& nav,Out& out) {
+    if (F::id(i)) out.template printMenu
+      <typename F::Type,Nav,op>
+      (F::obj(),nav,op==Op::Printing&&(out.fullDraw()||F::changed()||out.isSame(&F::obj())));
+    else tail.template printMenu<Nav,Out,op,i>(nav,out);
+  }
+
+  template<typename F,typename S>
   template<typename Nav,typename Out,Op op>
   inline void Pair<F,S>::printMenu(Nav& nav,Out& out,PathRef ref,Idx n) {
     trace(MDO<<"Pair::printMenu... "<<ref<<":"<<n<<endl);

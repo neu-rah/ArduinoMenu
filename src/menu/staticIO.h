@@ -90,4 +90,11 @@ namespace Menu {
     using This=StaticMenuOut<O...>;
     using Base::Base;
   };
+
+  template<Expr... O>
+  struct StaticMenuIn:Chain<O...,Quiet>::template To<Obj<StaticMenuIn<O...>>> {
+    using Base=typename Chain<O...,Quiet>::template To<Obj<StaticMenuIn<O...>>>;
+    using This=StaticMenuIn<O...>;
+    using Base::Base;
+  };
 };

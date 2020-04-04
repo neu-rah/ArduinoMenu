@@ -35,27 +35,36 @@ namespace Menu {
     return r<0?r:c;
   }
 
-  struct LinuxKeyIn:None {
-    inline LinuxKeyIn() {set_conio_terminal_mode();}//capture the keyboard
-    inline ~LinuxKeyIn() {reset_terminal_mode();}//capture the keyboard
-    template<typename Nav>
-    inline static bool cmd(Nav& nav) {
-      if (kbhit()) {
-        int k=getch();
-        if (k==27&&kbhit()) k=getch();
-        switch(k) {
-          case 91:break;
-          case 66: return nav.template cmd<Cmd::Up>();
-          case 65: return nav.template cmd<Cmd::Down>();
-          case 13:case 67: return nav.template cmd<Cmd::Enter>();
-          case 27:case 68: return nav.template cmd<Cmd::Esc>();
-          case 3://handle ctrl+c within the capturewd keyboard
-            reset_terminal_mode();
-            exit(0);
-          default:break;
+  struct LinuxKeyIn {
+    template<typename In=None>
+    struct Part:In {
+      inline LinuxKeyIn() {set_conio_terminal_mode();}//capture the keyboard
+      inline ~LinuxKeyIn() {reset_terminal_mode();}//capture the keyboard
+      template<typename Nav>
+      inline static bool cmd(Nav& nav) {
+        if (kbhit()) {
+          int k=getch();
+          if(isdigit(k)) {
+            Idx id=0;
+            while().... //TODO: implement an integer parser here!
+            //well for this to be a composition we gota separate the input reader!
+            // and for that every reader must be a composition top.
+
+          } else if (k==27&&kbhit()) k=getch();
+          switch(k) {
+            case 91:break;
+            case 66: return nav.template cmd<Cmd::Up>();
+            case 65: return nav.template cmd<Cmd::Down>();
+            case 13:case 67: return nav.template cmd<Cmd::Enter>();
+            case 27:case 68: return nav.template cmd<Cmd::Esc>();
+            case 3://handle ctrl+c within the capturewd keyboard
+              reset_terminal_mode();
+              exit(0);
+            default:break;
+          }
         }
+        return false;
       }
-      return false;
-    }
+    };
   };
 };

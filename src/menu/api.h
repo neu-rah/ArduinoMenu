@@ -8,6 +8,13 @@ namespace Menu {
   struct Nil {};
 
   ////////////////////////////////////////////////////////////////////////////////
+  //basic input, just be quiet
+  template<typename In>
+  struct Quiet:In {
+    template<typename Nav> inline static bool cmd(Nav& nav) {return false;}
+  };
+
+  ////////////////////////////////////////////////////////////////////////////////
   //basic output, just ignore the output
   template<typename O>
   struct Void:O {
@@ -136,21 +143,22 @@ namespace Menu {
     inline static Idx pos() {return 0;}
     inline static bool selected(Idx) {return false;}
     inline Mode mode() const {return Mode::Normal;}
-    inline static void cmd(Cmd) {}
+    template<Cmd c> inline static bool _cmd() {return false;}
+    template<Cmd c> inline static bool cmd() {return false;}
     inline static void up(Cmd) {}
     inline static void down(Cmd) {}
     inline static void enter(Cmd) {}
     inline static void esc(Cmd) {}
     template<typename In>
-    inline bool doInput(In& in) {
-      return in.cmd(N::obj());
-    }
+    inline bool doInput(In& in) {return in.cmd(N::obj());}
   };
 
   ////////////////////////////////////////////////////////////////////////////////
   // menu items base
   template<typename I>
   struct Empty:I {
+
+    static inline constexpr bool id(Idx tag) {return false;}
 
     inline static constexpr bool canNav(PathRef=self,Idx=0) {return false;}
 
@@ -171,8 +179,11 @@ namespace Menu {
       trace(MDO<<"Empty::printItems "<<ref<<":"<<n<<endl);
     }
 
+    template<typename Nav,typename Out,Op op=Op::Printing,Idx i>
+    inline static void printMenu(Nav& nav,Out& out) {}
+
     template<typename Nav,typename Out,Op op=Op::Printing>
-    inline void printMenu(Nav& nav,Out& out,PathRef ref=self,Idx n=0) {
+    inline static void printMenu(Nav& nav,Out& out,PathRef ref=self,Idx n=0) {
       trace(MDO<<"Empty::printMenu "<<ref<<":"<<n<<" printing parent"<<endl);
     }
 
