@@ -1,3 +1,9 @@
+#COVID-19 note
+
+**If you need this menu for any device covid-19 related, be my guest, I grant you free usage even if you going to sell the device**
+
+This menu system has the advantage of being long tested and supporting many interface devices so that makes don't be restricted in hardware.
+
 # ArduinoMenu 4
 
 **Generic menu/interactivity system for the arduino framework**
