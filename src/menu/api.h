@@ -11,7 +11,7 @@ namespace Menu {
   //basic input, just be quiet
   template<typename In>
   struct Quiet:In {
-    template<typename Nav> inline static bool cmd(Nav& nav) {return false;}
+    template<typename Nav> inline static bool cmd(Nav&,int) {return false;}
   };
 
   ////////////////////////////////////////////////////////////////////////////////

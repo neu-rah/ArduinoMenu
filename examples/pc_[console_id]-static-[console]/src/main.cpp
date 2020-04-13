@@ -113,7 +113,7 @@ StaticMenuOut<
 StaticNavRoot<IdNav<decltype(mainMenu)>::Part> nav(mainMenu);
 
 //menu input --------------------------------------
-LinuxKeyIn in;
+LinuxKeyIn<PCArrows::Part> in;
 
 bool tog12() {
   _trace(MDO<<"Toggle Enable/Disable of options 1 and 2"<<endl);
@@ -123,10 +123,10 @@ bool tog12() {
 }
 
 int main() {
-  nav.template print<Out,id_mainMenu>(out);
+  nav.template print<decltype(out),id_mainMenu>(out);
   while(running) {
     if (nav.doInput(in)) {
-      nav.print(out);
+      nav.template print<decltype(out),id_mainMenu>(out);
       out.nl();
     }
     cout.flush();

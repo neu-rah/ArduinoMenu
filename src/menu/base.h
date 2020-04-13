@@ -30,6 +30,13 @@ namespace Menu {
   //edit modes
   enum class Mode {Normal,Edit,Tune};
 
+  //activation result
+  enum class ActRes {
+    Stay,//nav state remains unchanged
+    Open,//open the item
+    Close,//close current item
+  };
+
   //formating parts/roles
   enum class Tag:int {
     None=0<<0,

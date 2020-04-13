@@ -96,8 +96,8 @@ Item<
   StaticMenu<
     FlashText<decltype(mainMenu_title),&mainMenu_title>::Part<>,
     StaticData<
-      // Item<Action<op1_action>::Part,EnDis<true>::Part,FlashText<decltype(op1_text),&op1_text>::Part>,
-      // Item<Action<op2_action>::Part,EnDis<false>::Part,FlashText<decltype(op2_text),&op2_text>::Part>,
+      Item<IdTag<id1>::Part,Action<op1_action>::Part,EnDis<true>::Part,FlashText<decltype(op1_text),&op1_text>::Part>,
+      Item<IdTag<id2>::Part,Action<op2_action>::Part,EnDis<false>::Part,FlashText<decltype(op2_text),&op2_text>::Part>,
       Item<IdTag<id3>::Part,Action<tog12>::Part,FlashText<decltype(op3_text),&op3_text>::Part>
     >
   >::Part
