@@ -122,7 +122,9 @@ bool tog12() {
   return true;
 }
 
+auto dis1=API::Enable<false>();
 int main() {
+  mainMenu.body.walkId<decltype(dis1),dis1,id1>();
   nav.print(out);
   // nav.template print<decltype(out),id_mainMenu>(out);
   while(running) {

@@ -148,6 +148,12 @@ namespace Menu {
       template<typename At>
       inline Result call(At& at) {return at.template cmd<c,Nav>(nav);}
     };
+    template<bool b>
+    struct Enable {
+      using Result=void;
+      template<typename At>
+      inline Result call(At& at) {at.enable(b);}
+    };
   };
 
   template<typename F,typename S=Empty<Nil>>
@@ -160,7 +166,7 @@ namespace Menu {
 
     template<typename A,A& api,Idx i>
     typename A::Result walkId() {
-      return F::id(i)?api.template call<F>(*this):tail.template idWalk<A,api,i>();
+      return F::id(i)?api.template call<F>(*this):tail.template walkId<A,api,i>();
     }
 
     template<typename A,A& api>
