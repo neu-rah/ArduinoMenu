@@ -157,7 +157,7 @@ namespace Menu {
   // menu items base
   template<typename I>
   struct Empty:I {
-    template<typename A,A& api,Idx i> typename A::Result walkId() {api.call(*this);}
+    template<typename A,Idx i> typename A::Result walkId(A& api) {api.call(*this);}
 
     static inline constexpr bool id(Idx tag) {return false;}
 

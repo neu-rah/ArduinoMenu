@@ -154,6 +154,12 @@ namespace Menu {
       template<typename At>
       inline Result call(At& at) {at.enable(b);}
     };
+    template<bool b>
+    struct Changed {
+      using Result=void;
+      template<typename At>
+      inline Result call(At& at) {at.changed(b);}
+    };
   };
 
   template<typename F,typename S=Empty<Nil>>
@@ -164,17 +170,17 @@ namespace Menu {
     S tail;
     using F::changed;
 
-    template<typename A,A& api,Idx i>
-    typename A::Result walkId() {
-      return F::id(i)?api.template call<F>(*this):tail.template walkId<A,api,i>();
+    template<typename A,Idx i>
+    typename A::Result walkId(A& api) {
+      return F::id(i)?api.template call<F>(*this):tail.template walkId<A,i>(api);
     }
 
-    template<typename A,A& api>
-    typename A::Result walkPath(PathRef ref,Idx n) {
-      if (n) return tail.template walkPath<A,api>(ref,n-1);
-      if (ref) return F::obj().template walkPath<A,api>(ref.tail());
-      return api.template call<F>(*this);
-    }
+    // template<typename A,A& api>
+    // typename A::Result walkPath(PathRef ref,Idx n) {
+    //   if (n) return tail.template walkPath<A,api>(ref,n-1);
+    //   if (ref) return F::obj().template walkPath<A,api>(ref.tail());
+    //   return api.template call<F>(*this);
+    // }
 
     template<typename A,A& api,PathRef& ref,Idx n=0>
     typename A::Result walkPath() {
