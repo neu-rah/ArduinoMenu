@@ -141,10 +141,14 @@ namespace Menu {
     using Base::Base;
   };
 
-  // struct API {
-  //   template<typename At,Cmd c,typename Nav,Nav& nav>
-  //   inline bool cmd(At& at) {return at.template cmd<c,Nav>(nav);}
-  // };
+  struct API {
+    template<Cmd c,typename Nav,Nav& nav>
+    struct Cmd {
+      using Result=bool;
+      template<typename At>
+      inline Result call(At& at) {return at.template cmd<c,Nav>(nav);}
+    };
+  };
 
   template<typename F,typename S=Empty<Nil>>
   struct Pair:F {
@@ -154,10 +158,24 @@ namespace Menu {
     S tail;
     using F::changed;
 
-    // template<API& api,Idx i>
-    // bool walkId() {
-    //   return F::id(i)?api.cmd<F,c,Nav>(*this):tail.template idWalk<c,Nav,i>(nav);
-    // }
+    template<typename A,A& api,Idx i>
+    typename A::Result walkId() {
+      return F::id(i)?api.template call<F>(*this):tail.template idWalk<A,api,i>();
+    }
+
+    template<typename A,A& api>
+    typename A::Result walkPath(PathRef ref,Idx n) {
+      if (n) return tail.template walkPath<A,api>(ref,n-1);
+      if (ref) return F::obj().template walkPath<A,api>(ref.tail());
+      return api.template call<F>(*this);
+    }
+
+    template<typename A,A& api,PathRef& ref,Idx n=0>
+    typename A::Result walkPath() {
+      if (n) return tail.template walkPath<A,api,ref,n-1>();
+      if (ref) return F::obj().template walkPath<A,api,ref.tail()>();
+      return api.template call<F>(*this);
+    }
 
     template<Cmd c,typename Nav>
     inline bool cmd(Nav& nav,PathRef ref,Idx n) {
