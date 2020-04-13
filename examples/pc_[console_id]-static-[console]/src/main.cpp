@@ -109,8 +109,8 @@ StaticMenuOut<
   TextMeasure<>::Part//default monometric text measure
 > out;
 
-// StaticNavRoot<Nav<MainMenu,3>::Part> nav(mainMenu);
-StaticNavRoot<IdNav<decltype(mainMenu)>::Part> nav(mainMenu);
+StaticNavRoot<Nav<MainMenu,3>::Part> nav(mainMenu);
+// StaticNavRoot<IdNav<decltype(mainMenu)>::Part> nav(mainMenu);
 
 //menu input --------------------------------------
 LinuxKeyIn<PCArrows::Part> in;
@@ -123,10 +123,12 @@ bool tog12() {
 }
 
 int main() {
-  nav.template print<decltype(out),id_mainMenu>(out);
+  nav.print(out);
+  // nav.template print<decltype(out),id_mainMenu>(out);
   while(running) {
     if (nav.doInput(in)) {
-      nav.template print<decltype(out),id_mainMenu>(out);
+      nav.print(out);
+      // nav.template print<decltype(out),id_mainMenu>(out);
       out.nl();
     }
     cout.flush();

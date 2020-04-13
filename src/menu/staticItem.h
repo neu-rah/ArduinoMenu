@@ -43,7 +43,12 @@ namespace Menu {
       using Base=I;
       using I::I;
       using This=Action<act>::Part<I>;
-      inline static bool activate(PathRef ref=self) {return ref?false:act();}
+      inline static ActRes activate(PathRef ref=self) {
+        return ref?
+          ActRes::Close:act()?
+            (I::canNav()?ActRes::Open:ActRes::Stay):
+            (I::canNav()?ActRes::Stay:ActRes::Close);
+      }
     };
   };
 
@@ -260,7 +265,7 @@ namespace Menu {
       inline void enable(bool b,PathRef ref=self) {if(ref) body.enable(b,ref,ref.head()); else Base::enable(b);}
       inline size_t size(PathRef ref=self) const {return ref?body.size(ref,ref.head()):body.size();}
       inline bool canNav(PathRef ref=self) {return ref?body.canNav(ref,ref.head()):true;}
-      inline bool activate(PathRef ref=self) {return ref?body.activate(ref,ref.head()):enabled();}
+      inline ActRes activate(PathRef ref=self) {return ref?body.activate(ref,ref.head()):enabled()?ActRes::Open:ActRes::Stay;}
       inline bool parentPrint(PathRef ref=self) {return ref?body.parentPrint(ref,ref.head()):false;}
 
       using Base::changed;

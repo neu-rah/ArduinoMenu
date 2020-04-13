@@ -26,8 +26,8 @@ namespace Menu {
       using I::parentDraw;
       inline static constexpr bool parentDraw(Idx=0) {return true;}
       using I::activate;
-      inline static bool activate() {return true;}
-      inline static bool activate(Ref,Idx) {return activate();}
+      inline static ActRes activate() {return ActRes::Open;}
+      inline static ActRes activate(Ref,Idx) {return activate();}
       // using I::printItem
       // template<typename It,typename Out,Tag role=Tag::Raw,bool toPrint=true>
       // inline void printItem(It& it,Out& out,Idx n=0,bool s=false,bool e=true,Mode m=Mode::Normal) {

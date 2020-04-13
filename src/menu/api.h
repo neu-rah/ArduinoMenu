@@ -195,7 +195,7 @@ namespace Menu {
     inline static void changed(Idx,bool o) {}
     // inline static void changed(Idx i,bool o,PathRef ref,Idx n) {}
 
-    inline static constexpr bool activate(PathRef=self,Idx=0) {return false;}
+    inline static constexpr ActRes activate(PathRef=self,Idx=0) {return ActRes::Close;}
 
     template<typename Nav> inline void up(Nav& nav) {nav._up();}
     template<typename Nav> inline void down(Nav& nav) {nav._down();}

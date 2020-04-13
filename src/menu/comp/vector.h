@@ -38,11 +38,11 @@ namespace Menu {
         return ref?vector<IItem*>::operator[](ref.head())->size(ref.tail()):vector<IItem*>::size();
       }
 
-      inline bool activate(PathRef ref=self) {
+      inline ActRes activate(PathRef ref=self) {
         trace(MDO<<"StdVectorMenu::activate "<<ref<<endl);
         if(ref.len==1)
-          return operator[](ref.head())->enabled()?operator[](ref.head())->activate():false;
-        return ref?operator[](ref.head())->activate(ref.tail()):true;
+          return operator[](ref.head())->enabled()?operator[](ref.head())->activate():ActRes::Stay;
+        return ref?operator[](ref.head())->activate(ref.tail()):ActRes::Open;
       }
 
       template<typename Nav,typename Out,Op op=Op::Printing>

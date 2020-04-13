@@ -4,7 +4,7 @@
 #include "api.h"
 
 namespace Menu {
-  
+
   template<typename I>
   struct IdNav {
     template<typename N>
@@ -105,11 +105,13 @@ namespace Menu {
 
       inline void _enter() {
         trace(MDO<<"enter->sending activate "<<(PathRef)*this<<endl);
-        bool n=root.canNav(*this);//TODO: check this on activate! => can not, we double check it
-        bool r=root.activate(*this);
-        trace(MDO<<"canNav:"<<n<<" activated:"<<r<<endl);
-        trace(MDO<<"!(n^r):"<<(!(n^r))<<endl);
-        if (!(n^r)) n?open():close();
+        // bool n=root.canNav(*this);//TODO: check this on activate! => can not, we double check it
+        ActRes r=root.activate(*this);
+        // trace(MDO<<"canNav:"<<n<<" activated:"<<r<<endl);
+        // trace(MDO<<"!(n^r):"<<(!(n^r))<<endl);
+        if(r==ActRes::Open) open();
+        else if(r==ActRes::Close) close();
+        // if (!(n^r)) n?open():close();
       }
 
       inline void _esc() {close();}

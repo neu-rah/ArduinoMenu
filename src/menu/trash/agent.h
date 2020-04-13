@@ -12,7 +12,7 @@ struct Rookie {
   virtual bool enabled()=0;
   virtual bool canNav()=0;
   virtual bool isMenu()=0;
-  virtual bool activate()=0;
+  virtual ActRes activate()=0;
   virtual bool parentDraw()=0;
   virtual bool changed()=0;
   virtual void changed(bool)=0;

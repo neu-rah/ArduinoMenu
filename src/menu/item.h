@@ -7,7 +7,7 @@ namespace Menu {
   struct IItem {
     virtual inline size_t size(PathRef=self)=0;
     virtual inline size_t canNav(PathRef=self)=0;
-    virtual inline bool activate(PathRef ref=self)=0;
+    virtual inline ActRes activate(PathRef ref=self)=0;
     virtual inline void printMenu(INav& nav,IOut& out,Op op=Op::Printing,PathRef=self)=0;
     virtual inline void printTitle(INav& nav,IOut& out,bool fullPrint,Op op=Op::Printing)=0;
     virtual inline void printItems(INav&,IOut&,bool fullPrint,Idx=0,Idx=0,PathRef=self,Op op=Op::Printing)=0;
@@ -47,7 +47,7 @@ namespace Menu {
     using Base::cmd;
     inline size_t size(PathRef ref=self) override {return Base::size(ref);}
     inline size_t canNav(PathRef ref=self) override {return Base::canNav(ref);}
-    inline bool activate(PathRef ref=self) override {return Base::activate(ref);}
+    inline ActRes activate(PathRef ref=self) override {return Base::activate(ref);}
     inline void printMenu(INav& nav,IOut& out,Op op=Op::Printing,PathRef ref=self) override;
     inline void printTitle(INav& nav,IOut& out,bool fullPrint,Op op=Op::Printing) override;
     inline void printItems(INav& nav,IOut& out,bool fullPrint,Idx idx=0,Idx top=0,PathRef ref=self,Op op=Op::Printing) override;
