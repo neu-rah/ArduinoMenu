@@ -47,10 +47,14 @@ namespace Menu {
       template<typename Out>
       inline void print(Out& out) {
         trace(MDO<<"Nav::print"<<endl);
-        root.template printMenu<typename N::Type,Out,Op::Printing>(N::obj(),out,*this);
+        auto printMenu=typename API::template PrintMenu<typename N::Type,Out,Op::Printing>(N::obj(),out);
+        root.walkPath(printMenu,operator PathRef());
+        // root.template printMenu<typename N::Type,Out,Op::Printing>(N::obj(),out,*this);
         if (out.partialDraw()) {
           trace(MDO<<"Nav::print cleanup!"<<endl);
-          root.template printMenu<typename N::Type,Out,Op::ClearChanges>(N::obj(),out,*this);
+          auto clear=typename API::template PrintMenu<typename N::Type,Out,Op::ClearChanges>(N::obj(),out);
+          root.walkPath(clear,*this);
+          // root.template printMenu<typename N::Type,Out,Op::ClearChanges>(N::obj(),out,*this);
         }
       }
       // template<typename Out>
@@ -72,12 +76,17 @@ namespace Menu {
       inline void close() {if(level>0) path[level--]=0;
       }
       inline size_t size() const {return root.size(*this);}
-      inline size_t size(PathRef ref) const {return root.size(ref);}
+      inline size_t size(PathRef ref) const {
+        auto sizeCall=API::Size();
+        return root.walkPath(sizeCall,*this);
+      }
 
       template<Cmd c>
       inline bool cmd() {
         trace(MDO<<"Nav::cmd "<<c<<" path:"<<((PathRef)*this)<<endl);
-        return root.template cmd<c,typename N::Type>(N::obj(),*this);
+        auto api=typename API::Cmd<c,This>(*this);
+        // return root.template cmd<c,typename N::Type>(N::obj(),*this);
+        return root.walkPath(api,*this);
       }
 
       inline void up()    {cmd<Cmd::Up>();}
@@ -106,7 +115,9 @@ namespace Menu {
       inline void _enter() {
         trace(MDO<<"enter->sending activate "<<(PathRef)*this<<endl);
         // bool n=root.canNav(*this);//TODO: check this on activate! => can not, we double check it
-        ActRes r=root.activate(*this);
+        auto actCall=API::Activate();
+        ActRes r=root.walkPath(actCall,*this);
+        // ActRes r=root.activate(*this);
         // trace(MDO<<"canNav:"<<n<<" activated:"<<r<<endl);
         // trace(MDO<<"!(n^r):"<<(!(n^r))<<endl);
         if(r==ActRes::Open) open();

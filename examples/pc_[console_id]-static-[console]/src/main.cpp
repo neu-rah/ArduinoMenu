@@ -18,7 +18,7 @@ bool quit() {
   running=false;
   return true;
 }
-bool tog12();//implemented later because we need to access mainMenu
+// bool tog12();//implemented later because we need to access mainMenu
 
 bool op1_action() {
   cout<<"Option 1 action called!"<<endl;
@@ -67,26 +67,26 @@ using MainMenu=Item<
     Item<StaticText<&mainText>::Part,Mutable::Part>,
     StaticData<
       Item<IdTag<id1>::Part,Action<op1_action>::Part,EnDis<>::Part,StaticText<&op1_text>::Part,Mutable::Part>,
-      Item<IdTag<id2>::Part,Action<op2_action>::Part,EnDis<false>::Part,StaticText<&op2_text>::Part,Mutable::Part>,
-      Item<IdTag<id3>::Part,Action<tog12>::Part,StaticText<&tog12_text>::Part,Mutable::Part>,
-      Item< //compose a field with a label, an edit cursor and an unit
-        AsName<StaticText<&max_temp_label>::Part>::Part,//(As) name format apply only to inner content
-        WrapMode<>::Part,//(Wrap) mode format, starts here and gores to end of remaining content
-        StaticNumField<int,max_temp,10,99,10,1>::Part,//the numeric field
-        AsUnit<StaticText<&max_temp_unit>::Part>::Part,//name format apply only to inner content
-        Mutable::Part //track changes
-      >,
-      Item<StaticText<&opn_text>::Part,Mutable::Part>,
-      Item<
-        StaticMenu<
-          Item<StaticText<&subText>::Part,Mutable::Part>,
-          StaticData<
-            Item<Action<sub_action>::Part,StaticText<&sub1_text>::Part,Mutable::Part>,
-            Item<Action<sub_action>::Part,StaticText<&sub2_text>::Part,Mutable::Part>,
-            Item<StaticText<&exit_text>::Part,Mutable::Part>
-          >
-        >::Part
-      >,
+      // Item<IdTag<id2>::Part,Action<op2_action>::Part,EnDis<false>::Part,StaticText<&op2_text>::Part,Mutable::Part>,
+      // Item<IdTag<id3>::Part,Action<tog12>::Part,StaticText<&tog12_text>::Part,Mutable::Part>,
+      // Item< //compose a field with a label, an edit cursor and an unit
+      //   AsName<StaticText<&max_temp_label>::Part>::Part,//(As) name format apply only to inner content
+      //   WrapMode<>::Part,//(Wrap) mode format, starts here and gores to end of remaining content
+      //   StaticNumField<int,max_temp,10,99,10,1>::Part,//the numeric field
+      //   AsUnit<StaticText<&max_temp_unit>::Part>::Part,//name format apply only to inner content
+      //   Mutable::Part //track changes
+      // >,
+      // Item<StaticText<&opn_text>::Part,Mutable::Part>,
+      // Item<
+      //   StaticMenu<
+      //     Item<StaticText<&subText>::Part,Mutable::Part>,
+      //     StaticData<
+      //       Item<Action<sub_action>::Part,StaticText<&sub1_text>::Part,Mutable::Part>,
+      //       Item<Action<sub_action>::Part,StaticText<&sub2_text>::Part,Mutable::Part>,
+      //       Item<StaticText<&exit_text>::Part,Mutable::Part>
+      //     >
+      //   >::Part
+      // >,
       Item<Action<quit>::Part,StaticText<&quit_text>::Part,Mutable::Part>
     >
   >::Part
@@ -115,12 +115,12 @@ StaticNavRoot<Nav<MainMenu,3>::Part> nav(mainMenu);
 //menu input --------------------------------------
 LinuxKeyIn<PCArrows::Part> in;
 
-bool tog12() {
-  _trace(MDO<<"Toggle Enable/Disable of options 1 and 2"<<endl);
-  mainMenu.enable(!mainMenu.enabled(Path<0>().ref()),Path<0>().ref());
-  mainMenu.enable(!mainMenu.enabled(Path<1>().ref()),Path<1>().ref());
-  return true;
-}
+// bool tog12() {
+//   _trace(MDO<<"Toggle Enable/Disable of options 1 and 2"<<endl);
+//   mainMenu.enable(!mainMenu.enabled(Path<0>().ref()),Path<0>().ref());
+//   mainMenu.enable(!mainMenu.enabled(Path<1>().ref()),Path<1>().ref());
+//   return true;
+// }
 
 int main() {
   auto dis1=API::Enable<false>();
