@@ -158,12 +158,18 @@ namespace Menu {
     typename A::Result walkPath(A& api,PathRef ref,Idx n) {
       if (n) return tail.template walkPath<A>(api,ref,n-1);
       if (ref) return F::obj().template walkPath<A>(api,ref.tail(),ref.head());
-      return api.template call<F>(*this);
+      return api.template call<F>(*this,ref.head());
     }
 
     inline constexpr size_t size() const {return tail.size()+1;}
     using F::parentPrint;
     inline bool parentPrint(Idx n) {return n?tail.parentPrint(n-1):F::parentPrint();}
+
+    template<Cmd c,typename Nav>
+    inline bool cmd(Nav& nav,Idx n=0) {
+      if(n) return tail.template cmd<c,Nav>(nav,n-1);
+      return F::template cmd<c,Nav>(nav);
+    }
 
     // template<Cmd c,typename Nav>
     // inline bool cmd(Nav& nav,PathRef ref,Idx n) {
@@ -179,10 +185,10 @@ namespace Menu {
     //   return F::id(i)?F::template cmd<c,Nav>(nav):tail.template cmd<c,Nav,i>(nav);
     // }
     //
-    // inline void changed(Idx i,bool o) {
-    //   if (i) tail.changed(i-1,o);
-    //   else F::changed(o);
-    // }
+    inline void changed(Idx i,bool o) {
+      if (i) tail.changed(i-1,o);
+      else F::changed(o);
+    }
     //
     // template<Idx i>
     // inline void changed(bool o) {
@@ -286,7 +292,7 @@ namespace Menu {
       typename A::Result walkPath(A& api,PathRef ref) {
         return api.chk(*this,ref)?
           body.template walkPath<A>(api,ref,ref.head()):
-          api.call(*this);
+          api.call(*this,ref.head());
       }
 
       // inline bool enabled(PathRef ref=self) const {return ref?body.enabled(ref,ref.head()):Base::enabled();}
@@ -303,9 +309,21 @@ namespace Menu {
 
       using Base::changed;
       // inline void changed(Idx i,bool o,PathRef ref) {body.changed(i,o,ref);}
-      // inline void changed(Idx i,bool o) {
-      //   trace(MDO<<"StaticMenu::changed("<<i<<","<<o<<")"<<endl);
-      //   body.changed(i,o);}
+      inline void changed(Idx i,bool o) {
+        trace(MDO<<"StaticMenu::changed("<<i<<","<<o<<")"<<endl);
+        body.changed(i,o);}
+
+      template<Cmd c,typename Nav>
+      inline bool cmd(Nav& nav,Idx n) {
+        _trace(MDO<<"StaticMenu::cmd "<<c<<endl);
+        Idx p=nav.pos();
+        bool res=body.template cmd<c,Nav>(nav,n);
+        if(p!=nav.pos()) {
+          changed(p,true);
+          changed(nav.pos(),true);
+        }
+        return res;
+      }
 
       // template<Cmd c,typename Nav>
       // inline bool cmd(Nav& nav,PathRef ref=self) {

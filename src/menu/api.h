@@ -22,49 +22,55 @@ namespace Menu {
       Nav& nav;
       inline Cmd(Nav& nav):nav(nav){}
       template<typename At>
-      inline Result call(At& at) {return at.template cmd<c,Nav>(nav);}
+      inline static bool chk(At&,PathRef ref) {return ref.len!=1;}
+      template<typename At>
+      inline Result call(At& at,Idx n=0) {return at.template cmd<c,Nav>(nav,n);}
       _trace(static constexpr const char* name="Cmd");
     };
     template<bool b> struct Enable:APICall<Enable<b>> {
       using Result=void;
       template<typename At>
-      inline static Result call(At& at) {at.enable(b);}
+      inline static Result call(At& at,Idx n=0) {at.enable(b);}
       _trace(static constexpr const char* name="Enable");
     };
     template<bool b> struct Changed:APICall<Changed<b>> {
       using Result=void;
       template<typename At>
-      inline static Result call(At& at) {at.changed(b);}
+      inline static Result call(At& at,Idx n=0) {at.changed(b);}
       _trace(static constexpr const char* name="Changed");
     };
     struct Enabled:APICall<Enabled> {
       using Result=bool;
       template<typename At>
-      inline static Result call(At& at) {return at.enabled();}
+      inline static Result call(At& at,Idx n=0) {return at.enabled();}
       _trace(static constexpr const char* name="Enabled");
     };
     struct Size:APICall<Size> {
       using Result=Idx;
       template<typename At>
-      inline static Result call(At& at) {return at.size();}
+      inline static bool chk(At& at,PathRef ref) {
+        return ref.len>1;
+      }
+      template<typename At>
+      inline static Result call(At& at,Idx n=0) {return at.size();}
       _trace(static constexpr const char* name="Size");
     };
     struct CanNav:APICall<CanNav> {
       using Result=bool;
       template<typename At>
-      inline static Result call(At& at) {return at.canNav();}
+      inline static Result call(At& at,Idx n=0) {return at.canNav();}
       _trace(static constexpr const char* name="CanNav");
     };
     struct ParentPrint:APICall<ParentPrint> {
       using Result=bool;
       template<typename At>
-      inline static Result call(At& at) {return at.parentPrint();}
+      inline static Result call(At& at,Idx n=0) {return at.parentPrint();}
       _trace(static constexpr const char* name="ParentPrint");
     };
     struct Activate:APICall<Activate> {
       using Result=ActRes;
       template<typename At>
-      inline static Result call(At& at) {return at.activate();}
+      inline static Result call(At& at,Idx n=0) {return at.activate();}
       _trace(static constexpr const char* name="Activate");
     };
     template<typename Nav,typename Out,Op op=Op::Printing>
@@ -78,7 +84,7 @@ namespace Menu {
         return !(ref.len==1&&at.parentPrint(ref.head()));
       }
       template<typename At>
-      inline Result call(At& at) {
+      inline Result call(At& at,Idx n=0) {
         at.template printMenu<Nav,Out,op>(nav,out);
       }
       _trace(static constexpr const char* name="PrintMenu");
@@ -94,7 +100,7 @@ namespace Menu {
       inline PrintItems(Nav& nav,Out& out,bool fullPrint,Idx idx=0,Idx top=0)
         :nav(nav),out(out),fullPrint(fullPrint),idx(idx),top(top) {}
       template<typename At>
-      inline Result call(At& at) {
+      inline Result call(At& at,Idx n=0) {
         at.template printItems<Nav,Out,op>(nav,out,fullPrint,idx,top);
       }
       _trace(static constexpr const char* name="PrintItems");
@@ -107,7 +113,7 @@ namespace Menu {
       bool fullPrint;
       inline PrintTitle(Nav& nav,Out& out,bool fullPrint):nav(nav),out(out),fullPrint(fullPrint) {}
       template<typename At>
-      inline Result call(At& at) {
+      inline Result call(At& at,Idx n=0) {
         at.template printTitle<Nav,Out,op>(nav,out,fullPrint);
       }
       _trace(static constexpr const char* name="PrintTitle");
@@ -119,7 +125,7 @@ namespace Menu {
       Out& out;
       inline Print(Nav& nav,Out& out) {}
       template<typename At>
-      inline Result call(At& at) {
+      inline Result call(At& at,Idx n=0) {
         at.template print<Nav,Out,op>(nav,out);
       }
       _trace(static constexpr const char* name="Print");
@@ -325,7 +331,7 @@ namespace Menu {
     inline static void enable(bool) {}
     inline static constexpr bool changed() {return true;}
     inline static void changed(bool o) {}
-    // inline static void changed(Idx,bool o) {}
+    inline static void changed(Idx,bool o) {}
     // // inline static void changed(Idx i,bool o,PathRef ref,Idx n) {}
     //
     inline static constexpr ActRes activate() {return ActRes::Close;}
@@ -337,7 +343,7 @@ namespace Menu {
     template<typename Nav> inline void esc(Nav& nav) {nav._esc();}
 
     template<Cmd c,typename Nav>
-    inline bool cmd(Nav& nav) {return nav.template _cmd<c>();}
+    inline bool cmd(Nav& nav,Idx=0) {return nav.template _cmd<c>();}
 
     // template<Cmd c,typename Nav>
     // inline bool cmd(Nav& nav,PathRef=self,Idx=0) {return nav.template _cmd<c>();}

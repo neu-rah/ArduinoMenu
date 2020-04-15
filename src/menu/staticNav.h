@@ -83,7 +83,7 @@ namespace Menu {
 
       template<Cmd c>
       inline bool cmd() {
-        trace(MDO<<"Nav::cmd "<<c<<" path:"<<((PathRef)*this)<<endl);
+        _trace(MDO<<"Nav::cmd "<<c<<" path:"<<((PathRef)*this)<<endl);
         auto api=typename API::Cmd<c,This>(*this);
         // return root.template cmd<c,typename N::Type>(N::obj(),*this);
         return root.walkPath(api,*this);
@@ -107,7 +107,7 @@ namespace Menu {
       }
 
       inline void _up() {
-        trace(MDO<<"pos:"<<pos()<<" size:"<<size(parent())<<endl);
+        _trace(MDO<<"pos:"<<pos()<<" size:"<<size(parent())<<endl);
         if(((size_t)pos()+1)<size(parent())) setPos(pos()+1);}
 
       inline void _down() {if(pos()>0) setPos(pos()-1);}

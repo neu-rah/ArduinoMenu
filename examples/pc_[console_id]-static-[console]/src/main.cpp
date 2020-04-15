@@ -18,6 +18,7 @@ bool quit() {
   running=false;
   return true;
 }
+
 // bool tog12();//implemented later because we need to access mainMenu
 
 bool op1_action() {
@@ -125,6 +126,9 @@ LinuxKeyIn<PCArrows::Part> in;
 int main() {
   auto dis1=API::Enable<false>();
   mainMenu.body.walkId<decltype(dis1),id1>(dis1);
+  auto sizeCall=API::Size();
+  Idx sz=mainMenu.walkPath(sizeCall,nav);
+  _trace(cout<<"main menu size:"<<sz<<endl);
   nav.print(out);
   while(running) {
     if (nav.doInput(in)) {
