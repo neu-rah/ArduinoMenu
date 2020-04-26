@@ -8,7 +8,7 @@ This menu system has the advantage of being long tested and supporting many inte
 
 **Generic menu/interactivity system for the arduino framework**
 
-[![License: LGPL-2.1+](https://img.shields.io/badge/License-LGPL-2.1+-lightgrey.svg)](https://spdx.org/licenses/LGPL-2.1-or-later.html)
+[![License: LGPL-2.1+](https://img.shields.io/badge/License%20LGPL-2.1+-lightgrey.svg)](https://spdx.org/licenses/LGPL-2.1-or-later.html)
 [![Build Status](https://travis-ci.org/neu-rah/ArduinoMenu.svg?branch=master)](https://travis-ci.org/neu-rah/ArduinoMenu)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/ruihfazevedo)
 [![Join Gitter](https://img.shields.io/badge/GITTER-join%20chat-green.svg)](https://gitter.im/ArduinoMenu/Lobby)
