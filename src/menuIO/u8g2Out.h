@@ -71,7 +71,7 @@ namespace Menu {
 			void clearLine(idx_t ln,idx_t panelNr=0,colorDefs color=bgColor,bool selected=false,status stat=enabledStatus,bool edit=false) override {
 				const panel p=panels[panelNr];
 				setColor(color,selected,stat,edit);
-				gfx.drawBox(p.x*resX + offsetX - 1,(p.y+ln)*resY + offsetY /*- fontMarginY*/,maxX()*resX /*+ fontMarginY*/ /*+ fontMarginY*/,resY /*+ fontMarginY*/ /*+ fontMarginY*/);
+				gfx.drawBox(p.x*resX + offsetX /*- 1*/,(p.y+ln)*resY + offsetY /*- fontMarginY*/,maxX()*resX /*+ fontMarginY*/ /*+ fontMarginY*/,resY /*+ fontMarginY*/ /*+ fontMarginY*/);
 				//setCursor(0,ln);
 			}
 			void clear() override {
