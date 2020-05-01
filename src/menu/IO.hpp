@@ -26,4 +26,14 @@ namespace Menu {
         break;
     }
   }
+  template<Expr...  O>
+  void MenuOut<O...>::fmt(Tag r,bool io,Idx n,bool s,bool e,Mode m,bool toPrint) {
+    if(io) {
+      if(toPrint) This::fmt<true,true>(r,n,s,e,m);
+      else fmt<true,false>(r,n,s,e,m);
+    } else {
+      if(toPrint) fmt<false,true>(r,n,s,e,m);
+      else fmt<false,false>(r,n,s,e,m);
+    }
+  }
 }

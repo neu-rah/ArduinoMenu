@@ -1,6 +1,8 @@
 /* -*- C++ -*- */
 #pragma once
 
+//POSIX PC Keyboard
+
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
@@ -35,38 +37,47 @@ namespace Menu {
     return r<0?r:c;
   }
 
-  template<Expr... O>
-  struct LinuxKeyIn:Chain<O...,Quiet>::template To<Obj<LinuxKeyIn<O...>>> {
-    using Base=typename Chain<O...,Quiet>::template To<Obj<LinuxKeyIn<O...>>>;
-    using This=LinuxKeyIn<O...>;
-    using Base::Base;
-    inline LinuxKeyIn() {set_conio_terminal_mode();}//capture the keyboard
-    inline ~LinuxKeyIn() {reset_terminal_mode();}//capture the keyboard
-
-    template<typename Nav>
-    inline bool cmd(Nav& nav) {
-      if (kbhit()) {
+  //POSIX system key reader
+  struct LinuxKeyIn {
+    template<typename In=None>
+    struct Part:In {
+      static constexpr bool isReader=true;
+      inline Part() {set_conio_terminal_mode();}//capture the keyboard
+      inline ~Part() {reset_terminal_mode();}//capture the keyboard
+      template<typename Nav>
+      inline bool parseKey(Nav& nav) {
+        if(!kbhit()) return In::parseKey(nav);
+        bool ext=false;
         int k=getch();
-        return Base::parseCmd(nav,k);
-      } else return false;
-    }
+        trace(MDO<<"LinuxKeyIn::parseKey "<<k<<endl);
+        if (k==3) {
+          //preemptive handle Ctrl+C
+          reset_terminal_mode();
+          exit(0);
+        }
+        if (k==27&&kbhit()) {
+          ext=true;
+          k=getch();
+          trace(MDO<<"ext key:"<<k<<endl);
+        }
+        return In::parseCmd(nav,k,ext);
+      }
+    };
   };
 
+  //PC keyboard arrows
   struct PCArrows {
     template<typename In=None>
     struct Part:In {
+      static constexpr bool isParser=true;
       template<typename Nav>
-      bool parseCmd(Nav& nav,int k) {
-        if (k==27&&kbhit()) k=getch();
+      bool parseCmd(Nav& nav,int k,bool e=false) {
+        if (e&&k==91) return false;//wait for ext code
         switch(k) {
-          case 91:break;
           case 66: return nav.template cmd<Cmd::Up>();
           case 65: return nav.template cmd<Cmd::Down>();
           case 13:case 67: return nav.template cmd<Cmd::Enter>();
           case 27:case 68: return nav.template cmd<Cmd::Esc>();
-          case 3://handle ctrl+c within the capturewd keyboard
-            reset_terminal_mode();
-            exit(0);
           default:break;
         }
         return In::cmd(nav,k);
@@ -74,22 +85,4 @@ namespace Menu {
     };
   };
 
-  struct Ids {
-    template<typename In=None>
-    struct Part:In {
-      template<typename Nav>
-      bool parseCmd(Nav& nav,int k) {
-        static Idx id=0;
-        if(isdigit(k)) {
-          id*=10;
-          id+=k-'0';
-          return false;
-        } else {
-          auto res=In::walkId(nav,k);
-          id=0;
-          return res;
-        }
-      }
-    };
-  };
 };

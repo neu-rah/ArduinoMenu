@@ -38,6 +38,7 @@ bool sub1Action() {
 
 //menu data/texts ----------------------------
 const char* mainText="Main menu";
+const char* max_temp_unit="ºC";
 Item<Mutable::Part,StaticText<&mainText>::Part> title;
 
 Prompt<Action<action1>::Part,EnDis<>::Part,Text::Part,Mutable::Part> op1("Option 1");
@@ -54,6 +55,16 @@ Prompt<Mutable::Part,Text::Part> sub2("Sub 2");
 Prompt<Mutable::Part,Text::Part> subn("Sub...");
 Prompt<Mutable::Part,Text::Part> exitOp("<Exit");
 
+int max_temp=80;
+
+Prompt< //compose a field with a label, an edit cursor and an unit
+  AsName<Text::Part>::Part,//(As) name format apply only to inner content
+  WrapMode<>::Part,//(Wrap) mode format, starts here and gores to end of remaining content
+  StaticNumField<int,max_temp,10,99,10,1>::Part,//the numeric field
+  AsUnit<StaticText<&max_temp_unit>::Part>::Part,//name format apply only to inner content
+  Mutable::Part //track changes
+> maxTemp("Max.");
+
 // menu structure -------------------------
 Prompt<EnDis<true>::Part,StdVectorMenu<decltype(sub_title),sub_title>::Part> subMenu {
   &sub1,
@@ -66,6 +77,7 @@ Prompt<StdVectorMenu<decltype(title),title>::Part> mainMenu {
   &op1,
   &op2,
   &tog12Op,
+  &maxTemp,
   &op3,
   &op4,
   &subMenu,
@@ -89,7 +101,10 @@ MenuOut<
 > out;
 
 //menu input --------------------------------------
-LinuxKeyIn in;
+StaticMenuIn<
+  LinuxKeyIn::Part,
+  PCArrows::Part
+> in;
 
 bool tog12() {
   _trace(MDO<<"Toggle Enable/Disable of options 1 and 2"<<endl);

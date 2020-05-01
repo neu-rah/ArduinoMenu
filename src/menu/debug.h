@@ -15,6 +15,7 @@
     // #include <Streaming.h>
     #ifndef MDO
       #define MDO Serial
+      using mdo_t=decltype(MDO);
     #endif
   #else
     #include <iostream>
@@ -23,8 +24,12 @@
     #ifndef MDO
       #define MDO std::cout
     #endif
+    using mdo_t=decltype(MDO)&;
   #endif
 #endif
+
+// struct _MDO:mdo_t {};
+// _MDO _mdo;
 
 #include <assert.h>
 #ifdef ARDUINO

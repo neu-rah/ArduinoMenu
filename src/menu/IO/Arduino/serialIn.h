@@ -10,18 +10,10 @@ namespace Menu {
     template<typename In=Quiet<Nil>>
     struct Part:In {
       template<typename Nav>
-      static bool cmd(Nav& nav) {
-        if (dev.available()) {
-          char key=dev.read();
-          switch(key) {
-            case '+': return nav.template cmd<Cmd::Up>();
-            case '-': return nav.template cmd<Cmd::Down>();
-            case '*': return nav.template cmd<Cmd::Enter>();
-            case '/': return nav.template cmd<Cmd::Esc>();
-            default:break;
-          }
-        }
-        return false;
+      inline bool parseKey(Nav& nav) {
+        return dev.available()?
+          In::parseCmd(nav,dev.read()):
+          In::parseKey(nav);
       }
     };
   };

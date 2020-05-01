@@ -39,18 +39,33 @@ namespace Menu {
   template<Tag role,Expr... R>
   struct As {
     template<typename I>
-    struct Part:I {
+    struct Part:I,private Chain<R...,Empty>::template To<Obj<Item<R...>>> {
       using Base=I;
       using This=As<role,R...>;
-      using Base::Base;
       using RoleBlock=typename Chain<R...,Empty>::template To<Obj<Item<R...>>>;
-      RoleBlock blk;
+      using Base::Base;
+      using RoleBlock::RoleBlock;
+      // RoleBlock blk;
+      using Type=typename Base::Type;
+      using Base::printMenu;
+      using Base::printTitle;
+      using Base::cmd;
+      using Base::printItems;
+      using Base::changed;
+      using Base::enable;
+      using Base::enabled;
+      using Base::size;
+      using Base::activate;
+      using Base::parentPrint;
+      using Base::walkPath;
+      using Base::obj;
+      using Base::id;
       template<typename Nav,typename Out,Op op=Op::Printing>
-      inline void print(Nav& nav,Out& out,PathRef ref=self) {
+      inline void print(Nav& nav,Out& out) {
         out.template fmt<role,true>(nav.pos(),true,Base::enabled(),nav.mode());
-        blk.template print<Nav,Out,op>(nav,out,ref);
+        RoleBlock::template print<Nav,Out,op>(nav,out);
         out.template fmt<role,false>(nav.pos(),true,Base::enabled(),nav.mode());
-        Base::template print<Nav,Out,op>(nav,out,ref);
+        Base::template print<Nav,Out,op>(nav,out);
       }
     };
   };

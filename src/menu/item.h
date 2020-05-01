@@ -4,36 +4,82 @@
 #include "staticItem.h"
 
 namespace Menu {
+
+  struct IAPI {
+    virtual APIRes call(IItem& at,Idx n=0)=0;
+    virtual bool chk(IItem&,PathRef ref)=0;
+    #ifdef MENU_DEBUG
+      virtual const char* named()=0;
+    #endif
+};
+
+  template<typename A>
+  struct IAPICall:IAPI,A {
+    using A::A;
+    IAPICall(A& a):A(a){}
+    using A::call;
+    APIRes call(IItem& at,Idx n=0) override {
+      return A::call(at,n);
+    }
+    bool chk(IItem& at,PathRef ref) override {return A::chk(at,ref);}
+    #ifdef MENU_DEBUG
+      const char* named() override {return A::named();}
+    #endif
+  };
+
   struct IItem {
-    virtual inline size_t size(PathRef=self)=0;
-    virtual inline size_t canNav(PathRef=self)=0;
-    virtual inline ActRes activate(PathRef ref=self)=0;
-    virtual inline void printMenu(INav& nav,IOut& out,Op op=Op::Printing,PathRef=self)=0;
     virtual inline void printTitle(INav& nav,IOut& out,bool fullPrint,Op op=Op::Printing)=0;
-    virtual inline void printItems(INav&,IOut&,bool fullPrint,Idx=0,Idx=0,PathRef=self,Op op=Op::Printing)=0;
-    virtual inline void print(INav&,IOut&,Op op,PathRef=self)=0;
-    virtual inline bool enabled(PathRef=self)=0;
-    virtual inline void enable(bool,PathRef=self)=0;
     virtual inline bool changed() const=0;
     virtual inline void changed(bool o)=0;
-    virtual inline bool parentPrint(PathRef ref=self)=0;
-    virtual inline bool cmd(Cmd,INav&,PathRef=self)=0;
+    virtual inline bool cmd(Cmd,INav&)=0;
+    virtual inline size_t size() const=0;
+    virtual inline bool enabled() const=0;
+    virtual inline ActRes activate()=0;
+    virtual inline void printMenu(INav& nav,IOut& out,Op op=Op::Printing)=0;
+    virtual void enable(bool b)=0;
+    virtual inline void printItems(INav&,IOut&,bool fullPrint,Idx=0,Idx=0,Op op=Op::Printing)=0;
+    virtual inline void print(INav&,IOut&,Op op)=0;
+    virtual bool parentPrint()=0;
+    virtual bool parentPrint(Idx)=0;
 
-    template<typename Nav,typename Out,Op op=Op::Printing>
-    inline void printMenu(Nav& nav,Out& out,PathRef ref=self) {printMenu(nav,out,op,ref);}
     template<typename Nav,typename Out,Op op=Op::Printing>
     inline void printTitle(Nav& nav,Out& out,bool fullPrint) {printTitle(nav,out,fullPrint,op);}
-    template<typename Nav,typename Out,Op op=Op::Printing>
-    inline void printItems(Nav& nav,Out& out,bool fullPrint,Idx idx=0,Idx top=0,PathRef ref=self)
-      {printItems(nav,out,fullPrint,idx,top,ref,op);}
-    template<typename Nav,typename Out,Op op=Op::Printing>
-    inline void print(Nav& nav,Out& out,PathRef ref=self) {print(nav,out,op,ref);}
-
-    // template<typename Nav,typename Out,Tag role=Tag::Raw>
-    // inline static void measure(Nav& nav,Out& out,PathRef ref=self) {print(nav,out,ref,Op::Measure);}
-
     template<Cmd c,typename Nav>
-    inline bool cmd(Nav& nav,PathRef ref=self) {return cmd(c,nav,ref);}
+    inline bool cmd(Nav& nav/*,Idx n*/) {return cmd(c,nav);}
+
+    template<typename A>
+    APIRes walkPath(A& api,PathRef ref) {
+      auto a=IAPICall<A>(api);
+      return iWalkPath(a,ref);
+    }
+    APIRes walkPath(IAPI& api,PathRef ref) {
+      return iWalkPath(api,ref);
+    }
+    template<typename Nav,typename Out,Op op=Op::Printing>
+    inline void printMenu(Nav& nav,Out& out) {printMenu(nav,out,op);}
+    inline bool enabled(PathRef ref) {
+      auto api=IAPICall<APICall::Enabled>();
+      return iWalkPath(api,ref);
+    }
+    inline size_t size(PathRef ref) {
+      trace(MDO<<"IItem::size"<<endl);
+      auto f=IAPICall<APICall::Size>();
+      iWalkPath(f,ref);
+    }
+    inline void enable(bool b,PathRef ref) {
+      auto en=IAPICall<APICall::Enable<true>>();
+      auto dis=IAPICall<APICall::Enable<false>>();
+      if(b) iWalkPath(en,ref);
+      else iWalkPath(dis,ref);
+    }
+    template<typename Nav,typename Out,Op op=Op::Printing>
+    inline void printItems(Nav& nav,Out& out,bool fullPrint,Idx idx=0,Idx top=0)
+      {printItems(nav,out,fullPrint,idx,top,op);}
+    template<typename Nav,typename Out,Op op=Op::Printing>
+    inline void print(Nav& nav,Out& out)
+      {print(nav,out,op);}
+  protected:
+    virtual APIRes iWalkPath(IAPI& api,PathRef ref)=0;
   };
 
   template<Expr... I>
@@ -45,18 +91,26 @@ namespace Menu {
     using Base::printMenu;
     using Base::print;
     using Base::cmd;
-    inline size_t size(PathRef ref=self) override {return Base::size(ref);}
-    inline size_t canNav(PathRef ref=self) override {return Base::canNav(ref);}
-    inline ActRes activate(PathRef ref=self) override {return Base::activate(ref);}
-    inline void printMenu(INav& nav,IOut& out,Op op=Op::Printing,PathRef ref=self) override;
+    using IItem::size;
+    using IItem::enabled;
+    using IItem::walkPath;
+    using IItem::enable;
     inline void printTitle(INav& nav,IOut& out,bool fullPrint,Op op=Op::Printing) override;
-    inline void printItems(INav& nav,IOut& out,bool fullPrint,Idx idx=0,Idx top=0,PathRef ref=self,Op op=Op::Printing) override;
-    inline void print(INav& nav,IOut& out,Op op,PathRef ref=self) override;
-    inline bool enabled(PathRef ref=self) override {return Base::enabled(ref);}
-    inline void enable(bool o,PathRef ref=self) override {Base::enable(o,ref);}
+    inline void printMenu(INav& nav,IOut& out,Op op=Op::Printing) override;
+    inline size_t size() const override {return Base::size();}
+    inline bool enabled() const override {return Base::enabled();}
+    inline void enable(bool o) override {Base::enable(o);}
     inline bool changed() const override {return Base::changed();}
     inline void changed(bool o) override {Base::changed(o);}
-    inline bool parentPrint(PathRef ref=self) override {return Base::parentPrint(ref);}
-    inline bool cmd(Cmd,INav&,PathRef=self) override;
+    inline bool cmd(Cmd,INav&) override;
+    inline ActRes activate() override {return Base::activate();}
+    inline void printItems(INav& nav,IOut& out,bool fullPrint,Idx idx=0,Idx top=0,Op op=Op::Printing) override;
+    inline void print(INav& nav,IOut& out,Op op) override;
+    bool parentPrint() override {return Base::parentPrint();}
+    bool parentPrint(Idx n) override {return Base::parentPrint(n);}
+  protected:
+    APIRes iWalkPath(IAPI& api,PathRef ref) override {
+      trace(MDO<<"Prompt::iWalkPath "<<api.named()<<endl);
+      return Base::walkPath(api,ref);}
   };
 };

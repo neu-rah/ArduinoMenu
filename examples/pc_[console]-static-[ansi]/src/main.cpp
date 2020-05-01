@@ -104,7 +104,10 @@ StaticMenuOut<
 StaticNavRoot<Nav<MainMenu,3>::Part> nav(mainMenu);
 
 //menu input --------------------------------------
-LinuxKeyIn in;
+StaticMenuIn<
+  LinuxKeyIn::Part,
+  PCArrows::Part
+> in;
 
 bool tog12() {
   _trace(MDO<<"Toggle Enable/Disable of options 1 and 2"<<endl);

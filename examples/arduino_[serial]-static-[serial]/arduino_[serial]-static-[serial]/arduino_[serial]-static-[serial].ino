@@ -42,6 +42,13 @@ bool sub_action() {
   return true;
 }
 
+enum MyIds:Idx {
+  id_mainMenu,
+  id1,
+  id2,
+  id3
+};
+
 // define menu structure ---------------------------------------------------------------
 
 //texts for menu
@@ -58,12 +65,13 @@ extern const char exit_txt[] PROGMEM="<Exit";
 
 //static menu structure
 Item<
+  IdTag<id_mainMenu>::Part,
   StaticMenu<
     FlashText<decltype(mainMenu_title),&mainMenu_title>::Part<>,
     StaticData<
-      Item<Action<op1_action>::Part,EnDis<>::Part,FlashText<decltype(op1_text),&op1_text>::Part>,
-      Item<Action<op2_action>::Part,EnDis<false>::Part,FlashText<decltype(op2_text),&op2_text>::Part>,
-      Item<Action<tog12>::Part,FlashText<decltype(tog12_text),&tog12_text>::Part>,
+      Item<IdTag<id1>::Part,Action<op1_action>::Part,EnDis<>::Part,FlashText<decltype(op1_text),&op1_text>::Part>,
+      Item<IdTag<id2>::Part,Action<op2_action>::Part,EnDis<false>::Part,FlashText<decltype(op2_text),&op2_text>::Part>,
+      Item<IdTag<id3>::Part,Action<tog12>::Part,FlashText<decltype(tog12_text),&tog12_text>::Part>,
       Item<FlashText<decltype(opn_text),&opn_text>::Part>,
       Item<
         StaticMenu<
@@ -81,7 +89,11 @@ Item<
 > mainMenu;//create menu object
 
 //menu input --------------------------------------
-SerialIn<decltype(Serial),Serial> in;//create input object (here serial)
+StaticMenuIn<
+  SerialIn<decltype(Serial),Serial>::Part,
+  AMNavKeys<>::Part,
+  Ids::Part
+> in;//create input object (here serial)
 
 //menu output (Serial)
 using Out=StaticMenuOut<
@@ -98,6 +110,7 @@ StaticNavRoot<Nav<decltype(mainMenu),3>::Part> nav(mainMenu);
 
 //menu action handlers implementation
 bool tog12() {
+  Serial.println("Toggle enable/diable of options 1 and 2");
   mainMenu.enable(!mainMenu.enabled(Path<0>().ref()),Path<0>().ref());
   mainMenu.enable(!mainMenu.enabled(Path<1>().ref()),Path<1>().ref());
   return true;

@@ -19,6 +19,9 @@
 #endif
 
 namespace Menu {
+
+  using Key=int;
+
   #ifdef ARDUINO
     using Idx=uint8_t;
     constexpr Idx idx_max=(1ul<<(sizeof(Idx)<<3))-1;
@@ -35,6 +38,19 @@ namespace Menu {
     Stay,//nav state remains unchanged
     Open,//open the item
     Close,//close current item
+  };
+
+  //APICall result
+  union APIRes {
+    size_t sz;
+    ActRes actRes;
+    bool on;
+    inline APIRes(size_t sz):sz(sz) {}
+    inline APIRes(ActRes o):actRes(o){}
+    inline APIRes(bool o):on(o) {}
+    inline operator size_t() const {return sz;}
+    inline operator ActRes() const {return actRes;}
+    inline operator bool() const {return on;}
   };
 
   //formating parts/roles
@@ -55,7 +71,15 @@ namespace Menu {
   };
 
   //navigation commands
-  enum class Cmd:Idx {None=0,Enter=1,Esc=2,Up=4,Down=8,Left=16,Right=32};
+  enum class Cmd:uint8_t {
+    None=0<<0,
+    Enter=1<<0,
+    Esc=1<<1,
+    Up=1<<2,
+    Down=1<<3,
+    Left=1<<4,
+    Right=1<<5
+  };
 
   // Output Device Operations
   enum class Op {Measure,Printing,ClearChanges};
@@ -83,14 +107,6 @@ namespace Menu {
   struct Area {
     Idx width;
     Idx height;
-  };
-
-  template<Idx idTag>
-  struct IdTag {
-    template<typename I> struct Part:I {
-      // static inline constexpr Idx id() {return idTag;}
-      static inline constexpr bool id(Idx tag) {return idTag==tag;}
-    };
   };
 
   #ifdef MENU_DEBUG
@@ -122,8 +138,8 @@ namespace Menu {
         case Cmd::Down:return o<<"Down";
         case Cmd::Left:return o<<"Left";
         case Cmd::Right:return o<<"Right";
+        default:return o<<"Cmd?";
       }
-      return o;
     }
 
   #endif

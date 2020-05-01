@@ -45,8 +45,9 @@ namespace Menu {
 #include "menu/staticItem.h"
 #include "menu/panels.h"
 #include "menu/tags.h"
+#include "menu/parsers.h"
 
 // must be at end of file
 #include "menu/base.hpp"
 #include "menu/debug.hpp"
-#include "menu/staticItem.hpp"
+// #include "menu/staticItem.hpp"

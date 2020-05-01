@@ -30,6 +30,10 @@ Flash: [====      ]  38.3% (used 3136 bytes from 8192 bytes)
 2020.02.25 ATTiny13 softuart https://github.com/lpodkalicki/attiny13-software-uart-library
 RAM:   [===       ]  25.0% (used 16 bytes from 64 bytes)
 Flash: [==        ]  17.4% (used 178 bytes from 1024 bytes)
+
+2020.04.30  ATTiny 13 using and ID navigation
+RAM:   [===       ]  25.0% (used 16 bytes from 64 bytes)
+Flash: [=======   ]  68.6% (used 702 bytes from 1024 bytes)
 */
 
 #include <Arduino.h>
@@ -65,7 +69,11 @@ using Out=StaticMenuOut<
 Out out;//create output object (Serial)
 
 //menu input --------------------------------------
-StaticMenuIn<SerialIn<decltype(Serial),Serial>::Part> in;//create input object (here serial)
+StaticMenuIn<
+  SerialIn<decltype(Serial),Serial>::Part,
+  Ids::Part
+> in;
+
 //------------------------------
 //menu action handlers
 bool tog12();
@@ -84,7 +92,7 @@ bool op2_action() {
 // defining static menu
 
 enum MyIds:Idx {
-  id_mainMenu,
+  id_mainMenu=0,
   id1,
   id2,
   id3
@@ -118,10 +126,10 @@ void setup() {
   Serial.begin(115200);
   while(!Serial);
   Serial.println(F("AM5 serial example"));
-  //now disabled at type definition
-  // mainMenu.enable(false,Path<1>().ref());//disable second option
   // nav.print(out);
-  nav.template print<Out,id_mainMenu>(out);
+  auto printMenu=typename APICall::template PrintMenu<decltype(nav),Out,Op::Printing>(nav,out);
+  nav.walkId<decltype(printMenu)>(printMenu,id_mainMenu);
+  // nav.template print<Out,id_mainMenu>(out);
 }
 
 void loop() {

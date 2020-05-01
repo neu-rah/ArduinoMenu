@@ -95,7 +95,7 @@ StaticMenuOut<
 //   PartialDraw::Part,//just for testing, because console is not of this cathegory
 //   PanelTarget::Part,//detect target (menu) changes
 //   RangePanel<>::Part,//control vertical scrolling
-//   StaticPanel<0,0,20,4>::Part,//define output geometry
+//   StaticPanel<0,0,20,4>::Part,//define output ge'ometry
 // #endif
   Console::Part,//the raw output device to use
   TextMeasure<>::Part//default monometric text measure
@@ -104,7 +104,10 @@ StaticMenuOut<
 StaticNavRoot<Nav<MainMenu,3>::Part> nav(mainMenu);
 
 //menu input --------------------------------------
-LinuxKeyIn in;
+StaticMenuIn<
+  LinuxKeyIn::Part,
+  PCArrows::Part
+> in;
 
 bool tog12() {
   _trace(MDO<<"Toggle Enable/Disable of options 1 and 2"<<endl);
@@ -115,12 +118,6 @@ bool tog12() {
 
 int main() {
   nav.print(out);
-  while(running) {
-    if (nav.doInput(in)) {
-      nav.print(out);
-      out.nl();
-    }
-    cout.flush();
-  };
+  while(running) if (nav.doInput(in)) nav.print(out);
   return 0;
 }

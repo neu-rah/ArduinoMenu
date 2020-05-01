@@ -96,5 +96,7 @@ namespace Menu {
     using Base=typename Chain<O...,Quiet>::template To<Obj<StaticMenuIn<O...>>>;
     using This=StaticMenuIn<O...>;
     using Base::Base;
+    template<typename Nav>
+    inline bool cmd(Nav& nav) {return Base::parseKey(nav);}
   };
 };

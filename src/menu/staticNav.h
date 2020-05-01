@@ -6,24 +6,51 @@
 namespace Menu {
 
   template<typename I>
-  struct IdNav {
+  struct StaticNavBase {
     template<typename N>
     struct Part:N {
       using Data=I;
       Data& root;
       inline Part(Data& o):root(o){}
-      template<typename Out,Idx i>
-      inline void printItem(Out& out) {
-        root.template print<typename N::Type,Out,Op::Printing,i>(N::obj(),out);
+    };
+  };
+
+  template<typename I>
+  struct IdNav {
+    template<typename N>
+    struct Part:StaticNavBase<I>::template Part<N> {
+      using Base=typename StaticNavBase<I>::template Part<N>;
+      using Data=I;
+      inline Part(Data& o):Base(o){}
+
+      template<typename A>
+      inline APIRes walkId(A& api,Idx i) {
+        _trace(MDO<<"IdNav::walkId<"<<api.name<<"> "<<i<<endl;);
+        return Base::root.walkId(api,i);
       }
+
+      template<typename A,Idx i>
+      APIRes walkId(A& api) {
+        _trace(MDO<<"IdNav::walkId<"<<api.name<<","<<i<<">"<<endl;);
+        return Base::root.template walkId<A,i>(api);
+      }
+
       template<typename Out,Idx i>
       inline void print(Out& out) {
-        trace(MDO<<"Nav::print"<<endl);
-        root.template printMenu<typename N::Type,Out,Op::Printing,i>(N::obj(),out);
-        if (out.partialDraw()) {
-          trace(MDO<<"Nav::print cleanup!"<<endl);
-          root.template printMenu<typename N::Type,Out,Op::ClearChanges,i>(N::obj(),out);
-        }
+        trace(MDO<<"IdNav::print"<<endl);
+        auto printMenu=typename APICall::template PrintMenu<typename N::Type,Out,Op::Printing>(N::obj(),out);
+        Base::root.template walkId<decltype(printMenu),i>(printMenu);
+      }
+      template<Cmd c,Idx id>
+      inline bool cmd() {
+        _trace(MDO<<"IdNav::cmd<"<<c<<","<<id<<">"<<endl);
+        auto api=typename APICall::Cmd<c,typename N::Type,id>(N::obj());
+        return Base::root.walkId(api);
+      }
+      template<Cmd c> inline bool cmd(Idx id) {
+        _trace(MDO<<"IdNav::cmd<(Cmd)"<<c<<">"<<endl);
+        auto api=typename APICall::Cmd<c,typename N::Type>(N::obj());
+        return Base::root.walkId(api,id);
       }
     };
   };
@@ -31,36 +58,32 @@ namespace Menu {
   template<typename I,Idx max_depth>
   struct Nav {
     template<typename N>
-    struct Part:N {
+    struct Part:IdNav<I>::template Part<N> {
       using This=Nav<I,max_depth>::Part<N>;
+      using Base=typename IdNav<I>::template Part<N>;
       using Data=I;
       Idx level=0;
       Idx path[max_depth]{0};
-      Data& root;
+      // Data& root;
       Mode editMode;
-      inline Part(Data& o):root(o){}
+      inline Part(Data& o):Base(o){}
+
       template<typename Out>
       inline void printItem(Out& out) {
         trace(MDO<<"Nav::printItem"<<endl);
-        root.template print<typename N::Type,Out,Op::Printing>(N::obj(),out,*this);
+        Base::root.template print<typename N::Type,Out,Op::Printing>(N::obj(),out,*this);
       }
       template<typename Out>
       inline void print(Out& out) {
         trace(MDO<<"Nav::print"<<endl);
-        auto printMenu=typename API::template PrintMenu<typename N::Type,Out,Op::Printing>(N::obj(),out);
-        root.walkPath(printMenu,operator PathRef());
-        // root.template printMenu<typename N::Type,Out,Op::Printing>(N::obj(),out,*this);
+        auto printMenu=typename APICall::template PrintMenu<typename N::Type,Out,Op::Printing>(N::obj(),out);
+        Base::root.template walkPath<decltype(printMenu)>(printMenu,operator PathRef());
         if (out.partialDraw()) {
           trace(MDO<<"Nav::print cleanup!"<<endl);
-          auto clear=typename API::template PrintMenu<typename N::Type,Out,Op::ClearChanges>(N::obj(),out);
-          root.walkPath(clear,*this);
-          // root.template printMenu<typename N::Type,Out,Op::ClearChanges>(N::obj(),out,*this);
+          auto clear=typename APICall::template PrintMenu<typename N::Type,Out,Op::ClearChanges>(N::obj(),out);
+          Base::root.walkPath(clear,N::obj());//sometimes we need INav here... what now
         }
       }
-      // template<typename Out>
-      // inline void printParent(Out& out) {
-      //   trace(MDO<<"Nav::printParent"<<endl);
-      //   root.printMenu(N::obj(),out,parent());}
       inline Idx pos() const {return path[level];}
       inline Mode mode() const {return editMode;}
       inline void setMode(Mode m) {editMode=m;}
@@ -75,18 +98,19 @@ namespace Menu {
       }
       inline void close() {if(level>0) path[level--]=0;
       }
-      inline size_t size() const {return root.size(*this);}
+      inline size_t size() const {return Base::root.size(*this);}
       inline size_t size(PathRef ref) const {
-        auto sizeCall=API::Size();
-        return root.walkPath(sizeCall,*this);
+        auto sizeCall=APICall::Size();
+        return Base::root.walkPath(sizeCall,N::obj());
       }
 
+      using Base::cmd;
       template<Cmd c>
       inline bool cmd() {
-        _trace(MDO<<"Nav::cmd "<<c<<" path:"<<((PathRef)*this)<<endl);
-        auto api=typename API::Cmd<c,This>(*this);
-        // return root.template cmd<c,typename N::Type>(N::obj(),*this);
-        return root.walkPath(api,*this);
+        trace(MDO<<"Nav::cmd "<<c<<" path:"<<((PathRef)*this)<<endl);
+        auto api=typename APICall::Cmd<c,typename N::Type>(N::obj());
+        // return Base::root.template cmd<c,typename N::Type>(N::obj(),*this);
+        return Base::root.walkPath(api,N::obj());
       }
 
       inline void up()    {cmd<Cmd::Up>();}
@@ -107,22 +131,17 @@ namespace Menu {
       }
 
       inline void _up() {
-        _trace(MDO<<"pos:"<<pos()<<" size:"<<size(parent())<<endl);
-        if(((size_t)pos()+1)<size(parent())) setPos(pos()+1);}
+        trace(MDO<<"pos:"<<pos()<<" size:"<<size(parent())<<endl);
+        if(((size_t)pos()+1)<size()) setPos(pos()+1);}
 
       inline void _down() {if(pos()>0) setPos(pos()-1);}
 
       inline void _enter() {
         trace(MDO<<"enter->sending activate "<<(PathRef)*this<<endl);
-        // bool n=root.canNav(*this);//TODO: check this on activate! => can not, we double check it
-        auto actCall=API::Activate();
-        ActRes r=root.walkPath(actCall,*this);
-        // ActRes r=root.activate(*this);
-        // trace(MDO<<"canNav:"<<n<<" activated:"<<r<<endl);
-        // trace(MDO<<"!(n^r):"<<(!(n^r))<<endl);
+        auto actCall=APICall::Activate();
+        ActRes r=Base::root.walkPath(actCall,N::obj());
         if(r==ActRes::Open) open();
         else if(r==ActRes::Close) close();
-        // if (!(n^r)) n?open():close();
       }
 
       inline void _esc() {close();}

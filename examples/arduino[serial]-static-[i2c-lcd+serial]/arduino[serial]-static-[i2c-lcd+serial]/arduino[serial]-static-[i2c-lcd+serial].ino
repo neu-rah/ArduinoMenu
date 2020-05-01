@@ -82,7 +82,10 @@ Item<
 > mainMenu;//create menu object
 
 //menu input --------------------------------------
-SerialIn<decltype(Serial),Serial> in;//create input object (here serial)
+StaticMenuIn<
+  SerialIn<decltype(Serial),Serial>::Part,
+  AMNavKeys<>::Part
+> in;//create input object (here serial)
 
 using SerialO=StaticMenuOut<
   FullPrinter::Part,//print title and items

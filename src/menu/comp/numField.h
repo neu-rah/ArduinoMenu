@@ -21,24 +21,19 @@ namespace Menu {
       inline NumValue():reflex(value){}
       using I::canNav;
       inline static constexpr bool canNav() {return true;}
-      // using I::isMenu;
-      // inline static constexpr bool isMenu() {return false;}
       using I::parentDraw;
       inline static constexpr bool parentDraw(Idx=0) {return true;}
       using I::activate;
       inline static ActRes activate() {return ActRes::Open;}
       inline static ActRes activate(Ref,Idx) {return activate();}
-      // using I::printItem
-      // template<typename It,typename Out,Tag role=Tag::Raw,bool toPrint=true>
-      // inline void printItem(It& it,Out& out,Idx n=0,bool s=false,bool e=true,Mode m=Mode::Normal) {
-      // }
       template<typename Out,Tag role=Tag::Raw,bool toPrint=true>
       inline void print(Out& out) {
         out.template print<T,Out,toPrint>(value,out,role);
       }
       using I::cmd;
       template<Cmds c,typename Nav>
-      inline void cmd(Nav& nav) {
+      inline void cmd(Nav& nav,Idx n=0) {
+        _trace(MDO<<"NumValue::cmd "<<c<<" "<<n<<endl);
         switch(c) {
           case Cmds::Enter:
             if (nav.mode()==Mode::Tune||tune==0) {

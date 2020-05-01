@@ -66,7 +66,10 @@ Item<
 > mainMenu;
 
 //menu input --------------------------------------
-SerialIn<decltype(Serial),Serial> in;//create input object (here serial)
+StaticMenuIn<
+  SerialIn<decltype(Serial),Serial>::Part,
+  AMNavKeys<>::Part
+> in;//create input object (here serial)
 
 //dual head output
 // using Out=OutList<
@@ -102,6 +105,6 @@ void setup() {
 
 void loop() {
   if (Serial.available()) {
-    if (nav.doInput(in)) nav.print(out);
+    if (nav.template doInput<decltype(in)>(in)) nav.print(out);
   }
 }

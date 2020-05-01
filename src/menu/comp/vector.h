@@ -13,67 +13,80 @@ namespace Menu {
       using This=StdVectorMenu<Title,title>::Part<I>;
       using Base=I;
 
-      // inline void changed(bool o) const {return title.changed(o);}
+      using vector<IItem*>::size;
 
-      inline bool enabled(PathRef ref=self) const {
-        trace(MDO<<"StdVectorMenu::enabled "<<ref<<endl);
-        return ref?
-          vector<IItem*>::operator[](ref.head())->enabled(ref.tail()):
-          Base::enabled();
-      }
-      inline void enable(bool b,PathRef ref=self) {
-        trace(MDO<<"StdVectorMenu::enable "<<b<<" "<<ref<<endl);
-        if (ref) vector<IItem*>::operator[](ref.head())->enable(b,ref.tail());
-        else Base::enable(b);
-      }
-
-      inline bool canNav(PathRef ref=self) {
-        trace(MDO<<"StdVectorMenu::canNav "<<ref<<endl);
-        if (ref) return vector<IItem*>::operator[](ref.head())->canNav(ref.tail());
-        return true;
-      }
-
-      inline size_t size(PathRef ref=self) const {
-        trace(MDO<<"StdVectorMenu::size "<<ref<<endl);
-        return ref?vector<IItem*>::operator[](ref.head())->size(ref.tail()):vector<IItem*>::size();
-      }
-
-      inline ActRes activate(PathRef ref=self) {
-        trace(MDO<<"StdVectorMenu::activate "<<ref<<endl);
-        if(ref.len==1)
-          return operator[](ref.head())->enabled()?operator[](ref.head())->activate():ActRes::Stay;
-        return ref?operator[](ref.head())->activate(ref.tail()):ActRes::Open;
-      }
-
-      template<typename Nav,typename Out,Op op=Op::Printing>
-      inline void printMenu(Nav& nav,Out& out,PathRef ref=self,Idx n=0) {
-        trace(MDO<<"StdVectorMenu::printMenu "<<op<<" @"<<ref<<endl);
-        if (!ref||(ref.len==1&&(vector<IItem*>::operator[](ref.head())->parentPrint(ref.tail()))))
-          out.template printMenu
-            <typename I::Type,Nav,op>
-            (I::obj(),nav,!(out.partialDraw()&&out.isSame(&Base::obj())));
-        else vector<IItem*>::operator[](ref.head())->template printMenu<Nav,Out,op>(nav,out,ref.tail());
-      }
-
-      template<typename Nav,typename Out,Op op=Op::Printing>
-      inline void printItems(Nav& nav,Out& out,bool fullPrint,Idx idx=0,Idx top=0,PathRef ref=self) {
-        trace(MDO<<"StdVectorMenu::printItems fullPrint:"<<fullPrint<<" top:"<<top<<" freeY:"<<out.freeY()<<endl);
-        if(ref) vector<IItem*>::operator[](ref.head())->printItems(nav,out,idx,top,ref.tail());
-        else {
-          for(auto a:*this) {
-            if (!out.freeY()) return;
-            if(top) {
-              trace(MDO<<"-----"<<endl);
-              top--;idx++;continue;
-            }
-            trace(MDO<<"item "<<idx<<" changed "<<a->changed()<<endl);
-            if (op==Op::Printing&&(fullPrint||out.fullDraw()||a->changed())) {
-              out.template printItem
-                <decltype(*a),Nav,op>
-                (*a,nav,idx++,nav.selected(idx),a->enabled(),nav.mode());
-            } else idx++;
+      template<typename A,Idx i>
+      inline IdMatch<A> _walkId(A& api) {
+        for(auto o:*this)
+          if (o->id(i)) return api.template call<This>(Base::obj());
+          else {
+            auto r=_walkId<A,i>(api);
+            if(r.match) return r;
           }
+        return IdMatch<A>();
+      }
+      // template<typename A>
+      // APIRes walkPath(A& api,PathRef ref) {
+      //   auto a=IAPICall<A>(api);
+      //   return ref?
+      //     vector<IItem*>::operator[](ref.head())->template walkPath<A>(a,ref.tail()):
+      //     api.template call<This>(Base::obj());
+      // }
+
+      APIRes walkPath(IAPI& api,PathRef ref) {
+        trace(MDO<<"StdVectorMenu::walkPath "<<api.named()<<" @"<<ref<<endl);
+        return api.chk(Base::obj(),ref)?
+          vector<IItem*>::operator[](ref.head())->walkPath(api,ref.tail()):
+          api.call(Base::obj());
+      }
+
+      using Base::enabled;
+      inline bool enabled(PathRef ref) {
+        auto f=APICall::Enabled();
+        return walkPath(f,ref);
+      }
+      using Base::enable;
+      inline void enable(bool b,PathRef ref) {
+        auto en=APICall::Enable<true>();
+        auto dis=APICall::Enable<false>();
+        if(b) walkPath(en,ref);
+        else walkPath(dis,ref);
+      }
+
+      using Base::parentPrint;
+      inline bool parentPrint(Idx n) {
+        return vector<IItem*>::operator[](n)->parentPrint();
+      }
+
+      template<typename Nav,typename Out,Op op=Op::Printing>
+      inline void printMenu(Nav& nav,Out& out) {
+        trace(MDO<<"StdVectorMenu::printMenu"<<endl);
+        out.template printMenu<typename I::Type,Nav,op>
+          (Base::obj(),nav,out.fullDraw()||!out.isSame(&Base::obj()));
+      }
+      template<typename Nav,typename Out,Op op=Op::Printing>
+      inline void printItems(Nav& nav,Out& out,bool fullPrint,Idx idx=0,Idx top=0) {
+        trace(MDO<<"StaticMenu::printItems"<<endl);
+        for(auto a:*this) {
+          if (!out.freeY()) return;
+          if(top) {
+            trace(MDO<<"-----"<<endl);
+            top--;idx++;continue;
+          }
+          trace(MDO<<"item "<<idx<<" changed "<<a->changed()<<endl);
+          if (op==Op::Printing&&(fullPrint||out.fullDraw()||a->changed())) {
+            out.template printItem
+              <decltype(*a),Nav,op>
+              (*a,nav,idx++,nav.selected(idx),a->enabled(),nav.mode());
+          } else idx++;
         }
+      }
+
+      template<typename Nav,typename Out,Op op=Op::Printing>
+      inline void print(Nav& nav,Out& out) {
+        trace(MDO<<"StdVectorMenu::print "<<role<<endl);
+        // if(title.changed())
+        title.template print<Nav,Out,op>(nav,out);
       }
 
       template<typename Nav,typename Out,Op op=Op::Printing>
@@ -88,30 +101,7 @@ namespace Menu {
         }
       }
 
-      template<typename Nav,typename Out,Op op=Op::Printing>
-      inline void print(Nav& nav,Out& out,PathRef ref=self) {
-        trace(MDO<<"StdVectorMenu::print "<<role<<endl);
-        // if(title.changed())
-        title.template print<Nav,Out,op>(nav,out,ref);
-      }
-
-      template<Cmd c,typename Nav>
-      inline bool cmd(Nav& nav,PathRef ref=self) {
-        trace(MDO<<"StdVectorMenu::cmd "<<ref<<endl);
-        if(ref.len==1&&!has(c,Cmd::Enter|Cmd::Esc)) {
-          Idx p=nav.pos();
-          bool res=vector<IItem*>::operator[](ref.head())->template cmd<c,Nav>(nav);
-          if(p!=nav.pos()) {
-            vector<IItem*>::operator[](p)->changed(true);
-            vector<IItem*>::operator[](nav.pos())->changed(true);
-          }
-          return res;
-        }
-        return ref?
-          vector<IItem*>::operator[](ref.head())->template cmd<c,Nav>(nav,ref.tail()):
-          Base::template cmd<c,Nav>(nav);
-      }
-
+      inline ActRes activate() {return ActRes::Open;}
     };
   };
 };
