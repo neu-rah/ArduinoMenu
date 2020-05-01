@@ -19,7 +19,7 @@ namespace Menu {
       using Links<T,OO...>::Links;
     };
     //provide a continuation
-    template<Expr _O>
-    using With=Chain<OO...,_O>;
+    template<Expr... _O>
+    using With=Chain<OO...,_O...>;
   };
 };
