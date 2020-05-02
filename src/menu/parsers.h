@@ -53,4 +53,30 @@ namespace Menu {
       }
     };
   };
+
+  // struct IndexAccel {
+  //   template<typename In>
+  //   struct Part:In {
+  //     template<typename Nav>
+  //     ActRes parseCmd(Nav& nav,int k) {
+  //       switch(k) {
+  //         case 0: return nav.template cmd<Cmd::Esc,0>();
+  //         case 1: return nav.template <Cmd::Enter,1>();
+  //       }
+  //     }
+  //   };
+  // };
+
+  struct Accel {
+    template<typename In>
+    struct Part:In {
+      template<typename Nav>
+      bool parseCmd(Nav& nav,Key k,bool e=false) {
+        _trace(MDO<<"Accel::parseCmd"<<endl);
+        //using key info to:
+        //1)send a command => commands will have to acomodate extra param, index will also require estra param
+        //2)call a specific function for accel check, this is similar to index so we will use extra param for both and reduce API functions
+      }
+    };
+  };
 };

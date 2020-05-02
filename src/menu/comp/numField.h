@@ -32,7 +32,7 @@ namespace Menu {
       }
       using I::cmd;
       template<Cmds c,typename Nav>
-      inline void cmd(Nav& nav,Idx n=0) {
+      inline bool cmd(Nav& nav,Idx n=0) {
         trace(MDO<<"NumValue::cmd "<<c<<" "<<n<<endl);
         switch(c) {
           case Cmds::Enter:
@@ -40,22 +40,27 @@ namespace Menu {
               nav.setMode(Mode::Normal);
               nav.close();
             } else nav.setMode(Mode::Tune);
-            return;
+            return true;
           case Cmds::Esc:nav.close();break;
           case Cmds::Up: {
               T s=(nav.mode()==Mode::Tune)?tune:step;
-              if (value+s<=high) value+=s;
+              if (value+s<=high) {
+                value+=s;
+                return true;
+              }
             }
-            return;
+            return false;
           case Cmds::Down: {
               T s=(nav.mode()==Mode::Tune)?tune:step;
-              if (value-s>=low) value-=s;
+              if (value-s>=low) {
+                value-=s;
+                return true;
+              }
             }
-            return;
-          default:I::template cmd<c,Nav>(nav);
+            return false;
+          default:return I::template cmd<c,Nav>(nav);
         }
       }
-
     protected:
       T reflex;//to check if original value changed
   };

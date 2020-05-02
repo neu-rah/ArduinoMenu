@@ -2,6 +2,8 @@
 
 **Generic menu/interactivity system for the arduino framework**
 
+**AM5 is now framework and platform agnostic, can run even on PC's**
+
 ## Development discussion about next menu version
 
 This is an experimental area, please contribute with ideas, experience or code. Thank you.
@@ -30,4 +32,4 @@ Composition allows features to be added as needed, code will be presente only if
 
 Composition also allows mixing of components, previous menus versions had a global setting to use ram or flash memory. Now we can mix data from either origin and even add extra origins such as file systems and eeproms.
 
-TODO: this code base has only static structure menus, dynamic structures still missing.
+TODO: once API becomes stable we need to ease composition into common combinations and AM4 compatibility
