@@ -6,8 +6,6 @@
 
 namespace Menu {
 
-  struct Nil {};
-
   template<typename O>
   struct IdMatch {
     using Result=typename O::Result;
@@ -43,20 +41,19 @@ namespace Menu {
       // inline static bool chk(const At&,PathRef ref) {return ref;}
       template<typename At>
       inline static APIRes call(At& at,Idx n=0) {
-        // _trace(_mdo<<"APICall::Activate "<<at<<endl);
         return at.enabled()?at.activate():Result::Stay;}
       _trace(static constexpr const char* name="Activate");
     };
     template<bool b> struct Enable:Call<Enable<b>> {
       using Result=void;
       template<typename At>
-      inline static APIRes call(At& at,Idx n=0) {at.enable(b);}
+      inline static APIRes call(At& at,Idx n=0) {at.enable(b);return APIRes();}
       _trace(static constexpr const char* name="Enable");
     };
     template<bool b> struct Changed:Call<Changed<b>> {
       using Result=void;
       template<typename At>
-      inline static APIRes call(At& at,Idx n=0) {at.changed(b);}
+      inline static APIRes call(At& at,Idx n=0) {return at.changed(b);}
       _trace(static constexpr const char* name="Changed");
     };
     struct Enabled:Call<Enabled> {
@@ -98,6 +95,7 @@ namespace Menu {
       template<typename At>
       inline APIRes call(At& at,Idx n=0) {
         at.template printMenu<Nav,Out,op>(nav,out);
+        return APIRes();
       }
       _trace(static constexpr const char* name="PrintMenu");
     };
@@ -127,6 +125,7 @@ namespace Menu {
       template<typename At>
       inline APIRes call(At& at,Idx n=0) const {
         at.template printTitle<Nav,Out,op>(nav,out,fullPrint);
+        return APIRes();
       }
       _trace(static constexpr const char* name="PrintTitle");
     };
@@ -139,6 +138,7 @@ namespace Menu {
       template<typename At>
       inline APIRes call(At& at,Idx n=0) const {
         at.template print<Nav,Out,op>(nav,out);
+        return APIRes();
       }
       _trace(static constexpr const char* name="Print");
     };
@@ -285,13 +285,13 @@ namespace Menu {
   // menu items base
   template<typename I>
   struct Empty:I {
-    template<typename A,Idx i> APIRes walkId(A& api) {api.call(I::obj());}
-    template<typename A> APIRes walkId(A& api,Idx i) {api.call(I::obj());}
+    using I::I;
+    template<typename A,Idx i> APIRes walkId(A& api) {return api.call(I::obj());}
+    template<typename A> APIRes walkId(A& api,Idx i) {return api.call(I::obj());}
     template<typename A>
     APIRes walkPath(A& api,PathRef ref,Idx n=0) {
-      trace(MDO<<"Empty::walkPath "<<ref<<" n:"<<n<<endl);
+      trace(MDO<<"Empty::walkPath "<<api.named()<<" "<<ref<<" n:"<<n<<endl);
       return api.call(I::obj());//this requires Empty to be CRTP Obj
-      // return api.call(*this);
     }
 
     template<Idx tag>
@@ -300,6 +300,7 @@ namespace Menu {
 
     template<typename Nav,typename Out,Op op=Op::Printing>
     inline void printMenu(Nav& nav,Out& out) {
+      trace(MDO<<"Empty::printMenu"<<endl);
       if (op==Op::Printing) I::obj().print(nav,out);
     }
 
@@ -307,13 +308,14 @@ namespace Menu {
     inline static constexpr size_t size() {return 0;}
     inline static constexpr bool parentPrint() {return true;}
     inline static constexpr bool parentPrint(Idx) {return true;}
-    template<typename Nav,typename Out,Op op=Op::Printing>
+    template<typename Nav,typename Out,Op op=Op::Printing,bool delegate=true>
     inline static void print(Nav& nav,Out& out) {}
     template<typename Nav,typename Out,Op op=Op::Printing>
     inline static void printItems(Nav& nav,Out& out,bool fullPrint,Idx idx,Idx top) {}
     inline static constexpr bool enabled() {return true;}
     template<typename Nav,typename Out,Op op=Op::Printing>
     inline void printTitle(Nav& nav,Out& out,bool fullPrint) {
+      trace(MDO<<"Empty::printTitle"<<endl);
       if(fullPrint||I::obj().changed()) I::obj().template print<Nav,Out,Op::Printing>(nav,out);
     }
     inline static void enable(bool) {}

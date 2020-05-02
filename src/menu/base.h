@@ -30,6 +30,9 @@ namespace Menu {
     constexpr Idx idx_max=std::numeric_limits<Idx>::max();
   #endif
 
+  //ultimate terminal
+  struct Nil {};
+
   //edit modes
   enum class Mode {Normal,Edit,Tune};
 
@@ -45,6 +48,7 @@ namespace Menu {
     size_t sz;
     ActRes actRes;
     bool on;
+    inline APIRes():sz(0){}
     inline APIRes(size_t sz):sz(sz) {}
     inline APIRes(ActRes o):actRes(o){}
     inline APIRes(bool o):on(o) {}
@@ -52,6 +56,8 @@ namespace Menu {
     inline operator ActRes() const {return actRes;}
     inline operator bool() const {return on;}
   };
+
+  constexpr APIRes noRes();
 
   //formating parts/roles
   enum class Tag:int {
@@ -147,8 +153,9 @@ namespace Menu {
   ////////////////////////////////////////////////////////////////////////////////
   //implement CRTP
   // otherwise encapsulation becomes a code issue, making customizations hard
-  template<typename T>
-  struct Obj {
+  template<typename T,typename U=Nil>
+  struct Obj:U {
+    using U::U;
     using Type=T;
     inline Type& obj() const {return *(Type*)this;}
   };

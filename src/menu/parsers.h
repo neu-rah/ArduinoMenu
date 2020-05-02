@@ -24,7 +24,7 @@ namespace Menu {
         } else {
           bool res=false;
           if(onId) {//dispatch command
-            _trace(MDO<<"seeking id:"<<id<<endl);
+            trace(MDO<<"seeking id:"<<id<<endl);
             auto a=APICall::Activate();
             res=nav.template walkId<decltype(a)>(a,id);
             id=0;
@@ -42,7 +42,7 @@ namespace Menu {
     struct Part:In {
       template<typename Nav>
       bool parseCmd(Nav& nav,Key k,bool e=false) {
-        _trace(MDO<<"AMNavKeys::parseCmd"<<endl);
+        trace(MDO<<"AMNavKeys::parseCmd"<<endl);
         switch(k) {
           case up: return nav.template cmd<Cmd::Up>();
           case down: return nav.template cmd<Cmd::Down>();

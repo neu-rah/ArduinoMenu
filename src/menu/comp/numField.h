@@ -33,7 +33,7 @@ namespace Menu {
       using I::cmd;
       template<Cmds c,typename Nav>
       inline void cmd(Nav& nav,Idx n=0) {
-        _trace(MDO<<"NumValue::cmd "<<c<<" "<<n<<endl);
+        trace(MDO<<"NumValue::cmd "<<c<<" "<<n<<endl);
         switch(c) {
           case Cmds::Enter:
             if (nav.mode()==Mode::Tune||tune==0) {

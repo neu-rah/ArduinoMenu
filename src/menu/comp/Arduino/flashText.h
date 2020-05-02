@@ -16,9 +16,10 @@ namespace Menu {
     struct Part:I {
       using I::I;
       // using I::size;
-      template<typename Nav,typename Out,Op op=Op::Printing>
-      inline static void print(Nav& nav,Out& out,PathRef ref=self) {
+      template<typename Nav,typename Out,Op op=Op::Printing,bool delegate=true>
+      inline void print(Nav& nav,Out& out,PathRef ref=self) {
         out.template raw<const __FlashStringHelper *,op==Op::Printing>(reinterpret_cast<const __FlashStringHelper *>(text[0]));
+        if (delegate) I::template print<Nav,Out,op>(nav,out);
       }
     };
   };

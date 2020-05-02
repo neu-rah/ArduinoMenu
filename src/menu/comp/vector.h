@@ -82,11 +82,12 @@ namespace Menu {
         }
       }
 
-      template<typename Nav,typename Out,Op op=Op::Printing>
+      template<typename Nav,typename Out,Op op=Op::Printing,bool delegate=true>
       inline void print(Nav& nav,Out& out) {
         trace(MDO<<"StdVectorMenu::print "<<role<<endl);
         // if(title.changed())
         title.template print<Nav,Out,op>(nav,out);
+        if (delegate) I::template print<Nav,Out,op>(nav,out);
       }
 
       template<typename Nav,typename Out,Op op=Op::Printing>

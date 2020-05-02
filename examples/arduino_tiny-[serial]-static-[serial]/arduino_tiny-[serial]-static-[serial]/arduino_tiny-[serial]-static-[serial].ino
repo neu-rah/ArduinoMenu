@@ -52,10 +52,14 @@ using namespace Menu;
 #include <menu/IO/Arduino/serialIO.h>//include both serial in and out
 #include <menu/comp/Arduino/flashText.h>
 
+#ifndef LED_PIN
+  #define LED_PIN 3
+#endif
+
 //string data on flash
-extern const char op1_text[] PROGMEM="Op 1";
-extern const char op2_text[] PROGMEM="Op 2";
-extern const char op3_text[] PROGMEM="Op 3";
+extern const char op1_text[] PROGMEM="On";
+extern const char op2_text[] PROGMEM="Off";
+// extern const char op3_text[] PROGMEM="Op 3";
 extern const char mainMenu_title[] PROGMEM="Main menu";
 
 // menu output (Serial)
@@ -80,11 +84,13 @@ bool tog12();
 
 bool op1_action() {
   Serial.println(F("Option 1 action called!"));
+  digitalWrite(LED_PIN,0);
   return true;//false would close the menu
 }
 
 bool op2_action() {
   Serial.println(F("Option 2 action called!"));
+  digitalWrite(LED_PIN,1);
   return true;
 }
 
@@ -105,8 +111,8 @@ Item<
     FlashText<decltype(mainMenu_title),&mainMenu_title>::Part<>,
     StaticData<
       Item<IdTag<id1>::Part,Action<op1_action>::Part,EnDis<true>::Part,FlashText<decltype(op1_text),&op1_text>::Part>,
-      Item<IdTag<id2>::Part,Action<op2_action>::Part,EnDis<false>::Part,FlashText<decltype(op2_text),&op2_text>::Part>,
-      Item<IdTag<id3>::Part,Action<tog12>::Part,FlashText<decltype(op3_text),&op3_text>::Part>
+      Item<IdTag<id2>::Part,Action<op2_action>::Part,EnDis<true>::Part,FlashText<decltype(op2_text),&op2_text>::Part>
+      // Item<IdTag<id3>::Part,Action<tog12>::Part,FlashText<decltype(op3_text),&op3_text>::Part>
     >
   >::Part
 > mainMenu;//create menu object
@@ -116,15 +122,17 @@ Item<
 StaticNavRoot<IdNav<decltype(mainMenu)>::Part> nav(mainMenu);
 
 //menu action handlers implementation
-bool tog12() {
-  mainMenu.enable(!mainMenu.enabled(Path<0>().ref()),Path<0>().ref());
-  mainMenu.enable(!mainMenu.enabled(Path<1>().ref()),Path<1>().ref());
-  return true;
-}
+// bool tog12() {
+//   mainMenu.enable(!mainMenu.enabled(Path<0>().ref()),Path<0>().ref());
+//   mainMenu.enable(!mainMenu.enabled(Path<1>().ref()),Path<1>().ref());
+//   return true;
+// }
 
 void setup() {
-  Serial.begin(115200);
-  while(!Serial);
+  Serial.begin(9600);
+  // while(!Serial);
+  delay(5000);
+  pinMode(LED_PIN,OUTPUT);
   Serial.println(F("AM5 serial example"));
   // nav.print(out);
   auto printMenu=typename APICall::template PrintMenu<decltype(nav),Out,Op::Printing>(nav,out);
@@ -133,6 +141,8 @@ void setup() {
 }
 
 void loop() {
+  // if(Serial.available()) Serial.write(Serial.peek());
   // if (nav.doInput(in)) nav.print(out);
   if (nav.doInput(in)) nav.template print<Out,id_mainMenu>(out);
+  delay(100);
 }

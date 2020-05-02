@@ -38,7 +38,6 @@ bool sub1Action() {
 
 //menu data/texts ----------------------------
 const char* mainText="Main menu";
-const char* max_temp_unit="ºC";
 Item<Mutable::Part,StaticText<&mainText>::Part> title;
 
 Prompt<Action<action1>::Part,EnDis<>::Part,Text::Part,Mutable::Part> op1("Option 1");
@@ -61,9 +60,9 @@ Prompt< //compose a field with a label, an edit cursor and an unit
   AsName<Text::Part>::Part,//(As) name format apply only to inner content
   WrapMode<>::Part,//(Wrap) mode format, starts here and gores to end of remaining content
   StaticNumField<int,max_temp,10,99,10,1>::Part,//the numeric field
-  AsUnit<StaticText<&max_temp_unit>::Part>::Part,//name format apply only to inner content
+  AsUnit<Text::Part>::Part,//name format apply only to inner content
   Mutable::Part //track changes
-> maxTemp("Max.");
+> maxTemp("Max.","ºC");
 
 // menu structure -------------------------
 Prompt<EnDis<true>::Part,StdVectorMenu<decltype(sub_title),sub_title>::Part> subMenu {

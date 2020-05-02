@@ -7,7 +7,9 @@ namespace Menu {
 
   template<Idx idTag>
   struct IdTag {
-    template<typename I> struct Part:I {
+    template<typename I>
+    struct Part:I {
+      using I::I;
       template<Idx tag> static inline constexpr bool id() {return idTag==tag;}
       static inline bool id(Idx tag) {return idTag==tag;}
     };
@@ -22,13 +24,13 @@ namespace Menu {
       inline void changed(bool o) {hasChanged=o;}
 
       //this can not be `protected` because of `CRTP` and `mixin` composition
-      template<typename Nav,typename Out,Op op=Op::Printing>
+      template<typename Nav,typename Out,Op op=Op::Printing,bool delegate=true>
       inline void print(Nav& nav,Out& out) {
         if (op==Op::ClearChanges) {
           trace(MDO<<"Mutable::print clear "<<endl);
           changed(false);
         }
-        I::template print<Nav,Out,op>(nav,out);
+        if (delegate) I::template print<Nav,Out,op>(nav,out);
       }
     protected:
       bool hasChanged=true;
@@ -48,7 +50,7 @@ namespace Menu {
       using Base=I;
       using I::I;
       using This=Action<act>::Part<I>;
-      inline /*static*/ ActRes activate() {
+      inline static ActRes activate() {
         return act()?
           (I::canNav()?ActRes::Open:ActRes::Stay):
           (I::canNav()?ActRes::Stay:ActRes::Close);
@@ -60,10 +62,11 @@ namespace Menu {
   struct StaticText {
     template<typename I=Empty<Nil>>
     struct Part:I {
-      template<typename Nav,typename Out,Op op=Op::Printing>
+      using I::I;
+      template<typename Nav,typename Out,Op op=Op::Printing,bool delegate=true>
       inline void print(Nav& nav,Out& out) {
         out.template raw<decltype(text[0]),op==Op::Printing>(text[0]);
-        I::template print<Nav,Out,op>(nav,out);
+        if(delegate) I::template print<Nav,Out,op>(nav,out);
       }
     };
   };
@@ -73,11 +76,12 @@ namespace Menu {
     struct Part:I {
       using Base=I;
       const char* text;
-      inline Part(const char*o):text(o) {}
-      template<typename Nav,typename Out,Op op=Op::Printing>
+      template<typename... OO>
+      inline Part(const char*o,OO... oo):text(o),I(oo...) {}
+      template<typename Nav,typename Out,Op op=Op::Printing,bool delegate=true>
       inline void print(Nav& nav,Out& out) {
         out.template raw<decltype(text),op==Op::Printing>(text);
-        I::template print<Nav,Out,op>(nav,out);
+        if(delegate) I::template print<Nav,Out,op>(nav,out);
       }
     };
   };
@@ -87,7 +91,7 @@ namespace Menu {
   struct StaticNumField {
     template<typename I>
     struct Part:I {
-
+      using I::I;
       inline static bool stepVal(T delta) {
         if (delta==0) return false;
         if (delta > 0) {
@@ -100,10 +104,10 @@ namespace Menu {
         return true;
       }
 
-      template<typename Nav,typename Out,Op op=Op::Printing>
-      inline void print(Nav& nav,Out& out,PathRef ref=self) {
+      template<typename Nav,typename Out,Op op=Op::Printing,bool delegate=true>
+      inline void print(Nav& nav,Out& out) {
         out.raw(value);
-        I::template print<Nav,Out,op>(nav,out);
+        if(delegate)I::template print<Nav,Out,op>(nav,out);
       }
 
       template<Cmd c,typename Nav>
@@ -172,6 +176,7 @@ namespace Menu {
     }
     template<typename A>
     APIRes walkPath(A& api,PathRef ref,Idx n) {
+      trace(MDO<<"Pair::walkPath "<<api.named()<<ref<<n<<endl);
       if (n) return tail.template walkPath<A>(api,ref,n-1);
       if (api.chk(F::obj(),ref)) return F::template walkPath<A>(api,ref.tail());
       return api.template call<F>(F::obj()/*,ref.head()*/);
@@ -203,7 +208,7 @@ namespace Menu {
       else walkPath(APICall::Enable<false>(),ref);
     }
 
-    template<typename Nav,typename Out,Op op=Op::Printing>
+    template<typename Nav,typename Out,Op op=Op::Printing,bool delegate=true>
     inline void printMenu(Nav& nav,Out& out) {
       out.template printMenu<typename F::Type,Nav,op>
         (F::obj(),nav,op==Op::Printing&&(out.fullDraw()||F::changed()||out.isSame(&F::obj())));
@@ -316,10 +321,10 @@ namespace Menu {
         }
       }
 
-      template<typename Nav,typename Out,Op op=Op::Printing>
+      template<typename Nav,typename Out,Op op=Op::Printing,bool delegate=true>
       inline void print(Nav& nav,Out& out) {
         trace(MDO<<"StaticMenu::print "<<op<<endl);
-        title.template print<Nav,Out,op>(nav,out);
+        title.template print<Nav,Out,op,delegate>(nav,out);
       }
 
     };

@@ -25,13 +25,13 @@ namespace Menu {
 
       template<typename A>
       inline APIRes walkId(A& api,Idx i) {
-        _trace(MDO<<"IdNav::walkId<"<<api.name<<"> "<<i<<endl;);
+        trace(MDO<<"IdNav::walkId<"<<api.name<<"> "<<i<<endl;);
         return Base::root.walkId(api,i);
       }
 
       template<typename A,Idx i>
       APIRes walkId(A& api) {
-        _trace(MDO<<"IdNav::walkId<"<<api.name<<","<<i<<">"<<endl;);
+        trace(MDO<<"IdNav::walkId<"<<api.name<<","<<i<<">"<<endl;);
         return Base::root.template walkId<A,i>(api);
       }
 
@@ -43,12 +43,12 @@ namespace Menu {
       }
       template<Cmd c,Idx id>
       inline bool cmd() {
-        _trace(MDO<<"IdNav::cmd<"<<c<<","<<id<<">"<<endl);
+        trace(MDO<<"IdNav::cmd<"<<c<<","<<id<<">"<<endl);
         auto api=typename APICall::Cmd<c,typename N::Type,id>(N::obj());
         return Base::root.walkId(api);
       }
       template<Cmd c> inline bool cmd(Idx id) {
-        _trace(MDO<<"IdNav::cmd<(Cmd)"<<c<<">"<<endl);
+        trace(MDO<<"IdNav::cmd<(Cmd)"<<c<<">"<<endl);
         auto api=typename APICall::Cmd<c,typename N::Type>(N::obj());
         return Base::root.walkId(api,id);
       }
