@@ -44,18 +44,22 @@ navCmd navNode::doNavigation(navCmd cmd) {
         root->out.doNav(cmd,*this);*/
     case upCmd:
       // trace(MENU_DEBUG_OUT<<"up"<<endl;);
-      nsel++;
-      if (nsel>=sz()) {if(wrap()) nsel=0; else nsel=sz()-1;}
-      // trace(MENU_DEBUG_OUT<<"new sel:"<<nsel<<endl);
+      if(sz()) {
+        nsel++;
+        if (nsel>=sz()) {if(wrap()) nsel=0; else nsel=sz()-1;}
+        // trace(MENU_DEBUG_OUT<<"new sel:"<<nsel<<endl);
+      }
       break;
       /*case scrlUpCmd:
         if (!target->isVariant())
           root->out.doNav(cmd,*this);*/
     case downCmd:
-      // trace(MENU_DEBUG_OUT<<"down"<<endl);
+      trace(MENU_DEBUG_OUT<<"down"<<endl);
       if (nsel||!target->is(_asPad)) {
-        nsel--;
-        if (nsel<0) {if(wrap()) nsel=sz()-1; else nsel=0;}
+        if(sz()) {
+          nsel--;
+          if (nsel<0) {if(wrap()) nsel=sz()-1; else nsel=0;}
+        }
         break;
       }
     case escCmd:
@@ -180,7 +184,7 @@ void navRoot::doNav(navCmd cmd) {
 }
 
 navCmd navRoot::enter() {
-  trace(MENU_DEBUG_OUT<<"navRoot::enter"<<endl);
+  _trace(MENU_DEBUG_OUT<<"navRoot::enter"<<endl);
   if (
     selected().enabled
     &&selected().sysHandler(activateEvent,node(),selected())==proceed
