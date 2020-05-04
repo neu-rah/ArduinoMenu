@@ -75,10 +75,12 @@
         idx_t maxY(idx_t i=0) const;
         idx_t& top(navNode& nav) const;
         // inline void reset() {panelsList.reset();}
+        idx_t printRaw(const char* at,idx_t len);
         inline idx_t printRaw(const __FlashStringHelper* at,idx_t len) {
           return printRaw((const char*)at,len);
         }
-        virtual idx_t printRaw(const char* at,idx_t len);
+        idx_t printText(const __FlashStringHelper* at,idx_t len) {return printRaw(at,len);}
+        idx_t printText(const char* at,idx_t len);
         #if defined(MENU_DEBUG) || defined(MENU_ASYNC)
           virtual menuOut& operator<<(prompt const &p);
           #ifdef ESP8266

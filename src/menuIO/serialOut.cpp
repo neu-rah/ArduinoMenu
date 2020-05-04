@@ -3,7 +3,7 @@
 
 namespace Menu {
   #ifdef MENU_DEBUG
-    constexpr idx_t w=16;
+    constexpr idx_t w=20;
   #else
     constexpr idx_t w=40;
   #endif

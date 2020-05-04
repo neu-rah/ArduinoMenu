@@ -70,13 +70,13 @@ www.r-site.net
 
     enum result {proceed=0,quit};
     enum systemStyles {
-      _noStyle=0,
-      _menuData=1,
-      _canNav=1<<1,
-      _parentDraw=1<<2,
-      _isVariant=1<<3,
-      _asPad=1<<4,
-      _Exit=1<<5
+      _noStyle=0,//      000000
+      _menuData=1,//     000001
+      _canNav=1<<1,//    000010
+      _parentDraw=1<<2,//000100
+      _isVariant=1<<3,// 001000
+      _asPad=1<<4,//     010000
+      _Exit=1<<5//       100000
     };
     //showTitle and noTitle override the default
     enum styles {

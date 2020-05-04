@@ -44,12 +44,18 @@ menuOut& menuOut::fill(
 
 idx_t menuOut::printRaw(const char* at,idx_t len) {
   trace(MENU_DEBUG_OUT<<"menuOut::printRaw"<<endl);
-  const char* p=at;
+  const char* p=(const char*)at;
   uint8_t ch;
-  for(int n=0;(ch=memByte(at++))&&(len==0||n<len);n++) {
+  for(int n=0;(ch=memByte(p++))&&(len==0||n<len);n++) {
     write(ch);
   }
-  return at-p-1;
+  return p-((const char*)at)-1;
+}
+
+idx_t menuOut::printText(const char* at,idx_t len) {
+  for(int n=0;at[n]&&(len==0||n<len);n++)
+    write(at[n]);
+  return len;
 }
 
 void menuOut::doNav(navCmd cmd,navNode &nav) {
