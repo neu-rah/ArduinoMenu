@@ -75,8 +75,8 @@
         idx_t maxY(idx_t i=0) const;
         idx_t& top(navNode& nav) const;
         // inline void reset() {panelsList.reset();}
-        idx_t printRaw(const char* at,idx_t len);
-        virtual inline idx_t printRaw(const __FlashStringHelper* at,idx_t len) {
+        virtual idx_t printRaw(const char* at,idx_t len);
+        inline idx_t printRaw(const __FlashStringHelper* at,idx_t len) {
           return printRaw((const char*)at,len);
         }
         idx_t printText(const __FlashStringHelper* at,idx_t len) {return printRaw(at,len);}
