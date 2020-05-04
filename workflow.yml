@@ -9,7 +9,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        example: [examples/arduino_[serial]-static-[serial]/arduino_[serial]-static-[serial]/arduino_[serial]-static-[serial].ino]
+        example: ["examples/arduino_[serial]-static-[serial]/arduino_[serial]-static-[serial]/arduino_[serial]-static-[serial].ino"]
 
     steps:
     - uses: actions/checkout@v1

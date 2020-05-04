@@ -2,15 +2,15 @@
 
 namespace Menu {
   template<Expr... I>
-  inline bool Prompt<I...>::cmd(Cmd c,INav& nav) {
+  inline bool Prompt<I...>::cmd(Cmd c,INav& nav,Idx i) {
     switch(c) {
-      case Cmd::None: return Base::template cmd<Cmd::None,INav>(nav);break;
-      case Cmd::Enter: return Base::template cmd<Cmd::Enter,INav>(nav);break;
-      case Cmd::Esc: return Base::template cmd<Cmd::Esc,INav>(nav);break;
-      case Cmd::Up: return Base::template cmd<Cmd::Up,INav>(nav);break;
-      case Cmd::Down: return Base::template cmd<Cmd::Down,INav>(nav);break;
-      case Cmd::Left: return Base::template cmd<Cmd::Left,INav>(nav);break;
-      case Cmd::Right: return Base::template cmd<Cmd::Right,INav>(nav);break;
+      case Cmd::None: return Base::template cmd<Cmd::None,INav>(nav,i);break;
+      case Cmd::Enter: return Base::template cmd<Cmd::Enter,INav>(nav,i);break;
+      case Cmd::Esc: return Base::template cmd<Cmd::Esc,INav>(nav,i);break;
+      case Cmd::Up: return Base::template cmd<Cmd::Up,INav>(nav,i);break;
+      case Cmd::Down: return Base::template cmd<Cmd::Down,INav>(nav,i);break;
+      case Cmd::Left: return Base::template cmd<Cmd::Left,INav>(nav,i);break;
+      case Cmd::Right: return Base::template cmd<Cmd::Right,INav>(nav,i);break;
     }
     assert(false);
   }

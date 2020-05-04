@@ -111,9 +111,9 @@ namespace Menu {
       }
 
       template<Cmd c,typename Nav>
-      inline bool cmd(Nav& nav,Idx=0) {
+      inline bool cmd(Nav& nav,Idx n=0) {
         trace(MDO<<"Field::cmd "<<c<<" mode:"<<nav.mode()<<endl);
-        if(nav.mode()==Mode::Normal&&c!=Cmd::Enter) return I::template cmd<c,Nav>(nav);
+        if(nav.mode()==Mode::Normal&&c!=Cmd::Enter) return I::template cmd<c,Nav>(nav,n);
         switch(c) {
           case Cmd::Enter:
             switch(nav.mode()) {
@@ -191,7 +191,7 @@ namespace Menu {
     inline bool cmd(Nav& nav,Idx n=0) {
       trace(MDO<<"Pair::cmd "<<c<<" n:"<<n<<endl);
       if(n) return tail.template cmd<c,Nav>(nav,n-1);
-      return F::template cmd<c,Nav>(nav);
+      return F::template cmd<c,Nav>(nav,n);
     }
 
     inline void changed(Idx i,bool o) {

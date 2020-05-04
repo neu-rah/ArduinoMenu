@@ -84,7 +84,9 @@ namespace Menu {
     Up=1<<2,
     Down=1<<3,
     Left=1<<4,
-    Right=1<<5
+    Right=1<<5,
+    Index=1<<6,
+    Accel=1<<7
   };
 
   // Output Device Operations

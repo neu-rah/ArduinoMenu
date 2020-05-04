@@ -9,8 +9,11 @@ namespace Menu {
     inline bool isdigit(uint8_t k) {return k>='0'&&k<='9';}
   #endif
 
+  //navigate by numeric ID
+  //ID's are ment for external call
+  //however we have this parsaer just in case (and for testing)
   struct Ids {
-    template<typename In=None>
+    template<typename In>
     struct Part:In {
       template<typename Nav>
       bool parseCmd(Nav& nav,Key k,bool e=false) {
@@ -36,9 +39,10 @@ namespace Menu {
     };
   };
 
+  //classical AM4 navigation keys
   template<char up='+',char down='-',char enter='*',char esc='/'>
   struct AMNavKeys {
-    template<typename In=None>
+    template<typename In>
     struct Part:In {
       template<typename Nav>
       bool parseCmd(Nav& nav,Key k,bool e=false) {
@@ -54,28 +58,29 @@ namespace Menu {
     };
   };
 
-  // struct IndexAccel {
-  //   template<typename In>
-  //   struct Part:In {
-  //     template<typename Nav>
-  //     ActRes parseCmd(Nav& nav,int k) {
-  //       switch(k) {
-  //         case 0: return nav.template cmd<Cmd::Esc,0>();
-  //         case 1: return nav.template <Cmd::Enter,1>();
-  //       }
-  //     }
-  //   };
-  // };
+  //clasical AM4 index
+  struct IndexAccel {
+    template<typename In>
+    struct Part:In {
+      template<typename Nav>
+      bool parseCmd(Nav& nav,Key k,bool e=false) {
+        _trace(MDO<<"IndexAccel::parseCmd "<<(char)k<<endl);
+        return isdigit(k)?
+           nav.template cmd<Cmd::Index>(k-'0'):
+           In::parseCmd(nav,k,e);
+      }
+    };
+  };
 
+  //must be the last one in chain because it will consume all keys
   struct Accel {
     template<typename In>
     struct Part:In {
       template<typename Nav>
       bool parseCmd(Nav& nav,Key k,bool e=false) {
         _trace(MDO<<"Accel::parseCmd"<<endl);
-        //using key info to:
-        //1)send a command => commands will have to acomodate extra param, index will also require estra param
-        //2)call a specific function for accel check, this is similar to index so we will use extra param for both and reduce API functions
+        return nav.template cmd<Cmd::Accel>(k);/*?
+          true:In::parseCmd(nav,k,e);*/ //this will swallow all keys... lets it be the last in chanin
       }
     };
   };

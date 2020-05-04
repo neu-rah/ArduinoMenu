@@ -1,6 +1,8 @@
 //tiny85 fuses for 16Mhz -U lfuse:w:0xf1:m -U hfuse:w:0xdd:m -U efuse:w:0xfe:m
-//8Mhz -U lfuse:w:0xe2:m -U hfuse:w:0xdd:m -U efuse:w:0xfe:m
+//tiny85 fuses for 8Mhz -U lfuse:w:0xe2:m -U hfuse:w:0xdd:m -U efuse:w:0xfe:m
 //OSCCAL was at 93
+
+//avrdude -Pusb -v -p attiny13 -C /home/azevedo/.platformio/packages/tool-avrdude/avrdude.conf -c usbasp -e -D
 
 // ***
 // *** Pinout ATtiny25/45/85:

@@ -39,7 +39,7 @@ namespace Menu {
 
   //POSIX system key reader
   struct LinuxKeyIn {
-    template<typename In=None>
+    template<typename In>
     struct Part:In {
       static constexpr bool isReader=true;
       inline Part() {set_conio_terminal_mode();}//capture the keyboard
@@ -67,11 +67,11 @@ namespace Menu {
 
   //PC keyboard arrows
   struct PCArrows {
-    template<typename In=None>
+    template<typename In>
     struct Part:In {
       static constexpr bool isParser=true;
       template<typename Nav>
-      bool parseCmd(Nav& nav,int k,bool e=false) {
+      bool parseCmd(Nav& nav,Key k,bool e=false) {
         if (e&&k==91) return false;//wait for ext code
         switch(k) {
           case 66: return nav.template cmd<Cmd::Up>();
@@ -80,7 +80,8 @@ namespace Menu {
           case 27:case 68: return nav.template cmd<Cmd::Esc>();
           default:break;
         }
-        return In::cmd(nav,k);
+        _trace(MDO<<"PCArrows passing key"<<endl);
+        return In::parseCmd(nav,k,e);
       }
     };
   };

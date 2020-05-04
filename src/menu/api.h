@@ -25,14 +25,14 @@ namespace Menu {
       inline static bool chk(const At&,PathRef ref) {return ref;}
       inline constexpr const char* named() {return CRTP::name;}
     };
-    template<Cmd c,typename Nav,Idx id=-1>
+    template<Cmd c,typename Nav,Idx id=0>
     struct Cmd:Call<Cmd<c,Nav>> {
       using Result=bool;
       Nav& nav;
-      inline Cmd(Nav& nav):nav(nav){}
+      inline Cmd(Nav& nav,Idx n=0):nav(nav){}
       template<typename At>
       inline APIRes call(At& at,Idx n=0) const {
-        return at.template cmd<c,Nav>(nav/*,n*/);}
+        return at.template cmd<c,Nav>(nav,n);}
       _trace(static constexpr const char* name="Cmd");
     };
     struct Activate:Call<Activate> {
@@ -150,8 +150,10 @@ namespace Menu {
   struct Quiet:In {
     template<typename Nav>
     inline static constexpr bool parseKey(Nav&) {return false;}
-    template<typename Nav> inline static constexpr bool cmd(Nav&,int) {return false;}
-    template<typename Nav> inline static constexpr bool parseCmd(Nav& nav,Key k) {return false;}
+    // template<typename Nav> inline static constexpr bool cmd(Nav&,int) {return false;}
+    template<typename Nav>
+    inline static constexpr bool parseCmd(Nav&,Key,bool=false) {return false;}
+
   };
 
   ////////////////////////////////////////////////////////////////////////////////
@@ -331,9 +333,9 @@ namespace Menu {
     template<typename Nav> inline void esc(Nav& nav) {nav._esc();}
 
     template<Cmd c,typename Nav>
-    inline bool cmd(Nav& nav,Idx n) {return nav.template _cmd<c>();}
-    template<Cmd c,typename Nav>
-    inline bool cmd(Nav& nav) {return nav.template _cmd<c>();}
+    inline bool cmd(Nav& nav,Idx n) {return nav.template _cmd<c>(n);}
+    // template<Cmd c,typename Nav>
+    // inline bool cmd(Nav& nav,Idx n=0) {return nav.template _cmd<c>(n);}
 
     inline bool enabled(PathRef) {return enabled();}
     inline void enable(bool b,PathRef ref) {

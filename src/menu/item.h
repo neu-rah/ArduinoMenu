@@ -28,24 +28,24 @@ namespace Menu {
   };
 
   struct IItem {
-    virtual inline void printTitle(INav& nav,IOut& out,bool fullPrint,Op op=Op::Printing)=0;
-    virtual inline bool changed() const=0;
-    virtual inline void changed(bool o)=0;
-    virtual inline bool cmd(Cmd,INav&)=0;
-    virtual inline size_t size() const=0;
-    virtual inline bool enabled() const=0;
-    virtual inline ActRes activate()=0;
-    virtual inline void printMenu(INav& nav,IOut& out,Op op=Op::Printing)=0;
+    virtual void printTitle(INav& nav,IOut& out,bool fullPrint,Op op=Op::Printing)=0;
+    virtual bool changed() const=0;
+    virtual void changed(bool o)=0;
+    virtual bool cmd(Cmd,INav&,Idx=0)=0;
+    virtual size_t size() const=0;
+    virtual bool enabled() const=0;
+    virtual ActRes activate()=0;
+    virtual void printMenu(INav& nav,IOut& out,Op op=Op::Printing)=0;
     virtual void enable(bool b)=0;
-    virtual inline void printItems(INav&,IOut&,bool fullPrint,Idx=0,Idx=0,Op op=Op::Printing)=0;
-    virtual inline void print(INav&,IOut&,Op op)=0;
+    virtual void printItems(INav&,IOut&,bool fullPrint,Idx=0,Idx=0,Op op=Op::Printing)=0;
+    virtual void print(INav&,IOut&,Op op)=0;
     virtual bool parentPrint()=0;
     virtual bool parentPrint(Idx)=0;
 
     template<typename Nav,typename Out,Op op=Op::Printing>
     inline void printTitle(Nav& nav,Out& out,bool fullPrint) {printTitle(nav,out,fullPrint,op);}
     template<Cmd c,typename Nav>
-    inline bool cmd(Nav& nav/*,Idx n*/) {return cmd(c,nav);}
+    inline bool cmd(Nav& nav,Idx n=0) {return cmd(c,nav,n);}
 
     template<typename A>
     APIRes walkPath(A& api,PathRef ref) {
@@ -102,7 +102,7 @@ namespace Menu {
     inline void enable(bool o) override {Base::enable(o);}
     inline bool changed() const override {return Base::changed();}
     inline void changed(bool o) override {Base::changed(o);}
-    inline bool cmd(Cmd,INav&) override;
+    inline bool cmd(Cmd,INav&,Idx) override;
     inline ActRes activate() override {return Base::activate();}
     inline void printItems(INav& nav,IOut& out,bool fullPrint,Idx idx=0,Idx top=0,Op op=Op::Printing) override;
     inline void print(INav& nav,IOut& out,Op op) override;

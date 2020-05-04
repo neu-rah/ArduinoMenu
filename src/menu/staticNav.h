@@ -106,9 +106,9 @@ namespace Menu {
 
       using Base::cmd;
       template<Cmd c>
-      inline bool cmd() {
-        trace(MDO<<"Nav::cmd "<<c<<" path:"<<((PathRef)*this)<<endl);
-        auto api=typename APICall::Cmd<c,typename N::Type>(N::obj());
+      inline bool cmd(Idx n=0) {
+        _trace(MDO<<"Nav::cmd "<<c<<" path:"<<((PathRef)*this)<<endl);
+        auto api=typename APICall::Cmd<c,typename N::Type>(N::obj(),n);
         // return Base::root.template cmd<c,typename N::Type>(N::obj(),*this);
         return Base::root.walkPath(api,N::obj());
       }
@@ -117,17 +117,35 @@ namespace Menu {
       inline void down()  {cmd<Cmd::Down>();}
       inline void enter() {cmd<Cmd::Enter>();}
       inline void esc()   {cmd<Cmd::Esc>();}
+      inline void idx(Idx n) {cmd<Cmd::Index>(n);}
+      inline void accel(Idx n) {cmd<Cmd::Accel>(n);}
 
       template<Cmd c>
-      inline bool _cmd() {
+      inline bool _cmd(Idx n=0) {
         switch(c) {
           case Cmd::Up:_up();break;
           case Cmd::Down:_down();break;
           case Cmd::Enter:_enter();break;
           case Cmd::Esc:_esc();break;
+          case Cmd::Index:_idx(n);break;
+          case Cmd::Accel:_accel(n);break;
           default:return false;
         }
         return true;
+      }
+
+      inline bool select(Idx n) {return n<size()?(_select(n),true):false;}
+      inline void _select(Idx n) {path[level]=n;}
+
+      inline void _idx(Idx n) {
+        _trace(MDO<<"nav index:"<<n<<endl);
+        if(n) {
+          if(select(n)) enter();
+        } else close();
+      }
+
+      inline void _accel(Idx n) {
+        trace(MDO<<"nav index:"<<n<<endl);
       }
 
       inline void _up() {

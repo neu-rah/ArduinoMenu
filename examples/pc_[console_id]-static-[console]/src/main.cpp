@@ -117,8 +117,10 @@ StaticNavRoot<Nav<MainMenu,3>::Part> nav(mainMenu);
 //menu input --------------------------------------
 StaticMenuIn<
   LinuxKeyIn::Part,
-  Ids::Part
-  // PCArrows::Part
+  PCArrows::Part,
+  IndexAccel::Part
+  // Accel::Part
+  // Ids::Part
 > in;
 
 bool tog12() {
