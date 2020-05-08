@@ -16,13 +16,16 @@ user defined array menu (userMenu plugin)
 
 using namespace Menu;
 
-#define MAX_DEPTH 4
+//===========================================================================
 
+//some values for user data record
 enum SelTest {Zero=0,One,Two};
 enum ChooseTest {First=1,Second=2,Third=3,Last=-1};
 constexpr int dataSz=3;
 constexpr int nameSz=20;
 
+
+//some user data record type to be edited by the menu
 struct Data {
   char name[nameSz+1]="<name>              ";
   bool valid=0;
@@ -38,17 +41,20 @@ struct Data {
   // }
 };
 
+//THE DATA <-----------------------------------------
 Data myTargets[dataSz];//our data
-//a temp. to be edited
+
+//a temporary to be edited
 //the data type must have assignment operator
-//because we will later on move data back and forth between the actual data and this template
-//menu edit is wired to this temp. and menu eventd will deal with the copy-call
+//because we will later on move data back and forth between the actual data and this temporary
+//menu edit is wired to this temp. and menu events will deal with the copy-call (from/to)
 Data target;
 
-
+//characters allowed on name field
 char* constMEM alphaNum MEMMODE=" 0123456789.ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz,\\|!\"#$%&/()=?~*^+-{}[]€";
 char* constMEM alphaNumMask[] MEMMODE={alphaNum};
 
+//some enumeration of values allowed on some fields
 TOGGLE(target.valid,editValid,"Valid: ",doNothing,noEvent,noStyle//,doExit,enterEvent,noStyle
   ,VALUE("On",HIGH,doNothing,noEvent)
   ,VALUE("Off",LOW,doNothing,noEvent)
@@ -67,6 +73,7 @@ CHOOSE(target.chooseTest,chooseMenu,"Choose",doNothing,noEvent,noStyle
   ,VALUE("Last",Last,doNothing,noEvent)
 );
 
+//a function to save the edited data record
 result saveTarget(eventMask e,navNode& nav) {
   _trace(MENU_DEBUG_OUT<<"saveTarget"<<endl);
   idx_t n=nav.root->path[nav.root->level-1].sel;//get selection of previous level
@@ -74,7 +81,7 @@ result saveTarget(eventMask e,navNode& nav) {
   return quit;
 }
 
-//if you want to print the recird name as the title,
+//if you want to print the data record name as the title,
 //then you MUST create a customized print menu to replace this default one
 MENU(targetEdit,"Target edit",doNothing,noEvent,wrapStyle
   ,EDIT("Name",target.name,alphaNumMask,doNothing,noEvent,noStyle)
@@ -86,7 +93,7 @@ MENU(targetEdit,"Target edit",doNothing,noEvent,wrapStyle
 );
 
 //handling the user menu selection
-//
+//this will copy the selected recotd into the temp var
 result targetEvent(eventMask e,navNode& nav) {
   _trace(MENU_DEBUG_OUT<<"copy data to temp.\n");
   target=myTargets[nav.sel];
@@ -94,19 +101,23 @@ result targetEvent(eventMask e,navNode& nav) {
   return proceed;
 }
 
+//the customized print of records
+//menu system wil use this to print the list of all records
 struct TargetMenu:UserMenu{
   using UserMenu::UserMenu;
 
   // override sz() function to have variable/custom size
   // inline idx_t sz() const override {return 0;}
 
-  //customizing the print of user menu
+  //customizing the print of user menu item (len is the availabe space)
   Used printItem(menuOut& out, int idx,int len) override {
+    //just printing the string name to the menu output device
+    //as an item representative
     return len?out.printText(myTargets[idx].name,len):0;
   }
 };
 
-//build the user menu object, optinally giving a sub menu
+//build the user menu object, optionally giving a sub menu
 #ifdef MENU_USERAM
   //for non-AVR devices or when MENU_USERAM is defined at compiler level
   TargetMenu targetsMenu("Targets",dataSz,targetEdit,targetEvent,enterEvent);
@@ -127,9 +138,14 @@ struct TargetMenu:UserMenu{
 #endif
 
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
-  ,OBJ(targetsMenu)//use in a macro built menu
+  ,OBJ(targetsMenu)//attach the array edit menu on a macri build nenu
   ,EXIT("<Back")
 );
+
+//////////////////////////////////////////////////////////////////////////////
+// menu IO and root navigation control
+
+#define MAX_DEPTH 4
 
 MENU_OUTPUTS(out,MAX_DEPTH
   ,SERIAL_OUT(Serial)
@@ -139,6 +155,7 @@ MENU_OUTPUTS(out,MAX_DEPTH
 serialIn serial(Serial);
 NAVROOT(nav,mainMenu,MAX_DEPTH,serial,out);
 
+//function for menu idle/timemout
 result idle(menuOut &o, idleEvent e) {
   switch(e) {
     case idleStart:o.println("suspending menu!");break;
