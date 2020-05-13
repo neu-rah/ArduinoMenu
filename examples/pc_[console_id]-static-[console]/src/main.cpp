@@ -65,6 +65,7 @@ enum MyIds:Idx {
 //menu static structure ---------------------------
 using MainMenu=Item<
   IdTag<id_mainMenu>::Part,
+  SetWalker::Part,
   StaticMenu<
     Item<StaticText<&mainText>::Part,Mutable::Part>,
     StaticData<
@@ -74,7 +75,7 @@ using MainMenu=Item<
       Item< //compose a field with a label, an edit cursor and an unit text
         AsName<StaticText<&max_temp_label>::Part>::Part,//(As) name format apply only to inner content
         WrapMode<>::Part,//(Wrap) mode format, tme mode starts here and goes to the end of remaining content
-        StaticNumField<int,max_temp,10,99,10,1>::Part,//the numeric field with validation range and change/tune steps
+        StaticNumFieldCore<int,max_temp,10,99,10,1>::Part,//the numeric field with validation range and change/tune steps
         AsUnit<StaticText<&max_temp_unit>::Part>::Part,//As unit format apply only to inner content
         Mutable::Part //track changes
       >,
@@ -115,12 +116,15 @@ StaticNavRoot<Nav<MainMenu,3>::Part> nav(mainMenu);
 // StaticNavRoot<IdNav<decltype(mainMenu)>::Part> nav(mainMenu);
 
 //menu input --------------------------------------
+// this composition still has a problem
+// enter is catched on PCArroiws and does not allow ids to be sent
+// reversing the order is still not working.. we need to check this!
 StaticMenuIn<
   LinuxKeyIn::Part,
-  PCArrows::Part,
-  IndexAccel::Part
+  // IndexAccel::Part,
+  // PCArrows::Part
   // Accel::Part
-  // Ids::Part
+  Ids::Part
 > in;
 
 bool tog12() {
@@ -131,8 +135,8 @@ bool tog12() {
 }
 
 int main() {
-  auto a=APICall::Activate();
-  mainMenu.template walkId<decltype(a)>(a,MyIds::id3);
+  // auto a=APICall::Activate();
+  // mainMenu.template walkId<decltype(a)>(a,MyIds::id3);
   nav.print(out);
   while(running) if (nav.doInput(in)) nav.print(out);
   return 0;

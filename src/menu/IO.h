@@ -6,9 +6,9 @@
 namespace Menu {
   struct IOut {
     virtual inline void nl(bool toPrint=true)=0;
-    virtual void printMenu(IItem& it,INav& nav,bool fullPrint,Op=Op::Printing)=0;
-    virtual void printTitle(IItem& it,INav& nav,Op op=Op::Printing)=0;
-    virtual void printItem(IItem& it,INav& nav,Idx n=0,bool s=false,bool e=true,Mode m=Mode::Normal,Op op=Op::Printing)=0;
+    virtual void printMenu(IItem& it,INav& nav,Idx level,bool fullPrint,Op=Op::Printing)=0;
+    virtual void printTitle(IItem& it,INav& nav,Idx level,Op op=Op::Printing)=0;
+    virtual void printItem(IItem& it,INav& nav,Idx level,Idx n=0,bool s=false,bool e=true,Mode m=Mode::Normal,Op op=Op::Printing)=0;
     virtual Idx freeY() const=0;
     virtual bool partialDraw() const=0;
     virtual bool isSame(void*) const=0;
@@ -19,14 +19,14 @@ namespace Menu {
     inline bool fullDraw() {return !partialDraw();}
 
     template<typename It,typename Nav,Op op=Op::Printing>
-    void printTitle(It& it,Nav& nav) {printTitle(it,nav,op);}
+    void printTitle(It& it,Nav& nav,Idx level) {printTitle(it,nav,level,op);}
 
     template<typename It,typename Nav,Op op=Op::Printing>
-    inline void printMenu(It& it,Nav& nav,bool fullPrint) {printMenu(it,nav,fullPrint,op);}
+    inline void printMenu(It& it,Nav& nav,Idx level,bool fullPrint) {printMenu(it,nav,level,fullPrint,op);}
 
     template<typename It,typename Nav,Op op=Op::Printing>
-    void printItem(It& it,Nav& nav,Idx n=0,bool s=false,bool e=true,Mode m=Mode::Normal) {
-      printItem(it,nav,n,s,e,m,op);
+    void printItem(It& it,Nav& nav,Idx level,Idx n=0,bool s=false,bool e=true,Mode m=Mode::Normal) {
+      printItem(it,nav,level,n,s,e,m,op);
     }
 
     template<typename T,bool toPrint=true>
@@ -57,9 +57,9 @@ namespace Menu {
       if (toPrint) Base::template raw<decltype(o),true>(o);
       else Base::template raw<decltype(o),false>(o);
     }
-    void printMenu(IItem& it,INav& nav,bool fullPrint, Op op=Op::Printing) override;
-    void printTitle(IItem& it,INav& nav,Op op=Op::Printing) override;
-    void printItem(IItem& it,INav& nav,Idx n=0,bool s=false,bool e=true,Mode m=Mode::Normal,Op op=Op::Printing) override;
+    void printMenu(IItem& it,INav& nav,Idx level,bool fullPrint, Op op=Op::Printing) override;
+    void printTitle(IItem& it,INav& nav,Idx level,Op op=Op::Printing) override;
+    void printItem(IItem& it,INav& nav,Idx level,Idx n=0,bool s=false,bool e=true,Mode m=Mode::Normal,Op op=Op::Printing) override;
     Idx freeY() const override {return Base::freeY();}
     bool partialDraw() const override {return Base::partialDraw();}
     bool isSame(void* o) const override {return Base::isSame(o);}

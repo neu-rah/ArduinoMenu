@@ -1,7 +1,7 @@
 /* -*- C++ -*- */
 #pragma once
 
-#include "api.h"
+#include "sys/kernel/api.h"
 #ifndef ARDUINO
 #include <string>
 #endif
@@ -75,14 +75,6 @@ namespace Menu {
       }
     };
   };
-
-  // struct None:Nil {
-  //   template<typename N=Nil>
-  //   struct Part:N {
-  //     template<typename Nav>
-  //     inline static bool cmd(Nav& nav) {return false;}
-  //   };
-  // };
 
   template<Expr... O>
   struct StaticMenuOut:Chain<O...,Void>::template To<Obj<StaticMenuOut<O...>>> {

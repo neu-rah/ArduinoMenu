@@ -12,7 +12,8 @@ namespace Menu {
     virtual bool cmd(Cmd,Idx=0)=0;
     virtual bool _cmd(Cmd,Idx=0)=0;
     virtual void setMode(Mode m)=0;
-
+    virtual void open()=0;
+    virtual void close()=0;
 
     template<Cmd c> inline bool _cmd(Idx n=0) {return _cmd(c,n);}
     template<typename In> inline bool doInput(In& in) {return in.cmd(*this);}
@@ -56,5 +57,7 @@ namespace Menu {
       assert(false);
     }
     void setMode(Mode m) override {Base::setMode(m);}
+    void open() override {Base::open();}
+    void close() override {Base::close();}
   };
 };

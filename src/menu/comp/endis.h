@@ -19,8 +19,14 @@ namespace Menu {
       struct Part:public I {
         public:
           using I::I;
-          inline bool enabled(PathRef=self) const {return isEnabled;}
-          inline void enable(bool b,PathRef=self) {isEnabled=b;}
+          using I::enable;
+          using I::enabled;
+          inline bool enabled() const {
+            trace(MDO<<"EnDis::enabled "<<isEnabled<<endl);
+            return isEnabled;}
+          inline void enable(bool b) {
+            trace(MDO<<"EnDis::enable "<<b<<endl);
+            isEnabled=b;}
         protected:
           bool isEnabled=e;
       };

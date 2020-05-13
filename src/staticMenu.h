@@ -12,7 +12,7 @@ You should have received a copy of the GNU Lesser General Public License along w
 // #include "menu/path.h"
 // #include "menu/tags.h"
 #include "menu/staticIO.h"
-#include "menu/printer.h"
+#include "menu/sys/printer.h"
 
 namespace Menu {
   #ifdef MENU_DEBUG
@@ -45,13 +45,13 @@ namespace Menu {
   #endif
 };
 
+#include "menu/sys/kernel/tags.h"
+#include "menu/sys/panels.h"
+#include "menu/sys/parsers.h"
 #include "menu/staticNav.h"
 #include "menu/staticItem.h"
-#include "menu/panels.h"
-#include "menu/tags.h"
-#include "menu/parsers.h"
 
 // must be at end of file
-#include "menu/base.hpp"
-#include "menu/debug.hpp"
+#include "menu/sys/kernel/base.hpp"
+#include "menu/sys/kernel/debug.hpp"
 // #include "menu/staticItem.hpp"

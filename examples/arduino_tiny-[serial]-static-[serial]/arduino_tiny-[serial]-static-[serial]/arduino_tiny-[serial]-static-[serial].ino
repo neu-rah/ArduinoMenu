@@ -31,9 +31,17 @@ Flash: [====      ]  38.3% (used 3136 bytes from 8192 bytes)
 RAM:   [===       ]  25.0% (used 16 bytes from 64 bytes)
 Flash: [==        ]  17.4% (used 178 bytes from 1024 bytes)
 
-2020.04.30  ATTiny 13 using and ID navigation
+2020.04.30 ATTiny13 using and ID navigation
 RAM:   [===       ]  25.0% (used 16 bytes from 64 bytes)
 Flash: [=======   ]  68.6% (used 702 bytes from 1024 bytes)
+
+2020.05.11 review walkers, implemented toggle field
+RAM:   [===       ]  28.1% (used 18 bytes from 64 bytes)
+Flash: [====      ]  40.4% (used 414 bytes from 1024 bytes)
+
+2020.05.12 treview walkers again
+RAM:   [===       ]  25.0% (used 16 bytes from 64 bytes)
+Flash: [=====     ]  47.5% (used 486 bytes from 1024 bytes)
 */
 
 #include <Arduino.h>
@@ -83,13 +91,13 @@ StaticMenuIn<
 bool tog12();
 
 bool op1_action() {
-  Serial.println(F("Option 1 action called!"));
+  Serial.println(F("Action 2 called!"));
   digitalWrite(LED_PIN,0);
   return true;//false would close the menu
 }
 
 bool op2_action() {
-  Serial.println(F("Option 2 action called!"));
+  Serial.println(F("Action 1 called!"));
   digitalWrite(LED_PIN,1);
   return true;
 }
@@ -134,15 +142,10 @@ void setup() {
   delay(5000);
   pinMode(LED_PIN,OUTPUT);
   Serial.println(F("AM5 serial example"));
-  // nav.print(out);
-  auto printMenu=typename APICall::template PrintMenu<decltype(nav),Out,Op::Printing>(nav,out);
-  nav.walkId<decltype(printMenu)>(printMenu,id_mainMenu);
-  // nav.template print<Out,id_mainMenu>(out);
+  nav.template print<Out,id_mainMenu>(out);
 }
 
 void loop() {
-  // if(Serial.available()) Serial.write(Serial.peek());
-  // if (nav.doInput(in)) nav.print(out);
   if (nav.doInput(in)) nav.template print<Out,id_mainMenu>(out);
   delay(100);
 }

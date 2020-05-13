@@ -7,7 +7,7 @@
 * @brief ArduinoMenu ANSI terminal output
 */
 
-#include "../ansiCodes.h"
+#include "extra/ansiCodes.h"
 
 namespace Menu {
 	struct AnsiFmt {

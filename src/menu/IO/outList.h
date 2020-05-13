@@ -6,8 +6,6 @@
 * @brief ArduinoMenu multiple outputs chain
 */
 
-#include "../base.h"
-
 namespace Menu {
   template<typename O,typename... OO>
   class OutList:public OutList<O> {
@@ -16,11 +14,11 @@ namespace Menu {
       using Next=OutList<OO...>;
       using O::O;
       template<typename It,typename Nav,Op op=Op::Printing>
-      void printMenu(It& it,Nav& nav,bool fullPrint) {
+      void printMenu(It& it,Nav& nav,Idx level,bool fullPrint) {
         trace(MDO<<"OutList::printMenu<O,OO...> "<<(int)&out<<endl);
-        OutList<O>::template printMenu<It,Nav,op>(it,nav,fullPrint);
+        OutList<O>::template printMenu<It,Nav,op>(it,nav,level,fullPrint);
         next.newView();
-        next.template printMenu<It,Nav,op>(it,nav,fullPrint);
+        next.template printMenu<It,Nav,op>(it,nav,level,fullPrint);
       }
     protected:
       Next next;
@@ -31,9 +29,9 @@ namespace Menu {
     public:
       using O::O;
       template<typename It,typename Nav,Op op=Op::Printing>
-      void printMenu(It& it,Nav& nav,bool fullPrint) {
+      void printMenu(It& it,Nav& nav,Idx level,bool fullPrint) {
         trace(MDO<<"OutList::printMenu<O> "<<(int)&out<<endl);
-        O::template printMenu<It,Nav,op>(it,nav,fullPrint);
+        O::template printMenu<It,Nav,op>(it,nav,level,fullPrint);
       }
   };
 };

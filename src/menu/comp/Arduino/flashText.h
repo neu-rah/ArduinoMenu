@@ -17,9 +17,9 @@ namespace Menu {
       using I::I;
       // using I::size;
       template<typename Nav,typename Out,Op op=Op::Printing,bool delegate=true>
-      inline void print(Nav& nav,Out& out,PathRef ref=self) {
+      inline void print(Nav& nav,Out& out,Idx level) {
         out.template raw<const __FlashStringHelper *,op==Op::Printing>(reinterpret_cast<const __FlashStringHelper *>(text[0]));
-        if (delegate) I::template print<Nav,Out,op>(nav,out);
+        if (delegate) I::template print<Nav,Out,op>(nav,out,level);
       }
     };
   };

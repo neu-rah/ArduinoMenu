@@ -20,8 +20,11 @@ tested on nano
 using namespace Menu;
 
 // some user code for example --------------------------------------------------------------
-int year=1967;
-int vcc=3;
+
+//some target variables
+bool myLed=false;//target for toggle edit
+int max_temp=80;
+
 
 //------------------------------
 //menu action handlers
@@ -42,6 +45,12 @@ bool sub_action() {
   return true;
 }
 
+bool tog_action() {
+  Serial.print("Toggling field myLed is ");
+  Serial.println(myLed?"On":"Off");
+  return true;
+}
+
 enum MyIds:Idx {
   id_mainMenu,
   id1,
@@ -59,31 +68,44 @@ extern const char op2_text[] PROGMEM="Option 2";
 extern const char tog12_text[] PROGMEM="toggle 1&2";
 extern const char opn_text[] PROGMEM="Option ...";
 extern const char exit_txt[] PROGMEM="<Exit";
-const char* max_temp_label="Max.";
+extern const char max_temp_label[] PROGMEM="Max.";
 extern const char max_temp_unit[] PROGMEM="ºC";
 // extern const char yr_txt[] PROGMEM="Year";
 // extern const char vcc_txt[] PROGMEM="VCC";
 // extern const char volts_txt[] PROGMEM="V";
 
-//a variable to be changed
-int max_temp=80;
+extern const char led_text[] PROGMEM="Led:";
+extern const char on_text[] PROGMEM="On";
+extern const char off_text[] PROGMEM="Off";
+
+using On=Item<EnumValue<bool,true>::Part,FlashText<decltype(on_text),&on_text>::Part>;
+using Off=Item<EnumValue<bool,false>::Part,FlashText<decltype(off_text),&off_text>::Part>;
 
 //static menu structure
 Item<
   IdTag<id_mainMenu>::Part,
+  SetWalker::Part,
   StaticMenu<
     FlashText<decltype(mainMenu_title),&mainMenu_title>::Part<>,
     StaticData<
       Item<IdTag<id1>::Part,Action<op1_action>::Part,EnDis<>::Part,FlashText<decltype(op1_text),&op1_text>::Part>,
       Item<IdTag<id2>::Part,Action<op2_action>::Part,EnDis<false>::Part,FlashText<decltype(op2_text),&op2_text>::Part>,
       Item<IdTag<id3>::Part,Action<tog12>::Part,FlashText<decltype(tog12_text),&tog12_text>::Part>,
-      Item<FlashText<decltype(opn_text),&opn_text>::Part>,
-      Item< //compose a field with a label, an edit cursor and an unit text
-        AsName<StaticText<&max_temp_label>::Part>::Part,//(As) name format apply only to inner content
-        WrapMode<>::Part,//(Wrap) mode format, tme mode starts here and goes to the end of remaining content
-        StaticNumField<int,max_temp,10,99,10,1>::Part,//the numeric field with validation range and change/tune steps
-        AsUnit<FlashText<decltype(max_temp_unit),&max_temp_unit>::Part>::Part,//As unit format apply only to inner content
-        Mutable::Part //track changes
+      Item<
+        StaticNumField<
+          FlashText<decltype(max_temp_label),&max_temp_label>::Part,//title
+          int,max_temp,0,100,10,1,//parameters
+          FlashText<decltype(max_temp_unit),&max_temp_unit>::Part//unit (optional)
+        >::template Part
+      >,
+      Item<
+        ActOnUpdate::Part,//call handler on selection/focus change and store selected value
+        Handler<tog_action>::Part,//the handler
+        SelectField<
+          bool,myLed,
+          Item<FlashText<decltype(led_text),&led_text>::Part>,
+          StaticData<On,Off>//the enumeration of options (text and values possibly)
+        >::Part
       >,
       Item<
         StaticMenu<
@@ -95,7 +117,8 @@ Item<
             Item<FlashText<decltype(exit_txt),&exit_txt>::Part>
           >
         >::Part
-      >
+      >,
+      Item<FlashText<decltype(opn_text),&opn_text>::Part>
     >
   >::Part
 > mainMenu;//create menu object

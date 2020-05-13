@@ -4,6 +4,17 @@ _under development_
 
 **things here migh be outdated!**
 
+## APICall walkers
+
+|Name|Target|Has Nav|
+|--|--|--|
+|**Cmd**|focus|yes|
+|**Activate**|focus|no|
+|**Enable**|focus|no|
+|**Enabled**|focus|no|
+|**Size**|selected|no|
+|**PrintMenu**|selected or parent|yes|
+
 ## Base
 
 Base definitions `"menu/base.h"`

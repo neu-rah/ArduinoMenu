@@ -30,30 +30,23 @@ namespace Menu {
     constexpr Idx idx_max=std::numeric_limits<Idx>::max();
   #endif
 
+  /// ActionHanlder, type of action functions to associate with items
+  using ActionHandler=bool (*)();
+
   //ultimate terminal
   struct Nil {};
 
   //edit modes
   enum class Mode {Normal,Edit,Tune};
 
-  //activation result
-  enum class ActRes {
-    Stay,//nav state remains unchanged
-    Open,//open the item
-    Close,//close current item
-  };
-
   //APICall result
   union APIRes {
     size_t sz;
-    ActRes actRes;
     bool on;
     inline APIRes():sz(0){}
     inline APIRes(size_t sz):sz(sz) {}
-    inline APIRes(ActRes o):actRes(o){}
     inline APIRes(bool o):on(o) {}
     inline operator size_t() const {return sz;}
-    inline operator ActRes() const {return actRes;}
     inline operator bool() const {return on;}
   };
 
@@ -139,7 +132,6 @@ namespace Menu {
     inline O& operator<<(O& o,Cmd r) {
       switch(r){
         case Cmd::None:return o<<"None";
-        // case Cmd::Activate:return o<<"Activate";
         case Cmd::Enter:return o<<"Enter";
         case Cmd::Esc:return o<<"Esc";
         case Cmd::Up:return o<<"Up";

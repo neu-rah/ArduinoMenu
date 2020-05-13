@@ -3,6 +3,8 @@
 
 //command input parsers
 
+#include "kernel/api.h"
+
 namespace Menu {
 
   #ifdef ARDUINO
@@ -28,8 +30,7 @@ namespace Menu {
           bool res=false;
           if(onId) {//dispatch command
             trace(MDO<<"seeking id:"<<id<<endl);
-            auto a=APICall::Activate();
-            res=nav.template walkId<decltype(a)>(a,id);
+            res=APICall::Activate<Nav>(nav).walkId(nav.root,id);
             id=0;
             onId=0;
           }
@@ -79,8 +80,7 @@ namespace Menu {
       template<typename Nav>
       bool parseCmd(Nav& nav,Key k,bool e=false) {
         _trace(MDO<<"Accel::parseCmd"<<endl);
-        return nav.template cmd<Cmd::Accel>(k);/*?
-          true:In::parseCmd(nav,k,e);*/ //this will swallow all keys... lets it be the last in chanin
+        return nav.template cmd<Cmd::Accel>(k);
       }
     };
   };

@@ -52,6 +52,8 @@ int max_temp=50;
 
 //static menu structure
 Item<
+  SetWalker::Part,
+  Mutable::Part,
   StaticMenu<
     Item<Mutable::Part,FlashText<decltype(mainMenu_title),&mainMenu_title>::Part>,
     StaticData<
@@ -62,7 +64,7 @@ Item<
         Mutable::Part, //track changes
         AsName<FlashText<decltype(max_temp_label),&max_temp_label>::Part>::Part,//(As) name format apply only to inner content
         WrapMode<>::Part,//(Wrap) mode format, starts here and gores to end of remaining content
-        StaticNumField<int,max_temp,10,99,10,1>::Part,//the numeric field
+        StaticNumFieldCore<int,max_temp,10,99,10,1>::Part,//the numeric field
         AsUnit<FlashText<decltype(max_temp_unit),&max_temp_unit>::Part>::Part//name format apply only to inner content
       >,
       Item<Mutable::Part,FlashText<decltype(opn_text),&opn_text>::Part>,

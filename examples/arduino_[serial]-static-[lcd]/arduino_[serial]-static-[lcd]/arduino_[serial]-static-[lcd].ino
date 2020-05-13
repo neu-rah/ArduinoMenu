@@ -23,14 +23,6 @@ using namespace Menu;
 #define EN A4
 LiquidCrystal lcd(RS, RW, EN, A0, A1, A2, A3);
 
-//string data on flash
-extern const char mainMenu_title[] PROGMEM="Main menu";
-extern const char subMenu_title[] PROGMEM="Sub-menu";
-extern const char op1_text[] PROGMEM="Option 1";
-extern const char op2_text[] PROGMEM="Option 2";
-extern const char opn_text[] PROGMEM="Op...";
-extern const char exit_text[] PROGMEM="<Exit";
-
 bool hey() {
   Serial.println(F("Hey!"));
   return false;
@@ -43,7 +35,16 @@ bool grrr() {
 
 int tpt=25;
 
+//string data on flash
+extern const char mainMenu_title[] PROGMEM="Main menu";
+extern const char subMenu_title[] PROGMEM="Sub-menu";
+extern const char op1_text[] PROGMEM="Option 1";
+extern const char op2_text[] PROGMEM="Option 2";
+extern const char opn_text[] PROGMEM="Op...";
+extern const char exit_text[] PROGMEM="<Exit";
+
 Item<
+  SetWalker::Part,
   Mutable::Part,
   StaticMenu<
     Item<Mutable::Part,FlashText<decltype(mainMenu_title),&mainMenu_title>::Part>,

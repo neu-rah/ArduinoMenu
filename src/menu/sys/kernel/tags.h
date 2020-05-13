@@ -14,10 +14,10 @@ namespace Menu {
       using Base=I;
       using Base::Base;
       using Base::print;
-      template<typename Nav,typename Out,Op op=Op::Printing>
-      inline void print(Nav& nav,Out& out,PathRef ref=self) {
+      template<typename Nav,typename Out,Op op=Op::Printing,bool=true>
+      inline void print(Nav& nav,Out& out,Idx level) {
         out.template fmt<role,true>(nav.pos(),true,Base::enabled(),nav.mode());
-        Base::template print<Nav,Out,op>(nav,out,ref);
+        Base::template print<Nav,Out,op>(nav,out,level);
         out.template fmt<role,false>(nav.pos(),true,Base::enabled(),nav.mode());
       }
     };
@@ -36,42 +36,21 @@ namespace Menu {
   template<typename... O> using WrapUnit=Wrap<Tag::Unit>;
   template<typename... O> using WrapRaw=Wrap<Tag::Raw>;
 
-  //insert a block if content to be printed as `Tag tole` format
-  template<Tag role,Expr... R>
+  //insert a block if content to be printed as `Tag role` format
+  //note: can only contain a single part
+  template<Tag role,Expr R>
   struct As {
     template<typename I>
-    struct Part:Chain<R...,Empty>::template To<I>/*,Obj<Part<I>>*/ {
-      using Base=typename Chain<R...,Empty>::template To<I>;
-      using This=As<role,R...>;
-      // using Obj<Part<I>>::obj;
+    struct Part:R<I> {
+      using Base=R<I>;
       using Base::Base;
-      // using RoleBlock::RoleBlock;
-      // RoleBlock blk;
-      // using Type=typename Base::Type;
-      // using Base::printMenu;
-      // using Base::printTitle;
-      // using Base::cmd;
-      // using Base::printItems;
-      // using Base::changed;
-      // using Base::enable;
-      // using Base::enabled;
-      // using Base::size;
-      // using Base::activate;
-      // using Base::parentPrint;
-      // using Base::walkPath;
-      // using Base::obj;
-      // using Base::id;
-      inline static ActRes activate() {
-        trace(MDO<<"As::Activate"<<endl);
-        return Base::activate();
-      }
-      template<typename Nav,typename Out,Op op=Op::Printing>
-      inline void print(Nav& nav,Out& out) {
+      template<typename Nav,typename Out,Op op=Op::Printing,bool delegate=true>
+      inline void print(Nav& nav,Out& out,Idx level) {
         trace(MDO<<"As::Print"<<endl);
         out.template fmt<role,true>(nav.pos(),true,Base::enabled(),nav.mode());
-        Base::template print<Nav,Out,op>(nav,out);
+        Base::template print<Nav,Out,op,false>(nav,out,level);
         out.template fmt<role,false>(nav.pos(),true,Base::enabled(),nav.mode());
-        I::template print<Nav,Out,op>(nav,out);
+        if(delegate) I::template print<Nav,Out,op>(nav,out,level);
       }
     };
   };

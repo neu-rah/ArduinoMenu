@@ -1,8 +1,6 @@
 /* -*- C++ -*- */
 #pragma once
 
-#include "base.h"
-
 #define ESCAPE 0x1B
 #define BRACE '['
 #define BLACK 0

@@ -55,6 +55,7 @@ const char* quit_text="<Quit.";
 //menu static structure ---------------------------
 using MainMenu=Item<
   Mutable::Part,
+  SetWalker::Part,
   StaticMenu<
     Item<Mutable::Part,StaticText<&mainText>::Part>,
     StaticData<

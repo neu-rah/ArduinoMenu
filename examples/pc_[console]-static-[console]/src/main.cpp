@@ -11,6 +11,8 @@ using namespace Menu;
 
 //sketch control and actions ------------------------
 bool running=true;//exit program when false
+int max_temp=80;//target for numeric field edit
+bool myLed=false;//target for toggle edit
 
 bool quit() {
   //just signal program exit
@@ -35,6 +37,11 @@ bool sub_action() {
   return true;
 }
 
+bool tog_action() {
+  cout<<"Toggling field myLed is "<<(myLed?"On":"Off")<<endl;
+  return true;
+}
+
 //menu texts -------------------------
 const char* subText="Sub-menu";
 const char* sub1_text="Sub 1";
@@ -51,30 +58,51 @@ const char* op2_text="Option 2";
 const char* opn_text="Option...";
 const char* quit_text="<Quit.";
 
-int max_temp=80;
+const char* led_text="Led:";
+const char* on_text="On";
+const char* off_text="Off";
+using On=Item<EnumValue<bool,true>::Part,StaticText<&on_text>::Part>;
+using Off=Item<EnumValue<bool,false>::Part,StaticText<&off_text>::Part>;
 
 //menu static structure ---------------------------
 using MainMenu=Item<
+  // SetWalker::Part,
   StaticMenu<
     Item<StaticText<&mainText>::Part,Mutable::Part>,
     StaticData<
       Item<Action<op1_action>::Part,EnDis<>::Part,StaticText<&op1_text>::Part,Mutable::Part>,
       Item<Action<op2_action>::Part,EnDis<false>::Part,StaticText<&op2_text>::Part,Mutable::Part>,
       Item<Action<tog12>::Part,StaticText<&tog12_text>::Part,Mutable::Part>,
-      Item< //compose a field with a label, an edit cursor and an unit
-        AsName<StaticText<&max_temp_label>::Part>::Part,//(As) name format apply only to inner content
-        WrapMode<>::Part,//(Wrap) mode format, starts here and gores to end of remaining content
-        StaticNumField<int,max_temp,0,100,10,1>::Part,//the numeric field
-        AsUnit<StaticText<&max_temp_unit>::Part>::Part,//name format apply only to inner content
-        Mutable::Part //track changes
+      // Item< //compose a field with a label, an edit cursor and an unit
+      //   AsName<StaticText<&max_temp_label>::Part>::Part,//(As) name format apply only to inner content
+      //   WrapMode<>::Part,//(Wrap) mode format, starts here and gores to end of remaining content
+      //   StaticNumFieldCore<int,max_temp,0,100,10,1>::Part,//the numeric field
+      //   AsUnit<StaticText<&max_temp_unit>::Part>::Part,//name format apply only to inner content
+      //   Mutable::Part //track changes
+      // >,//or alternative bellow
+      Item<
+        StaticNumField<
+          StaticText<&max_temp_label>::Part,//title
+          int,max_temp,0,100,10,1,//parameters
+          StaticText<&max_temp_unit>::Part//unit (optional)
+        >::template Part
       >,
       Item<StaticText<&opn_text>::Part,Mutable::Part>,
+      Item<
+        // ActOnUpdate::Part,//call handler on selection/focus change and store selected value
+        Handler<tog_action>::Part,//the handler
+        SelectField<
+          bool,myLed,
+          Item<StaticText<&led_text>::Part>,
+          StaticData<On,Off>//the enumeration of options (text and values possibly)
+        >::Part
+      >,
       Item<
         StaticMenu<
           Item<StaticText<&subText>::Part,Mutable::Part>,
           StaticData<
-            Item<Action<sub_action>::Part,StaticText<&sub1_text>::Part,Mutable::Part>,
             Item<Action<sub_action>::Part,StaticText<&sub2_text>::Part,Mutable::Part>,
+            Item<Action<sub_action>::Part,StaticText<&sub1_text>::Part,Mutable::Part>,
             Item<StaticText<&exit_text>::Part,Mutable::Part>
           >
         >::Part
@@ -117,6 +145,12 @@ bool tog12() {
 }
 
 int main() {
+  // cout<<mainMenu.enabled(1)<<endl;
+  // cout<<nav.size(nav.parent())<<endl;
+  // nav.level=0;
+  // nav.path[0]=7;
+  // nav.path[1]=1;
+  // cout<<nav.size(self)<<endl;
   nav.print(out);
   while(running) if (nav.doInput(in)) nav.print(out);
   return 0;
