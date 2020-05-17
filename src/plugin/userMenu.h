@@ -27,7 +27,7 @@ namespace Menu {
       if(root.navFocus!=this) return menuNode::printTo(root,sel,out,idx,len,p);
       return idx<0?
         menuNode::printTo(root,sel,out,idx,len,p)://print the title
-        printItem(out,idx,len);
+        printItem(out,out.tops[root.level]+idx,len);
     }
     void doNav(navNode& nav,navCmd cmd) {
       if(nav.root->navFocus==this&&cmd.cmd==enterCmd) {
