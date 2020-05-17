@@ -9,6 +9,7 @@
 #include "api.h"
 
 #ifdef MENU_DEBUG
+  #define dbg_constexpr
   #ifdef ARDUINO
     // #pragma message "COMPILE FOR ARDUINO FRAMEWORK!"
     #include <streamFlow.h>
@@ -26,6 +27,8 @@
     #endif
     using mdo_t=decltype(MDO)&;
   #endif
+#else
+  #define dbg_constexpr constexpr
 #endif
 
 // struct _MDO:mdo_t {};

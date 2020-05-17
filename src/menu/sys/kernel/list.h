@@ -18,15 +18,19 @@ namespace Menu {
     S tail;
     using F::changed;
 
+    inline constexpr bool canNav(Idx n) {
+      return n?tail.canNav(n-1):F::canNav();
+    }
+
     template<typename T>
     inline T getValue(Idx n) const
       {return n?tail.template getValue<T>(n-1):F::template getValue<T>();}
 
     using Base::activate;
     template<typename Nav>
-    inline void activate(Nav& nav,Idx level,Idx n) {
+    inline void activateItem(Nav& nav,Idx level,Idx n) {
       trace(MDO<<"Pair::activate n:"<<n<<endl);
-      if(n) tail.template activate<Nav>(nav,level,n-1);
+      if(n) tail.template activateItem<Nav>(nav,level,n-1);
       else F::template activate<Nav>(nav,level);
     }
 
@@ -50,13 +54,13 @@ namespace Menu {
     }
 
     using Base::size;
-    inline constexpr size_t size(Idx n) const {return n?tail.size(n-1):F::size();}
+    inline constexpr size_t sizeItem(Idx n) const {return n?tail.sizeItem(n-1):F::size();}
     inline constexpr size_t count() const {return tail.count()+1;}
 
     template<Cmd c,typename Nav>
-    inline bool cmd(Nav& nav,Idx level,Idx aux,Idx n) {
-      trace(MDO<<"Pair::cmd "<<c<<" aux:"<<aux<<" n:"<<n<<endl);
-      if(n) return tail.template cmd<c,Nav>(nav,level,aux,n-1);
+    inline bool cmdItem(Nav& nav,Idx level,Idx aux,Idx n) {
+      trace(MDO<<"Pair::cmdItem "<<c<<" aux:"<<aux<<" n:"<<n<<endl);
+      if(n) return tail.template cmdItem<c,Nav>(nav,level,aux,n-1);
       return F::template cmd<c,Nav>(nav,level,aux);
     }
 
@@ -66,21 +70,21 @@ namespace Menu {
     }
 
     using Base::enabled;
-    inline bool enabled(Idx n) {
+    inline bool enabledItem(Idx n) {
       trace(MDO<<"Pair::enabled n:"<<n<<endl);
-      return n?tail.enabled(n-1):F::enabled();
+      return n?tail.enabledItem(n-1):F::enabled();
     }
     using Base::enable;
-    inline void enable(bool b,Idx n) {
+    inline void enableItem(bool b,Idx n) {
       trace(MDO<<"Pair::enable("<<b<<","<<n<<")"<<endl);
-      return n?tail.enable(b,n-1):F::enable(b);
+      return n?tail.enableItem(b,n-1):F::enable(b);
     }
 
     template<typename Nav,typename Out,Op op=Op::Printing,bool delegate=true>
-    inline void print(Nav& nav,Out& out,Idx level,Idx n) {
+    inline void printItem(Nav& nav,Out& out,Idx level,Idx n) {
       trace(MDO<<"Pair::print "<<n<<endl);
-      if(n) tail.template print<Nav,Out,op,delegate>(nav,out,level,n-1);
-      else F::template print<Nav,Out,op,delegate>(nav,out,level+1);
+      if(n) tail.template printItem<Nav,Out,op,delegate>(nav,out,level,n-1);
+      else F::template print<Nav,Out,op,delegate>(nav,out,level+1,nav.selected(n,level));
     }
 
     template<typename Nav,typename Out,Op op=Op::Printing>
@@ -90,8 +94,8 @@ namespace Menu {
     }
 
     template<typename Nav,typename Out,Op op=Op::Printing>
-    inline void printMenu(Nav& nav,Out& out,Idx level,Idx n) {
-      if (n) tail.template printMenu<Nav,Out,op>(nav,out,level,n);
+    inline void printMenuItem(Nav& nav,Out& out,Idx level,Idx n) {
+      if (n) tail.template printMenuItem<Nav,Out,op>(nav,out,level,n);
       else  tail.template printMenu<Nav,Out,op>(nav,out,level);
     }
 
@@ -112,15 +116,17 @@ namespace Menu {
   template<typename O,typename... OO> struct StaticData:Pair<O,StaticData<OO...>> {};
   template<typename O>                struct StaticData<O>:Pair<O> {};
 
-  //static poly-morphic menu
+  //static poly-morphic menu core
+  //a core is a full component but it has some functionality that should not be on top of the composition
+  //in this case the `cmd` handler that is delivered to the bosy and therefore does NOT follow the composution chain
   template<typename Title,typename Body>
-  struct StaticMenu {
+  struct StaticMenuCore {
     template<typename I>
-    struct Part:SetWalker::template Part<I> {
-      using Base=typename SetWalker::template Part<I>;
+    struct Part:I {
+      using Base=I;
       Title title;
       Body body;
-      using This=StaticMenu<Title,Body>;
+      using This=Part<I>;
       using Base::Base;
 
       template<typename A,Idx i>
@@ -138,7 +144,7 @@ namespace Menu {
 
       template<typename A>
       APIRes walkPath(const A& api,PathRef ref,Idx level,Idx n) {
-        trace(MDO<<"StaticMenu::walkPath"<<endl);
+        trace(MDO<<"StaticMenu::walkPath "<<api.named()<<" "<<ref<<endl);
         return body.walkPath(api,ref,level,n);
       }
 
@@ -147,25 +153,26 @@ namespace Menu {
 
       using Base::size;
       inline constexpr size_t size() const {return body.count();}
-      inline constexpr size_t size(Idx n) const {return body.size(n);}
+      inline constexpr size_t sizeItem(Idx n) const {return body.sizeItem(n);}
       using Base::enabled;
-      inline bool enabled(Idx n) {
-        _trace(MDO<<"StaticMenu::enabled "<<n<<endl);
-        return body.enabled(n);}
+      inline bool enabledItem(Idx n) {
+        trace(MDO<<"StaticMenu::enabled "<<n<<endl);
+        return body.enabledItem(n);}
       using Base::enable;
-      inline void enable(bool b,Idx n) {
+      inline void enableItem(bool b,Idx n) {
         trace(MDO<<"StaticMenu::enable("<<b<<","<<n<<")"<<endl);
-        body.enable(b,n);}
+        body.enableItem(b,n);}
       inline static constexpr bool canNav() {return true;}
+      inline constexpr bool canNav(Idx n) {return body.canNav(n);}
       template<typename Nav>
       inline static void activate(Nav& nav,Idx) {
         trace(MDO<<"StaticMenu::activate!"<<endl);
         nav.open();
       }
       template<typename Nav>
-      inline void activate(Nav& nav,Idx level,Idx n) {
+      inline void activateItem(Nav& nav,Idx level,Idx n) {
         trace(MDO<<"StaticMenu::activate n:"<<n<<endl);
-        body.template activate<Nav>(nav,level,n);
+        body.template activateItem<Nav>(nav,level,n);
       }
 
       using Base::changed;
@@ -173,19 +180,9 @@ namespace Menu {
 
       using Base::cmd;
       template<Cmd c,typename Nav>
-      inline bool cmd(Nav& nav,Idx level,Idx aux) {
-        Idx p=nav.pos();
-        bool res=Base::template cmd<c,Nav>(nav,level,aux);
-        if(p!=nav.pos()) {
-          changed(p,true);
-          changed(nav.pos(),true);
-        }
-        return res;
-      }
-      template<Cmd c,typename Nav>
-      inline bool cmd(Nav& nav,Idx level,Idx aux,Idx n) {
-        trace(MDO<<"StaticMenu::cmd to item:"<<n<<endl);
-        return body.template cmd<c,Nav>(nav,level,aux,n);
+      inline bool cmdItem(Nav& nav,Idx level,Idx aux,Idx n) {
+        trace(MDO<<"StaticMenu::cmdItem to item:"<<n<<endl);
+        return body.template cmdItem<c,Nav>(nav,level,aux,n);
       }
 
       template<typename Nav,typename Out,Op op=Op::Printing>
@@ -196,9 +193,9 @@ namespace Menu {
       }
 
       template<typename Nav,typename Out,Op op=Op::Printing>
-      inline void printMenu(Nav& nav,Out& out,Idx level,Idx n) {
-        trace(MDO<<"StaticMenu::printMenu "<<n<<endl);
-        // body.template printMenu<Nav,Out,op,delegate>(nav,out,level,n);
+      inline void printMenuItem(Nav& nav,Out& out,Idx level,Idx n) {
+        trace(MDO<<"StaticMenu::printMenuItem "<<n<<endl);
+        // body.template printMenuItem<Nav,Out,op,delegate>(nav,out,level,n);
         //TODO: make this pure function even if slow
         out.template printMenu<typename Base::Type,Nav,op>
           (Base::obj(),nav,out.fullDraw()||!out.isSame(&Base::obj()),level);
@@ -223,16 +220,25 @@ namespace Menu {
       }
 
       template<typename Nav,typename Out,Op op=Op::Printing,bool delegate=true>
-      inline void print(Nav& nav,Out& out,Idx level) {
+      inline void print(Nav& nav,Out& out,Idx level,bool selected) {
         trace(MDO<<"StaticMenu::print "<<op<<endl);
-        title.template print<Nav,Out,op,delegate>(nav,out,level);
+        title.template print<Nav,Out,op,delegate>(nav,out,level,selected);
       }
 
       template<typename Nav,typename Out,Op op=Op::Printing,bool delegate=true>
-      inline void print(Nav& nav,Out& out,Idx level,Idx n) {
+      inline void printItem(Nav& nav,Out& out,Idx level,Idx n) {
         trace(MDO<<"StaticMenu::print "<<n<<endl);
-        body.template print<Nav,Out,op,delegate>(nav,out,level,n);
+        body.template printItem<Nav,Out,op,delegate>(nav,out,level,n);
       }
     };
   };
+
+  template<typename Title,typename Body>
+  using StaticMenu=Alias<
+    CmdChange::Part,
+    DefaultNav::Part,
+    SetWalker::Part,
+    StaticMenuCore<Title,Body>::template Part
+  >;
+
 };

@@ -65,7 +65,7 @@ namespace Menu {
     struct Part:In {
       template<typename Nav>
       bool parseCmd(Nav& nav,Key k,bool e=false) {
-        _trace(MDO<<"IndexAccel::parseCmd "<<(char)k<<endl);
+        trace(MDO<<"IndexAccel::parseCmd "<<(char)k<<endl);
         return isdigit(k)?
            nav.template cmd<Cmd::Index>(k-'0'):
            In::parseCmd(nav,k,e);
@@ -79,7 +79,7 @@ namespace Menu {
     struct Part:In {
       template<typename Nav>
       bool parseCmd(Nav& nav,Key k,bool e=false) {
-        _trace(MDO<<"Accel::parseCmd"<<endl);
+        trace(MDO<<"Accel::parseCmd"<<endl);
         return nav.template cmd<Cmd::Accel>(k);
       }
     };

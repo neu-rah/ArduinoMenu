@@ -36,7 +36,7 @@ namespace Menu {
         O::template clrLine<toPrint>(O::posY());
         O::template fmt<Tag::Item,true,toPrint>();
         O::template fmt<Tag::Title,true,toPrint>();
-        it.template print<Nav,typename Base::Type,op>(nav,Base::obj(),level);
+        it.template print<Nav,typename Base::Type,op>(nav,Base::obj(),level,false);
         O::template fmt<Tag::Title,false,toPrint>();
         O::template fmt<Tag::Item,false,toPrint>();
       }
@@ -50,7 +50,7 @@ namespace Menu {
         Base::template fmt<Tag::Index, false,toPrint>(n,s,e,m);
         Base::template fmt<Tag::Cursor,true ,toPrint>(n,s,e,m);
         Base::template fmt<Tag::Cursor,false,toPrint>(n,s,e,m);
-        it.template print<Nav,typename Base::Type,op>(nav,Base::obj(),level);
+        it.template print<Nav,typename Base::Type,op>(nav,Base::obj(),level,s);
         Base::template fmt<Tag::Item,false,toPrint>(n,s,e,m);
       }
     };

@@ -7,8 +7,19 @@ Menu system common components
 
 #include "kernel/api.h"
 
-
 namespace Menu {
+
+  // alias composition blocks
+  //ie: `using Test=Alias<ToggleNav::Part,WrapNav::Part,KeepSel::Part>;`
+  //    ...
+  //    `Item<Test::Part,Mutable::Part>,`
+  template<Expr... OO>
+  struct Alias {
+    template<typename I>
+    struct Part:Chain<OO...>::template To<I> {};
+  };
+
+
   //provide an ID for menu items
   template<Idx idTag>
   struct IdTag {
@@ -32,12 +43,12 @@ namespace Menu {
 
       //this can not be `protected` because of `CRTP` and `mixin` composition
       template<typename Nav,typename Out,Op op=Op::Printing,bool delegate=true>
-      inline void print(Nav& nav,Out& out,Idx level,bool selected) {
+      inline void print(Nav& nav,Out& out,Idx level) {
         if (op==Op::ClearChanges) {
           trace(MDO<<"Mutable::print clear "<<endl);
           changed(false);
         }
-        if (delegate) I::template print<Nav,Out,op>(nav,out,level,selected);
+        if (delegate) I::template print<Nav,Out,op>(nav,out,level);
       }
     protected:
       bool hasChanged=true;
@@ -89,9 +100,9 @@ namespace Menu {
     struct Part:I {
       using I::I;
       template<typename Nav,typename Out,Op op=Op::Printing,bool delegate=true>
-      inline void print(Nav& nav,Out& out,Idx level,bool selected) {
+      inline void print(Nav& nav,Out& out,Idx level) {
         out.template raw<decltype(text[0]),op==Op::Printing>(text[0]);
-        if(delegate) I::template print<Nav,Out,op>(nav,out,level,selected);
+        if(delegate) I::template print<Nav,Out,op>(nav,out,level);
       }
     };
   };
@@ -105,7 +116,7 @@ namespace Menu {
       template<typename... OO>
       inline Part(const char*o,OO... oo):text(o),I(oo...) {}
       template<typename Nav,typename Out,Op op=Op::Printing,bool delegate=true>
-      inline void print(Nav& nav,Out& out,Idx level,bool selected) {
+      inline void print(Nav& nav,Out& out,Idx level) {
         out.template raw<decltype(text),op==Op::Printing>(text);
         if(delegate) I::template print<Nav,Out,op>(nav,out,level);
       }
@@ -142,7 +153,7 @@ namespace Menu {
       using Base::printMenu;
       template<typename Nav,typename Out,Op op=Op::Printing>
       inline void printMenuItem(Nav& nav,Out& out,Idx level,Idx n) {
-        trace(MDO<<"ParentPrint::printMenu @"<<n<<endl);
+        trace(MDO<<"ParentPrint::printMenuItem @"<<n<<endl);
         nav.print(out,nav.parent());//relaunch the print on the parent
       }
     };
@@ -182,7 +193,7 @@ namespace Menu {
       using Base::cmd;
       template<Cmd c,typename Nav>
       inline bool cmdItem(Nav& nav,Idx level,Idx aux,Idx n) {
-        trace(MDO<<"ActOnUpdate::cmd "<<c<<endl);
+        trace(MDO<<"ActOnUpdate::cmdItem "<<c<<endl);
         if(c!=Cmd::Enter&&c!=Cmd::Esc&&Base::obj().isActive()) {
           if(Base::template cmdItem<c,Nav>(nav,level,aux,n)) {
             trace(MDO<<"ActOnUpdate::cmdItem level:"<<level<<" focus:"<<nav.pos()<<endl);
@@ -201,6 +212,7 @@ namespace Menu {
     };
   };
 
+  //keep navigation selection state
   template<typename I>
   class KeepSelCore:public I {
     public:
@@ -231,10 +243,10 @@ namespace Menu {
         trace(MDO<<"{KeepSel} retored selection of level "<<nav.depth()<<" to "<<nav.operator PathRef()<<endl);
       }
       template<typename Nav>
-      inline void activateItem(Nav& nav,Idx level,Idx n) {
+      inline void activate(Nav& nav,Idx level,Idx n) {
         trace(MDO<<"{KeepSel} User selects #"<<n<<endl);
         Base::obj().storeSel(n);
-        Base::activateItem(nav,level,n);
+        Base::activate(nav,level,n);
       }
       template<typename Nav>
       inline bool action(Nav& nav,Idx level) {
@@ -275,33 +287,25 @@ namespace Menu {
       using Base::Base;
       using Base::activate;
       template<typename Nav>
-      inline void activateItem(Nav& nav,Idx level,Idx n) {
+      inline void activate(Nav& nav,Idx level,Idx n) {
         trace(MDO<<"ActOnSub::activate #"<<n<<endl);
         Base::obj().action(nav,level);
-        Base::activateItem(nav,level,n);
+        Base::activate(nav,level,n);
       }
     };
   };
 
-  struct EnumNav {
-    template<typename I>
-    struct Part:I {
+  //navigation abstration
+  template<typename I>
+  class NavCmdAbs:public I {
+    public:
       using Base=I;
       using Base::Base;
-      using Base::cmd;
+    protected:
       template<Cmd c,typename Nav>
-      inline bool cmdItem(Nav& nav,Idx level,Idx aux,Idx n) {
-        trace(MDO
-          <<"EnumNav::cmdItem "<<c
-          <<" aux:"<<aux
-          <<" level:"<<level
-          <<" nav.level:"<<nav.depth()
-          <<" #"<<n
-          <<" mode:"<<nav.mode()
-          <<" canNav:"<<Base::obj().canNav()
-          <<endl
-        );
-        bool r=Base::template cmdItem<c,Nav>(nav,level,aux,n);
+      inline bool cmdAbs(Nav& nav,Idx level,Idx aux,Idx n) {
+        _trace(MDO<<"NavCmdAbs::cmd "<<aux<<" level:"<<level<<" #"<<n<<" mode:"<<nav.mode()<<" nav.level:"<<nav.depth()<<" canNav:"<<Base::canNav(n)<<endl);
+        bool r=Base::template cmd<c,Nav>(nav,level,aux,n);
         switch(c) {
           case Cmd::Up:
             if(n<Base::size()-1) {
@@ -322,53 +326,42 @@ namespace Menu {
         }
         return r;
       }
-
-    };
   };
 
-  struct DefaultNav {
+  //enumeration nav, no check for num. field mode
+  struct EnumNav {
     template<typename I>
-    struct Part:I {
-      using Base=I;
+    struct Part:NavCmdAbs<I> {
+      using Base=NavCmdAbs<I>;
       using Base::Base;
       using Base::cmd;
       template<Cmd c,typename Nav>
       inline bool cmdItem(Nav& nav,Idx level,Idx aux,Idx n) {
-        trace(MDO
-          <<"DefaultNav::cmdItem "<<c
-          <<" aux:"<<aux
-          <<" level:"<<level
-          <<" nav.level:"<<nav.depth()
-          <<" #"<<n<<" mode:"<<nav.mode()
-          <<" canNav:"<<Base::obj().canNav()
-          <<endl
-        );
-        bool r=Base::template cmdItem<c,Nav>(nav,level,aux,n);//this is assuming exclusivity!
-        if(nav.mode()==Mode::Normal)
-          switch(c) {
-            case Cmd::Up:
-              if(n<Base::size()-1) {
-                nav.setPos(n+1);
-                return true;
-              }
-              break;
-            case Cmd::Down:
-              if(n>0) {
-                nav.setPos(n-1);
-                return true;
-              }
-              break;
-            case Cmd::Enter:
-              nav.activate();
-              return true;
-            default:break;
-          }
-        return r;
+        _trace(MDO<<"EnumNav::cmd "<<aux<<" level:"<<level<<" #"<<n<<" mode:"<<nav.mode()<<" nav.level:"<<nav.depth()<<" canNav:"<<Base::canNav(n)<<endl);
+        return Base::template cmdAbs<c,Nav>(nav,level,aux,n);
       }
-
     };
   };
 
+  //default navigation
+  struct DefaultNav {
+    template<typename I>
+    struct Part:NavCmdAbs<I> {
+      using Base=NavCmdAbs<I>;
+      using Base::Base;
+      using Base::cmd;
+      template<Cmd c,typename Nav>
+      inline bool cmdItem(Nav& nav,Idx level,Idx aux,Idx n) {
+        _trace(MDO<<"DefaultNav::cmdItem "<<aux<<" level:"<<level<<" #"<<n<<" mode:"<<nav.mode()<<" nav.level:"<<nav.depth()<<" canNav:"<<Base::canNav(n)<<endl);
+        bool r=Base::template cmdItem<c,Nav>(nav,level,aux,n);
+        if(nav.mode()==Mode::Normal||(Base::obj().canNav()&&nav.mode()!=Mode::Normal))
+          return r||Base::template cmdAbs<c,Nav>(nav,level,aux,n);
+        return r;
+      }
+    };
+  };
+
+  //circular navigation
   struct WrapNav {
     template<typename I>
     struct Part:I {
@@ -377,15 +370,7 @@ namespace Menu {
       using Base::cmd;
       template<Cmd c,typename Nav>
       inline bool cmdItem(Nav& nav,Idx level,Idx aux,Idx n) {
-        trace(MDO
-          <<"   WrapNav::cmd "<<c
-          <<" aux:"<<aux
-          <<" level:"<<level
-          <<" nav.level:"<<nav.depth()
-          <<" #"<<n<<" mode:"<<nav.mode()
-          <<" canNav:"<<Base::obj().canNav()
-          <<endl
-        );
+        trace(MDO<<"WrapNav::cmdItem "<<aux<<" level:"<<level<<" #"<<n<<" mode:"<<nav.mode()<<endl);
         bool r=Base::template cmdItem<c,Nav>(nav,level,aux,n);
         if(nav.mode()==Mode::Normal) switch(c) {
           case Cmd::Up:
@@ -443,15 +428,4 @@ namespace Menu {
       }
     };
   };
-
-  // alias composition blocks
-  //ie: `using Test=Alias<ToggleNav::Part,WrapNav::Part,KeepSel::Part>;`
-  //    ...
-  //    `Item<Test::Part,Mutable::Part>,`
-  template<Expr... OO>
-  struct Alias {
-    template<typename I>
-    struct Part:Chain<OO...>::template To<I> {};
-  };
-
 };

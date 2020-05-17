@@ -80,7 +80,7 @@ namespace Menu {
           case 27:case 68: return nav.template cmd<Cmd::Esc>();
           default:break;
         }
-        _trace(MDO<<"PCArrows passing key"<<endl);
+        trace(MDO<<"PCArrows passing key"<<endl);
         return In::parseCmd(nav,k,e);
       }
     };

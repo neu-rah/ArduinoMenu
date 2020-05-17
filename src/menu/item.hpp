@@ -16,7 +16,7 @@ namespace Menu {
   }
 
   template<Expr... I>
-  inline bool Prompt<I...>::cmd(Cmd c,INav& nav,Idx level,Idx aux,Idx i) {
+  inline bool Prompt<I...>::cmdItem(Cmd c,INav& nav,Idx level,Idx aux,Idx i) {
     switch(c) {
       case Cmd::None: return Base::template cmd<Cmd::None,INav>(nav,level,aux,i);break;
       case Cmd::Enter: return Base::template cmd<Cmd::Enter,INav>(nav,level,aux,i);break;
@@ -39,11 +39,11 @@ namespace Menu {
   }
 
   template<Expr... I>
-  inline void Prompt<I...>::printMenu(INav& nav,IOut& out,Idx level,Idx n,Op op) {
+  inline void Prompt<I...>::printMenuItem(INav& nav,IOut& out,Idx level,Idx n,Op op) {
     switch(op) {
-      case Op::Measure: Base::template printMenu<INav,IOut,Op::Measure>(nav,out,level,n);break;
-      case Op::Printing: Base::template printMenu<INav,IOut,Op::Printing>(nav,out,level,n);break;
-      case Op::ClearChanges: Base::template printMenu<INav,IOut,Op::ClearChanges>(nav,out,level,n);break;
+      case Op::Measure: Base::template printMenuItem<INav,IOut,Op::Measure>(nav,out,level,n);break;
+      case Op::Printing: Base::template printMenuItem<INav,IOut,Op::Printing>(nav,out,level,n);break;
+      case Op::ClearChanges: Base::template printMenuItem<INav,IOut,Op::ClearChanges>(nav,out,level,n);break;
     }
   }
 

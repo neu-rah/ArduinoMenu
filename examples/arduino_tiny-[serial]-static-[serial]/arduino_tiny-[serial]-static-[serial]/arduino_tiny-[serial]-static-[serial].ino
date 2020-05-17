@@ -141,7 +141,7 @@ void setup() {
   // while(!Serial);
   delay(5000);
   pinMode(LED_PIN,OUTPUT);
-  Serial.println(F("AM5 serial example"));
+  Serial.println(F("AM5 tiny example/test"));
   nav.template print<Out,id_mainMenu>(out);
 }
 

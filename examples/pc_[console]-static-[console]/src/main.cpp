@@ -13,6 +13,9 @@ using namespace Menu;
 bool running=true;//exit program when false
 int max_temp=80;//target for numeric field edit
 bool myLed=false;//target for toggle edit
+enum class TrigType {None,Rise,Fall,Both};
+TrigType trigger=TrigType::None;
+int choose_value=0;
 
 bool quit() {
   //just signal program exit
@@ -39,6 +42,30 @@ bool sub_action() {
 
 bool tog_action() {
   cout<<"Toggling field myLed is "<<(myLed?"On":"Off")<<endl;
+  return false;
+}
+
+bool sel_action() {
+  cout<<"Selecting ";
+  switch(trigger){
+    case TrigType::None: cout<<"none";break;
+    case TrigType::Rise: cout<<"rise";break;
+    case TrigType::Fall: cout<<"fall";break;
+    case TrigType::Both: cout<<"both";break;
+  }
+  cout<<endl;
+  return true;
+}
+
+bool pos_action() {
+  cout<<"Choosing ";
+  switch(choose_value){
+    case 0: cout<<"first";break;
+    case 1: cout<<"second";break;
+    case 2: cout<<"third";break;
+    case 3: cout<<"last";break;
+  }
+  cout<<endl;
   return true;
 }
 
@@ -64,6 +91,27 @@ const char* off_text="Off";
 using On=Item<EnumValue<bool,true>::Part,StaticText<&on_text>::Part>;
 using Off=Item<EnumValue<bool,false>::Part,StaticText<&off_text>::Part>;
 
+const char* sel_text="Trigger";
+const char* trig_none_text="None";
+const char* trig_rise_text="Rise";
+const char* trig_fall_text="Fall";
+const char* trig_both_text="Both";
+using TrigNone=Item<EnumValue<TrigType,TrigType::None>::Part,StaticText<&trig_none_text>::Part>;
+using TrigRise=Item<EnumValue<TrigType,TrigType::Rise>::Part,StaticText<&trig_rise_text>::Part>;
+using TrigFall=Item<EnumValue<TrigType,TrigType::Fall>::Part,StaticText<&trig_fall_text>::Part>;
+using TrigBoth=Item<EnumValue<TrigType,TrigType::Both>::Part,StaticText<&trig_both_text>::Part>;
+
+
+const char* choose_text="Choose";
+const char* pos_first_text="First";
+const char* pos_second_text="Second";
+const char* pos_third_text="Third";
+const char* pos_last_text="Last";
+using ChooseFirst=Item<EnumValue<int,0>::Part,StaticText<&pos_first_text>::Part>;
+using ChooseSecond=Item<EnumValue<int,1>::Part,StaticText<&pos_second_text>::Part>;
+using ChooseThird=Item<EnumValue<int,2>::Part,StaticText<&pos_third_text>::Part>;
+using ChooseLast=Item<EnumValue<int,-1>::Part,StaticText<&pos_last_text>::Part>;
+
 //menu static structure ---------------------------
 using MainMenu=Item<
   // SetWalker::Part,
@@ -83,26 +131,45 @@ using MainMenu=Item<
       Item<
         StaticNumField<
           StaticText<&max_temp_label>::Part,//title
-          int,max_temp,0,100,10,1,//parameters
+          int,max_temp,0,100,10,1,true,//parameters
           StaticText<&max_temp_unit>::Part//unit (optional)
         >::template Part
       >,
       Item<StaticText<&opn_text>::Part,Mutable::Part>,
       Item<
-        // ActOnUpdate::Part,//call handler on selection/focus change and store selected value
         Handler<tog_action>::Part,//the handler
-        SelectField<
+        ToggleField<
           bool,myLed,
           Item<StaticText<&led_text>::Part>,
           StaticData<On,Off>//the enumeration of options (text and values possibly)
         >::Part
       >,
       Item<
+        Handler<sel_action>::Part,//the handler
+        ActOnUpdate::Part,
+        SelectField<
+          TrigType,trigger,
+          Item<StaticText<&sel_text>::Part>,
+          StaticData<TrigNone,TrigRise,TrigFall,TrigBoth>//the enumeration of options (text and values possibly)
+        >::Part
+      >,
+      Item<
+        Handler<pos_action>::Part,//the handler
+        ActOnUpdate::Part,
+        // WrapNav::Part,
+        ChooseField<
+          int,choose_value,
+          Item<StaticText<&choose_text>::Part>,
+          StaticData<ChooseFirst,ChooseSecond,ChooseThird,ChooseLast>//the enumeration of options (text and values possibly)
+        >::Part
+      >,
+      Item<
+        // WrapNav::Part,
         StaticMenu<
           Item<StaticText<&subText>::Part,Mutable::Part>,
           StaticData<
-            Item<Action<sub_action>::Part,StaticText<&sub2_text>::Part,Mutable::Part>,
             Item<Action<sub_action>::Part,StaticText<&sub1_text>::Part,Mutable::Part>,
+            Item<Action<sub_action>::Part,StaticText<&sub2_text>::Part,Mutable::Part>,
             Item<StaticText<&exit_text>::Part,Mutable::Part>
           >
         >::Part
@@ -123,7 +190,7 @@ StaticMenuOut<
 //   PartialDraw::Part,//just for testing, because console is not of this cathegory
 //   PanelTarget::Part,//detect target (menu) changes
 //   RangePanel<>::Part,//control vertical scrolling
-//   StaticPanel<0,0,20,4>::Part,//define output ge'ometry
+//   StaticPanel<0,0,20,4>::Part,//define output geometry
 // #endif
   Console::Part,//the raw output device to use
   TextMeasure<>::Part//default monometric text measure
@@ -145,12 +212,8 @@ bool tog12() {
 }
 
 int main() {
-  // cout<<mainMenu.enabled(1)<<endl;
-  // cout<<nav.size(nav.parent())<<endl;
-  // nav.level=0;
-  // nav.path[0]=7;
-  // nav.path[1]=1;
-  // cout<<nav.size(self)<<endl;
+  // nav.path[0]=5;
+  // nav.enter();
   nav.print(out);
   while(running) if (nav.doInput(in)) nav.print(out);
   return 0;

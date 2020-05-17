@@ -14,8 +14,8 @@ namespace Menu {
       using Base=typename SetWalker::template Part<I>;
 
       using vector<IItem*>::size;
-      inline size_t size(Idx n) const {
-        _trace(MDO<<"StdVectorMenu::size of "<<n<<endl);
+      inline size_t sizeItem(Idx n) const {
+        trace(MDO<<"StdVectorMenu::size of "<<n<<endl);
         return vector<IItem*>::operator[](n)->size();
       }
 
@@ -38,13 +38,13 @@ namespace Menu {
 
       using Base::enable;
       inline void enable(bool b,Idx n) {
-        _trace(MDO<<"StdVectorMenu::enable "<<b<<" @"<<n<<endl);
+        trace(MDO<<"StdVectorMenu::enable "<<b<<" @"<<n<<endl);
         vector<IItem*>::operator[](n)->enable(b);
       }
 
       using Base::enabled;
-      inline bool enabled(Idx n) const {
-        _trace(MDO<<"StdVectorMenu::enabled @"<<n<<endl);
+      inline bool enabledItem(Idx n) const {
+        trace(MDO<<"StdVectorMenu::enabledItem @"<<n<<endl);
         return vector<IItem*>::operator[](n)->enabled();
       }
 
@@ -61,8 +61,8 @@ namespace Menu {
       }
 
       template<Cmd c,typename Nav>
-      inline bool cmd(Nav& nav,Idx level,Idx aux,Idx n) {
-        return vector<IItem*>::operator[](n)->template cmd<c,Nav>(nav,level,aux,n);
+      inline bool cmdItem(Nav& nav,Idx level,Idx aux,Idx n) {
+        return vector<IItem*>::operator[](n)->template cmdItem<c,Nav>(nav,level,aux,n);
       }
 
       template<typename Nav,typename Out,Op op=Op::Printing>

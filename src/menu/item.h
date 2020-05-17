@@ -49,15 +49,15 @@ namespace Menu {
     virtual bool changed() const=0;
     virtual void changed(bool o)=0;
     virtual bool cmd(Cmd,INav&,Idx level,Idx aux)=0;
-    virtual bool cmd(Cmd,INav&,Idx level,Idx aux,Idx)=0;
+    virtual bool cmdItem(Cmd,INav&,Idx level,Idx aux,Idx)=0;
     virtual size_t size() const=0;
-    virtual size_t size(Idx) const=0;
+    virtual size_t sizeItem(Idx) const=0;
     virtual bool enabled() const=0;
-    virtual bool enabled(Idx) const=0;
+    virtual bool enabledItem(Idx) const=0;
     virtual void printMenu(INav& nav,IOut& out,Idx level,Op op=Op::Printing)=0;
     virtual void printMenu(INav& nav,IOut& out,Idx level,Idx n,Op op=Op::Printing)=0;
     virtual void enable(bool b)=0;
-    virtual void enable(bool b,Idx)=0;
+    virtual void enableItem(bool b,Idx)=0;
     virtual void printItems(INav&,IOut&,bool fullPrint,Idx=0,Idx=0,Op op=Op::Printing)=0;
     virtual void print(INav&,IOut&,Idx level,Op op)=0;
     inline IItem& obj() {return *this;}
@@ -89,7 +89,7 @@ namespace Menu {
     template<Cmd c,typename Nav>
     inline bool cmd(Nav& nav,Idx level,Idx aux) {return cmd(c,nav,level,aux);}
     template<Cmd c,typename Nav>
-    inline bool cmd(Nav& nav,Idx level,Idx aux,Idx n) {return cmd(c,nav,level,aux,n);}
+    inline bool cmdItem(Nav& nav,Idx level,Idx aux,Idx n) {return cmd(c,nav,level,aux,n);}
 
     template<typename A>
     APIRes walkPath(const A& api,PathRef ref,Idx level) {
@@ -135,15 +135,15 @@ namespace Menu {
     inline void printMenu(INav& nav,IOut& out,Idx level,Op op=Op::Printing) override;
     inline void printMenu(INav& nav,IOut& out,Idx level,Idx n,Op op=Op::Printing) override;
     inline size_t size() const override {return Base::size();}
-    inline size_t size(Idx n) const override {return Base::size(n);}
+    inline size_t sizeItem(Idx n) const override {return Base::sizeItem(n);}
     inline bool enabled() const override {return Base::enabled();}
-    inline bool enabled(Idx n) const override {return Base::enabled(n);}
+    inline bool enabledItem(Idx n) const override {return Base::enabledItem(n);}
     inline void enable(bool o) override {Base::enable(o);}
-    inline void enable(bool o,Idx n) override {Base::enable(o,n);}
+    inline void enableItem(bool o,Idx n) override {Base::enableItem(o,n);}
     inline bool changed() const override {return Base::changed();}
     inline void changed(bool o) override {Base::changed(o);}
     inline bool cmd(Cmd,INav&,Idx level,Idx) override;
-    inline bool cmd(Cmd,INav&,Idx level,Idx,Idx) override;
+    inline bool cmdItem(Cmd,INav&,Idx level,Idx,Idx) override;
     inline void printItems(INav& nav,IOut& out,bool fullPrint,Idx idx=0,Idx top=0,Op op=Op::Printing) override;
     inline void print(INav& nav,IOut& out,Idx level,Op op) override;
   // protected:

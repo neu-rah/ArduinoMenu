@@ -72,14 +72,16 @@ namespace Menu {
       }
       template<typename Out>
       inline void print(Out& out) {print(out,operator PathRef());}
-      inline Idx pos() const {return path[level];}
+      inline Idx pos(Idx l) const {return path[l];}
+      inline Idx pos() const {return pos(level);}
       inline Mode mode() const {return editMode;}
       inline void setMode(Mode m) {editMode=m;}
-      inline Idx focus() const {return path[level];}
-      inline Idx focus(Idx l) const {return path[l];}
+      // inline Idx focus() const {return path[level];}
+      // inline Idx focus(Idx l) const {return path[l];}
       inline bool selected(Idx i) const {return path[level]==i;}
       inline bool selected(Idx i,Idx l) const {return path[l]==i;}
-      inline void setPos(Idx n) {path[level]=n;}
+      inline void setPos(Idx n) {setPos(n,level);}
+      inline void setPos(Idx n,Idx l) {path[l]=n;}
       inline Idx head() const {return path[0];}
       inline operator PathRef() const {return PathRef{(Idx)(level+1),path};}
       inline PathRef parent() const {return operator PathRef().parent();}
@@ -90,7 +92,7 @@ namespace Menu {
       inline void close() {if(level>0) path[level--]=0;}
       inline size_t size() const {return Base::root.size(operator PathRef());}
       inline size_t size(PathRef ref) const {
-        _trace(MDO<<"Nav::size "<<ref<<endl);
+        trace(MDO<<"Nav::size "<<ref<<endl);
         return Base::root.size(ref);
       }
 
@@ -98,6 +100,11 @@ namespace Menu {
       template<Cmd c>
       inline bool cmd(Idx aux=0) {
         trace(MDO<<"Nav::cmd "<<c<<" path:"<<((PathRef)*this)<<endl);
+        //need to send esc event so that states get changed
+        /*if(c==Cmd::Esc) {
+          close();
+          return true;
+        } else*/
         return APICall::Cmd<c,typename N::Type>(N::obj(),aux).walkPath(Base::root,*this,0);
       }
 
@@ -108,46 +115,48 @@ namespace Menu {
       inline void idx(Idx n) {cmd<Cmd::Index>(n);}
       inline void accel(Idx n) {cmd<Cmd::Accel>(n);}
 
-      template<Cmd c>
-      inline bool _cmd(Idx n=0) {
-        trace(MDO<<"StaticNav::_cmd "<<c<<endl);
-        switch(c) {
-          case Cmd::Up:_up();break;
-          case Cmd::Down:_down();break;
-          case Cmd::Enter:_enter();break;
-          case Cmd::Esc:_esc();break;
-          case Cmd::Index:_idx(n);break;
-          case Cmd::Accel:_accel(n);break;
-          default:return false;
-        }
-        return true;
-      }
+      // template<Cmd c>
+      // inline bool _cmd(Idx n=0) {
+      //   trace(MDO<<"StaticNav::_cmd "<<c<<endl);
+      //   switch(c) {
+      //     case Cmd::Up:_up();break;
+      //     case Cmd::Down:_down();break;
+      //     case Cmd::Enter:_enter();break;
+      //     case Cmd::Esc:_esc();break;
+      //     case Cmd::Index:_idx(n);break;
+      //     case Cmd::Accel:_accel(n);break;
+      //     default:return false;
+      //   }
+      //   return true;
+      // }
 
       inline Idx depth() const {return level;}
-      inline bool focus(Idx n) {return n<size()?(setPath(level,n),true):false;}
-      inline void setPath(Idx l,Idx n) {path[l]=n;}
+      // inline bool focus(Idx n) {return n<size()?(setPath(level,n),true):false;}
+      // inline void setPath(Idx l,Idx n) {path[l]=n;}
 
-      inline void _idx(Idx n) {
-        trace(MDO<<"nav index:"<<n<<endl);
-        if(n) {
-          if(focus(n)) enter();
-        } else close();
-      }
+      // inline void _idx(Idx n) {
+      //   trace(MDO<<"nav index:"<<n<<endl);
+      //   if(n) {
+      //     if(focus(n)) enter();
+      //   } else close();
+      // }
 
-      inline void _accel(Idx n) {
-        trace(MDO<<"nav index:"<<n<<endl);
-      }
+      // inline void _accel(Idx n) {
+      //   trace(MDO<<"nav index:"<<n<<endl);
+      // }
 
-      inline void _up() {
-        _trace(MDO<<"pos:"<<pos()<<" size:"<<size(parent())<<endl);
-        if(((size_t)pos()+1)<size(parent())) setPos(pos()+1);}
-
-      inline void _down() {if(pos()>0) setPos(pos()-1);}
-
-      inline void _enter() {
-        trace(MDO<<"enter->sending activate "<<(PathRef)*this<<endl);
-        activate();
-      }
+      // inline void _up(/*Idx sz,bool wrap=false*/) {
+      //   trace(MDO<<"pos:"<<pos()<<" size:"<<size(parent())<<endl);
+      //   if(((size_t)pos()+1)<size(parent())) setPos(pos()+1);
+      //   // if(pos()<sz-1) setPos(pos()+1);
+      // }
+      //
+      // inline void _down(bool wrap=false) {if(pos()>0) setPos(pos()-1);}
+      //
+      // inline void _enter() {
+      //   trace(MDO<<"enter->sending activate "<<(PathRef)*this<<endl);
+      //   activate();
+      // }
 
       inline void activate(Idx n) {
         path[level]=n;
@@ -160,7 +169,7 @@ namespace Menu {
           .walkPath(Base::root,operator PathRef(),0);
       }
 
-      inline void _esc() {close();}
+      // inline void _esc() {close();}
 
     };
   };

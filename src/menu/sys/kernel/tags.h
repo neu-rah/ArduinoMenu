@@ -15,9 +15,9 @@ namespace Menu {
       using Base::Base;
       using Base::print;
       template<typename Nav,typename Out,Op op=Op::Printing,bool=true>
-      inline void print(Nav& nav,Out& out,Idx level) {
+      inline void print(Nav& nav,Out& out,Idx level,bool selected) {
         out.template fmt<role,true>(nav.pos(),true,Base::enabled(),nav.mode());
-        Base::template print<Nav,Out,op>(nav,out,level);
+        Base::template print<Nav,Out,op>(nav,out,level,selected);
         out.template fmt<role,false>(nav.pos(),true,Base::enabled(),nav.mode());
       }
     };
@@ -45,12 +45,12 @@ namespace Menu {
       using Base=R<I>;
       using Base::Base;
       template<typename Nav,typename Out,Op op=Op::Printing,bool delegate=true>
-      inline void print(Nav& nav,Out& out,Idx level) {
+      inline void print(Nav& nav,Out& out,Idx level,bool selected) {
         trace(MDO<<"As::Print"<<endl);
         out.template fmt<role,true>(nav.pos(),true,Base::enabled(),nav.mode());
-        Base::template print<Nav,Out,op,false>(nav,out,level);
+        Base::template print<Nav,Out,op,false>(nav,out,level,selected);
         out.template fmt<role,false>(nav.pos(),true,Base::enabled(),nav.mode());
-        if(delegate) I::template print<Nav,Out,op>(nav,out,level);
+        if(delegate) I::template print<Nav,Out,op>(nav,out,level,selected);
       }
     };
   };

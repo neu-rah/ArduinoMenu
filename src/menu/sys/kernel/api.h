@@ -29,11 +29,11 @@ namespace Menu {
       }
       template<typename At>
       inline APIRes walkPath(At& at,PathRef ref,Idx level=0) const {
-        _trace(if(!ref) MDO<<"walkPath "<<named()<<" "<<ref<<endl);
-        if (ref.len==0) return APIRes(obj().call(at.obj(),level));//self
+        trace(/*if(!ref)*/ MDO<<"APICall::walkPath "<<named()<<" "<<ref<<endl);
+        if (ref.len==0) return APIRes(obj().call(at,level));//self
         return ref?
           at.walkPath(obj(),ref.tail(),level,ref.head())://continue
-          APIRes(obj().call(at.obj(),level,ref.head()));//child
+          APIRes(obj().callItem(at,level,ref.head()));//child
       }
       template<typename At>
       inline APIRes walkId(At& at,Idx id,Idx level=0) const {return at.walkId(obj(),id,level);}
@@ -53,15 +53,15 @@ namespace Menu {
       inline Cmd(Nav& nav,Idx n=0):nav(nav),cmdAux(n) {}
       template<typename At>
       inline APIRes call(At& at,Idx level) const {
-        trace(MDO<<"Cmd::call "<<endl);
+        trace(MDO<<"APICall::Cmd::call "<<c<<endl);
         return at.template cmd<c,Nav>(nav,level,cmdAux);
       }
       template<typename At>
-      inline APIRes call(At& at,Idx level,Idx n) const {
-        trace(MDO<<"Cmd::call "<<n<<endl);
-        return at.template cmd<c,Nav>(nav,level,cmdAux,n);
+      inline APIRes callItem(At& at,Idx level,Idx n) const {
+        trace(MDO<<"APICall::Cmd::call "<<c<<" #"<<n<<endl);
+        return at.template cmdItem<c,Nav>(nav,level,cmdAux,n);
       }
-      _trace(static constexpr const char* name="Cmd");
+      static constexpr const char* name="Cmd";
     };
     template<typename Nav>
     struct Activate:Call<Activate<Nav>> {
@@ -74,35 +74,36 @@ namespace Menu {
         return APIRes();
       }
       template<typename At>
-      inline APIRes call(At& at,Idx level,Idx n) const {
-        if(at.enabled()) at.activate(nav,level,n);
+      inline APIRes callItem(At& at,Idx level,Idx n) const {
+        if(at.enabled()) at.activateItem(nav,level,n);
         return APIRes();
       }
-      _trace(static constexpr const char* name="Activate");
+      static constexpr const char* name="Activate";
     };
-    template<bool b> struct Enable:Call<Enable<b>> {
+    template<bool b>
+    struct Enable:Call<Enable<b>> {
       using Result=void;
       template<typename At>
       inline static APIRes call(At& at,Idx level) {at.enable(b);return APIRes();}
       template<typename At>
-      inline static APIRes call(At& at,Idx level,Idx n) {at.enable(b,n);return APIRes();}
-      _trace(static constexpr const char* name="Enable");
+      inline static APIRes callItem(At& at,Idx level,Idx n) {at.enableItem(b,n);return APIRes();}
+      static constexpr const char* name="Enable";
     };
     struct Enabled:Call<Enabled> {
       using Result=bool;
       template<typename At>
       inline static APIRes call(At& at,Idx level) {return at.enabled();}
       template<typename At>
-      inline static APIRes call(At& at,Idx level,Idx n) {return at.enabled(n);}
-      _trace(static constexpr const char* name="Enabled");
+      inline static APIRes callItem(At& at,Idx level,Idx n) {return at.enabledItem(n);}
+      static constexpr const char* name="Enabled";
     };
     struct Size:Call<Size> {
       using Result=size_t;
       template<typename At>
       inline static APIRes call(At& at,Idx level) {return at.size();}
       template<typename At>
-      inline static APIRes call(At& at,Idx level,Idx n) {return at.size(n);}
-      _trace(static constexpr const char* name="Size");
+      inline static APIRes callItem(At& at,Idx level,Idx n) {return at.sizeItem(n);}
+      static constexpr const char* name="Size";
     };
     template<typename Nav,typename Out,Op op=Op::Printing>
     struct PrintMenu:Call<PrintMenu<Nav,Out,op>> {
@@ -119,12 +120,12 @@ namespace Menu {
         return APIRes();
       }
       template<typename At>
-      inline APIRes call(At& at,Idx level,Idx n) const {
+      inline APIRes callItem(At& at,Idx level,Idx n) const {
         trace(MDO<<"APICall::PrintMenu::call=> level:"<<level<<" idx:"<<n<<endl);
-        at.template printMenu<Nav,Out,op>(nav,out,level,n);
+        at.template printMenuItem<Nav,Out,op>(nav,out,level,n);
         return APIRes();
       }
-      _trace(static constexpr const char* name="PrintMenu");
+      static constexpr const char* name="PrintMenu";
     };
   };
 
@@ -257,7 +258,7 @@ namespace Menu {
     inline static bool selected(Idx) {return false;}
     inline static bool selected(Idx,Idx) {return false;}
     inline Mode mode() const {return Mode::Normal;}
-    template<Cmd c> inline static bool _cmd() {return false;}
+    // template<Cmd c> inline static bool _cmd() {return false;}
     template<Cmd c> inline static bool cmd() {return false;}
     inline static void up(Cmd) {}
     inline static void down(Cmd) {}
@@ -285,19 +286,20 @@ namespace Menu {
     template<typename Nav,typename Out,Op op=Op::Printing>
     inline void printMenu(Nav& nav,Out& out,Idx level) {
       trace(MDO <<"Empty::printMenu"<<endl);
-      if (op==Op::Printing) I::obj().print(nav,out,level);
+      if (op==Op::Printing) I::obj().print(nav,out,level,false);
     }
 
     inline static constexpr bool canNav() {return false;}
+    inline static constexpr bool canNav(Idx) {return false;}
     inline constexpr size_t size() const {return 0;}
     inline constexpr size_t count() const {return 0;}
     template<typename Nav,typename Out,Op op=Op::Printing,bool delegate=true>
-    inline static void print(Nav& nav,Out& out,Idx level) {}
+    inline static void print(Nav& nav,Out& out,Idx level,bool selected) {}
     template<typename Nav,typename Out,Op op=Op::Printing,bool delegate=true>
-    inline static void print(Nav& nav,Out& out,Idx level,Idx) {}
+    inline static void printItem(Nav& nav,Out& out,Idx level,Idx) {}
     template<typename Nav,typename Out,Op op=Op::Printing>
     inline static void printItems(Nav& nav,Out& out,Idx level,bool fullPrint,Idx idx=0,Idx top=0) {}
-    inline static /*constexpr*/ bool enabled() {
+    inline static dbg_constexpr bool enabled() {
       trace(MDO<<"Empty::enabled()"<<endl);
       return true;}
     template<typename Nav,typename Out,Op op=Op::Printing>
@@ -315,27 +317,30 @@ namespace Menu {
     inline void activate(Nav& nav,Idx) {
       trace(MDO<<"Empty::activate"<<endl);
       if(Base::obj().enabled()) nav.close();}
-    template<typename Nav> inline void up(Nav& nav) {nav._up();}
-    template<typename Nav> inline void down(Nav& nav) {nav._down();}
-    template<typename Nav> inline void enter(Nav& nav) {nav._enter();}
-    template<typename Nav> inline void esc(Nav& nav) {nav._esc();}
 
     template<typename Nav>
-    inline static /*constexpr*/ bool action(Nav&,Idx) {
+    inline static dbg_constexpr bool action(Nav&,Idx) {
       trace(MDO<<"Empty::action"<<endl);
       return true;}
 
-    template<typename T> inline static T getValue(Idx n) {assert(false);return 0;}
-    // template<typename T> inline static void setValue(T) {}
+    template<typename T> inline static T getValue(Idx n) {
+      assert(false);
+      return (T)0;
+    }
     template<typename T> inline static void setValue(T&) {}
 
     template<Cmd c,typename Nav>
     inline bool cmd(Nav& nav,Idx level,Idx aux) {
-      trace(MDO<<"Empty::cmd"<<endl);
-      return nav.template _cmd<c>(aux);}
+      trace(MDO<<"Empty::cmd "<<c<<" aux:"<<aux<<" level:"<<level<<endl);
+      return false;
+    }
 
-    ////////////////////////////////////////////////////////////////////////
-    //default walkingh response
+    template<Cmd c,typename Nav>
+    inline bool cmdItem(Nav& nav,Idx level,Idx aux,Idx n) {
+      trace(MDO<<"Empty::cmdItem "<<c<<" aux:"<<aux<<" level:"<<level<<" #"<<n<<endl);
+      return false;
+    }
+
     template<typename A>
     APIRes walkPath(const A& api,PathRef ref,Idx level) {
       trace(MDO<<"default stepper"<<endl);
@@ -344,27 +349,22 @@ namespace Menu {
     APIRes walkPath(const A& api,PathRef ref,Idx level,Idx n) {
       trace(MDO<<"default stepper n:"<<n<<endl);
       return api.step(Base::obj(),ref,level);}
-    template<Cmd c,typename Nav>
-    inline bool cmd(Nav& nav,Idx level,Idx aux,Idx n) {
-      trace(MDO<<"Empty::cmd n:"<<n<<endl);
-      return Base::obj().template cmd<c,Nav>(nav,level,aux);
-    }
     template<typename Nav>
-    inline void activate(Nav& nav,Idx level,Idx) {
+    inline void activateItem(Nav& nav,Idx level,Idx) {
       trace(MDO<<"Empty::activate"<<endl);
       Base::obj().activate(nav,level);}
-    inline void enable(bool b,Idx) {
+    inline void enableItem(bool b,Idx) {
       trace(MDO<<"Empty::enable"<<endl);
       Base::obj().enable(b);}
-    inline bool enabled(Idx n) const {
+    inline bool enabledItem(Idx n) const {
       trace(MDO<<"Empty::enabled"<<endl);
       return Base::obj().enabled();}
-    inline size_t size(Idx) const {
+    inline size_t sizeItem(Idx) const {
       trace(MDO<<"Empty::size"<<endl);
       return Base::obj().size();}
     template<typename Nav,typename Out,Op op=Op::Printing>
-    inline void printMenu(Nav& nav,Out& out,Idx level,Idx) {
-      trace(MDO<<"Empty::printMenu"<<endl);
+    inline void printMenuItem(Nav& nav,Out& out,Idx level,Idx) {
+      trace(MDO<<"Empty::printMenuItem"<<endl);
       Base::obj().template printMenu<Nav,Out,op>(nav,out,level);
     }
 
