@@ -31,14 +31,14 @@ struct Data {
   bool valid=0;
   SelTest selTest=Zero;
   ChooseTest chooseTest=First;
-  //how to copy this data, being a simple data c++ will generate this for you
-  // Data& operator=(Data& o){
-  //   strcpy(name,o.name);
-  //   valid=o.valid;
-  //   selTest=o.selTest;
-  //   chooseTest=o.chooseTest;
-  //   return o;
-  // }
+  //how to copy this data...
+  Data& operator=(Data& o){
+    strncpy(name,o.name,nameSz);
+    valid=o.valid;
+    selTest=o.selTest;
+    chooseTest=o.chooseTest;
+    return o;
+  }
 };
 
 //THE DATA <-----------------------------------------

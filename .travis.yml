@@ -29,7 +29,7 @@ env:
    # - PLATFORMIO_CI_SRC=examples/Serial/ansiSerial/ansiSerial/ansiSerial.ino
    - PLATFORMIO_CI_SRC=examples/codeCtrl/codeCtrl/codeCtrl.ino
    # - PLATFORMIO_CI_SRC=examples/adafruitGfx/lcdMono/lcdMono/lcdMono.ino
-   - PLATFORMIO_CI_SRC=examples/adafruitGfx/tft/tft/tft.ino
+   # - PLATFORMIO_CI_SRC=examples/adafruitGfx/tft/tft/tft.ino
    - PLATFORMIO_CI_SRC=examples/U8GLib/U8GLib/U8GLib.ino
 
 install:
@@ -41,8 +41,8 @@ install:
   #  - wget https://github.com/nettigo/Assert4a/archive/master.zip -O /tmp/Assert4a.zip
   #  - unzip /tmp/Assert4a.zip -d /tmp/
 
-   - wget https://github.com/adafruit/Adafruit-GFX-Library/archive/master.zip -O /tmp/Adafruit-GFX-Library-master.zip
-   - unzip /tmp/Adafruit-GFX-Library-master.zip -d /tmp/
+   # - wget https://github.com/adafruit/Adafruit-GFX-Library/archive/master.zip -O /tmp/Adafruit-GFX-Library-master.zip
+   # - unzip /tmp/Adafruit-GFX-Library-master.zip -d /tmp/
 
    - wget https://github.com/neu-rah/PCINT/archive/master.zip -O /tmp/PCINT-master.zip
    - unzip /tmp/PCINT-master.zip -d /tmp/
@@ -59,8 +59,8 @@ install:
    # - wget https://github.com/adafruit/Adafruit-PCD8544-Nokia-5110-LCD-library/archive/master.zip -O /tmp/Adafruit-PCD8544-Nokia-5110-LCD-library-master.zip
    # - unzip /tmp/Adafruit-PCD8544-Nokia-5110-LCD-library-master.zip -d /tmp/
 
-   - wget https://github.com/adafruit/Adafruit-ST7735-Library/archive/master.zip -O /tmp/Adafruit-ST7735-Library-master.zip
-   - unzip /tmp/Adafruit-ST7735-Library-master.zip -d /tmp/
+   # - wget https://github.com/adafruit/Adafruit-ST7735-Library/archive/master.zip -O /tmp/Adafruit-ST7735-Library-master.zip
+   # - unzip /tmp/Adafruit-ST7735-Library-master.zip -d /tmp/
 
    # - wget https://github.com/PaulStoffregen/SD/archive/master.zip -O /tmp/SD-master.zip
    # - unzip /tmp/SD-master.zip -d /tmp/
@@ -68,4 +68,5 @@ install:
 script:
   #  - platformio ci --lib="."  --lib="/tmp/SD-master"  --board=nanoatmega328 --board=teensy31
    # - platformio ci --lib="." --lib="/tmp/Streaming-master" --lib="/tmp/Adafruit-GFX-Library-master" --lib="/tmp/PCINT-master" --lib="/tmp/U8glib_Arduino-master" --lib="/tmp/AnsiStream-master" --lib="/tmp/NewliquidCrystal" --lib="/tmp/Adafruit-PCD8544-Nokia-5110-LCD-library-master" --lib="/tmp/Adafruit-ST7735-Library-master" --board=nanoatmega328 --board=teensy31 --board=due
-   - platformio ci --lib="." --lib="/tmp/Streaming-master" --lib="/tmp/Adafruit-GFX-Library-master" --lib="/tmp/PCINT-master" --lib="/tmp/U8glib_Arduino-master" --lib="/tmp/AnsiStream-master" --lib="/tmp/NewliquidCrystal" --lib="/tmp/Adafruit-ST7735-Library-master" --board=nanoatmega328 --board=teensy31 --board=due
+   # - platformio ci --lib="." --lib="/tmp/Streaming-master" --lib="/tmp/Adafruit-GFX-Library-master" --lib="/tmp/PCINT-master" --lib="/tmp/U8glib_Arduino-master" --lib="/tmp/AnsiStream-master" --lib="/tmp/NewliquidCrystal" --lib="/tmp/Adafruit-ST7735-Library-master" --board=nanoatmega328 --board=teensy31 --board=due
+   - platformio ci --lib="." --lib="/tmp/Streaming-master" --lib="/tmp/PCINT-master" --lib="/tmp/U8glib_Arduino-master" --lib="/tmp/AnsiStream-master" --lib="/tmp/NewliquidCrystal" --board=nanoatmega328 --board=teensy31 --board=due
