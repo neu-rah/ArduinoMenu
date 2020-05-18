@@ -101,7 +101,6 @@ using TrigRise=Item<EnumValue<TrigType,TrigType::Rise>::Part,StaticText<&trig_ri
 using TrigFall=Item<EnumValue<TrigType,TrigType::Fall>::Part,StaticText<&trig_fall_text>::Part>;
 using TrigBoth=Item<EnumValue<TrigType,TrigType::Both>::Part,StaticText<&trig_both_text>::Part>;
 
-
 const char* choose_text="Choose";
 const char* pos_first_text="First";
 const char* pos_second_text="Second";
@@ -121,13 +120,6 @@ using MainMenu=Item<
       Item<Action<op1_action>::Part,EnDis<>::Part,StaticText<&op1_text>::Part,Mutable::Part>,
       Item<Action<op2_action>::Part,EnDis<false>::Part,StaticText<&op2_text>::Part,Mutable::Part>,
       Item<Action<tog12>::Part,StaticText<&tog12_text>::Part,Mutable::Part>,
-      // Item< //compose a field with a label, an edit cursor and an unit
-      //   AsName<StaticText<&max_temp_label>::Part>::Part,//(As) name format apply only to inner content
-      //   WrapMode<>::Part,//(Wrap) mode format, starts here and gores to end of remaining content
-      //   StaticNumFieldCore<int,max_temp,0,100,10,1>::Part,//the numeric field
-      //   AsUnit<StaticText<&max_temp_unit>::Part>::Part,//name format apply only to inner content
-      //   Mutable::Part //track changes
-      // >,//or alternative bellow
       Item<
         StaticNumField<
           StaticText<&max_temp_label>::Part,//title

@@ -12,7 +12,7 @@ namespace Menu {
   struct IAPI {
     virtual APIRes step(IItem& at,PathRef ref,Idx level=0) const=0;
     virtual APIRes call(IItem& at,Idx level)=0;
-    virtual APIRes call(IItem& at,Idx level,Idx n)=0;
+    virtual APIRes callItem(IItem& at,Idx level,Idx n)=0;
     virtual APIRes walkPath(IItem& at,PathRef ref,Idx level) const=0;
     #ifdef MENU_DEBUG
       virtual const char* named()=0;
@@ -30,8 +30,8 @@ namespace Menu {
     APIRes call(IItem& at,Idx level) override {
       return A::call(at,level);
     }
-    APIRes call(IItem& at,Idx level,Idx n) override {
-      return A::call(at,level,n);
+    APIRes callItem(IItem& at,Idx level,Idx n) override {
+      return A::callItem(at,level,n);
     }
     APIRes walkPath(IItem& at,PathRef ref,Idx level) const override {
       A::walkPath(at,ref,level);
@@ -55,18 +55,18 @@ namespace Menu {
     virtual bool enabled() const=0;
     virtual bool enabledItem(Idx) const=0;
     virtual void printMenu(INav& nav,IOut& out,Idx level,Op op=Op::Printing)=0;
-    virtual void printMenu(INav& nav,IOut& out,Idx level,Idx n,Op op=Op::Printing)=0;
+    virtual void printMenuItem(INav& nav,IOut& out,Idx level,Idx n,Op op=Op::Printing)=0;
     virtual void enable(bool b)=0;
     virtual void enableItem(bool b,Idx)=0;
     virtual void printItems(INav&,IOut&,bool fullPrint,Idx=0,Idx=0,Op op=Op::Printing)=0;
-    virtual void print(INav&,IOut&,Idx level,Op op)=0;
+    virtual void print(INav&,IOut&,Idx level,bool selected,Op op)=0;
     inline IItem& obj() {return *this;}
 
   // protected:
     virtual APIRes iWalkPath(const IAPI& api,PathRef ref,Idx level)=0;
     virtual APIRes iWalkPath(const IAPI& api,PathRef ref,Idx level,Idx)=0;
     virtual void iActivate(INav&,Idx)=0;
-    virtual void iActivate(INav&,Idx,Idx)=0;
+    virtual void iActivateItem(INav&,Idx,Idx)=0;
 
   // public:
     inline size_t size(PathRef ref) {return APICall::Size().walkPath(obj(),ref,0);}
@@ -81,7 +81,7 @@ namespace Menu {
     template<typename Nav>
     inline void activate(Nav& nav,Idx level) {iActivate(nav,level);}
     template<typename Nav>
-    inline void activate(Nav& nav,Idx level,Idx n) {iActivate(nav,level,n);}
+    inline void activateItem(Nav& nav,Idx level,Idx n) {iActivateItem(nav,level,n);}
 
     template<typename Nav,typename Out,Op op=Op::Printing>
     inline void printTitle(Nav& nav,Out& out,Idx level,bool fullPrint)
@@ -89,7 +89,7 @@ namespace Menu {
     template<Cmd c,typename Nav>
     inline bool cmd(Nav& nav,Idx level,Idx aux) {return cmd(c,nav,level,aux);}
     template<Cmd c,typename Nav>
-    inline bool cmdItem(Nav& nav,Idx level,Idx aux,Idx n) {return cmd(c,nav,level,aux,n);}
+    inline bool cmdItem(Nav& nav,Idx level,Idx aux,Idx n) {return cmdItem(c,nav,level,aux,n);}
 
     template<typename A>
     APIRes walkPath(const A& api,PathRef ref,Idx level) {
@@ -105,15 +105,15 @@ namespace Menu {
       {printItems(nav,out,fullPrint,idx,top,op);}
 
     template<typename Nav,typename Out,Op op=Op::Printing>
-    inline void print(Nav& nav,Out& out,Idx level)
-      {print(nav,out,level,op);}
+    inline void print(Nav& nav,Out& out,Idx level,bool selected)
+      {print(nav,out,level,selected,op);}
 
       template<typename Nav,typename Out,Op op=Op::Printing>
       inline void printMenu(Nav& nav,Out& out,Idx level)
         {printMenu(nav,out,level,op);}
       template<typename Nav,typename Out,Op op=Op::Printing>
-      inline void printMenu(Nav& nav,Out& out,Idx level,Idx n)
-        {printMenu(nav,out,level,n,op);}
+      inline void printMenuItem(Nav& nav,Out& out,Idx level,Idx n)
+        {printMenuItem(nav,out,level,n,op);}
   };
 
   template<Expr... I>
@@ -123,17 +123,20 @@ namespace Menu {
     using Base::Base;
     using Base::printItems;
     using IItem::printMenu;
+    using IItem::printMenuItem;
     using Base::print;
     using Base::cmd;
+    using Base::cmdItem;
     using IItem::size;
     using IItem::enabled;
     using IItem::walkPath;
     using IItem::enable;
     using IItem::obj;
     using Base::activate;
+    using Base::activateItem;
     inline void printTitle(INav& nav,IOut& out,Idx level,bool fullPrint,Op op=Op::Printing) override;
     inline void printMenu(INav& nav,IOut& out,Idx level,Op op=Op::Printing) override;
-    inline void printMenu(INav& nav,IOut& out,Idx level,Idx n,Op op=Op::Printing) override;
+    inline void printMenuItem(INav& nav,IOut& out,Idx level,Idx n,Op op=Op::Printing) override;
     inline size_t size() const override {return Base::size();}
     inline size_t sizeItem(Idx n) const override {return Base::sizeItem(n);}
     inline bool enabled() const override {return Base::enabled();}
@@ -145,7 +148,7 @@ namespace Menu {
     inline bool cmd(Cmd,INav&,Idx level,Idx) override;
     inline bool cmdItem(Cmd,INav&,Idx level,Idx,Idx) override;
     inline void printItems(INav& nav,IOut& out,bool fullPrint,Idx idx=0,Idx top=0,Op op=Op::Printing) override;
-    inline void print(INav& nav,IOut& out,Idx level,Op op) override;
+    inline void print(INav& nav,IOut& out,Idx level,bool selected,Op op) override;
   // protected:
     APIRes iWalkPath(const IAPI& api,PathRef ref,Idx level) override {
       trace(MDO<<"Prompt::iWalkPath "<<api.named()<<" "<<ref<<endl);
@@ -156,6 +159,6 @@ namespace Menu {
       return APIRes(Base::walkPath(api,ref,level,n));
     }
     inline void iActivate(INav& nav,Idx level) override {Base::activate(nav,level);}
-    inline void iActivate(INav& nav,Idx level,Idx n) override {Base::activate(nav,level,n);}
+    inline void iActivateItem(INav& nav,Idx level,Idx n) override {Base::activateItem(nav,level,n);}
   };
 };

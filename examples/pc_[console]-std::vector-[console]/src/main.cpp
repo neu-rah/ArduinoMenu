@@ -38,7 +38,7 @@ bool sub1Action() {
 
 //menu data/texts ----------------------------
 const char* mainText="Main menu";
-Item<StaticText<&mainText>::Part,Mutable::Part> title;
+Prompt<StaticText<&mainText>::Part,Mutable::Part> title;
 
 Prompt<Action<action1>::Part,EnDis<>::Part,Text::Part,Mutable::Part> op1("Option 1");
 Prompt<Action<action2>::Part,EnDis<false>::Part,Text::Part,Mutable::Part> op2("Option 2");
@@ -67,7 +67,7 @@ int max_temp=80;
 Prompt<
   StaticNumField<
     Text::Part,//title
-    int,max_temp,0,100,10,1,//parameters
+    int,max_temp,0,100,10,1,true,//parameters
     Text::Part//unit (optional)
   >::template Part
 > maxTemp("Max.","ºC");
@@ -123,9 +123,6 @@ bool tog12() {
 
 int main() {
   nav.print(out);
-  while(running) if (nav.doInput(in)) {
-    cout<<"@"<<nav.operator PathRef()<<endl;
-    nav.print(out);
-  }
+  while(running) if (nav.doInput(in)) nav.print(out);
   return 0;
 }

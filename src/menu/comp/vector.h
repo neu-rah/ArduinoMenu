@@ -6,7 +6,7 @@
 
 namespace Menu {
   template<typename Title,Title& title>
-  struct StdVectorMenu {
+  struct StdVectorMenuCore {
     template<typename I>
     struct Part:SetWalker::template Part<I>,vector<IItem*> {
       using vector<IItem*>::vector;
@@ -37,7 +37,7 @@ namespace Menu {
       }
 
       using Base::enable;
-      inline void enable(bool b,Idx n) {
+      inline void enableItem(bool b,Idx n) {
         trace(MDO<<"StdVectorMenu::enable "<<b<<" @"<<n<<endl);
         vector<IItem*>::operator[](n)->enable(b);
       }
@@ -62,7 +62,7 @@ namespace Menu {
 
       template<Cmd c,typename Nav>
       inline bool cmdItem(Nav& nav,Idx level,Idx aux,Idx n) {
-        return vector<IItem*>::operator[](n)->template cmdItem<c,Nav>(nav,level,aux,n);
+        return vector<IItem*>::operator[](n)->template cmd<c,Nav>(nav,level,aux);
       }
 
       template<typename Nav,typename Out,Op op=Op::Printing>
@@ -90,11 +90,11 @@ namespace Menu {
       }
 
       template<typename Nav,typename Out,Op op=Op::Printing,bool delegate=true>
-      inline void print(Nav& nav,Out& out,Idx level) {
+      inline void print(Nav& nav,Out& out,Idx level,bool selected) {
         trace(MDO<<"StdVectorMenu::print "<<role<<endl);
         // if(title.changed())
-        title.template print<Nav,Out,op>(nav,out,level);
-        if (delegate) I::template print<Nav,Out,op>(nav,out,level);
+        title.template print<Nav,Out,op>(nav,out,level,selected);
+        if (delegate) I::template print<Nav,Out,op>(nav,out,level,selected);
       }
 
       template<typename Nav,typename Out,Op op=Op::Printing>
@@ -115,10 +115,13 @@ namespace Menu {
         nav.open();
       }
       template<typename Nav>
-      inline void activate(Nav& nav,Idx level,Idx n) {
-        trace(MDO<<"StdVectorMenu::activate n:"<<n<<endl);
+      inline void activateItem(Nav& nav,Idx level,Idx n) {
+        trace(MDO<<"StdVectorMenu::activateItem n:"<<n<<endl);
         vector<IItem*>::operator[](n)->template activate<Nav>(nav,level);
       }
     };
   };
+
+  template<typename Title,Title& title>
+  using StdVectorMenu=Alias<DefaultNav::Part,StdVectorMenuCore<Title,title>::template Part>;
 };

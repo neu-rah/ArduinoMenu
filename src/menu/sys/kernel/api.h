@@ -305,7 +305,7 @@ namespace Menu {
     template<typename Nav,typename Out,Op op=Op::Printing>
     inline void printTitle(Nav& nav,Out& out,Idx level,bool fullPrint) {
       trace(MDO<<"Empty::printTitle"<<endl);
-      if(fullPrint||I::obj().changed()) I::obj().template print<Nav,Out,Op::Printing>(nav,out,level);
+      if(fullPrint||I::obj().changed()) I::obj().template print<Nav,Out,Op::Printing>(nav,out,level,false);
     }
     inline static void enable(bool b) {
       trace(MDO<<"Empty::enable("<<b<<")"<<endl);
@@ -351,7 +351,7 @@ namespace Menu {
       return api.step(Base::obj(),ref,level);}
     template<typename Nav>
     inline void activateItem(Nav& nav,Idx level,Idx) {
-      trace(MDO<<"Empty::activate"<<endl);
+      trace(MDO<<"Empty::activateItem"<<endl);
       Base::obj().activate(nav,level);}
     inline void enableItem(bool b,Idx) {
       trace(MDO<<"Empty::enable"<<endl);

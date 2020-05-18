@@ -58,7 +58,7 @@ namespace Menu {
       Part(T& target,OO... oo):Base(oo...),value(target) {}
       template<typename Nav,typename Out,Op op=Op::Printing,bool delegate=true>
       inline void print(Nav& nav,Out& out,Idx level,bool selected) {
-        out.raw(value);
+        out.raw("!!!!");out.raw(value);
         if(delegate) Base::template print<Nav,Out,op>(nav,out,level);
       }
       inline T getValue() const {return value;}
@@ -237,8 +237,8 @@ namespace Menu {
   template<typename T,T& value,typename Title,typename Ops,bool loop=true>
   struct EnumField {
     template<typename I>
-    struct Part:Chain<IsActive::Part,KeepSel::Part,StaticEnum<Title,Ops>::template Part,StaticField<T,value,loop>::template Part>::template To<I> {
-      using Base=typename Chain<IsActive::Part,KeepSel::Part,StaticEnum<Title,Ops>::template Part,StaticField<T,value,loop>::template Part>::template To<I>;
+    struct Part:Chain<IsActive::Part,StaticEnum<Title,Ops>::template Part,StaticField<T,value,loop>::template Part>::template To<I> {
+      using Base=typename Chain<IsActive::Part,StaticEnum<Title,Ops>::template Part,StaticField<T,value,loop>::template Part>::template To<I>;
       using Base::Base;
       using Base::print;
       template<typename Nav,typename Out,Op op=Op::Printing,bool delegate=true>
@@ -274,8 +274,8 @@ namespace Menu {
   template<typename T,T& value,typename Title,typename Ops>
   struct SelectField {
     template<typename I>
-    struct Part:Chain<ActOnSub::Part,ParentPrint::template Part,EnumField<T,value,Title,Ops>::template Part>::template To<I> {
-      using Base=typename Chain<ActOnSub::Part,ParentPrint::template Part,EnumField<T,value,Title,Ops>::template Part>::template To<I>;
+    struct Part:Chain<KeepSel::Part,ActOnSub::Part,ParentPrint::template Part,EnumField<T,value,Title,Ops>::template Part>::template To<I> {
+      using Base=typename Chain<KeepSel::Part,ActOnSub::Part,ParentPrint::template Part,EnumField<T,value,Title,Ops>::template Part>::template To<I>;
       using Base::Base;
       using Base::cmd;
       template<Cmd c,typename Nav>
@@ -289,7 +289,7 @@ namespace Menu {
       inline void activate(Nav& nav,Idx level) {
         nav.setMode(Mode::Edit);
         Base::activate(nav,level);
-        _trace(MDO<<"SelectField::activate "<<nav.mode()<<endl);
+        trace(MDO<<"SelectField::activate "<<nav.mode()<<endl);
       }
     };
   };
@@ -298,8 +298,8 @@ namespace Menu {
   template<typename T,T& value,typename Title,typename Ops>
   struct ChooseField {
     template<typename I>
-    struct Part:Chain<ActOnSub::Part,EnumField<T,value,Title,Ops>::template Part>::template To<I> {
-      using Base=typename Chain<ActOnSub::Part,EnumField<T,value,Title,Ops>::template Part>::template To<I>;
+    struct Part:Chain<KeepSel::Part,ActOnSub::Part,EnumField<T,value,Title,Ops>::template Part>::template To<I> {
+      using Base=typename Chain<KeepSel::Part,ActOnSub::Part,EnumField<T,value,Title,Ops>::template Part>::template To<I>;
       using Base::Base;
     };
   };

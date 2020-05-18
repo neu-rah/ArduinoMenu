@@ -7,6 +7,7 @@
 * @driver https://github.com/mathertel/LiquidCrystal_PCF8574
 */
 
+#include <Arduino.h>
 #include <Wire.h>
 #include <LiquidCrystal_PCF8574.h>
 #include <staticMenu.h>

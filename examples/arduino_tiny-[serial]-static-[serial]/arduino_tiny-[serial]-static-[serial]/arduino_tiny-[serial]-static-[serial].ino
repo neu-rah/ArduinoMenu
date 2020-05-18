@@ -42,6 +42,10 @@ Flash: [====      ]  40.4% (used 414 bytes from 1024 bytes)
 2020.05.12 treview walkers again
 RAM:   [===       ]  25.0% (used 16 bytes from 64 bytes)
 Flash: [=====     ]  47.5% (used 486 bytes from 1024 bytes)
+
+2020.05.17 Item nav and enumerated fields
+RAM:   [===       ]  28.1% (used 18 bytes from 64 bytes)
+Flash: [=====     ]  52.1% (used 534 bytes from 1024 bytes)
 */
 
 #include <Arduino.h>

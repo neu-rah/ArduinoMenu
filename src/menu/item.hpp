@@ -18,13 +18,13 @@ namespace Menu {
   template<Expr... I>
   inline bool Prompt<I...>::cmdItem(Cmd c,INav& nav,Idx level,Idx aux,Idx i) {
     switch(c) {
-      case Cmd::None: return Base::template cmd<Cmd::None,INav>(nav,level,aux,i);break;
-      case Cmd::Enter: return Base::template cmd<Cmd::Enter,INav>(nav,level,aux,i);break;
-      case Cmd::Esc: return Base::template cmd<Cmd::Esc,INav>(nav,level,aux,i);break;
-      case Cmd::Up: return Base::template cmd<Cmd::Up,INav>(nav,level,aux,i);break;
-      case Cmd::Down: return Base::template cmd<Cmd::Down,INav>(nav,level,aux,i);break;
-      case Cmd::Left: return Base::template cmd<Cmd::Left,INav>(nav,level,aux,i);break;
-      case Cmd::Right: return Base::template cmd<Cmd::Right,INav>(nav,level,aux,i);break;
+      case Cmd::None: return Base::template cmdItem<Cmd::None,INav>(nav,level,aux,i);break;
+      case Cmd::Enter: return Base::template cmdItem<Cmd::Enter,INav>(nav,level,aux,i);break;
+      case Cmd::Esc: return Base::template cmdItem<Cmd::Esc,INav>(nav,level,aux,i);break;
+      case Cmd::Up: return Base::template cmdItem<Cmd::Up,INav>(nav,level,aux,i);break;
+      case Cmd::Down: return Base::template cmdItem<Cmd::Down,INav>(nav,level,aux,i);break;
+      case Cmd::Left: return Base::template cmdItem<Cmd::Left,INav>(nav,level,aux,i);break;
+      case Cmd::Right: return Base::template cmdItem<Cmd::Right,INav>(nav,level,aux,i);break;
     }
     assert(false);
   }
@@ -56,11 +56,11 @@ namespace Menu {
     }
   }
   template<Expr... I>
-  inline void Prompt<I...>::print(INav& nav,IOut& out,Idx level,Op op) {
+  inline void Prompt<I...>::print(INav& nav,IOut& out,Idx level,bool selected,Op op) {
     switch(op) {
-      case Op::Measure: Base::template print<INav,IOut,Op::Measure>(nav,out,level);break;
-      case Op::Printing: Base::template print<INav,IOut,Op::Printing>(nav,out,level);break;
-      case Op::ClearChanges: Base::template print<INav,IOut,Op::ClearChanges>(nav,out,level);break;
+      case Op::Measure: Base::template print<INav,IOut,Op::Measure>(nav,out,level,selected);break;
+      case Op::Printing: Base::template print<INav,IOut,Op::Printing>(nav,out,level,selected);break;
+      case Op::ClearChanges: Base::template print<INav,IOut,Op::ClearChanges>(nav,out,level,selected);break;
     }
   }
   template<Expr... I>
