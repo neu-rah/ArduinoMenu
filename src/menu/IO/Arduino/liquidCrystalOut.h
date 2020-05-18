@@ -6,6 +6,7 @@
 * @brief use arduino standard LCD library as menu output
 */
 
+#include <Arduino.h>
 #include <LiquidCrystal.h>
 #include <staticMenu.h>
 
