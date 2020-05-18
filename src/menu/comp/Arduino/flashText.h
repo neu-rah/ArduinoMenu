@@ -15,11 +15,10 @@ namespace Menu {
     template<typename I=Empty<Nil>>
     struct Part:I {
       using I::I;
-      // using I::size;
       template<typename Nav,typename Out,Op op=Op::Printing,bool delegate=true>
-      inline void print(Nav& nav,Out& out,Idx level) {
+      inline void print(Nav& nav,Out& out,Idx level,bool selected) {
         out.template raw<const __FlashStringHelper *,op==Op::Printing>(reinterpret_cast<const __FlashStringHelper *>(text[0]));
-        if (delegate) I::template print<Nav,Out,op>(nav,out,level);
+        if (delegate) I::template print<Nav,Out,op>(nav,out,level,selected);
       }
     };
   };

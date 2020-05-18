@@ -221,24 +221,22 @@ namespace Menu {
       using Base=KeepSelCore<I>;
       using Base::Base;
       using Base::activate;
-      // inline Idx focusIndex() const {return sel;}
-      // inline void keepSel(Idx n) {sel=n;}
       template<typename Nav>
       inline void activate(Nav& nav,Idx level) {
-        trace(MDO<<"{KeepSel} User selection was #"<<sel<<" path"<<nav.operator PathRef()<<endl);
+        _trace(MDO<<"{KeepSel} User selection was #"<<Base::sel<<" path"<<nav.operator PathRef()<<endl);
         Base::activate(nav,level);
         nav.setPos(Base::obj().storedSel(),nav.depth());
-        trace(MDO<<"{KeepSel} retored selection of level "<<nav.depth()<<" to "<<nav.operator PathRef()<<endl);
+        _trace(MDO<<"{KeepSel} retored selection of level "<<nav.depth()<<" to "<<nav.operator PathRef()<<endl);
       }
       template<typename Nav>
       inline void activateItem(Nav& nav,Idx level,Idx n) {
-        trace(MDO<<"{KeepSel} User selects #"<<n<<endl);
+        _trace(MDO<<"{KeepSel} User selects #"<<n<<endl);
         Base::obj().storeSel(n);
         Base::activateItem(nav,level,n);
       }
       template<typename Nav>
       inline bool action(Nav& nav,Idx level) {
-        trace(MDO<<"{KeepSel} action storing:"<<nav.pos()<<" active:"<<Base::obj().isActive()<<endl);
+        _trace(MDO<<"{KeepSel} action storing:"<<nav.pos()<<" active:"<<Base::obj().isActive()<<endl);
         Base::obj().storeSel(nav.pos());
         return Base::action(nav,level);
       }
@@ -416,7 +414,7 @@ namespace Menu {
       using Base::cmd;
       template<typename Nav>
       bool toggle(Nav& nav,Idx level) {
-        int n=Base::obj().storedSel()+1;
+        size_t n=Base::obj().storedSel()+1;
         if(n>=Base::size()) n=0;
         Base::obj().storeSel(n);
         nav.setPos(n,level+1);
@@ -428,7 +426,7 @@ namespace Menu {
       }
       template<Cmd c,typename Nav>
       inline bool cmd(Nav& nav,Idx level,Idx aux) {
-        trace(MDO<<"Toggle::cmd "<<aux<<" level:"<<level<<" mode:"<<nav.mode()<<" size:"<<Base::size()<<endl);
+        _trace(MDO<<"ToggleNav::cmd "<<aux<<" level:"<<level<<" mode:"<<nav.mode()<<" size:"<<Base::size()<<endl);
         if(c==Cmd::Enter) {
           Base::template cmd<c,Nav>(nav,level,aux);
           return true;///toggle(nav,level);
@@ -438,7 +436,7 @@ namespace Menu {
       using Base::activate;
       template<typename Nav>
       inline void activate(Nav& nav,Idx level) {
-        trace(MDO<<"Toggle::activate"<<endl);
+        _trace(MDO<<"ToggleNav::activate"<<endl);
         toggle(nav,level);
       }
     };

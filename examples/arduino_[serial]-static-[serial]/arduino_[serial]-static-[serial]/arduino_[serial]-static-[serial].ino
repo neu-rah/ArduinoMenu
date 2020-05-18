@@ -24,7 +24,9 @@ using namespace Menu;
 //some target variables
 bool myLed=false;//target for toggle edit
 int max_temp=80;
-
+enum class TrigType {None,Rise,Fall,Both};
+TrigType trigger=TrigType::None;
+int choose_value=0;
 
 //------------------------------
 //menu action handlers
@@ -51,6 +53,28 @@ bool tog_action() {
   return true;
 }
 
+bool sel_action() {
+  Serial.print("Selecting ");
+  switch(trigger){
+    case TrigType::None: Serial.println("none");break;
+    case TrigType::Rise: Serial.println("rise");break;
+    case TrigType::Fall: Serial.println("fall");break;
+    case TrigType::Both: Serial.println("both");break;
+  }
+  return true;
+}
+
+bool pos_action() {
+  Serial.print("Choosing ");
+  switch(choose_value){
+    case 0: Serial.println("first");break;
+    case 1: Serial.println("second");break;
+    case 2: Serial.println("third");break;
+    case 3: Serial.println("last");break;
+  }
+  return true;
+}
+
 enum MyIds:Idx {
   id_mainMenu,
   id1,
@@ -70,9 +94,6 @@ extern const char opn_text[] PROGMEM="Option ...";
 extern const char exit_txt[] PROGMEM="<Exit";
 extern const char max_temp_label[] PROGMEM="Max.";
 extern const char max_temp_unit[] PROGMEM="ºC";
-// extern const char yr_txt[] PROGMEM="Year";
-// extern const char vcc_txt[] PROGMEM="VCC";
-// extern const char volts_txt[] PROGMEM="V";
 
 extern const char led_text[] PROGMEM="Led:";
 extern const char on_text[] PROGMEM="On";
@@ -81,12 +102,32 @@ extern const char off_text[] PROGMEM="Off";
 using On=Item<EnumValue<bool,true>::Part,FlashText<decltype(on_text),&on_text>::Part>;
 using Off=Item<EnumValue<bool,false>::Part,FlashText<decltype(off_text),&off_text>::Part>;
 
+extern const char sel_text[] PROGMEM="Trigger";
+extern const char trig_none_text[] PROGMEM="None";
+extern const char trig_rise_text[] PROGMEM="Rise";
+extern const char trig_fall_text[] PROGMEM="Fall";
+extern const char trig_both_text[] PROGMEM="Both";
+using TrigNone=Item<EnumValue<TrigType,TrigType::None>::Part,FlashText<decltype(trig_none_text),&trig_none_text>::Part>;
+using TrigRise=Item<EnumValue<TrigType,TrigType::Rise>::Part,FlashText<decltype(trig_rise_text),&trig_rise_text>::Part>;
+using TrigFall=Item<EnumValue<TrigType,TrigType::Fall>::Part,FlashText<decltype(trig_fall_text),&trig_fall_text>::Part>;
+using TrigBoth=Item<EnumValue<TrigType,TrigType::Both>::Part,FlashText<decltype(trig_both_text),&trig_both_text>::Part>;
+
+extern const char choose_text[] PROGMEM="Choose";
+extern const char pos_first_text[] PROGMEM="First";
+extern const char pos_second_text[] PROGMEM="Second";
+extern const char pos_third_text[] PROGMEM="Third";
+extern const char pos_last_text[] PROGMEM="Last";
+using ChooseFirst=Item<EnumValue<int,0>::Part,FlashText<decltype(pos_first_text),&pos_first_text>::Part>;
+using ChooseSecond=Item<EnumValue<int,1>::Part,FlashText<decltype(pos_second_text),&pos_second_text>::Part>;
+using ChooseThird=Item<EnumValue<int,2>::Part,FlashText<decltype(pos_third_text),&pos_third_text>::Part>;
+using ChooseLast=Item<EnumValue<int,-1>::Part,FlashText<decltype(pos_last_text),&pos_last_text>::Part>;
+
 //static menu structure
 Item<
   IdTag<id_mainMenu>::Part,
   SetWalker::Part,
   StaticMenu<
-    FlashText<decltype(mainMenu_title),&mainMenu_title>::Part<>,
+    Item<FlashText<decltype(mainMenu_title),&mainMenu_title>::Part>,
     StaticData<
       Item<IdTag<id1>::Part,Action<op1_action>::Part,EnDis<>::Part,FlashText<decltype(op1_text),&op1_text>::Part>,
       Item<IdTag<id2>::Part,Action<op2_action>::Part,EnDis<false>::Part,FlashText<decltype(op2_text),&op2_text>::Part>,
@@ -94,22 +135,40 @@ Item<
       Item<
         StaticNumField<
           FlashText<decltype(max_temp_label),&max_temp_label>::Part,//title
-          int,max_temp,0,100,10,1,//parameters
+          int,max_temp,0,100,10,1,true,//parameters
           FlashText<decltype(max_temp_unit),&max_temp_unit>::Part//unit (optional)
         >::template Part
       >,
       Item<
-        ActOnUpdate::Part,//call handler on selection/focus change and store selected value
         Handler<tog_action>::Part,//the handler
-        SelectField<
+        ToggleField<
           bool,myLed,
           Item<FlashText<decltype(led_text),&led_text>::Part>,
           StaticData<On,Off>//the enumeration of options (text and values possibly)
         >::Part
       >,
       Item<
+        Handler<sel_action>::Part,//the handler
+        ActOnUpdate::Part,
+        SelectField<
+          TrigType,trigger,
+          Item<FlashText<decltype(sel_text),&sel_text>::Part>,
+          StaticData<TrigNone,TrigRise,TrigFall,TrigBoth>//the enumeration of options (text and values possibly)
+        >::Part
+      >,
+      Item<
+        Handler<pos_action>::Part,//the handler
+        ActOnUpdate::Part,
+        // WrapNav::Part,
+        ChooseField<
+          int,choose_value,
+          Item<FlashText<decltype(choose_text),&choose_text>::Part>,
+          StaticData<ChooseFirst,ChooseSecond,ChooseThird,ChooseLast>//the enumeration of options (text and values possibly)
+        >::Part
+      >,
+      Item<
         StaticMenu<
-          FlashText<decltype(subMenu_title),&subMenu_title>::Part<>,
+          Item<FlashText<decltype(subMenu_title),&subMenu_title>::Part>,
           StaticData<
             Item<Action<sub_action>::Part,EnDis<>::Part,FlashText<decltype(op1_text),&op1_text>::Part>,
             Item<Action<sub_action>::Part,FlashText<decltype(op2_text),&op2_text>::Part>,
@@ -152,7 +211,7 @@ bool tog12() {
 }
 
 void setup() {
-  Serial.begin(19200);
+  Serial.begin(115200);
   while(!Serial);
   Serial.println("ArduinoMenu 5");
   delay(500);
