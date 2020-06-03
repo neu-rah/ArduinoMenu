@@ -218,7 +218,7 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
   Menu::prompt* constMEM id##_data[] MEMMODE={\
     FOR_EACH(DEF,__VA_ARGS__)\
   };\
-  constMEM MEMMODE Menu::menuVariantShadowRaw<typeof(target)> id##ShadowRaw={\
+  constMEM MEMMODE Menu::menuVariantShadows<typeof(target)> id##Shadows={\
     (Menu::callback)action,\
     ss,\
     id##_text,\
@@ -228,8 +228,8 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
     id##_data,\
     &target\
   };\
-  constMEM MEMMODE Menu::menuVariantShadow<typeof(target)>& id##_Shadow=*(menuVariantShadow<typeof(target)>*)&id##ShadowRaw;\
-  objType<typeof(target)> id (id##_Shadow);
+  objType<typeof(target)> id (id##Shadows.obj);
+  // constMEM MEMMODE Menu::menuVariantShadow<typeof(target)>& id##_Shadow=*(menuVariantShadow<typeof(target)>*)&id##ShadowRaw;
 
 // bridging macros prepending id's to arguments list
 // for all elements that need separate allocation and a name to it
@@ -249,14 +249,14 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
 //allocating space for elements and shadows -------------------------------------
 #define DECL_EXIT_(cnt,exitText)\
   constText title_##cnt[] MEMMODE=exitText;\
-  constMEM MEMMODE Menu::promptShadowRaw opShadowRaw##cnt = {\
+  constMEM MEMMODE Menu::promptShadows opShadows##cnt = {\
     (Menu::callback)Menu::doExit,\
     Menu::_Exit,\
     title_##cnt,\
     Menu::enterEvent\
   };\
-  constMEM Menu::promptShadow& opShadow##cnt=*(Menu::promptShadow*)&opShadowRaw##cnt;\
-  Menu::prompt op##cnt(opShadow##cnt);
+  Menu::prompt op##cnt(opShadows##cnt.obj);
+  // constMEM Menu::promptShadow& opShadow##cnt=*(Menu::promptShadow*)&opShadowRaw##cnt;
 #define DECL_ITEM_(cnt,objType,text,aFn,mask,ss,...) \
   constText title_##cnt[] MEMMODE=text;\
   constMEM MEMMODE Menu::promptShadowRaw opShadowRaw##cnt={\
@@ -270,19 +270,19 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
   objType op##cnt(opShadow##cnt,__VA_ARGS__);
 #define DECL_OP_(cnt,objType,text,aFn,mask) \
   constText title_##cnt[] MEMMODE=text;\
-  constMEM MEMMODE Menu::promptShadowRaw opShadowRaw##cnt={\
+  constMEM MEMMODE Menu::promptShadows opShadows##cnt={\
     (Menu::callback)aFn,\
     _noStyle,\
     title_##cnt,\
     mask,\
     noStyle\
   };\
-  constMEM Menu::promptShadow& opShadow##cnt=*(promptShadow*)&opShadowRaw##cnt;\
-  objType op##cnt(opShadow##cnt);
+  objType op##cnt(opShadows##cnt.obj);
+  // constMEM Menu::promptShadow& opShadow##cnt=*(promptShadow*)&opShadowRaw##cnt;
 #define DECL_FIELD_(cnt,objType,ss,target,text,units,low,high,step,tune,action,mask,style)\
   constText fieldLabel##cnt[] MEMMODE=text;\
   constText fieldUnit##cnt[] MEMMODE=units;\
-  constMEM MEMMODE Menu::menuFieldShadowRaw<typeof(target)> fieldShadowRaw##cnt={\
+  constMEM MEMMODE Menu::menuFieldShadows<typeof(target)> fieldShadows##cnt={\
     (Menu::callback)action,\
     ss,\
     fieldLabel##cnt,\
@@ -295,8 +295,8 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
     step,\
     tune\
   };\
-  constMEM Menu::menuFieldShadow<typeof(target)>& _fieldShadow##cnt=*(Menu::menuFieldShadow<typeof(target)>*)&fieldShadowRaw##cnt;\
-  objType<typeof(target)> _menuField##cnt(_fieldShadow##cnt);
+  objType<typeof(target)> _menuField##cnt(fieldShadows##cnt.obj);
+  // constMEM Menu::menuFieldShadow<typeof(target)>& _fieldShadow##cnt=*(Menu::menuFieldShadow<typeof(target)>*)&fieldShadowRaw##cnt;
 #define DECL_EDIT_(cnt,objType,ss,label,buf,valid,action,mask,style)\
   constText textFieldLabel##cnt[] MEMMODE=label;\
   constMEM MEMMODE Menu::textFieldShadowRaw textFieldShadowRaw##cnt={\
@@ -320,7 +320,7 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
 #define MK_VALUE(...) GET_VALUE(__VA_ARGS__,_MK_VALUE,_MK_VALUE,_MK_VALUE,_MK_VALUE,IGNORE,_MK_VALUE)(__VA_ARGS__)
 #define _MK_VALUE(target,cnt,text,value,action,mask)\
   constText valueLabel##cnt[] MEMMODE=text;\
-  constMEM MEMMODE Menu::menuValueShadowRaw<typeof(target)> choice##cnt##ShadowRaw={\
+  constMEM MEMMODE Menu::menuValueShadows<typeof(target)> choice##cnt##ShadowRaw={\
     (Menu::callback)action,\
     Menu::_noStyle,\
     valueLabel##cnt,\
@@ -328,9 +328,10 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
     Menu::noStyle,\
     value\
   };\
-  constMEM Menu::menuValueShadow<typeof(target)>& choice##cnt##Shadow=\
-    *(menuValueShadow<typeof(target)>*)&choice##cnt##ShadowRaw;\
-  Menu::menuValue<typeof(target)> menuValue##cnt(choice##cnt##Shadow);
+  Menu::menuValue<typeof(target)> menuValue##cnt(choice##cnt##ShadowRaw.obj);
+
+  // constMEM Menu::menuValueShadows<typeof(target)>& choice##cnt##Shadow=
+  //   *(menuValueShadow<typeof(target)>*)&choice##cnt##ShadowRaw;
 
 // when building a list of elements --------------------------------------------
 #define DEF_EXIT_(cnt,...) &op##cnt

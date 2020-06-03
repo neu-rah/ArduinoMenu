@@ -29,6 +29,10 @@
         inline eventMask _events() const {return (eventMask)memEnum(&events);}
         inline styles _style() const {return (styles)memEnum(&style);}
     };
+    union promptShadows {
+      promptShadowRaw raw;
+      promptShadow obj;
+    };
     struct textFieldShadowRaw {
       actionRaw a;
       systemStyles sysStyles;
@@ -138,6 +142,11 @@
         inline T _step() const {return getTypeValue(&step);}
         inline T _tune() const {return  getTypeValue(&tune);}
     };
+    template<typename T>
+    union menuFieldShadows {
+      menuFieldShadowRaw<T> raw;
+      menuFieldShadow<T> obj;
+    };
 
     template<typename T>
     struct menuValueShadowRaw {
@@ -170,6 +179,12 @@
     };
 
     template<typename T>
+    union menuValueShadows {
+      menuValueShadowRaw<T> raw;
+      menuValueShadow<T> obj;
+    };
+
+    template<typename T>
     struct menuVariantShadowRaw {
       actionRaw a;
       systemStyles sysStyles;
@@ -198,5 +213,11 @@
         ):menuNodeShadow(text,sz,data,a,e,style,ss),value(&target) {}
       inline T& target() const {return *((T*)memPtr(value));}
     };
+    template<typename T>
+    union menuVariantShadows {
+      menuVariantShadowRaw<T> raw;
+      menuVariantShadow<T> obj;
+    };
   }//namespace Menu
+
 #endif
