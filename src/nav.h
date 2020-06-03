@@ -88,7 +88,7 @@
         bool useUpdateEvent=false;//if false, when field value is changed use enterEvent instead.
         idx_t inputBurst=1;//limit of inputs that can be processed before output
         unsigned long lastChanged=0;//last change detected (can be external activity)
-        int timeOut=0;//enter idle mode after `timeOut` seconds of inactivity
+        unsigned int timeOut=0;//enter idle mode after `timeOut` seconds of inactivity
         bool useAccel=true;//use numeric accelerators to send idxCmd
         inline navRoot(menuNode& root,navNode* path,idx_t d,menuIn& in,outputsList &o)
           :out(o),in(in),path(path),maxDepth(d-1) {

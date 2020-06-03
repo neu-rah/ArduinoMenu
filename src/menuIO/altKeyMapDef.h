@@ -5,7 +5,7 @@
 
 struct keyMap {
   int8_t pin;
-  int8_t code;
+  uint8_t code;
   uint8_t mode;
 };
 
