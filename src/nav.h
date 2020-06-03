@@ -80,7 +80,7 @@
         idx_t level=0;
         bool showTitle=true;
         bool idleChanged=false;//does idle screen need refresh?
-        idleFunc idleTask=inaction;//to do when menu exits, menu system will set idleFunc to this on exit
+        idleFunc idleTask=inaction;//to do when menu exits, menu system will set sleepTask to this on exit
         idleFunc sleepTask=NULL;//menu suspended, call this function
         navTarget* navFocus=NULL;
         bool nav2D=false;
