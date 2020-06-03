@@ -143,7 +143,7 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
 
 #define MAX_DEPTH 2
 
-/*constMEM panel panels[] MEMMODE={{0,0,16,2}};
+/*const panel panels[] MEMMODE={{0,0,16,2}};
 navNode* nodes[sizeof(panels)/sizeof(panel)];
 panelsList pList(panels,nodes,1);
 idx_t tops[MAX_DEPTH];

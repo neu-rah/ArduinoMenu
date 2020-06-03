@@ -153,7 +153,7 @@ serialIn serial(Serial);
 idx_t serialTops[MAX_DEPTH]={0};
 serialOut outSerial(Serial,serialTops);
 
-constMEM panel panels[] MEMMODE={{0,0,480/fontW,320/fontH}};
+const panel panels[] MEMMODE={{0,0,480/fontW,320/fontH}};
 navNode* nodes[sizeof(panels)/sizeof(panel)];//navNodes to store navigation status
 panelsList pList(panels,nodes,1);//a list of panels and nodes
 idx_t gfxTops[MAX_DEPTH]={0};

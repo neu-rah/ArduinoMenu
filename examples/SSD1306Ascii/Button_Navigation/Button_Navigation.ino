@@ -148,7 +148,7 @@ MENU(mainMenu, "Main menu", doNothing, noEvent, wrapStyle
 
 //describing a menu output device without macros
 //define at least one panel for menu output
-constMEM panel panels[] MEMMODE = {{0, 0, 128 / fontW, 64 / fontH}};
+const panel panels[] MEMMODE = {{0, 0, 128 / fontW, 64 / fontH}};
 navNode* nodes[sizeof(panels) / sizeof(panel)]; //navNodes to store navigation status
 panelsList pList(panels, nodes, 1); //a list of panels and nodes
 idx_t tops[MAX_DEPTH] = {0, 0}; //store cursor positions for each level

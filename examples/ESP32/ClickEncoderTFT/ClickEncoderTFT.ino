@@ -130,7 +130,7 @@ const colorDef<uint16_t> colors[6] MEMMODE = {
 #define fontW 6
 #define fontH 9
 
-constMEM panel panels[] MEMMODE = {{0, 0, GFX_WIDTH / fontW, GFX_HEIGHT / fontH}}; // Main menu panel
+const panel panels[] MEMMODE = {{0, 0, GFX_WIDTH / fontW, GFX_HEIGHT / fontH}}; // Main menu panel
 navNode* nodes[sizeof(panels) / sizeof(panel)]; //navNodes to store navigation status
 panelsList pList(panels, nodes, sizeof(panels) / sizeof(panel)); //a list of panels and nodes
 //idx_t tops[MAX_DEPTH]={0,0}; // store cursor positions for each level

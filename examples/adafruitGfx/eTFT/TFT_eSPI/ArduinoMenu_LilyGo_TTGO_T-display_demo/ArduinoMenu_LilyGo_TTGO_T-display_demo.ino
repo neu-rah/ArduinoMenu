@@ -250,7 +250,7 @@ serialOut outSerial(Serial,serialTops);
 #define fontW 12
 #define fontH 18
 
-constMEM panel panels[] MEMMODE = {{0, 0, GFX_WIDTH / fontW, GFX_HEIGHT / fontH}};
+const panel panels[] MEMMODE = {{0, 0, GFX_WIDTH / fontW, GFX_HEIGHT / fontH}};
 navNode* nodes[sizeof(panels) / sizeof(panel)]; //navNodes to store navigation status
 panelsList pList(panels, nodes, 1); //a list of panels and nodes
 idx_t eSpiTops[MAX_DEPTH]={0};
