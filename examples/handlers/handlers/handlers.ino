@@ -126,12 +126,12 @@ PADMENU(birthDate,"Birth",showEvent,anyEvent,noStyle
   ,FIELD(day,"","",1,31,1,0,showEvent,anyEvent,wrapStyle)
 );
 
-char* constMEM hexDigit MEMMODE="0123456789ABCDEF";
-char* constMEM hexNr[] MEMMODE={"0","x",hexDigit,hexDigit};
+const char* constMEM hexDigit MEMMODE="0123456789ABCDEF";
+const char* constMEM hexNr[] MEMMODE={"0","x",hexDigit,hexDigit};
 char buf1[]="0x11";
 
-char* constMEM alphaNum MEMMODE=" 0123456789.ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz,\\|!\"#$%&/()=?~*^+-{}[]€";
-char* constMEM alphaNumMask[] MEMMODE={alphaNum};
+const char* constMEM alphaNum MEMMODE=" 0123456789.ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz,\\|!\"#$%&/()=?~*^+-{}[]€";
+const char* constMEM alphaNumMask[] MEMMODE={alphaNum};
 char name[]="                                                  ";
 
 MENU(mainMenu,"Main menu",showEvent,anyEvent,wrapStyle

@@ -25,7 +25,7 @@ unsigned char cantDecimals = 1;
 float         floatVar     = 0.123456789123456789;
 double        doubletVar   = 0.123456789123456789;
 
-void updateEvent_cb(eventMask e);    
+void updateEvent_cb(eventMask e);
 
 //-----Custom floatField----------------
 #define DECIMALSFLIED_DEFAULT 1
@@ -53,7 +53,7 @@ public:
     //menuFieldShadow<T>& s=*(menuFieldShadow<T>*)shadow;
     menuField<T>::reflex = menuField<T>::target();
     idx_t l = prompt::printTo(root, sel, out, idx, len);
-    bool ed = this == root.navFocus;
+    // bool ed = this == root.navFocus;
     //bool sel=nav.sel==i;
     if (l < len) {
       out.print((root.navFocus == this&&sel) ? (menuField<T>::tunning ? '>' : ':') : ' ');
@@ -73,7 +73,7 @@ public:
 };
 //-----Custom floatField----------------END
 
- 
+
 decimalslField <typeof(floatVar)>& floatFlied_Object = *new decimalslField<typeof(floatVar)>(floatVar, "f", "", -100.0, 100.0, 0.1, 1);
 decimalslField <typeof(doubletVar)>& doubleFlied_Object = *new decimalslField<typeof(doubletVar)>(doubletVar, "d", "", -100.0, 100.0, 0.1, 1);
 decimalslField <typeof(cantDecimals)>& DecimalsFlied_Object = *new decimalslField<typeof(cantDecimals)>(cantDecimals, "Dec", "", 0, 18, 1, 1, (Menu::callback)updateEvent_cb, updateEvent);
@@ -83,7 +83,7 @@ void updateEvent_cb(eventMask e){
   doubleFlied_Object.setDecimals(cantDecimals);
   Serial.println("");Serial.print("now using '");Serial.print(cantDecimals);Serial.println("' decimals.");
  }
- 
+
 //---Main menu  ---------------------------------
 prompt* mainData[] = {
   &floatFlied_Object,

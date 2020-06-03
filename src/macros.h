@@ -197,7 +197,7 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
   Menu::prompt* constMEM id##_data[] MEMMODE={\
     FOR_EACH(DEF,__VA_ARGS__)\
   };\
-  constMEM MEMMODE Menu::menuNodeShadowRaw id##ShadowRaw={\
+  constMEM MEMMODE Menu::menuNodeShadows id##Shadows={\
     (Menu::callback)aFn,\
     (Menu::systemStyles)(ss|Menu::_menuData|Menu::_canNav),\
     id##_text,\
@@ -206,8 +206,8 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
     sizeof(id##_data)/sizeof(Menu::prompt*),\
     id##_data\
   };\
-  constMEM Menu::menuNodeShadow& id##Shadow=*(Menu::menuNodeShadow*)&id##ShadowRaw;\
-  objType id(id##Shadow);
+  objType id(id##Shadows.obj);
+  // constMEM Menu::menuNodeShadow& id##Shadow=*(Menu::menuNodeShadow*)&id##ShadowRaw;
 
 #define SELECT(...) altVARIANT(Menu::select,((systemStyles)(Menu::_menuData|Menu::_canNav|Menu::_isVariant|Menu::_parentDraw)),__VA_ARGS__)
 #define CHOOSE(...) altVARIANT(Menu::choose,((systemStyles)(Menu::_menuData|Menu::_canNav|Menu::_isVariant)),__VA_ARGS__)
@@ -299,7 +299,7 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
   // constMEM Menu::menuFieldShadow<typeof(target)>& _fieldShadow##cnt=*(Menu::menuFieldShadow<typeof(target)>*)&fieldShadowRaw##cnt;
 #define DECL_EDIT_(cnt,objType,ss,label,buf,valid,action,mask,style)\
   constText textFieldLabel##cnt[] MEMMODE=label;\
-  constMEM MEMMODE Menu::textFieldShadowRaw textFieldShadowRaw##cnt={\
+  constMEM MEMMODE Menu::textFieldShadows textfieldShadows##cnt={\
     (Menu::callback)action,\
     ss,\
     textFieldLabel##cnt,\
@@ -309,8 +309,8 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
     valid,\
     sizeof(valid)/sizeof(char*)\
   };\
-  constMEM Menu::textFieldShadow& _fieldShadow##cnt=*(Menu::textFieldShadow*)&textFieldShadowRaw##cnt;\
-  objType _textField##cnt(_fieldShadow##cnt);
+  objType _textField##cnt(textfieldShadows##cnt.obj);
+  // constMEM Menu::textFieldShadow& _fieldShadow##cnt=*(Menu::textFieldShadow*)&textFieldShadowRaw##cnt;
 #define DECL_SUBMENU(id)
 #define DECL_VALUE(target,...) MK_VALUE(target, _##__VA_ARGS__)
 #define _VALUE_(...)  __VA_ARGS__

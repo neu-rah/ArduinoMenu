@@ -141,7 +141,7 @@ class AlarmMenu:public menu {
       len-=out.print(ss);
       //dirty=true;useless here because dirty flag is cleaned after all devices print
     }
-    bool changed(const navNode &nav,const menuOut& out,bool sub=true) override {
+    bool changed(const navNode &nav,const menuOut& out,bool sub=true,bool test=false) override {
       //this does not set the dirty flag, it  would redraw all menu causing flick
       //however printMenu checks this as a title change signal
       return true;//always changed!

@@ -36,7 +36,7 @@ idx_t Menu::print_P(menuOut& s,const char* at,idx_t len) {
 }
 
 const navCodesDef Menu::defaultNavCodes={
-  {noCmd,(char)0xff},
+  {noCmd,(uint8_t)0xff},
   {escCmd,'/'},
   {enterCmd,'*'},
   {upCmd,'+'},

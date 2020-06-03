@@ -2,7 +2,7 @@
 Sept. 2017 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
 
 Concurrent menu test
-output: I2C LCD (Malpartida) and Serial
+output: I2C LCD (Malpartida) and Serial https://bitbucket.org/fmalpartida/new-liquidcrystal/downloads/
 input: encoder + Serial
 purpose: test independent concurrent menus on two different devices
   the same menu could also be used to independent navigation on two output devices

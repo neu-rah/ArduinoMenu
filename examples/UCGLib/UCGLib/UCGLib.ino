@@ -68,7 +68,7 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
 #define YELLOW {255,255,0}
 #define RED {255,0,0}
 
-const colorDef<rgb> colors[6] MEMMODE={
+const colorDef<rgb> my_colors[6] {
   {{BLACK,BLACK},{BLACK,BLUE,BLUE}},//bgColor
   {{GRAY,GRAY},{WHITE,WHITE,WHITE}},//fgColor
   {{WHITE,BLACK},{YELLOW,YELLOW,RED}},//valColor
@@ -81,7 +81,7 @@ const colorDef<rgb> colors[6] MEMMODE={
 #define offsetY 0
 
 MENU_OUTPUTS(out,MAX_DEPTH
-  ,UCG_OUT(ucg,colors,fontX,fontY,offsetX,offsetY,{0,0,UC_Width/fontX,UC_Height/fontY})
+  ,UCG_OUT(ucg,my_colors,fontX,fontY,offsetX,offsetY,{0,0,UC_Width/fontX,UC_Height/fontY})
   ,SERIAL_OUT(Serial)
 );
 
@@ -104,7 +104,7 @@ serialOut outSerial(*(Print*)&Serial,serialTops);
 //define outputs controller
 idx_t ucg_tops[MAX_DEPTH];
 PANELS(ucgPanels,{0,0,UC_Width/fontX,UC_Height/fontY});
-UCGLibOut ucgOut(ucg,colors,ucg_tops,ucgPanels,fontX,fontY);
+UCGLibOut ucgOut(ucg,my_colors,ucg_tops,ucgPanels,fontX,fontY);
 
 menuOut* const outputs[] MEMMODE={&outSerial,&ucgOut};//list of output devices
 outputsList out(outputs,2);//outputs list controller

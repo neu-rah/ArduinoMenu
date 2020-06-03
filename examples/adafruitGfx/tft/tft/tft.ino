@@ -17,6 +17,7 @@ https://github.com/PaulStoffregen/TimerOne
 // #define USE_CLICK_ENCODER
 
 #include <SPI.h>
+#include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_ST7735.h>
 #include <menu.h>
@@ -100,8 +101,8 @@ MENU(subMenu,"Sub-Menu",doNothing,noEvent,noStyle
   ,EXIT("<Back")
 );
 
-char* constMEM hexDigit MEMMODE="0123456789ABCDEF";
-char* constMEM hexNr[] MEMMODE={"0","x",hexDigit,hexDigit};
+const char* constMEM hexDigit MEMMODE="0123456789ABCDEF";
+const char* constMEM hexNr[] MEMMODE={"0","x",hexDigit,hexDigit};
 char buf1[]="0x11";
 
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle

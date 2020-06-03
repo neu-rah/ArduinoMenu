@@ -8,13 +8,13 @@ using namespace Menu;
 #define LEDPIN LED_BUILTIN
 
 //list of allowed characters
-char* const  digit="0123456789";
-char* const hexChars MEMMODE="0123456789ABCDEF";
-char* const alphaNum[] MEMMODE = {" 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.,+-_"};
+const char* const  digit="0123456789";
+const char* const hexChars MEMMODE="0123456789ABCDEF";
+const char* const alphaNum[] MEMMODE = {" 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.,+-_"};
 //individual character validators
-char* constMEM validData[] MEMMODE={hexChars,hexChars,hexChars,hexChars};
+const char* constMEM validData[] MEMMODE={hexChars,hexChars,hexChars,hexChars};
 
-char* constMEM validIP[] MEMMODE = {"012",digit,digit,"."};
+const char* constMEM validIP[] MEMMODE = {"012",digit,digit,"."};
 char buf0[]="000.000.000.000";
 
 //define "Op 0" without macro

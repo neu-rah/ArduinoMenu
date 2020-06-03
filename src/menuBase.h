@@ -191,7 +191,7 @@ www.r-site.net
 
     //config
     ///////////////////////////////////////////////////////////////////////////
-    struct navCode {navCmds cmd;char ch;};
+    struct navCode {navCmds cmd;uint8_t ch;};
     typedef navCode navCodesDef[10];
     extern const navCodesDef defaultNavCodes;
 

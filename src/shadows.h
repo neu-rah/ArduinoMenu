@@ -40,14 +40,14 @@
       eventMask events;//registered events
       styles style;
       char* buffer;
-      char* const* validators;
+      constText* const* validators;
       idx_t sz;
     };
     class textFieldShadow:public promptShadow {
       protected:
       public:
         char* buffer;
-        char* const* validators;
+        constText* const* validators;
         idx_t sz;
         textFieldShadow(
           constText* label,
@@ -65,6 +65,10 @@
         inline constText* operator[](idx_t i) const {
           return (char*)memPtr(((char**)_validators())[i]);
         }
+    };
+    union textFieldShadows {
+      textFieldShadowRaw raw;
+      textFieldShadow obj;
     };
     struct menuNodeShadowRaw {
       actionRaw a;
@@ -89,6 +93,11 @@
           return *(prompt*)memPtr(((prompt**)_data())[i]);
           //return *(prompt*)memPtr(((prompt**)memPtr(((menuNodeShadow*)shadow)->data))[i]);
         }
+    };
+
+    union menuNodeShadows {
+      menuNodeShadowRaw raw;
+      menuNodeShadow obj;
     };
 
     struct fieldBaseShadowRaw {

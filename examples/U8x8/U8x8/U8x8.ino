@@ -33,8 +33,8 @@ using namespace Menu;
 
 U8X8_PCD8544_84X48_4W_HW_SPI u8x8(U8_CS, U8_DC , U8_RST);
 
-char* constMEM hexDigit MEMMODE="0123456789ABCDEF";
-char* constMEM hexNr[] MEMMODE={"0","x",hexDigit,hexDigit};
+const char* constMEM hexDigit MEMMODE="0123456789ABCDEF";
+const char* constMEM hexNr[] MEMMODE={"0","x",hexDigit,hexDigit};
 char buf1[]="0x11";//<-- menu will edit this text
 
 int chooseTest=-1;

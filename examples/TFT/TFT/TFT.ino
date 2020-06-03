@@ -13,6 +13,7 @@ MCU: see TFT library compatibility
 
 #include <TFT.h> // Hardware-specific library
 #include <SPI.h>
+#include <menu.h>
 #include <menuIO/serialOut.h>
 #include <menuIO/serialIn.h>
 #include <menuIO/tftOut.h>
@@ -33,8 +34,8 @@ using namespace Menu;
 
 TFT tft(CS, DC, RST);
 
-char* constMEM hexDigit MEMMODE="0123456789ABCDEF";
-char* constMEM hexNr[] MEMMODE={"0","x",hexDigit,hexDigit};
+const char* constMEM hexDigit MEMMODE="0123456789ABCDEF";
+const char* constMEM hexNr[] MEMMODE={"0","x",hexDigit,hexDigit};
 char buf1[]="0x11";//<-- menu will edit this text
 
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle

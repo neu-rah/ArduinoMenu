@@ -21,6 +21,7 @@
 #include <Arduino.h>
 
 //**** TFT-LCD RELATED LIBRARIES ***
+#include <Wire.h>
 #include "Adafruit_GFX.h"
 #include <MCUFRIEND_kbv.h>
 MCUFRIEND_kbv tft;
