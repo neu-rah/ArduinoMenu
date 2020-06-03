@@ -10,7 +10,7 @@
     struct promptShadowRaw {
       actionRaw a;//the hooked callback function
       systemStyles sysStyles;
-      constText*text;
+      const char* text;
       constMEM eventMask events;//registered events
       styles style;
     };
@@ -18,11 +18,11 @@
       protected:
       public:
         systemStyles sysStyles;
-        constText*text;
+        const char* text;
         eventMask events;//registered events (mask)
         styles style;
       public:
-        promptShadow(constText* t,action a=doNothing,eventMask e=noEvent,styles s=noStyle,systemStyles ss=_noStyle)
+        promptShadow(const char* t,action a=doNothing,eventMask e=noEvent,styles s=noStyle,systemStyles ss=_noStyle)
           :action(a),sysStyles(ss),text(t),events(e),style(s) {}
         inline constText* getText() const {return (constText*)memPtr(text);}
         inline systemStyles _sysStyles() const {return (systemStyles)memEnum(&sysStyles);}
@@ -36,21 +36,21 @@
     struct textFieldShadowRaw {
       actionRaw a;
       systemStyles sysStyles;
-      constText*text;
+      const char*text;
       eventMask events;//registered events
       styles style;
       char* buffer;
-      constText* const* validators;
+      const char* const* validators;
       idx_t sz;
     };
     class textFieldShadow:public promptShadow {
       protected:
       public:
         char* buffer;
-        constText* const* validators;
+        const char* const* validators;
         idx_t sz;
         textFieldShadow(
-          constText* label,
+          const char* label,
           char* b,
           idx_t sz,
           char* const* v,
@@ -73,7 +73,7 @@
     struct menuNodeShadowRaw {
       actionRaw a;
       systemStyles sysStyles;
-      constText*text;
+      const char* text;
       eventMask events;//registered events
       styles style;
       idx_t sz;
@@ -103,7 +103,7 @@
     struct fieldBaseShadowRaw {
       actionRaw a;
       systemStyles sysStyles;
-      constText*text;
+      const char* text;
       eventMask events;//registered events
       styles style;
       constText* units;
@@ -119,7 +119,7 @@
     struct menuFieldShadowRaw {
       actionRaw a;
       systemStyles sysStyles;
-      constText*text;
+      const char* text;
       eventMask events;//registered events
       styles style;
       constText* units;
@@ -161,7 +161,7 @@
     struct menuValueShadowRaw {
       actionRaw a;
       systemStyles sysStyles;
-      constText*text;
+      const char* text;
       eventMask events;//registered events
       styles style;
       T value;
@@ -197,7 +197,7 @@
     struct menuVariantShadowRaw {
       actionRaw a;
       systemStyles sysStyles;
-      constText*text;
+      const char* text;
       constMEM eventMask events;//registered events
       styles style;
       idx_t sz;

@@ -114,12 +114,12 @@ altMENU(menu,timeMenu,"Time",doNothing,noEvent,noStyle,(systemStyles)(_asPad|Men
   ,FIELD(mins,"","",0,59,10,1,doNothing,noEvent,wrapStyle)
 );
 
-char* constMEM hexDigit MEMMODE="0123456789ABCDEF";
-char* constMEM hexNr[] MEMMODE={hexDigit};
+const char* constMEM hexDigit MEMMODE="0123456789ABCDEF";
+const char* constMEM hexNr[] MEMMODE={hexDigit};
 char buf1[]="0000";
 
-char* constMEM alphaNum MEMMODE=" 0123456789.ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz,\\|!\"#$%&/()=?~*^+-{}[]€";
-char* constMEM alphaNumMask[] MEMMODE={alphaNum};
+const char* constMEM alphaNum MEMMODE=" 0123456789.ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz,\\|!\"#$%&/()=?~*^+-{}[]€";
+const char* constMEM alphaNumMask[] MEMMODE={alphaNum};
 char name[]="          ";
 
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle

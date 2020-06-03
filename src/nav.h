@@ -15,11 +15,11 @@
     //multiple panels
     class panelsList {
       public:
-        constMEM panel* panels;
+        const panel* panels;
         navNode** nodes;
         constMEM idx_t sz;
         idx_t cur=0;
-        inline panelsList(constMEM panel p[],navNode* nodes[],idx_t sz):panels(p),nodes(nodes),sz(sz) {
+        inline panelsList(const panel p[],navNode* nodes[],idx_t sz):panels(p),nodes(nodes),sz(sz) {
           reset();
         }
         void reset(idx_t from=0);

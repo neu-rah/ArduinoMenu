@@ -298,7 +298,7 @@ Menu::outputsList id(id##_outPtrs,sizeof(id##_outPtrs)/sizeof(Menu::menuOut*));
   objType<typeof(target)> _menuField##cnt(fieldShadows##cnt.obj);
   // constMEM Menu::menuFieldShadow<typeof(target)>& _fieldShadow##cnt=*(Menu::menuFieldShadow<typeof(target)>*)&fieldShadowRaw##cnt;
 #define DECL_EDIT_(cnt,objType,ss,label,buf,valid,action,mask,style)\
-  constText textFieldLabel##cnt[] MEMMODE=label;\
+  const char textFieldLabel##cnt[] MEMMODE=label;\
   constMEM MEMMODE Menu::textFieldShadows textfieldShadows##cnt={\
     (Menu::callback)action,\
     ss,\
