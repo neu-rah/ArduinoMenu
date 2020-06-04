@@ -8,12 +8,9 @@ src/main.cpp
 lib
 .travis.yml
 !/.travis.yml
-platformio.ini
 /TODO.txt
-/classes.odg
 .gitignore
 !/.gitignore
-*.odg
 examples/clickEncoder
 examples/screenNav
 /dev
