@@ -45,7 +45,7 @@
   #define USING_RAM
   #define MEMMODE
   #define constMEM
-  #define constText char
+  #define constText const char
   #define memPtr(src) (src)
   #define memByte(addr) (*addr)
   #define memWord(addr) (*addr)

@@ -51,8 +51,8 @@ Data myTargets[dataSz];//our data
 Data target;
 
 //characters allowed on name field
-char* constMEM alphaNum MEMMODE=" 0123456789.ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz,\\|!\"#$%&/()=?~*^+-{}[]€";
-char* constMEM alphaNumMask[] MEMMODE={alphaNum};
+const char* constMEM alphaNum MEMMODE=" 0123456789.ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz,\\|!\"#$%&/()=?~*^+-{}[]€";
+const char* constMEM alphaNumMask[] MEMMODE={alphaNum};
 
 //some enumeration of values allowed on some fields
 TOGGLE(target.valid,editValid,"Valid: ",doNothing,noEvent,noStyle//,doExit,enterEvent,noStyle
@@ -75,8 +75,9 @@ CHOOSE(target.chooseTest,chooseMenu,"Choose",doNothing,noEvent,noStyle
 
 //a function to save the edited data record
 result saveTarget(eventMask e,navNode& nav) {
-  _trace(MENU_DEBUG_OUT<<"saveTarget"<<endl);
-  idx_t n=nav.root->path[nav.root->level-1].sel;//get selection of previous level
+  trace(MENU_DEBUG_OUT<<"saveTarget"<<endl);
+  navNode& nn=nav.root->path[nav.root->level-1];
+  idx_t n=nn.sel;//get selection of previous level
   myTargets[n]=target;
   return quit;
 }
@@ -94,12 +95,7 @@ MENU(targetEdit,"Target edit",doNothing,noEvent,wrapStyle
 
 //handling the user menu selection
 //this will copy the selected recotd into the temp var
-result targetEvent(eventMask e,navNode& nav) {
-  _trace(MENU_DEBUG_OUT<<"copy data to temp.\n");
-  target=myTargets[nav.sel];
-  //you can store nav.sel for future reference
-  return proceed;
-}
+result targetEvent(eventMask e,navNode& nav);
 
 //the customized print of records
 //menu system wil use this to print the list of all records
@@ -107,6 +103,7 @@ struct TargetMenu:UserMenu{
   using UserMenu::UserMenu;
 
   // override sz() function to have variable/custom size
+  // if using exit option the an extra element has to be considered...
   // inline idx_t sz() const override {return 0;}
 
   //customizing the print of user menu item (len is the availabe space)
@@ -120,7 +117,8 @@ struct TargetMenu:UserMenu{
 //build the user menu object, optionally giving a sub menu
 #ifdef MENU_USERAM
   //for non-AVR devices or when MENU_USERAM is defined at compiler level
-  TargetMenu targetsMenu("Targets",dataSz,targetEdit,targetEvent,enterEvent);
+  TargetMenu targetsMenu("Targets",dataSz,"<Back",targetEdit,targetEvent,enterEvent);
+  // TargetMenu targetsMenu("Targets",dataSz,targetEdit,targetEvent,enterEvent);//no exit option
 #else
   //menu allocation compatible with AVR flash ---------------------------------
   constMEM char targetsMenuTitle[] MEMMODE="Targets";
@@ -134,13 +132,22 @@ struct TargetMenu:UserMenu{
     NULL
   };
   constMEM menuNodeShadow& targetsMenuInfo=*(menuNodeShadow*)&targetsMenuInfoRaw;
-  TargetMenu targetsMenu(targetsMenuInfo,targetEdit);
+  TargetMenu targetsMenu(targetsMenuInfo,targetEdit,"<Back");
+  // TargetMenu targetsMenu(targetsMenuInfo,targetEdit);//no exit option
 #endif
 
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,OBJ(targetsMenu)//attach the array edit menu on a macri build nenu
   ,EXIT("<Back")
 );
+
+result targetEvent(eventMask e,navNode& nav) {
+  trace(MENU_DEBUG_OUT<<"copy data to temp target:"<<(int)nav.target<<"\n");
+  if(nav.target==&targetsMenu)//only if we are on targetsMenu
+    target=myTargets[nav.sel];
+  //you can store nav.sel for future reference
+  return proceed;
+}
 
 //////////////////////////////////////////////////////////////////////////////
 // menu IO and root navigation control

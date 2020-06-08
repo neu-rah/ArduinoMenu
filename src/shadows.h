@@ -85,7 +85,7 @@
         idx_t sz;
         prompt* constMEM* data;
       public:
-        menuNodeShadow(constText* text,idx_t sz,prompt* constMEM* data,action a,eventMask e,styles style,systemStyles ss=(systemStyles)(_menuData|_canNav))
+        menuNodeShadow(const char* text,idx_t sz,prompt* constMEM* data,action a,eventMask e,styles style,systemStyles ss=(systemStyles)(_menuData|_canNav))
         :promptShadow(text,a,e,style,ss),sz(sz),data(data) {}
         idx_t _sz() const {return (idx_t)memIdx(sz);}
         prompt* constMEM* _data() const {return (prompt* constMEM*)memPtr(data);}

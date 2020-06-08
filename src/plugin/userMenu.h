@@ -16,35 +16,54 @@ namespace Menu {
   class UserMenu:public menuNode {
   public:
     menu* subMenu=NULL;
-    UserMenu(constMEM menuNodeShadow& shadow):menuNode(shadow) {}
-    UserMenu(constMEM menuNodeShadow& shadow,menu& subMenu):menuNode(shadow),subMenu(&subMenu) {}
-    UserMenu(constText* text,idx_t size,menu& subMenu,action a=noAction,eventMask e=noEvent,styles style=wrapStyle)
+    const char*backTitle=NULL;
+    UserMenu(constMEM menuNodeShadow& shadow,const char*backTitle=NULL)
+      :menuNode(shadow),backTitle(backTitle) {}
+    UserMenu(constMEM menuNodeShadow& shadow,menu& subMenu,const char*backTitle=NULL)
+      :menuNode(shadow),subMenu(&subMenu),backTitle(backTitle) {}
+    UserMenu(const char* text,idx_t size,menu& subMenu,action a=noAction,eventMask e=noEvent,styles style=wrapStyle)
       :menuNode(text,size,NULL,a,e,style,(systemStyles)(_menuData|_canNav)),subMenu(&subMenu) {}
+    UserMenu(const char* text,idx_t size,const char*backTitle,menu& subMenu,action a=noAction,eventMask e=noEvent,styles style=wrapStyle)
+      :menuNode(text,size,NULL,a,e,style,(systemStyles)(_menuData|_canNav)),subMenu(&subMenu),backTitle(backTitle) {}
+
+      inline idx_t sz() const override {return menuNode::sz()+(backTitle?1:0);}
 
     prompt& operator[](idx_t i) const override {return *(prompt*)this;}
     virtual Used printItem(menuOut& out, int idx,int len)=0;
     Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t p) override {
       if(root.navFocus!=this) return menuNode::printTo(root,sel,out,idx,len,p);
-      return idx<0?
-        menuNode::printTo(root,sel,out,idx,len,p)://print the title
-        printItem(out,out.tops[root.level]+idx,len);
+      if(idx<0) return menuNode::printTo(root,sel,out,idx,len,p);//print the title
+      if(backTitle&&idx==sz()-1) return out.printText(backTitle,len);
+      trace(MENU_DEBUG_OUT<<"{"<<idx<<"}");
+      return printItem(out,out.tops[root.level]+idx/*-(backTitle?1:0)*/,len);
     }
     void doNav(navNode& nav,navCmd cmd) {
-      if(nav.root->navFocus==this&&cmd.cmd==enterCmd) {
-        _trace(MENU_DEBUG_OUT<<"no sub levels! submenu:"<<(subMenu?"yes":"no")<<" level:"<<nav.root->level<<"\n");
-        //just send the event, but do not open (as this menu is representing the item)
-        // nav.root->path[nav.root->level-1].event(enterEvent);
-        // nav.event(enterEvent);
-        // if(enterEvent&&) operator()(enterEvent, nav, *this);
-        nav.event(enterEvent);
-        if(subMenu) {
-          assert(nav.root->level<nav.root->maxDepth);
-          nav.root->active().dirty=true;
-          nav.root->level++;
-          nav.root->navFocus=nav.root->node().target=subMenu;
-          nav.root->node().sel=0;
+      if(nav.root->navFocus==this) {
+        trace(MENU_DEBUG_OUT<<" submenu:"<<(subMenu?"yes":"no")<<" level:"<<nav.root->level<<"\n");
+        switch (cmd.cmd) {
+          case selCmd:
+          case idxCmd:
+            trace(MENU_DEBUG_OUT<<"idxCmd "<<cmd.param<<endl);
+            nav.sel=cmd.param;
+          case enterCmd:
+            _trace(MENU_DEBUG_OUT<<"enterCmd");
+            if(backTitle&&nav.sel==sz()-1) nav.root->exit();
+            else {
+              nav.event(enterEvent);
+              if(subMenu) {
+                _trace(MENU_DEBUG_OUT<<"edit item");
+                assert(nav.root->level<nav.root->maxDepth);
+                nav.root->active().dirty=true;
+                nav.root->level++;
+                nav.root->navFocus=nav.root->node().target=subMenu;
+                nav.root->node().sel=0;
+              }
+            }
+            return;
+          default:break;
         }
-      } else menuNode::doNav(nav,cmd);
+      }
+      menuNode::doNav(nav,cmd);
     }
   };
 

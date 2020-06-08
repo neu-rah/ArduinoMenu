@@ -246,7 +246,7 @@
     class menuNode:public navTarget {
       public:
         inline menuNode(constMEM menuNodeShadow& s):navTarget(s) {}
-        inline menuNode(constText* text,idx_t sz,prompt* constMEM data[],action a=noAction,eventMask e=noEvent,styles style=wrapStyle,systemStyles ss=(systemStyles)(_menuData|_canNav))
+        inline menuNode(const char* text,idx_t sz,prompt* constMEM data[],action a=noAction,eventMask e=noEvent,styles style=wrapStyle,systemStyles ss=(systemStyles)(_menuData|_canNav))
           :navTarget(*new menuNodeShadow(text,sz,data,a,e,style,ss)) {}
         #ifdef MENU_FMT_WRAPS
           virtual classes type() const;
