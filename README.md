@@ -311,6 +311,8 @@ Buttons - simple digital keyboard (builtin)
 
 Generic keyboard (no PCINT) - configurable for digital or analog keyboards (builtin)
 
+Analog Joystick
+
 ClickEncoder https://github.com/0xPIT/encoder
 
 Matrix keypad   
