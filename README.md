@@ -1,9 +1,3 @@
-# COVID-19 note
-
-**If you need this menu for any device covid-19 related, be my guest, I grant you free usage even if you going to sell the device**
-
-This menu system has the advantage of being long tested and supporting many interface devices so that makers don't be restricted in hardware.
-
 # ArduinoMenu 4
 
 **Generic menu/interactivity system for the arduino framework**
@@ -21,6 +15,12 @@ The system is designed as a non blocking polling system, allowing concurrent tas
 Optionally the system can be operated in semi-automated mode, issuing navigation command from user code.
 
 See the [wiki](https://github.com/neu-rah/ArduinoMenu/wiki)
+
+### COVID-19 note
+
+**If you need this menu for any device covid-19 related, be my guest, I grant you free usage even if you going to sell the device**
+
+This menu system has the advantage of being long tested and supporting many interface devices so that makers don't be restricted in hardware.
 
 ## Simple Example
 ```c++
