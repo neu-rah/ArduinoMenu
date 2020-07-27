@@ -15,7 +15,7 @@ int test=55;
 template<typename T>
 class leadsField:public menuField<T> {
 public:
-  leadsField(const menuFieldShadow<T>& shadow):menuField<T>(shadow) {}
+  using menuField<T>::menuField;
   Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) {
     menuField<T>::reflex=menuField<T>::target();
     prompt::printTo(root,sel,out,idx,len);
