@@ -16,7 +16,7 @@ template<typename T>
 class leadsField:public menuField<T> {
 public:
   using menuField<T>::menuField;
-  Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len) {
+  Used printTo(navRoot &root,bool sel,menuOut& out, idx_t idx,idx_t len,idx_t panelNr=0) override {
     menuField<T>::reflex=menuField<T>::target();
     prompt::printTo(root,sel,out,idx,len);
     bool ed=this==root.navFocus;
