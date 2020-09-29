@@ -53,8 +53,8 @@ install:
    - wget https://github.com/neu-rah/AnsiStream/archive/master.zip -O /tmp/AnsiStream-master.zip
    - unzip /tmp/AnsiStream-master.zip -d /tmp/
 
-   - wget https://bitbucket.org/fmalpartida/new-liquidcrystal/downloads/NewliquidCrystal_1.3.4.zip -O /tmp/NewliquidCrystal_1.3.4.zip
-   - unzip /tmp/NewliquidCrystal_1.3.4.zip -d /tmp/
+   # - wget https://bitbucket.org/fmalpartida/new-liquidcrystal/downloads/NewliquidCrystal_1.3.4.zip -O /tmp/NewliquidCrystal_1.3.4.zip
+   # - unzip /tmp/NewliquidCrystal_1.3.4.zip -d /tmp/
 
    # - wget https://github.com/adafruit/Adafruit-PCD8544-Nokia-5110-LCD-library/archive/master.zip -O /tmp/Adafruit-PCD8544-Nokia-5110-LCD-library-master.zip
    # - unzip /tmp/Adafruit-PCD8544-Nokia-5110-LCD-library-master.zip -d /tmp/
@@ -69,4 +69,5 @@ script:
   #  - platformio ci --lib="."  --lib="/tmp/SD-master"  --board=nanoatmega328 --board=teensy31
    # - platformio ci --lib="." --lib="/tmp/Streaming-master" --lib="/tmp/Adafruit-GFX-Library-master" --lib="/tmp/PCINT-master" --lib="/tmp/U8glib_Arduino-master" --lib="/tmp/AnsiStream-master" --lib="/tmp/NewliquidCrystal" --lib="/tmp/Adafruit-PCD8544-Nokia-5110-LCD-library-master" --lib="/tmp/Adafruit-ST7735-Library-master" --board=nanoatmega328 --board=teensy31 --board=due
    # - platformio ci --lib="." --lib="/tmp/Streaming-master" --lib="/tmp/Adafruit-GFX-Library-master" --lib="/tmp/PCINT-master" --lib="/tmp/U8glib_Arduino-master" --lib="/tmp/AnsiStream-master" --lib="/tmp/NewliquidCrystal" --lib="/tmp/Adafruit-ST7735-Library-master" --board=nanoatmega328 --board=teensy31 --board=due
-   - platformio ci --lib="." --lib="/tmp/Streaming-master" --lib="/tmp/PCINT-master" --lib="/tmp/U8glib_Arduino-master" --lib="/tmp/AnsiStream-master" --lib="/tmp/NewliquidCrystal" --board=nanoatmega328 --board=teensy31 --board=due
+   # - platformio ci --lib="." --lib="/tmp/Streaming-master" --lib="/tmp/PCINT-master" --lib="/tmp/U8glib_Arduino-master" --lib="/tmp/AnsiStream-master" --lib="/tmp/NewliquidCrystal" --board=nanoatmega328 --board=teensy31 --board=due
+   - platformio ci --lib="." --lib="/tmp/Streaming-master" --lib="/tmp/PCINT-master" --lib="/tmp/U8glib_Arduino-master" --lib="/tmp/AnsiStream-master" --board=nanoatmega328 --board=teensy31 --board=due
