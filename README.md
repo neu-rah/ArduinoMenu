@@ -283,6 +283,10 @@ https://github.com/neu-rah/AnsiStream
 
 - Unix terminal
 
+**Grove RGB LCD I2C 2x16**
+
+https://wiki.seeedstudio.com/Grove-LCD_RGB_Backlight/
+
 **Web browser**
 
 - ESP8266 (builtin)  
