@@ -1,0 +1,31 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "cppbuild",
+			"label": "C/C++: build src/main.cpp",
+			"command": "/usr/bin/g++",
+			"args": [
+				"-g",
+				"${workspaceFolder}/src/main.cpp",
+				"-o",
+				"${workspaceFolder}/.out/main",
+				"-fdiagnostics-color=always",
+				"-I${workspaceFolder}/../../src",
+				"-DRS_DEBUG",
+				"-DDEFAULT_LANG=lang_en"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"detail": "compiler: /usr/bin/g++"
+		}
+	]
+}

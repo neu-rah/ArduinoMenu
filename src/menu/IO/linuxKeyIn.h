@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include <sys/select.h>
 #include <termios.h>
+#include "menu/in.h"
 
 namespace Menu {
   struct termios orig_termios;
@@ -39,17 +40,16 @@ namespace Menu {
 
   //POSIX system key reader
   struct LinuxKeyIn {
-    template<typename In>
+    template<typename In=Quiet<>>
     struct Part:In {
       static constexpr bool isReader=true;
       inline Part() {set_conio_terminal_mode();}//capture the keyboard
-      inline ~Part() {reset_terminal_mode();}//capture the keyboard
+      inline ~Part() {reset_terminal_mode();}//reset the capture state
       template<typename Nav>
       inline bool parseKey(Nav& nav) {
         if(!kbhit()) return In::parseKey(nav);
         bool ext=false;
         int k=getch();
-        trace(MDO<<"LinuxKeyIn::parseKey "<<k<<endl);
         if (k==3) {
           //preemptive handle Ctrl+C
           reset_terminal_mode();
@@ -58,14 +58,13 @@ namespace Menu {
         if (k==27&&kbhit()) {
           ext=true;
           k=getch();
-          trace(MDO<<"ext key:"<<k<<endl);
         }
         return In::parseCmd(nav,k,ext);
       }
     };
   };
 
-  //PC keyboard arrows
+  //PC keyboard arrows to menu commands
   struct PCArrows {
     template<typename In>
     struct Part:In {
@@ -76,11 +75,14 @@ namespace Menu {
         switch(k) {
           case 66: return nav.template cmd<Cmd::Up>();
           case 65: return nav.template cmd<Cmd::Down>();
-          case 13:case 67: return nav.template cmd<Cmd::Enter>();
-          case 27:case 68: return nav.template cmd<Cmd::Esc>();
-          default:break;
+          case 13: return nav.template cmd<Cmd::Enter>();
+          case 27: return nav.template cmd<Cmd::Esc>();
+          case 67: return nav.template cmd<Cmd::Right>();
+          case 68: return nav.template cmd<Cmd::Left>();
+          default: return nav.template cmd<Cmd::Key>(k);
+          // break;
         }
-        trace(MDO<<"PCArrows passing key"<<endl);
+        // trace(MDO<<"PCArrows passing key"<<endl);
         return In::parseCmd(nav,k,e);
       }
     };

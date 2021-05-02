@@ -1,59 +1,73 @@
-# Notes
+# AM21 notes
 
-## Memory
+## Output
 
-Memory figures for ATTiny85
+> Menu/Nav -> [Fmt] -> [Panel] -> [Measure] -> Device\<Void\>
 
-2019.11.21 static tree with change and enable/disable control
-```text
-DATA:    [==        ]  24.6% (used 126 bytes from 512 bytes)
-PROGRAM: [======    ]  63.5% (used 5202 bytes from 8192 bytes)
+### Panel
+**Controls output device space to provide positioning/scrolling.**
+
+Devices can operate without a panel. _ex: free infinit space (Console)_
+
+Only panels that scroll on lack of free space will need a measure tool.
+This kind of panels allow multiple line heights to coexist on same menu.
+
+A `RangePanel` operates on menu items side, so they can be used on fixed line height cases.
+
+### Measure
+**Provides a method for a panel to calculates free input device area.**
+
+Even text measure can be complicated.
+- escape codes `\n \r \t ...`
+- Character surrogates
+- numeric formats
+- generic data format => API
+
+### Area
+**describes output device dimension.**
+
+
+---
+
+can data specify an output overload?
+that is an alternative output based on the current device
+
+=> output must cathegorize components hierarchy
+
+this can be used to implement pad menus
+
+1) Cathegorize output
+```c++
+enum class OutBlock {Format,Panel,Measure,Device};
+//...
+using Out=OutDef<
+  AsFormat<...>
+  AsPanel<...>
+  AsMeasure<...>
+  AsDevice<...>
+>;
 ```
 
-2019.11.25 - partial/minimal draw
-```text
-DATA:    [===       ]  25.6% (used 131 bytes from 512 bytes)
-PROGRAM: [=======   ]  67.0% (used 5488 bytes from 8192 bytes)
+2) Access output cathegories 
+```c++
+using OutPanel=Out::Output::Panel;
 ```
 
-2019.11.26 - partial/minimal draw (bug fixes)
-```text
-DATA:    [===       ]  25.6% (used 131 bytes from 512 bytes)
-PROGRAM: [=======   ]  68.3% (used 5594 bytes from 8192 bytes)
+3) Data inclusion
+```c++
+using MainMenu=ItemDef<
+  Using<OutPanel, PadFmt >::Part,
+  StaticMenu<....>
+>;
 ```
 
-2020.02.02 - joing dynamic and static API's
-DATA:    [==        ]  23.6% (used 121 bytes from 512 bytes)
-PROGRAM: [====      ]  35.3% (used 2894 bytes from 8192 bytes)
+4) Printing path process should pick on `Using` directives
 
-2020.02.07 - static&dynamic API's + PathRef length
-DATA:    [==        ]  23.8% (used 122 bytes from 512 bytes)
-PROGRAM: [=====     ]  54.2% (used 4444 bytes from 8192 bytes)
+5) Compose 
+```c++
+using PadOutput<PadFmt<OutPanel>>
+```
 
-2020.02.08 - use panels, rewrite std::vector menu
-DATA:    [==        ]  23.8% (used 122 bytes from 512 bytes)
-PROGRAM: [======    ]  64.6% (used 5294 bytes from 8192 bytes)
+**problem** alternative composition wont provied an `obj()` that includes the output top part.
 
-2020.02.08 - toggle enable/disable on dynamic and static menus
-DATA:    [==        ]  24.2% (used 124 bytes from 512 bytes)
-PROGRAM: [=======   ]  69.4% (used 5684 bytes from 8192 bytes)
-
-2020.02.09 rearranging files
-DATA:    [==        ]  24.2% (used 124 bytes from 512 bytes)
-PROGRAM: [======    ]  63.0% (used 5164 bytes from 8192 bytes)
-
-2020.02.13 minimal draw (draw only changes)
-DATA:    [==        ]  24.2% (used 124 bytes from 512 bytes)
-PROGRAM: [=====     ]  45.5% (used 3730 bytes from 8192 bytes)
-
-2020.02.18 review printing chain params
-RAM:   [====      ]  35.9% (used 184 bytes from 512 bytes)
-Flash: [=======   ]  65.7% (used 5380 bytes from 8192 bytes)
-
-using regular param `fullPrint`
-RAM:   [====      ]  35.9% (used 184 bytes from 512 bytes)
-Flash: [=======   ]  65.7% (used 5380 bytes from 8192 bytes)
-
-2020.02.22 tiny example with similar menu struct to compare with previous essays
-RAM:   [===       ]  27.5% (used 141 bytes from 512 bytes)
-Flash: [====      ]  38.3% (used 3136 bytes from 8192 bytes)
+**problem** overriding existing behaviors might  be a mess

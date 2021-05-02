@@ -9,16 +9,26 @@ This library is distributed in the hope that it will be useful, but WITHOUT ANY 
 You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
-namespace Menu {
-  class IItem;
-  class INav;
-  class IOut;
-};
+// // _trace(constexpr static const char*named=#name;);
+// // _trace(MDO& operator<<(MDO& o) const {return o<<named;})
+// #define APIDEF(memberFunc,name)\
+// struct name {\
+//   template<typename T,typename... Args>\
+//   inline auto operator()(T& o,Args... args)\
+//     ->decltype(o.memberFunc(args...))\
+//     {return o.memberFunc(args...);}\
+// };
+// // _trace(MDO& operator<<(MDO& o,const name& api) {return api.operator<<(o);})
 
-#include "staticMenu.h"
-#include "menu/item.h"
-#include "menu/nav.h"
-#include "menu/IO.h"
 
-#include "menu/item.hpp"
-#include <menu/IO.hpp>
+#include "menu/sys/staticMenu.h"
+#include "menu/sys/components.h"
+#include "menu/sys/fields.h"
+#include "menu/fmt/xml.h"
+#include "menu/fmt/text.h"
+
+#if defined(RS_DEBUG)&&!defined(RELEASE)
+// namespace Menu {
+//   MDO mdo;
+// };
+#endif

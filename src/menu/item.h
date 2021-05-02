@@ -1,164 +1,223 @@
 /* -*- C++ -*- */
 #pragma once
 
-/**************
-the dynamic/virtual interface for items
-*/
-
-#include "staticItem.h"
+// #include "sys/kernel/path.h"
+#include "menu/out.h"
 
 namespace Menu {
 
-  struct IAPI {
-    virtual APIRes step(IItem& at,PathRef ref,Idx level=0) const=0;
-    virtual APIRes call(IItem& at,Idx level)=0;
-    virtual APIRes callItem(IItem& at,Idx level,Idx n)=0;
-    virtual APIRes walkPath(IItem& at,PathRef ref,Idx level) const=0;
-    #ifdef MENU_DEBUG
-      virtual const char* named()=0;
-    #endif
-};
+  //API calls
+  //agensts to call member function on post provided objects
+  APIDEF(get,GetValue)
+  APIDEF(valueIs,ValueIs)
+  APIDEF(styles,Styles);
+  APIDEF(enabled,Enabled);
+  APIDEF(enable,Enable);
 
-  template<typename A>
-  struct IAPICall:IAPI,A {
-    using A::A;
-    IAPICall(const A& a):A(a){}
-    using A::call;
-    inline APIRes step(IItem& at,PathRef ref,Idx level=0) const {
-      return A::step(at,ref,level);
-    }
-    APIRes call(IItem& at,Idx level) override {
-      return A::call(at,level);
-    }
-    APIRes callItem(IItem& at,Idx level,Idx n) override {
-      return A::callItem(at,level,n);
-    }
-    APIRes walkPath(IItem& at,PathRef ref,Idx level) const override {
-      A::walkPath(at,ref,level);
-    }
-    #ifdef MENU_DEBUG
-      const char* named() override {return A::named();}
-    #endif
+  APIDEF(sz,Sz);
+  APIDEF(printTo,PrintTo);
+  APIDEF(onPrintTitleTo,PrintTitleTo);
+  APIDEF(onPrintBodyTo,PrintBodyTo);
+  APIDEF(onPrintItemTo,PrintItemTo);
+  APIDEF(esc,Esc);
+  APIDEF(up,Up);
+  APIDEF(down,Down);
+
+  // APIDEF(onPrintMenuTo,PrintMenuTo);
+  // APIDEF(enter,Enter);
+  struct PrintMenuTo {
+    constexpr static const char* named="PrintMenuTo";
+    // _trace(MDO& operator<<(MDO& o) const {return o<<named;});
+    template<typename T,typename Nav,typename Out>
+    inline auto operator()(T& o,Nav& nav,Out& out,int n)
+      ->decltype(o.template onPrintMenuTo<Nav,Out>(nav,out,n)) 
+      {return o.template onPrintMenuTo<Nav,Out>(nav,out,n);}
+  };
+  // _trace(MDO& operator<<(MDO& o,const PrintMenuTo& api) {return api.operator<<(o);});
+
+
+  // template<typename Nav>
+  struct Enter {
+    constexpr static const char* named="Enter";
+    // _trace(MDO& operator<<(MDO& o) const {return o<<named;})
+    template<typename T,typename Nav>
+    inline auto operator()(T& o,Nav& nav)
+      ->decltype(o.template enter<Nav>(nav)) 
+      {return o.template enter<Nav>(nav);}
+  };
+  // _trace(MDO& operator<<(MDO& o,const Enter& api) {return api.operator<<(o);});
+
+  template<Cmd c>
+  struct CmdTo {
+    constexpr static const char* named="CmdTo";
+    // _trace(MDO& operator<<(MDO& o) const {return o<<named<<"<"<<c<<">";});
+    template<typename T,typename Nav>
+    inline auto operator()(T& o,Nav& nav,int code)
+      ->decltype(o.template cmd<Nav,c>(nav,code)) 
+      {return o.template cmd<Nav,c>(nav,code);}
+  };
+  // _trace(
+  //   template<Cmd c>
+  //   MDO& operator<<(MDO& o,const CmdTo<c>& api) {return api.operator<<(o);}
+  // );
+
+  template<typename API,typename... Args>
+  struct Map {
+    constexpr static const char* named="Map";
+    // _trace(MDO& operator<<(MDO& o) const {return o<<named<<"<"<<API()<<">";});
+    template<typename T>
+    inline auto operator()(T& o,Args... args)
+      ->decltype(o.template map<API,Args...>(args...)) 
+      {return o.template map<API,Args...>(args...);}
   };
 
-  template<typename A>
-  struct IAPICall<IAPICall<A>> {};
+  // #ifdef DEBUG
+  //   template<typename API,typename... Args>
+  //   MDO& operator<<(MDO& o,const Map<API,Args...>& api) {return api.operator<<(o);}
+  // #endif
 
-  struct IItem {
-    virtual void printTitle(INav& nav,IOut& out,Idx level,bool fullPrint,Op op=Op::Printing)=0;
-    virtual bool changed() const=0;
-    virtual void changed(bool o)=0;
-    virtual bool cmd(Cmd,INav&,Idx level,Idx aux)=0;
-    virtual bool cmdItem(Cmd,INav&,Idx level,Idx aux,Idx)=0;
-    virtual size_t size() const=0;
-    virtual size_t sizeItem(Idx) const=0;
-    virtual bool enabled() const=0;
-    virtual bool enabledItem(Idx) const=0;
-    virtual void printMenu(INav& nav,IOut& out,Idx level,Op op=Op::Printing)=0;
-    virtual void printMenuItem(INav& nav,IOut& out,Idx level,Idx n,Op op=Op::Printing)=0;
-    virtual void enable(bool b)=0;
-    virtual void enableItem(bool b,Idx)=0;
-    virtual void printItems(INav&,IOut&,bool fullPrint,Idx=0,Idx=0,Op op=Op::Printing)=0;
-    virtual void print(INav&,IOut&,Idx level,bool selected,Op op)=0;
-    inline IItem& obj() {return *this;}
-
-  // protected:
-    virtual APIRes iWalkPath(const IAPI& api,PathRef ref,Idx level)=0;
-    virtual APIRes iWalkPath(const IAPI& api,PathRef ref,Idx level,Idx)=0;
-    virtual void iActivate(INav&,Idx)=0;
-    virtual void iActivateItem(INav&,Idx,Idx)=0;
-
-  // public:
-    inline size_t size(PathRef ref) {return APICall::Size().walkPath(obj(),ref,0);}
-
-    inline bool enabled(PathRef ref) {return APICall::Enabled().walkPath(obj(),ref,0);}
-
-    inline void enable(bool b,PathRef ref) {
-      if(b) APICall::Enable<true>().walkPath(obj(),ref,0);
-      else APICall::Enable<false>().walkPath(obj(),ref,0);
-    }
-
-    template<typename Nav>
-    inline void activate(Nav& nav,Idx level) {iActivate(nav,level);}
-    template<typename Nav>
-    inline void activateItem(Nav& nav,Idx level,Idx n) {iActivateItem(nav,level,n);}
-
-    template<typename Nav,typename Out,Op op=Op::Printing>
-    inline void printTitle(Nav& nav,Out& out,Idx level,bool fullPrint)
-      {printTitle(nav,out,level,fullPrint,op);}
-    template<Cmd c,typename Nav>
-    inline bool cmd(Nav& nav,Idx level,Idx aux) {return cmd(c,nav,level,aux);}
-    template<Cmd c,typename Nav>
-    inline bool cmdItem(Nav& nav,Idx level,Idx aux,Idx n) {return cmdItem(c,nav,level,aux,n);}
-
-    template<typename A>
-    APIRes walkPath(const A& api,PathRef ref,Idx level) {
-      return iWalkPath(api,ref,level);
-    }
-    template<typename A>
-    APIRes walkPath(const A& api,PathRef ref,Idx level,Idx n) {
-      return iWalkPath(IAPICall<A>(api),ref,level,n);
-    }
-
-    template<typename Nav,typename Out,Op op=Op::Printing>
-    inline void printItems(Nav& nav,Out& out,bool fullPrint,Idx idx=0,Idx top=0)
-      {printItems(nav,out,fullPrint,idx,top,op);}
-
-    template<typename Nav,typename Out,Op op=Op::Printing>
-    inline void print(Nav& nav,Out& out,Idx level,bool selected)
-      {print(nav,out,level,selected,op);}
-
-      template<typename Nav,typename Out,Op op=Op::Printing>
-      inline void printMenu(Nav& nav,Out& out,Idx level)
-        {printMenu(nav,out,level,op);}
-      template<typename Nav,typename Out,Op op=Op::Printing>
-      inline void printMenuItem(Nav& nav,Out& out,Idx level,Idx n)
-        {printMenuItem(nav,out,level,n,op);}
-  };
-
-  template<Expr... I>
-  struct Prompt:IItem,Chain<I...,Empty>::template To<Obj<Prompt<I...>>> {
-    using Base=typename Chain<I...,Empty>::template To<Obj<Prompt<I...>>>;
-    using This=Prompt<I...>;
+  // Item API ----------------------------
+  template<typename O=Nil>
+  struct Empty:O {
+    using Target=void;
+    using Base=O;
+    using IsTag=No;
     using Base::Base;
-    using Base::printItems;
-    using IItem::printMenu;
-    using IItem::printMenuItem;
-    using Base::print;
-    using Base::cmd;
-    using Base::cmdItem;
-    using IItem::size;
-    using IItem::enabled;
-    using IItem::walkPath;
-    using IItem::enable;
-    using IItem::obj;
-    using Base::activate;
-    using Base::activateItem;
-    inline void printTitle(INav& nav,IOut& out,Idx level,bool fullPrint,Op op=Op::Printing) override;
-    inline void printMenu(INav& nav,IOut& out,Idx level,Op op=Op::Printing) override;
-    inline void printMenuItem(INav& nav,IOut& out,Idx level,Idx n,Op op=Op::Printing) override;
-    inline size_t size() const override {return Base::size();}
-    inline size_t sizeItem(Idx n) const override {return Base::sizeItem(n);}
-    inline bool enabled() const override {return Base::enabled();}
-    inline bool enabledItem(Idx n) const override {return Base::enabledItem(n);}
-    inline void enable(bool o) override {Base::enable(o);}
-    inline void enableItem(bool o,Idx n) override {Base::enableItem(o,n);}
-    inline bool changed() const override {return Base::changed();}
-    inline void changed(bool o) override {Base::changed(o);}
-    inline bool cmd(Cmd,INav&,Idx level,Idx) override;
-    inline bool cmdItem(Cmd,INav&,Idx level,Idx,Idx) override;
-    inline void printItems(INav& nav,IOut& out,bool fullPrint,Idx idx=0,Idx top=0,Op op=Op::Printing) override;
-    inline void print(INav& nav,IOut& out,Idx level,bool selected,Op op) override;
-  // protected:
-    APIRes iWalkPath(const IAPI& api,PathRef ref,Idx level) override {
-      trace(MDO<<"Prompt::iWalkPath "<<api.named()<<" "<<ref<<endl);
-      return Base::template walkPath<decltype(api)>(api,ref,level);
+    using Head=Empty<O>;
+    using Tail=Empty<O>;
+    Empty(){}
+    Empty(const Empty&)=delete;
+    Empty& operator=(const Empty&)=delete;
+    // template<typename Next,typename... Args>
+    // static Next build(Args... args) {return Next(args...);}
+    Tail& head() {return *this;}
+    Tail& tail() {return *this;}
+    // static void names() {_trace(MDO::print("."));}
+    IItem* operator[](size_t i) {assert(false);}
+    void get() const {}
+    template<typename T> constexpr static bool valueIs(T&) {return false;}
+    static constexpr Style styles() {return Style::None;}
+    static constexpr bool is(Idx mask) {return ((Idx)Base::obj().styles())==mask;}
+    static constexpr bool has(Idx mask) {return ((Idx)Base::obj().styles())&mask;}
+    static constexpr bool changed() {return false;}
+    static constexpr bool enabled() {return true;}
+    static void enable(bool b) {}
+    template<typename Nav,typename Out,bool=true> 
+    static void printTo(Nav& nav,Out&,int n=0,bool sel=false) {}
+    template<typename Nav,typename Out> void onPrintMenuTo(Nav& nav,Out& out,Idx selIdx) {out.printMenu(nav,O::obj(),selIdx);}
+    template<typename Nav,typename Out> void onPrintTitleTo(Nav& nav,Out& out) {out.printTitle(nav,O::obj());}
+    template<typename Nav,typename Out> void onPrintBodyTo(Nav& nav,Out& out,Idx selIdx,Idx n)
+      {printTo(nav,out,selIdx,n==selIdx);}
+    template<typename Nav,typename Out> void onPrintItemTo(Nav& nav,Out& out,int n,bool sel) 
+      {Base::obj().template printTo<Nav,Out>(nav,out,n,sel);}
+    template<typename T> static constexpr bool chkId(T n) {return false;}
+    static constexpr Idx sz() {return 1;}
+    static constexpr Idx _sz() {return 1;}
+    template<typename Nav> constexpr static bool up(Nav&) {return true;}
+    template<typename Nav> constexpr static bool down(Nav&) {return true;}
+    template<typename Nav> constexpr static bool enter(Nav&) {return false;}
+    template<typename Nav> constexpr static bool esc(Nav&) {return false;}
+    template<typename Nav> constexpr static bool left(Nav& nav) {return enter(nav);}
+    template<typename Nav> constexpr static bool right(Nav& nav) {return esc(nav);}
+    template<typename Nav> constexpr static bool key(Nav&,Key) {return false;}
+    template<typename Nav,Cmd c>
+    bool cmd(Nav& nav,int code=0) {
+      switch(c) {
+        case Cmd::Enter: return O::obj().enter(nav);
+        case Cmd::Esc: return O::obj().esc(nav);
+        case Cmd::Up: return O::obj().up(nav);
+        case Cmd::Down: return O::obj().down(nav);
+        default: return false;
+      }
     }
-    APIRes iWalkPath(const IAPI& api,PathRef ref,Idx level,Idx n) override {
-      trace(MDO<<"Prompt::iWalkPath "<<api.named()<<" "<<ref<<" "<<n<<endl);
-      return APIRes(Base::walkPath(api,ref,level,n));
-    }
-    inline void iActivate(INav& nav,Idx level) override {Base::activate(nav,level);}
-    inline void iActivateItem(INav& nav,Idx level,Idx n) override {Base::activateItem(nav,level,n);}
-  };
+
+    template<typename API,typename... Args>
+    auto map(Args... args) 
+      ->decltype(API().operator()(*this,args...))
+      {return API().operator()(*this,args...);}
+      
+    template<typename Target,Idx o,Idx... oo>
+    struct Walk {
+      Target& target;
+      Walk(Target& t):target(t) {}
+      template<typename API,typename... Args>
+      auto walk(Args... args) 
+        ->decltype(API().operator()(target,args...)) 
+        {return API().operator()(target,args...);}
+    };
+    struct RefWalk {
+     RefWalk(Idx l,Idx*) {assert(!l);}
+     template<typename Target,typename API,typename... Args>
+      auto step(Idx at,Target& target,Args... args) 
+        ->decltype(API().operator()(target,args...))
+        {return API().operator()(target,args...);}
+    };
 };
+
+  // Empty<> empty;
+
+  template<template<typename> class... I>
+  using ItemDef=Composition<Empty,I...>;
+
+  //IItem class
+  //The virtual Item API interface
+  class IItem {
+    public:
+      static void names() {}
+      virtual IItem* operator[](size_t i) {assert(false);return this;}
+      virtual Style styles() const {return Style::None;}
+      virtual bool enabled() const {return true;}
+      virtual void enable(bool) {}
+      virtual bool cmd(INav&,Cmd,int) {return false;}
+      virtual void printTo(INav& nav,IOut&,int=0,bool=false){}
+      virtual void onPrintMenuTo(INav& nav,IOut&,int) {}
+      virtual void onPrintTitleTo(INav& nav,IOut& out) {out.printTitle(nav,*this);}
+      virtual void onPrintBodyTo(INav& nav,IOut& out,Idx,Idx) {}
+      virtual void onPrintItemTo(INav& nav,IOut& out,int n=0,bool sel=false) {}
+      template<typename Nav,Cmd c> bool cmd(INav& nav,int code=0) {return cmd(nav,c,code);}
+      virtual Idx sz() const {return 1;}
+      template<typename Nav,typename Out,bool=true> 
+      static void printTo(Nav& nav,Out& out,int n=0,bool sel=false)
+        {printTo(nav,out,n);}
+  };
+
+  //Prompt class
+  //encapsulate static item definition for use on dynamic containers
+  class Prompt {
+    public:
+      template<typename I>
+      struct Part:IItem, I {
+      using Base=I;
+      using This=Part<Base>;
+      using Base::Base;
+      using Base::cmd;
+      bool cmd(INav& nav,Cmd c,int code) override {
+        switch(c) {
+          case Cmd::Up: return Base::up(nav);
+          case Cmd::Down: return Base::down(nav);
+          case Cmd::Left: return Base::left(nav);
+          case Cmd::Right: return Base::right(nav);
+          case Cmd::Enter: return Base::enter(nav);
+          case Cmd::Esc: return Base::esc(nav);
+          case Cmd::Key: return Base::key(nav,code);
+          default: return false;
+        }
+      }
+
+      IItem* operator[](size_t i) override {return Base::operator[](i);}
+      Style styles() const override {return Base::styles();}
+      bool enabled() const override {return Base::enabled();}
+      void enable(bool b) {Base::enable(b);}
+      void printTo(INav& nav,IOut& out,int n=0,bool sel=false) override
+        {Base::template printTo<INav,IOut>(nav,out,n,sel);}
+      void onPrintMenuTo(INav& nav,IOut& out,int n) override {out.printMenu(nav,Base::obj(),n);}
+      void onPrintTitleTo(INav& nav,IOut& out) override {Base::onPrintTitleTo(nav,out);}
+      void onPrintBodyTo(INav& nav,IOut& out,Idx selIdx,Idx n) override 
+        {Base::onPrintBodyTo(nav,out,selIdx,n);}
+      void onPrintItemTo(INav& nav,IOut& out,int n=0,bool sel=false) override 
+        {Base::template onPrintItemTo<INav,IOut>(nav,out,n,sel);}
+      Idx sz() const override {return Base::sz();}
+    };
+  };
+
+};//Menu namespace
