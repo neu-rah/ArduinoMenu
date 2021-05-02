@@ -1,9 +1,11 @@
 {
 	"folders": [
 		{
+			"name": "ArduinoMenu",
 			"path": "."
 		},
 		{
+			"name": "console",
 			"path": "examples/console"
 		}
 	],
