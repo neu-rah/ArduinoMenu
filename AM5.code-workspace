@@ -9,5 +9,9 @@
 			"path": "examples/console"
 		}
 	],
-	"settings": {}
+	"settings": {
+		"files.associations": {
+			"ostream": "cpp"
+		}
+	}
 }
