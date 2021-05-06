@@ -2,18 +2,18 @@
 #pragma once
 
 #include "../parts/src/parts.h"
-// using namespace Parts;
+using namespace Parts;
 
 namespace Menu {
 
-  struct PartsCfg:Parts::DefaultCfg {
-    #ifdef Arduino
-      using Idx=byte;
-    #else
-      using Idx=uint16_t;//array size type
-    #endif
-  };
-  using Idx=typename PartsCfg::Idx;
+  // struct PartsCfg:Parts::DefaultCfg {
+  //   #ifdef Arduino
+  //     using Idx=byte;
+  //   #else
+  //     using Idx=uint16_t;//array size type
+  //   #endif
+  // };
+  // using Idx=typename PartsCfg::Idx;
   // template<Idx... path>
   // using Path=Parts::Config<PartsCfg>::Path<path...>;
   // using PathRef=Parts::Config<PartsCfg>::PathRef;
