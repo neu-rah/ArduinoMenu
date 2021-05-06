@@ -2,7 +2,7 @@
 #pragma once
 
 #include "../parts/src/parts.h"
-using namespace Parts;
+// using namespace Parts;
 
 namespace Menu {
 
@@ -14,13 +14,13 @@ namespace Menu {
     #endif
   };
   using Idx=typename PartsCfg::Idx;
-  template<Idx... path>
-  using Path=Parts::Config<PartsCfg>::Path<path...>;
-  using PathRef=Parts::Config<PartsCfg>::PathRef;
-  template<typename Fst,typename Snd>
-  using Pair=Parts::Config<PartsCfg>::Pair<Fst,Snd>;
-  template<typename Fst,typename Snd>
-  using StaticList=Parts::Config<PartsCfg>::StaticList<Fst,Snd>;
+  // template<Idx... path>
+  // using Path=Parts::Config<PartsCfg>::Path<path...>;
+  // using PathRef=Parts::Config<PartsCfg>::PathRef;
+  // template<typename Fst,typename Snd>
+  // using Pair=Parts::Config<PartsCfg>::Pair<Fst,Snd>;
+  // template<typename Fst,typename Snd>
+  // using StaticList=Parts::Config<PartsCfg>::StaticList<Fst,Snd>;
 
   using Key=int;//key type
   using ConstText=const char*;
