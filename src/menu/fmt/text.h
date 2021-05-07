@@ -108,6 +108,7 @@ namespace Menu {
               print(sel?(en?'>':'-'):' ');
             } else nl();
             break;
+          default: break;
         }
         Base::template fmt<tag,start>(editing,tunning,n,sel,en);
       }

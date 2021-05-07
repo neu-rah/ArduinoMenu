@@ -21,7 +21,7 @@ namespace Menu {
     template<typename Nav,typename Item>
     static void printTitle(Nav& nav,Item& i) {}
     template<typename Nav,typename Item>
-    static void printItem(Nav& nav,Item& i,int n=0,bool sel=false) {}
+    static void printItem(Nav& nav,Item& i,Idx n=0,bool sel=false) {}
     template<Fmt,bool> static void fmt(bool editing,bool tunning,int n=0,bool sel=false,bool en=true) {}
     template<Fmt tag> void fmtStart(bool editing,bool tunning,int n=0,bool sel=false,bool en=true) {O::obj().template fmt<tag,true>(editing,tunning,n,sel,en);}
     template<Fmt tag> void fmtStop(bool editing,bool tunning,int n=0,bool sel=false,bool en=true) {O::obj().template fmt<tag,false>(editing,tunning,n,sel,en);}
@@ -100,7 +100,7 @@ namespace Menu {
         Base::template fmtStop<Fmt::Menu>(nav.focus(),nav.tune());
       }
       template<typename Nav,typename Item>
-      void printItem(Nav& nav,Item& i,int n=0,bool sel=false) {
+      void printItem(Nav& nav,Item& i,Idx n=0,bool sel=false) {
         Base::template fmtStart<Fmt::Item>(nav.focus(),nav.tune(),n,sel,i.enabled());
         i.onPrintItemTo(nav,Base::obj(),n,sel);
         Base::template fmtStop<Fmt::Item>(nav.focus(),nav.tune(),n,sel,i.enabled());
@@ -211,7 +211,7 @@ namespace Menu {
       using Base::Base;
       Idx top=0;
       template<typename Nav,typename Item>
-      void printItem(Nav& nav,Item& i,int n=0,bool sel=false) {
+      void printItem(Nav& nav,Item& i,Idx n=0,bool sel=false) {
         auto pos=nav.ppos();//has<Style::ParentDraw>(i.styles())?nav.ppos():nav.pos();
         while(pos<top) top--;
         while(pos>(top+Sz-1)) top++;

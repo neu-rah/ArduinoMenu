@@ -61,16 +61,6 @@ namespace Menu {
   //   MDO& operator<<(MDO& o,const CmdTo<c>& api) {return api.operator<<(o);}
   // );
 
-  template<typename API,typename... Args>
-  struct Map {
-    constexpr static const char* named="Map";
-    // _trace(MDO& operator<<(MDO& o) const {return o<<named<<"<"<<API()<<">";});
-    template<typename T>
-    inline auto operator()(T& o,Args... args)
-      ->decltype(o.template map<API,Args...>(args...)) 
-      {return o.template map<API,Args...>(args...);}
-  };
-
   // #ifdef DEBUG
   //   template<typename API,typename... Args>
   //   MDO& operator<<(MDO& o,const Map<API,Args...>& api) {return api.operator<<(o);}

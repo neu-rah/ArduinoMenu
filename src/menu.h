@@ -9,18 +9,6 @@ This library is distributed in the hope that it will be useful, but WITHOUT ANY 
 You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
-// // _trace(constexpr static const char*named=#name;);
-// // _trace(MDO& operator<<(MDO& o) const {return o<<named;})
-// #define APIDEF(memberFunc,name)\
-// struct name {\
-//   template<typename T,typename... Args>\
-//   inline auto operator()(T& o,Args... args)\
-//     ->decltype(o.memberFunc(args...))\
-//     {return o.memberFunc(args...);}\
-// };
-// // _trace(MDO& operator<<(MDO& o,const name& api) {return api.operator<<(o);})
-
-
 #include "menu/sys/staticMenu.h"
 #include "menu/sys/components.h"
 #include "menu/sys/fields.h"
