@@ -84,7 +84,8 @@ namespace Menu {
     Tail& tail() {return *this;}
     // static void names() {_trace(MDO::print("."));}
     IItem* operator[](size_t i) {assert(false);}
-    void get() const {}
+    inline static void get() {}
+    inline static void begin() {}
     template<typename T> constexpr static bool valueIs(T&) {return false;}
     static constexpr Style styles() {return Style::None;}
     static constexpr bool is(Idx mask) {return ((Idx)Base::obj().styles())==mask;}
@@ -189,7 +190,7 @@ namespace Menu {
           case Cmd::Right: return Base::right(nav);
           case Cmd::Enter: return Base::enter(nav);
           case Cmd::Esc: return Base::esc(nav);
-          case Cmd::Key: return Base::key(nav,code);
+          case Cmd::KeyCode: return Base::key(nav,code);
           default: return false;
         }
       }

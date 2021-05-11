@@ -1,7 +1,7 @@
 /* -*- C++ -*- */
 #pragma once
 
-// #include "sys/kernel/base.h"
+#include "sys/base.h"
 
 namespace Menu {
   ////////////////////////////////////////////////////////////////////////////////
@@ -9,6 +9,8 @@ namespace Menu {
   template<typename In=Nil>
   struct Quiet:In {
     using Base=In;
+    inline static void begin() {}
+    inline static void relax() {}
     template<typename Nav>
     inline static constexpr bool parseKey(Nav&) {return false;}
     template<typename Nav>

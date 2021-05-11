@@ -167,7 +167,7 @@ namespace Menu {
     };
   };
 
-  //Static range
+  //Static range (low and high values)
   template<typename T,T lowVal,T highVal>
   struct StaticRange {
     template<typename O=Empty<Nil>>
@@ -181,7 +181,7 @@ namespace Menu {
     };
   };
 
-  //numeric range validation and change deltas
+  //numeric range validation and change deltas (step and tune)
   template<typename T,T lowVal,T highVal,T stepSz,T tuneSz,T def=0>
   struct StaticSTRange {
     template<typename O=Empty<Nil>>

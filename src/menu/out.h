@@ -15,6 +15,7 @@ namespace Menu {
   struct Void:O {
     Void() {}
     Void(const Void&)=delete;
+    inline static void begin() {}
     Void& operator=(const Void&)=delete;
     template<typename Nav,typename Menu>
     static void printMenu(Nav& nav,Menu& menu,Idx selIdx) {}

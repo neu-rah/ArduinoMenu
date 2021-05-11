@@ -29,7 +29,7 @@ namespace Menu {
   struct No {static constexpr bool value(){return false;}};
 
   //commands
-  enum class Cmd:Idx {Enter,Esc,Up,Down,Left,Right,Key};
+  enum class Cmd:Idx {Enter,Esc,Up,Down,Left,Right,KeyCode};
 
   //output format
   using fmt_t=Idx;

@@ -2,7 +2,6 @@
 #pragma once
 
 //POSIX PC Keyboard
-
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
@@ -63,29 +62,4 @@ namespace Menu {
       }
     };
   };
-
-  //PC keyboard arrows to menu commands
-  struct PCArrows {
-    template<typename In>
-    struct Part:In {
-      static constexpr bool isParser=true;
-      template<typename Nav>
-      bool parseCmd(Nav& nav,Key k,bool e=false) {
-        if (e&&k==91) return false;//wait for ext code
-        switch(k) {
-          case 66: return nav.template cmd<Cmd::Up>();
-          case 65: return nav.template cmd<Cmd::Down>();
-          case 13: return nav.template cmd<Cmd::Enter>();
-          case 27: return nav.template cmd<Cmd::Esc>();
-          case 67: return nav.template cmd<Cmd::Right>();
-          case 68: return nav.template cmd<Cmd::Left>();
-          default: return nav.template cmd<Cmd::Key>(k);
-          // break;
-        }
-        // trace(MDO<<"PCArrows passing key"<<endl);
-        return In::parseCmd(nav,k,e);
-      }
-    };
-  };
-
 };

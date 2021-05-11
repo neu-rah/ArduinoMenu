@@ -14,6 +14,7 @@ You should have received a copy of the GNU Lesser General Public License along w
 #include "menu/sys/fields.h"
 #include "menu/fmt/xml.h"
 #include "menu/fmt/text.h"
+#include "menu/IO/Arduino/rfIn.hpp"
 
 #if defined(RS_DEBUG)&&!defined(RELEASE)
 // namespace Menu {
