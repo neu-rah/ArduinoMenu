@@ -59,7 +59,7 @@ namespace Menu {
 
   //wrap a part printing with prefix and sufix characters
   template<char prefix='[',char sufix=']'>
-  struct Wrap {
+  struct PrintWrap {
     template<typename O>
     struct Part:Union<Prefix<prefix>::template Part,Sufix<sufix>::template Part>::template Part<O> {};
   };

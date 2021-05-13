@@ -5,6 +5,7 @@
 
 namespace Menu {
 
+  //emit formatting tag events
   template<Fmt tag>
   struct As {
     template<typename O>
@@ -19,8 +20,9 @@ namespace Menu {
         out.template fmtStart<tag>(nav.focus(),nav.tune(),n,sel);
         Base::template printTo<Nav,Out,BaseTag::value()||delegate>(nav,out,n,sel);
         out.template fmtStop<tag>(nav.focus(),nav.tune(),n,sel);
-        using SkipBase=typename Base::Base;
-        if(delegate&&!BaseTag::value()) SkipBase::template printTo<Nav,Out,true>(nav,out,n,sel);
+        // using SkipBase=typename Base::Base;
+        // if(delegate&&!BaseTag::value())
+        //   SkipBase::template printTo<Nav,Out,true>(nav,out,n,sel);
       }
     };
   };
@@ -40,6 +42,7 @@ namespace Menu {
   using AsValue=As<Fmt::Value>;
   using AsUnit=As<Fmt::Unit>;
 
+  //hold an Id of type T
   template<typename T>
   struct StaticIdOf {
     template<T id>
@@ -51,13 +54,10 @@ namespace Menu {
     };
   };
 
-  #ifdef ARDUINO
-    using Id=StaticIdOf<byte>;
-  #else
-    template<typename>
-    using Id=StaticIdOf<size_t>;
-  #endif
+  //Idx type Id
+  using Id=StaticIdOf<Idx>;
 
+  //holds runtiume construct const char* (C string)
   struct Text {
     template<typename O=Empty<Nil>>
     struct Part:O {
@@ -78,7 +78,7 @@ namespace Menu {
     };
   };
 
-  //use `const char*`
+  //use static constructed `const char*`
   template<const ConstText* text>
   struct StaticText {
     template<typename O=Empty<Nil>>
@@ -135,6 +135,7 @@ namespace Menu {
     };
   };
 
+  //enable/diable runtime setting
   template<bool e=true>
   struct EnDis {
     template<typename I>
@@ -148,6 +149,7 @@ namespace Menu {
     };
   };
 
+  //utility, use constText as label
   template<const ConstText* text>
   using StaticLabel=Chain<AsLabel::Part,StaticText<text>::template Part>;
 

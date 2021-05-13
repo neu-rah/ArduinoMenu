@@ -43,7 +43,7 @@ namespace Menu {
     };
   };
 
-  //enumation, opens enumerated values lists as sub-menu
+  //enumeration, opens enumerated values lists as sub-menu
   template<typename V>
   struct Choose {
     template<typename O>
@@ -212,6 +212,15 @@ namespace Menu {
     };
   };
 
+  //when ranged or enumerated values can wrap
+  struct Wrap {
+    template<typename O>
+    struct Part:O {
+      inline static constexpr bool canWrap() {return true;}
+    };
+  };
+  // bool wrap=false;//TODO: use static style instead
+  // bool canWrap() {return wrap;}
   //validate numeric field value by range info
   struct RangeValid {
     template<typename O=Empty<Nil>>
@@ -219,8 +228,6 @@ namespace Menu {
       using Base=typename EditCtrl::Part<O>;
       using This=Part<Base>;
       using Base::Base;
-      bool wrap=false;//TODO: use static style instead
-      bool canWrap() {return wrap;}
       template<typename Nav,typename T>
       void stepit(Nav& nav,int dir) {
         // dir*=options->invertFieldKeys?-1:1;
@@ -229,12 +236,12 @@ namespace Menu {
         //by default they are inverted.. now buttons and joystick have to flip them
         if (dir > 0) {
           if ((Base::high()-Base::target()) < thisstep)
-            Base::set(canWrap()?Base::low():Base::high());
+            Base::set(Base::canWrap()?Base::low():Base::high());
           else
             Base::target() += thisstep;
         } else {
           if ((Base::target()-Base::low()) < thisstep)
-            Base::target() = canWrap()?Base::high():Base::low();
+            Base::target() = Base::canWrap()?Base::high():Base::low();
           else
             Base::target() -= thisstep;
         }
@@ -270,7 +277,7 @@ namespace Menu {
     };
   };
 
-  //storing numeric value
+  //storing numeric value with validation range
   template<typename T,T def=0>
   struct NumVal {
     template<typename O=Empty<Nil>>
