@@ -15,8 +15,8 @@ namespace Menu {
       static uint32_t lastCmd;
       static bool rcvCmd(unsigned long cmd) {
         rfCmd=cmd;
-        _trace(clog<<"cmd: 0x"<<hex<<cmd<<endl);
-        return true;//In::recvCmd(cmd);
+        // _trace(clog<<"RFIn::rcvCmd: 0x"<<hex<<cmd<<endl);
+        return true;
       }
       void relax() {
         //allow commands to repeat
@@ -27,14 +27,11 @@ namespace Menu {
       template<typename Nav>
       inline bool parseKey(Nav& nav) {
         if(lastCmd!=rfCmd) {
-          // Serial.print("parseKey:");
-          // Serial.print(lastCmd);
-          // Serial.print("==");
-          // Serial.println(rfCmd);
+          // _trace(clog<<"RFin::parseKey: 0x"<<hex<<rfCmd<<endl);
           lastCmd=rfCmd;
           return In::parseCmd(nav,lastCmd);
         }
-        return false;
+        return In::parseKey(nav);
       }
     };
   };
