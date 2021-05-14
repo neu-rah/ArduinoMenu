@@ -19,6 +19,7 @@ namespace Menu {
         return true;
       }
       void relax() {
+        // _trace(clog<<"RFIn::relax"<<endl);
         //allow commands to repeat
         lastCmd=0;
         rfCmd=0;

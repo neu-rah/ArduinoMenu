@@ -36,6 +36,21 @@ namespace Menu {
       Part& operator=(const Part&)=delete;
       bool focus() {return _editing;}
       void focus(bool f) {_editing=f;}
+
+      void relax() {
+        if(_editing) {
+          // _trace(clog<<"nav.relax"<<endl);
+          PathRef(level,path).walk<Data,Relax>(data);
+        }
+      }
+      
+      template<Idx o,Idx oo,Idx... ooo>
+      void go(Idx n=0) {path[n]=o;go<oo,ooo...>(n+1);}
+      template<Idx o>
+      void go(Idx n=0) {path[n]=o;level=n;}
+
+      void goRoot() {while(level) esc();}
+
       bool tune() const {return _tunning;}
       void tune(bool t) {_tunning=t;}
       Idx* at() {return &path[level];}

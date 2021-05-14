@@ -13,6 +13,7 @@ namespace Menu {
   APIDEF(styles,Styles);
   APIDEF(enabled,Enabled);
   APIDEF(enable,Enable);
+  APIDEF(relax,Relax);
 
   APIDEF(sz,Sz);
   APIDEF(printTo,PrintTo);
@@ -86,6 +87,7 @@ namespace Menu {
     IItem* operator[](size_t i) {assert(false);}
     inline static void get() {}
     inline static void begin() {}
+    inline static void relax() {}
     inline static constexpr bool canWrap() {return false;}
     template<typename T> constexpr static bool valueIs(T&) {return false;}
     static constexpr Style styles() {return Style::None;}
