@@ -265,6 +265,46 @@ namespace Menu {
     };
   };
 
+  //change numeric value with acceleration
+  template<typename T,T max>
+  struct ValueAccel {
+    template<typename O>
+    struct Part:O {
+      using Base=O;
+      using This=Part<O>;
+      using Type=T;
+      T value=0;
+      int accel=0;
+      operator T() const {return value;}
+      constexpr T tune() const {return 0;}
+      This& operator =(T o) {value=o;return *this;}
+      template<typename Nav>
+      bool up(Nav&) {
+        if(accel>=0) accel++;
+        else accel/=-2;
+        if(max-value<accel) value=max;
+        else value+=accel;
+        _trace(clog<<"ValueAccel::set "<<value<<endl);
+        Base::set(value);
+        return true;
+      }
+      template<typename Nav>
+      bool down(Nav&) {
+        if(accel<=0) accel--;
+        else accel/=-2;
+        if(value<-accel) value=0;
+        else value+=accel;
+        _trace(clog<<"ValueAccel::set "<<value<<endl);
+        Base::set(value);
+        return true;
+      }
+      inline void relax() {
+        // _trace(clog<<"accel relax"<<endl);
+        accel/=2;
+      }
+    };
+  };
+
   //static bind to numeric reference
   template<typename T,T& target,T def=0>
   struct NumRef {

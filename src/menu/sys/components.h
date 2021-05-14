@@ -57,6 +57,9 @@ namespace Menu {
   //Idx type Id
   using Id=StaticIdOf<Idx>;
 
+  //empty dumb part
+  struct Zen {template<typename O> struct Part:O{};};
+
   //holds runtiume construct const char* (C string)
   struct Text {
     template<typename O=Empty<Nil>>

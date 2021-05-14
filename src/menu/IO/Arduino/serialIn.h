@@ -18,4 +18,8 @@ namespace Menu {
     };
   };
 
+  //defaults to Arduino `Serial` as input device
+  template<decltype(Serial)& dev=Serial>
+  using ArduinoSerialIn=SerialIn<decltype(Serial),dev>;
+
 };
