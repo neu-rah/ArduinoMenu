@@ -64,6 +64,7 @@ namespace Menu {
       }
       template<typename Out>
       inline void printTo(Out& out) {
+        out.newView();
         Style s=PathRef(level,path).walk<Data,Styles>(data);
         Idx l=level?(has<Style::ParentDraw>(s)?level-1:level):0;
         PathRef(l,path).walk<Data,PrintMenuTo,This&,Out&>(data,*this,out,path[l]);

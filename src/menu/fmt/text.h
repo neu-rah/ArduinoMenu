@@ -66,7 +66,7 @@ namespace Menu {
 
   //conditionally apply a format to a specified part
   template<Fmt on,template<typename> class Do>
-  struct On {
+  struct OnFmt {
     template<typename O>
     struct Part:Do<O> {
       using Base=Do<O>;
