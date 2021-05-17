@@ -15,10 +15,10 @@ using namespace Parts;
 
 namespace Menu {
   template<typename O,typename... OO>
-  struct StaticMenuBody:StaticList<O,StaticMenuBody<OO...>> {
+  struct StaticMenuBody:Node<O,StaticMenuBody<OO...>> {
     // named("StaticMenuBody<O,OO...>");
     using Tail=StaticMenuBody<OO...>;
-    using Base=StaticList<O,Tail>;
+    using Base=Node<O,Tail>;
     using This=StaticMenuBody<O,OO...>;
     using Base::Base;
     // template<typename... Args>
@@ -31,9 +31,9 @@ namespace Menu {
   };
 
   template<typename O>
-  struct StaticMenuBody<O>:StaticList<O,Nil> {
+  struct StaticMenuBody<O>:Node<O,Nil> {
     // named("StaticMenuBody<O>");
-    using Base=StaticList<O,Nil>;
+    using Base=Node<O,Nil>;
     using This=StaticMenuBody<O>;
     using Base::Base;
     template<typename... Args>

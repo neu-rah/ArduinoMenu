@@ -20,7 +20,7 @@ namespace Menu {
   // template<typename Fst,typename Snd>
   // using Pair=Parts::Config<PartsCfg>::Pair<Fst,Snd>;
   // template<typename Fst,typename Snd>
-  // using StaticList=Parts::Config<PartsCfg>::StaticList<Fst,Snd>;
+  // using Node=Parts::Config<PartsCfg>::Node<Fst,Snd>;
 
   using Key=int;//key type
   using ConstText=const char*;
