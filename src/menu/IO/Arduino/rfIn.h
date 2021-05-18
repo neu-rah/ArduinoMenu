@@ -26,14 +26,16 @@ namespace Menu {
   };
 
   //radio command id
-  template<Idx code,bool repeat=true>
+  template<Idx _code,bool _repeat=true>
   struct CmdCode {
-    template<typename O>
-    struct Part:O {
-      using Base=O;
-      using This=Part<Base>;
-      using Base::Base;
-    };
+    static constexpr Idx code() {return _code;}
+    static constexpr Idx repeat() {return _repeat;}
+    // template<typename O>
+    // struct Part:O {
+      // using Base=O;
+      // using This=Part<Base>;
+      // using Base::Base;
+    // };
   };
 
   //shell command definition
@@ -55,8 +57,7 @@ namespace Menu {
       static bool match(M&) {return false;}
       static bool match(ConstText m) {
         return false;
-      }
-      
+      }      
     };
   };
 
