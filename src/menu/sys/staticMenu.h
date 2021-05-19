@@ -28,7 +28,8 @@ namespace Menu {
       out.template printItem<Nav,This>(nav,*this,n,n==selIdx);
       Base::tail().template onPrintBodyTo<Nav,Out>(nav,out,selIdx,n+1);
     }
-  };
+    static constexpr Idx len() {return Base::_sz();}
+};
 
   template<typename O>
   struct StaticMenuBody<O>:Node<O,Nil> {
@@ -42,6 +43,7 @@ namespace Menu {
     void onPrintMenuTo(Nav& nav,Out& out,Idx selIdx) {out.printMenu(nav,*this,selIdx);}
     template<typename Nav,typename Out>
     void onPrintBodyTo(Nav& nav,Out& out,Idx selIdx,Idx n) {out.printItem(nav,*this,n,selIdx==n);}
+    static constexpr Idx len() {return Base::_sz();}
   };
 
   template<typename Title,typename Body>

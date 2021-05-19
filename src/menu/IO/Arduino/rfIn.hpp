@@ -2,21 +2,28 @@
 
 namespace Menu {
 
-  template<int repeatTime,int pauseTimeout>
+  template<int repeatTimeout>
   template<typename In>
-  volatile uint32_t RFIn<repeatTime,pauseTimeout>::Part<In>::rfCmd;
+  volatile uint32_t RFIn<repeatTimeout>::Part<In>::rfCmd;
 
-  template<int repeatTime,int pauseTimeout>
+  template<int repeatTimeout>
   template<typename In>
-  uint32_t RFIn<repeatTime,pauseTimeout>::Part<In>::lastCmd;
+  uint32_t RFIn<repeatTimeout>::Part<In>::lastCmd;
 
-  template<int repeatTime,int pauseTimeout>
+  // template<int repeatTime,int pauseTimeout>
+  // template<typename In>
+  // Tick<repeatTime> RFIn<repeatTime,pauseTimeout>::Part<In>::radioRepeat;
+
+  // template<int repeatTime,int pauseTimeout>
+  // template<typename In>
+  // Tick<pauseTimeout> RFIn<repeatTime,pauseTimeout>::Part<In>::radioPause;
+
+  template<int repeatTimeout>
   template<typename In>
-  Tick<repeatTime> RFIn<repeatTime,pauseTimeout>::Part<In>::radioRepeat;
+  Tick<repeatTimeout> RFIn<repeatTimeout>::Part<In>::radioTimeout;
 
-  template<int repeatTime,int pauseTimeout>
-  template<typename In>
-  Tick<pauseTimeout> RFIn<repeatTime,pauseTimeout>::Part<In>::radioPause;
-
+  template<int idBits,int handlerId>
+  template<typename O>
+  unsigned long RFIdLock<idBits,handlerId>::Part<O>::pairId=0;
 };
 

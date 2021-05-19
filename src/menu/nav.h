@@ -45,11 +45,12 @@ namespace Menu {
       }
       
       template<Idx o,Idx oo,Idx... ooo>
-      void go(Idx n=0) {path[n]=o;go<oo,ooo...>(n+1);}
+      void go(Idx n=0) {quitEdit();path[n]=o;go<oo,ooo...>(n+1);}
       template<Idx o>
-      void go(Idx n=0) {path[n]=o;level=n;}
+      void go(Idx n=0) {quitEdit();path[n]=o;level=n;}
 
       void goRoot() {while(level) esc();}
+      void quitEdit() {focus(false);}
 
       bool tune() const {return _tunning;}
       void tune(bool t) {_tunning=t;}

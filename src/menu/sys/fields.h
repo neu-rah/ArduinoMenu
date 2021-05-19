@@ -209,6 +209,13 @@ namespace Menu {
         } else nav.focus(true);
         return true;
       }
+      template<typename Nav>
+      bool esc(Nav& nav) {
+        _trace(clog<<"esc!"<<endl);
+        nav.tune(0);
+        nav.focus(0);
+        return true;//irrelevant
+      }
     };
   };
 
