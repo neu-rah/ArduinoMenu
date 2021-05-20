@@ -65,7 +65,8 @@ namespace Menu {
           nav.close();
           return false;
         }
-        auto r=Base::values.template cmd<Nav,c>(nav,code);
+        // auto r=
+        Base::values.template cmd<Nav,c>(nav,code);
         return true;
       }
       template<typename Nav,typename Out> void onPrintMenuTo(Nav& nav,Out& out,int n) {Base::values.template onPrintMenuTo<Nav,Out>(nav,out,n);}

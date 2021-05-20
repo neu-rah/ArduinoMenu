@@ -15,6 +15,7 @@ You should have received a copy of the GNU Lesser General Public License along w
 #include "menu/fmt/xml.h"
 #include "menu/fmt/text.h"
 #include "menu/nav.h"
+#include "menu/item.h"
 #include "menu/IO/Arduino/rfIn.hpp"
 
 namespace Menu {
