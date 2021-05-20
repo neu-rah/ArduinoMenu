@@ -228,8 +228,8 @@ namespace Menu {
 
   //define an output
   //aglomerate all parts into a single output definition
-  template<template<typename> class... O>
-  using OutDef=Composition<Void,O...>;
+  template<template<typename> class Base,template<typename> class... O>
+  using OutDefBase=Composition<Base,O...,Void>;
 
   class IOut {
     public:

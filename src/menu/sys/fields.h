@@ -291,6 +291,7 @@ namespace Menu {
         else accel/=-2;
         if(max-value<accel) value=max;
         else value+=accel;
+        _trace(clog<<"Accel: "<<accel<<endl);
         _trace(clog<<"ValueAccel::set "<<value<<endl);
         Base::set(value);
         return true;
@@ -301,6 +302,7 @@ namespace Menu {
         else accel/=-2;
         if(value<-accel) value=0;
         else value+=accel;
+        _trace(clog<<"Accel: "<<accel<<endl);
         _trace(clog<<"ValueAccel::set "<<value<<endl);
         Base::set(value);
         return true;

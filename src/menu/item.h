@@ -148,10 +148,8 @@ namespace Menu {
     };
 };
 
-  // Empty<> empty;
-
-  template<template<typename> class... I>
-  using ItemDef=Composition<Empty,I...>;
+  template<template<typename> class Base,template<typename> class... I>
+  using ItemDefBase=Composition<Base,I...,Empty>;
 
   //IItem class
   //The virtual Item API interface

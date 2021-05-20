@@ -158,7 +158,7 @@ namespace Menu {
   //     struct Part:INav,N {};
   // };
 
-  template<template<typename> class... I>
-  using NavDef=Composition<Drift,I...>;
+  template<template<typename> class Base,template<typename> class... I>
+  using NavDefBase=Composition<Base,I...,Drift>;
 
 };//Menu namespace

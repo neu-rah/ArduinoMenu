@@ -19,7 +19,7 @@ namespace Menu {
     inline bool cmd(Nav& nav,int code=0) {return Base::obj().parseKey(nav);}
   };
 
-  template<template<typename> class... I>
-  using InDef=Composition<Quiet,I...>;
+  template<template<typename> class Base,template<typename> class... I>
+  using InDefBase=Composition<Base,I...,Quiet>;
 
 };//menu namespace
