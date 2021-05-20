@@ -4,7 +4,7 @@
 #include <debug.h>
 using namespace Parts;
 
-#include <tinyTimeUtils.h>
+#include "../../tinyTimeUtils/src/tinyTimeUtils.h"
 using namespace TinyTimeUtils;
 
 namespace Menu {

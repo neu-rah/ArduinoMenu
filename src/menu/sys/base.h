@@ -2,6 +2,7 @@
 #pragma once
 
 #include "../parts/src/parts.h"
+#include <debug.h>
 using namespace Parts;
 
 namespace Menu {

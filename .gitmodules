@@ -1,3 +1,6 @@
 [submodule "parts"]
 	path = parts
 	url = https://github.com/neu-rah/parts
+[submodule "tinyTimeUtils"]
+	path = tinyTimeUtils
+	url = https://github.com/neu-rah/tinyTimeUtils

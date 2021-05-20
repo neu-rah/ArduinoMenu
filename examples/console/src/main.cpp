@@ -1,6 +1,7 @@
 #include <menu.h>
 #include <menu/sys/stdMenu.h>
 #include <menu/IO/linuxKeyIn.h>
+#include <menu/IO/pcArrows.h>
 #include <menu/in.h>
 #include <menu/nav.h>
 #include "lang.h"
@@ -24,8 +25,22 @@ using namespace std;
 
 #include <menu/IO/stdOut.h>
 
+template<typename O=Nil> 
+struct Native:O {
+  using Idx=size_t;
+};
+template<typename Cfg>
+struct Config {
+  template<typename O=Nil>
+  struct Part:Cfg,O {
+  };
+};
+
+using Cfg=Config<Native<>>;
+CONFIG_MENU_LIB(Cfg)
+
 using Out=OutDef<
-  On<Fmt::Title,Wrap<>::Part>::Part,
+  OnFmt<Fmt::Title,PrintWrap<>::Part>::Part,
   RangePanel<5>::Part,
   TitlePrinter::Part,
   BodyPrinter::Part,
