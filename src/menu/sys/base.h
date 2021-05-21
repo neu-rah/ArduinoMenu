@@ -90,7 +90,8 @@ namespace Menu {
     template<typename O>
     struct Part:O {
       using O::O;
-      static constexpr Style styles() {return O::styles()|Style::IsMenu;}
+      // static constexpr Style thisStyles=(O::isTop()?Style::None:O::styles())|Style::IsMenu;
+      static constexpr Style styles() {return (O::isTop()?Style::None:O::styles())|Style::IsMenu;}
     };
   };
 

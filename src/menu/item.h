@@ -90,12 +90,13 @@ namespace Menu {
     inline static void relax() {}
     inline static constexpr bool canWrap() {return false;}
     template<typename T> constexpr static bool valueIs(T&) {return false;}
-    static constexpr Style styles() {return Style::None;}
-    static constexpr bool is(Idx mask) {return ((Idx)Base::obj().styles())==mask;}
-    static constexpr bool has(Idx mask) {return ((Idx)Base::obj().styles())&mask;}
-    static constexpr bool changed() {return false;}
-    static constexpr bool enabled() {return true;}
-    static void enable(bool b) {}
+    inline static constexpr bool isTop() {return false;}
+    inline static constexpr Style styles() {return Style::None;}
+    inline static constexpr bool is(Idx mask) {return ((Idx)Base::obj().styles())==mask;}
+    inline static constexpr bool has(Idx mask) {return ((Idx)Base::obj().styles())&mask;}
+    inline static constexpr bool changed() {return false;}
+    inline static constexpr bool enabled() {return true;}
+    inline static void enable(bool b) {}
     template<typename Nav,typename Out,bool=true> 
     static void printTo(Nav& nav,Out&,int n=0,bool sel=false) {}
     template<typename Nav,typename Out> void onPrintMenuTo(Nav& nav,Out& out,Idx selIdx) {out.printMenu(nav,O::obj(),selIdx);}
