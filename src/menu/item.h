@@ -25,7 +25,7 @@ namespace Menu {
 
   // APIDEF(printTo,PrintTo);
   struct PrintTo {
-    constexpr static const char* named="PrintTo";
+    // constexpr static const char* named="PrintTo";
     template<typename T,typename Nav,typename Out>
     inline auto operator()(T& o,Nav& nav,Out& out,int n=0,bool d=true)
       ->decltype(o.template printTo<Nav,Out>(nav,out,n,d)) 
@@ -34,7 +34,7 @@ namespace Menu {
 
   // APIDEF(onPrintMenuTo,PrintMenuTo);
   struct PrintMenuTo {
-    constexpr static const char* named="PrintMenuTo";
+    // constexpr static const char* named="PrintMenuTo";
     // _trace(MDO& operator<<(MDO& o) const {return o<<named;});
     template<typename T,typename Nav,typename Out>
     inline auto operator()(T& o,Nav& nav,Out& out,int n)
@@ -46,7 +46,7 @@ namespace Menu {
 
   // APIDEF(enter,Enter);
   struct Enter {
-    constexpr static const char* named="Enter";
+    // constexpr static const char* named="Enter";
     // _trace(MDO& operator<<(MDO& o) const {return o<<named;})
     template<typename T,typename Nav>
     inline auto operator()(T& o,Nav& nav)
@@ -57,7 +57,7 @@ namespace Menu {
 
   template<Cmd c>
   struct CmdTo {
-    constexpr static const char* named="CmdTo";
+    // constexpr static const char* named="CmdTo";
     // _trace(MDO& operator<<(MDO& o) const {return o<<named<<"<"<<c<<">";});
     template<typename T,typename Nav>
     inline auto operator()(T& o,Nav& nav,int code)
