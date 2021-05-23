@@ -16,7 +16,6 @@ namespace Menu {
   APIDEF(relax,Relax);
 
   APIDEF(sz,Sz);
-  // APIDEF(printTo,PrintTo);
   APIDEF(onPrintTitleTo,PrintTitleTo);
   APIDEF(onPrintBodyTo,PrintBodyTo);
   APIDEF(onPrintItemTo,PrintItemTo);
@@ -24,6 +23,7 @@ namespace Menu {
   APIDEF(up,Up);
   APIDEF(down,Down);
 
+  // APIDEF(printTo,PrintTo);
   struct PrintTo {
     constexpr static const char* named="PrintTo";
     template<typename T,typename Nav,typename Out>

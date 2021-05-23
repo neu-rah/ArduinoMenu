@@ -135,75 +135,75 @@ using MainMenu=StaticMenu<
   ,WrapNav::Part<//this menu will wrap
     StaticMenuBody<
       ItemDef<EnDis<true>::Part,Action<op1_action>::Part,StaticText<&op1_text>::Part>
-      // ,ItemDef<EnDis<false>::Part,Action<op2_action>::Part,StaticText<&op2_text>::Part>
-      // ,ItemDef<Action<tog12_action>::Part,StaticText<&tog12_text>::Part>
-      // ,ItemDef<
-      //   StaticLabel<&addr_label>::Part,
-      //   AsEditMode::Part,
-      //   StaticText<&ox>::Part,//some special text between the cursor and the data
-      //   AsValue::Part,
-      //   TextEditBase<addr_buffer,sizeof(addr_buffer)/sizeof(addr_label[0]),addr_mask>::Part
-      // >
-      // ,ItemDef<
-      //   StaticLabel<&trig_text>::Part
-      //   ,Toggle<
-      //     StaticMenu<
-      //       ItemDef<StaticLabel<&trig_text>::Part>::Part
-      //       ,WrapNav::Part<TrigOptions>
-      //     >
-      //   >::Part
-      //   ,AsValue::Part 
-      //   ,FieldRef<Trig,trig,Trig::None>::Part
-      // >
-      // ,ItemDef<
-      //   StaticLabel<&trig_text>::Part
-      //   ,Select<
-      //     StaticMenu<
-      //       ItemDef<StaticLabel<&trig_text>::Part>::Part
-      //       ,WrapNav::Part<TrigOptions>
-      //     >
-      //   >::Part
-      //   ,AsEditMode::Part
-      //   ,AsValue::Part
-      //   ,FieldRef<Trig,trig,Trig::None>::Part
-      // >
+      ,ItemDef<EnDis<false>::Part,Action<op2_action>::Part,StaticText<&op2_text>::Part>
+      ,ItemDef<Action<tog12_action>::Part,StaticText<&tog12_text>::Part>
+      ,ItemDef<
+        StaticLabel<&addr_label>::Part,
+        AsEditMode::Part,
+        StaticText<&ox>::Part,//some special text between the cursor and the data
+        AsValue::Part,
+        TextEditBase<addr_buffer,sizeof(addr_buffer)/sizeof(addr_label[0]),addr_mask>::Part
+      >
       ,ItemDef<
         StaticLabel<&trig_text>::Part
+        ,AsValue::Part 
+        ,Toggle<
+          StaticMenu<
+            ItemDef<StaticLabel<&trig_text>::Part>::Part
+            ,WrapNav::Part<TrigOptions>
+          >
+        >::Part
+        ,FieldRef<Trig,trig,Trig::None>::Part
+      >
+      ,ItemDef<
+        StaticLabel<&trig_text>::Part
+        ,AsEditMode::Part
+        ,AsValue::Part
+        ,Select<
+          StaticMenu<
+            ItemDef<StaticLabel<&trig_text>::Part>::Part
+            ,WrapNav::Part<TrigOptions>
+          >
+        >::Part
+        ,FieldRef<Trig,trig,Trig::None>::Part
+      >
+      ,ItemDef<
+        StaticLabel<&trig_text>::Part
+        ,AsEditMode::Part
+        ,AsValue::Part 
         ,Choose<
           StaticMenu<
             ItemDef<StaticLabel<&trig_text>::Part>
             ,TrigOptions
           >
         >::Part
-        ,AsEditMode::Part
-        ,AsValue::Part 
         ,FieldRef<Trig,trig,Trig::None>::Part
       >
-      // ,ItemDef<
-      //   StaticLabel<&temp_text>::Part
-      //   ,AsEditMode::Part
-      //   ,AsValue::Part
-      //   ,Chain<
-      //     NumRef<decltype(perc),perc>::Part,
-      //     StaticSTRange<decltype(perc),0,100,10,1>::Part
-      //   >::Part
-      //   ,AsUnit::Part
-      //   ,StaticText<&celsius>::Part
-      // >
-      // ,Action<submenu_action>::Part<
-      //   StaticMenu<
-      //     ItemDef<StaticText<&subMenu_title_text>::Part>
-      //     ,StaticMenuBody<
-      //       ItemDef<Action<sub1_action>::Part,StaticText<&sub1_text>::Part>
-      //       ,ItemDef<Action<sub2_action>::Part,StaticText<&sub2_text>::Part>
-      //       ,ItemDef<StaticText<&opn_text>::Part>
-      //       ,ItemDef<StaticText<&opn_text>::Part>
-      //       ,Exit
-      //     >
-      //   >
-      // >
-      // ,ItemDef<StaticText<&opn_text>::Part>
-      ,Quit
+      ,ItemDef<
+        StaticLabel<&temp_text>::Part
+        ,AsEditMode::Part
+        ,AsValue::Part
+        ,Chain<
+          NumRef<decltype(perc),perc>::Part,
+          StaticSTRange<decltype(perc),0,100,10,1>::Part
+        >::Part
+        ,AsUnit::Part
+        ,StaticText<&celsius>::Part
+      >
+      ,Action<submenu_action>::Part<
+        StaticMenu<
+          ItemDef<StaticText<&subMenu_title_text>::Part>
+          ,StaticMenuBody<
+            ItemDef<Action<sub1_action>::Part,StaticText<&sub1_text>::Part>
+            ,ItemDef<Action<sub2_action>::Part,StaticText<&sub2_text>::Part>
+            ,ItemDef<StaticText<&opn_text>::Part>
+            ,ItemDef<StaticText<&opn_text>::Part>
+            ,Exit
+          >
+        >
+      >
+      ,ItemDef<StaticText<&opn_text>::Part>
+      // ,Quit
     >
   >
 >;
