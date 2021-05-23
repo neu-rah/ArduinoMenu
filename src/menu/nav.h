@@ -15,7 +15,7 @@ namespace Menu {
     template<Cmd c> inline static bool cmd() {return false;}
   };
 
-  template<typename Data,Idx max_depth>
+  template<typename Data,Idx max_depth=8>
   struct StaticNav {
     template<typename O=Drift<>>
     struct Part:O {
@@ -39,13 +39,18 @@ namespace Menu {
 
       void relax() {
         if(_editing) {
-          // _trace(clog<<"nav.relax"<<endl);
+          // _trace(
+          //   clog<<"nav.relax when editing {"<<level<<"|";
+          //   for(Idx n=0;n<level;n++)
+          //     clog<<(n?",":"")<<path[0];
+          //   clog<<"}";
+          // );
           PathRef(level,path).walk<Data,Relax>(data);
         }
       }
       
       template<Idx o,Idx oo,Idx... ooo>
-      void go(Idx n=0) {quitEdit();path[n]=o;go<oo,ooo...>(n+1);}
+      void go(Idx n=0) {path[n]=o;go<oo,ooo...>(n+1);}
       template<Idx o>
       void go(Idx n=0) {quitEdit();path[n]=o;level=n;}
 

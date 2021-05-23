@@ -9,7 +9,7 @@
 				"-g",
 				"${workspaceFolder}/src/main.cpp",
 				"-o",
-				"${workspaceFolder}/.out/main",
+				"${workspaceFolder}/.pio/build/native/program",
 				"-fdiagnostics-color=always",
 				"-I${workspaceFolder}/../../src",
 				"-DRS_DEBUG",

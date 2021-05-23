@@ -23,5 +23,6 @@
     template<decltype(Serial)& dev=Serial>
     using ArduinoSerialIn=SerialIn<decltype(Serial),dev>;
 
+
   };
 #endif

@@ -15,7 +15,6 @@
                 "/home/azevedo/Work/r-site.net/AM5/ArduinoMenu/parts/include",
                 "/home/azevedo/Work/r-site.net/AM5/ArduinoMenu/parts/src",
                 "/home/azevedo/Work/r-site.net/AM5/ArduinoMenu/.git",
-                "/home/azevedo/Work/r-site.net/AM5/ArduinoMenu/.vscode",
                 "/home/azevedo/.platformio/packages/tool-unity",
                 ""
             ],
@@ -29,7 +28,6 @@
                     "/home/azevedo/Work/r-site.net/AM5/ArduinoMenu/parts/include",
                     "/home/azevedo/Work/r-site.net/AM5/ArduinoMenu/parts/src",
                     "/home/azevedo/Work/r-site.net/AM5/ArduinoMenu/.git",
-                    "/home/azevedo/Work/r-site.net/AM5/ArduinoMenu/.vscode",
                     "/home/azevedo/.platformio/packages/tool-unity",
                     ""
                 ]

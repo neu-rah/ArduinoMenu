@@ -152,16 +152,16 @@ ConstText trig1_text="Rise";
 ConstText trig2_text="Fall";
 ConstText trig3_text="Both";
 enum class Trig {None,Rise,Fall,Both};
-template<typename O>
-O& operator<<(O& out,Trig t) {
-  switch(t) {
-    case Trig::None:return out<<"None";
-    case Trig::Rise:return out<<"Rise";
-    case Trig::Fall:return out<<"Fall";
-    case Trig::Both:return out<<"Both";
-    default: return out;
-  }
-}
+// template<typename O>
+// O& operator<<(O& out,Trig t) {
+//   switch(t) {
+//     case Trig::None:return out<<"None";
+//     case Trig::Rise:return out<<"Rise";
+//     case Trig::Fall:return out<<"Fall";
+//     case Trig::Both:return out<<"Both";
+//     default: return out;
+//   }
+// }
 Trig trig=Trig::None;
 
 char addr_buffer[]="000";//buffer to be edited
@@ -171,13 +171,13 @@ const char* ox="0x";//hex prefix
 using TrigOptions=StaticMenuBody<
   ItemDef<StaticText<&trig0_text>::Part,Value<Trig,Trig::None>::Part>
   ,ItemDef<StaticText<&trig1_text>::Part,Value<Trig,Trig::Rise>::Part>
-  ,ItemDef<StaticText<&trig2_text>::Part,Value<Trig,Trig::Fall>::Part>
-  ,ItemDef<StaticText<&trig3_text>::Part,Value<Trig,Trig::Both>::Part>
+  // ,ItemDef<StaticText<&trig2_text>::Part,Value<Trig,Trig::Fall>::Part>
+  // ,ItemDef<StaticText<&trig3_text>::Part,Value<Trig,Trig::Both>::Part>
 >;
 
 using MainMenu=StaticMenu<
-  ItemDef<StaticText<&title_text>::Part>
-  ,WrapNav::Part<//this menu will wrap
+  ItemDef<StaticText<&title_text>::Part>,
+  WrapNav::Part<//this menu will wrap
     StaticMenuBody<
       ItemDef<EnDis<true>::Part,Action<op1_action>::Part,StaticText<&op1_text>::Part>
       ,ItemDef<EnDis<false>::Part,Action<op2_action>::Part,StaticText<&op2_text>::Part>
@@ -191,37 +191,37 @@ using MainMenu=StaticMenu<
       >
       ,ItemDef<
         StaticLabel<&trig_text>::Part
+        ,AsValue::Part 
         ,Toggle<
           StaticMenu<
-            ItemDef<StaticLabel<&trig_text>::Part>::Part
-            ,WrapNav::Part<TrigOptions>
+            ItemDef<StaticLabel<&trig_text>::Part>::Part,
+            WrapNav::Part<TrigOptions>
           >
         >::Part
-        ,AsValue::Part 
         ,FieldRef<Trig,trig,Trig::None>::Part
       >
       ,ItemDef<
         StaticLabel<&trig_text>::Part
+        ,AsEditMode::Part
+        ,AsValue::Part
         ,Select<
           StaticMenu<
             ItemDef<StaticLabel<&trig_text>::Part>::Part
             ,WrapNav::Part<TrigOptions>
           >
         >::Part
-        ,AsEditMode::Part
-        ,AsValue::Part
         ,FieldRef<Trig,trig,Trig::None>::Part
       >
       ,ItemDef<
         StaticLabel<&trig_text>::Part
+        ,AsEditMode::Part
+        ,AsValue::Part 
         ,Choose<
           StaticMenu<
             ItemDef<StaticLabel<&trig_text>::Part>
             ,TrigOptions
           >
         >::Part
-        ,AsEditMode::Part
-        ,AsValue::Part 
         ,FieldRef<Trig,trig,Trig::None>::Part
       >
       ,ItemDef<
@@ -340,11 +340,13 @@ int main() {
   // Idx p0[]{0};
   // Idx p1[]{1};
   // Idx p01[]{0,1};
+  // Idx p11[]{0,1};
   // inspect(0,p);
   // inspect(1,p0);
   // inspect(1,p1);
   // inspect(2,p01);
 
+  // PathRef(2,p11).template walk<MainMenu,PrintTo,Nav&,Out&>(mainMenu,nav,out,0,true);
   // PathRef(nav.level,nav.path).template walk<MainMenu,PrintMenuTo,Nav&,Out&,bool,bool,int>(mainMenu,nav,out,nav.focus(),nav.tune(),0);
   // PrintMenuTo().template operator()<MainMenu,Nav&,Out&>(mainMenu,nav,out,nav.focus(),nav.tune(),0);
 

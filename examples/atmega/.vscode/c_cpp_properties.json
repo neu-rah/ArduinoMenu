@@ -1,0 +1,72 @@
+//
+// !!! WARNING !!! AUTO-GENERATED FILE!
+// PLEASE DO NOT MODIFY IT AND USE "platformio.ini":
+// https://docs.platformio.org/page/projectconf/section_env_build.html#build-flags
+//
+{
+    "configurations": [
+        {
+            "name": "PlatformIO",
+            "includePath": [
+                "/home/azevedo/Work/r-site.net/AM5/ArduinoMenu/examples/atmega/include",
+                "/home/azevedo/Work/r-site.net/AM5/ArduinoMenu/examples/atmega/src",
+                "/home/azevedo/Work/r-site.net/AM5/ArduinoMenu/src",
+                "/home/azevedo/Work/r-site.net/AM5/ArduinoMenu/parts/include",
+                "/home/azevedo/Work/r-site.net/AM5/ArduinoMenu/parts/src",
+                "/home/azevedo/Work/r-site.net/AM5/ArduinoMenu/tinyTimeUtils/src",
+                "/home/azevedo/.platformio/packages/framework-arduino-avr/cores/arduino",
+                "/home/azevedo/.platformio/packages/framework-arduino-avr/variants/standard",
+                "/home/azevedo/Work/r-site.net/AM5/ArduinoMenu/.git",
+                "/home/azevedo/Work/r-site.net/AM5/ArduinoMenu/examples",
+                "/home/azevedo/.platformio/packages/framework-arduino-avr/libraries/EEPROM/src",
+                "/home/azevedo/.platformio/packages/framework-arduino-avr/libraries/HID/src",
+                "/home/azevedo/.platformio/packages/framework-arduino-avr/libraries/SPI/src",
+                "/home/azevedo/.platformio/packages/framework-arduino-avr/libraries/SoftwareSerial/src",
+                "/home/azevedo/.platformio/packages/framework-arduino-avr/libraries/Wire/src",
+                "/home/azevedo/.platformio/packages/tool-unity",
+                ""
+            ],
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true,
+                "path": [
+                    "/home/azevedo/Work/r-site.net/AM5/ArduinoMenu/examples/atmega/include",
+                    "/home/azevedo/Work/r-site.net/AM5/ArduinoMenu/examples/atmega/src",
+                    "/home/azevedo/Work/r-site.net/AM5/ArduinoMenu/src",
+                    "/home/azevedo/Work/r-site.net/AM5/ArduinoMenu/parts/include",
+                    "/home/azevedo/Work/r-site.net/AM5/ArduinoMenu/parts/src",
+                    "/home/azevedo/Work/r-site.net/AM5/ArduinoMenu/tinyTimeUtils/src",
+                    "/home/azevedo/.platformio/packages/framework-arduino-avr/cores/arduino",
+                    "/home/azevedo/.platformio/packages/framework-arduino-avr/variants/standard",
+                    "/home/azevedo/Work/r-site.net/AM5/ArduinoMenu/.git",
+                    "/home/azevedo/Work/r-site.net/AM5/ArduinoMenu/examples",
+                    "/home/azevedo/.platformio/packages/framework-arduino-avr/libraries/EEPROM/src",
+                    "/home/azevedo/.platformio/packages/framework-arduino-avr/libraries/HID/src",
+                    "/home/azevedo/.platformio/packages/framework-arduino-avr/libraries/SPI/src",
+                    "/home/azevedo/.platformio/packages/framework-arduino-avr/libraries/SoftwareSerial/src",
+                    "/home/azevedo/.platformio/packages/framework-arduino-avr/libraries/Wire/src",
+                    "/home/azevedo/.platformio/packages/tool-unity",
+                    ""
+                ]
+            },
+            "defines": [
+                "PLATFORMIO=50101",
+                "ARDUINO_AVR_UNO",
+                "NO_RELEASE",
+                "RS_DEBUG",
+                "F_CPU=16000000L",
+                "ARDUINO_ARCH_AVR",
+                "ARDUINO=10808",
+                "__AVR_ATmega328P__",
+                ""
+            ],
+            "cStandard": "c11",
+            "cppStandard": "c++11",
+            "compilerPath": "/home/azevedo/.platformio/packages/toolchain-atmelavr/bin/avr-gcc",
+            "compilerArgs": [
+                "-mmcu=atmega328p",
+                ""
+            ]
+        }
+    ],
+    "version": 4
+}

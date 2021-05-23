@@ -5,13 +5,27 @@
 			"path": "."
 		},
 		{
-			"name": "console",
+			"path": "examples/atmega"
+		},
+		{
 			"path": "examples/console"
 		}
 	],
 	"settings": {
 		"files.associations": {
-			"ostream": "cpp"
+			"ostream": "cpp",
+			"*.tcc": "cpp",
+			"limits": "cpp",
+			"typeinfo": "cpp",
+			"cmath": "cpp",
+			"array": "cpp",
+			"chrono": "cpp",
+			"complex": "cpp",
+			"optional": "cpp",
+			"algorithm": "cpp",
+			"numeric": "cpp",
+			"streambuf": "cpp",
+			"thread": "cpp"
 		}
 	}
 }

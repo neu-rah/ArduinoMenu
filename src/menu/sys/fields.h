@@ -73,6 +73,16 @@ namespace Menu {
       template<typename Nav,typename Out> void onPrintTitleTo(Nav& nav,Out& out) {Base::values.template onPrintTitleTo<Nav,Out>(nav,out);}
       template<typename Nav,typename Out> void onPrintBodyTo(Nav& nav,Out& out,Idx selIdx,Idx n)  {Base::values.template onPrintBodyTo<Nav,Out>(nav,out,n);}
       // template<typename Nav,typename Out> void onPrintItemTo(Nav& nav,Out& out {O::obj().printTo(nav,out);}
+      template<typename Nav,typename Out,bool delegate=true>
+      void printTo(Nav& nav,Out& o,int n=0,bool sel=false) {
+        Idx selPath[1]{0};
+        selPath[0]=Base::values.template find<ValueIs,0>(Base::get());
+        PathRef(1,selPath).template walk<
+          decltype(Base::values),
+          PrintTo,Nav&,Out&
+        >(Base::values,nav,o,n,sel);
+        // if(delegate) Base::printTo(nav,o,n,sel);
+      }
       constexpr Idx sz() {return Base::values.sz();}
       constexpr Idx _sz() {return Base::values._sz();}
     };
@@ -106,7 +116,8 @@ namespace Menu {
       template<typename Nav,typename Out,bool delegate=true>
       void printTo(Nav& nav,Out& o,int n=0,bool sel=false) {
         o.print(cursor);
-        if(delegate) Base::printTo(nav,o,n,sel);
+        Base::printTo(nav,o,n,sel);
+        // if(delegate) Base::printTo(nav,o,n,sel);
       }
       template<typename Nav> bool enter(Nav& nav) {
         Idx selIdx=Base::values.template find<ValueIs,0>(Base::get());
@@ -138,7 +149,7 @@ namespace Menu {
       template<typename Nav,typename Out,bool delegate=true>
       void printTo(Nav& nav,Out& o,int n=0,bool sel=false) {
         o.print(get());
-        if(delegate)Base::printTo(nav,o,n,sel);
+        if(delegate) Base::printTo(nav,o,n,sel);
       }
     };
   };
@@ -311,6 +322,7 @@ namespace Menu {
       inline void relax() {
         // _trace(clog<<"accel relax"<<endl);
         accel/=2;
+        Base::relax();
       }
     };
   };
@@ -385,7 +397,7 @@ namespace Menu {
             if (nav.tune()) {
               const char* v=validator(nav.pos());
               const char *at=strchr(v,buffer[nav.pos()]);
-              int pos=at?at-v+1:1;
+              Idx pos=at?at-v+1:1;
               if (pos>=(Idx)strlen(v)) pos=0;
               buffer[nav.pos()]=v[pos];
               nav.edited(true);

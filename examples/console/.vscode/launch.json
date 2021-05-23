@@ -12,7 +12,7 @@
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/.out/main",
+            "program": "${workspaceFolder}/.pio/build/native/program",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

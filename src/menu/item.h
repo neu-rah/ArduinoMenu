@@ -16,7 +16,7 @@ namespace Menu {
   APIDEF(relax,Relax);
 
   APIDEF(sz,Sz);
-  APIDEF(printTo,PrintTo);
+  // APIDEF(printTo,PrintTo);
   APIDEF(onPrintTitleTo,PrintTitleTo);
   APIDEF(onPrintBodyTo,PrintBodyTo);
   APIDEF(onPrintItemTo,PrintItemTo);
@@ -24,8 +24,15 @@ namespace Menu {
   APIDEF(up,Up);
   APIDEF(down,Down);
 
+  struct PrintTo {
+    constexpr static const char* named="PrintTo";
+    template<typename T,typename Nav,typename Out>
+    inline auto operator()(T& o,Nav& nav,Out& out,int n=0,bool d=true)
+      ->decltype(o.template printTo<Nav,Out>(nav,out,n,d)) 
+      {return o.template printTo<Nav,Out>(nav,out,n,d);}
+  };
+
   // APIDEF(onPrintMenuTo,PrintMenuTo);
-  // APIDEF(enter,Enter);
   struct PrintMenuTo {
     constexpr static const char* named="PrintMenuTo";
     // _trace(MDO& operator<<(MDO& o) const {return o<<named;});
@@ -37,7 +44,7 @@ namespace Menu {
   // _trace(MDO& operator<<(MDO& o,const PrintMenuTo& api) {return api.operator<<(o);});
 
 
-  // template<typename Nav>
+  // APIDEF(enter,Enter);
   struct Enter {
     constexpr static const char* named="Enter";
     // _trace(MDO& operator<<(MDO& o) const {return o<<named;})

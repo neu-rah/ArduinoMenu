@@ -183,4 +183,26 @@ namespace Menu
   template <const ConstText *text>
   using StaticLabel = Chain<AsLabel::Part, StaticText<text>::template Part>;
 
+  #ifdef ARDUINO
+    //use static constructed `const char*`
+    // template <const PROGMEM char *text>
+    // struct FlashText {
+    //   template <typename O = Empty<Nil>>
+    //   struct Part : O {
+    //     using Base = O;
+    //     using This = Part<Base>;
+    //     using Base::Base;
+    //     template <typename Nav, typename Out, bool delegate = true>
+    //     void printTo(Nav &nav, Out &out, int n = 0, bool sel = false) {
+    //       out.print(text[0]);
+    //       if (delegate)
+    //         Base::printTo(nav, out, n, sel);
+    //     }
+    //   };
+    // };
+
+    // template <const PROGMEM char *text>
+    // using FlashLabel = Chain<AsLabel::Part, FlashText<text>::template Part>;
+
+  #endif
 }; //Menu namespace
