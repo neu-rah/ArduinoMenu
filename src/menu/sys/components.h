@@ -54,24 +54,18 @@ namespace Menu
     struct Id
     {
       template <typename O = Empty<Nil>>
-      struct Part
-      {
+      struct Part:O{
         bool chkId(T n) const { return id == n; }
       };
     };
   };
 
   //Idx type Id
-  using Id = StaticIdOf<Idx>;
+  template<Idx id>
+  using Id = StaticIdOf<Idx>::Id<id>;
 
   //empty dumb part
-  struct Zen
-  {
-    template <typename O>
-    struct Part : O
-    {
-    };
-  };
+  struct Zen {template <typename O>struct Part : O{};};
 
   //holds runtiume construct const char* (C string)
   struct Text

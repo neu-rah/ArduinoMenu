@@ -36,14 +36,15 @@ namespace Menu {
 
 #define CONFIG_MENU_LIB(Cfg)\
   using MenuLib=Menu::ConfigMenuLib<Cfg>;\
-    template<template<typename> class... I>\
-    using ItemDef=MenuLib::ItemDef<I...>;\
-    template<template<typename> class... I>\
-    using InDef=MenuLib::InDef<I...>;\
-    template<template<typename> class... I>\
-    using OutDef=MenuLib::OutDef<I...>;\
-    template<template<typename> class... I>\
-    using NavDef=MenuLib::NavDef<I...>;
+  template<template<typename> class... I>\
+  using ItemDef=MenuLib::ItemDef<I...>;\
+  template<template<typename> class... I>\
+  using InDef=MenuLib::InDef<I...>;\
+  template<template<typename> class... I>\
+  using OutDef=MenuLib::OutDef<I...>;\
+  template<template<typename> class... I>\
+  using NavDef=MenuLib::NavDef<I...>;
+
 
 #if defined(RS_DEBUG)&&!defined(RELEASE)
 // namespace Menu {

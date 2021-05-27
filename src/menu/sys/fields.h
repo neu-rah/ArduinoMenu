@@ -52,6 +52,7 @@ namespace Menu {
       using This=Part<Base>;
       using Base::Base;
       using Values=V;
+      using ValueType=V;
       template<typename Nav> bool enter(Nav& nav) {
         nav.open(Base::values.template find<ValueIs,0>(Base::get()));
         nav.focus(true);

@@ -87,6 +87,9 @@ namespace Menu {
   struct RFIdLock {
     template<typename O>
     struct Part:O {
+      using Base=O;
+      using This=Part<O>;
+      using Base::Base;
       static unsigned long pairId;
       static bool rcvCmd(unsigned long raw,bool pair=false) {
         // _trace(clog<<"RFIdLock::rcvCmd: 0x"<<hex<<raw<<endl);
@@ -101,6 +104,17 @@ namespace Menu {
         }
         if(id!=pairId) return false;
         return id==pairId&&O::rcvCmd(raw&mask);
+      }
+      template<typename M>
+      bool save(M& midia) {
+        _trace(clog<<"RFIdLock::save 0x"<<hex<<pairId<<endl);
+        return midia.write(pairId)&&Base::save(midia);
+      }
+      template<typename M>
+      bool load(M& midia) {
+        bool r=midia.read(pairId);
+        _trace(clog<<"RFIdLock::load 0x"<<hex<<pairId<<endl);
+        return r&&Base::load(midia);
       }
     };    
   };

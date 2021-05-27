@@ -64,16 +64,14 @@ namespace Menu {
     template<typename Nav,typename Out> void onPrintTitleTo(Nav& nav,Out& out) {out.printTitle(nav,title);}
     template<typename Nav,typename Out> void onPrintItemTo(Nav& nav,Out& out,Idx n=0,bool sel=0) {title.printTo(nav,out,n,sel);}
 
-    #define keyWalker(f,n)\
-    template<int... path>\
-    bool f() {\
-      using Call=typename This::template Walk<bool,typename This::n>;\
-      return Call().template walk<This,path...>(*this);\
-    }
+    // #define keyWalker(f,n)
+    // template<int... path>
+    // bool f() {
+    //   using Call=typename This::template Walk<bool,typename This::n>;
+    //   return Call().template walk<This,path...>(*this);
+    // }
 
-    template<typename Nav> bool enter(Nav& nav) {
-      return true;
-    }
+    template<typename Nav> bool enter(Nav& nav) {return true;}
     template<typename Nav,Cmd c> bool cmd(Nav& nav,int code=0) {
       PathRef parent(nav.level,nav.path);
       Style ps=parent.template walk<typename Nav::MenuType,Styles>(nav.data);
@@ -83,10 +81,10 @@ namespace Menu {
       return nav.template doNav<c>(sz(),s);
     }
 
-    keyWalker(enter,Enter);
-    keyWalker(esc,Esc);
-    keyWalker(up,Up);
-    keyWalker(down,Down);
+    // keyWalker(enter,Enter);
+    // keyWalker(esc,Esc);
+    // keyWalker(up,Up);
+    // keyWalker(down,Down);
 
     template<typename Nav,typename Out,int... path>
     void printMenuTo(Nav& nav,Out& out,int sel) {
