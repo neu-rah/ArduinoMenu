@@ -36,7 +36,7 @@ namespace Menu {
       template<typename Nav> 
       void enumSet(Nav& nav) {
         auto sel=PathRef(1,nav.at());
-        using Target=typename Base::TargetType;
+        using Target=typename Base::ValueType;
         Target selVal=sel.template walk<Values,GetValue>(values);
         Base::set(selVal);
       }
@@ -136,7 +136,7 @@ namespace Menu {
   struct FieldRef {
     template<typename O>
     struct Part:O {
-      using TargetType=T;
+      using ValueType=T;
       using Base=O;
       using This=Part<Base>;
       using Base::Base;
@@ -145,7 +145,10 @@ namespace Menu {
       Part(OO... oo):reflex(def),Base(oo...) {}
       bool changed() {return reflex!=target;}
       void changed(bool o) {if(o) reflex^=1; else reflex=target;}
-      void set(T o) const {target=o;}
+      void set(T o) {
+        target=o;
+        Base::obj().action();
+      }
       T get() const {return target;}
       template<typename Nav,typename Out,bool delegate=true>
       void printTo(Nav& nav,Out& o,int n=0,bool sel=false) {
@@ -160,7 +163,7 @@ namespace Menu {
   struct FieldVal {
     template<typename O=Empty<Nil>>
     struct Part:O {
-      using TargetType=T;
+      using ValueType=T;
       using Base=O;
       using This=Part<Base>;
       using Base::Base;
@@ -170,7 +173,10 @@ namespace Menu {
       Part(OO... oo):value(def),Base(oo...) {}
       bool changed() {return dirty;}
       void changed(bool o) {dirty=o;}
-      void set(T o) {value=o;}
+      void set(T o) {
+        value=o;
+        Base::obj().action();
+      }
       T get() const {return value;}
       template<typename Nav,typename Out,bool delegate=true>
       void printTo(Nav& nav,Out& o,int n,bool sel) {
@@ -369,13 +375,6 @@ namespace Menu {
         {return masks[i%(sizeof(masks)/sizeof(masks[0]))];}
       template<typename Nav,Cmd c> 
       bool cmd(Nav& nav,int code=0) {
-        // _trace(
-        //   mdo<<"TextEditBase::cmd<"<<c<<">"
-        //   <<" code:"<<code
-        //   <<" focus:"<<nav.focus()
-        //   <<" tune:"<<nav.tune()
-        //   <<"\n\r"
-        // );
         switch(c) {
           //from AM4
           case Cmd::Enter:

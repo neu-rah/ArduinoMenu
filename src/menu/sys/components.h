@@ -138,21 +138,8 @@ namespace Menu
       using This = Part<O>;
       using Base::Base;
       template <typename Nav>
-      bool enter(Nav &)
-      {
-        return Base::obj().enabled() ? fn() : !has<Style::IsMenu>(Base::obj().styles());
-        // r^m=x
-        // 0 0 0 Close
-        // 0 1 1 None
-        // 1 0 1 None
-        // 1 1 0 Open
-        // bool r=fn();
-        //
-        // bool x=r^m;
-        // return x?
-        //   NavRes::None:
-        //   (r?NavRes::Open:NavRes::Close);
-      }
+      inline bool enter(Nav& nav) {Base::enter(nav);return action();}
+      inline bool action() {return Base::obj().enabled() ? fn() : !has<Style::IsMenu>(Base::obj().styles());}
     };
   };
 
