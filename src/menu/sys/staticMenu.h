@@ -15,36 +15,43 @@ using namespace Parts;
 
 namespace Menu {
   template<typename O,typename... OO>
-  struct StaticMenuBody:Node<O,StaticMenuBody<OO...>> {
-    // named("StaticMenuBody<O,OO...>");
-    using Tail=StaticMenuBody<OO...>;
+  struct StaticList:Node<O,StaticList<OO...>> {
+    // named("StaticList<O,OO...>");
+    using Tail=StaticList<OO...>;
     using Base=Node<O,Tail>;
-    using This=StaticMenuBody<O,OO...>;
+    using This=StaticList<O,OO...>;
     using Base::Base;
     // template<typename... Args>
-    // StaticMenuBody(Args... args):Base(args...,Base::template build<Tail,Args...>(args...)) {}
+    // StaticList(Args... args):Base(args...,Base::template build<Tail,Args...>(args...)) {}
     template<typename Nav,typename Out>
     void onPrintBodyTo(Nav& nav,Out& out,Idx selIdx,Idx n)  {
       out.template printItem<Nav,This>(nav,*this,n,n==selIdx);
       Base::tail().template onPrintBodyTo<Nav,Out>(nav,out,selIdx,n+1);
     }
     static constexpr Idx len() {return Base::_sz();}
+    void begin() {
+      Base::head().begin();
+      Base::tail().begin();
+    }
 };
 
   template<typename O>
-  struct StaticMenuBody<O>:Node<O,Nil> {
-    // named("StaticMenuBody<O>");
+  struct StaticList<O>:Node<O,Nil> {
+    // named("StaticList<O>");
     using Base=Node<O,Nil>;
-    using This=StaticMenuBody<O>;
+    using This=StaticList<O>;
     using Base::Base;
     template<typename... Args>
-    StaticMenuBody(Args... args):Base(args...) {}
+    StaticList(Args... args):Base(args...) {}
     template<typename Nav,typename Out>
     void onPrintMenuTo(Nav& nav,Out& out,Idx selIdx) {out.printMenu(nav,*this,selIdx);}
     template<typename Nav,typename Out>
     void onPrintBodyTo(Nav& nav,Out& out,Idx selIdx,Idx n) {out.printItem(nav,*this,n,selIdx==n);}
     static constexpr Idx len() {return Base::_sz();}
   };
+
+  template<typename O,typename... OO>
+  using StaticMenuBody=StaticList<O,OO...>;
 
   template<typename Title,typename Body>
   struct StaticMenu:IsMenu::Part<Body> {

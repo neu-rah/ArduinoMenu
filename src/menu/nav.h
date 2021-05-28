@@ -23,7 +23,7 @@ namespace Menu {
       using This=Part<Base>;
       using Base::Base;
       using MenuType=Data;
-      Data& data;
+      Data data;
       Idx path[max_depth]{0};
       Idx level=0;
       bool _editing=false;
@@ -31,11 +31,13 @@ namespace Menu {
       bool wasEdited=false;
       bool edited() const {return wasEdited;}
       void edited(bool e) {wasEdited=e;}
-      Part(Data& data):data(data) {}
+      // Part(Data& data):data(data) {}
       Part(const Part&)=delete;
       Part& operator=(const Part&)=delete;
       bool focus() {return _editing;}
       void focus(bool f) {_editing=f;}
+      inline void begin() {data.begin();}
+      inline Data& root() {return data;}
 
       void relax() {
         if(_editing) {
