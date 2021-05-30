@@ -9,6 +9,7 @@ namespace Menu {
   template<typename In=Nil>
   struct Quiet:In {
     using Base=In;
+    template<typename Dev> inline static void poll(Dev&) {}
     inline static void begin() {}
     inline static void relax() {}
     template<typename Nav>

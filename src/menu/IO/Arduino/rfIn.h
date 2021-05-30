@@ -105,15 +105,16 @@ namespace Menu {
         if(id!=pairId) return false;
         return id==pairId&&O::rcvCmd(raw&mask);
       }
+      //TODO: move save/load out of menu stuff. because menu is not dealing with persistency
       template<typename M>
       bool save(M& midia) {
-        _trace(clog<<"RFIdLock::save 0x"<<hex<<pairId<<endl);
+        // _trace(clog<<"RFIdLock::save 0x"<<hex<<pairId<<endl);
         return midia.write(pairId)&&Base::save(midia);
       }
       template<typename M>
       bool load(M& midia) {
         bool r=midia.read(pairId);
-        _trace(clog<<"RFIdLock::load 0x"<<hex<<pairId<<endl);
+        // _trace(clog<<"RFIdLock::load 0x"<<hex<<pairId<<endl);
         return r&&Base::load(midia);
       }
     };    

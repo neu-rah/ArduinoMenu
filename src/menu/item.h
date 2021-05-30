@@ -104,6 +104,7 @@ namespace Menu {
     inline static constexpr bool changed() {return false;}
     inline static constexpr bool enabled() {return true;}
     inline static void enable(bool b) {}
+    template<typename Dev> inline static void poll(Dev&) {}
     template<typename Nav,typename Out,bool=true> 
     static void printTo(Nav& nav,Out&,int n=0,bool sel=false) {}
     template<typename Nav,typename Out> void onPrintMenuTo(Nav& nav,Out& out,Idx selIdx) {out.printMenu(nav,O::obj(),selIdx);}
@@ -122,6 +123,7 @@ namespace Menu {
     template<typename Nav> constexpr static bool left(Nav& nav) {return enter(nav);}
     template<typename Nav> constexpr static bool right(Nav& nav) {return esc(nav);}
     template<typename Nav> constexpr static bool key(Nav&,Key) {return false;}
+    inline bool action() {return true;}
     template<typename Nav,Cmd c>
     bool cmd(Nav& nav,int code=0) {
       switch(c) {

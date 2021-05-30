@@ -17,6 +17,7 @@ namespace Menu {
     Void(const Void&)=delete;
     inline static void begin() {}
     Void& operator=(const Void&)=delete;
+    template<typename Dev> inline static void poll(Dev&) {}
     inline static void nl() {}
     inline static void newView() {}
     template<typename Nav,typename Menu>

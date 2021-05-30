@@ -5,5 +5,5 @@
 #include "streamOut.h"
 
 namespace Menu {
-  struct StdOut:StreamOut<decltype(cout),cout> {};
+  struct StdOut:StreamOut<decltype(std::cout),std::cout> {};
 };

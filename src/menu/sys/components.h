@@ -125,14 +125,28 @@ namespace Menu
     };
   };
 
+  // using Events=uint8_t;
+  // enum class Event:Events {
+  //   None=0<<0,
+  //   Enter=1<<0,
+  //   Esc=1<<1,
+  //   Focus=1<<2,
+  //   Blur=1<<3,
+  //   Update=1<<4,
+  //   Any=0xFF
+  // };
+
+  // template<Events handled,bool (*fn)(Events)>
+  // struct On {
+  //   bool event(Events e) {return fn(e);}
+  // };
+
   //Associate an action
   //triggered at `enter` call
   template <bool (*fn)()>
-  struct Action
-  {
+  struct Action {
     template <typename O>
-    struct Part : O
-    {
+    struct Part : O {
       // named("Action");
       using Base = O;
       using This = Part<O>;
