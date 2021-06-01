@@ -22,8 +22,8 @@ namespace Menu {
   template<typename In>
   Tick<repeatTimeout> RFIn<repeatTimeout>::Part<In>::radioTimeout;
 
-  template<int idBits,int handlerId>
-  template<typename O>
-  unsigned long RFIdLock<idBits,handlerId>::Part<O>::pairId=0;
+  // template<int idBits,int handlerId>
+  // template<typename O>
+  // unsigned long RFIdLock<idBits,handlerId>::Part<O>::pairId=0;
 };
 

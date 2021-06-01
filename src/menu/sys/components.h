@@ -153,7 +153,9 @@ namespace Menu
       using Base::Base;
       template <typename Nav>
       inline bool enter(Nav& nav) {Base::enter(nav);return action();}
-      inline bool action() {return Base::obj().enabled() ? fn() : !has<Style::IsMenu>(Base::obj().styles());}
+      inline bool action() {//note: can not be static because of `enabled()`, its a runtime property
+        return Base::obj().enabled() ? fn() : !has<Style::IsMenu>(Base::Type::styles());
+      }
     };
   };
 

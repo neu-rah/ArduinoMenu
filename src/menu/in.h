@@ -9,9 +9,14 @@ namespace Menu {
   template<typename In=Nil>
   struct Quiet:In {
     using Base=In;
+    using This=Quiet<In>;
+    using Base::Base;
+    Quiet(const This&)=delete;
+    This& operator=(const This&)=delete;
     template<typename Dev> inline static void poll(Dev&) {}
     inline static void begin() {}
     inline static void relax() {}
+    inline static constexpr bool action() {return true;}
     template<typename Nav>
     inline static constexpr bool parseKey(Nav&) {return false;}
     template<typename Nav>

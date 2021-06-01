@@ -8,7 +8,12 @@ namespace Menu {
   struct AM4Parser {
     template<typename In>
     struct Part:In {
-      static constexpr bool isParser=true;
+      using Base=In;
+      using This=Part<In>;
+      using Base::Base;
+      Part(const This&)=delete;
+      Part& operator=(const This&)=delete;
+      // static constexpr bool isParser=true;
       template<typename Nav>
       bool parseCmd(Nav& nav,Key k,bool e=false) {
         bool r;

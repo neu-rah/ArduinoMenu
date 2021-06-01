@@ -123,7 +123,7 @@ namespace Menu {
     template<typename Nav> constexpr static bool left(Nav& nav) {return enter(nav);}
     template<typename Nav> constexpr static bool right(Nav& nav) {return esc(nav);}
     template<typename Nav> constexpr static bool key(Nav&,Key) {return false;}
-    inline bool action() {return true;}
+    inline static constexpr bool action() {return true;}
     template<typename Nav,Cmd c>
     bool cmd(Nav& nav,int code=0) {
       switch(c) {

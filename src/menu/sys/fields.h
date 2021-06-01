@@ -15,8 +15,9 @@ namespace Menu {
       using Base=O;
       using This=Part<Base>;
       using Base::Base;
-      T value() {return val;}
-      T get() const {return val;}
+      using ValueType=T;
+      inline static constexpr T value() {return val;}
+      inline static constexpr T get() {return val;}
       static bool valueIs(T& v) {return val==v;}
     };
   };
@@ -165,8 +166,10 @@ namespace Menu {
     struct Part:O {
       using ValueType=T;
       using Base=O;
-      using This=Part<Base>;
+      using This=Part<O>;
       using Base::Base;
+      Part(const This&)=delete;
+      Part& operator=(const This&)=delete;
       T value;
       T dirty=true;
       template<typename... OO>
@@ -185,6 +188,35 @@ namespace Menu {
       }
     };
   };
+
+  // template<typename T,T def,uint16_t id=0>
+  // struct StaticFieldVal {
+  //   template<typename O=Empty<Nil>>
+  //   struct Part:O {
+  //     using ValueType=T;
+  //     using Base=O;
+  //     using This=Part<Base>;
+  //     using Base::Base;
+  //     static T value;
+  //     static T dirty;
+  //     // template<typename... OO>
+  //     // Part(OO... oo):value(def),Base(oo...) {}
+  //     static bool changed() {return dirty;}
+  //     static void changed(bool o) {dirty=o;}
+  //     static void set(T o) {
+  //       dirty=o!=value;
+  //       value=o;
+  //       // Base::obj().action();//static fields can not have associated action
+  //       //unless we make a Static action... and eventually a static enable/disable
+  //     }
+  //     static T get() {return value;}
+  //     template<typename Nav,typename Out,bool delegate=true>
+  //     void printTo(Nav& nav,Out& o,int n,bool sel) {
+  //       o.print(get());
+  //       if(delegate)Base::printTo(nav,o,n,sel);
+  //     }
+  //   };
+  // };
 
   //Static range (low and high values)
   template<typename T,T lowVal,T highVal>
