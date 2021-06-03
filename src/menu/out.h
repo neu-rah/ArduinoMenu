@@ -61,11 +61,13 @@ namespace Menu {
       using Base::Base;
       template<typename Nav,typename Menu>
       void printMenu(Nav& nav,Menu& menu,Idx selIdx) {
+        // _trace(clog<<"TitlePrinter::printMenu"<<endl;clog.flush());
         menu.onPrintTitleTo(nav,Base::obj());
         Base::template printMenu<Nav,Menu>(nav,menu,selIdx);
       }
       template<typename Nav,typename Item>
       void printTitle(Nav& nav,Item& i) {
+        // _trace(clog<<"TitlePrinter::printTitle"<<endl;clog.flush());
         Base::template fmtStart<Fmt::Title>(nav.focus(),nav.tune());
         i.template printTo<Nav,typename This::Type>(nav,Base::obj());
         Base::template fmtStop<Fmt::Title>(nav.focus(),nav.tune());
@@ -82,6 +84,7 @@ namespace Menu {
       using Base::Base;
       template<typename Nav,typename Menu>
       void printMenu(Nav& nav,Menu& menu,Idx selIdx) {
+        // _trace(clog<<"BodyPrinter::printMenu"<<endl;clog.flush());
         Base::template fmtStart<Fmt::Body>(nav.focus(),nav.tune());
         menu.onPrintBodyTo(nav,Base::obj(),selIdx,0);
         Base::template fmtStop<Fmt::Body>(nav.focus(),nav.tune());
@@ -99,12 +102,14 @@ namespace Menu {
       using Base::Base;
       template<typename Nav,typename Menu>
       void printMenu(Nav& nav,Menu& menu,Idx selIdx) {
+        // _trace(clog<<"BasePrinter::printMenu"<<endl;clog.flush());
         Base::template fmtStart<Fmt::Menu>(nav.focus(),nav.tune());
         Base::template printMenu<Nav,Menu>(nav,menu,selIdx);
         Base::template fmtStop<Fmt::Menu>(nav.focus(),nav.tune());
       }
       template<typename Nav,typename Item>
       void printItem(Nav& nav,Item& i,Idx n=0,bool sel=false) {
+        // _trace(clog<<"BasePrinter::printItem"<<endl;clog.flush());
         Base::template fmtStart<Fmt::Item>(nav.focus(),nav.tune(),n,sel,i.enabled());
         i.onPrintItemTo(nav,Base::obj(),n,sel);
         Base::template fmtStop<Fmt::Item>(nav.focus(),nav.tune(),n,sel,i.enabled());

@@ -8,7 +8,7 @@
 namespace Menu {
 
   //Value, for enumeration
-  template<typename T,T val,bool def=false>
+  template<typename T,T val,bool isDef=false>
   struct Value {
     template<typename O>
     struct Part:O {
@@ -19,6 +19,7 @@ namespace Menu {
       inline static constexpr T value() {return val;}
       inline static constexpr T get() {return val;}
       static bool valueIs(T& v) {return val==v;}
+      static constexpr bool isDefault() {return isDef;}      
     };
   };
   
@@ -34,12 +35,17 @@ namespace Menu {
       using Values=V;//Value type
       Values values;//values enumeration
       //set target value from navigation index
-      template<typename Nav> 
-      void enumSet(Nav& nav) {
-        auto sel=PathRef(1,nav.at());
+      void enumSet(Idx i) {
+        _trace(clog<<"EnumField::enumSet idx:"<<i<<endl;clog.flush());
+        auto sel=PathRef(1,&i);
         using Target=typename Base::ValueType;
         Target selVal=sel.template walk<Values,GetValue>(values);
         Base::set(selVal);
+      }
+      template<typename Nav> 
+      void enumSet(Nav& nav) {
+        _trace(clog<<"EnumField::enumSet<Nav>"<<nav.at()[0]<<endl);
+        enumSet(nav.at()[0]);
       }
     };
   };
@@ -62,6 +68,7 @@ namespace Menu {
       template<typename Nav,Cmd c> 
       bool cmd(Nav& nav,int code=0) {
         if(c==Cmd::Enter) {
+          _trace(clog<<"Choose::Cmd<Nav,Enter>"<<endl;clog.flush(););
           Base::enumSet(nav);
           nav.focus(false);
           nav.close();
@@ -75,10 +82,29 @@ namespace Menu {
       template<typename Nav,typename Out> void onPrintTitleTo(Nav& nav,Out& out) {Base::values.template onPrintTitleTo<Nav,Out>(nav,out);}
       template<typename Nav,typename Out> void onPrintBodyTo(Nav& nav,Out& out,Idx selIdx,Idx n)  {Base::values.template onPrintBodyTo<Nav,Out>(nav,out,n);}
       // template<typename Nav,typename Out> void onPrintItemTo(Nav& nav,Out& out {O::obj().printTo(nav,out);}
+      // void setDefault() {
+      //   Idx selPath[1]{0};
+      //   if(selPath[0]>=Base::values.len()) setDefault();
+      // }
       template<typename Nav,typename Out,bool delegate=true>
       void printTo(Nav& nav,Out& o,int n=0,bool sel=false) {
+        _trace(clog<<"Choose::printTo"<<endl;clog.flush());
         Idx selPath[1]{0};
         selPath[0]=Base::values.template find<ValueIs,0>(Base::get());
+        _trace(clog
+          <<"selPath[0]:"<<selPath[0]
+          <<">= sz:"<<Base::values.len()
+          <<"? "<<(selPath[0]>=Base::values.len()?"yes":"no")
+          <<endl;clog.flush();
+        );
+        if(selPath[0]>=Base::values.len()) {
+          _trace(clog<<"out of range data"<<endl);
+          selPath[0]=Base::values.template find<IsDefault,0>();
+          _trace(clog<<"found default idx:"<<selPath[0]<<endl);
+          if(selPath[0]>=Base::values.len()) return;
+          _trace(clog<<"setting enum"<<endl);
+          Base::enumSet(selPath[0]);
+        }
         PathRef(1,selPath).template walk<
           decltype(Base::values),
           PrintTo,Nav&,Out&
@@ -117,6 +143,7 @@ namespace Menu {
       using Base::Base;
       template<typename Nav,typename Out,bool delegate=true>
       void printTo(Nav& nav,Out& o,int n=0,bool sel=false) {
+        // _trace(clog<<"Toggle::printTo"<<endl;clog.flush());
         o.print(cursor);
         Base::printTo(nav,o,n,sel);
         // if(delegate) Base::printTo(nav,o,n,sel);
@@ -144,6 +171,7 @@ namespace Menu {
       T reflex;
       template<typename... OO>
       Part(OO... oo):reflex(def),Base(oo...) {}
+      void setDefault() {reflex=target=def;}
       bool changed() {return reflex!=target;}
       void changed(bool o) {if(o) reflex^=1; else reflex=target;}
       void set(T o) {
@@ -153,6 +181,7 @@ namespace Menu {
       T get() const {return target;}
       template<typename Nav,typename Out,bool delegate=true>
       void printTo(Nav& nav,Out& o,int n=0,bool sel=false) {
+        // _trace(clog<<"FieldRef::printTo"<<endl;clog.flush());
         o.print(get());
         if(delegate) Base::printTo(nav,o,n,sel);
       }
@@ -174,6 +203,7 @@ namespace Menu {
       T dirty=true;
       template<typename... OO>
       Part(OO... oo):value(def),Base(oo...) {}
+      void setDefault() {dirty|=value==def;value=def;}
       bool changed() {return dirty;}
       void changed(bool o) {dirty=o;}
       void set(T o) {
@@ -183,6 +213,7 @@ namespace Menu {
       T get() const {return value;}
       template<typename Nav,typename Out,bool delegate=true>
       void printTo(Nav& nav,Out& o,int n,bool sel) {
+        // _trace(clog<<"FieldVal::printTo"<<endl;clog.flush());
         o.print(get());
         if(delegate)Base::printTo(nav,o,n,sel);
       }
@@ -262,7 +293,7 @@ namespace Menu {
       }
       template<typename Nav>
       bool esc(Nav& nav) {
-        _trace(clog<<"esc!"<<endl);
+        // _trace(clog<<"esc!"<<endl);
         nav.tune(0);
         nav.focus(0);
         return true;//irrelevant
@@ -453,6 +484,7 @@ namespace Menu {
       }
       template<typename Nav,typename Out,bool delegate=true>
       void printTo(Nav& nav,Out& out,int n=0,bool sel=false) {
+        // _trace(clog<<"TextEditBase::printTo"<<endl;clog.flush());
         if(sel/*&&editing*/) {//if we are here then we are editing
           if(nav.pos()) out.write(buffer,nav.pos());
           out.template fmtStart<Fmt::EditCursor>(nav.focus(),nav.tune());

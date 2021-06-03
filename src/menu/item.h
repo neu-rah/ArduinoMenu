@@ -8,8 +8,9 @@ namespace Menu {
 
   //API calls
   //agensts to call member function on post provided objects
-  APIDEF(get,GetValue)
-  APIDEF(valueIs,ValueIs)
+  APIDEF(get,GetValue);
+  APIDEF(valueIs,ValueIs);
+  APIDEF(isDefault,IsDefault);
   APIDEF(styles,Styles);
   APIDEF(enabled,Enabled);
   APIDEF(enable,Enable);
@@ -86,6 +87,7 @@ namespace Menu {
     Empty(){}
     Empty(const Empty&)=delete;
     Empty& operator=(const Empty&)=delete;
+    inline static void setDefault() {}
     // template<typename Next,typename... Args>
     // static Next build(Args... args) {return Next(args...);}
     Tail& head() {return *this;}
@@ -112,7 +114,9 @@ namespace Menu {
     template<typename Nav,typename Out> void onPrintBodyTo(Nav& nav,Out& out,Idx selIdx,Idx n)
       {printTo(nav,out,selIdx,n==selIdx);}
     template<typename Nav,typename Out> void onPrintItemTo(Nav& nav,Out& out,int n,bool sel) 
-      {Base::obj().template printTo<Nav,Out>(nav,out,n,sel);}
+      {
+        // _trace(clog<<"Empty::onPrintItemTo->printTo"<<endl;clog.flush());
+        Base::obj().template printTo<Nav,Out>(nav,out,n,sel);}
     template<typename T> static constexpr bool chkId(T n) {return false;}
     static constexpr Idx sz() {return 1;}
     static constexpr Idx _sz() {return 1;}
