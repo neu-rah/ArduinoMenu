@@ -11,6 +11,7 @@ namespace Menu {
   APIDEF(get,GetValue);
   APIDEF(valueIs,ValueIs);
   APIDEF(isDefault,IsDefault);
+  APIDEF(setDefault,SetDefault);
   APIDEF(styles,Styles);
   APIDEF(enabled,Enabled);
   APIDEF(enable,Enable);

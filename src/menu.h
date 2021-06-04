@@ -17,7 +17,6 @@ You should have received a copy of the GNU Lesser General Public License along w
 #include "menu/nav.h"
 #include "menu/item.h"
 #include "menu/IO/Arduino/rfIn.hpp"
-// #include "menu/sys/fields.hpp"
 
 namespace Menu {
   template<typename Cfg>

@@ -36,7 +36,7 @@ namespace Menu {
       Values values;//values enumeration
       //set target value from navigation index
       void enumSet(Idx i) {
-        _trace(clog<<"EnumField::enumSet idx:"<<i<<endl;clog.flush());
+        // _trace(clog<<"EnumField::enumSet idx:"<<i<<endl;clog.flush());
         auto sel=PathRef(1,&i);
         using Target=typename Base::ValueType;
         Target selVal=sel.template walk<Values,GetValue>(values);
@@ -44,7 +44,7 @@ namespace Menu {
       }
       template<typename Nav> 
       void enumSet(Nav& nav) {
-        _trace(clog<<"EnumField::enumSet<Nav>"<<nav.at()[0]<<endl);
+        // _trace(clog<<"EnumField::enumSet<Nav>"<<nav.at()[0]<<endl);
         enumSet(nav.at()[0]);
       }
     };
@@ -88,21 +88,22 @@ namespace Menu {
       // }
       template<typename Nav,typename Out,bool delegate=true>
       void printTo(Nav& nav,Out& o,int n=0,bool sel=false) {
-        _trace(clog<<"Choose::printTo"<<endl;clog.flush());
+        // _trace(clog<<"Choose::printTo"<<endl;clog.flush());
+        //TODO:: use & instead of array!
         Idx selPath[1]{0};
         selPath[0]=Base::values.template find<ValueIs,0>(Base::get());
-        _trace(clog
-          <<"selPath[0]:"<<selPath[0]
-          <<">= sz:"<<Base::values.len()
-          <<"? "<<(selPath[0]>=Base::values.len()?"yes":"no")
-          <<endl;clog.flush();
-        );
+        // _trace(clog
+        //   <<"selPath[0]:"<<selPath[0]
+        //   <<">= sz:"<<Base::values.len()
+        //   <<"? "<<(selPath[0]>=Base::values.len()?"yes":"no")
+        //   <<endl;clog.flush();
+        // );
         if(selPath[0]>=Base::values.len()) {
-          _trace(clog<<"out of range data"<<endl);
+          // _trace(clog<<"out of range data"<<endl);
           selPath[0]=Base::values.template find<IsDefault,0>();
-          _trace(clog<<"found default idx:"<<selPath[0]<<endl);
+          // _trace(clog<<"found default idx:"<<selPath[0]<<endl);
           if(selPath[0]>=Base::values.len()) return;
-          _trace(clog<<"setting enum"<<endl);
+          // _trace(clog<<"setting enum"<<endl);
           Base::enumSet(selPath[0]);
         }
         PathRef(1,selPath).template walk<
