@@ -20,6 +20,7 @@ namespace Menu {
     template<typename Dev> inline static void poll(Dev&) {}
     inline static void nl() {}
     inline static void newView() {}
+    inline static void setDefault() {}
     template<typename Nav,typename Menu>
     static void printMenu(Nav& nav,Menu& menu,Idx selIdx) {}
     template<typename Nav,typename Item>
