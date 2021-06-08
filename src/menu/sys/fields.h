@@ -309,8 +309,7 @@ namespace Menu {
       inline static constexpr bool canWrap() {return true;}
     };
   };
-  // bool wrap=false;//TODO: use static style instead
-  // bool canWrap() {return wrap;}
+
   //validate numeric field value by range info
   struct RangeValid {
     template<typename O=Empty<Nil>>
@@ -356,44 +355,52 @@ namespace Menu {
   };
 
   //change numeric value with acceleration
-  template<typename T,T max>
+  template<int relaxTimeout=300,int rate=1>
   struct ValueAccel {
     template<typename O>
     struct Part:O {
       using Base=O;
       using This=Part<O>;
-      using Type=T;
-      T value=0;
+      using Type=typename Base::ValueType;
+      static constexpr Type tune() {return 0;}
+      // Type value=0;
       int accel=0;
-      operator T() const {return value;}
-      constexpr T tune() const {return 0;}
-      This& operator =(T o) {value=o;return *this;}
+      TinyTimeUtils::TickCnt<relaxTimeout> relax;
+      using Base::high;
+      using Base::low;
+      using Base::get;
+      using Base::set;
       template<typename Nav>
-      bool up(Nav&) {
-        if(accel>=0) accel++;
+      bool up(Nav& nav) {
+        // _trace(clog<<"Accel up: "<<accel<<endl);
+        if(accel>=0) accel+=rate;
         else accel/=-2;
-        if(max-value<accel) value=max;
-        else value+=accel;
-        _trace(clog<<"Accel: "<<accel<<endl);
-        _trace(clog<<"ValueAccel::set "<<value<<endl);
-        Base::set(value);
-        return true;
+        if(high()-get()<accel) set(high());
+        else {
+          set(get()+accel);
+          relax.reset();
+        }
+        return Base::up(nav);
       }
       template<typename Nav>
-      bool down(Nav&) {
-        if(accel<=0) accel--;
+      bool down(Nav& nav) {
+        // _trace(clog<<"Accel down: "<<accel<<endl);
+        if(accel<=0) accel-=rate;
         else accel/=-2;
-        if(value<-accel) value=0;
-        else value+=accel;
-        _trace(clog<<"Accel: "<<accel<<endl);
-        _trace(clog<<"ValueAccel::set "<<value<<endl);
-        Base::set(value);
-        return true;
+        if(get()-low()<-accel) set(low());
+        else {
+          set(get()+accel);
+          relax.reset();
+        }
+        return Base::down(nav);
       }
-      inline void relax() {
-        // _trace(clog<<"accel relax"<<endl);
-        accel/=2;
-        Base::relax();
+      template<typename Dev>
+      inline void poll(Dev& dev) {
+        // _trace(if(accel) clog<<"ValueAccel::poll() cnt:"<<((uint16_t)relax)<<endl);
+        if(relax) {
+          accel=accel>>relax;
+          relax.reset();
+        }
       }
     };
   };

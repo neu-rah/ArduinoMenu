@@ -239,6 +239,6 @@ void setup() {
 
 void loop() {
   if(nav.doInput(in)) nav.printTo(out);
-  in.relax();
-  nav.relax();//TODO: only when idling (reset otherwise)
+  // in.relax();//use poll instead...
+  // nav.relax();//TODO: only when idling (reset otherwise)
 }

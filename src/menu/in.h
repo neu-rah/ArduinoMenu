@@ -15,7 +15,7 @@ namespace Menu {
     This& operator=(const This&)=delete;
     template<typename Dev> inline static void poll(Dev&) {}
     inline static void begin() {}
-    inline static void relax() {}
+    // inline static void relax() {}
     inline static constexpr bool action() {return true;}
     template<typename Nav>
     inline static constexpr bool parseKey(Nav&) {return false;}

@@ -15,7 +15,8 @@ namespace Menu {
   APIDEF(styles,Styles);
   APIDEF(enabled,Enabled);
   APIDEF(enable,Enable);
-  APIDEF(relax,Relax);
+  // APIDEF(relax,Relax);
+  APIDEF(poll,Poll);
 
   APIDEF(sz,Sz);
   APIDEF(onPrintTitleTo,PrintTitleTo);
@@ -97,7 +98,7 @@ namespace Menu {
     IItem* operator[](size_t i) {assert(false);}
     inline static void get() {}
     inline static void begin() {}
-    inline static void relax() {}
+    // inline static void relax() {}
     inline static constexpr bool canWrap() {return false;}
     template<typename T> constexpr static bool valueIs(T&) {return false;}
     inline static constexpr bool isTop() {return false;}
@@ -107,7 +108,12 @@ namespace Menu {
     inline static constexpr bool changed() {return false;}
     inline static constexpr bool enabled() {return true;}
     inline static void enable(bool b) {}
-    template<typename Dev> inline static void poll(Dev&) {}
+    template<typename Dev> inline static void poll(Dev&) {
+      _trace(
+        static TinyTimeUtils::Tick<500> dots;
+        if(dots) Serial.write('.')
+      );
+    }
     template<typename Nav,typename Out,bool=true> 
     static void printTo(Nav& nav,Out&,int n=0,bool sel=false) {}
     template<typename Nav,typename Out> void onPrintMenuTo(Nav& nav,Out& out,Idx selIdx) {out.printMenu(nav,O::obj(),selIdx);}

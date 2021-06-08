@@ -7,8 +7,8 @@ namespace Menu {
     template<typename O>
     struct Part:O {
       void write(const char* o,Idx len){dev.write(o,len);}
-      template<typename Data>
-      void print(Data o) {dev.print(o);}
+      template<typename Data,typename... Args>
+      void print(Data o,Args... args) {dev.print(o,args...);}
       void nl() {dev.println();}
     };
   };

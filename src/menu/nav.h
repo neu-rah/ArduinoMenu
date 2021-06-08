@@ -36,12 +36,16 @@ namespace Menu {
       Part(const Part&)=delete;
       Part& operator=(const Part&)=delete;
       template<typename Dev>
-      inline void poll(Dev& dev) {root().poll(dev);}
+      inline void poll(Dev& dev) {
+        auto ref=PathRef(level+(focus()?1:0),path);
+        ref.template walk<Data,Poll,Dev&>(data,dev);
+        // root().poll(dev);//removed.. not for all tree.. use it for active item only
+      }
       bool focus() {return _editing;}
       void focus(bool f) {_editing=f;}
       inline void begin() {data.begin();}
       inline Data& root() {return data;}
-      void relax() {if(_editing) PathRef(level,path).walk<Data,Relax>(data);}
+      // void relax() {if(_editing) PathRef(level,path).walk<Data,Relax>(data);}
       template<Idx o,Idx oo,Idx... ooo>
       void go(Idx n=0) {path[n]=o;go<oo,ooo...>(n+1);}
       template<Idx o>
