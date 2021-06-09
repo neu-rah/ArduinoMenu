@@ -176,6 +176,22 @@ namespace Menu
     };
   };
 
+  //disable commands when condition not met
+  //use this to disable commands when device is off
+  template<typename F,F& f>
+  struct When {
+    template<typename O>
+    struct Part:O {
+      using Base=O;
+      using This=Part<O>;
+      using Base::Base;
+      template<typename Nav,Cmd c>
+      bool cmd(Nav& nav,int code=0) {
+        return f()?Base::template cmd<Nav,c>(nav,code):false;
+      }
+    };
+  };
+
   //utility, use constText as label
   template <const ConstText *text>
   using StaticLabel = Chain<AsLabel::Part, StaticText<text>::template Part>;
