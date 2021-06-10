@@ -141,9 +141,9 @@ namespace Menu
   //   bool event(Events e) {return fn(e);}
   // };
 
-  //Associate an action
+    //Associate an action
   //triggered at `enter` call
-  template <bool (*fn)()>
+  template <ActionFn fn>
   struct Action {
     template <typename O>
     struct Part : O {
@@ -152,9 +152,11 @@ namespace Menu
       using This = Part<O>;
       using Base::Base;
       template <typename Nav>
-      inline bool enter(Nav& nav) {Base::enter(nav);return action();}
+      inline bool enter(Nav& nav) {
+        // _trace(clog<<"Action::enter"<<endl);
+        Base::enter(nav);return action();}
       inline bool action() {//note: can not be static because of `enabled()`, its a runtime property... move it to enter
-        return Base::obj().enabled() ? fn() : !has<Style::IsMenu>(Base::Type::styles());
+        return Base::obj().enabled() ? fn() : !has<Style::IsMenu>(Base::styles());
       }
     };
   };
@@ -187,9 +189,26 @@ namespace Menu
       using Base::Base;
       template<typename Nav,Cmd c>
       bool cmd(Nav& nav,int code=0) {
+        // _trace(clog<<"When::cmd "<<f()<<endl);
         return f()?Base::template cmd<Nav,c>(nav,code):false;
       }
     };
+  };
+
+  template<ActionFn f>
+  struct OnUpdate {
+    template<typename O>
+    struct Part:O {
+      using Base=O;
+      using This=Part<O>;
+      using Base::Base;
+      using V=typename Base::ValueType;
+      void set(V o) {
+        // _trace(clog<<"OnUpdate::set"<<endl);
+        Base::set(o);
+        f();
+      }
+    };    
   };
 
   //utility, use constText as label

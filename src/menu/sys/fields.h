@@ -286,10 +286,13 @@ namespace Menu {
       using Base::Base;
       template<typename Nav>
       bool enter(Nav& nav) {
+        _trace(clog<<"EditCtrl::enter"<<endl);
         if(nav.focus()) {
           nav.tune(nav.tune()^Base::tune());
           nav.focus(nav.tune());
         } else nav.focus(true);
+        // return
+        Base::enter(nav);
         return true;
       }
       template<typename Nav>
@@ -297,6 +300,8 @@ namespace Menu {
         // _trace(clog<<"esc!"<<endl);
         nav.tune(0);
         nav.focus(0);
+        // return 
+        Base::enter(nav);
         return true;//irrelevant
       }
     };

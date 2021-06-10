@@ -137,6 +137,7 @@ namespace Menu {
     inline static constexpr bool action() {return true;}
     template<typename Nav,Cmd c>
     bool cmd(Nav& nav,int code=0) {
+      // _trace(clog<<"Empty::cmd->obj()..."<<endl);
       switch(c) {
         case Cmd::Enter: return O::obj().enter(nav);
         case Cmd::Esc: return O::obj().esc(nav);

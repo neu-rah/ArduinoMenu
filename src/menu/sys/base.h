@@ -24,6 +24,9 @@ namespace Menu {
   // template<typename Fst,typename Snd>
   // using Node=Parts::Config<PartsCfg>::Node<Fst,Snd>;
 
+  //function type to use on actions
+  using ActionFn=bool(*)();
+
   using Key=int;//key type
   using ConstText=const char*;
 
