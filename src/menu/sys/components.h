@@ -192,6 +192,27 @@ namespace Menu
         // _trace(clog<<"When::cmd "<<f()<<endl);
         return f()?Base::template cmd<Nav,c>(nav,code):false;
       }
+      template<typename Nav> bool up(Nav& nav) {
+        return f()?Base::template up<Nav>(nav):false;
+      }
+      template<typename Nav> bool down(Nav& nav) {
+        return f()?Base::template down<Nav>(nav):false;
+      }
+      template<typename Nav> bool enter(Nav& nav) {
+        return f()?Base::template enter<Nav>(nav):false;
+      }
+      template<typename Nav> bool esc(Nav& nav) {
+        return f()?Base::template esc<Nav>(nav):false;
+      }
+      template<typename Nav> bool left(Nav& nav) {
+        return f()?Base::template left<Nav>(nav):false;
+      }
+      template<typename Nav> bool right(Nav& nav) {
+        return f()?Base::right(nav):false;
+      }
+      template<typename Nav> bool key(Nav& nav,Key k) {
+        return f()?Base::template key<Nav>(nav,k):false;
+      }
     };
   };
 
