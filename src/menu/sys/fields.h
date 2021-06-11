@@ -68,7 +68,7 @@ namespace Menu {
       template<typename Nav,Cmd c> 
       bool cmd(Nav& nav,int code=0) {
         if(c==Cmd::Enter) {
-          _trace(clog<<"Choose::Cmd<Nav,Enter>"<<endl;clog.flush(););
+          // _trace(clog<<"Choose::Cmd<Nav,Enter>"<<endl;clog.flush(););
           Base::enumSet(nav);
           nav.focus(false);
           nav.close();
@@ -286,7 +286,7 @@ namespace Menu {
       using Base::Base;
       template<typename Nav>
       bool enter(Nav& nav) {
-        _trace(clog<<"EditCtrl::enter"<<endl);
+        // _trace(clog<<"EditCtrl::enter"<<endl);
         if(nav.focus()) {
           nav.tune(nav.tune()^Base::tune());
           nav.focus(nav.tune());
