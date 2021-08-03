@@ -109,10 +109,10 @@ namespace Menu {
     inline static constexpr bool enabled() {return true;}
     inline static void enable(bool b) {}
     template<typename Dev> inline static void poll(Dev&) {
-      _trace(
-        static TinyTimeUtils::Tick<500> dots;
-        if(dots) Serial.write('.')
-      );
+      // _trace(
+      //   static TinyTimeUtils::Tick<500> dots;
+      //   if(dots) Serial.write('.')
+      // );
     }
     template<typename Nav,typename Out,bool=true> 
     static void printTo(Nav& nav,Out&,int n=0,bool sel=false) {}

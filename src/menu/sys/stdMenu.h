@@ -26,8 +26,8 @@ namespace Menu {
       Idx sz() const {return size();}
       decltype(data.operator[](0)) operator[](size_t i) {return data.operator[](i); }
 
-      static constexpr bool canNav() {return true;}
-      static constexpr bool parentDraw() {return false;}
+      // static constexpr bool canNav() {return true;}
+      // static constexpr bool parentDraw() {return false;}
 
       template<typename Target,Idx o,Idx... oo>
       struct Walk {
