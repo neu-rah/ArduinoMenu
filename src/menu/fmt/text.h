@@ -15,9 +15,12 @@ namespace Menu {
       using Base::Base;
       template<Fmt tag,bool start> 
       void fmt(bool editing,bool tunning,int n=0,bool sel=false,bool en=true) {
-        if(start&&tag==Fmt::EditMode)
-          Base::print((editing&&sel)?(tunning?tune:edit):none);
-        Base::template fmt<tag,start>(editing,tunning,n,sel,en);
+        if(tag==Fmt::EditMode) {
+          if(start) {
+            Base::template fmt<tag,start>(editing,tunning,n,sel,en);
+            Base::print((editing&&sel)?(tunning?tune:edit):none);
+          } else Base::template fmt<tag,start>(editing,tunning,n,sel,en);
+        } else Base::template fmt<tag,start>(editing,tunning,n,sel,en);
       }
     };
   };

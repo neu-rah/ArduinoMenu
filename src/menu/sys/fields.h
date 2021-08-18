@@ -370,7 +370,7 @@ namespace Menu {
       static constexpr Type tune() {return 0;}
       // Type value=0;
       int accel=0;
-      TinyTimeUtils::TickCnt<relaxTimeout> relax;
+      TinyTimeUtils::template TickCnt<relaxTimeout> relax;
       using Base::high;
       using Base::low;
       using Base::get;

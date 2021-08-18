@@ -96,7 +96,7 @@ namespace Menu {
     Tail& tail() {return *this;}
     // static void names() {_trace(MDO::print("."));}
     IItem* operator[](size_t i) {assert(false);}
-    inline static void get() {}
+    inline static constexpr bool get() {return true;}
     inline static void begin() {}
     // inline static void relax() {}
     inline static constexpr bool canWrap() {return false;}

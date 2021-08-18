@@ -89,7 +89,7 @@ namespace Menu {
         Base::template fmtStart<Fmt::Body>(nav.focus(),nav.tune());
         menu.onPrintBodyTo(nav,Base::obj(),selIdx,0);
         Base::template fmtStop<Fmt::Body>(nav.focus(),nav.tune());
-        Base::template printMenu<Nav,Menu>(nav,menu,selIdx);
+        // Base::template printMenu<Nav,Menu>(nav,menu,selIdx);
       }
     };
   };

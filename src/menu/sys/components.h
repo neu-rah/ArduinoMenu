@@ -232,9 +232,15 @@ namespace Menu
     };    
   };
 
-  //utility, use constText as label
+  template<template<typename> class O>
+  using LabelOf=Chain<AsLabel::Part,O>;
+
+  //utility, use constText as static label
   template <const ConstText *text>
-  using StaticLabel = Chain<AsLabel::Part, StaticText<text>::template Part>;
+  using StaticLabel = LabelOf<StaticText<text>::template Part>;
+
+  //utility, use constText as label
+  using Label = LabelOf<Text::template Part>;
 
   #ifdef ARDUINO
     //use static constructed `const char*`
