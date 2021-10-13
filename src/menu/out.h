@@ -26,7 +26,9 @@ namespace Menu {
     template<typename Nav,typename Item>
     static void printTitle(Nav& nav,Item& i) {}
     template<typename Nav,typename Item>
-    static void printItem(Nav& nav,Item& i,Idx n=0,bool sel=false) {}
+    void printItem(Nav& nav,Item& i,Idx n=0,bool sel=false) {
+      i.onPrintItemTo(nav,O::obj(),n,sel);
+    }
     template<Fmt,bool> static void fmt(bool editing,bool tunning,int n=0,bool sel=false,bool en=true) {}
     template<Fmt tag> void fmtStart(bool editing,bool tunning,int n=0,bool sel=false,bool en=true) {O::obj().template fmt<tag,true>(editing,tunning,n,sel,en);}
     template<Fmt tag> void fmtStop(bool editing,bool tunning,int n=0,bool sel=false,bool en=true) {O::obj().template fmt<tag,false>(editing,tunning,n,sel,en);}
@@ -51,6 +53,9 @@ namespace Menu {
         default: return "unknown";
       }
     }
+    inline void padOn() {}
+    inline void padOff() {}
+    inline constexpr bool padding() {return false;}
   };
 
   //print menu title
@@ -94,6 +99,43 @@ namespace Menu {
     };
   };
 
+  struct PadPrinter {
+    template<typename O>
+    struct Part:O {
+      Idx padLevel=0;// => single thread
+      using This=Part<O>;
+      using Base=O;
+      using Base::Base;
+      void nl() {
+        _trace(clog<<"PadPrinter::nl padLevel:"<<padLevel<<endl);
+        if(!padLevel) O::nl();
+      }
+      void _nl() {O::nl();}
+      template<typename Nav,typename Menu>
+      void printMenu(Nav& nav,Menu& menu,Idx selIdx) {
+        _trace(clog<<"#→");
+        // _trace(clog<<"PadPrinter::printMenu ");
+        if(has<Style::PadDraw>(menu.styles())) {
+          padLevel++;
+          _trace(clog<<"padLevel:"<<padLevel<<endl);
+        }
+        // _trace(clog<<"padLevels:"<<padLevel);
+        Base::printMenu(nav,menu,selIdx);
+        if(has<Style::PadDraw>(menu.styles())) padLevel--;
+        // _trace(clog<<" "<<padLevel<<endl);
+      }
+      // template<typename Nav,typename Item>
+      // void printItem(Nav& nav,Item& i,Idx n=0,bool sel=false) {
+      //   // _trace(clog<<"PadPrinter::printItem ");
+      //   // if(has<Style::PadDraw>((Style)i.styles())) padLevel++;
+      //   // _trace(clog<<"padLevels:"<<padLevel);
+      //   Base::printItem(nav,i,n,sel);
+      //   // if(has<Style::PadDraw>(i.styles())) padLevel--;
+      //   // _trace(clog<<" "<<padLevel<<endl);
+      // }
+    };
+  };
+
   //provides aux functions for printing
   struct BasePrinter {
     template<typename O>
@@ -112,7 +154,7 @@ namespace Menu {
       void printItem(Nav& nav,Item& i,Idx n=0,bool sel=false) {
         // _trace(clog<<"BasePrinter::printItem"<<endl;clog.flush());
         Base::template fmtStart<Fmt::Item>(nav.focus(),nav.tune(),n,sel,i.enabled());
-        i.onPrintItemTo(nav,Base::obj(),n,sel);
+        Base::printItem(nav,i,n,sel);
         Base::template fmtStop<Fmt::Item>(nav.focus(),nav.tune(),n,sel,i.enabled());
       }
     };
@@ -245,7 +287,7 @@ namespace Menu {
       virtual void print(const char* o){}
       virtual void printMenu(INav& nav,IItem&,Idx) {}
       virtual void printTitle(INav& nav,IItem&) {}
-      virtual void printItem(INav& nav,IItem&,Idx=0,bool=false) {}
+      virtual void printItem(INav& nav,IItem& i,Idx n=0,bool sel=false) {}
   };
 
   //joins mixins static output composition with the vitual output interface

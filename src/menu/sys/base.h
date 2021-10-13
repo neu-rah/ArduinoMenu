@@ -49,8 +49,9 @@ namespace Menu {
     None=0<<0,
     WrapNav=1<<0,
     ParentDraw=1<<1,
-    IsField=1<<2,
-    IsMenu=1<<3
+    PadDraw=1<<2,
+    IsField=1<<3,
+    IsMenu=1<<4
   };
 
   Style operator&(Style a,Style b) {return (Style)(((Idx)a)&((Idx)b));}
@@ -78,6 +79,14 @@ namespace Menu {
     struct Part:O {
       using O::O;
       static constexpr Style styles() {return O::styles()|Style::ParentDraw;}
+    };
+  };
+
+  struct PadDraw {
+    template<typename O>
+    struct Part:O {
+      using O::O;
+      static constexpr Style styles() {return O::styles()|Style::PadDraw;}
     };
   };
 

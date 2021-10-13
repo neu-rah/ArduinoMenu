@@ -168,6 +168,11 @@ namespace Menu {
         ->decltype(API().operator()(target,args...))
         {return API().operator()(target,args...);}
     };
+    // template<typename Nav,typename Item>
+    // void printItem(Nav& nav,Item& i,Idx n=0,bool sel=false) {
+    //   _trace(clog<<"Empty::printItem"<<endl);
+    //   i.onPrintItemTo(nav,Base::obj(),n,sel);
+    // }
 };
 
   template<template<typename> class Base,template<typename> class... I>
