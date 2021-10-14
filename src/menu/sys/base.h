@@ -90,20 +90,11 @@ namespace Menu {
     };
   };
 
-  // struct SelfDraw {
-  //   template<typename O>
-  //   struct Part:O {
-  //     using O::O;
-  //     static constexpr Style styles() {return O::styles()&~Style::ParentDraw;}
-  //   };
-  // };
-
   //style: item is a menu
   struct IsMenu {
     template<typename O>
     struct Part:O {
       using O::O;
-      // static constexpr Style thisStyles=(O::isTop()?Style::None:O::styles())|Style::IsMenu;
       static constexpr Style styles() {return (O::isTop()?Style::None:O::styles())|Style::IsMenu;}
     };
   };
