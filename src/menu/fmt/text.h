@@ -18,7 +18,9 @@ namespace Menu {
         if(tag==Fmt::EditMode) {
           if(start) {
             Base::template fmt<tag,start>(editing,tunning,n,sel,en);
-            Base::print((editing&&sel)?(tunning?tune:edit):none);
+            if(Base::padding()) {
+              if(editing&&sel) Base::print(tunning?tune:edit);
+            } else Base::print((editing&&sel)?(tunning?tune:edit):none);
           } else Base::template fmt<tag,start>(editing,tunning,n,sel,en);
         } else Base::template fmt<tag,start>(editing,tunning,n,sel,en);
       }
@@ -95,20 +97,22 @@ namespace Menu {
       template<Fmt tag,bool start> 
       void fmt(bool editing,bool tunning,int n=0,bool sel=false,bool en=true) {
         switch(tag) {
-          case Fmt::EditCursor:
-            if(!editing) return;
-            if(start) print(tunning?'>':'[');
-            else print(tunning?'<':']');
-            break;
+          // case Fmt::EditCursor:
+          //   if(!editing) return;
+          //   if(start) print(tunning?'>':'[');
+          //   else print(tunning?'<':']');
+          //   break;
           case Fmt::Title:
             if(!start) nl();
             break;
           case Fmt::Item:
             if (start) {
-              // print('[');
-              print((char)(n<10?'0'+n:' '));
-              // print(']');
-              print(sel?(en?'>':'-'):' ');
+              if(Base::padding()) {
+                if(sel) print(en?'>':'-');
+              } else {
+                print((char)(n<10?'0'+n:' '));
+                print(sel?(en?'>':'-'):' ');
+              }
             } else nl();
             break;
           default: break;

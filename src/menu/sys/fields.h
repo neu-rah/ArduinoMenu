@@ -265,9 +265,9 @@ namespace Menu
   template <typename T, T def>
   struct FieldVal {
     template <typename O = Empty<Nil>>
-    struct Part : FieldValBase<T,def>::Part<O> {
+    struct Part : FieldValBase<T,def>::template Part<O> {
       using ValueType = T;
-      using Base = typename FieldValBase<T,def>::Part<O>;
+      using Base = typename FieldValBase<T,def>::template Part<O>;
       using This = Part<O>;
       using Base::Base;
     };
@@ -276,14 +276,16 @@ namespace Menu
   template <uint8_t def>
   struct FieldVal<uint8_t,def> {
     template <typename O = Empty<Nil>>
-    struct Part : FieldValBase<uint8_t,def>::Part<O> {
+    struct Part : FieldValBase<uint8_t,def>::template Part<O> {
       using ValueType = uint8_t;
-      using Base = typename FieldValBase<uint8_t,def>::Part<O>;
+      using Base = typename FieldValBase<uint8_t,def>::template Part<O>;
       using This = Part<O>;
       using Base::Base;
       template <typename Nav, typename Out, bool delegate = true>
       void printTo(Nav &nav, Out &o, int n, bool sel) {
         o.print((int)Base::get());
+        if (delegate)
+          Base::Base::printTo(nav, o, n, sel);
       }
     };
   };
