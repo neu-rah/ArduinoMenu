@@ -91,8 +91,14 @@ namespace Menu {
       static constexpr Style styles() {return O::styles()|Style::PadDraw;}
       template<typename Nav,typename Out>
       void onPrintBodyTo(Nav& nav,Out& out,Idx selIdx,Idx n)  {
-        out.padOn();
+        _trace(clog<<"PadDraw::onPrintBodyTo"<<endl;);
         O::onPrintBodyTo(nav,out,selIdx,n);
+      }
+      template<typename Nav,typename Out>
+      void onPrintMenuTo(Nav& nav,Out& out,Idx selIdx) {
+        _trace(clog<<"PadDraw::onPrintMenuTo"<<endl;);
+        out.padOn();
+        O::onPrintMenuTo(nav,out,selIdx);
         out.padOff();
       }
     };

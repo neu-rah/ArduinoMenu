@@ -103,7 +103,10 @@ namespace Menu {
           //   else print(tunning?'<':']');
           //   break;
           case Fmt::Title:
-            if(!start) nl();
+            if(!start) {
+              if(Base::padding()) print(" ");
+              else nl();
+            }
             break;
           case Fmt::Item:
             if (start) {
