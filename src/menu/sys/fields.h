@@ -201,19 +201,17 @@ namespace Menu
       Part(OO... oo) : reflex(def), Base(oo...) {}
       void setDefault() { reflex = target = def; }
       bool changed() { return reflex != target; }
-      void changed(bool o)
-      {
+      void changed(bool o) {
         if (o)
           reflex ^= 1;
         else
           reflex = target;
       }
-      void set(T o)
-      {
+      void set(T o) {
         target = o;
         Base::obj().action();
       }
-      T get() const { return target; }
+      T get() const {return target;}
       template <typename Nav, typename Out, bool delegate = true>
       void printTo(Nav &nav, Out &o, int n = 0, bool sel = false)
       {
@@ -281,6 +279,7 @@ namespace Menu
       using Base = typename FieldValBase<uint8_t,def>::template Part<O>;
       using This = Part<O>;
       using Base::Base;
+      void changed(bool o) {}
       template <typename Nav, typename Out, bool delegate = true>
       void printTo(Nav &nav, Out &o, int n, bool sel) {
         o.print((int)Base::get());
@@ -406,34 +405,32 @@ namespace Menu
       using Base = typename EditCtrl::Part<O>;
       using This = Part<Base>;
       using Base::Base;
-      template <typename Nav, typename T>
+      using Type = typename Base::ValueType;
+      template <typename Nav>
       void stepit(Nav &nav, int dir)
       {
         // dir*=options->invertFieldKeys?-1:1;
-        T thisstep = nav.tune() ? Base::tune() : Base::step();
-        Base::changed(true);
+        Type thisstep = nav.tune() ? Base::tune() : Base::step();
+        // Base::obj().changed(true);
         //by default they are inverted.. now buttons and joystick have to flip them
-        if (dir > 0)
-        {
-          if ((Base::high() - Base::target()) < thisstep)
+        if (dir > 0) {
+          if ((Base::high() - Base::get()) < thisstep)
             Base::set(Base::canWrap() ? Base::low() : Base::high());
           else
-            Base::target() += thisstep;
-        }
-        else
-        {
-          if ((Base::target() - Base::low()) < thisstep)
-            Base::target() = Base::canWrap() ? Base::high() : Base::low();
+            Base::set(Base::get()+thisstep);
+        } else {
+          if ((Base::get() - Base::low()) < thisstep)
+            Base::set(Base::canWrap() ? Base::high() : Base::low());
           else
-            Base::target() -= thisstep;
+            Base::set(Base::get()-thisstep);
         }
       }
       template <typename Nav>
       bool up(Nav &nav)
       {
-        if (nav.focus())
-        {
-          Base::set(Base::get() + (nav.tune() ? Base::tune() : Base::step()));
+        if (nav.focus()) {
+          // Base::set(Base::get() + (nav.tune() ? Base::tune() : Base::step()));
+          stepit(nav,1);
           return true;
         }
         return false;
@@ -444,6 +441,7 @@ namespace Menu
         if (nav.focus())
         {
           Base::set(Base::get() - (nav.tune() ? Base::tune() : Base::step()));
+          // stepit<Nav,Type>(nav,-1);
           return true;
         }
         return false;
