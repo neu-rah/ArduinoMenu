@@ -68,7 +68,10 @@ namespace Menu {
     }
     template<typename Nav,typename Out> void onPrintMenuTo(Nav& nav,Out& out,Idx selIdx) 
       {
-        // _trace(clog<<"StaticMenu::onPrintMenuTo"<<endl;clog.flush());
+        // _trace(
+        //   clog<<"StaticMenu::onPrintMenuTo"<<has<Style::PadDraw>(This::styles())<<endl;
+        //   clog.flush()
+        // );
         out.template printMenu<Nav,This>(nav,*this,selIdx);}
     template<typename Nav,typename Out> void onPrintTitleTo(Nav& nav,Out& out) {
         // _trace(clog<<"StaticMenu::onPrintTitleTo"<<endl;clog.flush());

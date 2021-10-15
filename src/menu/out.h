@@ -92,9 +92,9 @@ namespace Menu {
       void printMenu(Nav& nav,Menu& menu,Idx selIdx) {
         // _trace(clog<<"BodyPrinter::printMenu"<<endl;clog.flush());
         Base::template fmtStart<Fmt::Body>(nav.focus(),nav.tune());
+        Base::template printMenu<Nav,Menu>(nav,menu,selIdx);
         menu.onPrintBodyTo(nav,Base::obj(),selIdx,0);
         Base::template fmtStop<Fmt::Body>(nav.focus(),nav.tune());
-        // Base::template printMenu<Nav,Menu>(nav,menu,selIdx);
       }
     };
   };
@@ -106,33 +106,11 @@ namespace Menu {
       using This=Part<O>;
       using Base=O;
       using Base::Base;
-      void nl() {
-        _trace(clog<<"PadPrinter::nl padLevel:"<<padLevel<<endl);
-        if(!padLevel) O::nl();
-      }
+      void padOn() {padLevel++;}
+      void padOff() {padLevel--;}
+      bool padding() {return padLevel>0;}
+      void nl() {if(!padLevel) O::nl();}
       void _nl() {O::nl();}
-      template<typename Nav,typename Menu>
-      void printMenu(Nav& nav,Menu& menu,Idx selIdx) {
-        _trace(clog<<"#→");
-        // _trace(clog<<"PadPrinter::printMenu ");
-        if(has<Style::PadDraw>(menu.styles())) {
-          padLevel++;
-          _trace(clog<<"padLevel:"<<padLevel<<endl);
-        }
-        // _trace(clog<<"padLevels:"<<padLevel);
-        Base::printMenu(nav,menu,selIdx);
-        if(has<Style::PadDraw>(menu.styles())) padLevel--;
-        // _trace(clog<<" "<<padLevel<<endl);
-      }
-      // template<typename Nav,typename Item>
-      // void printItem(Nav& nav,Item& i,Idx n=0,bool sel=false) {
-      //   // _trace(clog<<"PadPrinter::printItem ");
-      //   // if(has<Style::PadDraw>((Style)i.styles())) padLevel++;
-      //   // _trace(clog<<"padLevels:"<<padLevel);
-      //   Base::printItem(nav,i,n,sel);
-      //   // if(has<Style::PadDraw>(i.styles())) padLevel--;
-      //   // _trace(clog<<" "<<padLevel<<endl);
-      // }
     };
   };
 

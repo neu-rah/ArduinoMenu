@@ -46,12 +46,14 @@ namespace Menu {
 
   //attributes
   enum class Style:Idx {
-    None=0<<0,
-    WrapNav=1<<0,
-    ParentDraw=1<<1,
-    PadDraw=1<<2,
-    IsField=1<<3,
-    IsMenu=1<<4
+    None=0<<0,//0
+    WrapNav=1<<0,//1
+    ParentDraw=1<<1,//2
+    PadDraw=1<<2,//4
+    IsField=1<<3,//8
+    IsMenu=1<<4//16
+    //21=100101 = WrapNav | PadDraw | IsMenu
+    //17=100001 = WrapNav | IsMenu
   };
 
   Style operator&(Style a,Style b) {return (Style)(((Idx)a)&((Idx)b));}
@@ -87,6 +89,12 @@ namespace Menu {
     struct Part:O {
       using O::O;
       static constexpr Style styles() {return O::styles()|Style::PadDraw;}
+      template<typename Nav,typename Out>
+      void onPrintBodyTo(Nav& nav,Out& out,Idx selIdx,Idx n)  {
+        out.padOn();
+        O::onPrintBodyTo(nav,out,selIdx,n);
+        out.padOff();
+      }
     };
   };
 
@@ -95,7 +103,7 @@ namespace Menu {
     template<typename O>
     struct Part:O {
       using O::O;
-      static constexpr Style styles() {return (O::isTop()?Style::None:O::styles())|Style::IsMenu;}
+      static constexpr Style styles() {return (/*O::isTop()?Style::None:*/O::styles())|Style::IsMenu;}
     };
   };
 

@@ -225,9 +225,8 @@ namespace Menu
     };
   };
 
-  //storing data value
   template <typename T, T def>
-  struct FieldVal
+  struct FieldValBase
   {
     template <typename O = Empty<Nil>>
     struct Part : O
@@ -242,26 +241,49 @@ namespace Menu
       T dirty = true;
       template <typename... OO>
       Part(OO... oo) : value(def), Base(oo...) {}
-      void setDefault()
-      {
+      void setDefault() {
         dirty |= value == def;
         value = def;
       }
       bool changed() { return dirty; }
       void changed(bool o) { dirty = o; }
-      void set(T o)
-      {
+      void set(T o) {
         value = o;
         Base::obj().action();
       }
       T get() const { return value; }
       template <typename Nav, typename Out, bool delegate = true>
-      void printTo(Nav &nav, Out &o, int n, bool sel)
-      {
-        // _trace(clog<<"FieldVal::printTo"<<endl;clog.flush());
+      void printTo(Nav &nav, Out &o, int n, bool sel) {
         o.print(get());
         if (delegate)
           Base::printTo(nav, o, n, sel);
+      }
+    };
+  };
+
+  //storing data value
+  template <typename T, T def>
+  struct FieldVal {
+    template <typename O = Empty<Nil>>
+    struct Part : FieldValBase<T,def>::Part<O> {
+      using ValueType = T;
+      using Base = typename FieldValBase<T,def>::Part<O>;
+      using This = Part<O>;
+      using Base::Base;
+    };
+  };
+
+  template <uint8_t def>
+  struct FieldVal<uint8_t,def> {
+    template <typename O = Empty<Nil>>
+    struct Part : FieldValBase<uint8_t,def>::Part<O> {
+      using ValueType = uint8_t;
+      using Base = typename FieldValBase<uint8_t,def>::Part<O>;
+      using This = Part<O>;
+      using Base::Base;
+      template <typename Nav, typename Out, bool delegate = true>
+      void printTo(Nav &nav, Out &o, int n, bool sel) {
+        o.print((int)Base::get());
       }
     };
   };
