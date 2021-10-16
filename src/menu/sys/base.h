@@ -52,14 +52,17 @@ namespace Menu {
     PadDraw=1<<2,//4
     IsField=1<<3,//8
     IsMenu=1<<4//16
-    //21=100101 = WrapNav | PadDraw | IsMenu
-    //17=100001 = WrapNav | IsMenu
+    //  168421
+    //21=10101 = WrapNav | PadDraw | IsMenu
+    //17=10001 = WrapNav | IsMenu
+    //19=10011 = WrapNav | ParentDraw | IsMenu
+    //23=10111 = WrapNav | ParentDraw | PadDraw | IsMenu
   };
 
-  Style operator&(Style a,Style b) {return (Style)(((Idx)a)&((Idx)b));}
-  Style operator|(Style a,Style b) {return (Style)(((Idx)a)|((Idx)b));}
-  Style operator^(Style a,Style b) {return (Style)(((Idx)a)^((Idx)b));}
-  Style operator~(Style a) {return (Style)~((Idx)a);}
+  constexpr Style operator&(Style a,Style b) {return (Style)(((Idx)a)&((Idx)b));}
+  constexpr Style operator|(Style a,Style b) {return (Style)(((Idx)a)|((Idx)b));}
+  constexpr Style operator^(Style a,Style b) {return (Style)(((Idx)a)^((Idx)b));}
+  constexpr Style operator~(Style a) {return (Style)~((Idx)a);}
   // operator bool(Style o) {return (bool)o;}
   template<Style mask>
   bool is(Style s) {return ((Idx)s)==(Idx)mask;}
@@ -89,14 +92,14 @@ namespace Menu {
     struct Part:O {
       using O::O;
       static constexpr Style styles() {return O::styles()|Style::PadDraw;}
-      template<typename Nav,typename Out>
-      void onPrintBodyTo(Nav& nav,Out& out,Idx selIdx,Idx n)  {
-        _trace(clog<<"PadDraw::onPrintBodyTo"<<endl;);
-        O::onPrintBodyTo(nav,out,selIdx,n);
-      }
+      // template<typename Nav,typename Out>
+      // void onPrintBodyTo(Nav& nav,Out& out,Idx selIdx,Idx n)  {
+      //   _trace(clog<<"PadDraw::onPrintBodyTo"<<endl;);
+      //   O::onPrintBodyTo(nav,out,selIdx,n);
+      // }
       template<typename Nav,typename Out>
       void onPrintMenuTo(Nav& nav,Out& out,Idx selIdx) {
-        _trace(clog<<"PadDraw::onPrintMenuTo"<<endl;);
+        // _trace(clog<<"PadDraw::onPrintMenuTo"<<endl;);
         out.padOn();
         O::onPrintMenuTo(nav,out,selIdx);
         out.padOff();
