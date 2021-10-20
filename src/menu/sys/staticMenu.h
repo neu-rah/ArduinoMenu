@@ -44,7 +44,7 @@ namespace Menu {
     template<typename... Args>
     StaticList(Args... args):Base(args...) {}
     template<typename Nav,typename Out>
-    void onPrintMenuTo(Nav& nav,Out& out,Idx selIdx) {out.printMenu(nav,*this,selIdx);}
+    void onPrintMenuTo(Nav& nav,Out& out,Idx level,Idx selIdx) {out.printMenu(nav,*this,selIdx);}
     template<typename Nav,typename Out>
     void onPrintBodyTo(Nav& nav,Out& out,Idx selIdx,Idx n) {out.printItem(nav,*this,n,selIdx==n);}
     static constexpr Idx len() {return Base::_sz();}
@@ -67,7 +67,7 @@ namespace Menu {
       title.template printTo<Nav,Out>(nav,out,n,sel);
     }
     template<typename Nav,typename Out>
-    void onPrintMenuTo(Nav& nav,Out& out,Idx selIdx) 
+    void onPrintMenuTo(Nav& nav,Out& out,Idx level,Idx selIdx) 
       {out.template printMenu<Nav,This>(nav,*this,selIdx);}
     template<typename Nav,typename Out>
     void onPrintTitleTo(Nav& nav,Out& out) 

@@ -98,7 +98,7 @@ namespace Menu {
       //   O::onPrintBodyTo(nav,out,selIdx,n);
       // }
       template<typename Nav,typename Out>
-      void onPrintMenuTo(Nav& nav,Out& out,Idx selIdx) {
+      void onPrintMenuTo(Nav& nav,Out& out,Idx level,Idx selIdx) {
         // _trace(clog<<"PadDraw::onPrintMenuTo"<<endl;);
         out.padOn();
         O::onPrintMenuTo(nav,out,selIdx);

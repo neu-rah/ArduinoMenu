@@ -92,7 +92,7 @@ namespace Menu
         return true;
       }
       template <typename Nav, typename Out>
-      void onPrintMenuTo(Nav &nav, Out &out, int n) { Base::values.template onPrintMenuTo<Nav, Out>(nav, out, n); }
+      void onPrintMenuTo(Nav &nav, Out &out,Idx level, int n) { Base::values.template onPrintMenuTo<Nav, Out>(nav, out, n); }
       template <typename Nav, typename Out>
       void onPrintTitleTo(Nav &nav, Out &out) { Base::values.template onPrintTitleTo<Nav, Out>(nav, out); }
       template <typename Nav, typename Out>
@@ -641,7 +641,7 @@ namespace Menu
           Base::printTo(nav, out, n, sel);
       }
       template <typename Nav, typename Out>
-      void onPrintMenuTo(Nav &nav, Out &out, int)
+      void onPrintMenuTo(Nav &nav, Out &out,Idx level, int)
       { /*_trace(mdo<<"onPrintMenuTo\n\r");*/
       }
       template <typename Nav, typename Out>
