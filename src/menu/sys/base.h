@@ -101,7 +101,7 @@ namespace Menu {
       void onPrintMenuTo(Nav& nav,Out& out,Idx level,Idx selIdx) {
         // _trace(clog<<"PadDraw::onPrintMenuTo"<<endl;);
         out.padOn();
-        O::onPrintMenuTo(nav,out,selIdx);
+        O::onPrintMenuTo(nav,out,level,selIdx);
         out.padOff();
       }
     };

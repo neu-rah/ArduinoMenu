@@ -116,7 +116,7 @@ namespace Menu {
     }
     template<typename Nav,typename Out,bool=true> 
     static void printTo(Nav& nav,Out&,int n=0,bool sel=false) {}
-    template<typename Nav,typename Out> void onPrintMenuTo(Nav& nav,Out& out,Idx level,Idx selIdx) {out.printMenu(nav,O::obj(),selIdx);}
+    template<typename Nav,typename Out> void onPrintMenuTo(Nav& nav,Out& out,Idx level,Idx selIdx) {out.printMenu(nav,O::obj(),level+1,selIdx);}
     template<typename Nav,typename Out> void onPrintTitleTo(Nav& nav,Out& out) {out.printTitle(nav,O::obj());}
     template<typename Nav,typename Out> void onPrintBodyTo(Nav& nav,Out& out,Idx selIdx,Idx n)
       {printTo(nav,out,selIdx,n==selIdx);}
