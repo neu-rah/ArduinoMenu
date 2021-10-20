@@ -79,7 +79,7 @@ namespace Menu {
       // need to change `has` & `is` from Style to decltype(Style)? C++ should know it better...
       if(has<Style::PadDraw>(Base::styles())&has<Style::ParentDraw>(Base::styles())) {
         out.padOn();
-        out.template printMenu<Nav,This>(nav,*this,nav.pos());//TODO: nav pos() need to b corrected & menus need a preview print
+        out.template printMenu<Nav,This>(nav,*this,level,nav.pos());//TODO: nav pos() need to b corrected & menus need a preview print
         out.padOff();
       } else title.printTo(nav,out,n,sel);
 }

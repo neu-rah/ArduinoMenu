@@ -102,7 +102,7 @@ namespace Menu {
           idx++;
         }
       }
-      template<typename Nav,typename Out> void printItemTo(Nav& nav,Out& out) {out.printItem(Base::obj());}
+      template<typename Nav,typename Out> void printItemTo(Nav& nav,Out& out,Idx level) {out.printItem(Base::obj(),level);}
     };
   };
 

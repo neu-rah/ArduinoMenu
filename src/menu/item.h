@@ -40,9 +40,9 @@ namespace Menu {
     // constexpr static const char* named="PrintMenuTo";
     // _trace(MDO& operator<<(MDO& o) const {return o<<named;});
     template<typename T,typename Nav,typename Out>
-    inline auto operator()(T& o,Nav& nav,Out& out,int n)
-      ->decltype(o.template onPrintMenuTo<Nav,Out>(nav,out,n)) 
-      {return o.template onPrintMenuTo<Nav,Out>(nav,out,n);}
+    inline auto operator()(T& o,Nav& nav,Out& out,Idx level,int n)
+      ->decltype(o.template onPrintMenuTo<Nav,Out>(nav,out,level,n)) 
+      {return o.template onPrintMenuTo<Nav,Out>(nav,out,level,n);}
   };
   // _trace(MDO& operator<<(MDO& o,const PrintMenuTo& api) {return api.operator<<(o);});
 

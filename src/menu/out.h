@@ -26,8 +26,8 @@ namespace Menu {
     template<typename Nav,typename Item>
     static void printTitle(Nav& nav,Item& i) {}
     template<typename Nav,typename Item>
-    void printItem(Nav& nav,Item& i,Idx n=0,bool sel=false) {
-      i.onPrintItemTo(nav,O::obj(),n,sel);
+    void printItem(Nav& nav,Item& i,Idx level,Idx n=0,bool sel=false) {
+      i.onPrintItemTo(nav,O::obj(),level,n,sel);
     }
     template<Fmt,bool> static void fmt(bool editing,bool tunning,int n=0,bool sel=false,bool en=true) {}
     template<Fmt tag> void fmtStart(bool editing,bool tunning,int n=0,bool sel=false,bool en=true) {O::obj().template fmt<tag,true>(editing,tunning,n,sel,en);}
@@ -69,7 +69,7 @@ namespace Menu {
       void printMenu(Nav& nav,Menu& menu,Idx level,Idx selIdx) {
         // _trace(clog<<"TitlePrinter::printMenu"<<endl;clog.flush());
         menu.onPrintTitleTo(nav,Base::obj());
-        Base::template printMenu<Nav,Menu>(nav,menu,selIdx);
+        Base::template printMenu<Nav,Menu>(nav,menu,level,selIdx);
       }
       template<typename Nav,typename Item>
       void printTitle(Nav& nav,Item& i) {
@@ -125,13 +125,13 @@ namespace Menu {
       void printMenu(Nav& nav,Menu& menu,Idx level,bool preview,Idx selIdx=0) {
         // _trace(clog<<"BasePrinter::printMenu"<<endl;clog.flush());
         Base::template fmtStart<Fmt::Menu>(nav.focus(),nav.tune());
-        Base::template printMenu<Nav,Menu>(nav,menu,selIdx);
+        Base::template printMenu<Nav,Menu>(nav,menu,level,selIdx);
         Base::template fmtStop<Fmt::Menu>(nav.focus(),nav.tune());
       }
       // template<typename Nav,typename Menu> void printMenu(Nav& nav,Menu& menu,Idx level) {_printMenu(nav,menu,true,selIdx);}
       // template<typename Nav,typename Menu> void printMenu(Nav& nav,Menu& menu,Idx level,Idx selIdx) {_printMenu(nav,menu,false,selIdx);}
       template<typename Nav,typename Item>
-      void printItem(Nav& nav,Item& i,Idx n=0,bool sel=false) {
+      void printItem(Nav& nav,Item& i,Idx level,Idx n=0,bool sel=false) {
         // _trace(clog<<"BasePrinter::printItem"<<endl;clog.flush());
         //TODO: this is the place to capture menu preview... but how to signal it to format so that cursors wont be drawn?
         // clog<<"{"<<endl
@@ -144,7 +144,7 @@ namespace Menu {
         bool p=has<Style::PadDraw>(i.styles())&has<Style::ParentDraw>(i.styles());
         if(p) Base::padOn();
         Base::template fmtStart<Fmt::Item>(nav.focus(),nav.tune(),n,sel);
-        Base::printItem(nav,i,n,sel);
+        Base::printItem(nav,i,level,n,sel);
         Base::template fmtStop<Fmt::Item>(nav.focus(),nav.tune(),n,sel,i.enabled());
         if(p) Base::padOff();
       }
@@ -254,11 +254,11 @@ namespace Menu {
       using Base::Base;
       Idx top=0;
       template<typename Nav,typename Item>
-      void printItem(Nav& nav,Item& i,Idx n=0,bool sel=false) {
+      void printItem(Nav& nav,Item& i,Idx level,Idx n=0,bool sel=false) {
         auto pos=nav.ppos();//has<Style::ParentDraw>(i.styles())?nav.ppos():nav.pos();
         while(pos<top) top--;
         while(pos>(top+Sz-1)) top++;
-        if(n>=top&&(n-top)<Sz) Base::template printItem<Nav,Item>(nav,i,n,sel);
+        if(n>=top&&(n-top)<Sz) Base::template printItem<Nav,Item>(nav,i,level,n,sel);
       }
     };
   };
@@ -278,7 +278,7 @@ namespace Menu {
       virtual void print(const char* o){}
       virtual void printMenu(INav& nav,IItem&,Idx) {}
       virtual void printTitle(INav& nav,IItem&) {}
-      virtual void printItem(INav& nav,IItem& i,Idx n=0,bool sel=false) {}
+      virtual void printItem(INav& nav,IItem& i,Idx level,Idx n=0,bool sel=false) {}
   };
 
   //joins mixins static output composition with the vitual output interface
@@ -293,7 +293,7 @@ namespace Menu {
         void print(const char* o) override {O::print(o);}
         void printMenu(INav& nav,IItem& it,Idx selIdx) override {Base::printMenu(nav,it,selIdx);}
         void printTitle(INav& nav,IItem& it) override {Base::printTitle(nav,it);}
-        void printItem(INav& nav,IItem& it,Idx i=0,bool s=false) override {Base::printItem(nav,it,s);}
+        void printItem(INav& nav,IItem& it,Idx level,Idx i=0,bool s=false) override {Base::printItem(nav,it,s);}
       };
   };
 
