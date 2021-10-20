@@ -97,7 +97,7 @@ namespace Menu
       void onPrintTitleTo(Nav &nav, Out &out) { Base::values.template onPrintTitleTo<Nav, Out>(nav, out); }
       template <typename Nav, typename Out>
       void onPrintBodyTo(Nav &nav, Out &out, Idx selIdx, Idx n) { Base::values.template onPrintBodyTo<Nav, Out>(nav, out, n); }
-      // template<typename Nav,typename Out> void onPrintItemTo(Nav& nav,Out& out {O::obj().printTo(nav,out);}
+      // template<typename Nav,typename Out> void onPrintItemTo(Nav& nav,Out& out,Idx level {O::obj().printTo(nav,out);}
       // void setDefault() {
       //   Idx selPath[1]{0};
       //   if(selPath[0]>=Base::values.len()) setDefault();
@@ -651,7 +651,7 @@ namespace Menu
       { /*_trace(mdo<<"onPrintBodyTo\n\r");*/
       }
       // template <typename Nav, typename Out>
-      // void onPrintItemTo(Nav &nav, Out &out, int n, bool sel)
+      // void onPrintItemTo(Nav &nav, Out &out,Idx level, int n, bool sel)
       // {
       //   O::obj().template printTo<Nav, Out>(nav, out, n, sel);
       // }

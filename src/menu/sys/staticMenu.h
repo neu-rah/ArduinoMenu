@@ -73,7 +73,7 @@ namespace Menu {
     void onPrintTitleTo(Nav& nav,Out& out) 
       {out.printTitle(nav,title);}
     template<typename Nav,typename Out>
-    void onPrintItemTo(Nav& nav,Out& out,Idx n=0,bool sel=0) {
+    void onPrintItemTo(Nav& nav,Out& out,Idx level,Idx n=0,bool sel=0) {
       //TODO: allow combination of the types (mask) instead of the combination of results!
       // so that this is possoble `(has<Style::PadDraw&&Style::ParentDraw>(Base::styles())`
       // need to change `has` & `is` from Style to decltype(Style)? C++ should know it better...
