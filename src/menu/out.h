@@ -122,18 +122,31 @@ namespace Menu {
       using This=Part<O>;
       using Base::Base;
       template<typename Nav,typename Menu>
-      void printMenu(Nav& nav,Menu& menu,Idx selIdx) {
+      void printMenu(Nav& nav,Menu& menu,bool preview,Idx selIdx=0) {
         // _trace(clog<<"BasePrinter::printMenu"<<endl;clog.flush());
         Base::template fmtStart<Fmt::Menu>(nav.focus(),nav.tune());
         Base::template printMenu<Nav,Menu>(nav,menu,selIdx);
         Base::template fmtStop<Fmt::Menu>(nav.focus(),nav.tune());
       }
+      // template<typename Nav,typename Menu> void printMenu(Nav& nav,Menu& menu) {_printMenu(nav,menu,true,selIdx);}
+      // template<typename Nav,typename Menu> void printMenu(Nav& nav,Menu& menu,Idx selIdx) {_printMenu(nav,menu,false,selIdx);}
       template<typename Nav,typename Item>
       void printItem(Nav& nav,Item& i,Idx n=0,bool sel=false) {
         // _trace(clog<<"BasePrinter::printItem"<<endl;clog.flush());
-        Base::template fmtStart<Fmt::Item>(nav.focus(),nav.tune(),n,sel,i.enabled());
+        //TODO: this is the place to capture menu preview... but how to signal it to format so that cursors wont be drawn?
+        // clog<<"{"<<endl
+        //   <<"\tlevel:"<<nav.level<<endl
+        //   <<"\tpadding:"<<Base::padding()<<endl
+        //   <<"\tppos:"<<nav.ppos()<<endl
+        //   <<"\tpos:"<<nav.pos()<<endl
+        //   <<"}";
+        _trace(clog<<"BasePrinter::printItem parent and pad draw:"<<(has<Style::PadDraw>(i.styles())&has<Style::ParentDraw>(i.styles()))<<" padding:"<<Base::padding()<<endl);
+        bool p=has<Style::PadDraw>(i.styles())&has<Style::ParentDraw>(i.styles());
+        if(p) Base::padOn();
+        Base::template fmtStart<Fmt::Item>(nav.focus(),nav.tune(),n,sel);
         Base::printItem(nav,i,n,sel);
         Base::template fmtStop<Fmt::Item>(nav.focus(),nav.tune(),n,sel,i.enabled());
+        if(p) Base::padOff();
       }
     };
   };

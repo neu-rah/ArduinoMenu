@@ -66,34 +66,14 @@ namespace Menu {
     void printTo(Nav& nav,Out& out,int n=0,bool sel=false) {
       title.template printTo<Nav,Out>(nav,out,n,sel);
     }
-    template<typename Nav,typename Out> void onPrintMenuTo(Nav& nav,Out& out,Idx selIdx) 
-      {
-        // _trace(
-        //   clog<<"StaticMenu::onPrintMenuTo This::style:"<<(int)This::styles()<<endl;
-        //   clog<<"StaticMenu::onPrintMenuTo Base::style:"<<(int)Base::styles()<<endl;
-        //   clog<<"StaticMenu::onPrintMenuTo Base::obj().style:"<<(int)Base::obj().styles()<<endl;
-        //   clog.flush()
-        // );
-        out.template printMenu<Nav,This>(nav,*this,selIdx);}
-    template<typename Nav,typename Out> void onPrintTitleTo(Nav& nav,Out& out) {
-        // _trace(clog<<"StaticMenu::onPrintTitleTo"<<endl;clog.flush());
-      out.printTitle(nav,title);
-    }
-    template<typename Nav,typename Out> void onPrintItemTo(Nav& nav,Out& out,Idx n=0,bool sel=0) {
-      // _trace(
-      //   clog<<"StaticMenu::onPrintItemTo"<<endl;
-      //   clog<<"This::styles:"<<(int)This::styles()<<endl;
-      //   clog<<"Base::styles:"<<(int)Base::styles()<<endl;
-      //   clog<<"Base::obj().styles:"<<(int)Base::obj().styles()<<endl;
-      //   clog.flush()
-      // );
-      //this menu as item (submenu), use the title to print as item
-      // _trace(
-      //   clog<<"check padding here! "<<endl;
-      //   clog<<"PadDraw:"<<has<Style::PadDraw>(Base::styles())<<endl;
-      //   clog<<"ParentDraw:"<<has<Style::ParentDraw>(Base::styles())<<endl;
-      //   clog.flush();
-      // );
+    template<typename Nav,typename Out>
+    void onPrintMenuTo(Nav& nav,Out& out,Idx selIdx) 
+      {out.template printMenu<Nav,This>(nav,*this,selIdx);}
+    template<typename Nav,typename Out>
+    void onPrintTitleTo(Nav& nav,Out& out) 
+      {out.printTitle(nav,title);}
+    template<typename Nav,typename Out>
+    void onPrintItemTo(Nav& nav,Out& out,Idx n=0,bool sel=0) {
       //TODO: allow combination of the types (mask) instead of the combination of results!
       // so that this is possoble `(has<Style::PadDraw&&Style::ParentDraw>(Base::styles())`
       // need to change `has` & `is` from Style to decltype(Style)? C++ should know it better...
@@ -102,8 +82,7 @@ namespace Menu {
         out.template printMenu<Nav,This>(nav,*this,nav.pos());//TODO: nav pos() need to b corrected & menus need a preview print
         out.padOff();
       } else title.printTo(nav,out,n,sel);
-
-    }
+}
 
     // #define keyWalker(f,n)
     // template<int... path>
