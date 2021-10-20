@@ -20,7 +20,7 @@ namespace Menu {
       Base::tail().newView();
     }
     template<typename Nav,typename Menu>
-    void printMenu(Nav& nav,Menu& menu,Idx selIdx) {
+    void printMenu(Nav& nav,Menu& menu,Idx level,Idx selIdx) {
       Base::head().template printMenu<Nav,Menu>(nav,menu,selIdx);
       Base::tail().template printMenu<Nav,Menu>(nav,menu,selIdx);
     }

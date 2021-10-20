@@ -22,7 +22,7 @@ namespace Menu {
     inline static void newView() {}
     inline static void setDefault() {}
     template<typename Nav,typename Menu>
-    static void printMenu(Nav& nav,Menu& menu,Idx selIdx) {}
+    static void printMenu(Nav& nav,Menu& menu,Idx level,Idx selIdx) {}
     template<typename Nav,typename Item>
     static void printTitle(Nav& nav,Item& i) {}
     template<typename Nav,typename Item>
@@ -66,7 +66,7 @@ namespace Menu {
       using This=Part<O>;
       using Base::Base;
       template<typename Nav,typename Menu>
-      void printMenu(Nav& nav,Menu& menu,Idx selIdx) {
+      void printMenu(Nav& nav,Menu& menu,Idx level,Idx selIdx) {
         // _trace(clog<<"TitlePrinter::printMenu"<<endl;clog.flush());
         menu.onPrintTitleTo(nav,Base::obj());
         Base::template printMenu<Nav,Menu>(nav,menu,selIdx);
@@ -89,7 +89,7 @@ namespace Menu {
       using This=Part<O>;
       using Base::Base;
       template<typename Nav,typename Menu>
-      void printMenu(Nav& nav,Menu& menu,Idx selIdx) {
+      void printMenu(Nav& nav,Menu& menu,Idx level,Idx selIdx) {
         // _trace(clog<<"BodyPrinter::printMenu"<<endl;clog.flush());
         Base::template fmtStart<Fmt::Body>(nav.focus(),nav.tune());
         Base::template printMenu<Nav,Menu>(nav,menu,selIdx);
@@ -122,14 +122,14 @@ namespace Menu {
       using This=Part<O>;
       using Base::Base;
       template<typename Nav,typename Menu>
-      void printMenu(Nav& nav,Menu& menu,bool preview,Idx selIdx=0) {
+      void printMenu(Nav& nav,Menu& menu,Idx level,bool preview,Idx selIdx=0) {
         // _trace(clog<<"BasePrinter::printMenu"<<endl;clog.flush());
         Base::template fmtStart<Fmt::Menu>(nav.focus(),nav.tune());
         Base::template printMenu<Nav,Menu>(nav,menu,selIdx);
         Base::template fmtStop<Fmt::Menu>(nav.focus(),nav.tune());
       }
-      // template<typename Nav,typename Menu> void printMenu(Nav& nav,Menu& menu) {_printMenu(nav,menu,true,selIdx);}
-      // template<typename Nav,typename Menu> void printMenu(Nav& nav,Menu& menu,Idx selIdx) {_printMenu(nav,menu,false,selIdx);}
+      // template<typename Nav,typename Menu> void printMenu(Nav& nav,Menu& menu,Idx level) {_printMenu(nav,menu,true,selIdx);}
+      // template<typename Nav,typename Menu> void printMenu(Nav& nav,Menu& menu,Idx level,Idx selIdx) {_printMenu(nav,menu,false,selIdx);}
       template<typename Nav,typename Item>
       void printItem(Nav& nav,Item& i,Idx n=0,bool sel=false) {
         // _trace(clog<<"BasePrinter::printItem"<<endl;clog.flush());
