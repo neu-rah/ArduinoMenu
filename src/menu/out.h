@@ -92,8 +92,8 @@ namespace Menu {
       void printMenu(Nav& nav,Menu& menu,Idx level,Idx selIdx) {
         // _trace(clog<<"BodyPrinter::printMenu"<<endl;clog.flush());
         Base::template fmtStart<Fmt::Body>(nav.focus(),nav.tune());
-        Base::template printMenu<Nav,Menu>(nav,menu,selIdx);
-        menu.onPrintBodyTo(nav,Base::obj(),selIdx,0);
+        Base::template printMenu<Nav,Menu>(nav,menu,level,selIdx);
+        menu.onPrintBodyTo(nav,Base::obj(),level,selIdx,0);
         Base::template fmtStop<Fmt::Body>(nav.focus(),nav.tune());
       }
     };

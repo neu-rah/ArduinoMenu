@@ -231,8 +231,8 @@ namespace Menu {
         {Base::template printTo<INav,IOut>(nav,out,n,sel);}
       void onPrintMenuTo(INav& nav,IOut& out,int n) override {out.printMenu(nav,Base::obj(),n);}
       void onPrintTitleTo(INav& nav,IOut& out) override {Base::onPrintTitleTo(nav,out);}
-      void onPrintBodyTo(INav& nav,IOut& out,Idx selIdx,Idx n) override 
-        {Base::onPrintBodyTo(nav,out,selIdx,n);}
+      void onPrintBodyTo(INav& nav,IOut& out,Idx level,Idx selIdx,Idx n) override 
+        {Base::onPrintBodyTo(nav,out,level,selIdx,n);}
       void onPrintItemTo(INav& nav,IOut& out,int n=0,bool sel=false) override 
         {Base::template onPrintItemTo<INav,IOut>(nav,out,n,sel);}
       Idx sz() const override {return Base::sz();}

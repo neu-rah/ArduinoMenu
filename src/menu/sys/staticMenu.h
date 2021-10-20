@@ -25,8 +25,8 @@ namespace Menu {
     // StaticList(Args... args):Base(args...,Base::template build<Tail,Args...>(args...)) {}
     template<typename Nav,typename Out>
     void onPrintBodyTo(Nav& nav,Out& out,Idx level,Idx selIdx,Idx n)  {
-      out.template printItem<Nav,This>(nav,*this,n,n==selIdx);
-      Base::tail().template onPrintBodyTo<Nav,Out>(nav,out,selIdx,n+1);
+      out.template printItem<Nav,This>(nav,*this,level,n,n==selIdx);
+      Base::tail().template onPrintBodyTo<Nav,Out>(nav,out,level,selIdx,n+1);
     }
     static constexpr Idx len() {return Base::_sz();}
     void begin() {
@@ -46,7 +46,7 @@ namespace Menu {
     template<typename Nav,typename Out>
     void onPrintMenuTo(Nav& nav,Out& out,Idx level,Idx selIdx) {out.printMenu(nav,*this,level+1,selIdx);}
     template<typename Nav,typename Out>
-    void onPrintBodyTo(Nav& nav,Out& out,Idx level,Idx selIdx,Idx n) {out.printItem(nav,*this,n,selIdx==n);}
+    void onPrintBodyTo(Nav& nav,Out& out,Idx level,Idx selIdx,Idx n) {out.printItem(nav,*this,level,n,selIdx==n);}
     static constexpr Idx len() {return Base::_sz();}
   };
 

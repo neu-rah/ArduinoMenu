@@ -98,7 +98,7 @@ namespace Menu {
         // Base::printTo(out);
         int idx=0;
         for(auto i:data) {
-          out.printItem(nav,*i,idx,idx==selIdx);
+          out.printItem(nav,*i,level,idx,idx==selIdx);
           idx++;
         }
       }
