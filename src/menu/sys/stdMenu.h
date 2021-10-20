@@ -94,7 +94,7 @@ namespace Menu {
       }
 
       template<typename Nav,typename Out> void onPrintTitleTo(Nav& nav,Out& out) {Base::onPrintTitleTo(nav,out);}
-      template<typename Nav,typename Out> void onPrintBodyTo(Nav& nav,Out& out,Idx selIdx,Idx n) {
+      template<typename Nav,typename Out> void onPrintBodyTo(Nav& nav,Out& out,Idx level,Idx selIdx,Idx n) {
         // Base::printTo(out);
         int idx=0;
         for(auto i:data) {
