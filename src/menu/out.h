@@ -140,7 +140,7 @@ namespace Menu {
         //   <<"\tppos:"<<nav.ppos()<<endl
         //   <<"\tpos:"<<nav.pos()<<endl
         //   <<"}";
-        _trace(clog<<"BasePrinter::printItem parent and pad draw:"<<(has<Style::PadDraw>(i.styles())&has<Style::ParentDraw>(i.styles()))<<" padding:"<<Base::padding()<<endl);
+        _trace(clog<<"BasePrinter::printItem parent&pad draw:"<<(has<Style::PadDraw>(i.styles())&has<Style::ParentDraw>(i.styles()))<<" padding:"<<Base::padding()<<" level:"<<level<<" nav.level:"<<nav.level<<endl);
         bool p=has<Style::PadDraw>(i.styles())&has<Style::ParentDraw>(i.styles());
         if(p) Base::padOn();
         Base::template fmtStart<Fmt::Item>(nav.focus(),nav.tune(),n,sel);
