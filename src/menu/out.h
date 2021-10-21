@@ -29,9 +29,11 @@ namespace Menu {
     void printItem(Nav& nav,Item& i,Idx level,Idx n=0,bool sel=false) {
       i.onPrintItemTo(nav,O::obj(),level,n,sel);
     }
-    template<Fmt,bool> static void fmt(bool editing,bool tunning,int n=0,bool sel=false,bool en=true) {}
-    template<Fmt tag> void fmtStart(bool editing,bool tunning,int n=0,bool sel=false,bool en=true) {O::obj().template fmt<tag,true>(editing,tunning,n,sel,en);}
-    template<Fmt tag> void fmtStop(bool editing,bool tunning,int n=0,bool sel=false,bool en=true) {O::obj().template fmt<tag,false>(editing,tunning,n,sel,en);}
+    template<Fmt,bool> static void fmt(bool editing,bool tunning,int n=0,bool sel=false,bool en=true,bool preview=false) {}
+    template<Fmt tag> void fmtStart(bool editing,bool tunning,int n=0,bool sel=false,bool en=true,bool preview=false)
+      {O::obj().template fmt<tag,true>(editing,tunning,n,sel,en,preview);}
+    template<Fmt tag> void fmtStop(bool editing,bool tunning,int n=0,bool sel=false,bool en=true,bool preview=false)
+      {O::obj().template fmt<tag,false>(editing,tunning,n,sel,en,preview);}
     template<Fmt tag>
     static ConstText tagName() {//we need this for xml (not just debug)
       switch(tag) {
@@ -128,25 +130,12 @@ namespace Menu {
         Base::template printMenu<Nav,Menu>(nav,menu,level,selIdx);
         Base::template fmtStop<Fmt::Menu>(nav.focus(),nav.tune());
       }
-      // template<typename Nav,typename Menu> void printMenu(Nav& nav,Menu& menu,Idx level) {_printMenu(nav,menu,true,selIdx);}
-      // template<typename Nav,typename Menu> void printMenu(Nav& nav,Menu& menu,Idx level,Idx selIdx) {_printMenu(nav,menu,false,selIdx);}
       template<typename Nav,typename Item>
       void printItem(Nav& nav,Item& i,Idx level,Idx n=0,bool sel=false) {
-        // _trace(clog<<"BasePrinter::printItem"<<endl;clog.flush());
-        //TODO: this is the place to capture menu preview... but how to signal it to format so that cursors wont be drawn?
-        // clog<<"{"<<endl
-        //   <<"\tlevel:"<<nav.level<<endl
-        //   <<"\tpadding:"<<Base::padding()<<endl
-        //   <<"\tppos:"<<nav.ppos()<<endl
-        //   <<"\tpos:"<<nav.pos()<<endl
-        //   <<"}";
-        _trace(clog<<"BasePrinter::printItem parent&pad draw:"<<(has<Style::PadDraw>(i.styles())&has<Style::ParentDraw>(i.styles()))<<" padding:"<<Base::padding()<<" level:"<<level<<" nav.level:"<<nav.level<<endl);
-        bool p=has<Style::PadDraw>(i.styles())&has<Style::ParentDraw>(i.styles());
-        if(p) Base::padOn();
-        Base::template fmtStart<Fmt::Item>(nav.focus(),nav.tune(),n,sel);
+        bool preview=level>nav.level;
+        Base::template fmtStart<Fmt::Item>(nav.focus(),nav.tune(),n,sel,i.enabled(),preview);
         Base::printItem(nav,i,level,n,sel);
-        Base::template fmtStop<Fmt::Item>(nav.focus(),nav.tune(),n,sel,i.enabled());
-        if(p) Base::padOff();
+        Base::template fmtStop<Fmt::Item>(nav.focus(),nav.tune(),n,sel,i.enabled(),preview);
       }
     };
   };

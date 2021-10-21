@@ -361,7 +361,7 @@ namespace Menu
       template <typename Nav>
       bool enter(Nav &nav)
       {
-        _trace(clog << "EditCtrl::enter" << endl);
+        // _trace(clog << "EditCtrl::enter" << endl);
         if (nav.focus())
         {
           nav.tune(nav.tune() ^ Base::tune());

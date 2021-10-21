@@ -65,7 +65,7 @@ namespace Menu {
       }
       template<typename Out>
       inline void printTo(Out& out) {
-        _trace(clog<<"Nav::printTo -------------------------------"<<endl);
+        // _trace(clog<<"Nav::printTo -------------------------------"<<endl);
         out.newView();
         Style s=PathRef(level,path).walk<Data,Styles>(data);
         Idx l=level?(has<Style::ParentDraw>(s)?level-1:level):0;

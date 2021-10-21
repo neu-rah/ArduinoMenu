@@ -14,15 +14,15 @@ namespace Menu {
       using This=Part<Base>;
       using Base::Base;
       template<Fmt tag,bool start> 
-      void fmt(bool editing,bool tunning,int n=0,bool sel=false,bool en=true) {
+      void fmt(bool editing,bool tunning,int n=0,bool sel=false,bool en=true,bool preview=false) {
         if(tag==Fmt::EditMode) {
           if(start) {
-            Base::template fmt<tag,start>(editing,tunning,n,sel,en);
-            if(Base::padding()) {
+            Base::template fmt<tag,start>(editing,tunning,n,sel,en,preview);
+            if(Base::padding()/*&&!preview*/) {
               if(editing&&sel) Base::print(tunning?tune:edit);
             } else Base::print((editing&&sel)?(tunning?tune:edit):none);
-          } else Base::template fmt<tag,start>(editing,tunning,n,sel,en);
-        } else Base::template fmt<tag,start>(editing,tunning,n,sel,en);
+          } else Base::template fmt<tag,start>(editing,tunning,n,sel,en,preview);
+        } else Base::template fmt<tag,start>(editing,tunning,n,sel,en,preview);
       }
     };
   };
@@ -39,7 +39,7 @@ namespace Menu {
       using This=Part<O>;
       using Base::Base;
       template<Fmt tag,bool start> 
-      void fmt(bool editing,bool tunning,int n=0,bool sel=false,bool en=true) {
+      void fmt(bool editing,bool tunning,int n=0,bool sel=false,bool en=true,bool preview=false) {
         if(start) Base::print(prefix);
         Base::template fmt<tag,start>(editing,tunning,n,sel,en);
       }
@@ -55,7 +55,7 @@ namespace Menu {
       using This=Part<O>;
       using Base::Base;
       template<Fmt tag,bool start> 
-      void fmt(bool editing,bool tunning,int n=0,bool sel=false,bool en=true) {
+      void fmt(bool editing,bool tunning,int n=0,bool sel=false,bool en=true,bool preview=false) {
         if(!start) Base::print(prefix);
         Base::template fmt<tag,start>(editing,tunning,n,sel,en);
       }
@@ -78,7 +78,7 @@ namespace Menu {
       using This=Part<O>;
       using Base::Base;
       template<Fmt tag,bool start> 
-      void fmt(bool editing,bool tunning,int n=0,bool sel=false,bool en=true) {
+      void fmt(bool editing,bool tunning,int n=0,bool sel=false,bool en=true,bool preview=false) {
         using Skip=typename Base::Base;
         if(on==tag) Base::template fmt<tag,start>(editing,tunning,n,sel,en);
         else Skip::template fmt<tag,start>(editing,tunning,n,sel,en);
@@ -95,7 +95,7 @@ namespace Menu {
       using Base::print;
       using Base::nl;
       template<Fmt tag,bool start> 
-      void fmt(bool editing,bool tunning,int n=0,bool sel=false,bool en=true) {
+      void fmt(bool editing,bool tunning,int n=0,bool sel=false,bool en=true,bool preview=false) {
         switch(tag) {
           // case Fmt::EditCursor:
           //   if(!editing) return;
@@ -111,10 +111,10 @@ namespace Menu {
           case Fmt::Item:
             if (start) {
               if(Base::padding()) {
-                if(sel) print(en?'>':'-');
+                if(sel&&!preview) print(en?'>':'-');
               } else {
                 print((char)(n<10?'0'+n:' '));
-                print(sel?(en?'>':'-'):' ');
+                print((sel)?(en?'>':'-'):' ');
               }
             } else nl();
             break;

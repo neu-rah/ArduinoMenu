@@ -14,7 +14,7 @@
         using This=Part<O>;
         using Base::Base;
         template<Fmt tag,bool start> 
-        void fmt(bool editing,bool tunning,int n=0,bool sel=false,bool en=true) {
+        void fmt(bool editing,bool tunning,int n=0,bool sel=false,bool en=true,bool preview=false) {
           // if(start) fmt<tag,start>(editing,tunning,n,sel,en);
           // if(tag==Fmt::Item&&!start) Base::cl();
           // if(!start) 
