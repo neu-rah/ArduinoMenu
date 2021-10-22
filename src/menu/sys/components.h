@@ -78,12 +78,12 @@ namespace Menu
       using This = Part<Base>;
       using Base::Base;
       const char *text;
-      template <typename P, typename... OO>
-      constexpr Part(P o, OO... oo) : text(o), Base(oo...) {}
+      template <typename... OO>
+      constexpr Part(const char* o, OO... oo) : text(o), Base(oo...) {}
       // template<typename Next,typename P,typename... OO>
       // static Next build(P,OO... oo) {return Next(oo...);}
       template <typename Nav, typename Out, bool delegate = true>
-      void printTo(Nav &nav, Out &o, int n, bool sel)
+      void printTo(Nav &nav, Out &o, int n=0, bool sel=false)
       {
         o.print(text);
         if (delegate)
