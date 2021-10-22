@@ -21,8 +21,8 @@ namespace Menu {
     using Base=Node<O,Tail>;
     using This=StaticList<O,OO...>;
     using Base::Base;
-    // template<typename... Args>
-    // StaticList(Args... args):Base(args...,Base::template build<Tail,Args...>(args...)) {}
+    template<typename... Args>
+    StaticList(Args... args):Base(args...,Base::template build<Tail,Args...>(args...)) {}
     template<typename Nav,typename Out>
     void onPrintBodyTo(Nav& nav,Out& out,Idx level,Idx selIdx,Idx n)  {
       out.template printItem<Nav,This>(nav,*this,level,n,n==selIdx);

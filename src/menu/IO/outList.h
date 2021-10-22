@@ -21,8 +21,8 @@ namespace Menu {
     }
     template<typename Nav,typename Menu>
     void printMenu(Nav& nav,Menu& menu,Idx level,Idx selIdx) {
-      Base::head().template printMenu<Nav,Menu>(nav,menu,selIdx);
-      Base::tail().template printMenu<Nav,Menu>(nav,menu,selIdx);
+      Base::head().template printMenu<Nav,Menu>(nav,menu,level,selIdx);
+      Base::tail().template printMenu<Nav,Menu>(nav,menu,level,selIdx);
     }
   };
 
