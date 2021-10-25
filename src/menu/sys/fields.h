@@ -662,7 +662,7 @@ namespace Menu
       AsValue::Part,
       TextEditBase<buffer, len, mask, def>::template Part>;
 
-  template<typename T>
+  template<typename T,T def=0>
   struct NumField {
     template<typename O>
     using Part=typename Chain<
@@ -670,7 +670,19 @@ namespace Menu
       Menu::AsValue::Part,//format as value
       Menu::EditCtrl::Part,//editable
       Menu::RangeValid::Part,//use step/tune to change field value
-      Menu::FieldVal<T,0>::template Part
+      Menu::FieldVal<T,def>::template Part
+    >::template To<O>;
+  };
+
+  template<typename T,T& ref,T def=0>
+  struct NumFieldRef {
+    template<typename O>
+    using Part=typename Chain<
+      Menu::AsEditMode::Part,
+      Menu::AsValue::Part,//format as value
+      Menu::EditCtrl::Part,//editable
+      Menu::RangeValid::Part,//use step/tune to change field value
+      Menu::FieldRef<T,ref,def>::template Part
     >::template To<O>;
   };
 

@@ -125,6 +125,8 @@ namespace Menu
     };
   };
 
+  //this events will reequires an event emiter...
+  // we cab have simpler handlers for keys, not the same thing but simpler (no emiter required)
   // using Events=uint8_t;
   // enum class Event:Events {
   //   None=0<<0,
@@ -140,6 +142,22 @@ namespace Menu
   // struct On {
   //   bool event(Events e) {return fn(e);}
   // };
+
+  template <Cmd cmdCode,ActionFn fn,bool io=true>
+  struct OnCmd {
+    template <typename O>
+    struct Part : O {
+      using Base = O;
+      using This = Part<O>;
+      template<typename Nav,Cmd c>
+      bool cmd(Nav& nav,int code=0) {
+        if(io&&(c==cmdCode)) fn();
+        auto r=Base::template cmd<Nav,c>(nav,code);
+        if((!io)&&(c==cmdCode)) fn();
+        return r;
+      }
+    };
+  };
 
     //Associate an action
   //triggered at `enter` call

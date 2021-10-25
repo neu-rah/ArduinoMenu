@@ -100,7 +100,9 @@ namespace Menu {
       PathRef child(1,nav.at());
       Style s=child.template walk<This,Styles>(*this);
       if(has<Style::WrapNav>(ps)) s=s^Style::WrapNav;
-      return nav.template doNav<c>(sz(),s);
+      //this menus can not do this kind on Base::cmd call or they will be calling childs methods...
+      //its a point in favor of non menu body inheritance
+      return /*Base::template cmd<Nav,c>(nav,code)&&*/nav.template doNav<c>(sz(),s);
     }
 
     // keyWalker(enter,Enter);
