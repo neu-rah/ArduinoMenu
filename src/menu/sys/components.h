@@ -18,8 +18,7 @@ namespace Menu
       using Base::Base;
       using IsTag = Yes;
       template <typename Nav, typename Out, bool delegate = true>
-      void printTo(Nav &nav, Out &out, int n = 0, bool sel = false)
-      {
+      void printTo(Nav &nav, Out &out, int n = 0, bool sel = false) {
         using BaseTag = typename Base::IsTag;
         out.template fmtStart<tag>(nav.focus(), nav.tune(), n, sel);
         Base::template printTo<Nav, Out, BaseTag::value() || delegate>(nav, out, n, sel);
@@ -80,19 +79,12 @@ namespace Menu
       const char *text;
       template <typename... OO>
       constexpr Part(const char* o, OO... oo) : text(o), Base(oo...) {}
-      // template<typename Next,typename P,typename... OO>
-      // static Next build(P,OO... oo) {return Next(oo...);}
       template <typename Nav, typename Out, bool delegate = true>
-      void printTo(Nav &nav, Out &o, int n=0, bool sel=false)
-      {
-        o.print(text);
-        if (delegate)
-          Base::printTo(nav, o, n, sel);
-      }
+      static void printTo(Nav &nav, Out &o, int n=0, bool sel=false) {}
     };
   };
 
-  //use static constructed `const char*`
+  //use static `const char*`
   template <const ConstText *text>
   struct StaticText
   {
@@ -116,12 +108,22 @@ namespace Menu
       using This = Part<Base>;
       using Base::Base;
       template <typename Nav, typename Out, bool delegate = true>
-      void printTo(Nav &nav, Out &out, int n = 0, bool sel = false)
-      {
+      static void printTo(Nav &nav, Out &out, int n = 0, bool sel = false) {
         out.print(text[0]);
         if (delegate)
           Base::printTo(nav, out, n, sel);
       }
+    };
+  };
+
+  template <const Menu::ConstText *text>
+  struct SCText {
+    template<typename O>
+    struct Part:Text::template Part<O> {
+      using Base=typename Text::template Part<O>;
+      using This=Part<O>;
+      template <typename... OO>
+      Part(OO... oo):Base(text[0],oo...) {}
     };
   };
 
@@ -259,6 +261,15 @@ namespace Menu
 
   //utility, use constText as label
   using Label = LabelOf<Text::template Part>;
+
+  template <const ConstText *text>
+  struct SCLabel {
+    template<typename O>
+    struct Part:Label::Part<O> {
+      using Base = typename Label::Part<O>;
+      template<typename... OO> Part(OO... oo):Base(text[0],oo...) {}
+    };
+  };
 
   #ifdef ARDUINO
     //use static constructed `const char*`

@@ -52,6 +52,9 @@ namespace Menu {
     static constexpr Idx len() {return Base::_sz();}
   };
 
+  template<typename... OO>
+  struct Format:StaticList<OO...> {};
+
   template<typename O,typename... OO>
   using StaticMenuBody=StaticList<O,OO...>;
 

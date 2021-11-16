@@ -191,7 +191,7 @@ namespace Menu {
       virtual void printTo(INav& nav,IOut&,int=0,bool=false){}
       virtual void onPrintMenuTo(INav& nav,IOut&,int) {}
       virtual void onPrintTitleTo(INav& nav,IOut& out) {out.printTitle(nav,*this);}
-      virtual void onPrintBodyTo(INav& nav,IOut& out,Idx,Idx) {}
+      virtual void onPrintBodyTo(INav& nav,IOut& out,Idx,Idx,Idx) {}
       virtual void onPrintItemTo(INav& nav,IOut& out,int n=0,bool sel=false) {}
       template<typename Nav,Cmd c> bool cmd(INav& nav,int code=0) {return cmd(nav,c,code);}
       virtual Idx sz() const {return 1;}

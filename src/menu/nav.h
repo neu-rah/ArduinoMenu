@@ -14,6 +14,11 @@ namespace Menu {
     inline bool doInput(In& in) {return in.cmd(N::obj());}
     template<Cmd c> inline static bool cmd() {return false;}
     template<typename Dev> inline static void poll(Dev&) {}
+    template<typename Out>
+    static inline Idx printTo_api(Out& out,Idx level,Idx* path,Style s) {
+      out.newView();
+      return level?(has<Style::ParentDraw>(s)?level-1:level):0;
+    }
   };
 
   template<typename Data,Idx max_depth=8>
@@ -65,11 +70,19 @@ namespace Menu {
       }
       template<typename Out>
       inline void printTo(Out& out) {
+        Idx l=Base::printTo_api(out,level,path,PathRef(level,path).walk<Data,Styles>(data));
+        PathRef(l,path).walk<Data,PrintMenuTo,This&,Out&>(
+          data,
+          *this,
+          out,
+          l-1,
+          path[l]
+        );
         // _trace(clog<<"Nav::printTo -------------------------------"<<endl);
-        out.newView();
-        Style s=PathRef(level,path).walk<Data,Styles>(data);
-        Idx l=level?(has<Style::ParentDraw>(s)?level-1:level):0;
-        PathRef(l,path).walk<Data,PrintMenuTo,This&,Out&>(data,*this,out,l-1,path[l]);
+        // out.newView();
+        // Style s=PathRef(level,path).walk<Data,Styles>(data);
+        // Idx l=level?(has<Style::ParentDraw>(s)?level-1:level):0;
+        // PathRef(l,path).walk<Data,PrintMenuTo,This&,Out&>(data,*this,out,l-1,path[l]);
       }
       using Base::cmd;
       template<Cmd c>

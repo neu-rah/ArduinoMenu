@@ -8,5 +8,5 @@
 
 namespace Menu {
   template<typename I>
-  using ArrayMenu=Prompt::template Part<I>*[];
+  using ArrayItem=Prompt::template Part<I>*;
 };

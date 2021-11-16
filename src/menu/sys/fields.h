@@ -223,6 +223,47 @@ namespace Menu
     };
   };
 
+  //functional field, no data or reference stored, other than the change checking data ofcoz
+  template<typename T,T(&fget)(),void(&fset)(T),T def>
+  struct FuncField {
+    template<typename O>
+    struct Part:O {
+      using ValueType = T;
+      using Base = O;
+      using This = Part<Base>;
+      using Base::Base;
+      T reflex;
+      template <typename... OO>
+      Part(OO... oo) : reflex(def), Base(oo...) {}
+      void setDefault() { reflex = def; fset(def);}
+      bool changed() { return reflex != fget(); }
+      void changed(bool o) {
+        if (o)
+          reflex ^= 1;
+        else
+          reflex = fget();
+      }
+      void set(T o) {
+        reflex = o;
+        fset(o);
+        Base::obj().action();
+      }
+      inline T get() const {return fget();}
+      template <typename Nav, typename Out, bool delegate = true>
+      void printTo(Nav &nav, Out &o, int n = 0, bool sel = false)
+      {
+        o.print(get());
+        if (delegate)
+          Base::printTo(nav, o, n, sel);
+      }
+    };
+  };
+
+  // template<typename T,T(&fget)(),T(&fset)(T),T def>
+  // struct FuncField:FuncFieldBase<T,fget,fset,def> {};
+  // template<typename T,T(&fget)(),T def>
+  // struct FuncField<T,fget,fget,def>:FuncFieldBase<T,fget,fget,def> {};
+
   template <typename T, T def>
   struct FieldValBase
   {
@@ -318,6 +359,7 @@ namespace Menu
   //   };
   // };
 
+
   //Static range (low and high values)
   template <typename T, T lowVal, T highVal>
   struct StaticRange
@@ -328,9 +370,9 @@ namespace Menu
       using Base = O;
       using This = Part<Base>;
       using Base::Base;
-      constexpr T low() const { return lowVal; }
-      constexpr T high() const { return highVal; }
-      void constrainField() { Base::obj().set(constrain(Base::obj().get(), low(), high())); }
+      static constexpr T low() { return lowVal; }
+      static constexpr T high() { return highVal; }
+      static void constrainField() { Base::obj().set(constrain(Base::obj().get(), low(), high())); }
     };
   };
 
@@ -344,8 +386,53 @@ namespace Menu
       using Base = typename StaticRange<T, lowVal, highVal>::template Part<O>;
       using This = Part<Base>;
       using Base::Base;
+      static constexpr T tune() { return tuneSz; }
+      static constexpr T step() { return stepSz; }
+    };
+  };
+
+  //numeric range
+  template<typename T>
+  struct Range {
+    template<typename O>
+    struct Part:O {
+      using This=Part<O>;
+      using Base=O;
+      using Base::Base;
+      T lowVal,highVal;
+      template<typename... OO>
+      Part(T low,T high,OO... oo):lowVal(low),highVal(high),Base(oo...) {}
+      constexpr T low() const { return lowVal; }
+      constexpr T high() const { return highVal; }
+      void constrainField() { Base::obj().set(constrain(Base::obj().get(), low(), high())); }
+    };
+  };
+
+  //numeric range with step/tune change values
+  template<typename T>
+  struct STRange {
+    template<typename O>
+    struct Part:Range<T>::template Part<O> {
+      using This=Part<O>;
+      using Base=typename Range<T>::template Part<O>;
+      using Base::Base;
+      T stepSz,tuneSz;
+      template<typename... OO>
+      Part(T low,T high,T step, T tune,T def,OO... oo):stepSz(step),tuneSz(tune),Base(low,high,oo...) {}
       constexpr T tune() const { return tuneSz; }
       constexpr T step() const { return stepSz; }
+    };
+  };
+
+  //TODO separate default values from this structures
+  template <typename T, T lowVal, T highVal, T stepSz, T tuneSz, T def = 0>
+  struct SCSTRange {
+    template<typename O>
+    struct Part:STRange<T>::template Part<O> {
+      using This=Part<O>;
+      using Base=typename STRange<T>::template Part<O>;
+      template<typename... OO>
+      Part(OO... oo):Base(lowVal,highVal,stepSz,tuneSz,def,oo...) {}
     };
   };
 
@@ -553,20 +640,17 @@ namespace Menu
       using Base::Base;
       static constexpr Idx sz() { return buffSz - 1; }
       template <typename Nav>
-      bool enter(Nav &nav)
-      {
+      static bool enter(Nav &nav) {
         // _trace(mdo<<"TextEditBase::enter\n\r");
         nav.open();
         nav.focus(true);
         return false;
       }
-      ConstText validator(int i)
-      {
+      static ConstText validator(int i) {
         return masks[i % (sizeof(masks) / sizeof(masks[0]))];
       }
       template <typename Nav, Cmd c>
-      bool cmd(Nav &nav, int code = 0)
-      {
+      static bool cmd(Nav &nav, int code = 0) {
         switch (c)
         {
         //from AM4
@@ -622,7 +706,7 @@ namespace Menu
         return nav.template doNav<c>(sz(), Base::styles()); //generic menu nav
       }
       template <typename Nav, typename Out, bool delegate = true>
-      void printTo(Nav &nav, Out &out, int n = 0, bool sel = false)
+      static void printTo(Nav &nav, Out &out, int n = 0, bool sel = false)
       {
         // _trace(clog<<"TextEditBase::printTo"<<endl;clog.flush());
         if (sel /*&&editing*/)
@@ -641,13 +725,11 @@ namespace Menu
           Base::printTo(nav, out, n, sel);
       }
       template <typename Nav, typename Out>
-      void onPrintMenuTo(Nav &nav, Out &out,Idx level, int) {}
+      static void onPrintMenuTo(Nav &nav, Out &out,Idx level, int) {}
       template <typename Nav, typename Out>
-      void onPrintTitleTo(Nav &nav, Out &out)
-      { /*_trace(mdo<<"onPrintTitleTo\n\r");*/
-      }
+      static void onPrintTitleTo(Nav &nav, Out &out) {}
       template <typename Nav, typename Out>
-      void onPrintBodyTo(Nav &nav, Out &out,Idx level, Idx selIdx, Idx n) {}
+      static void onPrintBodyTo(Nav &nav, Out &out,Idx level, Idx selIdx, Idx n) {}
       // template <typename Nav, typename Out>
       // void onPrintItemTo(Nav &nav, Out &out,Idx level, int n, bool sel)
       // {
@@ -683,6 +765,18 @@ namespace Menu
       Menu::EditCtrl::Part,//editable
       Menu::RangeValid::Part,//use step/tune to change field value
       Menu::FieldRef<T,ref,def>::template Part
+    >::template To<O>;
+  };
+
+  template<typename T,T(&get)(),void(&set)(T),T def>
+  struct NumFuncField {
+    template<typename O>
+    using Part=typename Chain<
+      Menu::AsEditMode::Part,
+      Menu::AsValue::Part,//format as value
+      Menu::EditCtrl::Part,//editable
+      Menu::RangeValid::Part,//use step/tune to change field value
+      Menu::FuncField<T,get,set,def>::template Part
     >::template To<O>;
   };
 
