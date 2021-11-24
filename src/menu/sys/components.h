@@ -164,7 +164,7 @@ namespace Menu
     //Associate an action
   //triggered at `enter` call
   template <ActionFn fn>
-  struct Action {
+  struct StaticAction {
     template <typename O>
     struct Part : O {
       // named("Action");
@@ -178,6 +178,32 @@ namespace Menu
       inline bool action() {//note: can not be static because of `enabled()`, its a runtime property... move it to enter
         return Base::obj().enabled() ? fn() : !has<Style::IsMenu>(Base::styles());
       }
+    };
+  };
+
+  struct Action {
+    template <typename O>
+    struct Part : O {
+      // named("Action");
+      using Base = O;
+      using This = Part<O>;
+      using Base::Base;
+      ActionFn fn;
+      Part(ActionFn action):fn(action) {}
+      template <typename Nav>
+      inline bool enter(Nav& nav) {Base::enter(nav);return fn();}
+      inline bool action() {return Base::obj().enabled() ? fn() : !has<Style::IsMenu>(Base::styles());}
+    };
+  };
+
+  template <ActionFn fn>
+  struct SCAction {
+    template <typename O>
+    struct Part : Action::Part<O> {
+      using Base = Action::Part<O>;
+      using This = Part<O>;
+      using Base::Base;
+      Part():Base(fn) {}
     };
   };
 
