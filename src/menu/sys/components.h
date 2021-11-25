@@ -80,7 +80,10 @@ namespace Menu
       template <typename... OO>
       constexpr Part(const char* o, OO... oo) : text(o), Base(oo...) {}
       template <typename Nav, typename Out, bool delegate = true>
-      static void printTo(Nav &nav, Out &o, int n=0, bool sel=false) {}
+      void printTo(Nav &nav, Out &o, int n=0, bool sel=false) {
+        // _trace(clog<<" {Text::printTo} "<<text<<endl);
+        o.print(text);
+      }
     };
   };
 

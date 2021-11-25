@@ -8,7 +8,10 @@ namespace Menu {
     struct Part:O {
       void write(const char* o,Idx len){dev.write(o,len);}
       template<typename Data,typename... Args>
-      void print(Data o,Args... args) {dev.print(o,args...);}
+      void print(Data o,Args... args) {
+        // _trace(clog<<"SerialOut::print "<<o<<endl);
+        dev.print(o,args...);
+      }
       void nl() {dev.println();}
     };
   };

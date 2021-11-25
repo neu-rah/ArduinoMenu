@@ -27,6 +27,7 @@ namespace Menu {
     static void printTitle(Nav& nav,Item& i) {}
     template<typename Nav,typename Item>
     void printItem(Nav& nav,Item& i,Idx level,Idx n=0,bool sel=false) {
+      // _trace(clog<<"->onPrintItemTo");
       i.onPrintItemTo(nav,O::obj(),level,n,sel);
     }
     template<Fmt,bool> static void fmt(bool editing,bool tunning,int n=0,bool sel=false,bool en=true,bool preview=false) {}
@@ -74,7 +75,7 @@ namespace Menu {
         Base::template printMenu<Nav,Menu>(nav,menu,level,selIdx);
       }
       template<typename Nav,typename Item>
-      void printTitle(Nav& nav,Item& i) {
+      /*static*/ void printTitle(Nav& nav,Item& i) {
         // _trace(clog<<"TitlePrinter::printTitle"<<endl;clog.flush());
         Base::template fmtStart<Fmt::Title>(nav.focus(),nav.tune());
         i.template printTo<Nav,typename This::Type>(nav,Base::obj());
@@ -92,7 +93,7 @@ namespace Menu {
       using Base::Base;
       template<typename Nav,typename Menu>
       void printMenu(Nav& nav,Menu& menu,Idx level,Idx selIdx) {
-        // _trace(clog<<"BodyPrinter::printMenu"<<endl;clog.flush());
+        _trace(clog<<"BodyPrinter::printMenu"<<endl;clog.flush());
         Base::template fmtStart<Fmt::Body>(nav.focus(),nav.tune());
         Base::template printMenu<Nav,Menu>(nav,menu,level,selIdx);
         menu.onPrintBodyTo(nav,Base::obj(),level,selIdx,0);
@@ -132,6 +133,7 @@ namespace Menu {
       }
       template<typename Nav,typename Item>
       void printItem(Nav& nav,Item& i,Idx level,Idx n=0,bool sel=false) {
+        // _trace(clog<<"BasePrinter::printItem ");
         bool preview=level>nav.level;
         Base::template fmtStart<Fmt::Item>(nav.focus(),nav.tune(),n,sel,i.enabled(),preview);
         Base::printItem(nav,i,level,n,sel);
