@@ -2,14 +2,19 @@
 
 #ifndef RSITE_ARDUINO_MENU_ESP8266OUT
   #define RSITE_ARDUINO_MENU_ESP8266OUT
-  #ifdef ESP8266
+  #if defined(ESP8266) || defined(ESP32)
     #include "../menuDefs.h"
+  #ifdef ESP8266
     #include <ESP8266WiFi.h>
+    #include <ESP8266WebServer.h>
+  #elif defined(ESP32)
+    #include <WiFi.h>
+    #include <WebServer.h>
+  #endif
     // based on WebServer:
     //   https://github.com/esp8266/Arduino/tree/master/libraries/ESP8266WebServer
     //   https://github.com/Links2004/arduinoWebSockets
     #include <WebSocketsServer.h>
-    #include <ESP8266WebServer.h>
     #include <vector>
     #include "xmlFmt.h"
 
@@ -61,6 +66,7 @@
 
       class esp8266_WebServerOut:public esp8266BufferedOut {
         public:
+#ifdef ESP8266
           ESP8266WebServer &server;
           //using esp8266Out::esp8266Out;
           esp8266_WebServerOut(
@@ -69,18 +75,38 @@
             idx_t* t,
             panelsList& p
           ):esp8266BufferedOut(t,p),server(srv) {}
+#elif defined(ESP32)
+          WebServer &server;
+          //using esp8266Out::esp8266Out;
+          esp8266_WebServerOut(
+            WebServer &srv,
+            /*const colorDef<esp8266Out::webColor> (&c)[nColors],*/
+            idx_t* t,
+            panelsList& p
+          ):esp8266BufferedOut(t,p),server(srv) {}
+#endif
           size_t write(uint8_t ch) override {response<<(char)ch;return 1;}
           // template<typename T> inline esp8266_WebServerOut& operator<<(T t) {response<<t;return *this;}
       };
 
       class esp8266_WebServerStreamOut:public esp8266Out {
         public:
+#ifdef ESP8266
           ESP8266WebServer &server;
           inline esp8266_WebServerStreamOut(
             ESP8266WebServer &srv,
             idx_t* t,
             panelsList& p
           ):esp8266Out(t,p),server(srv) {}
+#elif defined(ESP32)
+          WebServer &server;
+          inline esp8266_WebServerStreamOut(
+            WebServer &srv,
+            idx_t* t,
+            panelsList& p
+          ):esp8266Out(t,p),server(srv) {}
+#endif
+
           inline size_t write(uint8_t ch) override {
             char c[2]={ch,0};
             server.sendContent(c);

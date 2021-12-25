@@ -24,7 +24,7 @@ int noInput::peek() {return -1;}
 //
 ////////////////////////////////////////////////////////////////////////////////
 #if defined(MENU_DEBUG) || defined(MENU_ASYNC)
-  #ifdef ESP8266
+  #if defined(ESP8266) || defined(ESP32)
     template<typename T>
     menuOut& menuOut::operator<<(T o) {(*(Stream*)this)<<(o);return *this;}
   #endif
