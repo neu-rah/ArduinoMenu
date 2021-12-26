@@ -43,10 +43,19 @@ so don't forget to change it.
 #endif
 //#include <menuIO/jsFmt.h>//to send javascript thru web socket (live update)
 #include <FS.h>
+#ifdef ESP8266
 #include <Hash.h>
 extern "C" {
   #include "user_interface.h"
 }
+#elif defined(ESP32)
+#include <SPIFFS.h>
+
+// Use external analogWrite library for ESP32 (optional)
+// for compatibility with older versions of espressif/arduino-esp32
+// https://github.com/Dlloydev/ESP32-ESP32S2-AnalogWrite
+#include <analogWrite.h>
+#endif
 
 using namespace Menu;
 
@@ -105,7 +114,11 @@ const char* serverName="192.168.1.79";
 #define HTTP_PORT 80
 #define WS_PORT 81
 #define USE_SERIAL Serial
+#ifdef ESP8266
 ESP8266WebServer server(80);
+#elif defined(ESP32)
+WebServer server(80);
+#endif
 WebSocketsServer webSocket(81);
 
 #define MAX_DEPTH 2
