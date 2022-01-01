@@ -83,7 +83,7 @@
         idx_t printText(const char* at,idx_t len);
         #if defined(MENU_DEBUG) || defined(MENU_ASYNC)
           virtual menuOut& operator<<(prompt const &p);
-          #ifdef ESP8266
+          #if defined(ESP8266) || defined(ESP32)
             template<typename T> menuOut& operator<<(T o);
           #endif
         #endif
