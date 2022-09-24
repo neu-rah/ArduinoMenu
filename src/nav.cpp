@@ -20,10 +20,25 @@ idx_t panelsList::maxY() const {
 //
 ////////////////////////////////////////////////////////////////////////////////
 
+static uint8_t escaped = 0;
+
 navCmd navNode::navKeys(char ch) {
   trace(MENU_DEBUG_OUT<<"navNode::navKeys"<<endl);
   if (root->useAccel&&strchr(numericChars,ch)) {
     return navCmd(idxCmd,ch-'1');
+  }
+  if ((escaped == 0) && (ch == '\e')) {escaped = 1; return noCmd;}
+  else if ((escaped == 1) && (ch == '[')) {escaped = 2; return noCmd;}
+  else if (escaped == 1) {escaped = 0; return noCmd;}
+  else if (escaped == 2) {
+    escaped = 0;
+    switch (ch) {
+      case 'A': return(downCmd); break;
+      case 'B': return(upCmd); break;
+      case 'C': return(enterCmd); break;
+      case 'D': return(escCmd); break;
+      default: return(noCmd); break;
+    }
   }
   for(uint8_t i=0;i<sizeof(options->navCodes)/sizeof(navCode);i++)
     if (options->navCodes[i].ch==ch) return options->navCodes[i].cmd;
