@@ -174,6 +174,11 @@ Menu::idx_t id##Tops##n[md];\
 PANELS(id##Panels##n,__VA_ARGS__);\
 Menu::utftOut id##n(gfx,color,id##Tops##n,id##Panels##n,fontW,fontH);
 
+#define VAR_SSD1306ASCII_OUT(id,md,n,oled,fontW,fontH,...)\
+Menu::idx_t id##Tops##n[md];\
+PANELS(id##Panels##n,__VA_ARGS__);\
+Menu::SSD1306AsciiOut id##n(&oled,id##Tops##n,id##Panels##n,fontW,fontH);
+
 #define REF_HEAD_NONE(...)
 #define REF_SERIAL_OUT(id,md,n,...) &id##n,
 #define REF_ANSISERIAL_OUT(id,md,n,...) &id##n,
@@ -188,6 +193,7 @@ Menu::utftOut id##n(gfx,color,id##Tops##n,id##Panels##n,fontW,fontH);
 #define REF_UCG_OUT(id,md,n,...) &id##n,
 #define REF_U8X8_OUT(id,md,n,...) &id##n,
 #define REF_UTFT_OUT(id,md,n,...) &id##n,
+#define REF_SSD1306ASCII_OUT(id,md,n,...) &id##n,
 
 #define MENU_OUTPUTS(id,maxDepth,...)\
 	XFOR_EACH(CALL,WITH(VAR,id,maxDepth),__VA_ARGS__)\
