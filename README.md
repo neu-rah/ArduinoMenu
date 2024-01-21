@@ -16,12 +16,6 @@ Optionally the system can be operated in semi-automated mode, issuing navigation
 
 See the [wiki](https://github.com/neu-rah/ArduinoMenu/wiki)
 
-### COVID-19 note
-
-**If you need this menu for any device covid-19 related, be my guest, I grant you free usage even if you going to sell the device**
-
-This menu system has the advantage of being long tested and supporting many interface devices so that makers don't be restricted in hardware.
-
 ## Simple Example
 ```c++
 #include <menu.h>
