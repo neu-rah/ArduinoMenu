@@ -42,9 +42,14 @@ template<class T> constexpr inline T& operator^= (T& a, T b) { return (T&)((int&
 	  BUTTON_DOUBLE_CLICKED     = 1 << 1,
 	  BUTTON_LONG_PRESSED       = 1 << 2,
 
-	  ROTARY_CW                 = 1 << 3,
+	  ROTARY_CW                 = 1 << 5,	// fix for issue #414
 	  ROTARY_CCW                = 1 << 4,
 	};
+/*
+EventType values should be different for codes defined as:
+const navCodesDef Menu::defaultNavCodes (menuBase.cpp file)
+and special cases in textField::parseInput (items.cpp file) function
+*/
 
 	EventType config;
 	EventType events;  // we could do a fifo if we miss events
