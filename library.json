@@ -1,6 +1,6 @@
 {
   "name": "ArduinoMenu library",
-  "version": "4.21.4",
+  "version": "4.21.5",
   "keywords": "menu, display, lcd, tft, buttons, encoder, io, control",
   "description": "AVR generic menu/interactivity system",
   "repository":
