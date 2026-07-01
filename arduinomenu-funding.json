@@ -1,0 +1,33 @@
+{
+  "$schema": "https://fundingjson.org/schema/v1.1.0.json",
+  "version": "v1.1.0",
+  "entity": {
+    "type": "individual",
+    "role": "maintainer",
+    "name": "Rui Azevedo",
+    "email": "ruihfazevedo@gmail.com",
+    "phone": "",
+    "description": "Freelance embedded systems engineer with 35+ years of experience, based in the Azores, Portugal. Author of ArduinoMenu and the HAPI (Open Chain Derivation) compile-time composition framework, part of the InternetOfPins open source ecosystem (OneParse, OneMenu, OneChip, and related libraries) aimed at eliminating per-chip-variant fragmentation in embedded/IoT firmware.",
+    "webpageUrl": {
+      "url": "https://r-site.net",
+      "wellKnown": ""
+    }
+  },
+  "projects": [
+    {
+      "guid": "arduinomenu",
+      "name": "ArduinoMenu",
+      "description": "An open source menu/UI library for embedded and IoT devices (AVR, ESP32, STM32, and other MCU targets), used wherever a device needs a navigable on-device UI: buttons, encoders, LCD/OLED/TFT displays, serial terminals, or web interfaces. In production use for over a decade, with 1,000+ GitHub stars and preservation in the GitHub Arctic Code Vault. Funding supports migrating the library onto a newer, zero-overhead compile-time architecture (HAPI, part of the InternetOfPins ecosystem) and resolving a known compiler-diagnostics barrier that discourages less experienced adopters.",
+      "webpageUrl": {
+        "url": "https://github.com/neu-rah/ArduinoMenu",
+        "wellKnown": ""
+      },
+      "repositoryUrl": {
+        "url": "https://github.com/neu-rah/ArduinoMenu",
+        "wellKnown": ""
+      },
+      "licenses": ["spdx:LGPL-2.1"],
+      "tags": ["embedded", "iot", "arduino", "menu", "ui", "cpp", "avr", "esp32", "stm32"]
+    }
+  ]
+}
