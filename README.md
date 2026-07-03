@@ -16,6 +16,21 @@ Optionally the system can be operated in semi-automated mode, issuing navigation
 
 See the [wiki](https://github.com/neu-rah/ArduinoMenu/wiki)
 
+## What's next — OneMenu / HAPI
+
+A successor is in active development, built on **HAPI**, a zero-overhead
+compile-time composition engine (github.com/InternetOfPins/HAPI). Menu
+definitions compile down to code indistinguishable from hand-written C —
+see it for yourself: [Compiler Explorer demo](https://godbolt.org/z/6srTzdTY7).
+
+This isn't a release. The core (**OneMenu**) is solid, but a drop-in
+compatibility layer for existing AM4 sketches is not done yet — that's the
+main blocker before this becomes a real v5. If you're interested in the
+architecture, want to help with the compatibility layer, or just want to
+follow along, the repo is open: github.com/InternetOfPins/HAPI
+
+No migration is required right now. AM4 keeps working exactly as it does today.
+
 ## Simple Example
 ```c++
 #include <menu.h>
