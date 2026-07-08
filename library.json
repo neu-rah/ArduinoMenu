@@ -1,13 +1,25 @@
 {
   "name": "ArduinoMenu library",
-  "version": "4.21.5",
+  "version": "5.0.0-alpha",
   "keywords": "menu, display, lcd, tft, buttons, encoder, io, control",
-  "description": "AVR generic menu/interactivity system",
+  "description": "AVR generic menu/interactivity system — AM5, rebuilt on OneMenu/HAPI (zero-overhead compile-time composition), AM4-syntax compat layer",
   "repository":
   {
     "type": "git",
     "url": "https://github.com/neu-rah/ArduinoMenu",
-    "branch": "master"
+    "branch": "AM5"
+  },
+  "dependencies": {
+    "HAPI": "https://github.com/InternetOfPins/HAPI.git",
+    "OneBit": "https://github.com/InternetOfPins/OneBit.git",
+    "OnePin": "https://github.com/InternetOfPins/OnePin.git",
+    "OneBus": "https://github.com/InternetOfPins/OneBus.git",
+    "OneChip": "https://github.com/InternetOfPins/OneChip.git",
+    "OneData": "https://github.com/InternetOfPins/OneData.git",
+    "OneItem": "https://github.com/InternetOfPins/OneItem.git",
+    "OneOutput": "https://github.com/InternetOfPins/OneOutput.git",
+    "OneParse": "https://github.com/InternetOfPins/OneParse.git",
+    "OneMenu": "https://github.com/InternetOfPins/OneMenu.git"
   },
   "frameworks": "arduino",
   "platforms": "*"

@@ -1,17 +1,16 @@
 /* -*- C++ -*- */
 /********************
-Sept 2014 ~ Oct. 2017 Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
+Rui Azevedo - ruihfazevedo(@rrob@)gmail.com
 
-menu library for the arduino framework
+AM5 — ArduinoMenu's AM4-syntax rebuilt on OneMenu/HAPI (zero-overhead
+compile-time composition, see github.com/InternetOfPins/HAPI). This branch's
+src/ is a thin forward onto OneMenu's compat layer, not a reimplementation —
+the actual macros/components live in OneMenu, pulled in as a dependency
+(see library.json). MENU/FIELD/OP/EXIT/SUBMENU/TOGGLE/SELECT/CHOOSE/VALUE/
+MENU_INPUTS/MENU_OUTPUTS/NAVROOT all resolve through this include.
 
 www.r-site.net
-
-This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation; either version 2.1 of the License, or (at your option) any later version.
-This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
-You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 ***/
 #pragma once
 
-#include "menuDefs.h"
-
-#include "itemsTemplates.hpp"
+#include <oneMenu/compat/am4.h>
