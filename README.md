@@ -23,11 +23,16 @@ compile-time composition engine (github.com/InternetOfPins/HAPI). Menu
 definitions compile down to code indistinguishable from hand-written C —
 see it for yourself: [Compiler Explorer demo](https://godbolt.org/z/6srTzdTY7).
 
-This isn't a release. The core (**OneMenu**) is solid, but a drop-in
-compatibility layer for existing AM4 sketches is not done yet — that's the
-main blocker before this becomes a real v5. If you're interested in the
-architecture, want to help with the compatibility layer, or just want to
-follow along, the repo is open: github.com/InternetOfPins/HAPI
+This isn't a release. The core (**OneMenu**) is solid, and a drop-in
+compatibility layer for existing AM4 sketches is now in progress on the
+**[AM5 branch](https://github.com/neu-rah/ArduinoMenu/tree/AM5)** of this
+repo — real, unmodified AM4 examples (Blink, Button, Confirm so far) already
+build against it with just a library-dependency swap, at roughly the same
+flash/RAM savings as the Compiler Explorer demo above suggests. Still missing
+pieces (masked text-field editing, the idle/suspend API, most device
+drivers) before it covers AM4's full example set. If you're interested in
+the architecture, want to help with the compatibility layer, or just want to
+follow along: github.com/InternetOfPins/HAPI
 
 No migration is required right now. AM4 keeps working exactly as it does today.
 
