@@ -105,6 +105,50 @@ oneMenu::INavDef<
   oneMenu::Root<decltype(editParent), editParent>
 > editNav;
 
+// ── digit-key entry while editing a NumField (nav.h/idParser.h/item.h,
+// 2026-07-09, "numeric fields ... need to deliver Cmd::Key when nav is on
+// edit mode, instead of the nav go()") — native composition (not an AM4
+// macro; this is a core nav mechanism fix, not AM4-compat-specific), own
+// standalone nav tree, not spliced into mainMenu's index-sensitive sequence.
+// Requires IndexGo in the nav chain (the actual redirect point) — none of
+// the other standalone trees above need it since they don't drive digit keys.
+int digitPower = 55;
+using DigitPower = oneMenu::NumFieldDef<oneMenu::AsLabel<Text>,
+  oneMenu::NumField<oneData::StaticNumRange<oneData::StaticRange<0,100,false>>,
+                     oneMenu::AsField<oneData::DataRef<&digitPower>>>>;
+auto digitMenu = oneMenu::menuDef<>(
+  oneMenu::ItemDef<Text>{"DigitMenu"},
+  oneMenu::staticBody(
+    DigitPower{"Power"},
+    EXIT("<Back")
+  )
+);
+oneMenu::INavDef<
+  oneMenu::IndexGo,
+  oneMenu::TreeNav,
+  oneMenu::Root<decltype(digitMenu), digitMenu>
+> digitNav;
+// scripted digit-key input — same shape as regIn above, but pushing the raw
+// Cmd::Go/Cmd::Esc events IdParser::parseKey would have produced for a real
+// keypress, since the point of this check is IndexGo's own redirect logic,
+// not IdParser's byte-to-CKE translation (already covered by construction —
+// idParser.h's own parseKey is a pure static function, trivial to trust once
+// its two branches are read; see notes.md).
+struct DigitIn {
+  template<typename In> struct Part : In {
+    static inline oneMenu::CKE queue[16]{};
+    static inline int head = 0, tail = 0;
+    static bool available() { return head < tail; }
+    static oneMenu::CKE cmd() { return head < tail ? queue[head++] : oneMenu::CKE{}; }
+    static void pushDigit(char c) {
+      if(tail >= 16) return;
+      queue[tail++] = (c=='0') ? oneMenu::CKE{oneMenu::Cmd::Esc, oneMenu::Key('0'), false, true}
+                                : oneMenu::CKE{oneMenu::Cmd::Go, oneMenu::Key(c-'0'), false, true};
+    }
+  };
+};
+oneMenu::InDef<DigitIn> digitIn;
+
 // ── menu tree, verbatim AM4 call syntax ─────────────────────────────────────
 MENU(subMenu, "Sub-Menu", Menu::doNothing, Menu::anyEvent, Menu::noStyle
   ,OP("Sub1", action::op1, Menu::enterEvent)
@@ -334,9 +378,31 @@ int main() {
          "EDIT() must bind directly to the caller's buffer (zero-copy) — only pos 0 should change");
   editNav.esc();
 
+  // ── digit-key entry while editing a NumField (nav.h/idParser.h/item.h,
+  // 2026-07-09) ── Power (index 0 in digitMenu's body) is focused by default.
+  assert(digitPower==55);
+  assert(digitNav.navMode()!=oneMenu::NavMode::Edit);
+  digitIn.pushDigit('1');   // outside edit mode: jump+enter item 1 (Power)
+  digitIn.inBurst(digitNav,1);
+  assert(digitNav.navMode()==oneMenu::NavMode::Edit &&
+         "digit outside edit mode must jump to item N and enter it");
+  digitIn.pushDigit('7');
+  digitIn.inBurst(digitNav,1);
+  assert(digitPower==7 && "first digit while editing must set the literal value directly");
+  digitIn.pushDigit('3');
+  digitIn.inBurst(digitNav,1);
+  assert(digitPower==73 && "second digit while editing must extend the literal (7 -> 73)");
+  digitIn.pushDigit('0');   // the fixed '0' collision — must enter a
+  digitIn.inBurst(digitNav,1);                   // literal 0, not exit edit mode
+  assert(digitNav.navMode()==oneMenu::NavMode::Edit && "'0' while editing must not exit edit mode");
+  assert(digitPower==100 && "'730' must clamp to StaticRange<0,100> via setStr's own clamp()");
+  digitNav.esc();
+  assert(digitNav.navMode()!=oneMenu::NavMode::Edit);
+
   printf("OK: MENU/FIELD/OP/EXIT/SUBMENU compat macros all verified\n");
   printf("OK: EventDispatch enabled()-gating + real poll()-path dispatch verified\n");
   printf("OK: MENU()/PADMENU() fn/mask auto-dispatch (menuDefStyle/padDefStyle) verified\n");
   printf("OK: EDIT()'s TextBufRef/PosSet (zero-copy buffer + per-position mask) verified\n");
+  printf("OK: NumField digit-key entry while editing (IndexGo redirect + '0' fix) verified\n");
   return 0;
 }
