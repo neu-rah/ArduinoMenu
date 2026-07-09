@@ -27,9 +27,9 @@
  * same auto-dispatch OP() has — see am4.h) — real coverage for that macro,
  * reusing showEvent() below unmodified (already bool(EventMask)-shaped).
  *
- * am4.h's MENU() macro still doesn't wire its own fn/mask (title-level
- * events) to anything — the SUBMENU() below still needs a native
- * EventAction<mask,fn> spliced in for that one case (see its own comment).
+ * subMenu below now goes through the MENU() macro directly (2026-07-09, once
+ * MENU()'s own fn/mask got the same auto-dispatch — am4compat::menuDefStyle,
+ * am4.h) — real coverage for MENU()'s title-level events too.
  *
  * The selftest drives nav.up()/down()/enter()/esc() directly (same style as
  * examples/am4compat's own selftest; the real input-driven poll()/in() path
@@ -91,26 +91,24 @@ namespace action {
 
 float test = 55;
 
-// Native menuDef (not the MENU() macro) so EventAction can be attached to
-// the submenu's own item slot — Menu<T,B,MM...>'s title is a plain data
-// member, not part of the inheritance chain, so an event component has to
-// be one of MM... (see notes.md: "attaching EventAction to a submenu's
-// title" — MENU()'s macro doesn't expose that slot today).
-auto subMenu = oneMenu::menuDef<oneMenu::EventAction<oneMenu::EventMask::Any, action::showEvent>>(
-  oneMenu::ItemDef<Text>{"Sub-Menu"},
-  oneMenu::staticBody(
-    // action::op1 is bool(int) — OP()'s auto-dispatch (am4.h) would give it
-    // the cheap Action<fn> path, same as always, with no event observable.
-    // Composed natively here instead, so this item demonstrates both firing
-    // side by side: Action<op1> (the plain execute-on-Enter primitive) and
-    // EventAction<Any,showEvent> (real event dispatch) on the *same* item —
-    // exactly the "independent layers, not two APIs for the same thing"
-    // point from earlier in this session.
-    oneMenu::ItemDef<oneMenu::Action<action::op1>,
+// subMenu's own Enter/Exit/Focus/Blur now wire through MENU()'s fn/mask
+// (am4compat::menuDefStyle splices EventAction<mask,fn> into Menu<T,B,MM...>'s
+// own MM... pack — the only chain-reachable slot, since the title itself is a
+// plain data member HAPI traversal never reaches). Sub1 stays hand-composed
+// (not OP()) specifically to keep demonstrating two independent layers on the
+// same item: Action<op1> (the plain execute-on-Enter primitive, op1 is
+// bool(int) so OP()'s own auto-dispatch would give it the cheap path anyway)
+// and EventAction<Any,showEvent> (real event dispatch) firing side by side —
+// not two APIs for the same thing.
+MENU(subMenu, "Sub-Menu", action::showEvent, Menu::anyEvent, Menu::noStyle
+  // wrapped in parens: MENU()'s __VA_ARGS__ goes through the preprocessor
+  // first, which splits on every top-level comma — including ones inside
+  // <...> template-argument lists, since the preprocessor doesn't parse C++
+  // template syntax. Parens make the whole expression one macro argument.
+  ,(oneMenu::ItemDef<oneMenu::Action<action::op1>,
                       oneMenu::EventAction<oneMenu::EventMask::Any, action::showEvent>,
-                      Text>{"Sub1"},
-    EXIT("<Back")
-  )
+                      Text>{"Sub1"})
+  ,EXIT("<Back")
 );
 
 int ledCtrl = -1;  // -1: neither VALUE() below — proves SyncValue actually wrote something.

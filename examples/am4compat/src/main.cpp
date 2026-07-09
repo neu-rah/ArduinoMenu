@@ -100,6 +100,37 @@ static_assert(!std::is_polymorphic_v<decltype(am4compat::opItem<oneMenu::EventMa
 static_assert(std::is_polymorphic_v<decltype(am4compat::opItem<oneMenu::EventMask::Enter, action::op1>("x"))>,
               "bool(EventMask,IItem&) OP() handler must get the real IItemDef binding");
 
+// ── PADMENU() coverage: fn/mask auto-dispatch (am4compat::padDefStyle, am4.h,
+// 2026-07-09) — same auto-dispatch principle as MENU()'s (menuDefStyle), but
+// deliberately without any style/WrapNav involvement — PadDraw is a pure
+// rendering tag, wrap is an orthogonal nav-boundary concern a pad has no use
+// for (see padDefStyle's own doc comment). Standalone nav tree (same pattern
+// as regMenu/regNav below), not spliced into mainMenu, so it doesn't disturb
+// mainMenu's existing index-based selftest sequence above.
+namespace padtest {
+  int enterCount = 0, exitCount = 0;
+  bool onEv(oneMenu::EventMask e) {
+    if(e & oneMenu::EventMask::Enter) enterCount++;
+    if(e & oneMenu::EventMask::Exit)  exitCount++;
+    return true;
+  }
+}
+
+PADMENU(padMenu, "Pad", padtest::onEv, Menu::anyEvent, Menu::noStyle
+  ,EXIT("<Back")
+);
+
+MENU(padParent, "PadParent", Menu::doNothing, Menu::noEvent, Menu::noStyle
+  ,SUBMENU(padMenu)
+  ,EXIT("<Back")
+);
+
+oneMenu::INavDef<
+  oneMenu::EventDispatch,
+  oneMenu::TreeNav,
+  oneMenu::Root<decltype(padParent), padParent>
+> padNav;
+
 // ── I/O + nav: AM4-syntax device wiring (ANSI_OUT/MENU_INPUTS/MENU_OUTPUTS/NAVROOT) ──
 // devIn is still pre-declared the native OneMenu way (see file comment); devOut now
 // comes from ANSI_OUT(id,w,h), am4.h's own per-backend device macro (AM4-syntax
@@ -248,7 +279,21 @@ int main() {
   assert(regtest::enterCount == 1 &&
          "poll()-path Enter did not fire through EventDispatch (in()/doCmd static-dispatch gap)");
 
+  // ── PADMENU()'s fn/mask auto-dispatch (am4compat::padDefStyle, am4.h, 2026-07-09) ──
+  // padMenu (index 0 in padParent's body) is focused by default — no nav call needed
+  // to arrive there. Enter on a pad item routes through PadDraw's own padOpen(), not
+  // the regular open() a plain submenu uses — EventDispatch::doCmd fires on cmd *type*
+  // (Cmd::Enter/Esc) regardless of which one ran internally, so this also proves
+  // EventAction dispatch is agnostic to PadDraw's different nav.h Enter handling.
+  assert(padtest::enterCount == 0);
+  padNav.enter();
+  assert(padtest::enterCount == 1 && "PADMENU()'s EventAction did not fire on Enter");
+  assert(padtest::exitCount == 0);
+  padNav.esc();
+  assert(padtest::exitCount == 1 && "PADMENU()'s EventAction did not fire on Exit");
+
   printf("OK: MENU/FIELD/OP/EXIT/SUBMENU compat macros all verified\n");
   printf("OK: EventDispatch enabled()-gating + real poll()-path dispatch verified\n");
+  printf("OK: MENU()/PADMENU() fn/mask auto-dispatch (menuDefStyle/padDefStyle) verified\n");
   return 0;
 }
