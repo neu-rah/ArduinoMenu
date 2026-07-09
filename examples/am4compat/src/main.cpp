@@ -183,6 +183,46 @@ oneMenu::INavDef<
   oneMenu::Root<decltype(objParent), objParent>
 > objNav;
 
+// ── AM4's richer 3-arg event handler signature (eventMask,navNode&,prompt&)
+// (am4.h, 2026-07-09) — OP()'s 3rd auto-dispatch branch (am4compat::opItem)
+// plus the idle-control bridge (am4compat::NavRootDef/NAVROOT_IDLE), mirroring
+// SDCard.ino's real filePick(eventMask,navNode&,prompt&) shape as closely as
+// practical: on Enter, checks nav.isFocused() then calls nav.idleOn(...) to
+// swap RunLoop's alternative — a real, if synthetic, mainFn/altFn pair drives
+// the swap end to end, not just a type-level check. Own standalone nav tree
+// (same pattern as edittest/digitMenu/objParent above), not spliced into
+// mainMenu's index-sensitive sequence.
+namespace navtest {
+  int hits = 0;
+  bool wasFocused = false;
+  bool mainFn() { return true; }
+  bool altFn()  { return true; }
+  bool filePick(oneMenu::EventMask e, oneMenu::INav& nav, oneMenu::IItem&) {
+    if(e & oneMenu::EventMask::Enter) {
+      hits++;
+      wasFocused = nav.isFocused();
+      nav.idleOn(altFn);
+    }
+    return true;
+  }
+}
+using NavTestRun = oneMenu::RunLoop<navtest::mainFn>;
+
+MENU(navParent, "NavParent", Menu::doNothing, Menu::noEvent, Menu::noStyle
+  ,OP("Pick", navtest::filePick, Menu::enterEvent)
+  ,EXIT("<Back")
+);
+
+// Built directly (not via NAVROOT_IDLE) — same reason editNav/digitNav/objNav
+// above skip NAVROOT: this selftest drives nav calls directly, no I/O device
+// pool needed. NAVROOT_IDLE itself (am4.h) is exercised at the type level by
+// this composing correctly through am4compat::NavRootDef; a real sketch
+// wanting AM4's exact NAVROOT(...) call syntax with idle support would use
+// the macro directly, e.g. `NAVROOT_IDLE(nav, mainMenu, 2, in, out, Run);`.
+am4compat::NavRootDef<NavTestRun,
+  oneMenu::EventDispatch, oneMenu::TreeNav, oneMenu::Root<decltype(navParent), navParent>
+> navNav;
+
 // ── menu tree, verbatim AM4 call syntax ─────────────────────────────────────
 MENU(subMenu, "Sub-Menu", Menu::doNothing, Menu::anyEvent, Menu::noStyle
   ,OP("Sub1", action::op1, Menu::enterEvent)
@@ -444,11 +484,24 @@ int main() {
   objNav.esc();
   assert(objNav.navMode()!=oneMenu::NavMode::Edit);
 
+  // ── AM4's 3-arg event handler signature + idle bridge (am4.h, 2026-07-09) ──
+  // Pick (index 0 in navParent's body) is focused by default.
+  assert(navtest::hits==0);
+  assert(navNav.isFocused() && "NavRootDef must start focused (RunLoop not yet swapped)");
+  navNav.enter();  // fires navtest::filePick(EventMask,INav&,IItem&) via EventActionItemNav
+  assert(navtest::hits==1 && "OP()'s 3-arg auto-dispatch branch did not fire");
+  assert(navtest::wasFocused && "nav.isFocused() must read true from inside the handler, pre-idleOn()");
+  assert(!navNav.isFocused() &&
+         "handler's nav.idleOn(altFn) must flip isFocused() to false via the real RunLoop swap");
+  navNav.idleOff();
+  assert(navNav.isFocused() && "idleOff() must restore isFocused() to true");
+
   printf("OK: MENU/FIELD/OP/EXIT/SUBMENU compat macros all verified\n");
   printf("OK: EventDispatch enabled()-gating + real poll()-path dispatch verified\n");
   printf("OK: MENU()/PADMENU() fn/mask auto-dispatch (menuDefStyle/padDefStyle) verified\n");
   printf("OK: EDIT()'s TextBufRef/PosSet (zero-copy buffer + per-position mask) verified\n");
   printf("OK: NumField digit-key entry while editing (IndexGo redirect + '0' fix) verified\n");
   printf("OK: OBJ() splices a hand-declared item into a real MENU() body verified\n");
+  printf("OK: AM4's 3-arg event handler signature + idle-control bridge verified\n");
   return 0;
 }
