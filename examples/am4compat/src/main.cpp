@@ -149,6 +149,40 @@ struct DigitIn {
 };
 oneMenu::InDef<DigitIn> digitIn;
 
+// ── OBJ() coverage (am4.h, 2026-07-09) — splices a previously hand-declared
+// item object (built without any macro) into a MENU()'s body, matching AM4's
+// own TextField.ino ground truth (`textField option0(...); MENU(...,
+// OBJ(option0),...)`). Mechanically identical to SUBMENU() in OneMenu (both
+// are `std::move(id)`), so this exercises that the moved-from object still
+// composes correctly into a real MENU()'s staticBody(...) pack, not just
+// that the macro expands. Own standalone nav tree, not spliced into
+// mainMenu's index-sensitive sequence. Native-only (this file is never AVR
+// -built): a NumField/TextField-composed object declared as a standalone
+// named variable — global or function-local-static, with or without Watch<>
+// — hits a real avr-g++ 7.3 ICE (output_constructor_regular_field,
+// varasm.c:5031) on real hardware builds, reproduced even without OBJ()
+// involved at all (see .RnD/AM4check/objMacro, notes.md "AM4 compat layer")
+// — a pre-existing toolchain limitation intrinsic to that declaration shape,
+// not a bug in OBJ() itself. A real AVR-targeted OBJ() port should
+// hand-declare a plainer item (see objMacro's own AVR-proven example) until
+// a newer avr-gcc is available.
+int objLevel = 3;
+using ObjLevel = oneMenu::NumFieldDef<oneMenu::AsLabel<Text>,
+  oneMenu::NumField<oneData::StaticNumRange<oneData::StaticRange<0,10,false>>,
+                     oneMenu::AsField<oneData::DataRef<&objLevel>>>>;
+ObjLevel objLevelItem{"Level"};  // hand-declared, no macro — same spirit as
+                                  // TextField.ino's `textField option0(...)`
+
+MENU(objParent, "ObjParent", Menu::doNothing, Menu::noEvent, Menu::noStyle
+  ,OBJ(objLevelItem)
+  ,EXIT("<Back")
+);
+
+oneMenu::INavDef<
+  oneMenu::TreeNav,
+  oneMenu::Root<decltype(objParent), objParent>
+> objNav;
+
 // ── menu tree, verbatim AM4 call syntax ─────────────────────────────────────
 MENU(subMenu, "Sub-Menu", Menu::doNothing, Menu::anyEvent, Menu::noStyle
   ,OP("Sub1", action::op1, Menu::enterEvent)
@@ -399,10 +433,22 @@ int main() {
   digitNav.esc();
   assert(digitNav.navMode()!=oneMenu::NavMode::Edit);
 
+  // ── OBJ() splices a hand-declared item into a real MENU() body (am4.h, 2026-07-09) ──
+  // objLevelItem (index 0 in objParent's body) is focused by default.
+  assert(objLevel==3);
+  objNav.enter();  // opens edit mode on the hand-declared NumField
+  assert(objNav.navMode()==oneMenu::NavMode::Edit &&
+         "OBJ()'d item did not compose correctly into the real nav tree");
+  objNav.down();   // NumField's own Up/Down convention: Down increments via up()
+  assert(objLevel==4 && "OBJ()'d item's own nav()/value binding must still work post-splice");
+  objNav.esc();
+  assert(objNav.navMode()!=oneMenu::NavMode::Edit);
+
   printf("OK: MENU/FIELD/OP/EXIT/SUBMENU compat macros all verified\n");
   printf("OK: EventDispatch enabled()-gating + real poll()-path dispatch verified\n");
   printf("OK: MENU()/PADMENU() fn/mask auto-dispatch (menuDefStyle/padDefStyle) verified\n");
   printf("OK: EDIT()'s TextBufRef/PosSet (zero-copy buffer + per-position mask) verified\n");
   printf("OK: NumField digit-key entry while editing (IndexGo redirect + '0' fix) verified\n");
+  printf("OK: OBJ() splices a hand-declared item into a real MENU() body verified\n");
   return 0;
 }
