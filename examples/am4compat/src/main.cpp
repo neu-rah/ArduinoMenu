@@ -77,6 +77,34 @@ namespace action {
   bool op2Legacy(int) { op2LegacyCount++; return true; }
 }
 
+// ── EDIT() coverage (am4.h, 2026-07-09) — per-position character-masked
+// text field bound directly to a caller-owned buffer (zero-copy, in place,
+// matching AM4's own EDIT() semantics — see am4.h's own EDIT()/editItem doc
+// comments). Standalone nav tree (same pattern as padMenu/padNav above), not
+// spliced into mainMenu, so it doesn't disturb mainMenu's existing
+// index-based selftest sequence.
+namespace edittest {
+  int hits = 0;
+  void onEdit() { hits++; }
+}
+char editBuf[5] = "0000";
+// NOTE: declared WITHOUT the trailing pointee-const (see EDIT()'s own doc
+// comment) — CharMask::PosSet<CText*>'s NTTP type is const char**, which a
+// `const char* const*` array's address does not convert to.
+static const char* editHexChars = "0123456789ABCDEF";
+static const char* editValidators[] = {editHexChars,editHexChars,editHexChars,editHexChars};
+
+MENU(editParent, "EditParent", Menu::doNothing, Menu::noEvent, Menu::noStyle
+  ,EDIT("Hex", editBuf, editValidators, edittest::onEdit, Menu::enterEvent, Menu::noStyle)
+  ,EXIT("<Back")
+);
+
+oneMenu::INavDef<
+  oneMenu::EventDispatch,
+  oneMenu::TreeNav,
+  oneMenu::Root<decltype(editParent), editParent>
+> editNav;
+
 // ── menu tree, verbatim AM4 call syntax ─────────────────────────────────────
 MENU(subMenu, "Sub-Menu", Menu::doNothing, Menu::anyEvent, Menu::noStyle
   ,OP("Sub1", action::op1, Menu::enterEvent)
@@ -292,8 +320,23 @@ int main() {
   padNav.esc();
   assert(padtest::exitCount == 1 && "PADMENU()'s EventAction did not fire on Exit");
 
+  // ── EDIT()'s zero-copy buffer binding + per-position mask (am4.h, 2026-07-09) ──
+  // Hex field (index 0 in editParent's body) is focused by default.
+  assert(strcmp(editBuf,"0000")==0);
+  assert(edittest::hits==0);
+  editNav.enter();  // opens edit mode -> fires edittest::onEdit (EventCall<enterEvent,fn>)
+  assert(edittest::hits==1 && "EDIT()'s EventCall did not fire on Enter");
+  editNav.down();   // cycle position 0's char up through editValidators[0] (per
+                     // TextField's own inverted Down=cycle-up convention)
+  assert(editBuf[0]=='1' &&
+         "EDIT()'s PosSet mask did not cycle the buffer's own char in place");
+  assert(strcmp(editBuf+1,"000")==0 &&
+         "EDIT() must bind directly to the caller's buffer (zero-copy) — only pos 0 should change");
+  editNav.esc();
+
   printf("OK: MENU/FIELD/OP/EXIT/SUBMENU compat macros all verified\n");
   printf("OK: EventDispatch enabled()-gating + real poll()-path dispatch verified\n");
   printf("OK: MENU()/PADMENU() fn/mask auto-dispatch (menuDefStyle/padDefStyle) verified\n");
+  printf("OK: EDIT()'s TextBufRef/PosSet (zero-copy buffer + per-position mask) verified\n");
   return 0;
 }
