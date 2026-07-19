@@ -377,8 +377,7 @@ int main() {
   assert(timeOff == 90);
   nav.down(); nav.down();       // index 3 -> 1 (Off field)
   nav.enter();                  // enters edit mode on the field
-  nav.up();                     // NumField::Part::nav inverts Up/Down while in Edit mode
-                                 // (Cmd::Up -> Base::down()) — see item.h; not a compat-layer bug
+  nav.down();                    // edit mode: Down decreases (natural mapping) — see item.h
   assert(timeOff == 89 && "FIELD() did not edit the bound variable via DataRef");
   nav.enter();                  // leave edit mode
 
@@ -479,7 +478,7 @@ int main() {
   objNav.enter();  // opens edit mode on the hand-declared NumField
   assert(objNav.navMode()==oneMenu::NavMode::Edit &&
          "OBJ()'d item did not compose correctly into the real nav tree");
-  objNav.down();   // NumField's own Up/Down convention: Down increments via up()
+  objNav.up();     // natural mapping: Up increments
   assert(objLevel==4 && "OBJ()'d item's own nav()/value binding must still work post-splice");
   objNav.esc();
   assert(objNav.navMode()!=oneMenu::NavMode::Edit);

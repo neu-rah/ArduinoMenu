@@ -349,11 +349,15 @@ namespace am4compat {
       if (cke.cmd == oneMenu::Cmd::Enter) {editing = !editing; this->dirty = true; return true;}
       if (editing && cke.cmd == oneMenu::Cmd::Esc) {editing = false; this->dirty = true; return true;}
       if (editing) {
-        // NumField's own edit-mode Up/Down inversion (item.h) — Up steps
-        // DOWN, Down steps UP; re-derived empirically, not assumed, see
-        // notes.md's own repeated caution about this exact direction.
-        if (cke.cmd == oneMenu::Cmd::Up   && *target > low)        {*target = (T)(*target - step); this->dirty = true; return true;}
-        if (cke.cmd == oneMenu::Cmd::Down && *target + step <= high) {*target = (T)(*target + step); this->dirty = true; return true;}
+        // Natural mapping (Up increases, Down decreases) — matches
+        // OneMenu's own NumField default (item.h, flipped this session to
+        // match AM4's real shipped default, config::invertFieldKeys=false)
+        // and non-edit-mode Up/Down semantics. No InvDir-style opt-in
+        // wrapper here (DynNumItem is a single runtime type, not a
+        // composable chain) — a future caller wanting the inverted
+        // direction would need its own sibling type.
+        if (cke.cmd == oneMenu::Cmd::Up   && *target + step <= high) {*target = (T)(*target + step); this->dirty = true; return true;}
+        if (cke.cmd == oneMenu::Cmd::Down && *target > low)        {*target = (T)(*target - step); this->dirty = true; return true;}
       }
       return false;
     }

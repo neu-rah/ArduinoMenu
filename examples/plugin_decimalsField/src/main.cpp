@@ -126,7 +126,7 @@ int main() {
   nav.up(); nav.up();  // f(0) -> d(1) -> Dec(2)
   nav.enter();
   assert(nav.navMode() == oneMenu::NavMode::Edit);
-  nav.down();
+  nav.up();   // edit mode: Up increases (natural mapping)
   assert(cantDecimals == 2 && "Dec field did not step to 2");
   nav.esc();
   assert(nav.navMode() != oneMenu::NavMode::Edit);

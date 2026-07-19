@@ -331,7 +331,7 @@ int main() {
   nav.enter();
   assert(nav.level() == 1 && "PADMENU() did not open a nested level");
   nav.enter();  // year field (index 0) enters edit mode
-  nav.down();   // NumField inverts Up/Down in edit mode; step is always 1.
+  nav.up();     // edit mode: Up increases (natural mapping); step is always 1.
   assert(year == 2018 && "birthDate's year FIELD did not edit independently");
   nav.enter();  // leave edit mode
   nav.esc();

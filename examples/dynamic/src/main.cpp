@@ -208,16 +208,17 @@ int main() {
   // exposed virtually, only the getter, so a type-erased field can't drive
   // the real edit-mode state machine; DynNumItem/DynTextItem manage editing
   // entirely themselves instead). Up/Down step the bound value within
-  // [low,high] while editing (NumField's own inverted Up/Down convention —
-  // reconfirmed here, not assumed).
+  // [low,high] while editing — natural mapping (Up increases), matching
+  // OneMenu's own NumField default (item.h, flipped this session to match
+  // AM4's real shipped default).
   while (nav.sel() != 2) nav.down();   // subMenu(4) -> Addr(3) -> test(2)
   assert(nav.sel() == 2);
   uint8_t testBefore = test;
   assert(!testField.editing);
   nav.enter();
   assert(testField.editing && "test field's Enter did not enter edit mode");
-  nav.down();   // edit-mode Down steps the value UP (NumField's documented inversion)
-  assert(test == (uint8_t)(testBefore + 10) && "Down in edit mode did not step +step");
+  nav.up();   // edit-mode Up increases (natural mapping)
+  assert(test == (uint8_t)(testBefore + 10) && "Up in edit mode did not step +step");
   nav.enter();
   assert(!testField.editing && "second Enter did not leave edit mode");
 

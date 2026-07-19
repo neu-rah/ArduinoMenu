@@ -368,11 +368,11 @@ int main() {
   nav.enter();
   assert(nav.level() == 1 && "PADMENU() did not open a nested level");
   nav.enter();  // year field (index 0) enters edit mode
-  // NumField inverts Up/Down while in edit mode (Cmd::Up -> Base::down()) —
-  // same documented quirk examples/am4compat's own digitMenu test hit — and
-  // FIELD()'s step/tune are accepted but ignored (am4.h's own doc comment:
-  // "value always steps by 1"), so Down here increments year by exactly 1.
-  nav.down();
+  // Natural mapping (Up increases) while in edit mode — item.h, flipped
+  // this session to match AM4's real shipped default. FIELD()'s step/tune
+  // are accepted but ignored (am4.h's own doc comment: "value always steps
+  // by 1"), so Up here increments year by exactly 1.
+  nav.up();
   assert(year == 2018 && "birthDate's year FIELD did not edit independently");
   nav.enter();  // leave edit mode
   nav.esc();

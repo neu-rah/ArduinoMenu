@@ -249,10 +249,10 @@ int main() {
   nav.up(); // setUse(0) -> setType(1)
   nav.up(); // setType(1) -> hour(2)
   int hBefore = tmpH;
-  // edit mode: Down increases (NumField's own established Up/Down
-  // inversion — tmpH starts at 0 = low, so Up would clamp at the boundary
-  // and do nothing).
-  nav.enter(); nav.down(); nav.enter();
+  // edit mode: Up increases (natural mapping, matching OneMenu's own
+  // NumField default — flipped this session to match AM4's real shipped
+  // default).
+  nav.enter(); nav.up(); nav.enter();
   assert(tmpH != hBefore && "editing hour did not change tmpH");
 
   nav.up(); nav.up(); nav.up(); // hour(2) -> min(3) -> sec(4) -> Ok(5)
