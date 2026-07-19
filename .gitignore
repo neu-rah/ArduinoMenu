@@ -12,6 +12,10 @@ lib
 .gitignore
 !/.gitignore
 examples/clickEncoder
+!examples/clickEncoder/
+!examples/clickEncoder/platformio.ini
+!examples/clickEncoder/src/
+!examples/clickEncoder/src/main.cpp
 examples/screenNav
 /dev
 /examples/dev
