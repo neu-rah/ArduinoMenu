@@ -53,7 +53,7 @@
 #include <oneData/oneData.h>
 #include <oneItem/oneItem.h>
 #include <oneOutput/oneOutput.h>
-#include "dynItem.h"
+#include <am4compat/dynItem.h>
 #include <cassert>
 #include <cstdio>
 #include <cstring>

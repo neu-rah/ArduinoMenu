@@ -1,9 +1,14 @@
 /**
  * @file dynItem.h
  * @author Rui Azevedo (ruihfazevedo@gmail.com)
- * @brief Program-side (not OneMenu-side) virtual item family unblocking AM4's
- *        `dynamic.ino` — a runtime-sized, heterogeneous `prompt*[]` array.
- *        See github.com/neu-rah/ArduinoMenu examples/dynamic/dynamic/dynamic.ino.
+ * @brief Shared AM4-compat virtual item family (program-side — not
+ *        OneMenu-side) for any port needing a runtime-sized, heterogeneous
+ *        item body. Lives in ArduinoMenu's own src/ (this library's real
+ *        include root — every example here already sees it, no per-example
+ *        copy needed), promoted here once a second real caller (`reuse.ino`,
+ *        alongside the original `dynamic.ino`) needed the same types.
+ *        Originally built unblocking `dynamic.ino` — see
+ *        github.com/neu-rah/ArduinoMenu examples/dynamic/dynamic/dynamic.ino.
  *
  * A prior attempt to port this onto OneMenu's IItemDef<Menu<...>> hit a real
  * C++ wall: Menu::Part::printMenu/StaticBody::printBody call TEMPLATE methods
