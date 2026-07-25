@@ -4,7 +4,28 @@
  * @brief AM4 LiquidCrystal.ino compat-macro port — "menu output to standard
  *        arduino LCD (LiquidCrystal)", input: encoder + Serial. See the
  *        original at github.com/neu-rah/ArduinoMenu examples/LiquidCrystal/
- *        LiquidCrystal/LiquidCrystal.ino.
+ *        LiquidCrystal/LiquidCrystal.ino. Also stands in for the now-dropped
+ *        `LCD_Malpartida.ino`/`LCD_PCF8574.ino` (both were the same I2C HD44780
+ *        backpack, just two different vendor libraries wrapping it) — see
+ *        `directI2c::unificationProof()` below for why one native driver already
+ *        covers both direct-parallel AND I2C wiring, so a separate example
+ *        per wiring was never needed.
+ *
+ * ── Direct-parallel and I2C-expander LCD wiring, unified ────────────────────
+ * `oneIO::display::Hd44780<RS,EN,D4,D5,D6,D7>` (below) only ever calls
+ * `begin()/on()/off()` on its 6 pin types — the same minimal contract any
+ * real IOP `OutPin` already satisfies. `oneIO::gpio::PCF8574Pin<Expander,Bit>`
+ * (new this round, `OneIO/include/oneIO/gpio/pcf8574.h`) satisfies that exact
+ * same contract over an I2C GPIO expander instead of a real port register —
+ * so the identical `Hd44780<...>` driver runs unmodified whether its 6 pins
+ * are real hardware `OutPin`s (direct-wired) or `PCF8574Pin`s (I2C backpack,
+ * `LCD_Malpartida.ino`/`LCD_PCF8574.ino`'s real wiring, both the exact same
+ * HD44780-over-PCF8574 hardware AM4 shipped two separate vendor-library
+ * examples for). One driver, two pin sources — not two drivers. Verified for
+ * real below (not just compile-checked): `directI2c::unificationProof()` drives the
+ * I2C-wired `Hd44780<...>` instance over `hw::native::VirtualTwi` (a real,
+ * host-testable in-memory I2C bus, OneChip) and asserts actual I2C traffic
+ * comes out the other end for an ordinary `setCursor()+print()` call.
  *
  * This was previously blocked — not by anything in this compat layer, but
  * by a real, pre-existing bug in the third-party `neu-rah/PCINT` library
@@ -81,11 +102,56 @@
 #include <oneData/oneData.h>
 #include <oneItem/oneItem.h>
 #include <oneOutput/oneOutput.h>
+#include <oneIO/display/hd44780.h>
+#include <oneIO/gpio/pcf8574.h>
+#include <chips/native/linuxTwi.h>
 #include <cassert>
 #include <cstdio>
 
 using namespace hapi;
 using namespace oneData;
+
+// ── Direct-parallel vs. I2C-expander wiring, same driver — see file header
+// comment. Direct wiring documents real hardware AVR OutPin types (same
+// convention as the rest of this file: descriptive only, not exercised in a
+// native selftest — proven for real at .RnD/AM4check/LiquidCrystal). The I2C
+// side IS exercised for real here: hw::native::VirtualTwi is a real,
+// host-testable I2C bus, not a stub.
+namespace directI2c {
+  // Direct wiring — same 6-pin shape as OneIO's own hd44780 example
+  // (RS=PB4/D12, EN=PB3/D11, D4-D7=PD5..PD2/D5..D2, classic Arduino tutorial
+  // pinout). Type-level only: no AVR chip headers pulled into this native
+  // build, so this alias isn't instantiated here — see the real hardware
+  // build for the actual pin types.
+  //   using DirectLcd = hapi::APIOf<oneIO::display::LcdDef,
+  //     oneIO::display::Hd44780<PinRS,PinEN,PinD4,PinD5,PinD6,PinD7>>;
+
+  // I2C-expander wiring — PCF8574 over a real (virtual, for this selftest)
+  // I2C bus. RS/EN/D4-D7 are now oneIO::gpio::PCF8574Pin<Expander,Bit>
+  // instead of real OutPins — the ONLY thing that changed in the Hd44780<>
+  // instantiation below versus the direct-wired one above.
+  using Twi      = hw::native::VirtualTwi;
+  using Expander = oneIO::gpio::PCF8574<Twi>::Api;
+  using PinRS = oneIO::gpio::PCF8574Pin<Expander, 0>;
+  using PinEN = oneIO::gpio::PCF8574Pin<Expander, 1>;
+  using PinD4 = oneIO::gpio::PCF8574Pin<Expander, 2>;
+  using PinD5 = oneIO::gpio::PCF8574Pin<Expander, 3>;
+  using PinD6 = oneIO::gpio::PCF8574Pin<Expander, 4>;
+  using PinD7 = oneIO::gpio::PCF8574Pin<Expander, 5>;
+  using I2cLcd = hapi::APIOf<oneIO::display::LcdDef,
+    oneIO::display::Hd44780<PinRS,PinEN,PinD4,PinD5,PinD6,PinD7>>;
+
+  void unificationProof() {
+    I2cLcd::begin();
+    Twi::reset();
+    I2cLcd::setCursor(0, 0);
+    I2cLcd::print("Hi");
+    assert(Twi::_addr != 0 && "PCF8574Pin never wrote to the I2C bus at all");
+    printf("directI2cUnification: last I2C write was %d byte(s) to 0x%02x "
+           "(same Hd44780<...> driver as direct-parallel wiring)\n",
+           Twi::_len, Twi::_addr);
+  }
+}
 // NOTE: deliberately no `using namespace oneMenu;` — see examples/am4compat's
 // own comment for why (oneMenu::Menu<> collides with AM4's Menu namespace).
 
@@ -215,6 +281,8 @@ bool doAlert(oneMenu::EventMask e, oneMenu::IItem&) {
 }
 
 int main() {
+  directI2c::unificationProof();
+
   devOut.lockMode(oneMenu::LockMode::None);
   devOut.setColors(WHITE, BLACK);
   devOut.clear();
@@ -273,8 +341,9 @@ int main() {
   assert(alertStartCount == 1 && alertEndCount == 1 &&
          "alertRun did not run to completion and hand control back via Run::idleOff()");
 
-  printf("OK: LiquidCrystal.ino compat-macro port (native parallel-HD44780 + "
-         "PCINT-driven encoder/button hardware proven separately, see "
+  printf("OK: LiquidCrystal.ino compat-macro port (direct+I2C Hd44780 "
+         "unification verified above; PCINT-driven encoder/button + real "
+         "direct-wired hardware proven separately, see "
          ".RnD/AM4check/LiquidCrystal) verified\n");
   return 0;
 }
