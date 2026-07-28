@@ -48,7 +48,7 @@
  *  - AM4's own `chainStream<2>` combining `keyIn`+`serialIn` is replaced
  *    with `MENU_INPUTS`'s own `InGroup` combining a `MenuInBridge`-wrapped
  *    button source with OneMenu's *native* serial input
- *    (`ArduinoSerialIn`/`IdParser`/`PCKbd`) — per the established decision
+ *    (`ArduinoSerialIn`/`IdxParser`/`PCKbd`) — per the established decision
  *    that AM4-driver bridging is for hardware OneMenu has no native
  *    equivalent for; serial input already does.
  *  - Manual-only idle (`nav.idleOn(alert)`, no `nav.timeOut` wired in the

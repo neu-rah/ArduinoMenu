@@ -105,7 +105,7 @@ oneMenu::INavDef<
   oneMenu::Root<editParent>
 > editNav;
 
-// ── digit-key entry while editing a NumField (nav.h/idParser.h/item.h,
+// ── digit-key entry while editing a NumField (nav.h/idxParser.h/item.h,
 // 2026-07-09, "numeric fields ... need to deliver Cmd::Key when nav is on
 // edit mode, instead of the nav go()") — native composition (not an AM4
 // macro; this is a core nav mechanism fix, not AM4-compat-specific), own
@@ -129,10 +129,10 @@ oneMenu::INavDef<
   oneMenu::Root<digitMenu>
 > digitNav;
 // scripted digit-key input — same shape as regIn above, but pushing the raw
-// Cmd::Go/Cmd::Esc events IdParser::parseKey would have produced for a real
+// Cmd::Go/Cmd::Esc events IdxParser::parseKey would have produced for a real
 // keypress, since the point of this check is IndexGo's own redirect logic,
-// not IdParser's byte-to-CKE translation (already covered by construction —
-// idParser.h's own parseKey is a pure static function, trivial to trust once
+// not IdxParser's byte-to-CKE translation (already covered by construction —
+// idxParser.h's own parseKey is a pure static function, trivial to trust once
 // its two branches are read; see notes.md).
 struct DigitIn {
   template<typename In> struct Part : In {
@@ -451,7 +451,7 @@ int main() {
          "EDIT() must bind directly to the caller's buffer (zero-copy) — only pos 0 should change");
   editNav.esc();
 
-  // ── digit-key entry while editing a NumField (nav.h/idParser.h/item.h,
+  // ── digit-key entry while editing a NumField (nav.h/idxParser.h/item.h,
   // 2026-07-09) ── Power (index 0 in digitMenu's body) is focused by default.
   assert(digitPower==55);
   assert(digitNav.navMode()!=oneMenu::NavMode::Edit);
