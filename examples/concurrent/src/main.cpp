@@ -10,7 +10,7 @@
  * Pure assembly, no new compat-layer machinery — "two independent
  * NAVROOTs in the same program" needs nothing beyond what MENU_INPUTS/
  * MENU_OUTPUTS/NAVROOT already build per call; each NAVROOT closes over
- * its own Pool<In,Out> and Root<menu,menuInstance>, so two of them never
+ * its own Pool<In,Out> and Root<menuInstance>, so two of them never
  * share state. What this file actually demonstrates (matching the
  * original's own stated purpose) is that navigating one tree's selection
  * leaves the other's completely untouched.

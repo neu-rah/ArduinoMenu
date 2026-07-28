@@ -8,7 +8,7 @@
  *        reuse.ino.
  *
  * AM4's `useMenu()` swaps which menu the SAME nav is bound to, at runtime,
- * while staying at nav level 0 (not opening a sub-level) — `Root<T,menu>`
+ * while staying at nav level 0 (not opening a sub-level) — `Root<menu>`
  * (OneMenu's own compile-time root binding) can't do this: T/menu are both
  * template parameters, fixed for the nav's whole lifetime. A tempting first
  * idea — a new root-binding component holding a runtime-reassignable
@@ -18,8 +18,8 @@
  * assumed) — a runtime pointer dereference breaks that outright.
  *
  * Fixed with something simpler that needs no new nav component at all: one
- * fixed `activeRoot` (the actual `Root<T,menu>` target, genuinely constexpr-
- * referenceable exactly like `Root<T,menu>` already requires) that gets
+ * fixed `activeRoot` (the actual `Root<menu>` target, genuinely constexpr-
+ * referenceable exactly like `Root<menu>` already requires) that gets
  * REASSIGNED (plain struct copy — `DynItem`'s own fields are simple/
  * copyable, confirmed via an isolated repro before building this whole
  * port) from whichever of `mainMenu`/`alarmDef` should currently be shown.
@@ -148,7 +148,7 @@ DynItem<0> cancelItem{"Cancel", sNone, oneMenu::EventMask::Enter, doCancel};
 oneMenu::IItem* const alarmDefItems[] = {&setUse, &setType, &hourField, &minField, &secField, &okItem, &cancelItem};
 DynItem<2> alarmDef{"Alarm def", sCanNav | sParentDraw, oneMenu::EventMask::None, nullptr, alarmDefItems, 7};
 
-// ── the actual nav root — genuinely constexpr-referenceable (Root<T,menu>'s
+// ── the actual nav root — genuinely constexpr-referenceable (Root<menu>'s
 // own requirement), reassigned by plain struct copy to switch content. ────
 DynItem<2> activeRoot = mainMenu;
 
@@ -180,7 +180,7 @@ oneMenu::InDef<NoOpIn> devIn;
 MENU_INPUTS(in, &devIn);
 MENU_OUTPUTS(out, /*maxDepth*/2, &devOut);
 oneMenu::INavDef<oneMenu::Pool<decltype(in), decltype(out)>,
-  oneMenu::TreeNav, oneMenu::Root<decltype(activeRoot), activeRoot>> nav(in, out);
+  oneMenu::TreeNav, oneMenu::Root<activeRoot>> nav(in, out);
 
 // Real oneMenu::IOut subclass for direct printItem() inspection in the
 // selftest below — AlarmItem::printItem is a virtual override (exact

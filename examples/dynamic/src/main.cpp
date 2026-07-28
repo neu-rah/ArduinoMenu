@@ -147,7 +147,7 @@ struct NoOpIn {
 oneMenu::InDef<NoOpIn> devIn;
 
 oneMenu::INavDef<oneMenu::Pool<decltype(devIn), decltype(devOut)>,
-  oneMenu::TreeNav, oneMenu::Root<decltype(mainMenu), mainMenu>> nav(devIn, devOut);
+  oneMenu::TreeNav, oneMenu::Root<mainMenu>> nav(devIn, devOut);
 
 int main() {
   devOut.lockMode(oneMenu::LockMode::None);

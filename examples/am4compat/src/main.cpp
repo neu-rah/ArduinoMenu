@@ -102,7 +102,7 @@ MENU(editParent, "EditParent", Menu::doNothing, Menu::noEvent, Menu::noStyle
 oneMenu::INavDef<
   oneMenu::EventDispatch,
   oneMenu::TreeNav,
-  oneMenu::Root<decltype(editParent), editParent>
+  oneMenu::Root<editParent>
 > editNav;
 
 // ── digit-key entry while editing a NumField (nav.h/idParser.h/item.h,
@@ -126,7 +126,7 @@ auto digitMenu = oneMenu::menuDef<>(
 oneMenu::INavDef<
   oneMenu::IndexGo,
   oneMenu::TreeNav,
-  oneMenu::Root<decltype(digitMenu), digitMenu>
+  oneMenu::Root<digitMenu>
 > digitNav;
 // scripted digit-key input — same shape as regIn above, but pushing the raw
 // Cmd::Go/Cmd::Esc events IdParser::parseKey would have produced for a real
@@ -180,7 +180,7 @@ MENU(objParent, "ObjParent", Menu::doNothing, Menu::noEvent, Menu::noStyle
 
 oneMenu::INavDef<
   oneMenu::TreeNav,
-  oneMenu::Root<decltype(objParent), objParent>
+  oneMenu::Root<objParent>
 > objNav;
 
 // ── AM4's richer 3-arg event handler signature (eventMask,navNode&,prompt&)
@@ -220,7 +220,7 @@ MENU(navParent, "NavParent", Menu::doNothing, Menu::noEvent, Menu::noStyle
 // wanting AM4's exact NAVROOT(...) call syntax with idle support would use
 // the macro directly, e.g. `NAVROOT_IDLE(nav, mainMenu, 2, in, out, Run);`.
 am4compat::NavRootDef<NavTestRun,
-  oneMenu::EventDispatch, oneMenu::TreeNav, oneMenu::Root<decltype(navParent), navParent>
+  oneMenu::EventDispatch, oneMenu::TreeNav, oneMenu::Root<navParent>
 > navNav;
 
 // ── menu tree, verbatim AM4 call syntax ─────────────────────────────────────
@@ -274,7 +274,7 @@ MENU(padParent, "PadParent", Menu::doNothing, Menu::noEvent, Menu::noStyle
 oneMenu::INavDef<
   oneMenu::EventDispatch,
   oneMenu::TreeNav,
-  oneMenu::Root<decltype(padParent), padParent>
+  oneMenu::Root<padParent>
 > padNav;
 
 // ── I/O + nav: AM4-syntax device wiring (ANSI_OUT/MENU_INPUTS/MENU_OUTPUTS/NAVROOT) ──
@@ -348,7 +348,7 @@ oneMenu::InDef<ScriptedIn> regIn;
 oneMenu::INavDef<
   oneMenu::EventDispatch,
   oneMenu::TreeNav,
-  oneMenu::Root<decltype(regMenu), regMenu>
+  oneMenu::Root<regMenu>
 > regNav;
 
 int main() {
