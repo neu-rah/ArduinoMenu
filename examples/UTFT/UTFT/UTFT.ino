@@ -101,10 +101,12 @@ MENU(subMenu,"Sub-Menu",showEvent,anyEvent,noStyle
   ,EXIT("<Back")
 );
 
+void noField() {}
+
 MENU(mainMenu,"Main menu",doNothing,noEvent,noStyle
   ,OP("Op1",action1,anyEvent)
   ,OP("Op2",action2,enterEvent)
-  ,FIELD(test,"Test","%",0,100,10,1,doNothing,noEvent,noStyle)
+  ,FIELD(test,"Test","%",0,100,10,1,noField,noEvent,noStyle)
   ,SUBMENU(subMenu)
   ,SUBMENU(setLed)
   ,OP("LED On",myLedOn,enterEvent)

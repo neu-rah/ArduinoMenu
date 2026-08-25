@@ -22,9 +22,15 @@ using namespace Menu;
 int timeOn=10;
 int timeOff=90;
 
+// Must be a real, local, plain (non-inline, non-static) function --
+// avr-g++ 7.3 rejects FIELD()'s fn (wired to EventCall, item.h) unless it
+// has ordinary external linkage; a shared inline/static header no-op
+// doesn't work here (see Menu::doNothing's comment in am4.h).
+void noField() {}
+
 MENU(mainMenu, "Blink menu", Menu::doNothing, Menu::noEvent, Menu::wrapStyle
-  ,FIELD(timeOn,"On","ms",0,100,10,1, Menu::doNothing, Menu::noEvent, Menu::noStyle)
-  ,FIELD(timeOff,"Off","ms",0,100,10,1,Menu::doNothing, Menu::noEvent, Menu::noStyle)
+  ,FIELD(timeOn,"On","ms",0,100,10,1, noField, Menu::noEvent, Menu::noStyle)
+  ,FIELD(timeOff,"Off","ms",0,100,10,1,noField, Menu::noEvent, Menu::noStyle)
   ,EXIT("<Back")
 );
 

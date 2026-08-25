@@ -125,11 +125,13 @@ char* constMEM hexDigit MEMMODE="0123456789ABCDEF";
 char* constMEM hexNr[] MEMMODE={"0","x",hexDigit,hexDigit};
 char buf1[]="0x11";
 
+void noField() {}
+
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,OP("OpA",action1,anyEvent)
   ,OP("OpB",action2,enterEvent)
   //,SUBMENU(togOp)
-  ,FIELD(test,"Test","%",0,100,10,1,doNothing,noEvent,wrapStyle)
+  ,FIELD(test,"Test","%",0,100,10,1,noField,noEvent,wrapStyle)
   ,SUBMENU(subMenu)
   ,SUBMENU(setLed)
   ,OP("LED On",myLedOn,enterEvent)

@@ -141,11 +141,13 @@ MENU(subMenu,"Sub-Menu",doNothing,noEvent,noStyle
 uint16_t hrs=0;
 uint16_t mins=0;
 
+void noField() {}
+
 //define a pad style menu (single line menu)
 //here with a set of fields to enter a date in YYYY/MM/DD format
 altMENU(menu,timeMenu,"Time",doNothing,noEvent,noStyle,(systemStyles)(_asPad|Menu::_menuData|Menu::_canNav|_parentDraw)
-  ,FIELD(hrs,"",":",0,11,1,0,doNothing,noEvent,noStyle)
-  ,FIELD(mins,"","",0,59,10,1,doNothing,noEvent,wrapStyle)
+  ,FIELD(hrs,"",":",0,11,1,0,noField,noEvent,noStyle)
+  ,FIELD(mins,"","",0,59,10,1,noField,noEvent,wrapStyle)
 );
 
 char* constMEM hexDigit MEMMODE="0123456789ABCDEF";

@@ -68,8 +68,10 @@ const char* constMEM hexDigit MEMMODE="0123456789ABCDEF";
 const char* constMEM hexNr[] MEMMODE={"0","x",hexDigit,hexDigit};
 char buf1[]="0x11";
 
+void noField() {}
+
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
-  ,FIELD(test,"Test","%",0,100,10,1,doNothing,noEvent,wrapStyle)
+  ,FIELD(test,"Test","%",0,100,10,1,noField,noEvent,wrapStyle)
   ,SUBMENU(setLed)
   ,OP("LED On",myLedOn,enterEvent)
   ,OP("LED Off",myLedOff,enterEvent)

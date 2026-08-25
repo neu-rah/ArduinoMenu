@@ -129,6 +129,8 @@ const char* constMEM hexDigit MEMMODE="0123456789ABCDEF";
 const char* constMEM hexNr[] MEMMODE={"0","x",hexDigit,hexDigit};
 char buf1[]="0x11";
 
+void noField() {}
+
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,OP("Op1",doNothing,noEvent)
   ,OP("Op2",doNothing,noEvent)
@@ -137,7 +139,7 @@ MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,SUBMENU(setLed)
   ,OP("LED On",myLedOn,enterEvent)
   ,OP("LED Off",myLedOff,enterEvent)
-  ,FIELD(ledBacklight,"Backlight: ","",0,255,10,5,doNothing,noEvent,wrapStyle) // Menu option to set the intensity of the backlight of the screen.
+  ,FIELD(ledBacklight,"Backlight: ","",0,255,10,5,noField,noEvent,wrapStyle) // Menu option to set the intensity of the backlight of the screen.
   ,SUBMENU(selMenu)
   ,SUBMENU(chooseMenu)
   //,OP("Alert test",doAlert,enterEvent)

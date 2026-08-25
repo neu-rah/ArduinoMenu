@@ -90,13 +90,15 @@ uint16_t year=2017;
 uint16_t month=10;
 uint16_t day=7;
 
+void noField() {}
+
 //define a pad style menu (single line menu)
 //here with a set of fields to enter a date in YYYY/MM/DD format
 //altMENU(menu,birthDate,"Birth",doNothing,noEvent,noStyle,(systemStyles)(_asPad|Menu::_menuData|Menu::_canNav|_parentDraw)
 PADMENU(birthDate,"Birth",doNothing,noEvent,noStyle
-  ,FIELD(year,"","/",1900,3000,20,1,doNothing,noEvent,noStyle)
-  ,FIELD(month,"","/",1,12,1,0,doNothing,noEvent,wrapStyle)
-  ,FIELD(day,"","",1,31,1,0,doNothing,noEvent,wrapStyle)
+  ,FIELD(year,"","/",1900,3000,20,1,noField,noEvent,noStyle)
+  ,FIELD(month,"","/",1,12,1,0,noField,noEvent,wrapStyle)
+  ,FIELD(day,"","",1,31,1,0,noField,noEvent,wrapStyle)
 );
 
 char* constMEM hexDigit MEMMODE="0123456789ABCDEF";
@@ -106,7 +108,7 @@ char buf1[]="0x11";
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,OP("Op1",action1,anyEvent)
   ,OP("Op2",action2,enterEvent)
-  ,FIELD(test,"Test","%",0,100,10,1,doNothing,noEvent,wrapStyle)
+  ,FIELD(test,"Test","%",0,100,10,1,noField,noEvent,wrapStyle)
   ,SUBMENU(subMenu)
   ,SUBMENU(setLed)
   ,OP("LED On",myLedOn,enterEvent)

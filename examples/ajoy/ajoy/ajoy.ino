@@ -39,10 +39,12 @@ analogAxis<JOY_Y,10,false> ay;
 
 int test=500;
 
+void noField() {}
+
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,OP("Op1",doNothing,noEvent)
   ,OP("Op2",doNothing,noEvent)
-  ,FIELD(test,"Test","ms",0,1000,100,1,doNothing,noEvent,wrapStyle)
+  ,FIELD(test,"Test","ms",0,1000,100,1,noField,noEvent,wrapStyle)
   ,EXIT("<Back")
 );
 

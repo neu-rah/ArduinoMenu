@@ -80,6 +80,8 @@ result updateEEPROM()
 
 #define MAX_DEPTH 3
 
+void noField() {}
+
 MENU(subMenuAdjustServo, "Adjust Servo Settings", doNothing, noEvent, noStyle
      // ,FIELD(settingsEEPROM.servoOpen, "Servo Open", " degrees", 0, 180, 10, 1, doNothing, noEvent, noStyle)
      // ,FIELD(settingsEEPROM.servoClosed, "Servo Closed", " degrees", 0, 180, 10, 1, doNothing, noEvent, noStyle)
@@ -89,9 +91,9 @@ MENU(subMenuAdjustServo, "Adjust Servo Settings", doNothing, noEvent, noStyle
 
 CHOOSE(chooseField, feedDirChoose, "Choose Direction:", doNothing, noEvent, noStyle, VALUE("Forward", 1, doNothing, noEvent), VALUE("Backwards", 0, doNothing, noEvent));
 
-MENU(subMenuFeedInOut, "Feed Tape", doNothing, noEvent, noStyle, FIELD(feedLength, "Length of Feed:", "mm", 0, 1000, 10, 1, doNothing, noEvent, noStyle), SUBMENU(feedDirChoose), OP("Run!", doFeed, enterEvent), EXIT("<Back"));
+MENU(subMenuFeedInOut, "Feed Tape", doNothing, noEvent, noStyle, FIELD(feedLength, "Length of Feed:", "mm", 0, 1000, 10, 1, noField, noEvent, noStyle), SUBMENU(feedDirChoose), OP("Run!", doFeed, enterEvent), EXIT("<Back"));
 
-MENU(mainMenu, "COPPER TAPE CUTTER", doNothing, noEvent, wrapStyle, FIELD(lengthOfCuts, "Cut Size:", "mm", 0, 2000, 10, 1, doNothing, noEvent, noStyle), FIELD(numberOfCuts, "Pieces:", "", 0, 1000, 10, 1, doNothing, noEvent, noStyle), OP("Cut!", doRunCuts, enterEvent), SUBMENU(subMenuFeedInOut), SUBMENU(subMenuAdjustServo));
+MENU(mainMenu, "COPPER TAPE CUTTER", doNothing, noEvent, wrapStyle, FIELD(lengthOfCuts, "Cut Size:", "mm", 0, 2000, 10, 1, noField, noEvent, noStyle), FIELD(numberOfCuts, "Pieces:", "", 0, 1000, 10, 1, noField, noEvent, noStyle), OP("Cut!", doRunCuts, enterEvent), SUBMENU(subMenuFeedInOut), SUBMENU(subMenuAdjustServo));
 
 // define menu colors --------------------------------------------------------
 #define Black RGB565(0,0,0)

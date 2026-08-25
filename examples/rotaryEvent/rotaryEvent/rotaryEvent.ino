@@ -78,10 +78,12 @@ const colorDef<uint8_t> colors[6] MEMMODE={
 unsigned int timeOn=10;
 unsigned int timeOff=90;
 
+void noField() {}
+
 using namespace Menu;
 MENU(mainMenu, "Blink menu", Menu::doNothing, Menu::noEvent, Menu::wrapStyle
-  ,FIELD(timeOn,"On","ms",0,1000,10,1, Menu::doNothing, Menu::noEvent, Menu::noStyle)
-  ,FIELD(timeOff,"Off","ms",0,10000,10,1,Menu::doNothing, Menu::noEvent, Menu::noStyle)
+  ,FIELD(timeOn,"On","ms",0,1000,10,1, noField, Menu::noEvent, Menu::noStyle)
+  ,FIELD(timeOff,"Off","ms",0,10000,10,1,noField, Menu::noEvent, Menu::noStyle)
   ,EXIT("<Back")
 );
 

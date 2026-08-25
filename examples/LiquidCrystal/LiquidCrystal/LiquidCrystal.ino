@@ -131,11 +131,13 @@ TOGGLE((mainMenu[1].enabled),togOp,"Op 2:",doNothing,noEvent,noStyle
 // char* constMEM hexNr[] MEMMODE={"0","x",hexDigit,hexDigit};
 // char buf1[]="0x11";
 
+void noField() {}
+
 MENU(mainMenu,"Main menu",doNothing,noEvent,wrapStyle
   ,OP("Op1",action1,anyEvent)
   ,OP("Op2",action2,enterEvent)
   //,SUBMENU(togOp)
-  ,FIELD(test,"Test","%",0,100,10,1,doNothing,noEvent,wrapStyle)
+  ,FIELD(test,"Test","%",0,100,10,1,noField,noEvent,wrapStyle)
   ,SUBMENU(subMenu)
   ,SUBMENU(setLed)
   ,OP("LED On",myLedOn,enterEvent)
