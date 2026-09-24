@@ -101,7 +101,7 @@ MENU(editParent, "EditParent", Menu::doNothing, Menu::noEvent, Menu::noStyle
 
 oneMenu::INavDef<
   oneMenu::EventDispatch,
-  oneMenu::TreeNav,
+  oneMenu::TreeNav<>,
   oneMenu::Root<editParent>
 > editNav;
 
@@ -125,7 +125,7 @@ auto digitMenu = oneMenu::menuDef<>(
 );
 oneMenu::INavDef<
   oneMenu::IndexGo,
-  oneMenu::TreeNav,
+  oneMenu::TreeNav<>,
   oneMenu::Root<digitMenu>
 > digitNav;
 // scripted digit-key input — same shape as regIn above, but pushing the raw
@@ -179,7 +179,7 @@ MENU(objParent, "ObjParent", Menu::doNothing, Menu::noEvent, Menu::noStyle
 );
 
 oneMenu::INavDef<
-  oneMenu::TreeNav,
+  oneMenu::TreeNav<>,
   oneMenu::Root<objParent>
 > objNav;
 
@@ -220,7 +220,7 @@ MENU(navParent, "NavParent", Menu::doNothing, Menu::noEvent, Menu::noStyle
 // wanting AM4's exact NAVROOT(...) call syntax with idle support would use
 // the macro directly, e.g. `NAVROOT_IDLE(nav, mainMenu, 2, in, out, Run);`.
 am4compat::NavRootDef<NavTestRun,
-  oneMenu::EventDispatch, oneMenu::TreeNav, oneMenu::Root<navParent>
+  oneMenu::EventDispatch, oneMenu::TreeNav<>, oneMenu::Root<navParent>
 > navNav;
 
 // ── menu tree, verbatim AM4 call syntax ─────────────────────────────────────
@@ -273,7 +273,7 @@ MENU(padParent, "PadParent", Menu::doNothing, Menu::noEvent, Menu::noStyle
 
 oneMenu::INavDef<
   oneMenu::EventDispatch,
-  oneMenu::TreeNav,
+  oneMenu::TreeNav<>,
   oneMenu::Root<padParent>
 > padNav;
 
@@ -347,7 +347,7 @@ oneMenu::InDef<ScriptedIn> regIn;
 // TreeNav, no IndexGo) — the real-world-relevant shape for this check.
 oneMenu::INavDef<
   oneMenu::EventDispatch,
-  oneMenu::TreeNav,
+  oneMenu::TreeNav<>,
   oneMenu::Root<regMenu>
 > regNav;
 

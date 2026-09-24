@@ -179,8 +179,8 @@ oneMenu::InDef<NoOpIn> devIn;
 
 MENU_INPUTS(in, &devIn);
 MENU_OUTPUTS(out, /*maxDepth*/2, &devOut);
-oneMenu::INavDef<oneMenu::Pool<decltype(in), decltype(out)>,
-  oneMenu::TreeNav, oneMenu::Root<activeRoot>> nav(in, out);
+oneMenu::INavDef<oneMenu::Poll<decltype(in)>,
+  oneMenu::TreeNav<>, oneMenu::Root<activeRoot>> nav(in, out);
 
 // Real oneMenu::IOut subclass for direct printItem() inspection in the
 // selftest below — AlarmItem::printItem is a virtual override (exact

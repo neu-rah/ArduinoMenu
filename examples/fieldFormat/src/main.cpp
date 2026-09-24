@@ -62,6 +62,7 @@ void noOpEdit() {} // AM4's doNothing, void()-shaped for EventCall
 // (checking rendered TEXT content, not just nav/state side effects) — same
 // shape as OneData's own test.cpp StrOut.
 struct StrOut {
+  using Types = hapi::Chain<>;   // OneMenu queries Out::Types (Fmt/Cursor tags); this fake device has none
   char buf[64]{};
   int len=0;
   void put(char c) { if(len<63) { buf[len++]=c; buf[len]=0; } }
